@@ -45,21 +45,24 @@ html{
 .hex-center-title-dark{
   color:#ffffff!important;
 }
-.hex-center-title-en{
+
+/* 共通センター見出し（トップページ専用） 英文 */
+.hex-center-title[data-en]::after{
+  content:attr(data-en);
   display:block;
-  margin-top:8px;
-  font-size:14px;
-  font-weight:400;
+  margin-top:22px;
+  font-size:16px;
   line-height:1.4;
-  letter-spacing:.25em;
+  letter-spacing:.22em;
+  font-family:serif;
+  font-weight:normal;
+  opacity:.6;
 }
-
-.hex-center-title-light .hex-center-title-en{
-  color:#9aa7c6;
+.hex-center-title-light[data-en]::after{
+  color:#3c4b7a;
 }
-
-.hex-center-title-dark .hex-center-title-en{
-  color:rgba(255,255,255,.7);
+.hex-center-title-dark[data-en]::after{
+  color:#fff;
 }
 
 /* 共通セクション見出し（h2専用） */
