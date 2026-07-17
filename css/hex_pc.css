@@ -3271,3 +3271,7 @@ body.hex-form-dialog-open{
 .hex-calendar-information .hex-button-wrap{
   margin-top:40px;
 }
+.hex-calendar-information .hex-btn-main.dark,
+.hex-calendar-information .hex-btn-main.dark *{
+  color:#1f2774!important;
+}
