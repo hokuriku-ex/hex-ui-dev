@@ -3281,6 +3281,6 @@ body.hex-form-dialog-open{
 }
 @media screen and (min-width:769px){
   .hex-calendar-information{
-    padding-left:50px;
+    padding-left:40px;
   }
 }
