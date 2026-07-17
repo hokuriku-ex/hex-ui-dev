@@ -3229,8 +3229,8 @@ body.hex-form-dialog-open{
 .hex-calendar-legend-symbol{
   flex:0 0 auto;
   display:block;
-  width:14px;
-  height:14px;
+  width:16px;
+  height:16px;
 }
 .hex-calendar-legend-symbol.is-closed{
   border-radius:50%;
@@ -3252,7 +3252,7 @@ body.hex-form-dialog-open{
 }
 .hex-calendar-legend-label{
   color:rgba(255,255,255,.92);
-  font-size:14px;
+  font-size:16px;
   line-height:1.6;
 }
 
