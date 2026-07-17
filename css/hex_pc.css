@@ -3279,3 +3279,8 @@ body.hex-form-dialog-open{
 .hex-calendar-information .hex-btn-main.dark:hover *{
   color:#c8a874!important;
 }
+@media screen and (min-width:769px){
+  .hex-calendar-information{
+    padding:100px;
+  }
+}
