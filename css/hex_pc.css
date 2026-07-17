@@ -45,6 +45,22 @@ html{
 .hex-center-title-dark{
   color:#ffffff!important;
 }
+.hex-center-title-en{
+  display:block;
+  margin-top:8px;
+  font-size:14px;
+  font-weight:400;
+  line-height:1.4;
+  letter-spacing:.25em;
+}
+
+.hex-center-title-light .hex-center-title-en{
+  color:#9aa7c6;
+}
+
+.hex-center-title-dark .hex-center-title-en{
+  color:rgba(255,255,255,.7);
+}
 
 /* 共通セクション見出し（h2専用） */
 .hex-section-title{
