@@ -2409,6 +2409,64 @@ body,
 }
 
 /* =======================================
+   下層ページ：外構をご検討中の方
+======================================= */
+.hex-worries{
+  display:grid;
+  grid-template-columns:minmax(180px,1fr) minmax(280px,420px) minmax(180px,1fr);
+  align-items:center;
+  gap:32px;
+  max-width:1100px;
+  margin:0 auto;
+}
+.hex-worries-list{
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+}
+.hex-worries-balloon{
+  position:relative;
+  margin:0;
+  padding:16px 20px;
+  border:1px solid #1f2774;
+  background:#fff;
+  color:#383838;
+  font-size:15px;
+  font-weight:500;
+  line-height:1.7;
+  text-align:center;
+}
+.hex-worries-list-left .hex-worries-balloon::after{
+  content:"";
+  position:absolute;
+  right:-9px;
+  bottom:12px;
+  width:16px;
+  height:16px;
+  border-right:1px solid #1f2774;
+  border-bottom:1px solid #1f2774;
+  background:#fff;
+  transform:skew(35deg);
+}
+.hex-worries-list-right .hex-worries-balloon::after{
+  content:"";
+  position:absolute;
+  left:-9px;
+  bottom:12px;
+  width:16px;
+  height:16px;
+  border-left:1px solid #1f2774;
+  border-bottom:1px solid #1f2774;
+  background:#fff;
+  transform:skew(-35deg);
+}
+.hex-worries-image img{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+/* =======================================
    下層ページ：工事メニュー
 ======================================= */
 /* 土木工事・申請 申請の流れ */
