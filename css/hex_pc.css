@@ -1865,7 +1865,6 @@ body,
 .hex-company-buttons > .hex-button-wrap{
   flex:1 1 0;
   width:auto;
-  max-width:310px;
   margin:0;
 }
 .hex-company-buttons .hex-btn-main{
