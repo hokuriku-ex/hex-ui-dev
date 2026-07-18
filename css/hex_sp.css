@@ -745,7 +745,7 @@
 
   .hex-card-grid4.hex-company-card{
     grid-template-columns:repeat(2,1fr)!important;
-    gap:30px 16px;
+    gap:0;
   }
 }
 
