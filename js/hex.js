@@ -3130,7 +3130,7 @@ hexLoad(function(){
       notice.className='hex-form-notice';
 
       notice.innerHTML=
-        '<p class="hex-form-notice-warning">※ 営業・セールスを目的としたお問い合わせはご遠慮ください。</p>'+
+        '<p class="hex-form-notice-warning">営業・セールスを目的としたお問い合わせはご遠慮ください。</p>'+
         '<p>・内容によりご回答までお時間をいただく場合があります。</p>'+
         '<p>・必要に応じてお電話でご連絡させていただく場合があります。</p>';
 
