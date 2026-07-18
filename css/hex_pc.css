@@ -2430,7 +2430,7 @@ body,
   transform:translateX(-50%);
 }
 
-/* 吹き出し */
+/* お悩み相談 */
 .hex-worries{
   display:grid;
   grid-template-columns:minmax(180px,1fr) minmax(280px,420px) minmax(180px,1fr);
@@ -2457,8 +2457,6 @@ body,
   line-height:1.7;
   text-align:center;
 }
-
-/* 左側：右向きのしっぽ */
 .hex-worries-list-left .hex-worries-balloon::before{
   content:"";
   position:absolute;
@@ -2477,8 +2475,6 @@ body,
   border-bottom:8px solid transparent;
   border-left:13px solid #fff;
 }
-
-/* 右側：左向きのしっぽ */
 .hex-worries-list-right .hex-worries-balloon::before{
   content:"";
   position:absolute;
@@ -2497,7 +2493,6 @@ body,
   border-bottom:8px solid transparent;
   border-right:13px solid #fff;
 }
-
 .hex-worries-image img{
   display:block;
   width:100%;
