@@ -1303,7 +1303,7 @@ hexReady(function(){
    カード
 ======================================= */
 hexReady(function(){
-  ['1','2','3'].forEach(function(col){
+  ['1','2','3','4'].forEach(function(col){
     document.querySelectorAll('.hex-card-grid'+col+'-start').forEach(function(gridStart){
       var gridStartBlock=window.hexBaseBlock(gridStart);
       var gridEndBlock=window.hexNextBlock(gridStartBlock);
