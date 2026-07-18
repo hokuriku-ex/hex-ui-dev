@@ -739,11 +739,6 @@
     align-items:center;
     gap:16px;
   }
-
-  .hex-company-buttons > .hex-button-wrap{
-    width:100%;
-    max-width:310px;
-  }
 }
 
 /* ギャラリー */
