@@ -732,6 +732,20 @@
   }
 }
 
+/* 私たちについて */
+@media screen and (max-width:768px){
+  .hex-company-buttons{
+    flex-direction:column;
+    align-items:center;
+    gap:16px;
+  }
+
+  .hex-company-buttons > .hex-button-wrap{
+    width:100%;
+    max-width:310px;
+  }
+}
+
 /* ギャラリー */
 @media screen and (max-width:768px){
   .hex-gallery{
