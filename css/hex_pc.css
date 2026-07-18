@@ -659,20 +659,20 @@ a.hex-text-link[target="_blank"]::after{
   transition:.3s ease;
 }
 .hex-btn-main.light{
-  background:#fff;
+  background:transparent;
   border:1px solid #1f2774;
 }
 .hex-btn-main.dark{
-  background:rgba(255,255,255,.88)!important;
+  background:rgba(255,255,255,.88);
   border:1px solid #fff;
 }
 .hex-btn-main.light .hex-btn-main-title,
 .hex-btn-main.light .hex-btn-main-icon{
-  color:#1f2774!important;
+  color:#1f2774;
 }
 .hex-btn-main.dark .hex-btn-main-title,
 .hex-btn-main.dark .hex-btn-main-icon{
-  color:#383838!important;
+  color:#383838;
 }
 .hex-btn-main-title{
   font-size:18px;
@@ -690,12 +690,12 @@ a.hex-text-link[target="_blank"]::after{
   transition:.3s ease;
 }
 .hex-btn-main.light:hover{
-  border-color:#c8a874!important;
-  background:#fff;
+  border-color:#c8a874;
+  background:transparent;
 }
 .hex-btn-main.dark:hover{
-  border-color:#c8a874!important;
-  background:rgba(255,255,255,.96)!important;
+  border-color:#c8a874;
+  background:rgba(255,255,255,.96);
 }
 .hex-btn-main:hover .hex-btn-main-title,
 .hex-btn-main:hover .hex-btn-main-icon,
