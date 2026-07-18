@@ -1070,7 +1070,7 @@
   .gc_auto_frame_post_index_box_contents_cell_text_list{
     display:block!important;
     position:relative!important;
-    padding:14px 30px 14px 0!important;
+    padding:0 30px 0 0!important;
   }
   .gc_auto_frame_post_index_home_box_contents_cell_date_list,
   .gc_auto_frame_post_index_box_contents_cell_date_list{
