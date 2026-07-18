@@ -2411,6 +2411,24 @@ body,
 /* =======================================
    下層ページ：外構をご検討中の方
 ======================================= */
+.hex-worries-section{
+  position:relative;
+  background:#fffaf0;
+}
+.hex-worries-section::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-26px;
+  z-index:2;
+  width:0;
+  height:0;
+  border-left:38px solid transparent;
+  border-right:38px solid transparent;
+  border-top:26px solid #fffaf0;
+  transform:translateX(-50%);
+}
+
 .hex-worries{
   display:grid;
   grid-template-columns:minmax(180px,1fr) minmax(280px,420px) minmax(180px,1fr);
