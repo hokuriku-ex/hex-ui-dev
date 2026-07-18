@@ -985,6 +985,33 @@
 }
 
 /* =======================================
+   下層ページ：外構をご検討中の方
+======================================= */
+@media(max-width:767px){
+  .hex-worries{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+  }
+  .hex-worries-image{
+    grid-column:1 / -1;
+    grid-row:1;
+    max-width:320px;
+    margin:0 auto 12px;
+  }
+  .hex-worries-list{
+    display:contents;
+  }
+  .hex-worries-balloon{
+    padding:12px 10px;
+    font-size:13px;
+    line-height:1.6;
+  }
+  .hex-worries-balloon::after{
+    display:none;
+  }
+}
+
+/* =======================================
    下層ページ：工事メニュー
 ======================================= */
 /* 土木工事・申請 申請の流れ */
