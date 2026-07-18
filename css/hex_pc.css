@@ -1879,7 +1879,7 @@ body,
 }
 
 .hex-company-card{
-  column-gap:32px;
+  column-gap:0;
 }
 .hex-company-card .hex-card{
   display:flex;
