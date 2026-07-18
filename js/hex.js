@@ -26,6 +26,7 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
 /* トップページセクション */
 const HOME_SECTIONS={
   HERO:'gc_auto_frame_home_0', /* ヒーロー画像 */
+  WELCOME:'gc_auto_frame_home_1', /* Welcomeメッセージ */
   ABOUT:'gc_auto_frame_home_1', /* 私たちについて */
   SERVICE:'gc_auto_frame_home_2', /* サービス案内 */
   PICKUP:'gc_auto_frame_home_3', /* 注目アイテム */
@@ -41,8 +42,9 @@ const HOME_SECTIONS={
   FIXED_FOOTER:'gc_auto_frame_home_13' /* 固定フッター */
 };
 
-/* 交互背景対象（薄いグレー） */
+/* トップページ交互背景対象 */
 const HOME_DISPLAY_SECTIONS=[
+  HOME_SECTIONS.WELCOME,
   HOME_SECTIONS.ABOUT,
   HOME_SECTIONS.SERVICE,
   HOME_SECTIONS.PICKUP,
@@ -53,6 +55,7 @@ const HOME_DISPLAY_SECTIONS=[
 
 /* スマホ左右余白対象 */
 const HOME_PADDING_SECTIONS=[
+  HOME_SECTIONS.WELCOME,
   HOME_SECTIONS.ABOUT,
   HOME_SECTIONS.SERVICE,
   HOME_SECTIONS.PICKUP,
