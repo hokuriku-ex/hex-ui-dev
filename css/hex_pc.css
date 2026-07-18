@@ -2504,6 +2504,65 @@ body,
   height:auto;
 }
 
+/* 外構づくりをお手伝いします */
+.hex-solution{
+  max-width:800px;
+  margin:0 auto;
+  text-align:center;
+}
+.hex-solution-image{
+  max-width:680px;
+  margin:0 auto;
+}
+.hex-solution-image img{
+  display:block;
+  width:100%;
+  height:auto;
+}
+.hex-solution-lead{
+  max-width:680px;
+  margin:0 auto;
+  padding:12px 24px;
+  box-sizing:border-box;
+  background:#1f2774;
+  color:#fff;
+  font-size:15px;
+  font-weight:700;
+  line-height:1.6;
+  letter-spacing:.04em;
+}
+.hex-solution-text{
+  margin:28px 0 0;
+  color:#383838;
+  font-size:16px;
+  font-weight:500;
+  line-height:2;
+  letter-spacing:.04em;
+}
+.hex-solution-copy{
+  margin:24px 0 0;
+  color:#1f2774;
+  font-family:var(--hex-font-serif);
+  font-size:30px;
+  font-weight:700;
+  line-height:1.6;
+  letter-spacing:.06em;
+}
+.hex-solution-copy span{
+  position:relative;
+  display:inline-block;
+}
+.hex-solution-copy span::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-5px;
+  width:100%;
+  height:2px;
+  background:#c8a874;
+  transform:translateX(-50%);
+}
+
 /* =======================================
    下層ページ：工事メニュー
 ======================================= */
