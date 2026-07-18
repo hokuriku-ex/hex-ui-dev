@@ -362,6 +362,56 @@ function hexInitAnchorNav(){
 }
 
 /* =======================================
+   日付をYYYY/MM/DD形式に整形
+======================================= */
+hexReady(function(){
+  function formatDateText(root){
+    var walker=document.createTreeWalker(
+      root,
+      NodeFilter.SHOW_TEXT
+    );
+
+    var nodes=[];
+    var node;
+
+    while(node=walker.nextNode()){
+      nodes.push(node);
+    }
+
+    nodes.forEach(function(textNode){
+      var parent=textNode.parentNode;
+      if(!parent)return;
+
+      if(
+        parent.closest(
+          'script,style,textarea,input,select,option'
+        )
+      )return;
+
+      var text=textNode.nodeValue.trim();
+
+      var match=text.match(
+        /^(\d{4})\s*(?:年|[\/.\-])\s*(\d{1,2})\s*(?:月|[\/.\-])\s*(\d{1,2})\s*日?$/
+      );
+
+      if(!match)return;
+
+      var year=match[1];
+      var month=('0'+match[2]).slice(-2);
+      var day=('0'+match[3]).slice(-2);
+
+      textNode.nodeValue=
+        textNode.nodeValue.replace(
+          text,
+          year+'/'+month+'/'+day
+        );
+    });
+  }
+
+  formatDateText(document.body);
+});
+
+/* =======================================
    記事詳細タイトル整形
 ======================================= */
 hexLoad(function(){
