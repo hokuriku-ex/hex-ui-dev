@@ -1878,6 +1878,9 @@ body,
   box-sizing:border-box;
 }
 
+.hex-company-card{
+  column-gap:32px;
+}
 .hex-company-card .hex-card{
   border:none;
   background:transparent;
