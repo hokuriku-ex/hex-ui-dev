@@ -224,8 +224,13 @@ function hexInitAnchorNav(){
       targets.forEach(function(h2){
         if(target)return;
         if(h2.offsetParent===null)return;
-        var h2Text=(h2.textContent||'').trim();
-        if(h2Text===title)target=h2;
+
+        var targetText=(h2.textContent||'').trim();
+        var targetId=(h2.id||'').trim();
+
+        if(targetText===title||targetId===title){
+          target=h2;
+        }
       });
     if(!target)return;
     if(!target.id){
