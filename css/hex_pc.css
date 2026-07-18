@@ -1877,8 +1877,52 @@ body,
   height:100%;
   box-sizing:border-box;
 }
-.hex-company-card{
-  
+
+.hex-company-card .hex-card{
+  border:none;
+  background:transparent;
+}
+.hex-company-card .hex-card-head{
+  margin:0 0 8px;
+}
+.hex-company-card .hex-card-title{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  align-items:end;
+  column-gap:6px;
+  margin:0;
+}
+.hex-company-card .hex-title{
+  align-self:center;
+  color:#1f2774;
+  font-size:15px;
+  font-weight:700;
+  line-height:1.6;
+  letter-spacing:.04em;
+}
+.hex-company-card .hex-number{
+  color:#c8a874;
+  font-family:var(--hex-font-serif);
+  font-size:58px;
+  font-weight:400;
+  line-height:.9;
+  letter-spacing:0;
+}
+.hex-company-card .hex-unit{
+  align-self:end;
+  margin-bottom:4px;
+  color:#383838;
+  font-size:15px;
+  font-weight:700;
+  line-height:1;
+}
+.hex-company-card .hex-card-text{
+  margin:0;
+  color:#383838;
+  font-size:14px;
+  font-weight:500;
+  line-height:1.6;
+  letter-spacing:.03em;
 }
 
 /* お知らせ */
