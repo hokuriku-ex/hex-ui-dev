@@ -27,19 +27,19 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
 const HOME_SECTIONS={
   HERO:'gc_auto_frame_home_0', /* ヒーロー画像 */
   WELCOME:'gc_auto_frame_home_1', /* Welcomeメッセージ */
-  ABOUT:'gc_auto_frame_home_1', /* 私たちについて */
-  SERVICE:'gc_auto_frame_home_2', /* サービス案内 */
-  PICKUP:'gc_auto_frame_home_3', /* 注目アイテム */
-  NEWS_SECTION:'gc_auto_frame_home_4', /* お知らせセクション */
-  NEWS:'gc_auto_frame_home_5', /* 重要なお知らせ */
-  BLOG:'gc_auto_frame_home_6', /* スタッフブログ */
-  BANNER:'gc_auto_frame_home_7', /* バナー */
-  MOVIE:'gc_auto_frame_home_8', /* プロモーション動画 */
-  RECRUIT:'gc_auto_frame_home_9', /* 採用情報 */
-  CALENDAR:'gc_auto_frame_home_10', /* 営業日カレンダー */
-  AREA:'gc_auto_frame_home_11', /* 施工エリア */
-  FOOTER:'gc_auto_frame_home_12', /* フッター */
-  FIXED_FOOTER:'gc_auto_frame_home_13' /* 固定フッター */
+  ABOUT:'gc_auto_frame_home_2', /* 私たちについて */
+  SERVICE:'gc_auto_frame_home_3', /* サービス案内 */
+  PICKUP:'gc_auto_frame_home_4', /* 注目アイテム */
+  NEWS_SECTION:'gc_auto_frame_home_5', /* お知らせセクション */
+  NEWS:'gc_auto_frame_home_6', /* 重要なお知らせ */
+  BLOG:'gc_auto_frame_home_7', /* スタッフブログ */
+  BANNER:'gc_auto_frame_home_8', /* バナー */
+  MOVIE:'gc_auto_frame_home_9', /* プロモーション動画 */
+  RECRUIT:'gc_auto_frame_home_10', /* 採用情報 */
+  CALENDAR:'gc_auto_frame_home_11', /* 営業日カレンダー */
+  AREA:'gc_auto_frame_home_12', /* 施工エリア */
+  FOOTER:'gc_auto_frame_home_13', /* フッター */
+  FIXED_FOOTER:'gc_auto_frame_home_14' /* 固定フッター */
 };
 
 /* トップページ交互背景対象 */
