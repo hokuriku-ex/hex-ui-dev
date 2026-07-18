@@ -1377,6 +1377,7 @@ hexReady(function(){
         head.className='hex-card-head';
         title.className='hex-card-title';
         text.className='hex-card-text';
+        text.innerHTML=cardData.title;
         text.innerHTML=cardData.text;
         if(cardData.image){
           var imageBox=document.createElement('div');
@@ -1395,26 +1396,32 @@ hexReady(function(){
               var titleDetail=document.createElement('span');
               var titleIcon=document.createElement('span');
               var titleI=document.createElement('i');
+
               titleLink.className='hex-card-title-link';
               titleLink.href=cardData.url;
               window.hexSetExternal(titleLink,cardData.type);
+
               titleText.className='hex-card-title-text';
-              titleText.textContent=cardData.title;
+              titleText.innerHTML=cardData.title;
+
               titleDetail.className='hex-link-detail';
               titleDetail.textContent='詳しく見る';
+
               titleIcon.className='hex-link-icon';
               titleI.className=window.hexIconClass(cardData.type);
+
               titleIcon.appendChild(titleI);
               titleLink.appendChild(titleText);
               titleLink.appendChild(titleDetail);
               titleLink.appendChild(titleIcon);
               title.appendChild(titleLink);
             }else{
-              title.textContent=cardData.title;
+              title.innerHTML=cardData.title;
             }
           }else{
-            title.textContent=cardData.title;
+            title.innerHTML=cardData.title;
           }
+
           head.appendChild(title);
           body.appendChild(head);
         }
