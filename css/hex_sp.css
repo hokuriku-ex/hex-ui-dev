@@ -987,7 +987,8 @@
 /* =======================================
    下層ページ：外構をご検討中の方
 ======================================= */
-@media(max-width:767px){
+/* お悩み相談 */
+@media screen and (max-width:768px){
   .hex-worries{
     grid-template-columns:repeat(2,minmax(0,1fr));
     gap:12px;
@@ -1008,6 +1009,34 @@
   }
   .hex-worries-balloon::after{
     display:none;
+  }
+}
+
+/* 外構づくりをお手伝いします */
+@media screen and (max-width:768px){
+  .hex-solution{
+    width:100%;
+  }
+  .hex-solution-image{
+    width:100%;
+  }
+  .hex-solution-lead{
+    padding:10px 16px;
+    font-size:13px;
+    line-height:1.7;
+  }
+  .hex-solution-text{
+    margin-top:22px;
+    padding:0 16px;
+    font-size:14px;
+    line-height:1.9;
+  }
+  .hex-solution-text br{
+    display:none;
+  }
+  .hex-solution-copy{
+    margin-top:20px;
+    font-size:24px;
   }
 }
 
