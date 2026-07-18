@@ -2411,9 +2411,10 @@ body,
 /* =======================================
    下層ページ：外構をご検討中の方
 ======================================= */
+/* お悩みセクション背景 */
 .hex-worries-section{
   position:relative;
-  background:#fffaf0;
+  background:#ffe7b8;
 }
 .hex-worries-section::after{
   content:"";
@@ -2425,10 +2426,11 @@ body,
   height:0;
   border-left:38px solid transparent;
   border-right:38px solid transparent;
-  border-top:26px solid #fffaf0;
+  border-top:26px solid #ffe7b8;
   transform:translateX(-50%);
 }
 
+/* 吹き出し */
 .hex-worries{
   display:grid;
   grid-template-columns:minmax(180px,1fr) minmax(280px,420px) minmax(180px,1fr);
