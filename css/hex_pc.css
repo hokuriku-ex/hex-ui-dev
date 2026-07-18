@@ -1886,6 +1886,9 @@ body,
   line-height:.9;
   letter-spacing:0;
 }
+.hex-founded-text{
+  margin-left:6px;
+}
 
 .hex-company-card{
   column-gap:0;
