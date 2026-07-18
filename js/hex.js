@@ -861,6 +861,7 @@ hexReady(function(){
   });
   document.querySelectorAll('.hex-link-view').forEach(function(hexView){
     var hexTitle=hexView.dataset.title||'';
+    var hexDetail=hexView.dataset.detail||'詳しく見る';
     var hexUrl=window.hexBuildUrl(hexView);
     var hexType=hexView.dataset.type||'internal';
     var hexStyle=hexView.dataset.style||'light';
@@ -885,7 +886,7 @@ hexReady(function(){
     hexIconSpan.appendChild(hexIcon);
     hexAnchor.appendChild(hexTitleSpan);
     hexDetailSpan.className='hex-link-detail';
-    hexDetailSpan.textContent='詳しく見る';
+    hexDetailSpan.textContent=hexDetail;
     hexAnchor.appendChild(hexDetailSpan);
     hexAnchor.appendChild(hexIconSpan);
     hexWrap.appendChild(hexAnchor);
