@@ -2444,54 +2444,63 @@ body,
   flex-direction:column;
   gap:24px;
 }
+/* 吹き出し */
 .hex-worries-balloon{
   position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:76px;
   margin:0;
   padding:16px 20px;
-  border:1px solid #1f2774;
-  border-radius:8px;
-  background:#fff;
+  box-sizing:border-box;
+  border:none;
+  border-radius:12px;
+  background:#f2f3f7;
   color:#383838;
   font-size:15px;
   font-weight:500;
   line-height:1.7;
   text-align:center;
 }
-.hex-worries-list-left .hex-worries-balloon::before{
+/* しっぽ共通 */
+.hex-worries-balloon::before,
+.hex-worries-balloon::after{
   content:"";
   position:absolute;
-  right:-14px;
-  bottom:14px;
-  border-top:9px solid transparent;
-  border-bottom:9px solid transparent;
-  border-left:14px solid #1f2774;
+  display:block;
+  width:0;
+  height:0;
+  border-radius:50%;
+  transform:rotate(45deg);
+  border-right:25px solid transparent;
+  border-bottom:25px solid transparent;
+}
+/* 左側の吹き出し：右向き */
+.hex-worries-list-left .hex-worries-balloon::before{
+  top:18px;
+  right:-15px;
+  border-top:25px solid #f2f3f7;
+  border-left:25px solid transparent;
 }
 .hex-worries-list-left .hex-worries-balloon::after{
-  content:"";
-  position:absolute;
-  right:-12px;
-  bottom:15px;
-  border-top:8px solid transparent;
-  border-bottom:8px solid transparent;
-  border-left:13px solid #fff;
+  top:36px;
+  right:-25px;
+  border-top:25px solid #fff;
+  border-left:25px solid transparent;
 }
+/* 右側の吹き出し：左向き */
 .hex-worries-list-right .hex-worries-balloon::before{
-  content:"";
-  position:absolute;
-  left:-14px;
-  bottom:14px;
-  border-top:9px solid transparent;
-  border-bottom:9px solid transparent;
-  border-right:14px solid #1f2774;
+  top:18px;
+  left:-15px;
+  border-top:25px solid transparent;
+  border-left:25px solid #f2f3f7;
 }
 .hex-worries-list-right .hex-worries-balloon::after{
-  content:"";
-  position:absolute;
-  left:-12px;
-  bottom:15px;
-  border-top:8px solid transparent;
-  border-bottom:8px solid transparent;
-  border-right:13px solid #fff;
+  top:36px;
+  left:-25px;
+  border-top:25px solid transparent;
+  border-left:25px solid #fff;
 }
 .hex-worries-image img{
   display:block;
