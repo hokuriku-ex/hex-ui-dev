@@ -2431,6 +2431,28 @@ body,
 }
 
 /* お悩み相談 */
+.hex-notch-line{
+  position:relative;
+  width:280px;
+  height:16px;
+  margin:0 auto;
+  border-top:2px solid #c8a874;
+  box-sizing:border-box;
+}
+.hex-notch-line::after{
+  content:"";
+  position:absolute;
+  top:-9px;
+  left:50%;
+  width:16px;
+  height:16px;
+  box-sizing:border-box;
+  background:#fffaf0;
+  border-right:2px solid #c8a874;
+  border-bottom:2px solid #c8a874;
+  transform:translateX(-50%) rotate(45deg);
+}
+
 .hex-worries{
   display:grid;
   grid-template-columns:minmax(180px,1fr) minmax(280px,420px) minmax(180px,1fr);
