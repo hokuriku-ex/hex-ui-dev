@@ -2411,19 +2411,43 @@ body,
 /* =======================================
    下層ページ：外構をご検討中の方
 ======================================= */
+/* フルワイド背景が親要素で切れないようにする */
+.bg_post_index:has(.hex-worries-section),
+.post_index:has(.hex-worries-section),
+.post_index_contents:has(.hex-worries-section),
+.content:has(.hex-worries-section),
+.content_body:has(.hex-worries-section){
+  overflow:visible!important;
+}
 /* お悩みセクション全体 */
 .post_index_contents > .content:has(.hex-worries-section){
   position:relative;
-  width:calc(100% + 240px);
-  margin-left:-120px;
-  margin-right:-120px;
-  padding-left:120px;
-  padding-right:120px;
-  box-sizing:border-box;
-  background:#ffe7b8;
-  overflow:visible;
+  z-index:0;
+  width:100%;
+  margin-left:0;
+  margin-right:0;
+  padding-left:0;
+  padding-right:0;
+  background:transparent;
 }
-/* 内側には背景を付けない */
+/* 画面幅いっぱいの背景 */
+.post_index_contents > .content:has(.hex-worries-section)::before{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:50%;
+  z-index:0;
+  width:100vw;
+  background:#ffe7b8;
+  transform:translateX(-50%);
+}
+/* 内容を背景より手前に表示 */
+.post_index_contents > .content:has(.hex-worries-section) > *{
+  position:relative;
+  z-index:1;
+}
+/* 内側の要素には背景を付けない */
 .hex-worries-section{
   position:relative;
   width:100%;
@@ -2431,7 +2455,7 @@ body,
   padding:0;
   background:transparent;
 }
-/* セクション全体の下に▽ */
+/* 下中央の▽ */
 .post_index_contents > .content:has(.hex-worries-section)::after{
   content:"";
   position:absolute;
