@@ -2414,10 +2414,13 @@ body,
 /* お悩みセクション背景 */
 .hex-worries-section{
   position:relative;
-  z-index:0;
-  background:transparent;
-  isolation:isolate;
-  overflow:visible;
+  width:calc(100% + 240px);
+  margin-left:-120px;
+  margin-right:-120px;
+  padding-left:120px;
+  padding-right:120px;
+  box-sizing:border-box;
+  background:#ffe7b8;
 }
 /* フルワイド背景 */
 .hex-worries-section::before{
