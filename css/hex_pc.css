@@ -2422,18 +2422,6 @@ body,
   box-sizing:border-box;
   background:#ffe7b8;
 }
-/* フルワイド背景 */
-.hex-worries-section::before{
-  content:"";
-  position:absolute;
-  top:0;
-  bottom:0;
-  left:50%;
-  z-index:-1;
-  width:100vw;
-  background:#ffe7b8;
-  transform:translateX(-50%);
-}
 /* 下中央の▽ */
 .hex-worries-section::after{
   content:"";
