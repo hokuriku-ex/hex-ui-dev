@@ -1003,10 +1003,13 @@
     display:contents;
   }
   .hex-worries-balloon{
+    min-height:68px;
     padding:12px 10px;
+    border-radius:10px;
     font-size:13px;
     line-height:1.6;
   }
+  .hex-worries-balloon::before,
   .hex-worries-balloon::after{
     display:none;
   }
