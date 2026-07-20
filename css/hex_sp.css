@@ -989,6 +989,20 @@
 ======================================= */
 /* お悩み相談 */
 @media screen and (max-width:768px){
+    .hex-worries-section{
+    width:calc(100% + 32px);
+    margin-left:-16px;
+    margin-right:-16px;
+    padding-left:16px;
+    padding-right:16px;
+  }
+  .hex-worries-section::after{
+    bottom:-20px;
+    border-left-width:30px;
+    border-right-width:30px;
+    border-top-width:20px;
+  }
+
   .hex-worries{
     grid-template-columns:repeat(2,minmax(0,1fr));
     gap:12px;
