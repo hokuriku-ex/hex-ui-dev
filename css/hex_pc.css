@@ -2411,8 +2411,8 @@ body,
 /* =======================================
    下層ページ：外構をご検討中の方
 ======================================= */
-/* お悩みセクション背景 */
-.hex-worries-section{
+/* お悩みセクション全体 */
+.post_index_contents > .content:has(.hex-worries-section){
   position:relative;
   width:calc(100% + 240px);
   margin-left:-120px;
@@ -2421,9 +2421,18 @@ body,
   padding-right:120px;
   box-sizing:border-box;
   background:#ffe7b8;
+  overflow:visible;
 }
-/* 下中央の▽ */
-.hex-worries-section::after{
+/* 内側には背景を付けない */
+.hex-worries-section{
+  position:relative;
+  width:100%;
+  margin:0;
+  padding:0;
+  background:transparent;
+}
+/* セクション全体の下に▽ */
+.post_index_contents > .content:has(.hex-worries-section)::after{
   content:"";
   position:absolute;
   left:50%;
