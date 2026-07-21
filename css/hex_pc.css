@@ -2633,7 +2633,7 @@ body,
 .post_index_contents > .content:has(.hex-reasons-section){
   position:relative;
   z-index:0;
-  padding-top:100px;
+  padding-top:80px;
   padding-bottom:80px;
   color:#fff;
 }
