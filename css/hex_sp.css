@@ -1368,7 +1368,4 @@
     grid-template-columns:1fr;
     gap:32px;
   }
-  .hex-calendar-information .hex-button-wrap{
-    margin-top:32px;
-  }
 }
