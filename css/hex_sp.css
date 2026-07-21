@@ -1046,7 +1046,8 @@
 /* 選ばれる理由 */
 @media screen and (max-width:768px){
   .post_index_contents > .content:has(.hex-reasons-section){
-    padding-top:90px;
+    padding-top:80px;
+    padding-bottom:80px;
   }
   .post_index_contents > .content:has(.hex-reasons-section)::before{
     width:140vw;
