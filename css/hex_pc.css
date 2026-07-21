@@ -2657,24 +2657,37 @@ body,
 }
 /* タイトル */
 .hex-reasons-section{
+  position:relative;
   display:flex;
   align-items:center;
   justify-content:center;
   gap:28px;
   width:100%;
-  text-align:center;
+  margin:0;
+  padding:0;
+  background:transparent;
   overflow:visible;
 }
 .hex-reasons-section::before,
 .hex-reasons-section::after{
-  content:"";
-  display:block;
+  content:""!important;
+  position:static!important;
+  inset:auto!important;
+  display:block!important;
   flex:0 1 110px;
+  width:auto!important;
   max-width:110px;
-  height:1px;
-  background:#c8a874;
+  height:1px!important;
+  margin:0!important;
+  padding:0!important;
+  background:#c8a874!important;
+  border:0!important;
+  border-radius:0!important;
+  transform:none!important;
+  z-index:auto!important;
 }
 .hex-reasons-section .hex-center-title{
+  position:relative;
   flex:0 0 auto;
   margin:0;
   color:#fff!important;
@@ -2688,12 +2701,12 @@ body,
 .hex-reasons-section .hex-number{
   display:inline-block;
   margin:0 .08em;
-  color:#c8a874;
+  color:#c8a874!important;
   font-size:1.35em;
   line-height:1;
 }
 .hex-reasons-section .hex-accent{
-  color:#c8a874;
+  color:#c8a874!important;
 }
 
 /* =======================================
