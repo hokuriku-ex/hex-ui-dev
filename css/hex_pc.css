@@ -2439,7 +2439,7 @@ body,
   left:50%;
   z-index:0;
   width:100vw;
-  background:#ffe7b8;
+  background:#f4eee3;
   transform:translateX(-50%);
 }
 /* 内容を背景より手前に表示 */
@@ -2466,7 +2466,7 @@ body,
   height:0;
   border-left:38px solid transparent;
   border-right:38px solid transparent;
-  border-top:26px solid #ffe7b8;
+  border-top:26px solid #f4eee3;
   transform:translateX(-50%);
 }
 
@@ -2548,7 +2548,7 @@ body,
 .hex-worries-list-left .hex-worries-balloon::after{
   top:36px;
   right:-25px;
-  border-top:25px solid #fff;
+  border-top:25px solid #f4eee3;
   border-left:25px solid transparent;
 }
 /* 右側の吹き出し：左向き */
@@ -2562,7 +2562,7 @@ body,
   top:36px;
   left:-25px;
   border-top:25px solid transparent;
-  border-left:25px solid #fff;
+  border-left:25px solid #f4eee3;
 }
 .hex-worries-image img{
   display:block;
