@@ -1047,7 +1047,6 @@
 @media screen and (max-width:768px){
   .post_index_contents > .content:has(.hex-reasons-section){
     padding-top:90px;
-    padding-bottom:60px;
   }
   .post_index_contents > .content:has(.hex-reasons-section)::before{
     width:140vw;
