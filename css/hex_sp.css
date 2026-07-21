@@ -1374,6 +1374,10 @@
 @media screen and (max-width:768px){
   .hex-contact-buttons{
     flex-direction:column;
-    gap:12px;
+    align-items:center;
+    gap:16px;
+  }
+  .hex-company-buttons > .hex-button-wrap{
+    width:100%;
   }
 }
