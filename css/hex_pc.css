@@ -2629,7 +2629,7 @@ body,
   transform:translateX(-50%);
 }
 
-/* 選ばれる3つの理由 */
+/* 選ばれる理由 */
 .post_index_contents > .content:has(#選ばれる理由){
   position:relative;
   z-index:0;
@@ -2674,12 +2674,12 @@ body,
 .hex-reasons-section .hex-number{
   display:inline-block;
   margin:0 .08em;
-  color:#f4c542;
+  color:#c8a874;
   font-size:1.35em;
   line-height:1;
 }
 .hex-reasons-section .hex-accent{
-  color:#f4c542;
+  color:#c8a874;
 }
 .hex-reasons-section .hex-center-title::before,
 .hex-reasons-section .hex-center-title::after{
