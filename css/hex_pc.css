@@ -2630,7 +2630,7 @@ body,
 }
 
 /* 選ばれる理由 */
-.post_index_contents > .content:has(#選ばれる理由){
+.post_index_contents > .content:has(.hex-reasons-section){
   position:relative;
   z-index:0;
   padding-top:100px;
@@ -2638,7 +2638,7 @@ body,
   color:#fff;
 }
 /* フルワイドの紺色背景 */
-.post_index_contents > .content:has(#選ばれる理由)::before{
+.post_index_contents > .content:has(.hex-reasons-section)::before{
   content:"";
   position:absolute;
   top:0;
@@ -2651,7 +2651,7 @@ body,
   transform:translateX(-50%);
 }
 /* 内容を背景より前に表示 */
-.post_index_contents > .content:has(#選ばれる理由) > *{
+.post_index_contents > .content:has(.hex-reasons-section) > *{
   position:relative;
   z-index:1;
 }
