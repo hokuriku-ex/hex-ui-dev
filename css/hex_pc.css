@@ -2742,8 +2742,8 @@ body,
   margin:0!important;
   color:#c8a874!important;
   font-family:var(--hex-font-serif);
-  font-size:19px;
-  font-weight:700;
+  font-size:18px;
+  font-weight:500;
   line-height:1.6;
   letter-spacing:.04em;
   text-align:center;
@@ -2779,7 +2779,7 @@ body,
   margin:0!important;
   padding:0!important;
   color:#fff!important;
-  font-size:15px;
+  font-size:16px;
   font-weight:500;
   line-height:1.9;
   letter-spacing:.04em;
