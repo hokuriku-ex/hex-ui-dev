@@ -2655,6 +2655,48 @@ body,
   position:relative;
   z-index:1;
 }
+/*  タイトル */
+.hex-reasons-section{
+  text-align:center;
+}
+.hex-reasons-section .hex-center-title{
+  position:relative;
+  display:inline-block;
+  margin:0;
+  color:#fff!important;
+  font-family:var(--hex-font-serif);
+  font-size:30px;
+  font-weight:700;
+  line-height:1.5;
+  letter-spacing:.04em;
+  white-space:nowrap;
+}
+.hex-reasons-section .hex-number{
+  display:inline-block;
+  margin:0 .08em;
+  color:#f4c542;
+  font-size:1.35em;
+  line-height:1;
+}
+.hex-reasons-section .hex-accent{
+  color:#f4c542;
+}
+.hex-reasons-section .hex-center-title::before,
+.hex-reasons-section .hex-center-title::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  width:110px;
+  height:1px;
+  background:#c8a874;
+  transform:translateY(-50%);
+}
+.hex-reasons-section .hex-center-title::before{
+  right:calc(100% + 28px);
+}
+.hex-reasons-section .hex-center-title::after{
+  left:calc(100% + 28px);
+}
 
 /* =======================================
    下層ページ：工事メニュー
