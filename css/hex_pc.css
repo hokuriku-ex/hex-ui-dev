@@ -3775,5 +3775,6 @@ body.hex-form-dialog-open{
 }
 .hex-contact-buttons > .hex-button-wrap{
   flex:0 0 auto;
+  width:auto;
   margin:0;
 }
