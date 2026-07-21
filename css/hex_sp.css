@@ -1047,10 +1047,15 @@
 @media screen and (max-width:768px){
   .post_index_contents > .content:has(.hex-reasons-section){
     padding-top:90px;
+    padding-bottom:60px;
   }
   .post_index_contents > .content:has(.hex-reasons-section)::before{
-    -webkit-clip-path:ellipse(180% 100% at 50% 100%);
-    clip-path:ellipse(180% 100% at 50% 100%);
+    width:140vw;
+    /* PCの楕円切り抜きを解除 */
+    -webkit-clip-path:none;
+    clip-path:none;
+    /* 高さが固定された緩やかなカーブ */
+    border-radius:50% 50% 0 0 / 60px 60px 0 0;
   }
   .hex-reasons-section{
     gap:14px;
