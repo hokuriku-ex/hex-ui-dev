@@ -2656,9 +2656,6 @@ body,
   z-index:1;
 }
 /*  タイトル */
-.hex-reasons-section{
-  text-align:center;
-}
 .hex-reasons-section .hex-center-title{
   position:relative;
   display:inline-block;
