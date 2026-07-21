@@ -1048,13 +1048,11 @@
   .hex-reasons-section{
     gap:14px;
   }
-
   .hex-reasons-section::before,
   .hex-reasons-section::after{
     flex-basis:48px;
     max-width:48px;
   }
-
   .hex-reasons-section .hex-center-title{
     font-size:26px;
   }
