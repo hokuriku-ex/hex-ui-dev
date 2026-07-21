@@ -1369,3 +1369,11 @@
     gap:32px;
   }
 }
+
+/* お問い合わせフッター */
+@media screen and (max-width:768px){
+  .hex-contact-buttons{
+    flex-direction:column;
+    gap:12px;
+  }
+}
