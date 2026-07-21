@@ -1056,6 +1056,29 @@
   .hex-reasons-section .hex-center-title{
     font-size:26px;
   }
+  .hex-reasons-card{
+    grid-template-columns:1fr;
+    gap:56px;
+    max-width:420px;
+  }
+  .hex-reasons-card .hex-card-head{
+    margin-bottom:16px!important;
+  }
+  .hex-reasons-card .hex-card-title{
+    font-size:18px;
+  }
+  .hex-reasons-card .hex-card-title .hex-number{
+    margin-bottom:6px;
+    font-size:42px;
+  }
+  .hex-reasons-card .hex-card-image{
+    width:210px;
+    margin-bottom:20px!important;
+  }
+  .hex-reasons-card .hex-card-text{
+    font-size:14px;
+    line-height:1.9;
+  }
 }
 
 /* =======================================
