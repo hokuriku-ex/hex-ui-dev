@@ -3682,12 +3682,12 @@ body.hex-form-dialog-open{
 /* 定休日 */
 .hex-calendar-number.is-closed{
   border-radius:50%;
-  color:#1f2774!important;
+  color:#fff!important;
   background:var(--hex-calendar-closed);
 }
 /* 大型連休 */
 .hex-calendar-number.is-long-holiday{
-  color:#1f2774!important;
+  color:#fff!important;
   background:var(--hex-calendar-holiday);
 }
 /* イベント */
