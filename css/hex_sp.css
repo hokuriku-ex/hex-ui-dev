@@ -1045,6 +1045,13 @@
 
 /* 選ばれる理由 */
 @media screen and (max-width:768px){
+  .post_index_contents > .content:has(.hex-reasons-section){
+    padding-top:90px;
+  }
+  .post_index_contents > .content:has(.hex-reasons-section)::before{
+    -webkit-clip-path:ellipse(180% 100% at 50% 100%);
+    clip-path:ellipse(180% 100% at 50% 100%);
+  }
   .hex-reasons-section{
     gap:14px;
   }
