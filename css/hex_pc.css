@@ -2629,6 +2629,14 @@ body,
   transform:translateX(-50%);
 }
 
+/* 選ばれる理由 */
+.hex-reasons-section{
+  padding:100px 0 80px;
+  background:#1f2774;
+  border-radius:50% 50% 0 0 / 70px 70px 0 0;
+  color:#fff;
+}
+
 /* =======================================
    下層ページ：工事メニュー
 ======================================= */
