@@ -3770,16 +3770,10 @@ body.hex-form-dialog-open{
 .hex-contact-buttons{
   display:flex;
   justify-content:center;
-  align-items:stretch;
+  align-items:center;
   gap:20px;
 }
 .hex-contact-buttons > .hex-button-wrap{
-  flex:1 1 0;
-  width:auto;
+  flex:0 0 auto;
   margin:0;
-}
-.hex-contact-buttons .hex-btn-main{
-  width:100%;
-  height:100%;
-  box-sizing:border-box;
 }
