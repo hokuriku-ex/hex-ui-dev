@@ -2655,10 +2655,27 @@ body,
   position:relative;
   z-index:1;
 }
-/*  タイトル */
+/* タイトル */
+.hex-reasons-section{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+  width:100%;
+  text-align:center;
+  overflow:visible;
+}
+.hex-reasons-section::before,
+.hex-reasons-section::after{
+  content:"";
+  display:block;
+  flex:0 1 110px;
+  max-width:110px;
+  height:1px;
+  background:#c8a874;
+}
 .hex-reasons-section .hex-center-title{
-  position:relative;
-  display:inline-block;
+  flex:0 0 auto;
   margin:0;
   color:#fff!important;
   font-family:var(--hex-font-serif);
@@ -2677,22 +2694,6 @@ body,
 }
 .hex-reasons-section .hex-accent{
   color:#c8a874;
-}
-.hex-reasons-section .hex-center-title::before,
-.hex-reasons-section .hex-center-title::after{
-  content:"";
-  position:absolute;
-  top:50%;
-  width:110px;
-  height:1px;
-  background:#c8a874;
-  transform:translateY(-50%);
-}
-.hex-reasons-section .hex-center-title::before{
-  right:calc(100% + 28px);
-}
-.hex-reasons-section .hex-center-title::after{
-  left:calc(100% + 28px);
 }
 
 /* =======================================
