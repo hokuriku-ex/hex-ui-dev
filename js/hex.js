@@ -418,6 +418,48 @@ hexReady(function(){
 });
 
 /* =======================================
+   記事パーツの末尾自動挿入改行を削除
+======================================= */
+hexReady(function(){
+  var params=new URLSearchParams(location.search);
+
+  /* 本番はp・k、開発環境はshortname・page_type */
+  var shortname=params.get('p')||params.get('shortname')||'';
+  var pageType=params.get('k')||params.get('page_type')||'';
+
+  var excludedPages=[
+    {
+      shortname:'work',
+      pageType:'work_item'
+    },
+    {
+      shortname:'information',
+      pageType:'information_item'
+    },
+    {
+      shortname:'staffblog',
+      pageType:'staffblog_item'
+    }
+  ];
+
+  var isExcluded=excludedPages.some(function(page){
+    return (
+      shortname===page.shortname &&
+      pageType===page.pageType
+    );
+  });
+
+  /* 施工事例・お知らせ・スタッフブログの記事では削除しない */
+  if(isExcluded)return;
+
+  document.querySelectorAll(
+    '[id^="PageMain_Txt_"] + br[clear="all"]'
+  ).forEach(function(br){
+    br.remove();
+  });
+});
+
+/* =======================================
    記事詳細タイトル整形
 ======================================= */
 hexLoad(function(){
