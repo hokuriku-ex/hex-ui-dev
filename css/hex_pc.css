@@ -620,12 +620,10 @@ div.NNAttached{
   display:block;
   width:0;
   height:0;
-  border:0;
   border-radius:50%;
-  transform:rotate(45deg);
+  transform:scaleY(-1) rotate(45deg);
   border-right:25px solid transparent;
   border-bottom:25px solid transparent;
-  pointer-events:none;
 }
 /* お客様の質問 */
 .kb_qanda_content .q_title{
@@ -634,13 +632,15 @@ div.NNAttached{
 }
 /* お客様：左の人物画像へ向くしっぽ */
 .kb_qanda_content .q_title::before{
-  top:18px;
+  top:auto;
+  bottom:18px;
   left:-15px;
   border-top:25px solid transparent;
   border-left:25px solid #c8a874;
 }
 .kb_qanda_content .q_title::after{
-  top:36px;
+  top:auto;
+  bottom:36px;
   left:-25px;
   border-top:25px solid transparent;
   border-left:25px solid #fff;
@@ -652,13 +652,15 @@ div.NNAttached{
 }
 /* スタッフ：右の人物画像へ向くしっぽ */
 .kb_qanda_content .qanda_a::before{
-  top:18px;
+  top:auto;
+  bottom:18px;
   right:-15px;
   border-top:25px solid #1f2774;
   border-left:25px solid transparent;
 }
 .kb_qanda_content .qanda_a::after{
-  top:36px;
+  top:auto;
+  bottom:36px;
   right:-25px;
   border-top:25px solid #fff;
   border-left:25px solid transparent;
