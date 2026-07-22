@@ -509,6 +509,132 @@ div.NNAttached{
   display:none!important;
 }
 
+/* Q&A記事登録をライン風に変更 */
+.kb_qanda_content{
+  width:100%;
+  max-width:900px;
+  margin:0 auto 56px;
+}
+.kb_qanda_content > label{
+  display:block;
+  cursor:default;
+}
+.kb_qanda_content .faq_toggle{
+  display:none!important;
+}
+.kb_qanda_content .bg_answer_qa{
+  display:block!important;
+  width:100%;
+  margin:22px 0 0;
+  padding:0;
+  border:0;
+}
+.kb_qanda_content .q_line,
+.kb_qanda_content .answer_qa{
+  display:flex;
+  align-items:flex-start;
+  width:100%;
+  padding:0;
+  background:transparent;
+}
+.kb_qanda_content .q_line{
+  justify-content:flex-start;
+  gap:18px;
+}
+.kb_qanda_content .answer_qa{
+  flex-direction:row-reverse;
+  justify-content:flex-start;
+  gap:18px;
+}
+/* 人物画像 */
+.kb_qanda_content .q_icon,
+.kb_qanda_content .a_icon{
+  flex:0 0 82px;
+  width:82px;
+  height:82px;
+  margin:0;
+  overflow:hidden;
+  background-color:#f4eee3;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-size:cover;
+  border-radius:50%;
+  color:transparent!important;
+  font-size:0!important;
+  line-height:1;
+}
+/* お客様画像 */
+.kb_qanda_content .q_icon{
+  background-image:url("https://example.com/customer.jpg");
+}
+/* スタッフ画像 */
+.kb_qanda_content .a_icon{
+  background-image:url("https://example.com/staff.jpg");
+}
+/* 吹き出し共通 */
+.kb_qanda_content .q_title,
+.kb_qanda_content .qanda_a{
+  position:relative;
+  flex:0 1 72%;
+  width:auto;
+  max-width:680px;
+  min-width:0;
+  margin:0;
+  padding:22px 28px;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  box-sizing:border-box;
+  font-size:16px;
+  font-weight:500;
+  line-height:1.8;
+  letter-spacing:.04em;
+}
+.kb_qanda_content .q_title::before,
+.kb_qanda_content .q_title::after,
+.kb_qanda_content .qanda_a::before,
+.kb_qanda_content .qanda_a::after{
+  content:"";
+  position:absolute;
+  width:0;
+  height:0;
+  border-style:solid;
+}
+/* お客様の質問 */
+.kb_qanda_content .q_title{
+  color:#383838;
+  background:#c8a874;
+}
+.kb_qanda_content .q_title::before{
+  top:18px;
+  left:-15px;
+  border-width:25px 25px 0 0;
+  border-color:#c8a874 transparent transparent transparent;
+}
+.kb_qanda_content .q_title::after{
+  top:36px;
+  left:-25px;
+  border-width:25px 25px 0 0;
+  border-color:#fff transparent transparent transparent;
+}
+/* スタッフの回答 */
+.kb_qanda_content .qanda_a{
+  color:#fff;
+  background:#1f2774;
+}
+.kb_qanda_content .qanda_a::before{
+  top:18px;
+  right:-15px;
+  border-width:25px 0 0 25px;
+  border-color:#1f2774 transparent transparent transparent;
+}
+.kb_qanda_content .qanda_a::after{
+  top:36px;
+  right:-25px;
+  border-width:25px 0 0 25px;
+  border-color:#fff transparent transparent transparent;
+}
+
 /* =======================================
    共通パーツ（アンカーナビ）
 ======================================= */
