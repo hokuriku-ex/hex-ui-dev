@@ -36,10 +36,11 @@ const HOME_SECTIONS={
   BANNER:'gc_auto_frame_home_8', /* バナー */
   MOVIE:'gc_auto_frame_home_9', /* プロモーション動画 */
   RECRUIT:'gc_auto_frame_home_10', /* 採用情報 */
-  CALENDAR:'gc_auto_frame_home_11', /* 営業日カレンダー */
-  AREA:'gc_auto_frame_home_12', /* 施工エリア */
-  FOOTER:'gc_auto_frame_home_13', /* フッター */
-  FIXED_FOOTER:'gc_auto_frame_home_14' /* 固定フッター */
+  CONTACT:'gc_auto_frame_home_11', /* お問い合わせ */
+  CALENDAR:'gc_auto_frame_home_12', /* 営業日カレンダー */
+  AREA:'gc_auto_frame_home_13', /* 施工エリア */
+  FOOTER:'gc_auto_frame_home_14', /* フッター */
+  FIXED_FOOTER:'gc_auto_frame_home_15' /* 固定フッター */
 };
 
 /* トップページ交互背景対象 */
