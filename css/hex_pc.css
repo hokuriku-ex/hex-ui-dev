@@ -531,7 +531,7 @@ div.NNAttached{
 .kb_qanda_content .answer_qa{
   display:flex!important;
   align-items:flex-start;
-  gap:18px;
+  gap:24px;
   width:100%!important;
   margin:0!important;
   padding:0!important;
