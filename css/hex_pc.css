@@ -2523,7 +2523,7 @@ body,
   box-sizing:border-box;
   border:none;
   border-radius:12px;
-  background:#fbfaf7;
+  background:#edeef4;
   color:#383838;
   font-size:15px;
   font-weight:500;
@@ -2547,7 +2547,7 @@ body,
 .hex-worries-list-left .hex-worries-balloon::before{
   top:18px;
   right:-15px;
-  border-top:25px solid #fbfaf7;
+  border-top:25px solid #edeef4;
   border-left:25px solid transparent;
 }
 .hex-worries-list-left .hex-worries-balloon::after{
@@ -2561,7 +2561,7 @@ body,
   top:18px;
   left:-15px;
   border-top:25px solid transparent;
-  border-left:25px solid #fbfaf7;
+  border-left:25px solid #edeef4;
 }
 .hex-worries-list-right .hex-worries-balloon::after{
   top:36px;
