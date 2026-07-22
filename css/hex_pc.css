@@ -59,10 +59,10 @@ html{
   opacity:.6;
 }
 .hex-center-title-light[data-en]::after{
-  color:#3c4b7a;
+  color:#1f2774;
 }
 .hex-center-title-dark[data-en]::after{
-  color:#fff;
+  color:#c8a45a;
 }
 
 /* 共通セクション見出し（h2専用） */
@@ -2050,7 +2050,7 @@ body,
 .pagetitle_type.pagetitle_type4 .bg_text h1::after {
   display: block;
   margin-top: 22px;
-  color: #3c4b7a;
+  color: #1f2774;
   font-size: 16px;
   line-height: 1.4;
   letter-spacing: 0.22em;
