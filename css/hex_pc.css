@@ -30,8 +30,8 @@ html{
   position:relative;
   width:100%;
   display:block;
-  margin:0 0 40px;
-  padding:0;
+  margin:0 0 40px!important;
+  padding:0!important;
   text-align:center;
   font-size:32px;
   font-weight:700;
@@ -50,8 +50,8 @@ html{
 .hex-center-title[data-en]::after{
   content:attr(data-en);
   display:block;
-  margin-top:22px;
-  font-size:16px;
+  margin-top:22px!important;
+  font-size:16px!important;
   line-height:1.4;
   letter-spacing:.22em;
   font-family:"Times New Roman",serif;
@@ -70,8 +70,8 @@ html{
   position:relative;
   width:100%;
   display:block;
-  margin:0 0 48px;
-  padding:0 0 16px;
+  margin:0 0 48px!important;
+  padding:0 0 16px!important;
   font-size:32px;
   font-weight:700;
   line-height:1.4;
@@ -99,8 +99,8 @@ html{
 /* 共通セクションサブ見出し（h3専用） */
 .hex-section-subtitle{
   position:relative;
-  margin:0 0 24px;
-  padding-left:18px;
+  margin:0 0 24px!important;
+  padding-left:18px!important;
   color:#1f2774;
   font-size:24px;
   font-weight:700;
@@ -121,12 +121,12 @@ html{
   display:grid;
   grid-template-columns:1fr auto;
   gap:0 24px;
-  margin:0 0 32px;
+  margin:0 0 32px!important;
 }
 .hex-section-action h3{
   position:relative;
-  margin:0;
-  padding-left:18px;
+  margin:0!important;
+  padding-left:18px!important;
   color:#1f2774;
   font-size:24px;
   font-weight:700;
@@ -168,8 +168,8 @@ html{
 }
 .hex-section-action h4{
   grid-column:1 / -1;
-  margin:14px 0 0;
-  padding-top:18px;
+  margin:14px 0 0!important;
+  padding-top:18px!important;
   border-top:1px solid #d8dce8;
   font-size:18px;
   font-weight:500;
@@ -180,7 +180,7 @@ html{
 
 /* 共通セクション小見出し（h4専用） */
 .hex-section-smalltitle{
-  margin:0;
+  margin:0!important;
   font-size:18px;
   font-weight:500;
   line-height:2;
