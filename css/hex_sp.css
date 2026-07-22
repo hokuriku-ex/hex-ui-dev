@@ -174,15 +174,18 @@
   .kb_qanda_content .answer_qa{
     gap:10px;
   }
-  .kb_qanda_content .bg_answer_qa{
-    margin-top:18px;
+  .kb_qanda_content .bg_answer_qa,
+  .kb_qanda_content .bq_answer_qa{
+    margin-top:18px!important;
   }
+  /* 人物画像 */
   .kb_qanda_content .q_icon,
   .kb_qanda_content .a_icon{
     flex-basis:58px;
     width:58px;
     height:58px;
   }
+  /* 吹き出し */
   .kb_qanda_content .q_title,
   .kb_qanda_content .qanda_a{
     flex:1 1 auto;
@@ -192,29 +195,31 @@
     font-size:14px;
     line-height:1.8;
   }
+  /* お客様側のしっぽ */
   .kb_qanda_content .q_title::before{
-    top:13px;
+    top:14px;
     left:-11px;
-    border-top:18px solid #c8a874;
-    border-left:18px solid transparent;
+    border-top-width:18px;
+    border-left-width:18px;
   }
   .kb_qanda_content .q_title::after{
-    top:25px;
-    left:-18px;
-    border-top:18px solid #fff;
-    border-left:18px solid transparent;
+    top:23px;
+    left:-23px;
+    width:24px;
+    height:24px;
   }
+  /* スタッフ側のしっぽ */
   .kb_qanda_content .qanda_a::before{
-    top:13px;
+    top:14px;
     right:-11px;
-    border-top:18px solid #1f2774;
-    border-right:18px solid transparent;
+    border-top-width:18px;
+    border-right-width:18px;
   }
   .kb_qanda_content .qanda_a::after{
-    top:25px;
-    right:-18px;
-    border-top:18px solid #fff;
-    border-right:18px solid transparent;
+    top:23px;
+    right:-23px;
+    width:24px;
+    height:24px;
   }
 }
 
