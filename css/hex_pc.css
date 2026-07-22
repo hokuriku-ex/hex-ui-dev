@@ -627,7 +627,7 @@ div.NNAttached{
 }
 /* お客様の質問 */
 .kb_qanda_content .q_title{
-  background:#c8a874;
+  background:#E8D575;
   color:#383838;
 }
 /* お客様：左の人物画像へ向くしっぽ */
@@ -636,7 +636,7 @@ div.NNAttached{
   bottom:18px;
   left:-15px;
   border-top:25px solid transparent;
-  border-left:25px solid #c8a874;
+  border-left:25px solid #E8D575;
 }
 .kb_qanda_content .q_title::after{
   top:auto;
