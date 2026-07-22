@@ -4,7 +4,7 @@
 /* 共通センター見出し（トップページ専用） */
 @media screen and (max-width:768px){
   .hex-center-title{
-    margin:0 0 30px;
+    margin:0 0 30px!important;
     font-size:26px;
     line-height:1.4;
     letter-spacing:.02em;
@@ -15,8 +15,8 @@
 @media screen and (max-width:768px){
   .hex-section-title{
     width:100%!important;
-    margin:0 auto 36px;
-    padding:0 0 14px;
+    margin:0 auto 36px!important;
+    padding:0 0 14px!important;
     border-left:none!important;
     font-size:26px!important;
     line-height:1.4;
@@ -26,8 +26,8 @@
 /* 共通セクションサブ見出し（h3専用） */
 @media screen and (max-width:768px){
   .hex-section-subtitle{
-    margin:0 0 20px;
-    padding-left:16px;
+    margin:0 0 20px!important;
+    padding-left:16px!important;
     font-size:20px;
   }
   .hex-section-subtitle:before{
@@ -40,10 +40,10 @@
   .hex-section-action{
     grid-template-columns:1fr auto;
     gap:0 16px;
-    margin:0 0 26px;
+    margin:0 0 26px!important;
   }
   .hex-section-action h3{
-    padding-left:16px;
+    padding-left:16px!important;
     font-size:20px;
   }
   .hex-section-action h3:before{
@@ -56,18 +56,18 @@
     font-size:16px;
   }
   .hex-section-action a i{
-    margin-left:.35em;
+    margin-left:.35em!important;
   }
   .hex-section-action h4{
-    margin:12px 0 0;
-    padding-top:14px;
+    margin:12px 0 0!important;
+    padding-top:14px!important;
   }
 }
 
 /* 共通セクション小見出し（h4専用） */
 @media screen and (max-width:768px){
   .hex-section-smalltitle{
-    margin:0 0 14px;
+    margin:0 0 14px!important;
     font-size:16px!important;
   }
 }
