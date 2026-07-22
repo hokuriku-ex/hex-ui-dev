@@ -512,7 +512,7 @@ div.NNAttached{
   display:none!important;
 }
 
-/* Q&A記事登録をライン風に変更 */
+/* Q&A記事登録をチャット風に変更 */
 .kb_qanda_content{
   width:100%;
   max-width:900px;
@@ -522,32 +522,44 @@ div.NNAttached{
   display:block;
   cursor:default;
 }
+/* アコーディオン用チェックボックスを非表示 */
 .kb_qanda_content .faq_toggle{
   display:none!important;
 }
-.kb_qanda_content .bg_answer_qa{
-  display:block!important;
-  width:100%;
-  margin:22px 0 0;
-  padding:0;
-  border:0;
-}
+/* 質問・回答の共通レイアウト */
 .kb_qanda_content .q_line,
 .kb_qanda_content .answer_qa{
-  display:flex;
+  display:flex!important;
   align-items:flex-start;
-  width:100%;
-  padding:0;
-  background:transparent;
+  gap:18px;
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  box-sizing:border-box;
 }
+/* お客様：左側 */
 .kb_qanda_content .q_line{
   justify-content:flex-start;
-  gap:18px;
 }
+/* スタッフ：右側 */
 .kb_qanda_content .answer_qa{
   flex-direction:row-reverse;
   justify-content:flex-start;
-  gap:18px;
+}
+/* 回答を常時表示・標準デザインを解除 */
+.kb_qanda_content .bg_answer_qa,
+.kb_qanda_content .bq_answer_qa{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  margin:22px 0 0!important;
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
 }
 /* 人物画像 */
 .kb_qanda_content .q_icon,
@@ -555,13 +567,15 @@ div.NNAttached{
   flex:0 0 82px;
   width:82px;
   height:82px;
-  margin:0;
+  margin:0!important;
   overflow:hidden;
   background-color:#f4eee3;
   background-position:center;
   background-repeat:no-repeat;
   background-size:cover;
+  border:0!important;
   border-radius:50%;
+  box-sizing:border-box;
   color:transparent!important;
   font-size:0!important;
   line-height:1;
@@ -582,7 +596,7 @@ div.NNAttached{
   width:auto;
   max-width:680px;
   min-width:0;
-  margin:0;
+  margin:0!important;
   padding:22px 28px;
   border:0!important;
   border-radius:18px!important;
@@ -593,77 +607,62 @@ div.NNAttached{
   line-height:1.8;
   letter-spacing:.04em;
 }
+/* 標準の疑似要素をリセット */
 .kb_qanda_content .q_title::before,
 .kb_qanda_content .q_title::after,
 .kb_qanda_content .qanda_a::before,
 .kb_qanda_content .qanda_a::after{
   content:"";
   position:absolute;
-  width:0;
-  height:0;
+  display:block;
   border:0;
+  pointer-events:none;
 }
 /* お客様の質問 */
 .kb_qanda_content .q_title{
   color:#383838;
   background:#c8a874;
 }
+/* お客様側：左の人物へ向くしっぽ */
 .kb_qanda_content .q_title::before{
   top:18px;
   left:-16px;
+  width:0;
+  height:0;
   border-top:24px solid #c8a874;
   border-left:24px solid transparent;
 }
+/* 背景色の円で、しっぽの下側を丸く削る */
 .kb_qanda_content .q_title::after{
-  top:34px;
-  left:-25px;
-  border-top:24px solid #fff;
-  border-left:24px solid transparent;
+  top:30px;
+  left:-31px;
+  width:32px;
+  height:32px;
+  background:#fff;
+  border-radius:50%;
 }
 /* スタッフの回答 */
 .kb_qanda_content .qanda_a{
   color:#fff;
   background:#1f2774;
 }
+/* スタッフ側：右の人物へ向くしっぽ */
 .kb_qanda_content .qanda_a::before{
   top:18px;
   right:-16px;
+  width:0;
+  height:0;
   border-top:24px solid #1f2774;
   border-right:24px solid transparent;
 }
+/* 背景色の円で、しっぽの下側を丸く削る */
 .kb_qanda_content .qanda_a::after{
-  top:34px;
-  right:-25px;
-  border-top:24px solid #fff;
-  border-right:24px solid transparent;
-}
-/* 回答欄の標準デザインを完全に解除 */
-.kb_qanda_content .bg_answer_qa,
-.kb_qanda_content .bq_answer_qa{
-  display:block!important;
-  width:100%!important;
-  height:auto!important;
-  margin:22px 0 0!important;
-  padding:0!important;
-  background:transparent!important;
-  border:0!important;
-  border-left:0!important;
-  border-bottom:0!important;
-  box-shadow:none!important;
-}
-/* 回答部分にも残っている装飾を解除 */
-.kb_qanda_content .answer_qa{
-  display:flex!important;
-  flex-direction:row-reverse;
-  align-items:flex-start;
-  justify-content:flex-start;
-  gap:18px;
-  width:100%!important;
-  margin:0!important;
-  padding:0!important;
-  background:transparent!important;
-  border:0!important;
-  box-shadow:none!important;
+  top:30px;
+  right:-31px;
+  width:32px;
+  height:32px;
+  background:#fff;
+  border-radius:50%;
 }
 
 /* =======================================
