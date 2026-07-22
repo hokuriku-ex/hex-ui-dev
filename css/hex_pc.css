@@ -2444,7 +2444,7 @@ body,
   left:50%;
   z-index:0;
   width:100vw;
-  background:#f4eee3;
+  background:#f3f0eb;
   transform:translateX(-50%);
 }
 /* 内容を背景より手前に表示 */
@@ -2471,7 +2471,7 @@ body,
   height:0;
   border-left:38px solid transparent;
   border-right:38px solid transparent;
-  border-top:26px solid #f4eee3;
+  border-top:26px solid #f3f0eb;
   transform:translateX(-50%);
 }
 
@@ -2492,7 +2492,7 @@ body,
   width:16px;
   height:16px;
   box-sizing:border-box;
-  background:#f4eee3;
+  background:#f3f0eb;
   border-right:2px solid #c8a874;
   border-bottom:2px solid #c8a874;
   transform:translateX(-50%) rotate(45deg);
@@ -2553,7 +2553,7 @@ body,
 .hex-worries-list-left .hex-worries-balloon::after{
   top:36px;
   right:-25px;
-  border-top:25px solid #f4eee3;
+  border-top:25px solid #f3f0eb;
   border-left:25px solid transparent;
 }
 /* 右側の吹き出し：左向き */
@@ -2567,7 +2567,7 @@ body,
   top:36px;
   left:-25px;
   border-top:25px solid transparent;
-  border-left:25px solid #f4eee3;
+  border-left:25px solid #f3f0eb;
 }
 .hex-worries-image img{
   display:block;
