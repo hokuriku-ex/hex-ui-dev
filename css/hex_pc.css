@@ -584,9 +584,9 @@ div.NNAttached{
   min-width:0;
   margin:0;
   padding:22px 28px;
-  border:0;
-  border-radius:0;
-  box-shadow:none;
+  border:0!important;
+  border-radius:18px!important;
+  box-shadow:none!important;
   box-sizing:border-box;
   font-size:16px;
   font-weight:500;
@@ -601,7 +601,7 @@ div.NNAttached{
   position:absolute;
   width:0;
   height:0;
-  border-style:solid;
+  border:0;
 }
 /* お客様の質問 */
 .kb_qanda_content .q_title{
@@ -610,15 +610,15 @@ div.NNAttached{
 }
 .kb_qanda_content .q_title::before{
   top:18px;
-  left:-15px;
-  border-width:25px 25px 0 0;
-  border-color:#c8a874 transparent transparent transparent;
+  left:-16px;
+  border-top:24px solid #c8a874;
+  border-left:24px solid transparent;
 }
 .kb_qanda_content .q_title::after{
-  top:36px;
+  top:34px;
   left:-25px;
-  border-width:25px 25px 0 0;
-  border-color:#fff transparent transparent transparent;
+  border-top:24px solid #fff;
+  border-left:24px solid transparent;
 }
 /* スタッフの回答 */
 .kb_qanda_content .qanda_a{
@@ -627,15 +627,15 @@ div.NNAttached{
 }
 .kb_qanda_content .qanda_a::before{
   top:18px;
-  right:-15px;
-  border-width:25px 0 0 25px;
-  border-color:#1f2774 transparent transparent transparent;
+  right:-16px;
+  border-top:24px solid #1f2774;
+  border-right:24px solid transparent;
 }
 .kb_qanda_content .qanda_a::after{
-  top:36px;
+  top:34px;
   right:-25px;
-  border-width:25px 0 0 25px;
-  border-color:#fff transparent transparent transparent;
+  border-top:24px solid #fff;
+  border-right:24px solid transparent;
 }
 /* 回答欄の標準デザインを完全に解除 */
 .kb_qanda_content .bg_answer_qa,
