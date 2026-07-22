@@ -188,28 +188,33 @@
     flex:1 1 auto;
     max-width:calc(100% - 68px);
     padding:16px 18px;
+    border-radius:14px!important;
     font-size:14px;
     line-height:1.8;
   }
   .kb_qanda_content .q_title::before{
     top:13px;
-    left:-10px;
-    border-width:18px 18px 0 0;
+    left:-11px;
+    border-top:18px solid #c8a874;
+    border-left:18px solid transparent;
   }
   .kb_qanda_content .q_title::after{
-    top:26px;
+    top:25px;
     left:-18px;
-    border-width:18px 18px 0 0;
+    border-top:18px solid #fff;
+    border-left:18px solid transparent;
   }
   .kb_qanda_content .qanda_a::before{
     top:13px;
-    right:-10px;
-    border-width:18px 0 0 18px;
+    right:-11px;
+    border-top:18px solid #1f2774;
+    border-right:18px solid transparent;
   }
   .kb_qanda_content .qanda_a::after{
-    top:26px;
+    top:25px;
     right:-18px;
-    border-width:18px 0 0 18px;
+    border-top:18px solid #fff;
+    border-right:18px solid transparent;
   }
 }
 
