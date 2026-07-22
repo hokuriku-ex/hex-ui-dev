@@ -163,6 +163,57 @@
 }
 
 /* =======================================
+   記事パーツ
+======================================= */
+/* Q&A記事登録をライン風に変更 */
+@media screen and (max-width:768px){
+  .kb_qanda_content{
+    margin-bottom:44px;
+  }
+  .kb_qanda_content .q_line,
+  .kb_qanda_content .answer_qa{
+    gap:10px;
+  }
+  .kb_qanda_content .bg_answer_qa{
+    margin-top:18px;
+  }
+  .kb_qanda_content .q_icon,
+  .kb_qanda_content .a_icon{
+    flex-basis:58px;
+    width:58px;
+    height:58px;
+  }
+  .kb_qanda_content .q_title,
+  .kb_qanda_content .qanda_a{
+    flex:1 1 auto;
+    max-width:calc(100% - 68px);
+    padding:16px 18px;
+    font-size:14px;
+    line-height:1.8;
+  }
+  .kb_qanda_content .q_title::before{
+    top:13px;
+    left:-10px;
+    border-width:18px 18px 0 0;
+  }
+  .kb_qanda_content .q_title::after{
+    top:26px;
+    left:-18px;
+    border-width:18px 18px 0 0;
+  }
+  .kb_qanda_content .qanda_a::before{
+    top:13px;
+    right:-10px;
+    border-width:18px 0 0 18px;
+  }
+  .kb_qanda_content .qanda_a::after{
+    top:26px;
+    right:-18px;
+    border-width:18px 0 0 18px;
+  }
+}
+
+/* =======================================
    共通パーツ（アンカーナビ）
 ======================================= */
 @media screen and (max-width:768px){
