@@ -504,6 +504,9 @@ a.hex-text-link[target="_blank"]::after{
   background:linear-gradient(90deg,rgba(31,39,116,.18) 0%,rgba(42,91,172,.10) 45%,rgba(214,221,224,.04) 100%);
 }
 
+/* =======================================
+   記事パーツ
+======================================= */
 /* ファイル記事登録非表示 */
 div.NNAttached{
   display:none!important;
