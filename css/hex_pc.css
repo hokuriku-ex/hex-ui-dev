@@ -2636,6 +2636,10 @@ body,
 }
 
 /* お悩み相談 */
+#お悩み相談 .hex-center-title{
+  margin:0!important;
+}
+
 .hex-notch-line{
   position:relative;
   width:280px;
