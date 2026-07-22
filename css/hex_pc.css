@@ -585,11 +585,11 @@ div.NNAttached{
 }
 /* お客様画像 */
 .kb_qanda_content .q_icon{
-  background-image:url("https://example.com/customer.jpg");
+  background-image:url("/media/freeaccess/202607/20260723_0856_13_9815.png");
 }
 /* スタッフ画像 */
 .kb_qanda_content .a_icon{
-  background-image:url("https://example.com/staff.jpg");
+  background-image:url("/media/freeaccess/202607/20260723_0856_25_4614.png");
 }
 /* 吹き出し共通 */
 .kb_qanda_content .q_title,
