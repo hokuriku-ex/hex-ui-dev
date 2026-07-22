@@ -592,22 +592,25 @@ div.NNAttached{
 .kb_qanda_content .q_title,
 .kb_qanda_content .qanda_a{
   position:relative;
+  display:flex;
+  align-items:center;
+  min-height:76px;
   flex:0 1 72%;
   width:auto;
   max-width:680px;
   min-width:0;
   margin:0!important;
-  padding:22px 28px;
+  padding:16px 20px;
   border:0!important;
-  border-radius:18px!important;
+  border-radius:12px!important;
   box-shadow:none!important;
   box-sizing:border-box;
-  font-size:16px;
+  font-size:15px;
   font-weight:500;
-  line-height:1.8;
+  line-height:1.7;
   letter-spacing:.04em;
 }
-/* 標準の疑似要素をリセット */
+/* しっぽ共通 */
 .kb_qanda_content .q_title::before,
 .kb_qanda_content .q_title::after,
 .kb_qanda_content .qanda_a::before,
@@ -615,54 +618,50 @@ div.NNAttached{
   content:"";
   position:absolute;
   display:block;
+  width:0;
+  height:0;
   border:0;
+  border-radius:50%;
+  transform:rotate(45deg);
+  border-right:25px solid transparent;
+  border-bottom:25px solid transparent;
   pointer-events:none;
 }
 /* お客様の質問 */
 .kb_qanda_content .q_title{
-  color:#383838;
   background:#c8a874;
+  color:#383838;
 }
-/* お客様側：左の人物へ向くしっぽ */
+/* お客様：左の人物画像へ向くしっぽ */
 .kb_qanda_content .q_title::before{
   top:18px;
-  left:-16px;
-  width:0;
-  height:0;
-  border-top:24px solid #c8a874;
-  border-left:24px solid transparent;
+  left:-15px;
+  border-top:25px solid transparent;
+  border-left:25px solid #c8a874;
 }
-/* 背景色の円で、しっぽの下側を丸く削る */
 .kb_qanda_content .q_title::after{
-  top:30px;
-  left:-31px;
-  width:32px;
-  height:32px;
-  background:#fff;
-  border-radius:50%;
+  top:36px;
+  left:-25px;
+  border-top:25px solid transparent;
+  border-left:25px solid #fff;
 }
 /* スタッフの回答 */
 .kb_qanda_content .qanda_a{
-  color:#fff;
   background:#1f2774;
+  color:#fff;
 }
-/* スタッフ側：右の人物へ向くしっぽ */
+/* スタッフ：右の人物画像へ向くしっぽ */
 .kb_qanda_content .qanda_a::before{
   top:18px;
-  right:-16px;
-  width:0;
-  height:0;
-  border-top:24px solid #1f2774;
-  border-right:24px solid transparent;
+  right:-15px;
+  border-top:25px solid #1f2774;
+  border-left:25px solid transparent;
 }
-/* 背景色の円で、しっぽの下側を丸く削る */
 .kb_qanda_content .qanda_a::after{
-  top:30px;
-  right:-31px;
-  width:32px;
-  height:32px;
-  background:#fff;
-  border-radius:50%;
+  top:36px;
+  right:-25px;
+  border-top:25px solid #fff;
+  border-left:25px solid transparent;
 }
 
 /* =======================================
