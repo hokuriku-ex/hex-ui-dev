@@ -43,7 +43,7 @@ html{
   color:#1f2774!important;
 }
 .hex-center-title-dark{
-  color:#c8a45a!important;
+  color:#c8a874!important;
 }
 
 /* 共通センター見出し（トップページ専用） 英文 */
@@ -62,7 +62,7 @@ html{
   color:#1f2774;
 }
 .hex-center-title-dark[data-en]::after{
-  color:#c8a45a;
+  color:#c8a874;
 }
 
 /* 共通セクション見出し（h2専用） */
@@ -164,7 +164,7 @@ html{
 .hex-section-action a:hover i,
 .bg_post_index .linktext_color_basecolor2 .hex-section-action a:hover,
 .bg_post_index .linktext_color_basecolor2 .hex-section-action a:hover i{
-  color:#c8a45a!important;
+  color:#c8a874!important;
 }
 .hex-section-action h4{
   grid-column:1 / -1;
