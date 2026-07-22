@@ -66,11 +66,15 @@ html{
 }
 
 /* 共通セクション見出し（h2専用） */
+span:has(> .hex-section-title){
+  display:block;
+  margin-bottom:18px;
+}
 .hex-section-title{
   position:relative;
   width:100%;
   display:block;
-  margin:0 0 48px;
+  margin:0;
   padding:0 0 16px;
   font-size:32px;
   font-weight:700;
@@ -79,7 +83,6 @@ html{
   color:#1f2774!important;
   box-sizing:border-box;
 }
-
 .hex-section-title::after{
   content:"";
   position:absolute;
@@ -97,9 +100,13 @@ html{
 }
 
 /* 共通セクションサブ見出し（h3専用） */
+span:has(> .hex-section-subtitle){
+  display:block;
+  margin-bottom:18px;
+}
 .hex-section-subtitle{
   position:relative;
-  margin:0 0 24px;
+  margin:0;
   padding-left:18px;
   color:#1f2774;
   font-size:24px;
