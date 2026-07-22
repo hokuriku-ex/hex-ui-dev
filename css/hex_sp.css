@@ -15,6 +15,7 @@
 @media screen and (max-width:768px){
   .hex-section-title{
     width:100%!important;
+    margin:0 auto 36px;
     padding:0 0 14px;
     border-left:none!important;
     font-size:26px!important;
@@ -25,6 +26,7 @@
 /* 共通セクションサブ見出し（h3専用） */
 @media screen and (max-width:768px){
   .hex-section-subtitle{
+    margin:0 0 20px;
     padding-left:16px;
     font-size:20px;
   }
@@ -38,6 +40,7 @@
   .hex-section-action{
     grid-template-columns:1fr auto;
     gap:0 16px;
+    margin:0 0 26px;
   }
   .hex-section-action h3{
     padding-left:16px;
@@ -64,6 +67,7 @@
 /* 共通セクション小見出し（h4専用） */
 @media screen and (max-width:768px){
   .hex-section-smalltitle{
+    margin:0 0 14px;
     font-size:16px!important;
   }
 }
