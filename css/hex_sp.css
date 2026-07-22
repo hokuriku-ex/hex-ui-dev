@@ -172,7 +172,7 @@
   }
   .kb_qanda_content .q_line,
   .kb_qanda_content .answer_qa{
-    gap:10px;
+    gap:16px;
   }
   .kb_qanda_content .bg_answer_qa,
   .kb_qanda_content .bq_answer_qa{
