@@ -43,7 +43,7 @@ html{
   color:#1f2774!important;
 }
 .hex-center-title-dark{
-  color:#c8a874!important;
+  color:#fff!important;
 }
 
 /* 共通センター見出し（トップページ専用） 英文 */
@@ -62,7 +62,7 @@ html{
   color:#1f2774;
 }
 .hex-center-title-dark[data-en]::after{
-  color:#c8a874;
+  color:#fff;
 }
 
 /* 共通セクション見出し（h2専用） */
