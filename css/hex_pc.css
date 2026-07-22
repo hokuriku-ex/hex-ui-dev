@@ -507,6 +507,7 @@ a.hex-text-link[target="_blank"]::after{
 /* =======================================
    記事パーツ（ファイル）
 ======================================= */
+/* 非表示 */
 div.NNAttached{
   display:none!important;
 }
