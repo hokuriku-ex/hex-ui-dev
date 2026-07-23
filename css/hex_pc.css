@@ -791,6 +791,9 @@ div.NNAttached{
   position:relative;
   margin-top:7.5%;
 }
+.hex-anchor-nav.hex-anchor-nav-auto-page{
+  margin:0 calc(50% - 50vw) 0!important;
+}
 
 /* =======================================
    共通パーツ（新規）
