@@ -2250,15 +2250,12 @@ body,
 /* =======================================
    下層ページ：背景色範囲指定
 ======================================= */
-/* 背景範囲の親要素 */
-.post_index_contents > .content.hex-bg-range{
+.hex-bg-range{
   position:relative;
   z-index:0;
-  background:transparent;
+  isolation:isolate;
 }
-
-/* 画面幅いっぱいの背景 */
-.post_index_contents > .content.hex-bg-range::before{
+.hex-bg-range::before{
   content:"";
   position:absolute;
   inset:0 auto 0 50%;
@@ -2267,10 +2264,15 @@ body,
   background:var(--hex-bg-range-color,#fff);
   transform:translateX(-50%);
 }
-
-/* 背景を途中で切らない */
-.post_index_contents > .content.hex-bg-range,
-.post_index_contents:has(.hex-bg-start){
+.hex-bg-start,
+.hex-bg-end{
+  display:none!important;
+}
+.bg_post_index:has(.hex-bg-range),
+.post_index:has(.hex-bg-range),
+.post_index_contents:has(.hex-bg-range),
+.content:has(.hex-bg-range),
+.content_body:has(.hex-bg-range){
   overflow:visible!important;
 }
 
