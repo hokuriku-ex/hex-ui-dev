@@ -2199,6 +2199,9 @@ body,
     linear-gradient(135deg,#f7f6f2 0%,#f3f1eb 38%,#eef0e8 68%,#f6f5f1 100%);
   z-index:0;
 }
+.gc_auto_frame_page_title .pagetitle_type4 .bg_text{
+  padding:2.5% 2.5% 2.5% 2.5%!important;
+}
 
 /* コンテンツを前面へ */
 .pagetitle_type.pagetitle_type4 .contents,
@@ -2246,11 +2249,6 @@ body,
 /* 記事タイトル非表示 */
 .gc_auto_frame_post_index .bg_title.accent_color_basecolor1{
   display:none !important;
-}
-
-/* 記事タイトル非表示 */
-.gc_auto_frame_page_title .pagetitle_type4 .bg_text{
-  padding:2.5% 2.5% 2.5% 2.5%!important;
 }
 
 /* =======================================
