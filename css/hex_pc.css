@@ -787,8 +787,12 @@ div.NNAttached{
 }
 
 /* 自動生成ページ位置調整用 */
-.hex-anchor-nav.hex-anchor-nav-auto-page{
-  margin:9% calc(50% - 50vw) 0!important;
+@media screen and (min-width:769px){
+  .hex-anchor-nav-auto-page:not(.is-fixed){
+    position:relative;
+    top:0px;
+    margin-top:90px;
+  }
 }
 
 /* =======================================
