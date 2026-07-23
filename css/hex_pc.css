@@ -831,7 +831,7 @@ div.NNAttached{
 }
 .hex-btn-main.dark{
   background:transparent;
-  border:1px solid #c8a874;
+  border:1px solid #fff;
 }
 .hex-btn-main.light .hex-btn-main-title,
 .hex-btn-main.light .hex-btn-main-icon{
@@ -839,7 +839,7 @@ div.NNAttached{
 }
 .hex-btn-main.dark .hex-btn-main-title,
 .hex-btn-main.dark .hex-btn-main-icon{
-  color:#c8a874;
+  color:#fff;
 }
 .hex-btn-main-title{
   font-size:18px;
@@ -861,7 +861,7 @@ div.NNAttached{
   background:transparent;
 }
 .hex-btn-main.dark:hover{
-  border-color:#1f2774;
+  border-color:#c8a874;
   background:transparent;
 }
 .hex-btn-main:hover .hex-btn-main-title,
