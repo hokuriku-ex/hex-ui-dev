@@ -137,46 +137,50 @@ hexLoad(function(){
 ======================================= */
 hexReady(function(){
   document.querySelectorAll('.hex-bg-start').forEach(function(start){
-    var startContent=start.closest(
-      '.post_index_contents > .content'
-    );
+    var body=start.closest('.content_body');
+    if(!body)return;
 
-    if(!startContent)return;
+    var end=body.querySelector('.hex-bg-end');
+    if(!end)return;
 
-    var color=start.dataset.bgColor || '#f3f0eb';
-    var current=startContent.nextElementSibling;
+    var startBlock=start.closest(
+      ':scope > span'
+    ) || start;
 
-    while(current){
-      if(current.querySelector('.hex-bg-end')){
-        break;
-      }
+    var endBlock=end.closest(
+      ':scope > span'
+    ) || end;
 
-      if(current.classList.contains('content')){
-        current.classList.add('hex-bg-range');
-        current.style.setProperty(
-          '--hex-bg-range-color',
-          color
-        );
-      }
-
-      current=current.nextElementSibling;
+    /* HOPWEBの直下ブロックまで取得 */
+    while(startBlock.parentElement!==body){
+      startBlock=startBlock.parentElement;
     }
 
-    startContent.classList.add('hex-bg-range');
-    startContent.style.setProperty(
+    while(endBlock.parentElement!==body){
+      endBlock=endBlock.parentElement;
+    }
+
+    var color=start.dataset.bgColor || '#fff';
+    var wrapper=document.createElement('div');
+
+    wrapper.className='hex-bg-range';
+    wrapper.style.setProperty(
       '--hex-bg-range-color',
       color
     );
 
-    start.style.display='none';
+    body.insertBefore(wrapper,startBlock.nextSibling);
 
-    if(current){
-      var end=current.querySelector('.hex-bg-end');
+    var current=wrapper.nextSibling;
 
-      if(end){
-        end.style.display='none';
-      }
+    while(current && current!==endBlock){
+      var next=current.nextSibling;
+      wrapper.appendChild(current);
+      current=next;
     }
+
+    startBlock.style.display='none';
+    endBlock.style.display='none';
   });
 });
 
