@@ -2275,6 +2275,9 @@ body,
 .content_body:has(.hex-bg-range){
   overflow:visible!important;
 }
+.post_index_contents:has(.hex-bg-page-end){
+  padding-bottom:0!important;
+}
 
 /* =======================================
    下層ページ：会社情報
