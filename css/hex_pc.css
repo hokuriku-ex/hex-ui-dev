@@ -790,7 +790,7 @@ div.NNAttached{
 @media screen and (min-width:769px){
   .hex-anchor-nav-auto-page:not(.is-fixed){
     position:relative;
-    top:90px;
+    top:0px;
   }
 }
 
