@@ -3993,6 +3993,9 @@ body.hex-form-dialog-open{
   gap:4px;
   margin-top:24px;
 }
+.hex-contact-phone:hover{
+  text-decoration:none!important;
+}
 .hex-contact-text{
   font-size:15px;
 }
@@ -4002,7 +4005,7 @@ body.hex-form-dialog-open{
   font-weight:500;
   line-height:1.4;
   letter-spacing:.04em;
-  text-decoration:none;
+  text-decoration:none!important;
 }
 .hex-contact-tel span{
   margin-right:6px;
