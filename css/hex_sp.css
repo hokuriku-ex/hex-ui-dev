@@ -277,7 +277,8 @@
 @media screen and (max-width:768px){
   .hex-anchor-nav-auto-page:not(.is-fixed){
     position:relative;
-    top:32px;
+    top:0;
+    margin-top:32px;
   }
 }
 
