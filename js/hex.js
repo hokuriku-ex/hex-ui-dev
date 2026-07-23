@@ -133,6 +133,54 @@ hexLoad(function(){
 });
 
 /* =======================================
+   下層ページ背景色範囲指定
+======================================= */
+hexReady(function(){
+  document.querySelectorAll('.hex-bg-start').forEach(function(start){
+    var startContent=start.closest(
+      '.post_index_contents > .content'
+    );
+
+    if(!startContent)return;
+
+    var color=start.dataset.bgColor || '#f3f0eb';
+    var current=startContent.nextElementSibling;
+
+    while(current){
+      if(current.querySelector('.hex-bg-end')){
+        break;
+      }
+
+      if(current.classList.contains('content')){
+        current.classList.add('hex-bg-range');
+        current.style.setProperty(
+          '--hex-bg-range-color',
+          color
+        );
+      }
+
+      current=current.nextElementSibling;
+    }
+
+    startContent.classList.add('hex-bg-range');
+    startContent.style.setProperty(
+      '--hex-bg-range-color',
+      color
+    );
+
+    start.style.display='none';
+
+    if(current){
+      var end=current.querySelector('.hex-bg-end');
+
+      if(end){
+        end.style.display='none';
+      }
+    }
+  });
+});
+
+/* =======================================
    SP用左右余白範囲指定
 ======================================= */
 hexLoad(function(){
