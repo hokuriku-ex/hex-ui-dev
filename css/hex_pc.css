@@ -542,6 +542,7 @@ div.NNAttached{
   border:0!important;
   box-shadow:none!important;
   box-sizing:border-box;
+  align-items:center;
 }
 /* お客様：左側 */
 .kb_qanda_content .q_line{
