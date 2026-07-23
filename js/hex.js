@@ -1565,6 +1565,26 @@ hexReady(function(){
 });
 
 /* =======================================
+   Q&A記事アイコンをファイル記事から取得
+======================================= */
+hexReady(function(){
+  document.querySelectorAll(
+    '.kb_qanda_content .q_icon,' +
+    '.kb_qanda_content .a_icon'
+  ).forEach(function(element){
+    var path=getComputedStyle(element)
+      .getPropertyValue('--hex-bg-path')
+      .trim()
+      .replace(/^["']|["']$/g,'');
+
+    if(!path)return;
+
+    element.style.backgroundImage=
+      'url("' + location.origin + path + '")';
+  });
+});
+
+/* =======================================
    お知らせ・ブログ共通リスト整形
 ======================================= */
 hexLoad(function(){
