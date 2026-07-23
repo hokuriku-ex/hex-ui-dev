@@ -2221,7 +2221,6 @@ body,
 /* 英語タイトル共通 */
 .pagetitle_type.pagetitle_type4 .bg_text h1::after {
   display: block;
-  margin-top: 22px;
   color: #1f2774;
   font-size: 16px;
   line-height: 1.4;
