@@ -567,9 +567,9 @@ div.NNAttached{
 /* 人物画像 */
 .kb_qanda_content .q_icon,
 .kb_qanda_content .a_icon{
-  flex:0 0 82px;
-  width:82px;
-  height:82px;
+  flex:0 0 96px;
+  width:96px;
+  height:96px;
   margin:0!important;
   overflow:hidden;
   background-color:#fff;
