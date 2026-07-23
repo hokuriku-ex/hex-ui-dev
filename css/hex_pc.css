@@ -3990,7 +3990,7 @@ body.hex-form-dialog-open{
   font-size:15px;
 }
 .hex-contact-tel{
-  color:#c8a874;
+  color:#c8a874!important;
   font-size:22px;
   font-weight:500;
   line-height:1.4;
@@ -4038,6 +4038,9 @@ body.hex-form-dialog-open{
   margin-left:2px;
   font-size:12px;
   transition:transform .3s;
+}
+.hex-contact-faq-link:hover{
+  text-decoration:none!important;
 }
 .hex-contact-faq-link span:hover{
   text-decoration:none!important;
