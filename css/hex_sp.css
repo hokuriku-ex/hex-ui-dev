@@ -276,7 +276,7 @@
 /* 自動生成ページ位置調整用 */
 @media screen and (max-width:768px){
   .hex-anchor-nav.hex-anchor-nav-auto-page{
-    margin:9% calc(50% - 50vw) 0!important;
+    margin:7.5% calc(50% - 50vw) 0!important;
   }
 }
 
