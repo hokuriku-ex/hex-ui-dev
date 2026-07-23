@@ -3986,3 +3986,28 @@ body.hex-form-dialog-open{
   width:auto;
   margin:0;
 }
+.hex-contact-faq-link{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  color:#d6d6d6;
+  font-size:14px;
+  text-decoration:none;
+  transition:color .3s;
+}
+.hex-contact-faq-link span{
+  color:#fff;
+  font-weight:500;
+  border-bottom:1px solid rgba(255,255,255,.6);
+  padding-bottom:2px;
+}
+.hex-contact-faq-link i{
+  font-size:12px;
+  transition:transform .3s;
+}
+.hex-contact-faq-link:hover{
+  color:#fff;
+}
+.hex-contact-faq-link:hover i{
+  transform:translateX(4px);
+}
