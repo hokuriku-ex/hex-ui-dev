@@ -2248,6 +2248,33 @@ body,
 }
 
 /* =======================================
+   下層ページ：背景色範囲指定
+======================================= */
+/* 背景範囲の親要素 */
+.post_index_contents > .content.hex-bg-range{
+  position:relative;
+  z-index:0;
+  background:transparent;
+}
+
+/* 画面幅いっぱいの背景 */
+.post_index_contents > .content.hex-bg-range::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 50%;
+  z-index:-1;
+  width:100vw;
+  background:var(--hex-bg-range-color,#fff);
+  transform:translateX(-50%);
+}
+
+/* 背景を途中で切らない */
+.post_index_contents > .content.hex-bg-range,
+.post_index_contents:has(.hex-bg-start){
+  overflow:visible!important;
+}
+
+/* =======================================
    下層ページ：会社情報
 ======================================= */
 #gc_auto_body_company{
