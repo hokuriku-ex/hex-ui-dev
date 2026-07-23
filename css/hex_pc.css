@@ -4005,6 +4005,7 @@ body.hex-form-dialog-open{
   text-decoration:none!important;
 }
 .hex-contact-tel:hover{
+  color:#c8a874;
   text-decoration:none!important;
 }
 .hex-contact-tel span{
