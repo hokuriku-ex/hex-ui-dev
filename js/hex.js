@@ -247,7 +247,7 @@ hexLoad(function(){
 hexLoad(function(){
   setTimeout(function(){
     hexInitAnchorNav();
-  },200);
+  },1000);
 });
 function hexInitAnchorNav(){
   if(document.body.classList.contains('hex-staff-iframe-mode'))return;
