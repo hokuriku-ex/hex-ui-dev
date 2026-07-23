@@ -3975,16 +3975,9 @@ body.hex-form-dialog-open{
 }
 
 /* お問い合わせフッター */
-.hex-contact-buttons{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:20px;
-}
-.hex-contact-buttons > .hex-button-wrap{
-  flex:0 0 auto;
-  width:auto;
-  margin:0;
+.hex-contact-section .hex-center-title-dark,
+.hex-contact-section .hex-center-title-dark[data-en]::after{
+  color:#c8a874!important;
 }
 .hex-contact-phone{
   display:flex;
@@ -4015,6 +4008,17 @@ body.hex-form-dialog-open{
 .hex-contact-hours{
   font-size:14px;
   color:#ddd;
+}
+.hex-contact-buttons{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:20px;
+}
+.hex-contact-buttons > .hex-button-wrap{
+  flex:0 0 auto;
+  width:auto;
+  margin:0;
 }
 .hex-contact-faq-link{
   display:inline-flex;
