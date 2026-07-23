@@ -791,6 +791,7 @@ div.NNAttached{
   .hex-anchor-nav-auto-page:not(.is-fixed){
     position:relative;
     top:0px;
+    margin-top:90px;
   }
 }
 
