@@ -4042,6 +4042,7 @@ body.hex-form-dialog-open{
 .hex-contact-faq-link:hover{
   text-decoration:none!important;
 }
-.hex-contact-faq-link span:hover{
+.hex-contact-faq-link:hover i{
+  transform:translateX(4px);
   text-decoration:none!important;
 }
