@@ -4036,6 +4036,7 @@ body.hex-form-dialog-open{
   padding-bottom:2px;
 }
 .hex-contact-faq-link i{
+  margin-right:2px;
   font-size:12px;
   transition:transform .3s;
 }
