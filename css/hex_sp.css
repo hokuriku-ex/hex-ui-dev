@@ -273,14 +273,6 @@
   }
 }
 
-/* 自動生成ページ位置調整用 */
-@media screen and (max-width:768px){
-  .hex-anchor-nav-auto-page:not(.is-fixed){
-    position:relative;
-    top:32px;
-  }
-}
-
 /* =======================================
    共通パーツ（新規）
 ======================================= */
