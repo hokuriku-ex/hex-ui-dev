@@ -2248,6 +2248,11 @@ body,
   display:none !important;
 }
 
+/* 記事タイトル非表示 */
+.gc_auto_frame_page_title .pagetitle_type4 .bg_text{
+  padding:2.5% 2.5% 2.5% 2.5%!important;
+}
+
 /* =======================================
    下層ページ：背景色範囲指定
 ======================================= */
