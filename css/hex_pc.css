@@ -646,7 +646,7 @@ div.NNAttached{
   bottom:36px;
   left:-25px;
   border-top:25px solid transparent;
-  border-left:25px solid #fff;
+  border-left:25px solid #f3f0eb;
 }
 /* スタッフの回答 */
 .kb_qanda_content .qanda_a{
@@ -665,7 +665,7 @@ div.NNAttached{
   top:auto;
   bottom:36px;
   right:-25px;
-  border-top:25px solid #fff;
+  border-top:25px solid #f3f0eb;
   border-left:25px solid transparent;
 }
 
