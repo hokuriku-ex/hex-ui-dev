@@ -3998,7 +3998,7 @@ body.hex-form-dialog-open{
   text-decoration:none!important;
 }
 .hex-contact-tel:hover{
-  color:#c8a874;
+  color:#c8a874!important;
   text-decoration:none!important;
 }
 .hex-contact-tel span{
@@ -4038,10 +4038,9 @@ body.hex-form-dialog-open{
 .hex-contact-faq-link i{
   font-size:12px;
   transition:transform .3s;
-  border-bottom:1px solid rgba(255,255,255,.6);
 }
 .hex-contact-faq-link:hover{
-  color:#c8a874;
+  color:#c8a874!important;
   text-decoration:none!important;
 }
 .hex-contact-faq-link:hover i{
