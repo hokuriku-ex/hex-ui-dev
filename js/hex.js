@@ -276,7 +276,7 @@ function hexInitAnchorNav(){
     var target=null;
       targets.forEach(function(h2){
         if(target)return;
-        
+        if(h2.offsetParent===null)return;
 
         var targetText=(h2.textContent||'').trim();
         var targetId=(h2.id||'').trim();
