@@ -2437,8 +2437,10 @@ hexLoad(function(){
       memberGrid.className='hex-staff-grid hex-staff-member-grid';
       var linkButton=createStaffLinkButton(group);
       var hasLeader=false;
+      var groupTotal=String(group.members.length).padStart(2,'0');
       group.members.forEach(function(member,index){
-        member.number=('0'+(index+1)).slice(-2);
+        var currentNumber=String(index+1).padStart(2,'0');
+        member.number=currentNumber+' | '+groupTotal;
         var card=createStaffCard(member);
         if(member.isLeader){
           hasLeader=true;
