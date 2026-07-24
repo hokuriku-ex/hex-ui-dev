@@ -919,16 +919,16 @@
     min-height:0;
   }
   .hex-staff-number{
-  display:block!important;
-  position:absolute;
-  left:0;
-  top:0;
-  z-index:2;
-  color:#1f2774;
-  font-size:34px;
-  font-weight:800;
-  line-height:1;
-  letter-spacing:.04em;
+    display:block!important;
+    position:absolute;
+    left:0;
+    top:0;
+    z-index:2;
+    color:#1f2774;
+    font-size:34px;
+    font-weight:800;
+    line-height:1;
+    letter-spacing:.04em;
   }
   .hex-staff-number-current{
     font:inherit;
