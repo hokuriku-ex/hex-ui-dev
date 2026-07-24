@@ -919,24 +919,29 @@
     min-height:0;
   }
   .hex-staff-number{
-    display:block!important;
-    position:absolute;
-    left:0;
-    top:0;
-    z-index:2;
-    color:#1f2774;
-    font-size:34px;
-    font-weight:800;
-    line-height:1;
-    letter-spacing:.04em;
+  display:block!important;
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:2;
+  color:#1f2774;
+  font-size:34px;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:.04em;
   }
   .hex-staff-number-current{
     font:inherit;
   }
-  .hex-staff-number-separator,
+  .hex-staff-number-separator{
+    font-size:.75em;
+    opacity:.45;
+    margin:0 .08em;
+  }
   .hex-staff-number-total{
-    font-size:.7em;
+    font-size:.75em;
     opacity:.6;
+    font-weight:600;
   }
   .hex-staff-card.is-leader .hex-staff-photo{
     aspect-ratio:1/1;
