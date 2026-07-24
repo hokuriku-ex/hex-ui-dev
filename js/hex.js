@@ -512,6 +512,17 @@ hexReady(function(){
 });
 
 /* =======================================
+   テキストリンクURL自動生成
+======================================= */
+hexLoad(function(){
+  document.querySelectorAll('a[data-shortname][data-pagetype]').forEach(function(link){
+    var url=window.hexBuildUrl(link);
+    if(!url)return;
+    link.href=url;
+  });
+});
+
+/* =======================================
    記事詳細タイトル整形
 ======================================= */
 hexLoad(function(){
