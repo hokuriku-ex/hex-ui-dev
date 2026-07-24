@@ -930,6 +930,14 @@
     line-height:1;
     letter-spacing:.04em;
   }
+  .hex-staff-number-current{
+    font:inherit;
+  }
+  .hex-staff-number-separator,
+  .hex-staff-number-total{
+    font-size:.7em;
+    opacity:.6;
+  }
   .hex-staff-card.is-leader .hex-staff-photo{
     aspect-ratio:1/1;
     min-height:0;
