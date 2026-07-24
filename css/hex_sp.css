@@ -919,7 +919,9 @@
     min-height:0;
   }
   .hex-staff-number{
-    display:block!important;
+    display:flex!important;
+    align-items:baseline;
+    gap:.12em;
     position:absolute;
     left:0;
     top:0;
@@ -936,7 +938,6 @@
   .hex-staff-number-separator{
     font-size:.75em;
     opacity:.45;
-    margin:0 .08em;
   }
   .hex-staff-number-total{
     font-size:.75em;
