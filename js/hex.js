@@ -512,7 +512,7 @@ hexReady(function(){
 });
 
 /* =======================================
-   テキストリンクURL自動生成
+   テキストリンク サイト内URL自動生成
 ======================================= */
 hexLoad(function(){
   document.querySelectorAll('a[data-shortname][data-pagetype]').forEach(function(link){
