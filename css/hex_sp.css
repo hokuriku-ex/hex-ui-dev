@@ -285,6 +285,16 @@
 /* =======================================
    共通パーツ（新規）
 ======================================= */
+/* PC・スマホ専用改行 */
+@media screen and (max-width:768px){
+  .hex-pc-br{
+    display:none;
+  }
+  .hex-sp-br{
+    display:block;
+  }
+}
+
 /* ボタン・リンク・カード */
 @media screen and (max-width:768px){
   .hex-col-1,
