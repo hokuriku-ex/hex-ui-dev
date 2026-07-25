@@ -1978,21 +1978,18 @@ body,
 .welcome{
   padding:80px 0 30px;
 }
-
 .welcome_contents{
   max-width:1200px;
   margin:0 auto;
   padding:0 40px;
   text-align:center;
 }
-
 .welcome .title{
   position:relative;
   display:inline-block;
   margin:0 0 70px;
   color:#1f2774;
 }
-
 .welcome .title span{
   display:block;
   font-size:32px;
@@ -2000,7 +1997,6 @@ body,
   line-height:1.4;
   letter-spacing:.04em;
 }
-
 .welcome .kakko_l{
   position:absolute;
   top:-28px;
@@ -2010,7 +2006,6 @@ body,
   border-top:1px solid #1f2774;
   border-left:1px solid #1f2774;
 }
-
 .welcome .kakko_br{
   position:absolute;
   right:-60px;
@@ -2020,7 +2015,6 @@ body,
   border-right:1px solid #1f2774;
   border-bottom:1px solid #1f2774;
 }
-
 .welcome .text{
   margin:0;
   font-size:20px;
@@ -2029,10 +2023,6 @@ body,
   letter-spacing:.03em;
   color:#383838;
   font-family:var(--hex-font-serif)!important;
-}
-
-.hex-welcome-sp{
-  display:none;
 }
 
 /* 私たちについて */
