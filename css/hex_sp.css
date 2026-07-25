@@ -947,6 +947,7 @@
   .hex-staff-number-separator{
     font-size:.75em;
     opacity:.45;
+    margin:0 .15em;
   }
   .hex-staff-number-total{
     font-size:.75em;
