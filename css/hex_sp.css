@@ -951,7 +951,7 @@
   }
   .hex-staff-number-total{
     font-size:.75em;
-    opacity:.6;
+    opacity:.45;
     font-weight:600;
   }
   .hex-staff-card.is-leader .hex-staff-photo{
