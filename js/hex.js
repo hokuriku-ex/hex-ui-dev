@@ -874,7 +874,23 @@ hexLoad(function(){
 });
 
 /* =======================================
-   共通パーツ
+   PC・スマホ専用改行
+======================================= */
+hexLoad(function(){
+  document.querySelectorAll('hex-pc-br').forEach(function(el){
+    var br=document.createElement('br');
+    br.className='hex-pc-br';
+    el.replaceWith(br);
+  });
+  document.querySelectorAll('hex-sp-br').forEach(function(el){
+    var br=document.createElement('br');
+    br.className='hex-sp-br';
+    el.replaceWith(br);
+  });
+});
+
+/* =======================================
+   共通パーツ ボタン・リンク
 ======================================= */
 window.hexIconClass=function(hexType){
   return hexType==='external'?'fa-solid fa-arrow-up-right-from-square':'fa-solid fa-arrow-right';
