@@ -287,10 +287,10 @@
 ======================================= */
 /* PC・スマホ専用改行 */
 @media screen and (max-width:768px){
-  .hex-pc-br{
+  br[hex-pc]{
     display:none;
   }
-  .hex-sp-br{
+  br[hex-sp]{
     display:block;
   }
 }
