@@ -799,11 +799,11 @@ div.NNAttached{
    共通パーツ（新規）
 ======================================= */
 /* PC・スマホ専用改行 */
-.hex-pc-br{
-  display:block;
-}
-.hex-sp-br{
+br[hex-sp]{
   display:none;
+}
+br[hex-pc]{
+  display:block;
 }
 
 /* カラム設定：ボタン幅用 */
