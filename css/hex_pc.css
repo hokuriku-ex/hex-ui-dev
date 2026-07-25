@@ -1974,7 +1974,9 @@ body,
   background:#cfcfcf;
 }
 
-/* ウェルカムメッセージ */
+/* =======================================
+   トップページ ウェルカムメッセージ
+======================================= */
 .welcome{
   padding:80px 0 30px;
 }
@@ -2025,7 +2027,9 @@ body,
   font-family:var(--hex-font-serif)!important;
 }
 
-/* 私たちについて */
+/* =======================================
+   トップページ 私たちについて
+======================================= */
 .hex-company-buttons{
   display:flex;
   justify-content:center;
@@ -2055,7 +2059,6 @@ body,
   color:#1f2774;
   margin-left:6px;
 }
-
 .hex-company-card{
   column-gap:0;
 }
@@ -2112,7 +2115,9 @@ body,
   letter-spacing:.03em;
 }
 
-/* お知らせ */
+/* =======================================
+   トップページ お知らせ
+======================================= */
 .hex-home-news-tabs{
   display:flex;
   justify-content:center;
