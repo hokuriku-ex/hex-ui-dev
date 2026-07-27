@@ -1957,8 +1957,8 @@ body,
 ======================================= */
 /* キャッチコピー */
 @media screen and (min-width:769px){
-  .catch_type4 .catch_catch{
-    transform:translate(30%,-65%)!important;
+  .catch_type4 .bg_catch_catch{
+    transform:translate(-50%,-50%)!important;
   }
 }
 
