@@ -750,10 +750,10 @@
 /* =======================================
    トップページ：ヒーロー画像
 ======================================= */
+/* キャッチコピー */
 @media screen and (max-width:768px){
-  /* キャッチコピー */
-  .catch_type4 .catch_catch{
-    transform:translate(15%,-60%)!important;
+  .catch_type4 .bg_catch_catch{
+    transform:translate(-50%,-50%)!important;
   }
 }
 
