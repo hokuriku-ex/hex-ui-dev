@@ -1849,58 +1849,77 @@ function hexHomeNewsUpdateButton(buttonArea,shortname,pagetype){
 }
 
 /* =======================================
-   PCヘッダー 電話情報・カレンダーボタン
+   PCヘッダー 電話情報・営業日カレンダーモーダル
 ======================================= */
 hexLoad(function(){
+  /* ---------------------------------------
+     PCヘッダーへ電話情報とボタンを追加
+  --------------------------------------- */
   var pcMenu=document.querySelector(
     '.bg_pc_menu .pc_menu'
   );
-  if(!pcMenu)return;
-  if(pcMenu.querySelector('.hex-header-info'))return;
-  var headerInfo=document.createElement('div');
-  headerInfo.className='hex-header-info';
-  headerInfo.innerHTML=`
-    <div class="hex-header-tel">
-      <a href="tel:0762404200"
-         class="hex-header-tel-link"
-         aria-label="076-240-4200へ電話">
-        <i class="fa-solid fa-phone"></i>
-        <span>076-240-4200</span>
-      </a>
-      <span class="hex-header-hours">
-        日曜・祝日休 ／ 受付 9:00〜18:00
-      </span>
-    </div>
-    <button class="hex-calendar-open"
-            type="button"
-            aria-label="営業日カレンダーを開く">
-      <i class="fa-regular fa-calendar-days"></i>
-    </button>
-  `;
-  pcMenu.appendChild(headerInfo);
-});
 
-/* =======================================
-   営業日カレンダーモーダル
-======================================= */
-hexLoad(function(){
+  if(
+    pcMenu&&
+    !pcMenu.querySelector('.hex-header-info')
+  ){
+    var headerInfo=document.createElement('div');
+
+    headerInfo.className='hex-header-info';
+
+    headerInfo.innerHTML=`
+      <div class="hex-header-tel">
+        <a href="tel:0762404200"
+           class="hex-header-tel-link"
+           aria-label="076-240-4200へ電話">
+          <i class="fa-solid fa-phone"></i>
+          <span>076-240-4200</span>
+        </a>
+        <span class="hex-header-hours">
+          日曜・祝日休 ／ 受付 9:00〜18:00
+        </span>
+      </div>
+      <button class="hex-calendar-open"
+              type="button"
+              aria-label="営業日カレンダーを開く"
+              aria-haspopup="dialog"
+              aria-expanded="false">
+        <i class="fa-regular fa-calendar-days"
+           aria-hidden="true"></i>
+      </button>
+    `;
+
+    pcMenu.appendChild(headerInfo);
+  }
+
+  /* ---------------------------------------
+     カレンダーモーダル
+  --------------------------------------- */
   var calendarSection=document.querySelector(
     '.hex-calendar-section'
   );
 
   if(!calendarSection)return;
-  if(document.querySelector('.hex-calendar-modal'))return;
+
+  var existingModal=document.querySelector(
+    '.hex-calendar-modal'
+  );
+
+  if(existingModal)return;
 
   var modal=document.createElement('div');
   var dialog=document.createElement('div');
-  var closeButton=document.createElement('button');
   var modalBody=document.createElement('div');
+  var closeButton=document.createElement('button');
   var lastFocusedElement=null;
 
+  /* モーダル背景 */
   modal.className='hex-calendar-modal';
   modal.setAttribute('aria-hidden','true');
 
+  /* ダイアログ本体 */
   dialog.className='hex-calendar-modal-dialog';
+
   dialog.setAttribute('role','dialog');
   dialog.setAttribute('aria-modal','true');
   dialog.setAttribute(
@@ -1908,14 +1927,21 @@ hexLoad(function(){
     '営業日カレンダー'
   );
 
+  /* 閉じるボタン */
   closeButton.className='hex-calendar-modal-close';
   closeButton.type='button';
+
   closeButton.setAttribute(
     'aria-label',
     '営業日カレンダーを閉じる'
   );
-  closeButton.innerHTML='<i class="fa-solid fa-xmark"></i>';
 
+  closeButton.innerHTML=`
+    <i class="fa-solid fa-xmark"
+       aria-hidden="true"></i>
+  `;
+
+  /* カレンダー格納部分 */
   modalBody.className='hex-calendar-modal-body';
 
   dialog.appendChild(closeButton);
@@ -1923,33 +1949,73 @@ hexLoad(function(){
   modal.appendChild(dialog);
   document.body.appendChild(modal);
 
-  /* フッターのカレンダーセクションをモーダルへ移動 */
-  modalBody.appendChild(calendarSection);
+  /* ---------------------------------------
+     モーダルを開く
+  --------------------------------------- */
+  function openCalendarModal(openButton){
+    lastFocusedElement=
+      openButton||
+      document.activeElement;
 
-  function openCalendarModal(){
-    lastFocusedElement=document.activeElement;
+    /*
+     * 読込み時点では移動しない。
+     * 既存のカレンダーJSが生成を終えたあと、
+     * 初めて開くタイミングでセクション全体を移動する。
+     */
+    if(!modalBody.contains(calendarSection)){
+      modalBody.appendChild(calendarSection);
+    }
 
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden','false');
+
     document.documentElement.classList.add(
       'hex-calendar-modal-open'
     );
+
     document.body.classList.add(
       'hex-calendar-modal-open'
     );
 
+    document
+      .querySelectorAll('.hex-calendar-open')
+      .forEach(function(button){
+        button.setAttribute(
+          'aria-expanded',
+          'true'
+        );
+      });
+
     closeButton.focus();
   }
 
+  /* ---------------------------------------
+     モーダルを閉じる
+  --------------------------------------- */
   function closeCalendarModal(){
+    if(!modal.classList.contains('is-open')){
+      return;
+    }
+
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden','true');
+
     document.documentElement.classList.remove(
       'hex-calendar-modal-open'
     );
+
     document.body.classList.remove(
       'hex-calendar-modal-open'
     );
+
+    document
+      .querySelectorAll('.hex-calendar-open')
+      .forEach(function(button){
+        button.setAttribute(
+          'aria-expanded',
+          'false'
+        );
+      });
 
     if(
       lastFocusedElement&&
@@ -1959,7 +2025,9 @@ hexLoad(function(){
     }
   }
 
-  /* 後から生成されたボタンにも対応 */
+  /* ---------------------------------------
+     クリック操作
+  --------------------------------------- */
   document.addEventListener('click',function(event){
     var openButton=event.target.closest(
       '.hex-calendar-open'
@@ -1967,24 +2035,79 @@ hexLoad(function(){
 
     if(openButton){
       event.preventDefault();
-      openCalendarModal();
+      openCalendarModal(openButton);
+
       return;
     }
 
-    if(
-      event.target===modal||
-      event.target.closest('.hex-calendar-modal-close')
-    ){
+    var closeTarget=event.target.closest(
+      '.hex-calendar-modal-close'
+    );
+
+    if(closeTarget){
+      event.preventDefault();
+      closeCalendarModal();
+
+      return;
+    }
+
+    /*
+     * 白いダイアログの外側を押した場合だけ閉じる
+     */
+    if(event.target===modal){
       closeCalendarModal();
     }
   });
 
+  /* ---------------------------------------
+     キーボード操作
+  --------------------------------------- */
   document.addEventListener('keydown',function(event){
-    if(
-      event.key==='Escape'&&
-      modal.classList.contains('is-open')
-    ){
+    if(!modal.classList.contains('is-open')){
+      return;
+    }
+
+    /* Escキーで閉じる */
+    if(event.key==='Escape'){
+      event.preventDefault();
       closeCalendarModal();
+
+      return;
+    }
+
+    /* モーダル外へフォーカスが出ないようにする */
+    if(event.key==='Tab'){
+      var focusableElements=dialog.querySelectorAll(
+        'button:not([disabled]),'+
+        'a[href],'+
+        'input:not([disabled]),'+
+        'select:not([disabled]),'+
+        'textarea:not([disabled]),'+
+        '[tabindex]:not([tabindex="-1"])'
+      );
+
+      if(!focusableElements.length)return;
+
+      var firstElement=focusableElements[0];
+      var lastElement=
+        focusableElements[
+          focusableElements.length-1
+        ];
+
+      if(
+        event.shiftKey&&
+        document.activeElement===firstElement
+      ){
+        event.preventDefault();
+        lastElement.focus();
+      }
+      else if(
+        !event.shiftKey&&
+        document.activeElement===lastElement
+      ){
+        event.preventDefault();
+        firstElement.focus();
+      }
     }
   });
 });
