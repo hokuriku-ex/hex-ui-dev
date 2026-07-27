@@ -1961,6 +1961,9 @@ body,
     top:45%!important;
     left:8%!important;
   }
+  .catch_type4 .subcatch{
+    margin-left:30px!important;
+  }
 }
 
 /* スクロールナビ */
