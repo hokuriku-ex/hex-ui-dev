@@ -1956,7 +1956,12 @@ body,
    トップページ：ヒーロー画像
 ======================================= */
 /* キャッチコピー */
-
+@media screen and (min-width:769px){
+  .catch_type4 .catch_catch{
+    top:45%!important;
+    left:8%!important;
+  }
+}
 
 /* スクロールナビ */
 .hex-scroll-indicator{
