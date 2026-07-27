@@ -1884,7 +1884,7 @@ hexLoad(function(){
               aria-label="営業日カレンダーを開く"
               aria-haspopup="dialog"
               aria-expanded="false">
-        <i class="fa-regular fa-calendar-check"
+        <i class="fa-regular fa-calendar"
            aria-hidden="true"></i>
       </button>
     `;
