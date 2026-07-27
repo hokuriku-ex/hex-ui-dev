@@ -1791,7 +1791,7 @@ br[hex-sp]{
   align-items:center;
   flex:0 0 auto;
   gap:16px;
-  margin-left:48px;
+  margin-left:36px;
 }
 .hex-header-tel{
   display:flex;
@@ -1856,6 +1856,7 @@ br[hex-sp]{
   display:flex;
   align-items:center;
   justify-content:center;
+  box-sizing:border-box;
   padding:40px;
   background:rgba(10,10,10,.72);
   visibility:hidden;
@@ -1865,39 +1866,79 @@ br[hex-sp]{
     opacity .3s ease,
     visibility .3s ease;
 }
-
 .hex-calendar-modal.is-open{
   visibility:visible;
   opacity:1;
   pointer-events:auto;
 }
 
+/* モーダル本体 */
 .hex-calendar-modal-dialog{
   position:relative;
   width:min(1200px,100%);
-  max-height:calc(100vh - 80px);
+  max-height:calc(100dvh - 80px);
   overflow:auto;
   background:#fff;
+  color:#383838;
   box-shadow:0 24px 70px rgba(0,0,0,.28);
+  overscroll-behavior:contain;
   transform:translateY(20px);
   transition:transform .3s ease;
-  overscroll-behavior:contain;
 }
-
 .hex-calendar-modal.is-open
 .hex-calendar-modal-dialog{
   transform:translateY(0);
 }
-
 .hex-calendar-modal-body{
   position:relative;
+  width:100%;
 }
 
-/* 元のフッター用セクションをモーダル内に最適化 */
+/* モーダル内カレンダー */
 .hex-calendar-modal
 .hex-calendar-section{
-  width:100%;
+  display:block!important;
+  box-sizing:border-box;
+  width:100%!important;
+  min-height:0!important;
   margin:0!important;
+  padding:60px 70px!important;
+  background:#fff!important;
+  color:#383838!important;
+}
+
+/* 見出し */
+.hex-calendar-modal
+.hex-calendar-section
+.hex-center-title-dark{
+  margin:0 0 16px!important;
+  color:#1f2774!important;
+  text-align:center;
+}
+
+/* 英字見出し */
+.hex-calendar-modal
+.hex-calendar-section
+.hex-center-title-dark[data-en]::after{
+  color:#c8a874!important;
+}
+
+/* 説明文 */
+.hex-calendar-modal
+.hex-calendar-section h4{
+  margin:0 0 40px!important;
+  color:#383838!important;
+  text-align:center;
+}
+
+/* カレンダー生成領域 */
+.hex-calendar-modal
+#hex-calendar-area{
+  display:block!important;
+  box-sizing:border-box;
+  width:100%!important;
+  margin:0!important;
+  color:#383838!important;
 }
 
 /* 閉じるボタン */
@@ -1911,6 +1952,7 @@ br[hex-sp]{
   justify-content:center;
   width:48px;
   height:48px;
+  margin:0;
   padding:0;
   border:1px solid rgba(31,39,116,.18);
   border-radius:50%;
@@ -1919,23 +1961,37 @@ br[hex-sp]{
   font-size:24px;
   line-height:1;
   cursor:pointer;
+  appearance:none;
   box-shadow:0 5px 18px rgba(0,0,0,.08);
   transition:
     color .25s ease,
     background-color .25s ease,
     transform .25s ease;
 }
-
 .hex-calendar-modal-close:hover{
   color:#fff;
   background:#1f2774;
   transform:rotate(90deg);
 }
+.hex-calendar-modal-close:focus-visible{
+  outline:2px solid #1f2774;
+  outline-offset:3px;
+}
 
-/* 背景ページのスクロール停止 */
+/* モーダル表示中は背景をスクロールさせない */
 html.hex-calendar-modal-open,
 body.hex-calendar-modal-open{
   overflow:hidden!important;
+}
+
+/* 動きを減らす設定への対応 */
+@media (prefers-reduced-motion:reduce){
+  .hex-calendar-modal,
+  .hex-calendar-modal-dialog,
+  .hex-calendar-modal-close,
+  .hex-calendar-open{
+    transition:none!important;
+  }
 }
 
 /* =======================================
