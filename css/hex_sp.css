@@ -736,12 +736,14 @@
 }
 
 /* =======================================
-   営業日カレンダーモーダル
+   PCヘッダー用カレンダー関連を非表示
 ======================================= */
-/* PCだけ表示 */
 @media screen and (max-width:768px){
+  .hex-header-info{
+    display:none!important;
+  }
   .hex-calendar-modal{
-    display:none;
+    display:none!important;
   }
 }
 
