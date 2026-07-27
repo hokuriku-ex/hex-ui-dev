@@ -1784,6 +1784,69 @@ br[hex-sp]{
 }
 
 /* =======================================
+   PCヘッダー 電話情報・カレンダーボタン
+======================================= */
+.hex-header-info{
+  display:flex;
+  align-items:center;
+  flex:0 0 auto;
+  gap:16px;
+  margin-left:24px;
+}
+.hex-header-tel{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:3px;
+  white-space:nowrap;
+  line-height:1;
+}
+.hex-header-tel-link{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:#1f2774;
+  font-size:16px;
+  font-weight:700;
+  line-height:1.1;
+  text-decoration:none;
+}
+.hex-header-tel-link:hover{
+  color:#c8a874;
+  text-decoration:none;
+}
+.hex-header-tel-link i{
+  font-size:13px;
+}
+.hex-header-hours{
+  color:#666;
+  font-size:10px;
+  font-weight:500;
+  line-height:1.2;
+}
+.hex-calendar-open{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:40px;
+  height:40px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#1f2774;
+  font-size:24px;
+  line-height:1;
+  cursor:pointer;
+  transition:
+    color .25s ease,
+    transform .25s ease;
+}
+.hex-calendar-open:hover{
+  color:#c8a874;
+  transform:translateY(-2px);
+}
+
+/* =======================================
    フッター調整
 ======================================= */
 /* SP用左右余白範囲指定 マーカー非表示*/
