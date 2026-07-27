@@ -1791,7 +1791,7 @@ br[hex-sp]{
   align-items:center;
   flex:0 0 auto;
   gap:16px;
-  margin-left:24px;
+  margin-left:48px;
 }
 .hex-header-tel{
   display:flex;
@@ -1816,7 +1816,7 @@ br[hex-sp]{
   text-decoration:none;
 }
 .hex-header-tel-link i{
-  font-size:18px;
+  font-size:16px;
 }
 .hex-header-hours{
   color:#666;
