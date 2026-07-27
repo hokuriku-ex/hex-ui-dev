@@ -1952,6 +1952,14 @@ body,
   background:#fafafa!important;
 }
 
+/* =======================================
+   トップページ：ヒーロー画像
+======================================= */
+/* キャッチコピー */
+.catch_type4 .catch_catch{
+  transform:translate(15%,-60%);
+}
+
 /* スクロールナビ */
 .hex-scroll-indicator{
   text-align:center;
