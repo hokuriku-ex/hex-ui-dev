@@ -1957,7 +1957,7 @@ body,
 ======================================= */
 /* キャッチコピー */
 .catch_type4 .catch_catch{
-  transform:translate(15%,-60%);
+  transform:translate(15%,-60%)!important;
 }
 
 /* スクロールナビ */
