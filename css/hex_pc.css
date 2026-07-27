@@ -1710,11 +1710,9 @@ br[hex-sp]{
   letter-spacing:.05em;
   transition:transform .2s ease;
 }
-
 .headermenu_type8 .menu_group.menu_menu:hover{
   transform:translateY(-2px);
 }
-
 .headermenu_type8 .menu_sub{
   left:0!important;
   transform:none!important;
@@ -1724,7 +1722,6 @@ br[hex-sp]{
   text-align:left!important;
   overflow:hidden;
 }
-
 .headermenu_type8 .menu_sub .menu_inner{
   position:relative;
   display:block;
@@ -1737,12 +1734,10 @@ br[hex-sp]{
   font-weight:700!important;
   line-height:1.5!important;
 }
-
 .headermenu_type8 .menu_sub .menu_inner:hover{
   color:rgb(56,56,56)!important;
   background:transparent!important;
 }
-
 .headermenu_type8 .menu_sub .menu_inner::before{
   content:"";
   position:absolute;
@@ -1752,7 +1747,6 @@ br[hex-sp]{
   height:1px;
   background:rgba(56,56,56,.15);
 }
-
 .headermenu_type8 .menu_sub .menu_inner::after{
   content:"";
   position:absolute;
@@ -1763,11 +1757,9 @@ br[hex-sp]{
   background:rgb(56,56,56);
   transition:width .28s ease;
 }
-
 .headermenu_type8 .menu_sub .menu_inner:hover::after{
   width:calc(100% - 36px);
 }
-
 .headermenu_type8 .menu_sub .menu_inner .hex-menu-icon{
   position:absolute;
   right:18px;
@@ -1778,7 +1770,6 @@ br[hex-sp]{
   color:rgb(56,56,56);
   transition:transform .2s ease;
 }
-
 .headermenu_type8 .menu_sub .menu_inner:hover .hex-menu-icon{
   transform:translate(3px,-50%);
 }
