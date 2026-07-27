@@ -1849,6 +1849,38 @@ function hexHomeNewsUpdateButton(buttonArea,shortname,pagetype){
 }
 
 /* =======================================
+   PCヘッダー 電話情報・カレンダーボタン
+======================================= */
+hexLoad(function(){
+  var pcMenu=document.querySelector(
+    '.bg_pc_menu .pc_menu'
+  );
+  if(!pcMenu)return;
+  if(pcMenu.querySelector('.hex-header-info'))return;
+  var headerInfo=document.createElement('div');
+  headerInfo.className='hex-header-info';
+  headerInfo.innerHTML=`
+    <div class="hex-header-tel">
+      <a href="tel:0762404200"
+         class="hex-header-tel-link"
+         aria-label="076-240-4200へ電話">
+        <i class="fa-solid fa-phone"></i>
+        <span>076-240-4200</span>
+      </a>
+      <span class="hex-header-hours">
+        日曜・祝日休 ／ 受付 9:00〜18:00
+      </span>
+    </div>
+    <button class="hex-calendar-open"
+            type="button"
+            aria-label="営業日カレンダーを開く">
+      <i class="fa-regular fa-calendar-days"></i>
+    </button>
+  `;
+  pcMenu.appendChild(headerInfo);
+});
+
+/* =======================================
    トップ スクロールナビ
 ======================================= */
 hexReady(function(){
