@@ -1847,6 +1847,98 @@ br[hex-sp]{
 }
 
 /* =======================================
+   営業日カレンダーモーダル
+======================================= */
+.hex-calendar-modal{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px;
+  background:rgba(10,10,10,.72);
+  visibility:hidden;
+  opacity:0;
+  pointer-events:none;
+  transition:
+    opacity .3s ease,
+    visibility .3s ease;
+}
+
+.hex-calendar-modal.is-open{
+  visibility:visible;
+  opacity:1;
+  pointer-events:auto;
+}
+
+.hex-calendar-modal-dialog{
+  position:relative;
+  width:min(1200px,100%);
+  max-height:calc(100vh - 80px);
+  overflow:auto;
+  background:#fff;
+  box-shadow:0 24px 70px rgba(0,0,0,.28);
+  transform:translateY(20px);
+  transition:transform .3s ease;
+  overscroll-behavior:contain;
+}
+
+.hex-calendar-modal.is-open
+.hex-calendar-modal-dialog{
+  transform:translateY(0);
+}
+
+.hex-calendar-modal-body{
+  position:relative;
+}
+
+/* 元のフッター用セクションをモーダル内に最適化 */
+.hex-calendar-modal
+.hex-calendar-section{
+  width:100%;
+  margin:0!important;
+}
+
+/* 閉じるボタン */
+.hex-calendar-modal-close{
+  position:absolute;
+  top:22px;
+  right:22px;
+  z-index:10;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:48px;
+  height:48px;
+  padding:0;
+  border:1px solid rgba(31,39,116,.18);
+  border-radius:50%;
+  background:#fff;
+  color:#1f2774;
+  font-size:24px;
+  line-height:1;
+  cursor:pointer;
+  box-shadow:0 5px 18px rgba(0,0,0,.08);
+  transition:
+    color .25s ease,
+    background-color .25s ease,
+    transform .25s ease;
+}
+
+.hex-calendar-modal-close:hover{
+  color:#fff;
+  background:#1f2774;
+  transform:rotate(90deg);
+}
+
+/* 背景ページのスクロール停止 */
+html.hex-calendar-modal-open,
+body.hex-calendar-modal-open{
+  overflow:hidden!important;
+}
+
+/* =======================================
    フッター調整
 ======================================= */
 /* SP用左右余白範囲指定 マーカー非表示*/
