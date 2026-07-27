@@ -1881,6 +1881,115 @@ hexLoad(function(){
 });
 
 /* =======================================
+   営業日カレンダーモーダル
+======================================= */
+hexLoad(function(){
+  var calendarSection=document.querySelector(
+    '.hex-calendar-section'
+  );
+
+  if(!calendarSection)return;
+  if(document.querySelector('.hex-calendar-modal'))return;
+
+  var modal=document.createElement('div');
+  var dialog=document.createElement('div');
+  var closeButton=document.createElement('button');
+  var modalBody=document.createElement('div');
+  var lastFocusedElement=null;
+
+  modal.className='hex-calendar-modal';
+  modal.setAttribute('aria-hidden','true');
+
+  dialog.className='hex-calendar-modal-dialog';
+  dialog.setAttribute('role','dialog');
+  dialog.setAttribute('aria-modal','true');
+  dialog.setAttribute(
+    'aria-label',
+    '営業日カレンダー'
+  );
+
+  closeButton.className='hex-calendar-modal-close';
+  closeButton.type='button';
+  closeButton.setAttribute(
+    'aria-label',
+    '営業日カレンダーを閉じる'
+  );
+  closeButton.innerHTML='<i class="fa-solid fa-xmark"></i>';
+
+  modalBody.className='hex-calendar-modal-body';
+
+  dialog.appendChild(closeButton);
+  dialog.appendChild(modalBody);
+  modal.appendChild(dialog);
+  document.body.appendChild(modal);
+
+  /* フッターのカレンダーセクションをモーダルへ移動 */
+  modalBody.appendChild(calendarSection);
+
+  function openCalendarModal(){
+    lastFocusedElement=document.activeElement;
+
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden','false');
+    document.documentElement.classList.add(
+      'hex-calendar-modal-open'
+    );
+    document.body.classList.add(
+      'hex-calendar-modal-open'
+    );
+
+    closeButton.focus();
+  }
+
+  function closeCalendarModal(){
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden','true');
+    document.documentElement.classList.remove(
+      'hex-calendar-modal-open'
+    );
+    document.body.classList.remove(
+      'hex-calendar-modal-open'
+    );
+
+    if(
+      lastFocusedElement&&
+      typeof lastFocusedElement.focus==='function'
+    ){
+      lastFocusedElement.focus();
+    }
+  }
+
+  /* 後から生成されたボタンにも対応 */
+  document.addEventListener('click',function(event){
+    var openButton=event.target.closest(
+      '.hex-calendar-open'
+    );
+
+    if(openButton){
+      event.preventDefault();
+      openCalendarModal();
+      return;
+    }
+
+    if(
+      event.target===modal||
+      event.target.closest('.hex-calendar-modal-close')
+    ){
+      closeCalendarModal();
+    }
+  });
+
+  document.addEventListener('keydown',function(event){
+    if(
+      event.key==='Escape'&&
+      modal.classList.contains('is-open')
+    ){
+      closeCalendarModal();
+    }
+  });
+});
+
+/* =======================================
    トップ スクロールナビ
 ======================================= */
 hexReady(function(){
