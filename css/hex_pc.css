@@ -1919,14 +1919,6 @@ br[hex-sp]{
   color:#c8a874!important;
 }
 
-/* 説明文 */
-.hex-calendar-modal
-.hex-calendar-section h4{
-  margin:0!important;
-  color:#383838!important;
-  text-align:center;
-}
-
 /* カレンダー生成領域 */
 .hex-calendar-modal
 #hex-calendar-area{
