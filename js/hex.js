@@ -1876,7 +1876,7 @@ hexLoad(function(){
           <span>076-240-4200</span>
         </a>
         <span class="hex-header-hours">
-          日曜・祝日休 ／ 受付 9:00〜18:00
+          受付 9:00〜18:00(日曜・祝日休)
         </span>
       </div>
       <button class="hex-calendar-open"
