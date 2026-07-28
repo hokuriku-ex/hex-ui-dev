@@ -763,7 +763,17 @@
    トップページ：ヒーロー画像
 ======================================= */
 /* キャッチコピー */
-
+@media screen and (max-width:768px){
+  .catch_type4 .catch_contents{
+    padding-left:16px!important;
+  }
+  .heroimage_type .fontsize_caption_smp_04{
+    font-size: calc(42vw / 768 * 100);
+  }
+  .heroimage_type .fontsize_sub_smp_05{
+    font-size: calc(24vw / 768 * 100);
+  }
+}
 
 /* =======================================
    トップページ：ウェルカムメッセージ
