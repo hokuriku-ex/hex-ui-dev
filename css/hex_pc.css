@@ -4302,7 +4302,7 @@ body.hex-form-dialog-open{
 */
 @media screen and (min-width:769px) and (max-width:1200px){
   :root{
-    --base_width:1200px;
+    --base_width:1200px!important;
   }
 
   html{
@@ -4320,7 +4320,7 @@ body.hex-form-dialog-open{
 */
 @media screen and (min-width:1201px){
   :root{
-    --base_width:clamp(1200px, 100vw, 1600px);
+    --base_width:clamp(1200px, 100vw, 1600px)!important;
   }
 
   html{
