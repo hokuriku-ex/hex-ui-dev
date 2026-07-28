@@ -4293,24 +4293,12 @@ body.hex-form-dialog-open{
 }
 
 /* =======================================
-   PC表示の可変スケール
-   基準：画面幅1200px
+   PC表示画面サイズ対応調整
 ======================================= */
-/* 769～1200px
-   コンテンツ：画面幅に合わせて縮小
-*/
-@media screen and (min-width:769px) and (max-width:1200px){
-  :root{
-    --base_width:1200px!important;
-  }
-}
-
-/* 1201～1600px以上
-   コンテンツ：1200px → 1600px
-*/
-@media screen and (min-width:1201px){
-  :root{
-    --base_width:clamp(1200px, 100vw, 1600px)!important;
+/* 記事エリアを1200pxから1600pxに広げる */
+@media screen and (min-width:769px){
+  html:root{
+    --base_width:1600px!important;
   }
 }
 
