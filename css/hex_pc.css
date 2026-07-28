@@ -4304,6 +4304,6 @@ body.hex-form-dialog-open{
 
 /* 記事エリア上下左右余白変更 */
 .post_index_contents{
-  padding-block:0;
+  padding-block:0!important;
   padding-inline:clamp(24px, 3vw, 40px)!important;
 }
