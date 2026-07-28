@@ -943,22 +943,20 @@ window.hexBuildUrl=function(hexView){
   var url='';
   if(hexType==='external'){
     shortname=hexView.dataset.shortname||'';
-    if(shortname==='RECRUIT'){
-      if(HEX_IS_PRODUCTION){
-        return origin+'/subsite/recruit/';
-      }
-      if(host==='02sample28.hopweb.net'){
-        designId=window.hexGetDesignId();
-        if(!designId){
-          return '';
-        }
-        return origin+
-          '/addon/gartencloud/ajax_gethtml_site_from_db.php'+
-          '?gc_design_set_ID='+encodeURIComponent(designId);
-      }
-      return '';
+    /* 環境別URLが登録されている場合 */
+    if(shortname&&HEX_URLS[shortname]){
+      url=HEX_IS_PRODUCTION
+        ?HEX_URLS[shortname].PRODUCTION
+        :HEX_URLS[shortname].DEVELOPMENT;
+
+      return window.hexAddAnchor(url,anchor);
     }
-    return hexView.dataset.url||'';
+
+    /* 通常の外部リンク */
+    return window.hexAddAnchor(
+      hexView.dataset.url||'',
+      anchor
+    );
   }
   shortname=hexView.dataset.shortname||'';
   pagetype=hexView.dataset.pagetype||'';
