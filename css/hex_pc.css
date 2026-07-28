@@ -1589,10 +1589,10 @@ br[hex-sp]{
 
 /* ヘッダーロゴホバー */
 .headermenu_type8 .headermenu_logo img{
-  transition:opacity .25s ease;
+  transition:opacity .25s ease!important;
 }
 .headermenu_type8 .headermenu_logo a:hover img:hover{
-  opacity:.75;
+  opacity:.75!important;
 }
 
 /* PCのみ：ハンバーガーメニュー非表示 */
