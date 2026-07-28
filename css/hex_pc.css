@@ -1782,7 +1782,7 @@ br[hex-sp]{
   align-items:center;
   flex:0 0 auto;
   gap:16px;
-  margin-left:36px;
+  margin-left:60px;
 }
 .hex-header-tel{
   display:flex;
