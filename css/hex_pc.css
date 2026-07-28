@@ -1885,6 +1885,11 @@ br[hex-sp]{
   width:100%;
 }
 
+/* カレンダーセクションを非表示 */
+.hex-calendar-section{
+  display:none!important;
+}
+
 /* モーダル内カレンダー */
 .hex-calendar-modal
 .hex-calendar-section{
