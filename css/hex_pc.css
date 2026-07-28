@@ -4142,7 +4142,7 @@ body.hex-form-dialog-open{
   gap:10px;
   margin:24px 0 0;
   padding:20px 0 0;
-  border-top:1px solid rgba(56,56,56,.16);
+  border-top:1px solid rgba(56,56,56,.12);
   list-style:none;
 }
 .hex-calendar-legend-item{
