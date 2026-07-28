@@ -4296,7 +4296,6 @@ body.hex-form-dialog-open{
    PC表示の可変スケール
    基準：画面幅1200px
 ======================================= */
-
 /* 769～1200px
    文字：85％ → 100％
    コンテンツ：画面幅に合わせて縮小
@@ -4331,4 +4330,9 @@ body.hex-form-dialog-open{
       18.4px
     );
   }
+}
+
+/* 記事エリア上下左右標準余白を無くす */
+.post_index_contents{
+  padding:0!important;
 }
