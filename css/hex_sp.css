@@ -768,10 +768,10 @@
     padding-left:16px!important;
   }
   .heroimage_type .fontsize_caption_smp_04{
-    font-size: calc(42vw / 768 * 100);
+    font-size: calc(42vw / 768 * 100)!important;
   }
   .heroimage_type .fontsize_sub_smp_05{
-    font-size: calc(24vw / 768 * 100);
+    font-size: calc(24vw / 768 * 100)!important;
   }
 }
 
