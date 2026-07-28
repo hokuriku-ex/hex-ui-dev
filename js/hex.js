@@ -942,6 +942,22 @@ window.hexBuildUrl=function(hexView){
   var anchor=hexView.dataset.anchor||'';
   var url='';
   if(hexType==='external'){
+    shortname=hexView.dataset.shortname||'';
+    if(shortname==='RECRUIT'){
+      if(HEX_IS_PRODUCTION){
+        return origin+'/subsite/recruit/';
+      }
+      if(host==='02sample28.hopweb.net'){
+        designId=window.hexGetDesignId();
+        if(!designId){
+          return '';
+        }
+        return origin+
+          '/addon/gartencloud/ajax_gethtml_site_from_db.php'+
+          '?gc_design_set_ID='+encodeURIComponent(designId);
+      }
+      return '';
+    }
     return hexView.dataset.url||'';
   }
   shortname=hexView.dataset.shortname||'';
