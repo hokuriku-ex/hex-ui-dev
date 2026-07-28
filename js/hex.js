@@ -2232,31 +2232,71 @@ hexReady(function(){
   },100);
 });
 hexReady(function(){
-  setTimeout(function(){
+  var hexFooterRetryCount=0;
+  var hexFooterRetryLimit=20;
+
+  function hexInitFooter(){
     var areaView=document.getElementById('footer-area-view');
     var footerFrame=document.querySelector('.gc_auto_frame_footer');
-    var footerContents=footerFrame?footerFrame.querySelector('.footer_contents'):null;
-    var companyText=footerFrame?footerFrame.querySelector('.footer_text'):null;
-    var copyright=footerFrame?footerFrame.querySelector('.footer_copyright'):null;
-    if(!areaView||!footerFrame||!footerContents||!companyText||!copyright)return;
-    if(footerContents.querySelector('.hex-footer-area'))return;
+    var footerContents=footerFrame
+      ?footerFrame.querySelector('.footer_contents')
+      :null;
+    var companyText=footerFrame
+      ?footerFrame.querySelector('.footer_text')
+      :null;
+    var copyright=footerFrame
+      ?footerFrame.querySelector('.footer_copyright')
+      :null;
+
+    /* 必要な要素がまだなければ50ms後に再確認 */
+    if(
+      !areaView||
+      !footerFrame||
+      !footerContents||
+      !companyText||
+      !copyright
+    ){
+      hexFooterRetryCount++;
+
+      if(hexFooterRetryCount<hexFooterRetryLimit){
+        setTimeout(hexInitFooter,50);
+      }
+
+      return;
+    }
+
+    /* 生成済みなら終了 */
+    if(footerContents.querySelector('.hex-footer-area')){
+      return;
+    }
+
     footerFrame.classList.add('hex-footer-frame');
+
     if(!companyText.querySelector('.footer-company-name')){
       var companyName=document.createElement('div');
       companyName.className='footer-company-name';
       companyName.textContent='北陸エクステリア株式会社';
       companyText.prepend(companyName);
     }
+
     areaView.textContent='';
     areaView.appendChild(hexCreateFooterArea());
     areaView.classList.add('hex-footer-area');
     footerContents.insertBefore(areaView,copyright);
+
     hexReplaceTikTokSvgs(document);
     hexCreateFooterSns();
     hexCreateHeaderSns();
     hexCreatePageTopButton();
-    setTimeout(function(){ hexReplaceTikTokSvgs(document); },500);
-  },300);
+
+    setTimeout(function(){
+      hexReplaceTikTokSvgs(document);
+    },500);
+  }
+
+  /* 待ち時間なしで最初の処理を実行 */
+  hexInitFooter();
+
 });
 function hexCreateFooterSns(){
   var footerFrame=document.querySelector('.gc_auto_frame_footer');
