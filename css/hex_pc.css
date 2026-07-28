@@ -1791,6 +1791,9 @@ br[hex-sp]{
   gap:3px;
   white-space:nowrap;
   line-height:1;
+  padding:10px 16px;
+  background:#f4eee3;
+  border-radius:4px;
 }
 .hex-header-tel-link{
   display:flex;
