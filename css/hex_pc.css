@@ -1886,26 +1886,13 @@ br[hex-sp]{
 }
 
 /* カレンダーセクションを非表示 */
-.hex-calendar-section{
-  position:fixed!important;
-  top:0!important;
-  left:-10000px!important;
-  display:block!important;
-  box-sizing:border-box;
-  width:1200px!important;
-  min-height:0!important;
-  margin:0!important;
-  opacity:0!important;
-  visibility:hidden!important;
-  pointer-events:none!important;
+.hex-calendar-section.is-calendar-generated{
+  display:none!important;
 }
 
 /* モーダル内カレンダー */
 .hex-calendar-modal
-.hex-calendar-section{
-  position:relative!important;
-  top:auto!important;
-  left:auto!important;
+.hex-calendar-section.is-calendar-generated{
   display:block!important;
   box-sizing:border-box;
   width:100%!important;
@@ -1914,9 +1901,6 @@ br[hex-sp]{
   padding:60px 70px!important;
   background:#fff!important;
   color:#383838!important;
-  opacity:1!important;
-  visibility:visible!important;
-  pointer-events:auto!important;
 }
 
 /* 見出し */
