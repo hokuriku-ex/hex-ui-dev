@@ -993,11 +993,7 @@ window.hexNextBlock=function(el){
 hexReady(function(){
   document.querySelectorAll('.hex-button-view').forEach(function(hexView){
     var hexTitle=hexView.dataset.title||'';
-    var hexShortname=hexView.dataset.shortname||'';
-    var hexPageType=hexView.dataset.pageType||'';
-    var hexUrl=hexShortname
-      ?window.hexBuildPageUrl(hexShortname,hexPageType)
-      :window.hexBuildUrl(hexView);
+    var hexUrl=window.hexBuildUrl(hexView);
     var hexType=hexView.dataset.type||'internal';
     var hexStyle=hexView.dataset.style||'light';
     var hexCol=hexView.dataset.col||'1';
