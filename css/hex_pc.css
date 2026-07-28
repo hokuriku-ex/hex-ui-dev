@@ -1922,7 +1922,7 @@ br[hex-sp]{
 /* 説明文 */
 .hex-calendar-modal
 .hex-calendar-section h4{
-  margin:0 0 40px!important;
+  margin:0!important;
   color:#383838!important;
   text-align:center;
 }
