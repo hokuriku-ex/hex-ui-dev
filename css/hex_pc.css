@@ -4037,7 +4037,7 @@ body.hex-form-dialog-open{
     background:#f8faff!important;
   }
 }
-
+  
 /* =======================================
    営業日カレンダー
 ======================================= */
@@ -4314,7 +4314,7 @@ body.hex-form-dialog-open{
   }
 }
 
-/* 記事エリア上下左右標準余白を無くす */
+/* 記事エリア上下左右標準余白をリセット */
 .post_index_contents{
   padding:0!important;
 }
