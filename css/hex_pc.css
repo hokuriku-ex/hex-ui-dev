@@ -4030,8 +4030,8 @@ body.hex-form-dialog-open{
   padding:28px 30px;
   box-sizing:border-box;
   color:#383838;
-  background:rgba(56,56,56,.035);
-  border:1px solid rgba(56,56,56,.16);
+  background:#fff;
+  border:none;
 }
 .hex-calendar-header{
   display:grid;
