@@ -4291,3 +4291,44 @@ body.hex-form-dialog-open{
   transform:translateX(4px);
   text-decoration:none!important;
 }
+
+/* =======================================
+   PC表示の可変スケール
+   基準：画面幅1200px
+======================================= */
+
+/* 769～1200px
+   文字：85％ → 100％
+   コンテンツ：画面幅に合わせて縮小
+*/
+@media screen and (min-width:769px) and (max-width:1200px){
+  :root{
+    --base_width:1200px;
+  }
+
+  html{
+    font-size:clamp(
+      13.6px,
+      calc(9.318px + 0.5568vw),
+      16px
+    );
+  }
+}
+
+/* 1201～1600px以上
+   文字：100％ → 115％
+   コンテンツ：1200px → 1600px
+*/
+@media screen and (min-width:1201px){
+  :root{
+    --base_width:clamp(1200px, 100vw, 1600px);
+  }
+
+  html{
+    font-size:clamp(
+      16px,
+      calc(8.8px + 0.6vw),
+      18.4px
+    );
+  }
+}
