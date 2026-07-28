@@ -1849,7 +1849,7 @@ br[hex-sp]{
   justify-content:center;
   box-sizing:border-box;
   padding:40px;
-  background:rgba(10,10,10,.72);
+  background:rgba(10,10,10,.72)!important;
   visibility:hidden;
   opacity:0;
   pointer-events:none;
@@ -1869,9 +1869,9 @@ br[hex-sp]{
   width:min(1200px,100%);
   max-height:calc(100dvh - 80px);
   overflow:auto;
-  background:#fff;
-  color:#383838;
-  box-shadow:0 24px 70px rgba(0,0,0,.28);
+  background:#fff!important;
+  color:#383838!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.28)!important;
   overscroll-behavior:contain;
   transform:translateY(20px);
   transition:transform .3s ease;
@@ -1950,27 +1950,27 @@ br[hex-sp]{
   height:48px;
   margin:0;
   padding:0;
-  border:1px solid rgba(31,39,116,.18);
+  border:1px solid rgba(31,39,116,.18)!important;
   border-radius:50%;
-  background:#fff;
-  color:#1f2774;
+  background:#fff!important;
+  color:#1f2774!important;
   font-size:24px;
   line-height:1;
   cursor:pointer;
   appearance:none;
-  box-shadow:0 5px 18px rgba(0,0,0,.08);
+  box-shadow:0 5px 18px rgba(0,0,0,.08)!important;
   transition:
     color .25s ease,
     background-color .25s ease,
     transform .25s ease;
 }
 .hex-calendar-modal-close:hover{
-  color:#fff;
-  background:#1f2774;
+  color:#fff!important;
+  background:#1f2774!important;
   transform:rotate(90deg);
 }
 .hex-calendar-modal-close:focus-visible{
-  outline:2px solid #1f2774;
+  outline:2px solid #1f2774!important;
   outline-offset:3px;
 }
 
