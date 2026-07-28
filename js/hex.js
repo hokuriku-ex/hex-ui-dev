@@ -1950,6 +1950,58 @@ hexLoad(function(){
   document.body.appendChild(modal);
 
   /* ---------------------------------------
+    カレンダー生成完了後に元の位置で非表示
+  --------------------------------------- */
+  var calendarArea=document.querySelector(
+    '#hex-calendar-area'
+  );
+
+  function hideGeneratedCalendarSection(){
+    if(
+      calendarArea&&
+      (
+        calendarArea.classList.contains(
+          'hex-calendar-ready'
+        )||
+        calendarArea.querySelector('.hex-calendar')
+      )
+    ){
+      calendarSection.classList.add(
+        'is-calendar-generated'
+      );
+
+      return true;
+    }
+
+    return false;
+  }
+
+  /* すでに生成済みか確認 */
+  if(
+    calendarArea&&
+    !hideGeneratedCalendarSection()
+  ){
+    var calendarObserver=
+      new MutationObserver(function(){
+
+        if(hideGeneratedCalendarSection()){
+          calendarObserver.disconnect();
+        }
+
+      });
+
+    calendarObserver.observe(
+      calendarArea,
+      {
+        childList:true,
+        subtree:true,
+        attributes:true,
+        attributeFilter:['class']
+      }
+    );
+  }
+
+  /* ---------------------------------------
      モーダルを開く
   --------------------------------------- */
   function openCalendarModal(openButton){
