@@ -2188,6 +2188,12 @@ body,
   .catch_type4 .catch_catch{
     top:45%!important;
   }
+  .catch_type4 .maincatch{
+    padding-left:0!important;
+  }
+  .catch_type4 .subcatch{
+    padding-left:0!important;
+  }
   .heroimage_type .fontsize_caption_pc_04{
     line-height:1.5em!important;
   }
