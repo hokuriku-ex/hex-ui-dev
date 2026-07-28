@@ -2192,6 +2192,12 @@ body,
   .catch_type4 .subcatch{
     margin-left:3%!important;
   }
+  .heroimage_type .fontsize_caption_pc_04{
+    line-height:1.5em!important;
+  }
+  .heroimage_type .fontsize_sub_pc_05{
+    font-size:min(var(--base_width) * 1.9 / 100, 1.9vw);
+  }
 }
 
 /* スクロールナビ */
