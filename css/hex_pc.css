@@ -1670,6 +1670,13 @@ br[hex-sp]{
   }
 }
 
+/* 画面幅が狭いPCではヘッダーSNSを非表示 */
+@media screen and (min-width:769px) and (max-width:1250px){
+  .hex-header-sns{
+    display:none!important;
+  }
+}
+
 /* PC丸型ページトップ */
 .hex-page-top{
   display:none;
