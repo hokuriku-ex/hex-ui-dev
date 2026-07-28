@@ -1587,6 +1587,10 @@ br[hex-sp]{
   display:none!important;
 }
 
+.headermenu_type8 .headermenu_logo img:hover{
+  opacity:.75;
+}
+
 /* PCのみ：ハンバーガーメニュー非表示 */
 @media screen and (min-width:769px){
   .contactbutton_type1 .menu_button,
