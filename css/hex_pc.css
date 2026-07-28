@@ -1901,7 +1901,8 @@ br[hex-sp]{
 }
 
 /* モーダル内カレンダー */
-.hex-calendar-modal .hex-calendar-section{
+.hex-calendar-modal
+.hex-calendar-section{
   position:relative!important;
   top:auto!important;
   left:auto!important;
