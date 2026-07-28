@@ -2184,22 +2184,20 @@ body,
    トップページ：ヒーロー画像
 ======================================= */
 /* キャッチコピー */
-@media screen and (min-width:769px){
-  .catch_type4 .catch_catch{
-    top:45%!important;
-  }
-  .catch_type4 .maincatch{
-    padding-left:0!important;
-  }
-  .catch_type4 .subcatch{
-    padding-left:0!important;
-  }
-  .heroimage_type .fontsize_caption_pc_04{
-    line-height:1.5em!important;
-  }
-  .heroimage_type .fontsize_sub_pc_05{
-    font-size:min(var(--base_width) * 1.9 / 100, 1.9vw);
-  }
+.catch_type4 .catch_catch{
+  top:45%!important;
+}
+.catch_type4 .maincatch{
+  padding-left:0!important;
+}
+.catch_type4 .subcatch{
+  padding-left:0!important;
+}
+.heroimage_type .fontsize_caption_pc_04{
+  line-height:1.5em!important;
+}
+.heroimage_type .fontsize_sub_pc_05{
+  font-size:min(var(--base_width) * 1.9 / 100, 1.9vw);
 }
 
 /* スクロールナビ */
