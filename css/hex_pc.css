@@ -4029,7 +4029,7 @@ body.hex-form-dialog-open{
   margin:0 auto;
   padding:28px 30px;
   box-sizing:border-box;
-  color:#fff;
+  color:#383838;
   background:rgba(255,255,255,.035);
   border:1px solid rgba(255,255,255,.16);
 }
@@ -4054,7 +4054,7 @@ body.hex-form-dialog-open{
   height:40px;
   padding:0;
   border:0;
-  color:#fff;
+  color:#383838;
   font-size:20px;
   background:transparent;
   cursor:pointer;
@@ -4100,7 +4100,7 @@ body.hex-form-dialog-open{
   width:34px;
   height:34px;
   box-sizing:border-box;
-  color:#fff;
+  color:#383838;
   font-size:16px;
   font-weight:500;
   line-height:1;
@@ -4114,17 +4114,17 @@ body.hex-form-dialog-open{
 /* 定休日 */
 .hex-calendar-number.is-closed{
   border-radius:50%;
-  color:#fff!important;
+  color:#383838!important;
   background:var(--hex-calendar-closed);
 }
 /* 大型連休 */
 .hex-calendar-number.is-long-holiday{
-  color:#fff!important;
+  color:#383838!important;
   background:var(--hex-calendar-holiday);
 }
 /* イベント */
 .hex-calendar-number.is-event{
-  color:#fff!important;
+  color:#383838!important;
   background:var(--hex-calendar-event);
   clip-path:polygon(
     25% 6.7%,
