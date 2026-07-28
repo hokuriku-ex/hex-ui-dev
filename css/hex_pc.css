@@ -1859,6 +1859,13 @@ br[hex-sp]{
   }
 }
 
+/* 画面幅が狭いPCではカレンダーアイコンを非表示 */
+@media screen and (min-width:769px) and (max-width:1350px){
+  .hex-header-info{
+    display:none!important;
+  }
+}
+
 /* =======================================
    営業日カレンダーモーダル
 ======================================= */
