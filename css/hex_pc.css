@@ -1670,7 +1670,7 @@ br[hex-sp]{
   }
 }
 
-/* 画面幅が狭いPCではヘッダーSNSを非表示 */
+/* 画面幅が狭いPCではSNSアイコンを非表示 */
 @media screen and (min-width:769px) and (max-width:1800px){
   .hex-header-sns{
     display:none!important;
