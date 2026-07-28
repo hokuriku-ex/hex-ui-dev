@@ -2191,10 +2191,12 @@ body,
   padding-left:0!important;
 }
 .heroimage_type .fontsize_caption_pc_04{
+  font-size: min(var(--base_width) * 3.6 / 100, 3.6vw);
   line-height:1.5em!important;
 }
 .heroimage_type .fontsize_sub_pc_05{
   font-size:min(var(--base_width) * 1.9 / 100, 1.9vw);
+  line-height:1.5em!important;
 }
 
 /* スクロールナビ */
