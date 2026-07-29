@@ -2414,6 +2414,9 @@ body,
   max-width:1600px;
   margin:0 auto;
 }
+.hex-home-news-list .post_index_home_type1 .bg_post_index_home .bg_items{
+  padding-inline:0!important;
+}
 .hex-home-news-button{
   width:100%;
   max-width:1600px;
