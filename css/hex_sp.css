@@ -1493,6 +1493,6 @@
 /* ヘッダー高さ */
 @media screen and (max-width:768px){
   :root{
-    --header_height_smartphone:80px!important;
+    --header_height_smartphone:clamp(64px, 20vw, 80px)!important;
   }
 }
