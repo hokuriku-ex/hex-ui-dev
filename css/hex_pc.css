@@ -1716,8 +1716,22 @@ br[hex-sp]{
 }
 
 /* ==========================
-   ヘッダーメニュー hover
+   ヘッダーメニュー
 ========================== */
+/* すき間調整 */
+.headermenu_type8 .pc_menu{
+  gap:clamp(1px, .4vw, 8px);
+}
+.headermenu_type8 .pc_menu a{
+  padding-inline:clamp(2px, .5vw, 10px);
+  white-space:nowrap;
+}
+.headermenu_type8
+.gc_auto_frame_header_object_menu_separator{
+  margin-inline:clamp(1px, .2vw, 4px);
+}
+
+/* 項目レイアウト */
 .headermenu_type8 .menu_group.menu_menu{
   color:rgb(56,56,56);
   font-weight:900;
