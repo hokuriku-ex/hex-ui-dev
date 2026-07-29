@@ -2525,7 +2525,7 @@ body,
 .hex-intro h4{
   max-width:1000px;
   margin:0 auto;
-  padding:26px 40px 44px;
+  padding:0 0 22px;
   text-align:center;
   color:#343a63;
   font-size:17px;
@@ -2538,7 +2538,7 @@ body,
   display:block;
   width:40px;
   height:1px;
-  margin:0 auto 20px;
+  margin:0 auto 22px;
   background:#c8a874;
 }
 
