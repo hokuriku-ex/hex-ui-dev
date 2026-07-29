@@ -2237,6 +2237,20 @@ hexReady(function(){
 });
 
 /* =======================================
+   導入文をページタイトル内へ移動
+======================================= */
+hexLoad(function(){
+  var hexIntro=document.querySelector('.hex-intro');
+  var pageTitleContents=document.querySelector(
+    '.pagetitle_type.pagetitle_type4 > .contents'
+  );
+
+  if(!hexIntro || !pageTitleContents)return;
+
+  pageTitleContents.appendChild(hexIntro);
+});
+
+/* =======================================
    共通フッター レイアウト調整
 ======================================= */
 hexReady(function(){
