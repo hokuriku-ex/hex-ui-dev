@@ -1719,12 +1719,21 @@ br[hex-sp]{
    ヘッダーメニュー
 ========================== */
 /* すき間調整 */
-.headermenu_type8 .pc_menu{
+.headermenu_type8 .bg_pc_menu{
   display:flex!important;
   align-items:center!important;
   justify-content:flex-end!important;
-  gap:3.5px!important;
+  flex-wrap:nowrap!important;
   min-width:0!important;
+}
+.headermenu_type8 .bg_pc_menu > .pc_menu{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  flex:1 1 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  gap:3.5px!important;
 }
 .headermenu_type8 .pc_menu > .menu_menu{
   flex:0 1 auto!important;
@@ -1815,12 +1824,13 @@ br[hex-sp]{
 /* =======================================
    PCヘッダー 電話情報・カレンダーボタン
 ======================================= */
-.hex-header-info{
-  display:flex;
-  align-items:center;
-  flex:0 0 auto;
+.headermenu_type8
+.bg_pc_menu > .hex-header-info{
+  display:flex!important;
+  align-items:center!important;
+  flex:0 0 auto!important;
   gap:16px;
-  margin-left:60px;
+  margin-left:clamp(16px,3vw,60px)!important;
 }
 .hex-header-tel{
   display:flex;
