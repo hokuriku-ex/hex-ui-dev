@@ -2185,7 +2185,7 @@ body,
 ======================================= */
 /* キャッチコピー */
 .catch_type4 .catch_contents{
-  padding-left:clamp(24px, 3vw, 560px)!important;
+  padding-left:clamp(24px, 4.5vw, 72px)!important;
 }
 .catch_type4 .maincatch{
   padding-left:0!important;
@@ -2507,6 +2507,12 @@ body,
 /* 記事タイトル非表示 */
 .gc_auto_frame_post_index .bg_title.accent_color_basecolor1{
   display:none !important;
+}
+
+/* 記事エリア上下左右余白変更 */
+.post_index_contents{
+  padding-block:0!important;
+  padding-inline:clamp(24px, 3vw, 40px)!important;
 }
 
 /* =======================================
@@ -4310,10 +4316,4 @@ body.hex-form-dialog-open{
   html:root{
     --base_width:1600px!important;
   }
-}
-
-/* 記事エリア上下左右余白変更 */
-.post_index_contents{
-  padding-block:0!important;
-  padding-inline:clamp(24px, 3vw, 40px)!important;
 }
