@@ -2059,9 +2059,9 @@ body.hex-calendar-modal-open{
 /* ロゴ */
 .hex-footer-frame .footer_logo{
   width:340px!important;
-  justify-self:end;
-  margin-left:auto;
-  margin-right:0;
+  justify-self:end!important;
+  margin-left:auto!important;
+  margin-right:0!important;
 }
 
 .hex-footer-frame .footer_logo picture{
