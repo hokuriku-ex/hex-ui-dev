@@ -691,7 +691,7 @@ div.NNAttached{
 }
 .bg_post_index .linktext_color_basecolor2 .hex-anchor-nav a{
   color:#c8a874!important;
-  border-bottom: 1px solid rgba(200, 168, 116, .6);
+  border-bottom: 1px solid rgba(200, 168, 116, .6)!important;
 }
 .hex-anchor-nav.is-fixed{
   position:fixed;
@@ -757,7 +757,7 @@ div.NNAttached{
   box-shadow:none!important;
   transform:none!important;
   transition:.3s;
-  border-bottom: 1px solid rgba(200, 168, 116, .6);
+  border-bottom: 1px solid rgba(200, 168, 116, .6)!important;
 }
 .hex-anchor-nav-link:hover{
   color:#4a7fd0!important;
