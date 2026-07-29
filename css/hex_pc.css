@@ -2185,7 +2185,7 @@ body,
 ======================================= */
 /* キャッチコピー */
 .catch_type4 .catch_contents{
-  padding-left:clamp(24px, 3vw, 240px)!important;
+  padding-left:clamp(24px, 3vw, 320px)!important;
 }
 .catch_type4 .maincatch{
   padding-left:0!important;
