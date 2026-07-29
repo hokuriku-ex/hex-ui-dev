@@ -1718,82 +1718,6 @@ br[hex-sp]{
 /* ==========================
    ヘッダーメニュー
 ========================== */
-/* すき間調整 */
-.headermenu_type8 .bg_pc_menu{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:flex-end!important;
-  flex-wrap:nowrap!important;
-  min-width:0!important;
-}
-.headermenu_type8 .bg_pc_menu > .pc_menu{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:flex-end!important;
-  flex:1 1 auto!important;
-  width:auto!important;
-  min-width:0!important;
-  gap:3.5px!important;
-}
-.headermenu_type8 .pc_menu > .menu_menu{
-  flex:0 1 auto!important;
-  padding-inline:clamp(
-    2px,
-    calc(1.44vw - 9.1px),
-    14px
-  )!important;
-  white-space:nowrap!important;
-}
-.headermenu_type8
-.pc_menu > .gc_auto_frame_header_object_menu_separator{
-  flex:0 0 1px!important;
-  margin-inline:0!important;
-}
-/* ロゴとメニューの横幅を分配 */
-.headermenu_type8 .headermenu{
-  display:flex!important;
-  align-items:center!important;
-  flex-wrap:nowrap!important;
-}
-
-/* ロゴは不足したときだけ縮小 */
-.headermenu_type8 .headermenu_logo{
-  flex:0 1 auto!important;
-  min-width:0!important;
-}
-
-.headermenu_type8 .headermenu_logo picture{
-  display:block;
-  width:100%;
-}
-
-.headermenu_type8 .headermenu_logo img{
-  display:block;
-  width:100%!important;
-  max-width:100%!important;
-  height:auto!important;
-}
-
-/* メニュー側も残り幅に収める */
-.headermenu_type8 .bg_pc_menu{
-  flex:1 1 auto!important;
-  width:auto!important;
-  min-width:0!important;
-}
-
-.headermenu_type8 .bg_pc_menu > .pc_menu{
-  flex:1 1 auto!important;
-  width:auto!important;
-  min-width:0!important;
-}
-
-/* HOPWEBの位置調整用要素は幅を取らせない */
-.headermenu_type8 .pc_menu_center{
-  flex:0 0 0!important;
-  width:0!important;
-}
-
-/* 項目レイアウト */
 .headermenu_type8 .menu_group.menu_menu{
   color:rgb(56,56,56);
   font-weight:900;
@@ -1867,13 +1791,12 @@ br[hex-sp]{
 /* =======================================
    PCヘッダー 電話情報・カレンダーボタン
 ======================================= */
-.headermenu_type8
-.bg_pc_menu > .hex-header-info{
-  display:flex!important;
-  align-items:center!important;
-  flex:0 0 auto!important;
+.hex-header-info{
+  display:flex;
+  align-items:center;
+  flex:0 0 auto;
   gap:16px;
-  margin-left:clamp(16px,3vw,60px)!important;
+  margin-left:60px;
 }
 .hex-header-tel{
   display:flex;
@@ -1928,9 +1851,16 @@ br[hex-sp]{
   transform:translateY(-2px);
 }
 
-/* 画面幅が狭いPCでは電話・カレンダーを非表示 */
-@media screen and (min-width:769px) and (max-width:800px){
-  .headermenu_type8 .hex-header-info{
+/* 画面幅が狭いPCでは電話情報を非表示 */
+@media screen and (min-width:769px) and (max-width:1550px){
+  .hex-header-tel{
+    display:none!important;
+  }
+}
+
+/* 画面幅が狭いPCではカレンダーアイコンを非表示 */
+@media screen and (min-width:769px) and (max-width:1350px){
+  .hex-header-info{
     display:none!important;
   }
 }
