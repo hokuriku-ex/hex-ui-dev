@@ -699,7 +699,7 @@ div.NNAttached{
   padding:0 16px 16px;
   overflow:visible;
   text-align:center;
-  background:#fff;
+  background:transparent!important;
   box-shadow:none;
   transform:translateX(-50%);
 }
