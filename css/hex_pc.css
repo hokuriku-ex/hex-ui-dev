@@ -689,6 +689,9 @@ div.NNAttached{
   background:#fff!important;
   box-shadow:none;
 }
+.bg_post_index .linktext_color_basecolor2 .hex-anchor-nav a{
+  color:#c8a874!important;
+}
 .hex-anchor-nav.is-fixed{
   position:fixed;
   left:50%;
