@@ -1749,6 +1749,49 @@ br[hex-sp]{
   flex:0 0 1px!important;
   margin-inline:0!important;
 }
+/* ロゴとメニューの横幅を分配 */
+.headermenu_type8 .headermenu{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:nowrap!important;
+}
+
+/* ロゴは不足したときだけ縮小 */
+.headermenu_type8 .headermenu_logo{
+  flex:0 1 auto!important;
+  min-width:0!important;
+}
+
+.headermenu_type8 .headermenu_logo picture{
+  display:block;
+  width:100%;
+}
+
+.headermenu_type8 .headermenu_logo img{
+  display:block;
+  width:100%!important;
+  max-width:100%!important;
+  height:auto!important;
+}
+
+/* メニュー側も残り幅に収める */
+.headermenu_type8 .bg_pc_menu{
+  flex:1 1 auto!important;
+  width:auto!important;
+  min-width:0!important;
+}
+
+.headermenu_type8 .bg_pc_menu > .pc_menu{
+  flex:1 1 auto!important;
+  width:auto!important;
+  min-width:0!important;
+}
+
+/* HOPWEBの位置調整用要素は幅を取らせない */
+.headermenu_type8 .pc_menu_center{
+  flex:0 0 0!important;
+  width:0!important;
+}
 
 /* 項目レイアウト */
 .headermenu_type8 .menu_group.menu_menu{
