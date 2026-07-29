@@ -2417,6 +2417,9 @@ body,
 .hex-home-news-list .post_index_home_type1 .bg_post_index_home .bg_items{
   padding-inline:0!important;
 }
+.hex-home-news-list .bg_post_index_home .post_index_home{
+  padding-inline:0!important;
+}
 .hex-home-news-button{
   width:100%;
   max-width:1600px;
