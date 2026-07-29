@@ -1875,9 +1875,7 @@ hexLoad(function(){
 
   if(
     pcMenu&&
-    !document.querySelector(
-      '.bg_pc_menu .hex-header-info'
-    )
+    !pcMenu.querySelector('.hex-header-info')
   ){
     var headerInfo=document.createElement('div');
 
@@ -1895,7 +1893,6 @@ hexLoad(function(){
           9:00〜18:00(日曜・祝日休)
         </span>
       </div>
-
       <button class="hex-calendar-open"
               type="button"
               aria-label="営業日カレンダーを開く"
@@ -1906,10 +1903,7 @@ hexLoad(function(){
       </button>
     `;
 
-    pcMenu.insertAdjacentElement(
-      'afterend',
-      headerInfo
-    );
+    pcMenu.appendChild(headerInfo);
   }
 
   /* ---------------------------------------
