@@ -683,8 +683,7 @@ div.NNAttached{
 .hex-anchor-nav{
   z-index:70;
   width:100vw;
-  margin:0 calc(50% - 50vw) 48px;
-  padding:0 16px 16px;
+  margin:0 calc(50% - 50vw);
   overflow:visible;
   text-align:center;
   background:#fff;
