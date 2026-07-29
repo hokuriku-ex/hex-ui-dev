@@ -734,6 +734,7 @@ div.NNAttached{
   border:none!important;
   box-shadow:none!important;
   text-decoration:none!important;
+  border-bottom: 1px solid rgba(200, 168, 116, .6)!important;
 }
 .hex-anchor-nav-link{
   position:relative;
@@ -757,7 +758,6 @@ div.NNAttached{
   box-shadow:none!important;
   transform:none!important;
   transition:.3s;
-  border-bottom: 1px solid rgba(200, 168, 116, .6)!important;
 }
 .hex-anchor-nav-link:hover{
   color:#4a7fd0!important;
