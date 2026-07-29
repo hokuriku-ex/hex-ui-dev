@@ -686,7 +686,7 @@ div.NNAttached{
   margin:22px calc(50% - 50vw);
   overflow:visible;
   text-align:center;
-  background:#fff;
+  background:transparent;
   box-shadow:none;
 }
 .hex-anchor-nav.is-fixed{
