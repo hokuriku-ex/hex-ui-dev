@@ -1740,9 +1740,6 @@ br[hex-sp]{
   flex:0 0 1px!important;
   margin-inline:0!important;
 }
-.headermenu_type8 .hex-header-info{
-  flex:0 0 auto!important;
-}
 
 /* 項目レイアウト */
 .headermenu_type8 .menu_group.menu_menu{
@@ -1880,10 +1877,7 @@ br[hex-sp]{
 
 /* 画面幅が狭いPCでは電話・カレンダーを非表示 */
 @media screen and (min-width:769px) and (max-width:800px){
-  .hex-header-tel{
-    display:none!important;
-  }
-  .hex-header-info{
+  .headermenu_type8 .hex-header-info{
     display:none!important;
   }
 }
