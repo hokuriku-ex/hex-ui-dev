@@ -1723,26 +1723,23 @@ br[hex-sp]{
   display:flex!important;
   align-items:center!important;
   justify-content:flex-end!important;
-  gap:0!important;
+  gap:3.5px!important;
   min-width:0!important;
 }
-/* ホーム～お問い合わせ */
 .headermenu_type8 .pc_menu > .menu_menu{
   flex:0 1 auto!important;
   padding-inline:clamp(
     2px,
     calc(1.44vw - 9.1px),
     14px
-  );
+  )!important;
   white-space:nowrap!important;
 }
-/* 区切り線 */
 .headermenu_type8
 .pc_menu > .gc_auto_frame_header_object_menu_separator{
   flex:0 0 1px!important;
   margin-inline:0!important;
 }
-/* 電話・カレンダー */
 .headermenu_type8 .hex-header-info{
   flex:0 0 auto!important;
 }
