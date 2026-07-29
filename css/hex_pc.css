@@ -686,17 +686,11 @@ div.NNAttached{
   margin:22px calc(50% - 50vw);
   overflow:visible;
   text-align:center;
-  background:
-    radial-gradient(circle at 8% 16%,rgba(31,39,116,.18),transparent 28%),
-    radial-gradient(circle at 16% 82%,rgba(200,168,116,.20),transparent 30%),
-    radial-gradient(circle at 78% 22%,rgba(169,170,149,.26),transparent 34%),
-    radial-gradient(circle at 88% 78%,rgba(42,91,172,.14),transparent 30%),
-    linear-gradient(135deg,#f7f6f2 0%,#f3f1eb 38%,#eef0e8 68%,#f6f5f1 100%)!important;
+  background:#fff!important;
   box-shadow:none;
 }
 .bg_post_index .linktext_color_basecolor2 .hex-anchor-nav a{
-  color:#c8a874!important;
-  border-bottom: 1px solid rgba(200, 168, 116, .6)!important;
+  color:#1f2774!important;
 }
 .hex-anchor-nav.is-fixed{
   position:fixed;
@@ -708,12 +702,7 @@ div.NNAttached{
   padding:0 16px 16px;
   overflow:visible;
   text-align:center;
-  background:
-    radial-gradient(circle at 8% 16%,rgba(31,39,116,.18),transparent 28%),
-    radial-gradient(circle at 16% 82%,rgba(200,168,116,.20),transparent 30%),
-    radial-gradient(circle at 78% 22%,rgba(169,170,149,.26),transparent 34%),
-    radial-gradient(circle at 88% 78%,rgba(42,91,172,.14),transparent 30%),
-    linear-gradient(135deg,#f7f6f2 0%,#f3f1eb 38%,#eef0e8 68%,#f6f5f1 100%)!important;
+  background:#fff!important;
   box-shadow:none;
   transform:translateX(-50%);
 }
@@ -744,7 +733,6 @@ div.NNAttached{
   border:none!important;
   box-shadow:none!important;
   text-decoration:none!important;
-  border-bottom: 1px solid rgba(200, 168, 116, .6)!important;
 }
 .hex-anchor-nav-link{
   position:relative;
@@ -755,7 +743,7 @@ div.NNAttached{
   min-height:0!important;
   margin:0!important;
   padding:0 18px!important;
-  color:#c8a874!important;
+  color:#1f2774!important;
   font-size:16px!important;
   line-height:1.8!important;
   font-weight:500!important;
