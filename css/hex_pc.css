@@ -2423,9 +2423,6 @@ body,
 .hex-home-news-list .bg_post_index_home .post_index_home{
   padding-inline:0!important;
 }
-.hex-home-news-list .gc_auto_frame_post_index_home_box_contents_cell_list{
-  margin:0!important;
-}
 .hex-home-news-button{
   width:100%;
   max-width:1600px;
@@ -3399,6 +3396,7 @@ body,
 .gc_auto_frame_post_index_box_contents_cell_list{
   position:relative!important;
   border-bottom:1px solid rgba(31,39,116,.35)!important;
+  margin:5px 0!important;
 }
 .gc_auto_frame_post_index_home_box_contents_cell_text_list,
 .gc_auto_frame_post_index_box_contents_cell_text_list{
