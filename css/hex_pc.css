@@ -1878,15 +1878,11 @@ br[hex-sp]{
   transform:translateY(-2px);
 }
 
-/* 画面幅が狭いPCでは電話情報を非表示 */
-@media screen and (min-width:769px) and (max-width:1550px){
+/* 画面幅が狭いPCでは電話・カレンダーを非表示 */
+@media screen and (min-width:769px) and (max-width:800px){
   .hex-header-tel{
     display:none!important;
   }
-}
-
-/* 画面幅が狭いPCではカレンダーアイコンを非表示 */
-@media screen and (min-width:769px) and (max-width:1350px){
   .hex-header-info{
     display:none!important;
   }
