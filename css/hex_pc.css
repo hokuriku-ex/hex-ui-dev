@@ -2521,6 +2521,27 @@ body,
   display:none !important;
 }
 
+/* 導入文 */
+.hex-intro h4{
+  max-width:1000px;
+  margin:0 auto;
+  padding:26px 40px 44px;
+  text-align:center;
+  color:#343a63;
+  font-size:17px;
+  font-weight:500;
+  line-height:1.9;
+  letter-spacing:.04em;
+}
+.hex-intro::before{
+  content:"";
+  display:block;
+  width:40px;
+  height:1px;
+  margin:0 auto 20px;
+  background:#c8a874;
+}
+
 /* 記事エリア上下左右余白変更 */
 .post_index_contents{
   padding-block:0!important;
