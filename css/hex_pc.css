@@ -2692,7 +2692,8 @@ body,
   width:100%;
 }
 #gc_auto_body_company .bg_company_googlemap_link_url{
-  margin-top:0!important;
+  margin:0!important;
+  padding:0!important;
 }
 #gc_auto_body_company .hex-company-map-link{
   display:flex;
