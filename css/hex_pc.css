@@ -4384,19 +4384,7 @@ body.hex-form-dialog-open{
 @media screen and (min-width:769px){
   html:root{
     --base_width:1600px!important;
-  }
-}
-
-/* ベース幅設定 */
-@media screen and (min-width:769px){
-  html:root{
     --medium_width:1200px!important;
-  }
-}
-
-/* ベース幅設定 */
-@media screen and (min-width:769px){
-  html:root{
     --small_width:1000px!important;
   }
 }
