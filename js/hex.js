@@ -2450,10 +2450,6 @@ function hexCreatePageTopButton(){
   });
 }
 function hexTogglePageTopButton(button){
-  if(window.innerWidth<=768){
-    button.className=button.className.replace(/\bis-visible\b/g,'').replace(/\s+/g,' ').replace(/^\s+|\s+$/g,'');
-    return;
-  }
   var isVisible=(' '+button.className+' ').indexOf(' is-visible ')!==-1;
   if(window.scrollY>300&&!isVisible){
     button.className+=' is-visible';
