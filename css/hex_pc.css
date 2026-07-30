@@ -365,7 +365,7 @@ a.hex-text-link[target="_blank"]::after{
 /* 記事詳細ページング */
 .gc_auto_frame_post_item_pager_box.hex-detail-pager-done{
   width:100%!important;
-  max-width:1000px!important;
+  max-width:var(--base_width)!important;
   display:grid!important;
   grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;
   align-items:center!important;
@@ -466,7 +466,7 @@ a.hex-text-link[target="_blank"]::after{
 
 /* 記事詳細タイトル */
 .gc_auto_frame_post_item_title{
-  max-width:1000px!important;
+  max-width:var(--base_width)!important;
   margin:0 auto 54px!important;
   padding:0!important;
   box-sizing:border-box!important;
@@ -518,7 +518,7 @@ div.NNAttached{
 /* チャット風に変更 */
 .kb_qanda_content{
   width:100%;
-  max-width:900px;
+  max-width:var(--base_width);
   margin:0 auto 56px;
 }
 .kb_qanda_content > label{
@@ -718,7 +718,7 @@ div.NNAttached{
   align-items:center;
   flex-wrap:wrap;
   width:100%;
-  max-width:1100px;
+  max-width:var(--base_width);
   margin:0 auto;
   padding:0;
   gap:0;
@@ -1229,7 +1229,7 @@ br[hex-sp]{
   line-height:1.3;
 }
 .hex-banner-text{
-  max-width:900px;
+  max-width:var(--base_width);
   color:#fff;
   paint-order:stroke fill;
   text-shadow:
@@ -2387,7 +2387,7 @@ body,
 .hex-home-news-tabs{
   display:flex;
   justify-content:center;
-  max-width:520px;
+  max-width:var(--base_width);
   margin:0 auto 28px;
   border:none;
   border-bottom:1px solid #d8dce8;
@@ -2531,7 +2531,7 @@ body,
 
 /* 導入文 */
 .hex-intro h4{
-  max-width:1000px;
+  max-width:var(--base_width);
   margin:0 auto;
   padding:0 0 24px;
   text-align:center;
