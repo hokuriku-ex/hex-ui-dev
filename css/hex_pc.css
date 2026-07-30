@@ -1680,8 +1680,6 @@ br[hex-sp]{
 /* PC丸型ページトップ */
 .hex-page-top{
   display:none;
-}
-.hex-page-top{
   position:fixed;
   right:28px;
   bottom:28px;
