@@ -1618,6 +1618,19 @@ br[hex-sp]{
   }
 }
 
+/* ハンバーガーメニューをヘッダーの下から表示 */
+@media screen and (min-width:769px) and (max-width:1200px){
+  #gc_auto_frame_header_object_smartphone_hum_pupup{
+    top:var(--header_height)!important;
+    height:calc(
+      100dvh - var(--header_height)
+    )!important;
+    max-height:calc(
+      100dvh - var(--header_height)
+    )!important;
+  }
+}
+
 /* SNS共通 */
 .bg_menu_button_popup .snsbutton_content a[href*="tiktok.com"]::before,
 .ff_contents .ff_sns a[href*="tiktok.com"]::before,
