@@ -499,7 +499,7 @@
 }
 
 /* スマホメニュー変更 */
-@media screen and (max-width:768px){
+@media screen and (max-width:1200px){
   /* メニュー内のホームを非表示 */
   #gc_auto_frame_header_object_smartphone_hum_pupup .home_button{
     display:none!important;
@@ -518,9 +518,13 @@
 
   /* メニューをヘッダーの下から表示 */
   #gc_auto_frame_header_object_smartphone_hum_pupup{
-    top:72px!important;
-    height:calc(100dvh - 72px - 50px)!important;
-    max-height:calc(100dvh - 72px - 50px)!important;
+    top:var(--header_height_smartphone)!important;
+    height:calc(
+      100dvh - var(--header_height_smartphone) - 50px
+    )!important;
+    max-height:calc(
+      100dvh - var(--header_height_smartphone) - 50px
+    )!important;
   }
 
   /* ヘッダーを固定して前面に表示 */
