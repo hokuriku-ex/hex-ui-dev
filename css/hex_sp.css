@@ -245,14 +245,12 @@
   .hex-anchor-nav::after{
     content:'\f105';
     position:absolute;
-    top:1px;
     right:16px;
     z-index:2;
     display:none;
     align-items:center;
     justify-content:flex-end;
     width:64px;
-    height:100%;
     box-sizing:border-box;
     color:#1f2774;
     font-family:'Font Awesome 6 Free';
@@ -265,6 +263,14 @@
       rgba(255,255,255,0) 0%,
       #fff 50%
     );
+  }
+  .hex-anchor-nav:not(.is-fixed)::after{
+    top:1px;
+    height:100%;
+  }
+  .hex-anchor-nav.is-fixed::after{
+    top:0;
+    height:calc(100% - 16px);
   }
   .hex-anchor-nav.has-scroll-right::after{
     display:flex;
