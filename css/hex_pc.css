@@ -695,7 +695,7 @@ div.NNAttached{
 .hex-anchor-nav.is-fixed{
   position:fixed;
   left:50%;
-  top:80px;
+  top:var(--header_height)!important;
   z-index:70;
   width:100vw;
   margin:0;
