@@ -1827,7 +1827,7 @@ br[hex-sp]{
   align-items:center;
   flex:0 0 auto;
   gap:16px;
-  margin-left:60px;
+  padding-left:40px;
 }
 .hex-header-tel{
   display:flex;
