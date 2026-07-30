@@ -2802,10 +2802,9 @@ body,
 /* スタッフ紹介ページ本体 */
 .hex-staff-wrap{
   width:100%!important;
-  padding-top:0!important;
-  padding-bottom:10%!important;
-  padding-inline:clamp(24px, 3vw, 40px)!important;
-  margin:0 auto;
+  margin-top:0!important;
+  margin-bottom:10%!important;
+  margin-inline:clamp(24px, 3vw, 40px)!important;
   color:#383838;
 }
 .hex-staff-section{
