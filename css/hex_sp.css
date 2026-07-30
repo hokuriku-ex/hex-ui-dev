@@ -492,7 +492,7 @@
    固定ヘッダー・フッター
 ======================================= */
 /* ヘッダー高さ調整 */
-@media screen and (max-width:768px){
+@media screen and (max-width:1200px){
   .heroimage_margintop_normal{
     margin-top:calc(var(--header_height) - 60px)!important;
   }
