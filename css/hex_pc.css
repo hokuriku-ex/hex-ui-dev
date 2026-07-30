@@ -2801,7 +2801,6 @@ body,
 
 /* スタッフ紹介ページ本体 */
 .hex-staff-wrap{
-  max-width:960px;
   margin:0 auto;
   padding:90px 0;
   color:#383838;
