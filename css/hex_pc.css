@@ -2633,7 +2633,6 @@ body,
 #gc_auto_body_company .publicinfo_company h2.title,
 #gc_auto_body_company .publicinfo_company h2.hex-section-title{
   position:relative;
-  width:960px!important;
   max-width:100%;
   display:block;
   margin:0 auto 48px;
@@ -2661,7 +2660,6 @@ body,
   display:none!important;
 }
 #gc_auto_body_company .hex-company-section{
-  width:960px;
   max-width:100%;
   margin:96px auto 0;
   box-sizing:border-box;
