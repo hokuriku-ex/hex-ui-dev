@@ -788,15 +788,6 @@ div.NNAttached{
   z-index:200;
 }
 
-/* 自動生成ページ位置調整用 */
-@media screen and (min-width:769px){
-  .hex-anchor-nav-auto-page:not(.is-fixed){
-    position:relative;
-    top:0;
-    margin-top:90px;
-  }
-}
-
 /* =======================================
    共通パーツ（新規）
 ======================================= */
