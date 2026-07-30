@@ -1681,39 +1681,37 @@ br[hex-sp]{
 .hex-page-top{
   display:none;
 }
-@media screen and (min-width:769px){
-  .hex-page-top{
-    position:fixed;
-    right:28px;
-    bottom:28px;
-    z-index:9999;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    width:54px;
-    height:54px;
-    border:1px solid #1f2774;
-    border-radius:50%;
-    background:#fff;
-    color:#1f2774!important;
-    font-size:18px;
-    text-decoration:none!important;
-    opacity:0;
-    visibility:hidden;
-    transform:translateY(10px);
-    transition:opacity .25s ease,visibility .25s ease,transform .25s ease,border-color .25s ease,color .25s ease,background .25s ease;
-  }
-  .hex-page-top.is-visible{
-    opacity:1;
-    visibility:visible;
-    transform:translateY(0);
-  }
-  .hex-page-top:hover{
-    border-color:#c8a874;
-    background:#fff;
-    color:#c8a874!important;
-    text-decoration:none!important;
-  }
+.hex-page-top{
+  position:fixed;
+  right:28px;
+  bottom:28px;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:54px;
+  height:54px;
+  border:1px solid #1f2774;
+  border-radius:50%;
+  background:#fff;
+  color:#1f2774!important;
+  font-size:18px;
+  text-decoration:none!important;
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(10px);
+  transition:opacity .25s ease,visibility .25s ease,transform .25s ease,border-color .25s ease,color .25s ease,background .25s ease;
+}
+.hex-page-top.is-visible{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+}
+.hex-page-top:hover{
+  border-color:#c8a874;
+  background:#fff;
+  color:#c8a874!important;
+  text-decoration:none!important;
 }
 
 /* ==========================
