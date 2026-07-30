@@ -2568,6 +2568,14 @@ body,
   padding-inline:clamp(24px, 3vw, 40px)!important;
 }
 
+/* 会社情報ページ */
+.gc_auto_frame_publicinfo_company .publicinfo_company_type1 .bg_contents{
+  width:100%!important;
+  padding-top:5%!important;
+  padding-bottom:10%!important;
+  padding-inline:clamp(24px, 3vw, 40px)!important;
+}
+
 /* よくある質問ページ */
 .gc_auto_frame_publicinfo_qanda .publicinfo_qanda_contents{
   width:100%!important;
