@@ -216,7 +216,7 @@
     text-align:left;
   }
   .hex-anchor-nav.is-fixed{
-    top:80px;
+    top:var(--header_height_smartphone)!important;
     width:100vw;
     margin:0;
     padding:0 16px 12px;
