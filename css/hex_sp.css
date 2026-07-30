@@ -252,7 +252,7 @@
     align-items:center;
     justify-content:flex-end;
     width:64px;
-    height:calc(100% - 12px);
+    height:100%;
     padding-right:8px;
     box-sizing:border-box;
     color:#1f2774;
