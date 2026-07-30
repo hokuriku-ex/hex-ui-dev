@@ -492,9 +492,22 @@
    固定ヘッダー・フッター
 ======================================= */
 /* ヘッダー高さ調整 */
-@media screen and (max-width:1200px){
+@media screen and (max-width:768px){
   .heroimage_margintop_normal{
     margin-top:calc(var(--header_height) - 60px)!important;
+  }
+}
+
+/* メニューをヘッダーの下から表示 */
+@media screen and (max-width:768px){
+  #gc_auto_frame_header_object_smartphone_hum_pupup{
+    top:var(--header_height_smartphone)!important;
+    height:calc(
+      100dvh - var(--header_height_smartphone)
+    )!important;
+    max-height:calc(
+      100dvh - var(--header_height_smartphone)
+    )!important;
   }
 }
 
@@ -514,17 +527,6 @@
   /* メニュー内にある既存の×ボタンを非表示 */
   #gc_auto_frame_header_object_smartphone_hum_pupup .bg_closebutton{
     display:none!important;
-  }
-
-  /* メニューをヘッダーの下から表示 */
-  #gc_auto_frame_header_object_smartphone_hum_pupup{
-    top:var(--header_height_smartphone)!important;
-    height:calc(
-      100dvh - var(--header_height_smartphone) - 50px
-    )!important;
-    max-height:calc(
-      100dvh - var(--header_height_smartphone) - 50px
-    )!important;
   }
 
   /* ヘッダーを固定して前面に表示 */
