@@ -245,6 +245,7 @@
   .hex-anchor-nav::after{
     content:'\f105';
     position:absolute;
+    top:1px;
     right:16px;
     z-index:2;
     display:none;
@@ -265,11 +266,9 @@
     )!important;
   }
   .hex-anchor-nav:not(.is-fixed)::after{
-    top:1px;
     height:100%;
   }
   .hex-anchor-nav.is-fixed::after{
-    top:0;
     height:calc(100% - 16px);
   }
   .hex-anchor-nav.has-scroll-right::after{
