@@ -2559,8 +2559,26 @@ body,
   background:#c8a874;
 }
 
-/* 記事エリア上下左右余白変更 */
+/* 記事エリア余白変更 */
 .post_index_contents{
+  padding-block:0!important;
+  padding-inline:clamp(24px, 3vw, 40px)!important;
+}
+
+/* 会社情報ページ余白変更 */
+.gc_auto_frame_publicinfo_company .publicinfo_company_type1 .bg_contents{
+  padding-block:0!important;
+  padding-inline:clamp(24px, 3vw, 40px)!important;
+}
+
+/* 施工事例・お知らせ余白変更 */
+.gc_auto_frame_post_item .post_item_contents{
+  padding-block:0!important;
+  padding-inline:clamp(24px, 3vw, 40px)!important;
+}
+
+/* よくある質問余白変更 */
+.gc_auto_frame_publicinfo_qanda .publicinfo_qanda_contents{
   padding-block:0!important;
   padding-inline:clamp(24px, 3vw, 40px)!important;
 }
