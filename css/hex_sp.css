@@ -576,7 +576,7 @@
 /* =======================================
    ハンバーガーメニュー
 ======================================= */
-@media screen and (max-width:768px){
+@media screen and (max-width:1200px){
   /* メニュー領域を縦スクロール可能にする */
   #gc_auto_frame_header_object_smartphone_hum_pupup{
     overflow-x:hidden!important;
@@ -713,18 +713,6 @@
   #gc_auto_frame_header_object_smartphone_hum_pupup
   .menu_inner_group:hover{
     background:#fff!important;
-  }
-}
-
-/* =======================================
-   PCヘッダー用カレンダー関連を非表示
-======================================= */
-@media screen and (max-width:768px){
-  .hex-header-info{
-    display:none!important;
-  }
-  .hex-calendar-modal{
-    display:none!important;
   }
 }
 
