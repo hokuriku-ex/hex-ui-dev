@@ -2659,7 +2659,7 @@ body,
 #gc_auto_body_company .hex-company-section{
   width:960px;
   max-width:100%;
-  margin:0;
+  margin:96px auto 0;
   box-sizing:border-box;
 }
 #gc_auto_body_company .hex-company-section-info .content:first-of-type{
