@@ -1677,7 +1677,7 @@ br[hex-sp]{
   }
 }
 
-/* PC丸型ページトップ */
+/* 丸型ページトップ */
 .hex-page-top{
   display:none;
   position:fixed;
