@@ -3548,6 +3548,12 @@ body,
 #form_lp_form .gc_form_lp_title{
   display:none!important;
 }
+.gc_auto_frame_lp_form_box{
+  width:100%!important;
+  padding-top:0!important;
+  padding-bottom:10%!important;
+  padding-inline:clamp(24px, 3vw, 40px)!important;
+}
 
 /* 行 */
 #form_lp_form .hex-form-row{
