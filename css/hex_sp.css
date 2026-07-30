@@ -245,14 +245,14 @@
   .hex-anchor-nav::after{
     content:'\f105';
     position:absolute;
-    top:1px;
+    top:0;
     right:16px;
     z-index:2;
     display:none;
     align-items:center;
     justify-content:flex-end;
     width:64px;
-    height:100%;
+    height:calc(100% - 16px);
     box-sizing:border-box;
     color:#1f2774;
     font-family:'Font Awesome 6 Free';
