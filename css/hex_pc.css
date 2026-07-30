@@ -1624,11 +1624,9 @@ br[hex-sp]{
   display:flex!important;
 }
 
-/* PCのみ：標準固定フッター非表示 */
-@media screen and (min-width:769px){
-  .gc_auto_frame_footer_fixed{
-    display:none!important;
-  }
+/* 標準固定フッター非表示 */
+.gc_auto_frame_footer_fixed{
+  display:none!important;
 }
 
 /* PCヘッダーSNS */
@@ -4335,7 +4333,7 @@ body.hex-form-dialog-open{
 }
 
 /* =======================================
-   PC表示画面サイズ対応調整
+   標準変数上書き
 ======================================= */
 /* 記事エリアを1200pxから1600pxに広げる */
 @media screen and (min-width:769px){
