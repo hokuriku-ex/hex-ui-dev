@@ -210,8 +210,7 @@
   .hex-anchor-nav{
     position:relative;
     width:100vw;
-    margin:0 calc(50% - 50vw) 36px;
-    padding:0 16px 12px;
+    margin:22px calc(50% - 50vw);
     overflow:hidden;
     text-align:left;
   }
@@ -219,7 +218,7 @@
     top:var(--header_height_smartphone)!important;
     width:100vw;
     margin:0;
-    padding:0 16px 12px;
+    padding:0 16px 16px;
     overflow:hidden;
     text-align:left;
   }
