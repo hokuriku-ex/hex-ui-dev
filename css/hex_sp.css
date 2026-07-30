@@ -848,7 +848,7 @@
    下層ページ共通
 ======================================= */
 /* 余白調整 */
-@media screen and (max-width:767px){
+@media screen and (max-width:768px){
   /* 基本ページ */
   .post_index_contents{
     padding-block:0!important;
@@ -877,7 +877,7 @@
 /* =======================================
    下層ページ：会社情報
 ======================================= */
-@media screen and (max-width:767px){
+@media screen and (max-width:768px){
   #gc_auto_body_company .hex-company-section{
     width:100%;
     margin:72px auto 0;
