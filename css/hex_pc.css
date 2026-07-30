@@ -1746,7 +1746,6 @@ br[hex-sp]{
       20px
     )!important;
 }
-
 .headermenu_type8 .menu_group.menu_menu{
   color:rgb(56,56,56);
   font-weight:900;
@@ -1878,13 +1877,6 @@ br[hex-sp]{
 .hex-calendar-open:hover{
   color:#c8a874!important;
   transform:translateY(-2px);
-}
-
-/* 画面幅が狭いPCでは電話・カレンダーを非表示 */
-@media screen and (min-width:769px) and (max-width:1550px){
-  .hex-header-info{
-    display:none!important;
-  }
 }
 
 /* =======================================
