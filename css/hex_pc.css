@@ -3543,11 +3543,11 @@ body,
   padding-bottom:10%!important;
 }
 #gc_auto_frame_lp_form_body{
-  max-width:var(--base_width);
+  max-width:var(--small_width);
   margin:0 auto;
 }
 #form_lp_form{
-  max-width:var(--base_width);
+  max-width:var(--small_width);
   margin:0 auto;
 }
 #form_lp_form .gc_form_lp_title{
@@ -3698,7 +3698,7 @@ body,
 /* プライバシーポリシー */
 #gc_auto_frame_lp_form_body .privacy_policy{
   width:calc(100% - 58px)!important;
-  max-width:902px!important;
+  max-width:var(--small_width)!important;
   margin:40px auto 0!important;
   box-sizing:border-box;
 }
@@ -3865,7 +3865,7 @@ body.hex-form-dialog-open{
 }
 #gc_auto_frame_lp_form_dialog_box{
   width:auto!important;
-  max-width:var(--base_width)!important;
+  max-width:var(--small_width)!important;
   margin:60px auto!important;
   padding:0 0 48px!important;
   background:#fff!important;
@@ -3873,7 +3873,7 @@ body.hex-form-dialog-open{
   box-shadow:none!important;
 }
 #gc_auto_frame_lp_form_dialog_box .hex-dialog-confirm{
-  max-width:var(--base_width);
+  max-width:var(--small_width);
   margin:0 auto;
   color:#383838;
 }
