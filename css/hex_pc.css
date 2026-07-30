@@ -1597,8 +1597,8 @@ br[hex-sp]{
   opacity:.75!important;
 }
 
-/* PCのみ：ハンバーガーメニュー非表示 */
-@media screen and (min-width:769px){
+/* 1201px以上のみハンバーガーメニュー非表示 */
+@media screen and (min-width:1201px){
   .contactbutton_type1 .menu_button,
   .contactbutton_type1 .menu_button.contactbutton_none,
   .contactbutton_type1 .menu_button.contactbutton_none.menubutton_position{
@@ -1606,6 +1606,15 @@ br[hex-sp]{
     visibility:hidden!important;
     opacity:0!important;
     pointer-events:none!important;
+  }
+}
+
+/* 769～1200pxはPCメニューを非表示 */
+@media screen and (min-width:769px) and (max-width:1200px){
+  .headermenu_type8 .bg_pc_menu,
+  .headermenu_type8 .pc_menu,
+  .headermenu_type8 .pc_menu_center{
+    display:none!important;
   }
 }
 
