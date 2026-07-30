@@ -2566,6 +2566,9 @@ body,
   padding-bottom:10%!important;
   padding-inline:clamp(24px, 3vw, 40px)!important;
 }
+.gc_auto_frame_publicinfo_company .publicinfo_company_type1 .contents{
+  padding-bottom:0!important;
+}
 
 /* 施工事例・お知らせページ */
 .gc_auto_frame_post_item .post_item_contents{
