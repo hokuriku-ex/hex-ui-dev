@@ -1737,6 +1737,24 @@ br[hex-sp]{
 /* ==========================
    ヘッダーメニュー
 ========================== */
+.headermenu_type8 .menu_group{
+  width:max-content;
+  height:100%;
+  padding:
+    10px
+    clamp(
+      0px,
+      calc((100vw - 1200px) * .05),
+      20px
+    );
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  cursor:pointer;
+}
+
 .headermenu_type8 .menu_group.menu_menu{
   color:rgb(56,56,56);
   font-weight:900;
