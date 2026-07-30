@@ -851,25 +851,25 @@
 @media screen and (max-width:767px){
   /* 基本ページ */
   .post_index_contents{
-    padding-block:32px!important;
+    padding-block:0!important;
     padding-inline:16px!important;
   }
 
   /* 会社情報ページ */
   .gc_auto_frame_publicinfo_company .publicinfo_company_type1 .bg_contents{
-    padding-block:32px!important;
+    padding-block:0!important;
     padding-inline:16px!important;
   }
 
   /* 施工事例・お知らせページ */
   .gc_auto_frame_post_item .post_item_contents{
-    padding-block:32px!important;
+    padding-block:0!important;
     padding-inline:16px!important;
   }
 
   /* よくある質問ページ */
   .gc_auto_frame_publicinfo_qanda .publicinfo_qanda_contents{
-    padding-block:32px!important;
+    padding-block:0!important;
     padding-inline:16px!important;
   }
 }
