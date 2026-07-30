@@ -262,7 +262,7 @@
       to right,
       rgba(255,255,255,0) 0%,
       #fff 50%
-    );
+    )!important;
   }
   .hex-anchor-nav:not(.is-fixed)::after{
     top:1px;
