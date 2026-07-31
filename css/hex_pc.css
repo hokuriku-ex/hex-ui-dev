@@ -68,7 +68,7 @@ html{
 /* 共通セクション見出し（h2専用） */
 .hex-section-title{
   position:relative;
-  width:100%;
+  width:fit-content;
   display:block;
   margin:0 0 48px!important;
   padding:0 0 16px!important;
@@ -79,6 +79,15 @@ html{
   letter-spacing:.02em;
   color:#1f2774!important;
   box-sizing:border-box;
+}
+.hex-section-title::after{
+  content:"";
+  position:absolute;
+  bottom:0;
+  left:-12px;
+  width:calc(100% + 24px);
+  height:2px;
+  background:#c8a874!important;
 }
 
 /* 共通セクションサブ見出し（h3専用） */
