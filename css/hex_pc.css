@@ -2740,7 +2740,7 @@ body,
 }
 
 /* 会社情報ページの外枠 */
-#gc_auto_body_company{
+#gc_auto_body_company1{
   width:100%!important;
   max-width:1600px!important;
   margin-inline:auto!important;
@@ -2762,14 +2762,6 @@ body,
   max-width:var(--base_width)!important;
   margin-inline:auto;
   box-sizing:border-box;
-}
-
-/* アクセス見出しだけは1000pxに揃える */
-#gc_auto_body_company
-.hex-company-section-access h2{
-  width:100%!important;
-  max-width:var(--hex_small_width)!important;
-  margin-inline:auto;
 }
 
 /* マップはアクセスセクションいっぱいに広げる */
