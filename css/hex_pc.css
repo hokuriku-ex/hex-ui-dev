@@ -2781,9 +2781,12 @@ body,
   display:none!important;
 }
 .hex-staff-iframe-mode .hex-staff-wrap{
-  max-width:var(--hex_medium_width);
+  width:100%!important;
+  max-width:var(--hex_medium_width)!important;
   margin:0 auto;
-  padding:0;
+  box-sizing:border-box;
+  color:#383838;
+  padding:0!important;
 }
 .hex-staff-iframe-mode .hex-staff-section{
   margin:0 0 48px;
