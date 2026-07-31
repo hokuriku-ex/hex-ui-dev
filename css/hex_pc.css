@@ -2871,7 +2871,7 @@ body,
 }
 .hex-staff-grid{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(5, minmax(0, 1fr));
   column-gap:24px;
   row-gap:48px;
 }
@@ -2950,6 +2950,20 @@ body,
   height:1px;
   min-height:0;
   border:0;
+}
+
+/* PC専用：769～1199px：3カラム */
+@media screen and (min-width:769px) and (max-width:1199px){
+  .hex-staff-grid{
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* PC専用：1200～1399px：4カラム */
+@media screen and (min-width:1200px) and (max-width:1399px){
+  .hex-staff-grid{
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+  }
 }
 
 /* PC専用：769px以上 */
