@@ -974,30 +974,59 @@ br[hex-sp]{
 
 /* カード */
 .hex-card-grid{
+  display:grid;
+  grid-template-columns:1fr;
   width:100%;
   max-width:1400px;
   margin:0 auto;
-  display:grid;
-  gap:36px;
+  gap:clamp(24px, 2.5vw, 36px);
 }
-.hex-card-grid1{
-  grid-template-columns:1fr;
+
+/* 769px以上：最大2列 */
+@media screen and (min-width:769px){
+  .hex-card-grid2,
+  .hex-card-grid3,
+  .hex-card-grid4,
+  .hex-card-grid5,
+  .hex-card-grid6{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
 }
-.hex-card-grid2{
-  grid-template-columns:repeat(2,1fr);
+
+/* 1000px以上：最大3列 */
+@media screen and (min-width:1000px){
+  .hex-card-grid3,
+  .hex-card-grid4,
+  .hex-card-grid5,
+  .hex-card-grid6{
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+  }
 }
-.hex-card-grid3{
-  grid-template-columns:repeat(3,1fr);
+
+/* 1200px以上：最大4列 */
+@media screen and (min-width:1200px){
+  .hex-card-grid4,
+  .hex-card-grid5,
+  .hex-card-grid6{
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+  }
 }
-.hex-card-grid4{
-  grid-template-columns:repeat(4,1fr);
+
+/* 1400px以上：最大5列 */
+@media screen and (min-width:1400px){
+  .hex-card-grid5,
+  .hex-card-grid6{
+    grid-template-columns:repeat(5, minmax(0, 1fr));
+  }
 }
-.hex-card-grid5{
-  grid-template-columns:repeat(5,1fr);
+
+/* 1500px以上：6列 */
+@media screen and (min-width:1500px){
+  .hex-card-grid6{
+    grid-template-columns:repeat(6, minmax(0, 1fr));
+  }
 }
-.hex-card-grid6{
-  grid-template-columns:repeat(6,1fr);
-}
+
 .hex-card{
   background:#fff;
   border:1px solid #d8dce8;
