@@ -1228,12 +1228,15 @@
    下層ページ：施工事例一覧
 ======================================= */
 @media screen and (max-width:768px){
-  #gc_auto_body_work #gc_auto_frame_work_2 .post_index_contents{
-    padding-top:32px!important;
-    padding-bottom:32px!important;
-  }
-  #gc_auto_body_work #gc_auto_frame_work_2 .gc_auto_frame_post_index_box_contents_cell_tile{
+  .post_index_contents >
+  .gc_auto_frame_post_index_box_contents_cell_tile{
+    display:block!important;
+    float:none!important;
     width:100%!important;
+    max-width:100%!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    box-sizing:border-box!important;
   }
 }
 
