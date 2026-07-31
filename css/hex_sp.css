@@ -817,7 +817,7 @@
 ======================================= */
 @media screen and (max-width:768px){
   .hex-home-news-tabs{
-    max-width:90%;
+    max-width:100%;
   }
   .hex-home-news-tab{
     padding:8px 10px 10px;
