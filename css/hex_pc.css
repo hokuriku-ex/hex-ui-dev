@@ -1197,7 +1197,9 @@ br[hex-sp]{
 .hex-banner{
   position:relative;
   width:calc(100% - 20px);
+  max-width:var(--hex_medium_width)!important;
   margin:0 auto;
+  box-sizing:border-box;
 }
 .hex-banner-image img{
   display:block;
