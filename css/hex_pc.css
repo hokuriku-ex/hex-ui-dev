@@ -523,7 +523,7 @@ div.NNAttached{
 /* チャット風に変更 */
 .kb_qanda_content{
   width:100%;
-  max-width:var(--base_width);
+  max-width:var(--hex_medium_width);
   margin:0 auto 56px;
 }
 .kb_qanda_content > label{
