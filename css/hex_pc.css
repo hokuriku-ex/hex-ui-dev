@@ -3458,6 +3458,7 @@ body,
   border-bottom:1px solid rgba(31,39,116,.35)!important;
   margin:5px 0!important;
   max-width:var(--hex_small_width)!important;
+  justify-content:center!important;
 }
 .gc_auto_frame_post_index_home_box_contents_cell_text_list,
 .gc_auto_frame_post_index_box_contents_cell_text_list{
