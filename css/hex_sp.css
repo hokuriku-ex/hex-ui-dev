@@ -781,11 +781,6 @@
   .hex-company-buttons > .hex-button-wrap{
     width:100%;
   }
-
-  .hex-card-grid4.hex-company-card{
-    grid-template-columns:repeat(2,1fr)!important;
-    gap:0;
-  }
 }
 
 /* =======================================
