@@ -2564,6 +2564,7 @@ body,
   padding-inline:clamp(24px, 3vw, 40px)!important;
 }
 .gc_auto_frame_spotitem_box{
+  width:100%!important;
   padding-inline:clamp(24px, 3vw, 40px)!important;
 }
 
