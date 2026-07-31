@@ -2305,6 +2305,9 @@ body,
   justify-content:center;
   align-items:stretch;
   gap:20px;
+  width:100%;
+  max-width:var(--hex_small_width);
+  margin:0 auto;
 }
 .hex-company-buttons > .hex-button-wrap{
   flex:1 1 0;
