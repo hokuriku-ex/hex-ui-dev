@@ -2163,7 +2163,6 @@ body.hex-calendar-modal-open{
 .hex-footer-frame .footer_copyright{
   grid-column:1 / 4!important;
   text-align:center!important;
-  margin-top:55px!important;
   font-size:16px!important;
 }
 
