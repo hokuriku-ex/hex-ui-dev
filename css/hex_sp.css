@@ -330,7 +330,9 @@
   .hex-card-grid,
   .hex-card-grid1,
   .hex-card-grid2,
-  .hex-card-grid3{
+  .hex-card-grid3,
+  .hex-card-grid4,
+  .hex-card-grid5{
     grid-template-columns:1fr;
     gap:28px;
   }
