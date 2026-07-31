@@ -1236,7 +1236,7 @@ br[hex-sp]{
   line-height:1.3;
 }
 .hex-banner-text{
-  max-width:var(--hex_medium_width);
+  max-width:var(--hex_small_width);
   color:#fff;
   paint-order:stroke fill;
   text-shadow:
