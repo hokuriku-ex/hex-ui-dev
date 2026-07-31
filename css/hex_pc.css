@@ -282,6 +282,11 @@ a.hex-text-link[target="_blank"]::after{
   line-height:2;
 }
 
+/* 記事のフル幅変更 */
+.gc_auto_frame_spotitem_box{
+  max-width:var(--base_width)!important;
+}
+
 /* 記事下のマージン削除 */
 .content.add_animation_fadein_fadein.animation_fadein_fadein{
   margin-bottom:0!important;
