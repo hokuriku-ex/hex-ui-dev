@@ -3369,7 +3369,7 @@ body,
   display:flex;
   justify-content:center;
   align-items:center;
-  max-width:var(--hex_small_width);
+  max-width:720px;
   margin:0 auto 56px;
   background:#fff;
   border:1px solid #d7dce8;
