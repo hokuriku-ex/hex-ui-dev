@@ -992,6 +992,9 @@ br[hex-sp]{
 .hex-card-grid4{
   grid-template-columns:repeat(4,1fr);
 }
+.hex-card-grid5{
+  grid-template-columns:repeat(5,1fr);
+}
 .hex-card{
   background:#fff;
   border:1px solid #d8dce8;
@@ -1023,7 +1026,8 @@ br[hex-sp]{
 }
 .hex-card-grid2 .hex-card,
 .hex-card-grid3 .hex-card,
-.hex-card-grid4 .hex-card{
+.hex-card-grid4 .hex-card,
+.hex-card-grid5 .hex-card{
   display:block;
 }
 .hex-card-image img{
@@ -1032,7 +1036,8 @@ br[hex-sp]{
 }
 .hex-card-grid2 .hex-card-image,
 .hex-card-grid3 .hex-card-image,
-.hex-card-grid4 .hex-card-image{
+.hex-card-grid4 .hex-card-image,
+.hex-card-grid5 .hex-card-image{
   margin-bottom:20px;
 }
 .hex-card-body{
