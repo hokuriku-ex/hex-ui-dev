@@ -2054,7 +2054,7 @@ body.hex-calendar-modal-open{
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   display:grid!important;
   grid-template-columns:repeat(3, minmax(0, 1fr))!important;
-  gap:70px!important;
+  gap:40px!important;
   align-items:start!important;
 }
 
