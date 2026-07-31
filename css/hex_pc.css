@@ -2562,6 +2562,7 @@ body,
   padding-top:0!important;
   padding-bottom:10%!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
+  box-sizing:border-box!important;
 }
 .gc_auto_frame_spotitem_box{
   width:100%!important;
@@ -2575,9 +2576,11 @@ body,
   padding-top:0!important;
   padding-bottom:10%!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
+  box-sizing:border-box!important;
 }
 .gc_auto_frame_publicinfo_company .publicinfo_company_type1 .contents{
   padding-bottom:0!important;
+  box-sizing:border-box!important;
 }
 
 /* 施工事例・お知らせページ */
@@ -2586,6 +2589,7 @@ body,
   padding-top:0!important;
   padding-bottom:10%!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
+  box-sizing:border-box!important;
 }
 
 /* よくある質問ページ */
@@ -2594,6 +2598,7 @@ body,
   padding-top:0!important;
   padding-bottom:10%!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
+  box-sizing:border-box!important;
 }
 
 /* =======================================
