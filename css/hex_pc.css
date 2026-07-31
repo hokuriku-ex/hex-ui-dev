@@ -2566,6 +2566,7 @@ body,
 .gc_auto_frame_spotitem_box{
   width:100%!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
+  box-sizing:border-box!important;
 }
 
 /* 会社情報ページ */
