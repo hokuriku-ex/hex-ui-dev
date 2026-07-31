@@ -2026,12 +2026,6 @@ body.hex-calendar-modal-open{
 /* =======================================
    フッター調整
 ======================================= */
-/* SP用左右余白範囲指定 マーカー非表示*/
-.hex-sp-padding-inline-start,
-.hex-sp-padding-inline-end{
-  display:none!important;
-}
-
 /* フッター全体 */
 .hex-footer-frame{
   width:100%!important;
