@@ -282,7 +282,7 @@ a.hex-text-link[target="_blank"]::after{
   line-height:2;
 }
 
-/* 記事のフル幅変更 */
+/* 記事の最大幅変更 */
 .gc_auto_frame_spotitem_box{
   max-width:var(--base_width)!important;
 }
@@ -2561,6 +2561,9 @@ body,
   width:100%!important;
   padding-top:0!important;
   padding-bottom:10%!important;
+  padding-inline:clamp(24px, 3vw, 40px)!important;
+}
+.gc_auto_frame_spotitem_box{
   padding-inline:clamp(24px, 3vw, 40px)!important;
 }
 
