@@ -84,9 +84,9 @@ html{
   content:"";
   position:absolute;
   bottom:0;
-  left:-12px;
-  width:calc(100% + 24px);
-  height:2px;
+  left:-24px;
+  width:calc(100% + 48px);
+  height:1px;
   background:#c8a874!important;
 }
 
