@@ -2050,7 +2050,7 @@ body.hex-calendar-modal-open{
   max-width:var(--base_width)!important;
   margin:0 auto!important;
   padding-top:10%!important;
-  padding-bottom:10%!important;
+  padding-bottom:5%!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   display:grid!important;
   grid-template-columns:repeat(3, minmax(0, 1fr))!important;
