@@ -4032,7 +4032,7 @@ body.hex-form-dialog-open{
    下層ページ：よくある質問
 ======================================= */
 .publicinfo_qanda .qanda_content{
-  max-width:var(--base_width);
+  max-width:var(--hex_medium_width);
   margin:0 auto!important;
   padding:0!important;
   background:#fff!important;
