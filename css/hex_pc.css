@@ -1910,7 +1910,7 @@ br[hex-sp]{
 /* モーダル本体 */
 .hex-calendar-modal-dialog{
   position:relative;
-  width:min(var(--base_width),100%);
+  width:min(var(--hex_small_width),100%);
   max-height:calc(100dvh - 80px);
   overflow:auto;
   background:#fff!important;
