@@ -2848,7 +2848,10 @@ body,
 
 /* スタッフ紹介ページ本体 */
 .hex-staff-wrap{
+  width:100%;
+  max-width:var(--base_width);
   margin:0 auto;
+  box-sizing:border-box;
   color:#383838;
 }
 .hex-staff-section{
