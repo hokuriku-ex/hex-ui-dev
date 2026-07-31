@@ -1487,10 +1487,12 @@ br[hex-sp]{
 /* フロー */
 .hex-flow{
   position:relative;
-  margin:0;
+  width:100%;
+  max-width:var(--hex_medium_width);
+  margin-inline:auto;
   padding:0 0 0 120px;
+  box-sizing:border-box;
   list-style:none;
-  justify-content:center;
 }
 .hex-flow::before{
   content:"";
