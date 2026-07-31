@@ -14,12 +14,11 @@
 /* 共通セクション見出し（h2専用） */
 @media screen and (max-width:768px){
   .hex-section-title{
-    width:100%!important;
-    margin:0 auto 36px!important;
-    padding:0 0 14px!important;
-    border-left:none!important;
-    font-size:26px!important;
-    line-height:1.4;
+    font-size:36px;
+  }
+  .hex-section-title::after{
+    left:-12px;
+    width:calc(100% + 24px);
   }
 }
 
