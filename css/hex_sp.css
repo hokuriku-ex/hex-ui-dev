@@ -422,7 +422,7 @@
   .hex-footer-frame .footer_contents{
     display:flex !important;
     flex-direction:column !important;
-    padding:35px 0px 95px !important;
+    padding-inline:16px!important;
   }
   .hex-footer-frame .hex-footer-area{
     order:1 !important;
