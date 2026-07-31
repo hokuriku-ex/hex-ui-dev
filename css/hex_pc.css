@@ -2561,11 +2561,11 @@ body,
   width:100%!important;
   padding-top:0!important;
   padding-bottom:10%!important;
-  padding-inline:clamp(24px, 3vw, 40px)!important;
+  padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
 }
 .gc_auto_frame_spotitem_box{
   width:100%!important;
-  padding-inline:clamp(24px, 3vw, 40px)!important;
+  padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
 }
 
 /* 会社情報ページ */
@@ -2573,7 +2573,7 @@ body,
   width:100%!important;
   padding-top:0!important;
   padding-bottom:10%!important;
-  padding-inline:clamp(24px, 3vw, 40px)!important;
+  padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
 }
 .gc_auto_frame_publicinfo_company .publicinfo_company_type1 .contents{
   padding-bottom:0!important;
@@ -2584,7 +2584,7 @@ body,
   width:100%!important;
   padding-top:0!important;
   padding-bottom:10%!important;
-  padding-inline:clamp(24px, 3vw, 40px)!important;
+  padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
 }
 
 /* よくある質問ページ */
@@ -2592,7 +2592,7 @@ body,
   width:100%!important;
   padding-top:0!important;
   padding-bottom:10%!important;
-  padding-inline:clamp(24px, 3vw, 40px)!important;
+  padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
 }
 
 /* =======================================
