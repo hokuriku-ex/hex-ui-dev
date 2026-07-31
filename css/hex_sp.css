@@ -851,6 +851,9 @@
   .post_index_contents{
     padding-inline:16px!important;
   }
+  .gc_auto_frame_spotitem_box{
+    padding-inline:16px!important;
+  }
 
   /* 会社情報ページページ */
   .gc_auto_frame_publicinfo_company .publicinfo_company_type1 .bg_contents{
