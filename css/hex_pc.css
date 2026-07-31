@@ -2740,7 +2740,7 @@ body,
 }
 
 /* 基本情報・会社概要・沿革セクションは最大1000px */
-.bg_publicinfo_company > .contents{
+.bg_publicinfo_company .publicinfo_company .bg_contents .contents{
   width:100%!important;
   max-width:var(--hex_small_width)!important;
   margin-inline:auto;
