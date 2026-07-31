@@ -2784,9 +2784,9 @@ body,
   width:100%!important;
   max-width:var(--hex_medium_width)!important;
   margin:0 auto;
+  padding:0!important;
   box-sizing:border-box;
   color:#383838;
-  padding:0!important;
 }
 .hex-staff-iframe-mode .hex-staff-section{
   margin:0 0 48px;
@@ -2854,6 +2854,9 @@ body,
   width:100%;
   max-width:var(--base_width);
   margin:0 auto;
+  padding-top:0!important;
+  padding-bottom:10%!important;
+  padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box;
   color:#383838;
 }
