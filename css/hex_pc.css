@@ -1234,7 +1234,7 @@ br[hex-sp]{
   line-height:1.3;
 }
 .hex-banner-text{
-  max-width:var(--base_width);
+  max-width:var(--hex_medium_width);
   color:#fff;
   paint-order:stroke fill;
   text-shadow:
@@ -1308,7 +1308,7 @@ br[hex-sp]{
 /* ギャラリー */
 .hex-gallery{
   width:calc(100% - 20px);
-  max-width:var(--base_width);
+  max-width:var(--hex_medium_width);
   margin:0 auto;
 }
 .hex-gallery-wrap{
@@ -1442,7 +1442,7 @@ br[hex-sp]{
 /* 画像グリッド */
 .hex-image-grid{
   width:100%;
-  max-width:var(--base_width);
+  max-width:var(--hex_medium_width);
   margin:0 auto;
   display:grid;
   gap:28px 32px;
