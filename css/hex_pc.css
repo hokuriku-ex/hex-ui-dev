@@ -2739,15 +2739,13 @@ body,
   fill:#383838!important;
 }
 
-/* 会社情報ページの外枠 */
-#gc_auto_body_company1{
+/* 基本情報・会社概要・沿革セクションは最大1000px */
+.bg_publicinfo_company > .contents{
   width:100%!important;
-  max-width:1600px!important;
-  margin-inline:auto!important;
-  box-sizing:border-box!important;
+  max-width:var(--hex_small_width)!important;
+  margin-inline:auto;
+  box-sizing:border-box;
 }
-
-/* 会社概要・沿革などは最大1000px */
 #gc_auto_body_company
 .hex-company-section:not(.hex-company-section-access){
   width:100%!important;
