@@ -975,7 +975,7 @@ br[hex-sp]{
 /* カード */
 .hex-card-grid{
   width:100%;
-  max-width:var(--base_width);
+  max-width:1400px;
   margin:0 auto;
   display:grid;
   gap:36px;
