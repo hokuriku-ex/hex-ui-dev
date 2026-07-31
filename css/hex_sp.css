@@ -1211,7 +1211,7 @@
 ======================================= */
 @media screen and (max-width:768px){
   .hex-product-search{
-    margin:0 16px 42px;
+    margin:0 0 42px;
   }
 
   .hex-product-search input{
