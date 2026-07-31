@@ -2781,7 +2781,7 @@ body,
   display:none!important;
 }
 .hex-staff-iframe-mode .hex-staff-wrap{
-  max-width:var(--base_width);
+  max-width:var(--hex_medium_width);
   margin:0 auto;
   padding:0;
 }
