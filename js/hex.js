@@ -185,21 +185,6 @@ hexReady(function(){
 });
 
 /* =======================================
-   SP用左右余白範囲指定
-======================================= */
-hexLoad(function(){
-  document.querySelectorAll('.hex-sp-padding-inline-start').forEach(function(start){
-    var box=start.closest('.gc_auto_frame_spotitem_box');
-    if(!box)return;
-
-    var end=box.querySelector('.hex-sp-padding-inline-end');
-    if(!end)return;
-
-    box.classList.add('hex-sp-padding-inline');
-  });
-});
-
-/* =======================================
    URLアンカー補正
 ======================================= */
 hexLoad(function(){
