@@ -781,6 +781,19 @@
   .hex-company-buttons > .hex-button-wrap{
     width:100%;
   }
+
+  /* 769px以下：最大2列 */
+  .hex-card-grid4.hex-company-card{
+    grid-template-columns:repeat(2, minmax(0, 1fr))!important;
+    gap:28px 16px;
+  }
+}
+
+/* 480px以下：最大1列 */
+@media screen and (max-width:480px){
+  .hex-card-grid4.hex-company-card{
+    grid-template-columns:1fr!important;
+  }
 }
 
 /* =======================================
