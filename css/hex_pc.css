@@ -2387,7 +2387,7 @@ body,
 .hex-home-news-tabs{
   display:flex;
   justify-content:center;
-  max-width:var(--base_width);
+  max-width:var(--hex_small_width);
   margin:0 auto 28px;
   border:none;
   border-bottom:1px solid #d8dce8;
@@ -2421,7 +2421,7 @@ body,
   opacity:1;
 }
 .hex-home-news-list{
-  max-width:var(--base_width);
+  max-width:var(--hex_small_width);
   margin:0 auto;
 }
 .hex-home-news-list .post_index_home_type1 .bg_post_index_home .bg_items{
@@ -2432,7 +2432,7 @@ body,
 }
 .hex-home-news-button{
   width:100%;
-  max-width:var(--base_width);
+  max-width:var(--hex_small_width);
   margin:34px auto 0;
   padding:0 32px;
   display:flex;
