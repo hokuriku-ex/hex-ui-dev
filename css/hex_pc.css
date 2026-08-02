@@ -2379,7 +2379,7 @@ body,
   background:#c8a874!important;
   transition:width .3s ease;
 }
-.hex-company-buttons .hex-btn-main.dark p{
+.hex-company-buttons .hex-btn-main.dark span{
   position:relative;
   margin:0;
   font-size:17px;
