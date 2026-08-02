@@ -2379,7 +2379,7 @@ body,
   background:#c8a874!important;
   transition:width .3s ease;
 }
-.hex-company-buttons .hex-btn-main.dark span{
+.hex-company-buttons .hex-btn-main.dark p{
   position:relative;
   margin:0;
   font-size:17px;
@@ -2389,15 +2389,15 @@ body,
 }
 .hex-company-buttons
 .hex-button-wrap:nth-child(1)
-.hex-btn-main.dark span::before{
+.hex-btn-main.dark p::before{
   content:"一般のお客様";
 }
 .hex-company-buttons
 .hex-button-wrap:nth-child(2)
-.hex-btn-main.dark span::before{
+.hex-btn-main.dark p::before{
   content:"法人・事業者のお客様";
 }
-.hex-company-buttons .hex-btn-main.dark span::before{
+.hex-company-buttons .hex-btn-main.dark p::before{
   display:block;
   margin-bottom:4px;
   color:#c8a874!important;
