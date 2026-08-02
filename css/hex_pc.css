@@ -2357,9 +2357,9 @@ body,
   position:relative;
   min-height:88px;
   padding:18px 68px 18px 28px;
-  color:#fff;
-  background:#1f2774;
-  border:1px solid #1f2774;
+  color:#fff!important;
+  background:#1f2774!important;
+  border:1px solid #1f2774!important;
   border-radius:2px;
   text-align:left;
   overflow:hidden;
@@ -2376,7 +2376,7 @@ body,
   bottom:18px;
   left:0;
   width:3px;
-  background:#c8a874;
+  background:#c8a874!important;
   transition:width .3s ease;
 }
 .hex-company-buttons .hex-btn-main.dark p{
@@ -2400,17 +2400,17 @@ body,
 .hex-company-buttons .hex-btn-main.dark p::before{
   display:block;
   margin-bottom:4px;
-  color:#c8a874;
+  color:#c8a874!important;
   font-size:11px;
   font-weight:500;
   line-height:1.2;
   letter-spacing:.14em;
 }
 .hex-company-buttons .hex-btn-main.dark:hover{
-  color:#fff;
-  background:#171e5e;
-  border-color:#171e5e;
-  box-shadow:0 8px 20px rgba(31,39,116,.18);
+  color:#fff!important;
+  background:#171e5e!important;
+  border-color:#171e5e!important;
+  box-shadow:0 8px 20px rgba(31,39,116,.18)!important;
   transform:translateY(-2px);
 }
 .hex-company-buttons .hex-btn-main.dark:hover::before{
