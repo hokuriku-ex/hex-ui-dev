@@ -2353,6 +2353,16 @@ body,
   height:100%;
   box-sizing:border-box;
 }
+.hex-company-buttons .hex-btn-main.light{
+  color:#1f2774;
+  background:transparent;
+  border:1px solid #1f2774;
+}
+.hex-company-buttons .hex-btn-main.dark{
+  color:#fff;
+  background:#1f2774;
+  border:1px solid #1f2774;
+}
 
 .hex-founded-year{
   color:#c8a874;
