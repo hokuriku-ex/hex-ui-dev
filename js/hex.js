@@ -1330,7 +1330,7 @@ hexReady(function(){
     var title=start.dataset.title||'';
     var text=start.dataset.text||'';
     var button=start.dataset.button||'';
-    var buttonCol=start.dataset.col||'4';
+    var buttonWidth=start.dataset.width||'100%';
     var buttonType=start.dataset.type||'internal';
     var buttonStyle=start.dataset.style||'light';
     var bannerUrl=window.hexBuildUrl(start);
@@ -1376,8 +1376,9 @@ hexReady(function(){
         var buttonTitle=document.createElement('span');
         var buttonIcon=document.createElement('span');
         var buttonI=document.createElement('i');
-        buttonWrap.className='hex-banner-button hex-col-'+buttonCol;
+        buttonWrap.className='hex-banner-button';
         buttonEl.className='hex-btn-main '+buttonStyle;
+        buttonEl.style.width=buttonWidth;
         buttonEl.href=bannerUrl;
         window.hexSetExternal(buttonEl,buttonType);
         buttonTitle.className='hex-btn-main-title';
