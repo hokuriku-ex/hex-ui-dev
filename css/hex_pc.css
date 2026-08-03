@@ -1060,9 +1060,6 @@ br[hex-sp]{
   inset:0;
   z-index:1;
 }
-.hex-card:hover{
-  border-color:#c8a874!important;
-}
 .hex-card:hover .hex-card-title-link,
 .hex-card:hover .hex-link-detail,
 .hex-card:hover .hex-link-icon{
