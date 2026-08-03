@@ -1130,26 +1130,21 @@ br[hex-sp]{
   min-width:0;
 }
 .hex-card-head{
-  position:relative;
   margin-bottom:16px;
   padding-bottom:18px;
   border-bottom:1px solid #d8dce8;
 }
+.hex-card:has(.hex-card-title-link[href]) .hex-card-head{
+  background:
+    linear-gradient(#c8a874,#c8a874)
+    left bottom / 0 2px no-repeat;
+  transition:background-size .3s ease;
+}
+.hex-card:has(.hex-card-title-link[href]):hover .hex-card-head{
+  background-size:100% 2px;
+}
 .hex-card.dark .hex-card-head{
   border-bottom-color:rgba(255,255,255,.35);
-}
-.hex-card:has(.hex-card-title-link[href]) .hex-card-head::before{
-  content:"";
-  position:absolute;
-  left:0;
-  bottom:-1px;
-  width:0;
-  height:2px;
-  background:#c8a874;
-  transition:width .3s ease;
-}
-.hex-card:has(.hex-card-title-link[href]):hover .hex-card-head::before{
-  width:100%;
 }
 .hex-card-title{
   margin:0;
@@ -1188,7 +1183,13 @@ br[hex-sp]{
     color .25s ease,
     transform .25s ease;
 }
-.hex-card:hover .hex-link-icon{
+.hex-card:has(.hex-card-title-link[href]):hover .hex-card-title-link,
+.hex-card:has(.hex-card-title-link[href]):hover .hex-link-detail,
+.hex-card:has(.hex-card-title-link[href]):hover .hex-link-icon{
+  color:#c8a874!important;
+  text-decoration:none!important;
+}
+.hex-card:has(.hex-card-title-link[href]):hover .hex-link-icon{
   transform:translateX(3px);
 }
 .hex-card-text{
