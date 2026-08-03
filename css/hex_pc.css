@@ -2613,10 +2613,7 @@ body,
 
 /* 日本語タイトル共通 */
 .gc_auto_frame_page_title .title_font_big_headline{
-  color:#fff!important;
-  text-shadow:
-    0 0 3px #1f2774,
-    0 0 7px rgba(31,39,116,.8);
+  color:#c8a874!important;
 }
 
 /* 英語タイトル共通 */
