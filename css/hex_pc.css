@@ -4531,17 +4531,6 @@ body.hex-form-dialog-open{
   font-size:14px;
   color:#ddd;
 }
-.hex-contact-buttons{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:20px;
-}
-.hex-contact-buttons > .hex-button-wrap{
-  flex:0 0 auto;
-  width:auto;
-  margin:0;
-}
 .hex-contact-faq-link{
   display:inline-flex;
   align-items:center;
