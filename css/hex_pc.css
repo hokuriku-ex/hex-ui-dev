@@ -4515,11 +4515,12 @@ body.hex-form-dialog-open{
 }
 
 /* お問い合わせフッター */
-.hex-contact-section{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+.gc_auto_frame_spotitem_body:has(.hex-contact-section){
   text-align:center;
+}
+.gc_auto_frame_spotitem_body:has(.hex-contact-section) .hex-button-wrap{
+  margin-left:auto!important;
+  margin-right:auto!important;
 }
 .hex-contact-section .hex-center-title-dark,
 .hex-contact-section .hex-center-title-dark[data-en]::after{
