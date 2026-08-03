@@ -2215,6 +2215,16 @@ hexLoad(function(){
 });
 
 /* =======================================
+   トップ サービス案内
+======================================= */
+hexReady(function(){
+  var serviceSection=document.getElementById(HOME_SECTIONS.SERVICE);
+  if(!serviceSection)return;
+
+  serviceSection.classList.add('hex-service-top-section');
+});
+
+/* =======================================
    下層ページタイトル共通
 ======================================= */
 hexReady(function(){
