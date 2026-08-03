@@ -823,6 +823,8 @@ br[hex-sp]{
 .hex-button-wrap{
   display:flex;
   width:100%;
+  max-width:100%;
+  min-width:0;
   box-sizing:border-box;
 }
 .hex-btn-main{
@@ -894,6 +896,8 @@ br[hex-sp]{
 .hex-link-wrap{
   display:flex;
   width:100%;
+  max-width:100%;
+  min-width:0;
   box-sizing:border-box;
 }
 .hex-link{
