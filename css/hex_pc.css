@@ -1051,20 +1051,31 @@ br[hex-sp]{
   padding:22px;
   background:#fff;
   border:1px solid #d8dce8;
-  cursor:pointer;
   transition:border-color .25s ease;
 }
-.hex-card .hex-link::after{
+.hex-card:has(.hex-link[href]){
+  cursor:pointer;
+}
+.hex-card .hex-link[href]::after{
   content:"";
   position:absolute;
   inset:0;
   z-index:1;
 }
-.hex-card:hover .hex-card-title-link,
-.hex-card:hover .hex-link-detail,
-.hex-card:hover .hex-link-icon{
+.hex-card:has(.hex-link[href]):hover{
+  border-color:#d8dce8;
+}
+.hex-card:has(.hex-link[href]):hover .hex-card-title-link,
+.hex-card:has(.hex-link[href]):hover .hex-link-detail,
+.hex-card:has(.hex-link[href]):hover .hex-link-icon{
   color:#c8a874!important;
   text-decoration:none!important;
+}
+.hex-card:has(.hex-link[href]):hover .hex-card-head::before{
+  width:100%;
+}
+.hex-card:has(.hex-link[href]):hover .hex-link-icon{
+  transform:translateX(4px);
 }
 .hex-card.light{
   background:#fff;
