@@ -998,7 +998,7 @@ hexReady(function(){
     var hexUrl=window.hexBuildUrl(hexView);
     var hexType=hexView.dataset.type||'internal';
     var hexStyle=hexView.dataset.style||'light';
-    var hexCol=hexView.dataset.col||'1';
+    var hexWidth=hexView.dataset.width||'100%';
     var hexAlign=hexView.dataset.align||'center';
     var hexWrap=document.createElement('div');
     var hexAnchor=document.createElement('a');
@@ -1007,7 +1007,8 @@ hexReady(function(){
     var hexIcon=document.createElement('i');
     if(!hexTitle)return;
     if(!hexUrl)return;
-    hexWrap.className='hex-button-wrap hex-col-'+hexCol+' hex-align-'+hexAlign;
+    hexWrap.className='hex-button-wrap hex-align-'+hexAlign;
+    hexWrap.style.width=hexWidth;
     hexAnchor.className='hex-btn-main '+hexStyle;
     hexAnchor.href=hexUrl;
     window.hexSetExternal(hexAnchor,hexType);
@@ -1038,7 +1039,8 @@ hexReady(function(){
     var hexIcon=document.createElement('i');
     if(!hexTitle)return;
     if(!hexUrl)return;
-    hexWrap.className='hex-link-wrap hex-col-'+hexCol+' hex-align-'+hexAlign;
+    hexWrap.className='hex-link-wrap hex-align-'+hexAlign;
+    hexWrap.style.width=hexWidth;
     hexAnchor.className='hex-link '+hexStyle;
     hexAnchor.href=hexUrl;
     window.hexSetExternal(hexAnchor,hexType);
