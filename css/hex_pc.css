@@ -2568,14 +2568,14 @@ body,
    下層ページ共通
 ======================================= */
 /* 本体 */
-.pagetitle_type.pagetitle_type4 {
+.pagetitle_type.pagetitle_type4{
   position: relative;
   overflow: hidden;
   background: #1f2774;
 }
 
 /* 元の背景を非表示 */
-.pagetitle_type.pagetitle_type4 .background_color {
+.pagetitle_type.pagetitle_type4 .background_color{
   display: none !important;
 }
 
@@ -2601,18 +2601,26 @@ body,
 
 /* コンテンツを前面へ */
 .pagetitle_type.pagetitle_type4 .contents,
-.pagetitle_type.pagetitle_type4 .bg_text {
+.pagetitle_type.pagetitle_type4 .bg_text{
   position: relative;
   z-index: 1;
 }
 
 /* パンくず非表示 */
-.pagetitle_type.pagetitle_type4 .breadcrumbs {
+.pagetitle_type.pagetitle_type4 .breadcrumbs{
   display: none !important;
 }
 
+/* 日本語タイトル共通 */
+.gc_auto_frame_page_title .title_font_big_headline{
+  color:#fff!important;
+  -webkit-text-stroke:.8px #1f2774;
+  paint-order:stroke fill;
+  text-shadow:0 1px 2px rgba(31,39,116,.12);
+}
+
 /* 英語タイトル共通 */
-.pagetitle_type.pagetitle_type4 .bg_text h1::after {
+.pagetitle_type.pagetitle_type4 .bg_text h1::after{
   display: block;
   color: #1f2774;
   font-size: 16px;
