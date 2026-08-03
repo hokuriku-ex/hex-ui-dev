@@ -1009,7 +1009,7 @@ hexReady(function(){
     hexAnchor.href=hexUrl;
     window.hexSetExternal(hexAnchor,hexType);
     hexTitleSpan.className='hex-btn-main-title';
-    hexTitleSpan.textContent=hexTitle;
+    hexTitleSpan.innerHTML=hexTitle;
     hexIconSpan.className='hex-btn-main-icon';
     hexIcon.className=window.hexIconClass(hexType);
     hexIconSpan.appendChild(hexIcon);
@@ -1040,7 +1040,7 @@ hexReady(function(){
     hexAnchor.href=hexUrl;
     window.hexSetExternal(hexAnchor,hexType);
     hexTitleSpan.className='hex-link-title';
-    hexTitleSpan.textContent=hexTitle;
+    hexTitleSpan.innerHTML=hexTitle;
     hexIconSpan.className='hex-link-icon';
     hexIcon.className=window.hexIconClass(hexType);
     hexIconSpan.appendChild(hexIcon);
