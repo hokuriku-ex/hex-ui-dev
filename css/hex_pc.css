@@ -2613,7 +2613,7 @@ body,
 
 /* 日本語タイトル共通 */
 .gc_auto_frame_page_title .title_font_big_headline{
-  color:#c8a874!important;
+  color:#383838!important;
   text-shadow:
     0 0 5px #fff,
     0 0 10px rgba(255,255,255,.8)!important;
@@ -2622,13 +2622,13 @@ body,
 /* 英語タイトル共通 */
 .pagetitle_type.pagetitle_type4 .bg_text h1::after{
   display: block;
-  color: #c8a874;
+  color: #383838;
   font-size: 16px;
   line-height: 1.4;
   letter-spacing: 0.22em;
   font-family: "Times New Roman",serif;
   font-weight: normal;
-  opacity: 0.75;
+  opacity: 0.6;
 }
 
 /* ページ別 英語タイトル */
