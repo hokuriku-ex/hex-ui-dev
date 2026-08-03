@@ -804,7 +804,7 @@
     font-size:18px!important;
   }
   .hex-company-buttons .hex-btn-main.dark{
-    gap:16px;
+    padding-bottom:16px;
   }
 }
 
