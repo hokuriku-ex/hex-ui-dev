@@ -459,6 +459,9 @@
     font-size:18px !important;
     margin-bottom:10px !important;
   }
+  .footer-area h4{
+    text-align:center !important;
+  }
   .footer-area-text{
     font-size:16px !important;
     line-height:2 !important;
