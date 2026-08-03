@@ -2343,7 +2343,7 @@ body,
   gap:20px;
   width:100%;
   max-width:800px;
-  margin:0 auto;
+  margin:0 auto 20px;
 }
 .hex-company-buttons > .hex-button-wrap{
   flex:1 1 0;
@@ -2363,7 +2363,7 @@ body,
 }
 .hex-company-buttons .hex-btn-main-title .sub{
   color:#c8a874!important;
-  font-size:12px;
+  font-size:15px;
   font-weight:500;
   line-height:1.2;
   letter-spacing:.14em;
