@@ -1331,9 +1331,15 @@ br[hex-sp]{
 .hex-banner-button{
   display:flex;
   justify-content:center;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
 }
 .hex-banner-button .hex-btn-main{
   width:100%;
+  max-width:100%;
+  min-width:0;
   box-sizing:border-box;
   background:rgba(255,255,255,.88)!important;
   border:1px solid rgba(255,255,255,.9)!important;
@@ -1359,20 +1365,6 @@ br[hex-sp]{
 }
 .hex-banner-button .hex-btn-main:hover .hex-btn-main-title{
   color:#c8a874!important;
-}
-.hex-banner-button.hex-col-4{
-  width:calc(25% - 27px);
-  min-width:260px;
-}
-.hex-banner-button.hex-col-3{
-  width:calc(33.333% - 24px);
-  min-width:320px;
-}
-.hex-banner-button.hex-col-2{
-  width:calc(50% - 18px);
-}
-.hex-banner-button.hex-col-1{
-  width:100%;
 }
 .hex-banner-image-link{
   display:block;
