@@ -511,7 +511,7 @@ a.hex-text-link[target="_blank"]::after{
 .rsp_spacer3,
 .rsp_spacer4{
   width:100%;
-  max-width:var(--hex_small_width);
+  max-width:var(--hex_small_width)!important;
   margin-inline:auto;
 }
 
