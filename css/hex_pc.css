@@ -1061,7 +1061,7 @@ br[hex-sp]{
   z-index:1;
 }
 .hex-card:hover{
-  border-color:#1f2774;
+  border-color:#1f2774!important;
 }
 .hex-card:hover .hex-card-title-link,
 .hex-card:hover .hex-link-detail,
