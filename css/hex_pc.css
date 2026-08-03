@@ -2615,8 +2615,8 @@ body,
 .gc_auto_frame_page_title .title_font_big_headline{
   color:#c8a874!important;
   text-shadow:
-    0 0 3px #fff,
-    0 0 7px rgba(255,255,255,.8)!important;
+    0 0 5px #fff,
+    0 0 10px rgba(255,255,255,.8)!important;
 }
 
 /* 英語タイトル共通 */
