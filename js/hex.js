@@ -2196,27 +2196,6 @@ hexReady(function(){
 /* =======================================
    トップ サービス案内
 ======================================= */
-hexLoad(function(){
-  document.querySelectorAll('#gc_auto_frame_home_2 .hex-link-wrap').forEach(function(item){
-
-    var title=item.querySelector('.hex-link-title');
-    var detail=item.querySelector('.hex-link-detail');
-
-    if(!title||!detail)return;
-
-    if(title.textContent.trim()==='外構をご検討中の方'){
-      detail.textContent='初めての方へ';
-    }
-
-    if(title.textContent.trim()==='ハウスメーカー・工務店の方'){
-      detail.textContent='初めての方へ';
-    }
-  });
-});
-
-/* =======================================
-   トップ サービス案内
-======================================= */
 hexReady(function(){
   var serviceSection=document.getElementById(HOME_SECTIONS.SERVICE);
   if(!serviceSection)return;
