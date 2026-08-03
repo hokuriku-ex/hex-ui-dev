@@ -947,9 +947,6 @@ br[hex-sp]{
   letter-spacing:.04em;
   transition:.3s ease;
 }
-.hex-link-wrap.hex-col-1 .hex-link-title{
-  font-size:24px;
-}
 .hex-link-detail{
   font-size:18px;
   font-weight:500;
