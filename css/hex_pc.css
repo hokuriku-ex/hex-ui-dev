@@ -814,14 +814,6 @@ br[hex-sp]{
   display:none;
 }
 
-/* カラム設定：ボタン幅用 */
-.hex-col-1{width:100%;}
-.hex-col-2{width:calc(50%);}
-.hex-col-3{width:calc(33.333%);}
-.hex-col-4{width:calc(25%);}
-.hex-col-5{width:calc(20%);}
-.hex-col-6{width:calc(16.666%);}
-
 /* 配置制御：button/link用 */
 .hex-align-left{justify-content:flex-start;}
 .hex-align-center{justify-content:center;}
@@ -830,10 +822,13 @@ br[hex-sp]{
 /* ボタン */
 .hex-button-wrap{
   display:flex;
+  width:100%;
   box-sizing:border-box;
 }
 .hex-btn-main{
   width:100%;
+  max-width:100%;
+  box-sizing:border-box;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -898,11 +893,14 @@ br[hex-sp]{
 /* リンク */
 .hex-link-wrap{
   display:flex;
+  width:100%;
   box-sizing:border-box;
 }
 .hex-link{
   position:relative;
   width:100%;
+  max-width:100%;
+  box-sizing:border-box;
   display:flex;
   align-items:center;
   justify-content:space-between;
