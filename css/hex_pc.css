@@ -2353,13 +2353,33 @@ body,
   height:100%;
   box-sizing:border-box;
 }
+.hex-company-buttons .hex-btn-main-title{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:5px;
+}
+.hex-company-buttons .hex-btn-main-title .sub{
+  color:#c8a874!important;
+  font-size:11px;
+  font-weight:500;
+  line-height:1.2;
+  letter-spacing:.14em;
+}
+.hex-company-buttons .hex-btn-main-title .main{
+  color:#fff!important;
+  font-size:17px;
+  font-weight:500;
+  line-height:1.5;
+  letter-spacing:.04em;
+}
 .hex-company-buttons .hex-btn-main.dark{
   position:relative;
   min-height:88px;
-  padding:17px 68px 17px 28px;
-  color:#fff!important;
-  background:#1f2774!important;
-  border:1px solid #1f2774!important;
+  padding:16px 68px 16px 28px;
+  color:#fff;
+  background:#1f2774;
+  border:1px solid #1f2774;
   text-align:left;
   overflow:hidden;
   transition:
@@ -2371,42 +2391,24 @@ body,
 .hex-company-buttons .hex-btn-main.dark::before{
   content:"";
   position:absolute;
-  top:17px;
-  bottom:17px;
+  top:16px;
+  bottom:16px;
   left:0;
   width:3px;
-  background:#c8a874!important;
+  background:#c8a874;
   transition:width .3s ease;
 }
-.hex-company-buttons .hex-btn-main.dark p{
-  position:relative;
-  margin:0;
-}
-.hex-company-buttons .hex-btn-main.dark .sub{
-  margin-bottom:5px;
-  color:#c8a874!important;
-  font-size:11px;
-  font-weight:500;
-  line-height:1.2;
-  letter-spacing:.14em;
-}
-.hex-company-buttons .hex-btn-main.dark .main{
-  color:#fff!important;
-  font-size:17px;
-  font-weight:500;
-  line-height:1.5;
-  letter-spacing:.04em;
-}
 .hex-company-buttons .hex-btn-main.dark:hover{
-  color:#fff!important;
-  background:#171e5e!important;
-  border-color:#171e5e!important;
-  box-shadow:0 8px 20px rgba(31,39,116,.18)!important;
+  color:#fff;
+  background:#171e5e;
+  border-color:#171e5e;
+  box-shadow:0 8px 20px rgba(31,39,116,.18);
   transform:translateY(-2px);
 }
 .hex-company-buttons .hex-btn-main.dark:hover::before{
   width:6px;
 }
+
 
 .hex-founded-year{
   color:#c8a874;
