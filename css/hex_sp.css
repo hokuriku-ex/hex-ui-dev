@@ -397,13 +397,9 @@
     font-size:16px;
     line-height:1.8;
   }
-  .hex-banner-button,
-  .hex-banner-button.hex-col-1,
-  .hex-banner-button.hex-col-2,
-  .hex-banner-button.hex-col-3,
-  .hex-banner-button.hex-col-4{
+  .hex-banner-button{
     width:100%;
-    max-width:320px;
+    max-width:100%;
     min-width:0;
   }
 }
