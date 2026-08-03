@@ -2407,6 +2407,7 @@ body,
   font-weight:500;
   line-height:1.2;
   letter-spacing:.14em;
+  text-align:left;
 }
 .hex-company-buttons .hex-btn-main-title .main{
   color:#fff!important;
@@ -2414,6 +2415,7 @@ body,
   font-weight:500;
   line-height:1.5;
   letter-spacing:.04em;
+  text-align:left;
 }
 .hex-company-buttons .hex-btn-main.dark{
   color:#fff!important;
