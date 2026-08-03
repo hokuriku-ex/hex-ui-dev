@@ -2568,11 +2568,7 @@ body,
   box-sizing:border-box;
 }
 .hex-home-news-button .hex-home-news-link-wrap{
-  width:100%;
-  max-width:100%;
-}
-.hex-home-news-button .hex-link{
-  cursor:pointer;
+  width:160px!important;
 }
 
 /* =======================================
