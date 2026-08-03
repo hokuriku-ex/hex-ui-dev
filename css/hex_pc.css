@@ -3584,7 +3584,7 @@ body,
 }
 .post_index_contents > .gc_auto_frame_post_index_box_contents_cell_list{
   width:100%!important;
-  max-width:var(--hex_small_width)!important;
+  max-width:calc(var(--hex_small_width) - 200px)!important;
   margin-inline:auto!important;
   box-sizing:border-box!important;
 }
