@@ -1826,7 +1826,7 @@ function hexHomeNewsUpdateButton(buttonArea,shortname,pagetype){
     iconSpan=document.createElement('span');
     icon=document.createElement('i');
 
-    wrap.className='hex-link-wrap hex-col-'+(view.dataset.col||'3')+' hex-align-center hex-home-news-link-wrap';
+    wrap.className='hex-link-wrap hex-align-'+(view.dataset.align||'center')+' hex-home-news-link-wrap';
     link.className='hex-link '+(view.dataset.style||'light');
     title.className='hex-link-title';
     iconSpan.className='hex-link-icon';
@@ -1844,9 +1844,11 @@ function hexHomeNewsUpdateButton(buttonArea,shortname,pagetype){
   }
 
   if(link){
+    link.style.width=view.dataset.width||'100%';
     link.href=url;
     window.hexSetExternal(link,view.dataset.type||'internal');
   }
+
   if(title){
     title.textContent=view.dataset.title||'一覧を見る';
   }
