@@ -793,6 +793,7 @@
     flex-direction:column;
     align-items:center;
     gap:16px;
+    margin:0 auto 16px;
   }
   .hex-company-buttons > .hex-button-wrap{
     width:100%;
