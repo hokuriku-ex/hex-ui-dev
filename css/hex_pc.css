@@ -2387,6 +2387,9 @@ body,
   box-shadow:0 8px 20px rgba(31,39,116,.18)!important;
   opacity:.75!important;
 }
+.hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon{
+  color:#fff!important;
+}
 
 .hex-founded-year{
   color:#c8a874;
