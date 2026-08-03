@@ -1448,18 +1448,6 @@
   }
 }
 
-/* お問い合わせフッター */
-@media screen and (max-width:768px){
-  .hex-contact-buttons{
-    flex-direction:column;
-    align-items:center;
-    gap:16px;
-  }
-  .hex-contact-buttons > .hex-button-wrap{
-    width:100%;
-  }
-}
-
 /* =======================================
    標準変数上書き
 ======================================= */
