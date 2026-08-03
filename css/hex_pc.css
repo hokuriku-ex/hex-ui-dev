@@ -2342,7 +2342,7 @@ body,
   align-items:stretch;
   gap:20px;
   width:100%;
-  max-width:800px;
+  max-width:calc(var(--hex_small_width) - 200px);
   margin:0 auto 20px;
 }
 .hex-company-buttons > .hex-button-wrap{
@@ -2465,7 +2465,7 @@ body,
 .hex-home-news-tabs{
   display:flex;
   justify-content:center;
-  max-width:var(--hex_small_width);
+  max-width:calc(var(--hex_small_width) - 200px);
   margin:0 auto 28px;
   border:none;
   border-bottom:1px solid #d8dce8;
@@ -2499,7 +2499,7 @@ body,
   opacity:1;
 }
 .hex-home-news-list{
-  max-width:var(--hex_small_width);
+  max-width:calc(var(--hex_small_width) - 200px);
   margin:0 auto;
 }
 .hex-home-news-list .post_index_home_type1 .bg_post_index_home .bg_items{
@@ -2510,7 +2510,7 @@ body,
 }
 .hex-home-news-button{
   width:100%;
-  max-width:var(--hex_small_width);
+  max-width:calc(var(--hex_small_width) - 200px);
   margin:34px auto 0;
   padding:0 32px;
   display:flex;
