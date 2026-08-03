@@ -1061,7 +1061,7 @@ br[hex-sp]{
   z-index:1;
 }
 .hex-card:hover{
-  border-color:#1f2774!important;
+  border-color:#c8a874;
 }
 .hex-card:hover .hex-card-title-link,
 .hex-card:hover .hex-link-detail,
@@ -1071,11 +1071,11 @@ br[hex-sp]{
 }
 .hex-card.light{
   background:#fff;
-  border-color:#d8dce8;
+  border-color:#d8dce8!important;
 }
 .hex-card.dark{
   background:transparent;
-  border-color:rgba(255,255,255,.75);
+  border-color:rgba(255,255,255,.75)!important;
 }
 .hex-card-grid1 .hex-card{
   display:grid;
