@@ -800,9 +800,11 @@ br[hex-sp]{
 
 /* カラム設定：ボタン幅用 */
 .hex-col-1{width:100%;}
-.hex-col-2{width:calc(50% - 18px);}
-.hex-col-3{width:calc(33.333% - 24px);}
-.hex-col-4{width:calc(25% - 27px);}
+.hex-col-2{width:calc(50%);}
+.hex-col-3{width:calc(33.333%);}
+.hex-col-4{width:calc(25%);}
+.hex-col-5{width:calc(20%);}
+.hex-col-6{width:calc(16.666%);}
 
 /* 配置制御：button/link用 */
 .hex-align-left{justify-content:flex-start;}
