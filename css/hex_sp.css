@@ -839,6 +839,11 @@
 ======================================= */
 /* 記事エリア余白変更 */
 @media screen and (max-width:768px){
+  /* 導入文 */
+  .hex-intro h4{
+    padding-inline:16px!important;
+  }
+
   /* 基本ページ */
   .post_index_contents{
     padding-inline:16px!important;
