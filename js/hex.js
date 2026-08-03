@@ -1105,7 +1105,7 @@ hexReady(function(){
               url:window.hexBuildUrl(bannerStart),
               type:bannerStart.dataset.type||'internal',
               style:bannerStart.dataset.style||'light',
-              col:bannerStart.dataset.col||'4',
+              width:bannerStart.dataset.width||'100%',
               image:image.src,
               alt:image.alt||bannerStart.dataset.title||bannerStart.dataset.thumbTitle||''
             });
@@ -1172,8 +1172,9 @@ hexReady(function(){
           var buttonTitle=document.createElement('span');
           var buttonIcon=document.createElement('span');
           var buttonI=document.createElement('i');
-          buttonWrap.className='hex-banner-button hex-col-'+item.col;
+          buttonWrap.className='hex-banner-button';
           buttonEl.className='hex-btn-main '+item.style;
+          buttonEl.style.width=item.width;
           buttonEl.href=item.url;
           window.hexSetExternal(buttonEl,item.type);
           buttonTitle.className='hex-btn-main-title';
