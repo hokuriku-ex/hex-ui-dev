@@ -2387,7 +2387,9 @@ body,
   box-shadow:0 8px 20px rgba(31,39,116,.18)!important;
   opacity:.75!important;
 }
-.hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon{
+.hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon,
+.hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon i,
+.hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon i::before{
   color:#fff!important;
 }
 
