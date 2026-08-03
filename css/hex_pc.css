@@ -2593,7 +2593,7 @@ body,
   z-index:0;
 }
 .gc_auto_frame_page_title .pagetitle_type4 .bg_text{
-  padding:18px 0 22px!important;
+  padding:36px 0 22px!important;
 }
 .gc_auto_frame_page_title .pagetitle_type4 .title_box{
   margin-bottom:22px!important;
@@ -2658,7 +2658,7 @@ body,
 .hex-intro h4{
   max-width:var(--base_width);
   margin:0 auto;
-  padding:0 0 24px;
+  padding:0 0 48px;
   text-align:center;
   color:#383838;
   font-size:16px;
