@@ -2615,14 +2615,14 @@ body,
 .gc_auto_frame_page_title .title_font_big_headline{
   color:#fff!important;
   text-shadow:
-    0 0 3px #383838,
-    0 0 7px rgba(56,56,56,.8);
+    0 0 3px #1f2774,
+    0 0 7px rgba(31,39,116,.8);
 }
 
 /* 英語タイトル共通 */
 .pagetitle_type.pagetitle_type4 .bg_text h1::after{
   display: block;
-  color: #383838;
+  color: #1f2774;
   font-size: 16px;
   line-height: 1.4;
   letter-spacing: 0.22em;
@@ -2660,7 +2660,7 @@ body,
   margin:0 auto;
   padding:0 0 24px;
   text-align:center;
-  color:#383838;
+  color:#1f2774;
   font-size:16px;
   font-weight:500;
   line-height:1.9;
