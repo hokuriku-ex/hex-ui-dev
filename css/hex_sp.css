@@ -300,14 +300,6 @@
 
 /* ボタン・リンク・カード */
 @media screen and (max-width:768px){
-  .hex-col-1,
-  .hex-col-2,
-  .hex-col-3,
-  .hex-col-4,
-  .hex-col-5,
-  .hex-col-6{
-    width:100%;
-  }
   .hex-btn-main{
     padding:16px 20px;
   }
@@ -361,11 +353,6 @@
   }
   .hex-card-title-link .hex-link-icon{
     font-size:14px;
-  }
-
-  /* リンクcol=1 */
-  .hex-link-wrap.hex-col-1 .hex-link-title{
-    font-size:20px;
   }
 }
 
