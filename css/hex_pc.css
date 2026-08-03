@@ -2666,8 +2666,8 @@ body,
   line-height:1.9;
   letter-spacing:.04em;
   text-shadow:
-    0 0 3px #fff,
-    0 0 7px rgba(255,255,255,.8)!important;
+    0 0 5px #fff,
+    0 0 10px rgba(255,255,255,.8)!important;
 }
 .hex-intro::before{
   content:"";
