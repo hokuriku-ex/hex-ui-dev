@@ -28,7 +28,7 @@ const HOME_SECTIONS={
   HERO:'gc_auto_frame_home_0', /* ヒーロー画像 */
   WELCOME:'gc_auto_frame_home_1', /* Welcomeメッセージ */
   ABOUT:'gc_auto_frame_home_2', /* 私たちについて */
-  ABOUT:'gc_auto_frame_home_3', /* 初めての方へ */
+  FIRST:'gc_auto_frame_home_3', /* 初めての方へ */
   SERVICE:'gc_auto_frame_home_4', /* サービス案内 */
   PICKUP:'gc_auto_frame_home_5', /* 注目アイテム */
   NEWS_SECTION:'gc_auto_frame_home_6', /* お知らせセクション */
