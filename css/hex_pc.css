@@ -1134,7 +1134,7 @@ br[hex-sp]{
 .hex-card.dark .hex-card-head{
   border-bottom-color:rgba(255,255,255,.35);
 }
-.hex-card-head::before{
+.hex-card:has(.hex-link[href]) .hex-card-head::before{
   content:"";
   position:absolute;
   left:0;
@@ -1144,7 +1144,7 @@ br[hex-sp]{
   background:#c8a874;
   transition:width .3s ease;
 }
-.hex-card:hover .hex-card-head::before{
+.hex-card:has(.hex-link[href]):hover .hex-card-head::before{
   width:100%;
 }
 .hex-card-title{
