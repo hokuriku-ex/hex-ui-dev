@@ -66,8 +66,9 @@
 /* 共通セクション小見出し（h4専用） */
 @media screen and (max-width:768px){
   .hex-section-smalltitle{
-    margin:0 0 14px!important;
+    margin:0!important;
     font-size:16px!important;
+    text-align:left!important;
   }
 }
 
@@ -78,9 +79,11 @@
   }
   h3:not(.hex-section-subtitle){
     font-size:20px;
+    text-align:left!important;
   }
   h4:not(.hex-section-smalltitle){
     font-size:16px;
+    text-align:left!important;
   }
 }
 
