@@ -2561,7 +2561,6 @@ body,
 }
 .hex-home-news-button{
   width:100%;
-  max-width:calc(var(--hex_small_width) - 200px);
   margin:34px auto 0;
   padding:0 32px;
   display:flex;
@@ -2569,8 +2568,7 @@ body,
   box-sizing:border-box;
 }
 .hex-home-news-button .hex-home-news-link-wrap{
-  width:calc(25% - 27px);
-  max-width:none;
+  width:100%;
 }
 .hex-home-news-button .hex-link{
   cursor:pointer;
