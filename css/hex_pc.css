@@ -2613,7 +2613,9 @@ body,
 
 /* 日本語タイトル共通 */
 .gc_auto_frame_page_title .title_font_big_headline{
-  color:#c8a874!important;
+  color:#b28d52!important;
+  text-shadow:none!important;
+  -webkit-text-stroke:0!important;
 }
 
 /* 英語タイトル共通 */
@@ -2657,7 +2659,7 @@ body,
   margin:0 auto;
   padding:0 0 24px;
   text-align:center;
-  color:#c8a874;
+  color:#b89560;
   font-size:16px;
   font-weight:500;
   line-height:1.9;
