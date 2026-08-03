@@ -2356,11 +2356,10 @@ body,
 .hex-company-buttons .hex-btn-main.dark{
   position:relative;
   min-height:88px;
-  padding:18px 68px 18px 28px;
+  padding:17px 68px 17px 28px;
   color:#fff!important;
   background:#1f2774!important;
   border:1px solid #1f2774!important;
-  border-radius:2px;
   text-align:left;
   overflow:hidden;
   transition:
@@ -2372,8 +2371,8 @@ body,
 .hex-company-buttons .hex-btn-main.dark::before{
   content:"";
   position:absolute;
-  top:18px;
-  bottom:18px;
+  top:17px;
+  bottom:17px;
   left:0;
   width:3px;
   background:#c8a874!important;
@@ -2382,29 +2381,21 @@ body,
 .hex-company-buttons .hex-btn-main.dark p{
   position:relative;
   margin:0;
-  font-size:17px;
-  font-weight:500;
-  line-height:1.5;
-  letter-spacing:.04em;
 }
-.hex-company-buttons
-.hex-button-wrap:nth-child(1)
-.hex-btn-main.dark p::before{
-  content:"一般のお客様";
-}
-.hex-company-buttons
-.hex-button-wrap:nth-child(2)
-.hex-btn-main.dark p::before{
-  content:"法人・事業者のお客様";
-}
-.hex-company-buttons .hex-btn-main.dark p::before{
-  display:block;
-  margin-bottom:4px;
+.hex-company-buttons .hex-btn-main.dark .sub{
+  margin-bottom:5px;
   color:#c8a874!important;
   font-size:11px;
   font-weight:500;
   line-height:1.2;
   letter-spacing:.14em;
+}
+.hex-company-buttons .hex-btn-main.dark .main{
+  color:#fff!important;
+  font-size:17px;
+  font-weight:500;
+  line-height:1.5;
+  letter-spacing:.04em;
 }
 .hex-company-buttons .hex-btn-main.dark:hover{
   color:#fff!important;
