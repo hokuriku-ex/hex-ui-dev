@@ -2460,7 +2460,7 @@ body,
 .hex-company-buttons .hex-btn-main.dark::before{
   content:"";
   position:absolute;
-  inset:5px;
+  inset:7px;
   border:1px solid #c8a874;
   pointer-events:none;
 }
