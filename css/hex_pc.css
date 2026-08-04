@@ -2622,7 +2622,7 @@ body,
   margin-left:auto!important;
   margin-right:auto!important;
 }
-.gc_auto_frame_spotitem_body:has(.hex-recruit-section) h4{
+.gc_auto_frame_spotitem_body:has(.hex-recruit-section) :is(h3,h4){
   display:table;
   width:auto!important;
   margin-left:auto!important;
