@@ -4481,6 +4481,7 @@ body.hex-form-dialog-open{
   display:flex;
   align-items:center;
   gap:10px;
+  margin:0;
 }
 .hex-calendar-legend-symbol{
   flex:0 0 auto;
