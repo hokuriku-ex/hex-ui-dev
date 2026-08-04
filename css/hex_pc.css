@@ -2622,7 +2622,11 @@ body,
   margin-left:auto!important;
   margin-right:auto!important;
 }
-
+.hex-recruit-section h4{
+  display:table;
+  width:auto!important;
+  text-align:left;
+}
 
 /* =======================================
    下層ページ共通
@@ -4581,9 +4585,11 @@ body.hex-form-dialog-open{
 .hex-contact-section .hex-center-title-dark[data-en]::after{
   color:#c8a874!important;
 }
-.hex-contact-section h4{
+.gc_auto_frame_spotitem_body:has(.hex-contact-section) h4{
   display:table;
   width:auto!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
   text-align:left;
 }
 .hex-contact-phone{
