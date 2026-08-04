@@ -2627,7 +2627,7 @@ body,
   width:auto!important;
   margin-left:auto!important;
   margin-right:auto!important;
-  text-align:left;
+  text-align:left!important;
 }
 
 /* =======================================
