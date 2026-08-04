@@ -822,6 +822,7 @@ br[hex-sp]{
 /* ボタン */
 .hex-button-wrap{
   display:flex;
+  justify-content:center;
   width:100%;
   max-width:100%;
   min-width:0;
