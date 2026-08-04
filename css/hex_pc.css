@@ -2455,7 +2455,6 @@ body,
   color:#fff!important;
   background:#1f2774!important;
   border:1px solid #1f2774!important;
-  box-shadow:5px 5px 15px rgba(31,39,116,.18)!important;
   transition:opacity .25s ease!important;
 }
 .hex-company-buttons .hex-btn-main.dark::before{
