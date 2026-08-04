@@ -1383,6 +1383,7 @@ br[hex-sp]{
 .hex-banner.hex-banner-no-image{
   position:relative;
   background:#1f2774!important;
+  opacity: .8;
 }
 .hex-banner.hex-banner-no-image .hex-banner-image{
   min-height:clamp(240px, 30vw, 320px)!important;
@@ -2686,7 +2687,7 @@ body,
   letter-spacing: 0.22em;
   font-family: "Times New Roman",serif;
   font-weight: normal;
-  opacity: 0.6;
+  opacity: .6;
 }
 
 /* ページ別 英語タイトル */
