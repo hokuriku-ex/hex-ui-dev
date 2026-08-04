@@ -2451,11 +2451,23 @@ body,
   text-align:left;
 }
 .hex-company-buttons .hex-btn-main.dark{
+  position:relative;
   color:#fff!important;
   background:#1f2774!important;
   border:1px solid #1f2774!important;
-  box-shadow:5px rgba(31,39,116,.18)!important;
+  box-shadow:5px 5px 15px rgba(31,39,116,.18)!important;
   transition:opacity .25s ease!important;
+}
+.hex-company-buttons .hex-btn-main.dark::before{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border:1px solid #c8a874;
+  pointer-events:none;
+}
+.hex-company-buttons .hex-btn-main.dark > *{
+  position:relative;
+  z-index:1;
 }
 .hex-company-buttons .hex-btn-main.dark:hover{
   opacity:.75!important;
