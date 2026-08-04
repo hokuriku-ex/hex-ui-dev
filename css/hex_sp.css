@@ -595,7 +595,9 @@
     flex-direction:column!important;
     width:100%!important;
     height:auto!important;
-    min-height:100%!important;
+    min-height:0!important;
+    justify-content:flex-start!important;
+    align-items:stretch!important;
     margin:0!important;
     padding:0!important;
     overflow:visible!important;
@@ -606,14 +608,20 @@
     flex-direction:column!important;
     order:1;
     width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    flex:none!important;
     margin:0!important;
     padding:0!important;
   }
 
   #gc_auto_frame_header_object_smartphone_hum_pupup .menu_left{
     display:block!important;
+    flex:none!important;
     order:2;
     width:100%!important;
+    height:auto!important;
+    min-height:0!important;
     margin:0!important;
     padding:0!important;
     border:none!important;
