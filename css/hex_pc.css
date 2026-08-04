@@ -4592,7 +4592,7 @@ body.hex-form-dialog-open{
   width:auto!important;
   margin-left:auto!important;
   margin-right:auto!important;
-  text-align:left;
+  text-align:left!important;
 }
 .hex-contact-phone{
   display:flex;
