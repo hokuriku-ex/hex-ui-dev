@@ -1458,7 +1458,6 @@
 ======================================= */
 @media screen and (max-width:768px){
   .hex-calendar{
-    max-width:none;
     padding:22px 16px;
   }
   .hex-calendar-header{
