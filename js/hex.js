@@ -1348,7 +1348,6 @@ hexReady(function(){
       if(image)break;
       imageBlock=window.hexNextBlock(imageBlock);
     }
-    if(!image)return;
     var title=start.dataset.title||'';
     var text=start.dataset.text||'';
     var button=start.dataset.button||'';
@@ -1362,11 +1361,16 @@ hexReady(function(){
     var overlay=document.createElement('div');
     var inner=document.createElement('div');
     banner.className='hex-banner';
+    if(!image){
+      banner.classList.add('hex-banner-no-image');
+    }
     imageBox.className='hex-banner-image';
     overlay.className='hex-banner-overlay';
     inner.className='hex-banner-inner';
-    if(bannerUrl){
-      if(!button){
+    if(image){
+      var imageClone=image.cloneNode(true);
+
+      if(bannerUrl&&!button){
         var imageLink=document.createElement('a');
         imageLink.className='hex-banner-image-link';
         imageLink.href=bannerUrl;
@@ -1376,8 +1380,6 @@ hexReady(function(){
       }else{
         imageBox.appendChild(imageClone);
       }
-    }else{
-      imageBox.appendChild(imageClone);
     }
     if(title){
       var titleEl=document.createElement('h2');
