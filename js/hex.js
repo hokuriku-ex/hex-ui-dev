@@ -714,9 +714,7 @@ hexLoad(function(){
       popup.querySelectorAll('.menu_right > .menu_group')
     );
 
-    /*
-     * ハンバーガーと×アイコンの切り替え
-     */
+    /* ハンバーガーと×アイコンの切り替え */
     if(wrapper){
       function syncSmartphoneMenuState(){
         var isOpen=
@@ -737,9 +735,7 @@ hexLoad(function(){
       syncSmartphoneMenuState();
     }
 
-    /*
-     * 親メニューのアコーディオン制御
-     */
+    /* 親メニューのアコーディオン制御 */
     function syncOpenMenu(){
       groups.forEach(function(group){
         var submenu=group.querySelector(':scope > .menu_sub');
@@ -785,9 +781,7 @@ hexLoad(function(){
 
     syncOpenMenu();
 
-    /*
-     * PC・スマホのメニューアイコンと採用情報URL
-     */
+    /* PC・スマホのメニューアイコンと採用情報URL */
     var recruitUrl=HEX_IS_PRODUCTION
       ?HEX_URLS.RECRUIT.PRODUCTION
       :HEX_URLS.RECRUIT.DEVELOPMENT;
@@ -806,9 +800,7 @@ hexLoad(function(){
         ?iconSpan.querySelector('i')
         :null;
 
-      /*
-       * 通常の内部リンクアイコン
-       */
+      /* 通常の内部リンクアイコン */
       if(!iconSpan){
         iconSpan=document.createElement('span');
         iconSpan.className='hex-menu-icon';
@@ -821,9 +813,7 @@ hexLoad(function(){
         el.appendChild(iconSpan);
       }
 
-      /*
-       * スマホの子メニューから親へのイベント伝播を停止
-       */
+      /* スマホの子メニューから親へのイベント伝播を停止 */
       if(
         isSmartphoneItem&&
         el.dataset.hexMenuPropagationReady!=='1'
@@ -835,9 +825,7 @@ hexLoad(function(){
         });
       }
 
-      /*
-       * 採用情報を外部リンクに変更
-       */
+      /* 採用情報を外部リンクに変更 */
       if(el.textContent.trim()!=='採用情報')return;
 
       el.classList.add('menu-external');
@@ -858,6 +846,39 @@ hexLoad(function(){
         window.open(recruitUrl,'_blank','noopener');
       },true);
     });
+
+    /* ハンバーガーメニュー最下部に電話番号・カレンダーを複製 */
+    var headerInfo=document.querySelector(
+      '.headermenu_type8 .pc_menu > .hex-header-info'
+    );
+
+    var menuPopup=popup.querySelector('.menu_button_popup');
+
+    if(
+      headerInfo&&
+      menuPopup&&
+      !menuPopup.querySelector('.hex-header-info-menu')
+    ){
+      var headerInfoClone=headerInfo.cloneNode(true);
+      headerInfoClone.classList.add('hex-header-info-menu');
+
+      menuPopup.appendChild(headerInfoClone);
+
+      var originalCalendar=
+        headerInfo.querySelector('.hex-calendar-open');
+
+      var cloneCalendar=
+        headerInfoClone.querySelector('.hex-calendar-open');
+
+      if(originalCalendar&&cloneCalendar){
+        cloneCalendar.addEventListener('click',function(event){
+          event.preventDefault();
+          event.stopPropagation();
+
+          originalCalendar.click();
+        });
+      }
+    }
   },100);
 });
 
