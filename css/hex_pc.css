@@ -1694,6 +1694,7 @@ br[hex-sp]{
   }
   .headermenu_type8 .hex-header-info{
     display:flex!important;
+    margin-right:80px!important;
   }
 }
 
