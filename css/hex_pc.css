@@ -4581,6 +4581,11 @@ body.hex-form-dialog-open{
 .hex-contact-section .hex-center-title-dark[data-en]::after{
   color:#c8a874!important;
 }
+.hex-contact-section h4{
+  display:table;
+  width:auto!important;
+  text-align:left;
+}
 .hex-contact-phone{
   display:flex;
   flex-direction:column;
