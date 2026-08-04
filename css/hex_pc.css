@@ -2966,7 +2966,7 @@ body,
 }
 .hex-staff-iframe-mode .hex-staff-wrap{
   width:100%!important;
-  max-width:var(--hex_small_width)!important;
+  max-width:var(--hex_medium_width)!important;
   margin:0 auto;
   padding:0!important;
   box-sizing:border-box;
