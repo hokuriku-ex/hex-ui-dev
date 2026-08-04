@@ -2719,7 +2719,6 @@ body,
   max-width:var(--base_width);
   display:table;
   margin:0 auto!important;
-  width:100%!important;
   padding-top:0!important;
   padding-bottom:48px!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
