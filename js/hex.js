@@ -1357,7 +1357,7 @@ hexReady(function(){
     var bannerUrl=window.hexBuildUrl(start);
     var banner=document.createElement('div');
     var imageBox=document.createElement('div');
-    var imageClone=image.cloneNode(true);
+    var imageClone=null;
     var overlay=document.createElement('div');
     var inner=document.createElement('div');
     banner.className='hex-banner';
