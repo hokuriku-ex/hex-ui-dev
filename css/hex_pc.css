@@ -1687,10 +1687,13 @@ br[hex-sp]{
 
 /* 769～1200pxはPCメニューを非表示 */
 @media screen and (min-width:769px) and (max-width:1200px){
-  .headermenu_type8 .bg_pc_menu,
-  .headermenu_type8 .pc_menu,
+  .headermenu_type8 .pc_menu > .menu_menu,
+  .headermenu_type8 .pc_menu > .gc_auto_frame_header_object_menu_separator,
   .headermenu_type8 .pc_menu_center{
     display:none!important;
+  }
+  .headermenu_type8 .hex-header-info{
+    display:flex!important;
   }
 }
 
