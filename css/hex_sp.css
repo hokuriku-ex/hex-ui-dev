@@ -729,7 +729,7 @@
     width:calc(100% - 48px)!important;
     height:auto!important;
     margin:24px 24px 0!important;
-    padding:24px 0!important;
+    padding:0!important;
     justify-content:center!important;
     align-items:center!important;
     gap:20px!important;
