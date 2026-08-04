@@ -2243,6 +2243,25 @@ hexReady(function(){
 });
 
 /* =======================================
+   下層ページタイトル　文言差し替え
+======================================= */
+hexReady(function(){
+  document.querySelectorAll(
+    '.gc_auto_frame_page_title .title_font_big_headline'
+  ).forEach(function(title){
+    var text=title.textContent.trim();
+
+    if(text==='個人のお客様'){
+      title.textContent='外構工事をご検討中の方';
+    }
+
+    if(text==='法人・事業者の方'){
+      title.textContent='外構パートナーをお探しの方';
+    }
+  });
+});
+
+/* =======================================
    導入文をページタイトル内へ移動
 ======================================= */
 hexLoad(function(){
