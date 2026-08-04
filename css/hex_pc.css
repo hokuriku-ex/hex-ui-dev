@@ -174,13 +174,14 @@ html{
 
 /* 共通セクション小見出し（h4専用） */
 .hex-section-smalltitle{
-  margin:0!important;
+  display:table;
+  margin:0 auto!important;
   font-size:18px;
   font-weight:500;
   line-height:2;
   letter-spacing:.03em;
   color:#383838;
-  text-align:center;
+  text-align:left;
 }
 
 /* 標準見出しフォントサイズ（h2・h3・h4） */
