@@ -180,6 +180,7 @@ html{
   line-height:2;
   letter-spacing:.03em;
   color:#383838;
+  text-align:center;
 }
 
 /* 標準見出しフォントサイズ（h2・h3・h4） */
