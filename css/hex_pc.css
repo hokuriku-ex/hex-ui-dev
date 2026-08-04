@@ -1382,8 +1382,7 @@ br[hex-sp]{
 /* 画像未登録時のバナー */
 .hex-banner.hex-banner-no-image{
   position:relative;
-  background:#1f2774!important;
-  opacity:.9;
+  background:rgba(31,39,116,.85)!important;
 }
 .hex-banner.hex-banner-no-image .hex-banner-image{
   min-height:clamp(240px, 30vw, 320px)!important;
@@ -2454,7 +2453,7 @@ body,
 .hex-company-buttons .hex-btn-main.dark{
   position:relative;
   color:#fff!important;
-  background:#1f2774!important;
+  background:rgba(31,39,116,.85)!important;
   border:none!important;
   transition:opacity .25s ease!important;
 }
