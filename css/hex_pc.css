@@ -297,11 +297,6 @@ a.hex-text-link[target="_blank"]::after{
   line-height:1;
   text-decoration:none!important;
 }
-.hex-leftblock{
-  display:inline-block;
-  text-align:left;
-  line-height:2;
-}
 
 /* 一覧ページング */
 .bg_page_button{
