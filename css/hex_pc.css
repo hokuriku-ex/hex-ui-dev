@@ -1388,7 +1388,7 @@ br[hex-sp]{
   background:#1f2774!important;
 }
 .hex-banner.hex-banner-no-image .hex-banner-image{
-  min-height:clamp(280px, 30vw, 420px);
+  min-height:clamp(280px, 30vw, 420px)!important;
 }
 .hex-banner.hex-banner-no-image::before{
   content:"";
@@ -1401,7 +1401,7 @@ br[hex-sp]{
 .hex-banner.hex-banner-no-image .hex-banner-inner{
   position:relative;
   z-index:2;
-  padding:40px 32px;
+  padding:40px 32px!important;
   box-sizing:border-box;
 }
 
