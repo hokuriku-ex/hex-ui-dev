@@ -1385,40 +1385,22 @@ br[hex-sp]{
 /* 画像未登録時のバナー */
 .hex-banner.hex-banner-no-image{
   position:relative;
+  background:#1f2774!important;
+}
+.hex-banner.hex-banner-no-image .hex-banner-image{
   min-height:clamp(280px, 30vw, 420px);
-  overflow:hidden;
-  background:
-    linear-gradient(
-      135deg,
-      #1f2774 0%,
-      #2d377f 55%,
-      #c8a874 160%
-    );
 }
 .hex-banner.hex-banner-no-image::before{
   content:"";
   position:absolute;
-  inset:16px;
-  border:1px solid rgba(200,168,116,.55);
+  z-index:1;
+  inset:20px;
+  border:1px solid #c8a874;
   pointer-events:none;
-}
-.hex-banner.hex-banner-no-image::after{
-  content:"";
-  position:absolute;
-  top:-60%;
-  right:-10%;
-  width:45%;
-  height:220%;
-  background:rgba(255,255,255,.05);
-  transform:rotate(20deg);
-  pointer-events:none;
-}
-.hex-banner.hex-banner-no-image .hex-banner-image{
-  min-height:inherit;
 }
 .hex-banner.hex-banner-no-image .hex-banner-inner{
   position:relative;
-  z-index:1;
+  z-index:2;
 }
 
 /* ギャラリー */
