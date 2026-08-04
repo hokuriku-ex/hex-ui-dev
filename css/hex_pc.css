@@ -1328,14 +1328,7 @@ br[hex-sp]{
   font-size:22px;
   line-height:1.9;
 }
-.hex-banner-button{
-  display:flex;
-  justify-content:center;
-  width:100%;
-  max-width:100%;
-  min-width:0;
-  box-sizing:border-box;
-}
+.hex-banner:not(.hex-banner-no-image)
 .hex-banner-button .hex-btn-main{
   width:100%;
   max-width:100%;
@@ -1348,21 +1341,28 @@ br[hex-sp]{
   backdrop-filter:blur(3px);
   -webkit-backdrop-filter:blur(3px);
 }
+
+.hex-banner:not(.hex-banner-no-image)
 .hex-banner-button .hex-btn-main i{
   color:#383838!important;
 }
+
+.hex-banner:not(.hex-banner-no-image)
 .hex-banner-button .hex-btn-main .hex-btn-main-title{
   color:#383838!important;
 }
+
+.hex-banner:not(.hex-banner-no-image)
 .hex-banner-button .hex-btn-main:hover{
   background:rgba(255,255,255,.96)!important;
   border-color:#fff!important;
   color:#c8a874!important;
   box-shadow:0 0 10px rgba(56,56,56,.45);
 }
-.hex-banner-button .hex-btn-main:hover i{
-  color:#c8a874!important;
-}
+
+.hex-banner:not(.hex-banner-no-image)
+.hex-banner-button .hex-btn-main:hover i,
+.hex-banner:not(.hex-banner-no-image)
 .hex-banner-button .hex-btn-main:hover .hex-btn-main-title{
   color:#c8a874!important;
 }
@@ -1402,6 +1402,12 @@ br[hex-sp]{
   z-index:2;
   padding:40px 32px!important;
   box-sizing:border-box;
+}
+.hex-banner.hex-banner-no-image .hex-banner-title,
+.hex-banner.hex-banner-no-image .hex-banner-text{
+  color:#fff!important;
+  text-shadow:none!important;
+  paint-order:normal;
 }
 
 /* ギャラリー */
