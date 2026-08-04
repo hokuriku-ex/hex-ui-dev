@@ -1401,6 +1401,8 @@ br[hex-sp]{
 .hex-banner.hex-banner-no-image .hex-banner-inner{
   position:relative;
   z-index:2;
+  padding:8px;
+  box-sizing:border-box;
 }
 
 /* ギャラリー */
