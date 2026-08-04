@@ -710,6 +710,21 @@
     line-height:1!important;
   }
 
+  /* 電話番号・カレンダーをSNSより下へ配置 */
+  #gc_auto_frame_header_object_smartphone_hum_pupup
+  .hex-header-info-menu{
+    display:flex!important;
+    order:3;
+    width:calc(100% - 48px)!important;
+    margin:24px 24px 0!important;
+    padding:24px 0!important;
+    justify-content:center!important;
+    align-items:center!important;
+    gap:20px!important;
+    border-top:1px solid #d8dce8!important;
+    box-sizing:border-box!important;
+  }
+
   /* 既存のホバー表現を無効化 */
   #gc_auto_frame_header_object_smartphone_hum_pupup
   .menu_group:hover,
