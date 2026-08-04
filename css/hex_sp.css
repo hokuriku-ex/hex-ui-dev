@@ -594,9 +594,11 @@
     display:flex!important;
     flex-direction:column!important;
     width:100%!important;
+    height:auto!important;
     min-height:100%!important;
     margin:0!important;
     padding:0!important;
+    overflow:visible!important;
   }
 
   #gc_auto_frame_header_object_smartphone_hum_pupup .menu_right{
@@ -714,8 +716,10 @@
   #gc_auto_frame_header_object_smartphone_hum_pupup
   .hex-header-info-menu{
     display:flex!important;
-    order:3;
+    flex:none!important;
+    order:3!important;
     width:calc(100% - 48px)!important;
+    height:auto!important;
     margin:24px 24px 0!important;
     padding:24px 0!important;
     justify-content:center!important;
