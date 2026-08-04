@@ -747,6 +747,14 @@
   }
 }
 
+/* 769～1200pxはハンバーガーメニュー内のカレンダーを非表示 */
+@media screen and (min-width:769px) and (max-width:1200px){
+  #gc_auto_frame_header_object_smartphone_hum_pupup
+  .hex-header-info-menu{
+    display:none!important;
+  }
+}
+
 /* =======================================
    営業日カレンダーモーダル
 ======================================= */
