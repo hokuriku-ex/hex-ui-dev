@@ -805,7 +805,11 @@
     padding:16px 24px;
   }
   .welcome .title h2{
-    font-size:26px;
+    font-size:clamp(
+      26px,
+      calc(20.46px + 0.72vw),
+      32px
+    );
   }
   .welcome .kakko_l,
   .welcome .kakko_br{
