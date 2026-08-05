@@ -813,6 +813,12 @@
     width:clamp(45px, calc(2.7vw + 35.3px), 56px);
     height:clamp(45px, calc(2.7vw + 35.3px), 56px);
   }
+  .welcome .kakko_l{
+    left:-22px;
+  }
+  .welcome .kakko_br{
+    right:-22px;
+  }
   .welcome .text{
     font-size:18px;
     line-height:2.5;
