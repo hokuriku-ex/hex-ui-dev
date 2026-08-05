@@ -802,9 +802,7 @@
     box-sizing:border-box;
   }
   .welcome .title{
-    padding:
-    clamp(8px, 1.75vw, 16px)
-    clamp(16px, 3.75vw, 24px);
+    padding:16px 24px;
   }
   .welcome .title h2{
     font-size:26px;
