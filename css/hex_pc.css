@@ -910,6 +910,10 @@ br[hex-sp]{
   transform:translateX(0);
   transition:.3s ease;
 }
+.hex-btn-main.light:hover,
+.hex-btn-main.dark:hover{
+  border-color:#c8a874;
+}
 .hex-btn-main.light:hover::before,
 .hex-btn-main.dark:hover::before{
   border-color:#c8a874;
@@ -920,10 +924,6 @@ br[hex-sp]{
     transparent 1px,
     transparent 5px
   );
-}
-.hex-btn-main.light:hover,
-.hex-btn-main.dark:hover{
-  border-color:#c8a874;
 }
 .hex-btn-main:hover .hex-btn-main-title,
 .hex-btn-main:hover .hex-btn-main-icon,
