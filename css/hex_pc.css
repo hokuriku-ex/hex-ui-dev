@@ -2367,6 +2367,7 @@ body,
 }
 .welcome .title{
   position:relative;
+  overflow:visible;
   display:inline-block;
   max-width:100%;
   margin:0 0 70px;
