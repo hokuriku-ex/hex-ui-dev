@@ -808,17 +808,10 @@
   .welcome .title h2{
     font-size:26px;
   }
-  .welcome .kakko_l{
-    top:-18px;
-    left:-22px;
-    width:45px;
-    height:45px;
-  }
+  .welcome .kakko_l,
   .welcome .kakko_br{
-    right:-22px;
-    bottom:-18px;
-    width:45px;
-    height:45px;
+    width:clamp(56px, 5.625vw, 90px);
+    height:clamp(56px, 5.625vw, 90px);
   }
   .welcome .text{
     font-size:18px;
