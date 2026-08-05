@@ -794,6 +794,9 @@
 ======================================= */
 @media screen and (max-width:768px){
   .welcome{
+    padding:0;
+  }
+  .welcome.has-padding{
     padding:50px 0 20px;
   }
   .welcome_contents{
