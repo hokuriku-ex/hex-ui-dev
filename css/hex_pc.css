@@ -3003,17 +3003,17 @@ body,
 .welcome .title:has(.hex-vision-section){
   margin:0 auto!important;
   padding:
-    clamp(16px, 1.75vw, 24px)
-    clamp(24px, 3.75vw, 56px)!important;
+    clamp(14px, 1.5vw, 20px)
+    clamp(20px, 3vw, 44px)!important;
   color:#383838!important;
 }
 .welcome .title h2:has(.hex-vision-section){
-  font-size:32px!important;
+  font-size:24px!important;
 }
 .welcome .kakko_l,
 .welcome .kakko_br:has(.hex-vision-section){
-  width:clamp(56px, 5.625vw, 72px)!important;
-  height:clamp(56px, 5.625vw, 72px)!important;
+  width:clamp(40px, 4.7vw, 56px)!important;
+  height:clamp(40px, 4.7vw, 56px)!important;
 }
 .welcome .kakko_l:has(.hex-vision-section){
   border-top:1px solid #383838!important;
