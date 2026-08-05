@@ -2389,8 +2389,8 @@ body,
 .welcome .kakko_br{
   position:absolute;
   z-index:2;
-  width:clamp(56px, 5.625vw, 90px);
-  height:clamp(56px, 5.625vw, 90px);
+  width:clamp(56px, 5.625vw, 72px);
+  height:clamp(56px, 5.625vw, 72px);
   box-sizing:border-box;
   pointer-events:none;
 }
