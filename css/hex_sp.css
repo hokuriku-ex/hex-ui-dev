@@ -797,12 +797,15 @@
     padding:50px 0 20px;
   }
   .welcome_contents{
+    width:100%;
     padding:0;
+    box-sizing:border-box;
   }
   .welcome .title{
-    margin-bottom:50px;
+    max-width:calc(100% - 44px);
+    margin:0 auto 50px;
   }
-  .welcome .title span{
+  .welcome .title h2{
     font-size:26px;
   }
   .welcome .kakko_l{
