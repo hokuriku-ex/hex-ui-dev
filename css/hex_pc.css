@@ -877,7 +877,7 @@ br[hex-sp]{
   );
 }
 .hex-btn-main.light::after{
-  background:#fff;
+  background:transparent;
 }
 .hex-btn-main.light .hex-btn-main-title,
 .hex-btn-main.light .hex-btn-main-icon{
@@ -898,7 +898,7 @@ br[hex-sp]{
   );
 }
 .hex-btn-main.dark::after{
-  background:#1f2774;
+  background:transparent;
 }
 .hex-btn-main.dark .hex-btn-main-title,
 .hex-btn-main.dark .hex-btn-main-icon{
