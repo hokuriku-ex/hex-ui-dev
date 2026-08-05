@@ -840,11 +840,12 @@ br[hex-sp]{
   text-decoration:none;
   border-radius:6px;
   transition:.3s ease;
+  background:transparent;
 }
 .hex-btn-main::before{
   content:"";
   position:absolute;
-  z-index:-2;
+  z-index:-1;
   top:5px;
   left:5px;
   width:100%;
@@ -853,21 +854,20 @@ br[hex-sp]{
   border:1px solid;
   border-radius:6px;
   pointer-events:none;
-}
-.hex-btn-main::after{
-  content:"";
-  position:absolute;
-  z-index:-1;
-  inset:0;
-  border-radius:5px;
-  pointer-events:none;
+  clip-path:polygon(
+    calc(100% - 5px) 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 calc(100% - 5px),
+    calc(100% - 5px) calc(100% - 5px)
+  );
 }
 .hex-btn-main.light{
   color:#1f2774;
   border:1px solid #1f2774;
 }
 .hex-btn-main.light::before{
-  border-color:#1f2774;
   background:repeating-linear-gradient(
     -45deg,
     #1f2774 0,
@@ -875,9 +875,6 @@ br[hex-sp]{
     transparent 1px,
     transparent 5px
   );
-}
-.hex-btn-main.light::after{
-  background:transparent;
 }
 .hex-btn-main.light .hex-btn-main-title,
 .hex-btn-main.light .hex-btn-main-icon{
@@ -888,7 +885,6 @@ br[hex-sp]{
   border:1px solid #fff;
 }
 .hex-btn-main.dark::before{
-  border-color:#fff;
   background:repeating-linear-gradient(
     -45deg,
     #fff 0,
@@ -896,9 +892,6 @@ br[hex-sp]{
     transparent 1px,
     transparent 5px
   );
-}
-.hex-btn-main.dark::after{
-  background:transparent;
 }
 .hex-btn-main.dark .hex-btn-main-title,
 .hex-btn-main.dark .hex-btn-main-icon{
