@@ -3000,26 +3000,26 @@ body,
    下層ページ：私たちについて
 ======================================= */
 /* 企業理念 */
-.welcome .title:has(.hex-vision-section){
+.content_body:has(.hex-vision-section) .welcome .title{
   margin:0 auto!important;
   padding:
     clamp(14px, 1.5vw, 20px)
     clamp(20px, 3vw, 44px)!important;
   color:#383838!important;
 }
-.welcome .title h2:has(.hex-vision-section){
+.content_body:has(.hex-vision-section) .welcome .title h2{
   font-size:24px!important;
 }
-.welcome .kakko_l,
-.welcome .kakko_br:has(.hex-vision-section){
-  width:clamp(40px, 4.7vw, 56px)!important;
-  height:clamp(40px, 4.7vw, 56px)!important;
+.content_body:has(.hex-vision-section) .welcome .kakko_l,
+.content_body:has(.hex-vision-section) .welcome .kakko_br{
+  width:clamp(48px, 4.7vw, 60px)!important;
+  height:clamp(48px, 4.7vw, 60px)!important;
 }
-.welcome .kakko_l:has(.hex-vision-section){
+.content_body:has(.hex-vision-section) .welcome .kakko_l{
   border-top:1px solid #383838!important;
   border-left:1px solid #383838!important;
 }
-.welcome .kakko_br:has(.hex-vision-section){
+.content_body:has(.hex-vision-section) .welcome .kakko_br{
   border-right:1px solid #383838!important;
   border-bottom:1px solid #383838!important;
 }
