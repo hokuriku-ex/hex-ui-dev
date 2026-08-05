@@ -807,7 +807,7 @@
   .welcome .title h2{
     font-size:clamp(
       26px,
-      calc(20.46px + 0.72vw),
+      calc(20px + 1.5vw),
       32px
     );
   }
