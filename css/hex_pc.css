@@ -826,6 +826,8 @@ br[hex-sp]{
   box-sizing:border-box;
 }
 .hex-btn-main{
+  position:relative;
+  z-index:1;
   width:100%;
   max-width:100%;
   box-sizing:border-box;
@@ -834,21 +836,61 @@ br[hex-sp]{
   justify-content:space-between;
   gap:24px;
   padding:18px 24px;
+  margin:0 6px 6px 0;
   text-decoration:none;
-  border-radius:0;
+  border-radius:6px;
   transition:.3s ease;
+}
+.hex-btn-main::before{
+  content:"";
+  position:absolute;
+  z-index:-2;
+  top:5px;
+  left:5px;
+  width:100%;
+  height:100%;
+  border:1px solid #c8a874;
+  border-radius:6px;
+  background:repeating-linear-gradient(
+    -45deg,
+    #c8a874 0,
+    #c8a874 1px,
+    transparent 1px,
+    transparent 5px
+  );
+  pointer-events:none;
+}
+
+/* ボタン本体の背景 */
+.hex-btn-main::after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:0;
+  border-radius:5px;
+  pointer-events:none;
 }
 .hex-btn-main.light{
   background:transparent;
   border:1px solid #1f2774;
 }
-.hex-btn-main.dark{
-  background:transparent;
-  border:1px solid #fff;
+.hex-btn-main.light{
+  color:#1f2774;
+  border:1px solid #1f2774;
+}
+.hex-btn-main.light::after{
+  background:#fff;
 }
 .hex-btn-main.light .hex-btn-main-title,
 .hex-btn-main.light .hex-btn-main-icon{
   color:#1f2774;
+}
+.hex-btn-main.dark{
+  color:#fff;
+  border:1px solid #fff;
+}
+.hex-btn-main.dark::after{
+  background:#1f2774;
 }
 .hex-btn-main.dark .hex-btn-main-title,
 .hex-btn-main.dark .hex-btn-main-icon{
@@ -869,13 +911,9 @@ br[hex-sp]{
   transform:translateX(0);
   transition:.3s ease;
 }
-.hex-btn-main.light:hover{
-  border-color:#c8a874;
-  background:transparent;
-}
+.hex-btn-main.light:hover,
 .hex-btn-main.dark:hover{
   border-color:#c8a874;
-  background:transparent;
 }
 .hex-btn-main:hover .hex-btn-main-title,
 .hex-btn-main:hover .hex-btn-main-icon,
@@ -883,7 +921,7 @@ br[hex-sp]{
   color:#c8a874!important;
 }
 .hex-btn-main:hover .hex-btn-main-icon{
-  transform:translateX(3px);
+  transform:translateX(4px);
 }
 .hex-btn-main:hover,
 .hex-btn-main:hover *{
