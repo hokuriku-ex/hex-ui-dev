@@ -841,6 +841,19 @@ br[hex-sp]{
   border-radius:6px;
   transition:.3s ease;
 }
+.hex-btn-main::before{
+  content:"";
+  position:absolute;
+  z-index:-2;
+  top:5px;
+  left:5px;
+  width:100%;
+  height:100%;
+  box-sizing:border-box;
+  border:1px solid;
+  border-radius:6px;
+  pointer-events:none;
+}
 .hex-btn-main::after{
   content:"";
   position:absolute;
@@ -848,10 +861,6 @@ br[hex-sp]{
   inset:0;
   border-radius:5px;
   pointer-events:none;
-}
-.hex-btn-main.light{
-  background:transparent;
-  border:1px solid #1f2774;
 }
 .hex-btn-main.light{
   color:#1f2774;
