@@ -3001,7 +3001,6 @@ body,
 ======================================= */
 /* 企業理念 */
 .content_body:has(.hex-vision-section) .welcome .title{
-  margin:0 auto!important;
   padding:
     clamp(14px, 1.5vw, 20px)
     clamp(20px, 3vw, 44px)!important;
