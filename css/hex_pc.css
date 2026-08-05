@@ -2368,14 +2368,16 @@ body,
 .welcome .title{
   position:relative;
   overflow:visible;
-  display:inline-block;
+  display:table;
+  width:auto;
   max-width:100%;
-  margin:0 0 70px;
+  margin:0 auto 70px;
   padding:
     clamp(16px, 1.75vw, 24px)
     clamp(24px, 3.75vw, 56px);
   box-sizing:border-box;
   color:#1f2774;
+  text-align:left;
 }
 .welcome .title h2{
   position:relative;
