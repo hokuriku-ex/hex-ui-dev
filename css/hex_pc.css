@@ -841,27 +841,6 @@ br[hex-sp]{
   border-radius:6px;
   transition:.3s ease;
 }
-.hex-btn-main::before{
-  content:"";
-  position:absolute;
-  z-index:-2;
-  top:5px;
-  left:5px;
-  width:100%;
-  height:100%;
-  border:1px solid #c8a874;
-  border-radius:6px;
-  background:repeating-linear-gradient(
-    -45deg,
-    #c8a874 0,
-    #c8a874 1px,
-    transparent 1px,
-    transparent 5px
-  );
-  pointer-events:none;
-}
-
-/* ボタン本体の背景 */
 .hex-btn-main::after{
   content:"";
   position:absolute;
@@ -878,6 +857,16 @@ br[hex-sp]{
   color:#1f2774;
   border:1px solid #1f2774;
 }
+.hex-btn-main.light::before{
+  border-color:#1f2774;
+  background:repeating-linear-gradient(
+    -45deg,
+    #1f2774 0,
+    #1f2774 1px,
+    transparent 1px,
+    transparent 5px
+  );
+}
 .hex-btn-main.light::after{
   background:#fff;
 }
@@ -888,6 +877,16 @@ br[hex-sp]{
 .hex-btn-main.dark{
   color:#fff;
   border:1px solid #fff;
+}
+.hex-btn-main.dark::before{
+  border-color:#fff;
+  background:repeating-linear-gradient(
+    -45deg,
+    #fff 0,
+    #fff 1px,
+    transparent 1px,
+    transparent 5px
+  );
 }
 .hex-btn-main.dark::after{
   background:#1f2774;
@@ -911,6 +910,17 @@ br[hex-sp]{
   transform:translateX(0);
   transition:.3s ease;
 }
+.hex-btn-main.light:hover::before,
+.hex-btn-main.dark:hover::before{
+  border-color:#c8a874;
+  background:repeating-linear-gradient(
+    -45deg,
+    #c8a874 0,
+    #c8a874 1px,
+    transparent 1px,
+    transparent 5px
+  );
+}
 .hex-btn-main.light:hover,
 .hex-btn-main.dark:hover{
   border-color:#c8a874;
@@ -921,7 +931,7 @@ br[hex-sp]{
   color:#c8a874!important;
 }
 .hex-btn-main:hover .hex-btn-main-icon{
-  transform:translateX(4px);
+  transform:translateX(3px);
 }
 .hex-btn-main:hover,
 .hex-btn-main:hover *{
