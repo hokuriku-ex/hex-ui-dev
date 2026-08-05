@@ -2376,7 +2376,7 @@ body,
   display:table;
   width:auto;
   max-width:100%;
-  margin:0 auto 70px;
+  margin:0 auto 40px;
   padding:
     clamp(16px, 1.75vw, 24px)
     clamp(24px, 3.75vw, 56px);
