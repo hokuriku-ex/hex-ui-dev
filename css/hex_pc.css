@@ -2355,6 +2355,9 @@ body,
    トップページ：ウェルカムメッセージ
 ======================================= */
 .welcome{
+  padding:0;
+}
+.welcome.has-padding{
   padding:80px 0 30px;
 }
 .welcome_contents{
