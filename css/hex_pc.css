@@ -2999,6 +2999,31 @@ body,
 /* =======================================
    下層ページ：私たちについて
 ======================================= */
+/* 企業理念 */
+.welcome .title:has(.hex-vision-section){
+  margin:0 auto!important;
+  padding:
+    clamp(16px, 1.75vw, 24px)
+    clamp(24px, 3.75vw, 56px)!important;
+  color:#383838!important;
+}
+.welcome .title h2:has(.hex-vision-section){
+  font-size:32px!important;
+}
+.welcome .kakko_l,
+.welcome .kakko_br:has(.hex-vision-section){
+  width:clamp(56px, 5.625vw, 72px)!important;
+  height:clamp(56px, 5.625vw, 72px)!important;
+}
+.welcome .kakko_l:has(.hex-vision-section){
+  border-top:1px solid #383838!important;
+  border-left:1px solid #383838!important;
+}
+.welcome .kakko_br:has(.hex-vision-section){
+  border-right:1px solid #383838!important;
+  border-bottom:1px solid #383838!important;
+}
+
 /* 体制・スタッフ紹介 */
 .hex-staff-iframe-mode .gc_auto_frame_footer_fixed{
   display:none!important;
