@@ -2426,6 +2426,14 @@ body,
   font-family:var(--hex-font-serif)!important;
   text-align:left;
 }
+.welcome .text .text-center{
+  display:block;
+  text-align:center;
+}
+.welcome .text .text-right{
+  display:block;
+  text-align:right;
+}
 
 /* =======================================
    トップページ：私たちについて
