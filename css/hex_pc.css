@@ -2358,7 +2358,7 @@ body,
   padding:0;
 }
 .welcome.has-padding{
-  padding:80px 0 30px;
+  padding-top:80px;
 }
 .welcome_contents{
   width:100%;
