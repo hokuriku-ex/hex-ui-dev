@@ -2369,14 +2369,15 @@ body,
   position:relative;
   display:inline-block;
   max-width:100%;
-  margin:0 0 42px;
-  padding:
-    clamp(18px, 1.75vw, 28px)
-    clamp(24px, 3.75vw, 60px);
+  margin:0 0 70px;
+  padding:28px 60px;
   box-sizing:border-box;
   color:#1f2774;
 }
-.welcome .title span{
+.welcome .title h2{
+  position:relative;
+  z-index:1;
+  margin:0;
   display:block;
   font-size:32px;
   font-weight:700;
@@ -2386,6 +2387,7 @@ body,
 .welcome .kakko_l,
 .welcome .kakko_br{
   position:absolute;
+  z-index:2;
   width:clamp(56px, 5.625vw, 90px);
   height:clamp(56px, 5.625vw, 90px);
   box-sizing:border-box;
@@ -2396,6 +2398,12 @@ body,
   left:0;
   border-top:1px solid #1f2774;
   border-left:1px solid #1f2774;
+}
+.welcome .kakko_br{
+  right:0;
+  bottom:0;
+  border-right:1px solid #1f2774;
+  border-bottom:1px solid #1f2774;
 }
 .welcome .text{
   margin:0;
