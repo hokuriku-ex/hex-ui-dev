@@ -2358,7 +2358,9 @@ body,
   padding:0;
 }
 .welcome.has-padding{
-  padding-top:80px;
+  width:100%;
+  padding-top:min(10%, 120px);
+  box-sizing:border-box;
 }
 .welcome_contents{
   width:100%;
