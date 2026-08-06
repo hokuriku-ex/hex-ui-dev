@@ -866,6 +866,7 @@
     text-align:center;
   }
 }
+
 /* =======================================
    トップページ：お知らせ
 ======================================= */
@@ -879,6 +880,15 @@
   }
   .hex-home-news-button{
     padding:0!important;
+  }
+}
+
+/* =======================================
+   トップページ：採用情報
+======================================= */
+@media screen and (max-width:768px){
+  .gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3::after{
+    width:calc(100% + 24px);
   }
 }
 
