@@ -2462,6 +2462,8 @@ body,
   pointer-events:none;
 }
 .welcome .kakko_l{
+  top:0;
+  left:0;
   border:none!important;
   background:none!important;
 }
@@ -2500,6 +2502,8 @@ body,
   );
 }
 .welcome .kakko_br{
+  right:0;
+  bottom:0;
   border:none!important;
   background:none!important;
 }
