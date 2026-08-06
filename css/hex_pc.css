@@ -2454,6 +2454,7 @@ body,
 }
 .welcome .kakko_l,
 .welcome .kakko_br{
+  --kakko-color:#1f2774;
   position:absolute;
   z-index:2;
   width:clamp(56px, 5.625vw, 72px);
@@ -2464,82 +2465,64 @@ body,
 .welcome .kakko_l{
   top:0;
   left:0;
-  border:none!important;
-  background:none!important;
-}
-.welcome .kakko_l::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:#1f2774;
-  clip-path:polygon(
-    0 0,
-    100% 0,
-    100% 8px,
-    8px 8px,
-    8px 100%,
-    0 100%
-  );
-}
-.welcome .kakko_l::after{
-  content:"";
-  position:absolute;
-  inset:2px;
-  background:repeating-linear-gradient(
-    45deg,
-    #1f2774 0,
-    #1f2774 2px,
-    transparent 2px,
-    transparent 5px
-  );
-  clip-path:polygon(
-    0 0,
-    100% 0,
-    100% 4px,
-    4px 4px,
-    4px 100%,
-    0 100%
-  );
+  background:
+    linear-gradient(var(--kakko-color) 0 0)
+      top left / 100% 2px no-repeat,
+    linear-gradient(var(--kakko-color) 0 0)
+      top left / 2px 100% no-repeat,
+    linear-gradient(var(--kakko-color) 0 0)
+      left 8px top 6px / calc(100% - 8px) 2px no-repeat,
+    linear-gradient(var(--kakko-color) 0 0)
+      left 6px top 8px / 2px calc(100% - 8px) no-repeat,
+    linear-gradient(var(--kakko-color) 0 0)
+      top right / 2px 8px no-repeat,
+    linear-gradient(var(--kakko-color) 0 0)
+      bottom left / 8px 2px no-repeat,
+    repeating-linear-gradient(
+      45deg,
+      var(--kakko-color) 0,
+      var(--kakko-color) 2px,
+      transparent 2px,
+      transparent 5px
+    ) top left / 100% 8px no-repeat,
+    repeating-linear-gradient(
+      45deg,
+      var(--kakko-color) 0,
+      var(--kakko-color) 2px,
+      transparent 2px,
+      transparent 5px
+    ) top left / 8px 100% no-repeat;
 }
 .welcome .kakko_br{
   right:0;
   bottom:0;
-  border:none!important;
-  background:none!important;
-}
-.welcome .kakko_br::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:#1f2774;
-  clip-path:polygon(
-    calc(100% - 8px) 0,
-    100% 0,
-    100% 100%,
-    0 100%,
-    0 calc(100% - 8px),
-    calc(100% - 8px) calc(100% - 8px)
-  );
-}
-.welcome .kakko_br::after{
-  content:"";
-  position:absolute;
-  inset:2px;
-  background:repeating-linear-gradient(
-    45deg,
-    #1f2774 0,
-    #1f2774 2px,
-    transparent 2px,
-    transparent 5px
-  );
-  clip-path:polygon(
-    calc(100% - 4px) 0,
-    100% 0,
-    100% 100%,
-    0 100%,
-    0 calc(100% - 4px),
-    calc(100% - 4px) calc(100% - 4px)
-  );
+  background:
+    linear-gradient(var(--kakko-color) 0 0)
+      bottom left / 100% 2px no-repeat,
+    linear-gradient(var(--kakko-color) 0 0)
+      top right / 2px 100% no-repeat,
+    linear-gradient(var(--kakko-color) 0 0)
+      left bottom 6px / calc(100% - 8px) 2px no-repeat,
+    linear-gradient(var(--kakko-color) 0 0)
+      right 6px top / 2px calc(100% - 8px) no-repeat,
+    linear-gradient(var(--kakko-color) 0 0)
+      bottom left / 2px 8px no-repeat,
+    linear-gradient(var(--kakko-color) 0 0)
+      top right / 8px 2px no-repeat,
+    repeating-linear-gradient(
+      45deg,
+      var(--kakko-color) 0,
+      var(--kakko-color) 2px,
+      transparent 2px,
+      transparent 5px
+    ) bottom left / 100% 8px no-repeat,
+    repeating-linear-gradient(
+      45deg,
+      var(--kakko-color) 0,
+      var(--kakko-color) 2px,
+      transparent 2px,
+      transparent 5px
+    ) top right / 8px 100% no-repeat;
 }
 .welcome .text{
   display:table;
