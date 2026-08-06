@@ -1335,6 +1335,7 @@ br[hex-sp]{
   max-width:var(--hex_medium_width)!important;
   margin:0 auto;
   box-sizing:border-box;
+  border-radius:6px;
 }
 .hex-banner-image img{
   display:block;
