@@ -89,11 +89,11 @@ html{
   width:calc(100% - 48px);
   height:8px;
   box-sizing:border-box;
-  border:2px solid #c8a874;
+  border:2px solid #1f2774;
   background:repeating-linear-gradient(
     45deg,
-    #c8a874 0,
-    #c8a874 2px,
+    #1f2774 0,
+    #1f2774 2px,
     transparent 2px,
     transparent 5px
   )!important;
