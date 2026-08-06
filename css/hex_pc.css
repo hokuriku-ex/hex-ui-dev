@@ -3112,13 +3112,15 @@ body,
   width:clamp(48px, 4.7vw, 60px)!important;
   height:clamp(48px, 4.7vw, 60px)!important;
 }
-.content_body:has(.hex-vision-section) .welcome .kakko_l{
-  border-top:1px solid #383838!important;
-  border-left:1px solid #383838!important;
-}
+.content_body:has(.hex-vision-section) .welcome .kakko_l,
 .content_body:has(.hex-vision-section) .welcome .kakko_br{
-  border-right:1px solid #383838!important;
-  border-bottom:1px solid #383838!important;
+  background:repeating-linear-gradient(
+    45deg,
+    #383838 0,
+    #383838 2px,
+    transparent 2px,
+    transparent 5px
+  );
 }
 
 /* 体制・スタッフ紹介 */
