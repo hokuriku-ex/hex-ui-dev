@@ -86,7 +86,7 @@ html{
   bottom:0;
   left:50%;
   transform:translateX(-50%);
-  width:calc(100% + 48px);
+  width:calc(100% - 48px);
   height:8px;
   box-sizing:border-box;
   border:2px solid #c8a874;
