@@ -1100,7 +1100,8 @@ br[hex-sp]{
   box-sizing:border-box;
   padding:22px;
   background:#fff;
-  border:1px solid #d8dce8;
+  border:2px solid #d8dce8;
+  border-radius:6px;
   transition:border-color .25s ease;
 }
 .hex-card:has(.hex-card-title-link[href]){
