@@ -2141,14 +2141,14 @@ br[hex-sp]{
 /* 閉じるボタン */
 .hex-calendar-modal-close{
   position:absolute;
-  top:22px;
-  right:22px;
+  top:24px;
+  right:24px;
   z-index:10;
   display:flex;
   align-items:center;
   justify-content:center;
-  width:48px;
-  height:48px;
+  width:40px;
+  height:40px;
   margin:0;
   padding:0;
   border:2px solid #1f2774!important;
