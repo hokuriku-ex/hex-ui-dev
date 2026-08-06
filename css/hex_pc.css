@@ -2545,6 +2545,16 @@ body,
 .hex-company-buttons .hex-btn-main.dark:hover{
   border-color:rgba(31,39,116,.9)!important;
 }
+.hex-company-buttons .hex-btn-main.dark::before{
+  border-color:#1f2774;
+  background:repeating-linear-gradient(
+    45deg,
+    #1f2774 0,
+    #1f2774 2px,
+    transparent 2px,
+    transparent 5px
+  );
+}
 .hex-company-buttons .hex-btn-main.dark > *{
   position:relative;
   z-index:1;
