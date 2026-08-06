@@ -922,7 +922,7 @@ br[hex-sp]{
 .hex-btn-main.dark:hover::before{
   border-color:#c8a874;
   background:repeating-linear-gradient(
-    -45deg,
+    45deg,
     #c8a874 0,
     #c8a874 1px,
     transparent 1px,
