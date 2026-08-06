@@ -2165,8 +2165,9 @@ br[hex-sp]{
     transform .25s ease;
 }
 .hex-calendar-modal-close:hover{
-  color:#fff!important;
-  background:#c8a874!important;
+  border:2px solid #c8a874!important;
+  background:#fff!important;
+  color:#c8a874!important;
   transform:rotate(90deg);
 }
 .hex-calendar-modal-close:focus-visible{
