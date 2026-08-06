@@ -2160,14 +2160,15 @@ br[hex-sp]{
   cursor:pointer;
   appearance:none;
   transition:
+    border-color .25s ease,
     color .25s ease,
     background-color .25s ease,
     transform .25s ease;
 }
 .hex-calendar-modal-close:hover{
   border:2px solid #c8a874!important;
-  background:#fff!important;
   color:#c8a874!important;
+  background:#fff!important;
   transform:rotate(90deg);
 }
 .hex-calendar-modal-close:focus-visible{
