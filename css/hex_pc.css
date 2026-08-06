@@ -86,14 +86,13 @@ html{
   bottom:0;
   left:50%;
   transform:translateX(-50%);
-  width:calc(100% - 48px);
+  width:calc(100% + 48px);
   height:8px;
   box-sizing:border-box;
-  border:2px solid #1f2774;
   background:repeating-linear-gradient(
     45deg,
-    #1f2774 0,
-    #1f2774 2px,
+    #c8a874 0,
+    #c8a874 2px,
     transparent 2px,
     transparent 5px
   )!important;
