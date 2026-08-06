@@ -2501,6 +2501,12 @@ body,
     0 100%
   );
 }
+.welcome .kakko_br{
+  right:0;
+  bottom:0;
+  border:none!important;
+  background:none!important;
+}
 .welcome .kakko_br::before{
   content:"";
   position:absolute;
