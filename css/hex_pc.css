@@ -2462,7 +2462,16 @@ body,
   pointer-events:none;
 }
 .welcome .kakko_l{
-  border:none;
+  border:none!important;
+  background:none!important;
+}
+.welcome .kakko_l::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:6px;
   background:repeating-linear-gradient(
     45deg,
     #1f2774 0,
@@ -2470,17 +2479,33 @@ body,
     transparent 2px,
     transparent 5px
   );
-  clip-path:polygon(
-    0 0,
-    100% 0,
-    100% 8px,
-    8px 8px,
-    8px 100%,
-    0 100%
+}
+.welcome .kakko_l::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:6px;
+  height:100%;
+  background:repeating-linear-gradient(
+    45deg,
+    #1f2774 0,
+    #1f2774 2px,
+    transparent 2px,
+    transparent 5px
   );
 }
 .welcome .kakko_br{
-  border:none;
+  border:none!important;
+  background:none!important;
+}
+.welcome .kakko_br::before{
+  content:"";
+  position:absolute;
+  right:0;
+  bottom:0;
+  width:100%;
+  height:6px;
   background:repeating-linear-gradient(
     45deg,
     #1f2774 0,
@@ -2488,13 +2513,20 @@ body,
     transparent 2px,
     transparent 5px
   );
-  clip-path:polygon(
-    calc(100% - 8px) 0,
-    100% 0,
-    100% 100%,
-    0 100%,
-    0 calc(100% - 8px),
-    calc(100% - 8px) calc(100% - 8px)
+}
+.welcome .kakko_br::after{
+  content:"";
+  position:absolute;
+  right:0;
+  bottom:0;
+  width:6px;
+  height:100%;
+  background:repeating-linear-gradient(
+    45deg,
+    #1f2774 0,
+    #1f2774 2px,
+    transparent 2px,
+    transparent 5px
   );
 }
 .welcome .text{
