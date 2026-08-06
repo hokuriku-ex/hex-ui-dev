@@ -4368,6 +4368,8 @@ body.hex-form-dialog-open{
   justify-content:center!important;
 }
 #gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round{
+  position:relative;
+  z-index:1;
   width:100%!important;
   min-width:0!important;
   height:auto!important;
@@ -4377,17 +4379,47 @@ body.hex-form-dialog-open{
   align-items:center;
   justify-content:center;
   gap:18px;
-  border-radius:0!important;
+  border-radius:6px!important;
   box-sizing:border-box;
   cursor:pointer;
-  transition:.3s ease;
+  transition:none!important;
 }
-#gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round:first-child{
-  background:#fff!important;
-  border:1px solid #1f2774!important;
+#gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round::after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:9px;
+  left:9px;
+  width:100%;
+  height:100%;
+  box-sizing:border-box;
+  border:2px solid #1f2774;
+  border-radius:6px;
+  pointer-events:none;
+  clip-path:polygon(
+    calc(100% - 8px) 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 calc(100% - 8px),
+    calc(100% - 8px) calc(100% - 8px)
+  );
+  background:repeating-linear-gradient(
+    45deg,
+    #1f2774 0,
+    #1f2774 2px,
+    transparent 2px,
+    transparent 5px
+  );
+}
+#gc_auto_frame_lp_form_dialog
+.gc_auto_frame_lp_form_box_button_round:first-child{
+  background:transparent!important;
+  border:2px solid #1f2774!important;
   color:#1f2774!important;
 }
-#gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round:first-child::before{
+#gc_auto_frame_lp_form_dialog
+.gc_auto_frame_lp_form_box_button_round:first-child::before{
   content:"\f060";
   font-family:"Font Awesome 6 Free";
   font-weight:900;
@@ -4395,20 +4427,13 @@ body.hex-form-dialog-open{
   line-height:1;
   color:inherit!important;
   transform:translateX(0);
-  transition:.3s ease;
+  transition:transform .3s ease;
 }
-#gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round:last-child{
+#gc_auto_frame_lp_form_dialog
+.gc_auto_frame_lp_form_box_button_round:last-child{
   background:#1f2774!important;
-  border:1px solid #1f2774!important;
+  border:2px solid #1f2774!important;
   color:#fff!important;
-}
-#gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round:hover{
-  border-color:#c8a874!important;
-  background:#fff!important;
-  color:#c8a874!important;
-}
-#gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round:first-child:hover::before{
-  transform:translateX(-3px);
 }
 #gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_text{
   color:inherit!important;
@@ -4416,7 +4441,10 @@ body.hex-form-dialog-open{
   font-weight:500!important;
   line-height:1.5!important;
   letter-spacing:.04em!important;
-  transition:.3s ease;
+  transition:none!important;
+}
+#gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_svg svg{
+  display:none!important;
 }
 #gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_svg{
   width:auto!important;
@@ -4428,10 +4456,7 @@ body.hex-form-dialog-open{
   justify-content:center;
   color:inherit!important;
   transform:translateX(0);
-  transition:.3s ease;
-}
-#gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_svg svg{
-  display:none!important;
+  transition:transform .3s ease;
 }
 #gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_svg::before{
   content:"\f061";
@@ -4441,7 +4466,36 @@ body.hex-form-dialog-open{
   line-height:1;
   color:inherit!important;
 }
-#gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round:hover .gc_auto_frame_lp_form_box_button_svg{
+#gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round:hover{
+  border-color:#c8a874!important;
+  color:#c8a874!important;
+}
+#gc_auto_frame_lp_form_dialog
+.gc_auto_frame_lp_form_box_button_round:first-child:hover{
+  background:transparent!important;
+}
+#gc_auto_frame_lp_form_dialog
+.gc_auto_frame_lp_form_box_button_round:last-child:hover{
+  background:#1f2774!important;
+}
+#gc_auto_frame_lp_form_dialog
+.gc_auto_frame_lp_form_box_button_round:hover::after{
+  border-color:#c8a874;
+  background:repeating-linear-gradient(
+    45deg,
+    #c8a874 0,
+    #c8a874 2px,
+    transparent 2px,
+    transparent 5px
+  );
+}
+#gc_auto_frame_lp_form_dialog
+.gc_auto_frame_lp_form_box_button_round:first-child:hover::before{
+  transform:translateX(-3px);
+}
+#gc_auto_frame_lp_form_dialog
+.gc_auto_frame_lp_form_box_button_round:hover
+.gc_auto_frame_lp_form_box_button_svg{
   transform:translateX(3px);
 }
 
