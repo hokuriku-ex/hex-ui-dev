@@ -2535,6 +2535,9 @@ body,
   letter-spacing:.04em;
   text-align:left;
 }
+.hex-company-buttons .hex-btn-main:hover .hex-btn-main-title .main{
+  color:#c8a874!important;
+}
 .hex-company-buttons .hex-btn-main.dark{
   position:relative;
   color:#1f2774!important;
@@ -2569,7 +2572,6 @@ body,
     transparent 5px
   )!important;
 }
-.hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-title .main,
 .hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon,
 .hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon i,
 .hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon i::before{
