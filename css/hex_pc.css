@@ -2539,15 +2539,11 @@ body,
   position:relative;
   color:#fff!important;
   background:rgba(31,39,116,.9)!important;
-  border:none!important;
-  transition:opacity .25s ease!important;
+  border:1px solid #fff!important;
+  transition:none!important;
 }
-.hex-company-buttons .hex-btn-main.dark::before{
-  content:"";
-  position:absolute;
-  inset:7px;
-  border:1px solid #c8a874;
-  pointer-events:none;
+.hex-company-buttons .hex-btn-main.dark:hover{
+  border-color:rgba(31,39,116,.9)!important;
 }
 .hex-company-buttons .hex-btn-main.dark > *{
   position:relative;
