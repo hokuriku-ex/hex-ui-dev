@@ -2489,6 +2489,8 @@ body,
   left:0;
   width:6px;
   height:100%;
+  box-sizing:border-box;
+  border:2px solid #1f2774;
   background:repeating-linear-gradient(
     45deg,
     #1f2774 0,
@@ -2525,6 +2527,8 @@ body,
   bottom:0;
   width:6px;
   height:100%;
+  box-sizing:border-box;
+  border:2px solid #1f2774;
   background:repeating-linear-gradient(
     45deg,
     #1f2774 0,
