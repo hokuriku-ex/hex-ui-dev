@@ -2151,7 +2151,7 @@ br[hex-sp]{
   height:48px;
   margin:0;
   padding:0;
-  border:2px solid rgba(31,39,116,.18)!important;
+  border:2px solid #1f2774!important;
   border-radius:50%;
   background:#fff!important;
   color:#1f2774!important;
@@ -2166,7 +2166,7 @@ br[hex-sp]{
 }
 .hex-calendar-modal-close:hover{
   color:#fff!important;
-  background:#1f2774!important;
+  background:#c8a874!important;
   transform:rotate(90deg);
 }
 .hex-calendar-modal-close:focus-visible{
