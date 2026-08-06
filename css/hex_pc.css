@@ -2569,7 +2569,7 @@ body,
     transparent 5px
   )!important;
 }
-.hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-title,
+.hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-title .main,
 .hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon,
 .hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon i,
 .hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon i::before{
