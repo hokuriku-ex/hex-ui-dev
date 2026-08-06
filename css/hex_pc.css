@@ -2753,7 +2753,7 @@ body,
   height:6px;
   opacity:0;
   background:repeating-linear-gradient(
-    45deg,
+    -45deg,
     #c8a874  0,
     #c8a874  2px,
     transparent 2px,
