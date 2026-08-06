@@ -2560,7 +2560,6 @@ body,
   border-color:#c8a874!important;
 }
 .hex-company-buttons .hex-btn-main.dark:hover::before{
-  color:#c8a874!important;
   border-color:#c8a874!important;
   background:repeating-linear-gradient(
     45deg,
@@ -2570,6 +2569,7 @@ body,
     transparent 5px
   )!important;
 }
+.hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-title,
 .hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon,
 .hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon i,
 .hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon i::before{
