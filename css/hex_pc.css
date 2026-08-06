@@ -2811,6 +2811,26 @@ body,
   margin-right:auto!important;
   text-align:left!important;
 }
+.gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3{
+  position:relative;
+}
+.gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3::after{
+  content:"";
+  position:absolute;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:calc(100% + 48px);
+  height:8px;
+  box-sizing:border-box;
+  background:repeating-linear-gradient(
+    45deg,
+    #c8a874 0,
+    #c8a874 2px,
+    transparent 2px,
+    transparent 5px
+  )!important;
+}
 
 /* =======================================
    下層ページ共通
