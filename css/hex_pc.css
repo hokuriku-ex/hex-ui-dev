@@ -1440,6 +1440,7 @@ br[hex-sp]{
 .hex-banner.hex-banner-no-image{
   position:relative;
   background:rgba(31,39,116,.9)!important;
+  border-radius:6px;
 }
 .hex-banner.hex-banner-no-image .hex-banner-image{
   min-height:clamp(240px, 30vw, 320px)!important;
@@ -1450,6 +1451,7 @@ br[hex-sp]{
   z-index:1;
   inset:20px;
   border:1px solid #c8a874;
+  border-radius:4px;
   pointer-events:none;
 }
 .hex-banner.hex-banner-no-image .hex-banner-inner{
