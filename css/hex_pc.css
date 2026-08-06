@@ -2766,7 +2766,6 @@ body,
   background:transparent;
   color:#1f2774;
   font-weight:700;
-  border-bottom-color:#1f2774;
 }
 .hex-home-news-tab.is-active::after{
   opacity:1;
