@@ -2462,16 +2462,40 @@ body,
   pointer-events:none;
 }
 .welcome .kakko_l{
-  top:0;
-  left:0;
-  border-top:1px solid #1f2774;
-  border-left:1px solid #1f2774;
+  border:none;
+  background:repeating-linear-gradient(
+    45deg,
+    #1f2774 0,
+    #1f2774 2px,
+    transparent 2px,
+    transparent 5px
+  );
+  clip-path:polygon(
+    0 0,
+    100% 0,
+    100% 8px,
+    8px 8px,
+    8px 100%,
+    0 100%
+  );
 }
 .welcome .kakko_br{
-  right:0;
-  bottom:0;
-  border-right:1px solid #1f2774;
-  border-bottom:1px solid #1f2774;
+  border:none;
+  background:repeating-linear-gradient(
+    45deg,
+    #1f2774 0,
+    #1f2774 2px,
+    transparent 2px,
+    transparent 5px
+  );
+  clip-path:polygon(
+    calc(100% - 8px) 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 calc(100% - 8px),
+    calc(100% - 8px) calc(100% - 8px)
+  );
 }
 .welcome .text{
   display:table;
