@@ -2537,9 +2537,9 @@ body,
 }
 .hex-company-buttons .hex-btn-main.dark{
   position:relative;
-  color:#fff!important;
+  color:rgba(31,39,116,.9)!important;
   background:rgba(31,39,116,.9)!important;
-  border:1px solid #fff!important;
+  border:2px solid rgba(31,39,116,.9)!important;
   transition:none!important;
 }
 .hex-company-buttons .hex-btn-main.dark:hover{
