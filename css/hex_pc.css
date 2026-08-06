@@ -172,7 +172,7 @@ html{
   grid-column:1 / -1;
   margin:14px 0 0!important;
   padding-top:18px!important;
-  border-top:1px solid #d8dce8;
+  border-top:2px solid #d8dce8;
   font-size:18px;
   font-weight:500;
   line-height:2;
@@ -2736,13 +2736,28 @@ body,
   text-align:center;
   padding:10px 20px 12px;
   border:0;
-  border-bottom:3px solid transparent;
   background:transparent;
   color:#555;
   font-size:18px;
   line-height:1.4;
   cursor:pointer;
   transition:.2s;
+}
+.hex-home-news-tab::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:100%;
+  height:6px;
+  opacity:0;
+  background:repeating-linear-gradient(
+    45deg,
+    #1f2774 0,
+    #1f2774 2px,
+    transparent 2px,
+    transparent 5px
+  );
 }
 .hex-home-news-tab+.hex-home-news-tab{
   border-left:none;
@@ -2752,6 +2767,9 @@ body,
   color:#1f2774;
   font-weight:700;
   border-bottom-color:#1f2774;
+}
+.hex-home-news-tab.is-active::after{
+  opacity:1;
 }
 .hex-home-news-tab:hover{
   color:#2a5bac;
