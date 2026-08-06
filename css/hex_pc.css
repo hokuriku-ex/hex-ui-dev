@@ -2151,7 +2151,7 @@ br[hex-sp]{
   height:48px;
   margin:0;
   padding:0;
-  border:1px solid rgba(31,39,116,.18)!important;
+  border:2px solid rgba(31,39,116,.18)!important;
   border-radius:50%;
   background:#fff!important;
   color:#1f2774!important;
@@ -2159,7 +2159,6 @@ br[hex-sp]{
   line-height:1;
   cursor:pointer;
   appearance:none;
-  box-shadow:0 5px 18px rgba(0,0,0,.08)!important;
   transition:
     color .25s ease,
     background-color .25s ease,
