@@ -3152,15 +3152,18 @@ body,
   width:clamp(48px, 4.7vw, 60px)!important;
   height:clamp(48px, 4.7vw, 60px)!important;
 }
-.content_body:has(.hex-vision-section) .welcome .kakko_l,
-.content_body:has(.hex-vision-section) .welcome .kakko_br{
+.content_body:has(.hex-vision-section) .welcome .kakko_l::before,
+.content_body:has(.hex-vision-section) .welcome .kakko_l::after,
+.content_body:has(.hex-vision-section) .welcome .kakko_br::before,
+.content_body:has(.hex-vision-section) .welcome .kakko_br::after{
+  border-color:#383838!important;
   background:repeating-linear-gradient(
     45deg,
     #383838 0,
     #383838 2px,
     transparent 2px,
     transparent 5px
-  );
+  )!important;
 }
 
 /* 体制・スタッフ紹介 */
