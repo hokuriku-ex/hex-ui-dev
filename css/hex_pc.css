@@ -839,7 +839,7 @@ br[hex-sp]{
   margin:0 10px 10px 0;
   text-decoration:none;
   border-radius:6px;
-  transition:.3s ease;
+  transition:none;
   background:transparent;
 }
 .hex-btn-main::before{
@@ -904,7 +904,7 @@ br[hex-sp]{
   font-weight:500;
   line-height:1.5;
   letter-spacing:.04em;
-  transition:.3s ease;
+  transition:none;
 }
 .hex-btn-main-icon{
   display:flex;
@@ -924,8 +924,8 @@ br[hex-sp]{
   background:repeating-linear-gradient(
     45deg,
     #c8a874 0,
-    #c8a874 1px,
-    transparent 1px,
+    #c8a874 2px,
+    transparent 2px,
     transparent 5px
   );
 }
