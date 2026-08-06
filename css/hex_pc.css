@@ -4195,11 +4195,11 @@ body,
   border-radius:0!important;
   background:#fff!important;
   color:#383838!important;
-  box-shadow:0 12px 32px rgba(0,0,0,.18)!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.28)!important;
   box-sizing:border-box!important;
 }
 #o7cms_dialog::backdrop{
-  background:rgba(47,49,56,.35)!important;
+  background:rgba(10,10,10,.72)!important;
 }
 #o7cms_dialog,
 #o7cms_dialog *{
