@@ -2825,7 +2825,7 @@ body,
   height:8px;
   box-sizing:border-box;
   background:repeating-linear-gradient(
-    45deg,
+    -45deg,
     #c8a874 0,
     #c8a874 2px,
     transparent 2px,
