@@ -2465,8 +2465,8 @@ body,
   --kakko-color:#1f2774;
   position:absolute;
   z-index:2;
-  width:clamp(28px, 2.8125vw, 36px);
-  height:clamp(28px, 2.8125vw, 36px);
+  width:clamp(40px, calc(25.88px + 3.92vw), 56px);
+  height:clamp(40px, calc(25.88px + 3.92vw), 56px);
   box-sizing:border-box;
   pointer-events:none;
 }
@@ -2492,7 +2492,7 @@ body,
       var(--kakko-color) 2px,
       transparent 2px,
       transparent 5px
-    ) top left / 100% 16px no-repeat,
+    ) top left / 100% 8px no-repeat,
     repeating-linear-gradient(
       -45deg,
       var(--kakko-color) 0,
@@ -2523,7 +2523,7 @@ body,
       var(--kakko-color) 2px,
       transparent 2px,
       transparent 5px
-    ) bottom left / 100% 16px no-repeat,
+    ) bottom left / 100% 8px no-repeat,
     repeating-linear-gradient(
       -45deg,
       var(--kakko-color) 0,
