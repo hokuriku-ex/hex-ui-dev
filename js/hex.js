@@ -305,13 +305,13 @@ function hexInitAnchorNav(){
   var originalParent=nav.parentNode;
   var originalNext=nav.nextSibling;
   function getHexAnchorHeaderHeight(){
-    return window.innerWidth<=768?70:80;
+    return window.innerWidth<=768?80:80;
   }
   function getHexAnchorOffset(){
     return getHexAnchorHeaderHeight()+nav.offsetHeight+40;
   }
   function refreshHexAnchorNav(){
-    var mobileAdjust=window.innerWidth<=768?10:0;
+    var mobileAdjust=window.innerWidth<=768?0:0;
     nav.classList.remove('is-fixed');
     placeholder.classList.remove('is-active');
     placeholder.style.height='0px';
@@ -2885,7 +2885,7 @@ hexLoad(function(){
           var title=sections[i].querySelector('.hex-anchor-target');
           if(!title)continue;
           if(title.textContent.trim()!==anchorParam)continue;
-          var offset=window.innerWidth<=768?160:190;
+          var offset=window.innerWidth<=768?120:120;
           var top=sections[i].getBoundingClientRect().top+window.pageYOffset-offset;
           window.scrollTo({
             top:top,
