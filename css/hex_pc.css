@@ -1530,6 +1530,7 @@ br[hex-sp]{
   position:relative;
   width:100%;
   overflow:hidden;
+  border-radius:6px;
 }
 .hex-gallery.is-single .hex-gallery-main-swiper{
   overflow:visible;
@@ -1594,6 +1595,7 @@ br[hex-sp]{
   width:calc((100% - 48px) / 4.35);
   height:90px;
   overflow:hidden;
+  border-radius:6px;
   cursor:pointer;
   opacity:.8;
   transition:opacity .3s ease,transform .3s ease,filter .3s ease;
