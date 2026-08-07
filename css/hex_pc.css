@@ -490,7 +490,7 @@ a.hex-text-link[target="_blank"]::after{
   width:fit-content!important;
   margin:0 0 10px!important;
   padding:6px 14px!important;
-  font-size:14px!important;
+  font-size:16px!important;
   font-weight:500!important;
   line-height:1.5!important;
   color:#1f2774!important;
@@ -510,11 +510,11 @@ a.hex-text-link[target="_blank"]::after{
 .gc_auto_frame_post_item_title .date::after{
   content:"";
   position:absolute;
-  left:15px;
-  bottom:-5px;
-  border-left:6px solid transparent;
-  border-right:6px solid transparent;
-  border-top:6px solid #fff;
+  left:14.5px;
+  bottom:-6px;
+  border-left:6.5px solid transparent;
+  border-right:6.5px solid transparent;
+  border-top:6.5px solid #fff;
 }
 .gc_auto_frame_post_item_title h2{
   position:relative;
