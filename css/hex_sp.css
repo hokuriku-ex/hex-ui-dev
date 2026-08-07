@@ -817,8 +817,8 @@
   }
   .welcome .kakko_l,
   .welcome .kakko_br{
-    width:clamp(32px, calc(5.88vw + 10.82px), 56px);
-    height:clamp(32px, calc(5.88vw + 10.82px), 56px);
+    width:clamp(32px, calc(24.94px + 1.96vw), 40px);
+    height:clamp(32px, calc(24.94px + 1.96vw), 40px);
   }
   .welcome .text{
     font-size:16px;
