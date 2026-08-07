@@ -935,7 +935,7 @@
 /* =======================================
    下層ページ：私たちについて
 ======================================= */
-/* 企業理念 */
+/* 代表あいさつ・企業理念 */
 @media screen and (max-width:768px){
   .content_body:has(.hex-vision-section) .welcome .title{
     padding:16px 24px!important;
@@ -947,6 +947,15 @@
   .content_body:has(.hex-vision-section) .welcome .kakko_br{
     width:clamp(32px, calc(3.92vw + 17.88px), 48px)!important;
     height:clamp(32px, calc(3.92vw + 17.88px), 48px)!important;
+  }
+  .content_body:has(.hex-vision-section) .welcome .text .text-right{
+    margin:16px 0 0 auto!important;
+  }
+  .content_body:has(.hex-vision-section) .welcome .hex-signature-title{
+    font-size:12px!important;
+  }
+  .content_body:has(.hex-vision-section) .welcome .hex-signature-name{
+    font-size:18px!important;
   }
 }
 
