@@ -305,13 +305,13 @@ function hexInitAnchorNav(){
   var originalParent=nav.parentNode;
   var originalNext=nav.nextSibling;
   function getHexAnchorHeaderHeight(){
-    return window.innerWidth<=768?80:80;
+    return window.innerWidth<=768?160:160;
   }
   function getHexAnchorOffset(){
     return getHexAnchorHeaderHeight()+nav.offsetHeight+40;
   }
   function refreshHexAnchorNav(){
-    var mobileAdjust=window.innerWidth<=768?80:80;
+    var mobileAdjust=window.innerWidth<=768?0:0;
     nav.classList.remove('is-fixed');
     placeholder.classList.remove('is-active');
     placeholder.style.height='0px';
