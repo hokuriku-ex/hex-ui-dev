@@ -3239,6 +3239,22 @@ body,
   height:clamp(48px, 4.7vw, 60px)!important;
   --kakko-color:#383838!important;
 }
+.welcome .hex-signature-title{
+  display:block;
+  margin-bottom:4px;
+  font-size:14px;
+  font-weight:400;
+  color:#666;
+}
+.welcome .hex-signature-name{
+  display:block;
+  padding-bottom:6px;
+  font-size:20px;
+  font-weight:500;
+  letter-spacing:.12em;
+  color:#383838;
+  border-bottom:2px solid #c8a874;
+}
 
 /* 体制・スタッフ紹介 */
 .hex-staff-iframe-mode .gc_auto_frame_footer_fixed{
