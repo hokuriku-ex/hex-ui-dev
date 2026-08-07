@@ -2827,7 +2827,7 @@ hexLoad(function(){
       var heading=document.createElement('div');
       heading.className='hex-section-action hex-staff-section-heading';
       var title=document.createElement('h3');
-      title.className='hex-section-subtitle hex-anchor-target';
+      title.className='hex-section-action hex-anchor-target';
       title.textContent=group.name;
       heading.appendChild(title);
       if(group.description){
