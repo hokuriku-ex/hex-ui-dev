@@ -537,7 +537,7 @@ a.hex-text-link[target="_blank"]::after{
   bottom:0;
   left:50%;
   transform:translateX(-50%);
-  width:calc(100% + 48px);
+  width:calc(100% + 48px)!important;
   height:8px;
   box-sizing:border-box;
   background:repeating-linear-gradient(
