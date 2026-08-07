@@ -1279,7 +1279,7 @@ br[hex-sp]{
 }
 .hex-card-title-link .hex-link-icon{
   flex:0 0 auto;
-  font-size:16px;
+  font-size:16px!important;
   line-height:1;
   transition:
     color .25s ease,
@@ -1297,7 +1297,7 @@ br[hex-sp]{
 .hex-card-text{
   margin:0;
   color:#383838;
-  font-size:16px;
+  font-size:16px!important;
   line-height:2;
 }
 .hex-card.dark .hex-card-text{
@@ -1320,7 +1320,7 @@ br[hex-sp]{
 .hex-card-strength .hex-card-text{
   margin-top:14px;
   color:#383838;
-  font-size:16px;
+  font-size:16px!important;
   line-height:1.9;
   text-align:left;
 }
@@ -1331,7 +1331,7 @@ br[hex-sp]{
   z-index:2;
   display:block;
   color:#1f2774;
-  font-size:34px;
+  font-size:34px!important;
   font-weight:800;
   line-height:1;
   letter-spacing:.04em;
@@ -1357,7 +1357,7 @@ br[hex-sp]{
 .hex-card-grid1.hex-card-strength .hex-card-title{
   margin:0;
   color:#1f2774!important;
-  font-size:20px;
+  font-size:20px!important;
   font-weight:700;
   line-height:1.5;
   letter-spacing:.04em;
@@ -1372,7 +1372,7 @@ br[hex-sp]{
 .hex-card-grid2.hex-card-strength .hex-card-title{
   margin:0;
   color:#1f2774!important;
-  font-size:18px;
+  font-size:18px!important;
   font-weight:500;
   line-height:1.5;
   letter-spacing:.04em;
