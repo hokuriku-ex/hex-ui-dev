@@ -778,10 +778,10 @@
   .catch_type4 .maincatch{
     position:relative!important;
     top:clamp(
-      0px,
-      calc(15.69vw - 56.47px),
-      64px
-    )!important;
+    30px,
+    calc(94px - 8.333vw),
+    64px
+  )!important;
     width:auto!important;
     margin:0!important;
     padding:0!important;
@@ -792,7 +792,7 @@
     display:block!important;
     width:max-content!important;
     max-width:calc(100vw - 32px)!important;
-    margin-top:300px!important;
+    margin-top:240px!important;
     margin-left:0!important;
     padding:0!important;
     white-space:nowrap!important;
