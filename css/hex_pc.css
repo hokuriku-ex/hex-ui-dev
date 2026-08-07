@@ -1690,6 +1690,7 @@ br[hex-sp]{
   width:100%;
   height:auto;
   object-fit:contain;
+  border-radius:6px;
   transition:filter .25s ease;
 }
 .hex-image-grid-item a:hover img{
