@@ -290,7 +290,7 @@
     padding:16px 20px;
   }
   .hex-btn-main-title{
-    font-size:16px;
+    font-size:16px!important;
   }
   .hex-btn-main-icon{
     font-size:20px;
@@ -299,7 +299,7 @@
     padding:0 0 14px;
   }
   .hex-link-title{
-    font-size:18px;
+    font-size:18px!important;
   }
   .hex-link-detail{
     font-size:16px;
@@ -323,10 +323,10 @@
     margin-bottom:14px;
   }
   .hex-card-title{
-    font-size:18px;
+    font-size:18px!important;
   }
   .hex-card-text{
-    font-size:16px;
+    font-size:16px!important;
     line-height:1.9;
   }
   .hex-card-button{
@@ -335,10 +335,10 @@
 
   /* カードタイトルリンク */
   .hex-card-title-link .hex-link-detail{
-    font-size:14px;
+    font-size:14px!important;
   }
   .hex-card-title-link .hex-link-icon{
-    font-size:14px;
+    font-size:14px!important;
   }
 }
 
