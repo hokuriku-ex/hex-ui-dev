@@ -3243,7 +3243,7 @@ body,
   display:flex;
   align-items:baseline;
   width:fit-content;
-  margin:28px 0 0 auto;
+  margin:24px 0 0 auto;
   gap:16px;
   white-space:nowrap;
 }
