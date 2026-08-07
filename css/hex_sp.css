@@ -771,6 +771,16 @@
   }
   .catch_type4 .catch_contents{
     padding-left:16px!important;
+    padding-right:16px!important;
+  }
+  .catch_type4 .maincatch{
+    padding-left:0!important;
+    text-align:left!important;
+  }
+  .catch_type4 .subcatch{
+    padding-left:0!important;
+    margin-top:clamp(80px, 20vw, 150px)!important;
+    text-align:right!important;
   }
   .heroimage_type .fontsize_caption_smp_04{
     font-size:clamp(30px, 5.46875vw, 42px)!important;
