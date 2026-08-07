@@ -3734,7 +3734,102 @@ hexReady(function(){
 
   var originalLastPage=getOriginalLastPage(document);
 
-  fetchPage(originalLastPage)
+  var startIndex=
+    (currentPage-1)*DISPLAY_LIMIT;
+
+  var firstOriginalPage=
+    Math.floor(startIndex/ORIGINAL_LIMIT)+1;
+
+  var firstOffset=
+    startIndex%ORIGINAL_LIMIT;
+
+  /*
+  * 25件を表示するために必要な
+  * 元ページの範囲を先に計算
+  */
+  var provisionalLastIndex=
+    startIndex+DISPLAY_LIMIT;
+
+  var lastOriginalPage=Math.min(
+    Math.floor((provisionalLastIndex-1)/ORIGINAL_LIMIT)+1,
+    originalLastPage
+  );
+
+  var requiredPages=[];
+
+  for(
+    var page=firstOriginalPage;
+    page<=lastOriginalPage;
+    page++
+  ){
+    requiredPages.push(page);
+  }
+
+  /*
+  * 必要ページと最終ページを同時に取得開始
+  */
+  var cardsPromise=Promise.all(
+    requiredPages.map(function(page){
+      return fetchPage(page);
+    })
+  );
+
+  var lastPagePromise=fetchPage(originalLastPage);
+
+  /*
+  * 25件分が揃った時点で一覧を表示
+  * 最終ページの取得完了は待たない
+  */
+  cardsPromise
+  .then(function(documents){
+    var collectedCards=[];
+
+    documents.forEach(function(doc){
+      collectedCards=collectedCards.concat(
+        getCards(doc)
+      );
+    });
+
+    var displayCards=collectedCards.slice(
+      firstOffset,
+      firstOffset+DISPLAY_LIMIT
+    );
+
+    var list=root.querySelector(LIST_SELECTOR);
+    var pager=root.querySelector(PAGER_SELECTOR);
+
+    if(!list||!pager){
+      root.classList.remove('hex-work-loading');
+      return;
+    }
+
+    Array.from(
+      list.querySelectorAll(':scope > '+CARD_SELECTOR)
+    ).forEach(function(card){
+      card.remove();
+    });
+
+    displayCards.forEach(function(card){
+      list.insertBefore(
+        document.importNode(card,true),
+        pager
+      );
+    });
+
+    /*
+    * カードが揃ったらすぐ表示
+    */
+    root.classList.remove('hex-work-loading');
+  })
+  .catch(function(error){
+    root.classList.remove('hex-work-loading');
+    console.error(error);
+  });
+
+  /*
+  * 最終件数が分かり次第ページャーを再構築
+  */
+  lastPagePromise
   .then(function(lastDocument){
     var lastPageCount=getCards(lastDocument).length;
 
@@ -3746,81 +3841,17 @@ hexReady(function(){
       totalItems/DISPLAY_LIMIT
     );
 
-    /* 削除などで存在しなくなったページへの対策 */
     if(currentPage>totalDisplayPages){
       goToPage(Math.max(totalDisplayPages,1));
-      return null;
+      return;
     }
 
-    var startIndex=
-      (currentPage-1)*DISPLAY_LIMIT;
-
-    var firstOriginalPage=
-      Math.floor(startIndex/ORIGINAL_LIMIT)+1;
-
-    var firstOffset=
-      startIndex%ORIGINAL_LIMIT;
-
-    var lastIndex=Math.min(
-      startIndex+DISPLAY_LIMIT,
-      totalItems
-    );
-
-    var lastOriginalPage=
-      Math.floor((lastIndex-1)/ORIGINAL_LIMIT)+1;
-
-    var requests=[];
-
-    for(
-      var page=firstOriginalPage;
-      page<=lastOriginalPage;
-      page++
-    ){
-      requests.push(fetchPage(page));
-    }
-
-    return Promise.all(requests)
-    .then(function(documents){
-      var collectedCards=[];
-
-      documents.forEach(function(doc){
-        collectedCards=collectedCards.concat(
-          getCards(doc)
-        );
-      });
-
-      var displayCards=collectedCards.slice(
-        firstOffset,
-        firstOffset+DISPLAY_LIMIT
-      );
-
-      var list=root.querySelector(LIST_SELECTOR);
-      var pager=root.querySelector(PAGER_SELECTOR);
-
-      if(!list||!pager)return;
-
-      Array.from(
-        list.querySelectorAll(':scope > '+CARD_SELECTOR)
-      ).forEach(function(card){
-        card.remove();
-      });
-
-      displayCards.forEach(function(card){
-        list.insertBefore(
-          document.importNode(card,true),
-          pager
-        );
-      });
-
-      rebuildPager(totalDisplayPages);
-
-      /* 25件の組み替え完了後に表示 */
-      root.classList.remove('hex-work-loading');
-    });
+    rebuildPager(totalDisplayPages);
   })
   .catch(function(error){
-    /* 取得失敗時はCMS本来の24件表示へ戻す */
-    root.classList.remove('hex-work-loading');
+    /*
+    * ページャーはCMS標準の状態を維持
+    */
     console.error(error);
   });
 });
