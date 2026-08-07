@@ -3489,7 +3489,7 @@ hexReady(function(){
 /* =======================================
    施工事例一覧
 ======================================= */
-hexLoad(function(){
+hexReady(function(){
   var fiveColumnQuery=window.matchMedia('(min-width:1600px)');
 
   fiveColumnQuery.addEventListener('change',function(){
