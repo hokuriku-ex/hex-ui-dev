@@ -305,7 +305,7 @@ function hexInitAnchorNav(){
   var originalParent=nav.parentNode;
   var originalNext=nav.nextSibling;
   function getHexAnchorHeaderHeight(){
-    return window.innerWidth<=768?160:160;
+    return window.innerWidth<=768?80:80;
   }
   function getHexAnchorOffset(){
     return getHexAnchorHeaderHeight()+nav.offsetHeight+40;
