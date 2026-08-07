@@ -1419,9 +1419,9 @@ br[hex-sp]{
   text-shadow:
     0 0 3px #383838,
     0 0 7px rgba(56,56,56,.8);
-  font-size:48px;
-  font-weight:700;
-  line-height:1.3;
+  font-size:28px!important;
+  font-weight:700!important;
+  line-height:1.3!important;
 }
 .hex-banner-text{
   max-width:var(--hex_small_width);
@@ -1430,8 +1430,8 @@ br[hex-sp]{
   text-shadow:
     0 0 3px #383838,
     0 0 7px rgba(56,56,56,.8);
-  font-size:22px;
-  line-height:1.9;
+  font-size:22px!important;
+  line-height:1.9!important;
 }
 .hex-banner:not(.hex-banner-no-image)
 .hex-banner-button .hex-btn-main{
