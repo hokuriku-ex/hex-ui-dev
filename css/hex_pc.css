@@ -6,11 +6,11 @@ body{
   font-family:'Zen Kaku Gothic New',sans-serif!important;
 }
 h1,
-h2,
-h3
+h2
 {
   font-family:'GF_NotoSerifJapanese_Bold',serif!important;
 }
+h3,
 h4,
 h5,
 h6{
@@ -3203,9 +3203,6 @@ body,
 }
 .hex-staff-iframe-mode .hex-staff-section{
   margin:0 0 48px;
-}
-.hex-staff-iframe-mode .hex-section-action .hex-section-smalltitle{
-  font-family:var(--hex-font-serif)!important;
 }
 .hex-staff-iframe-mode .hex-staff-member-grid{
   display:none!important;
