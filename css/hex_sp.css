@@ -15,7 +15,7 @@
 @media screen and (max-width:768px){
   .hex-section-title{
     margin:0 auto 24px!important;
-    font-size:36px;
+    font-size:26px!important;
   }
   .hex-section-title::after{
     width:calc(100% + 24px);
@@ -155,7 +155,7 @@
   }
   .gc_auto_frame_post_item_title h2{
     margin:0 auto 24px!important;
-    font-size:36px;
+    font-size:26px!important;
   }
   .gc_auto_frame_post_item_title h2::after{
     width:calc(100% + 24px);
