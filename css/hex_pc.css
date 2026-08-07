@@ -2434,10 +2434,18 @@ body,
 .heroimage_type .fontsize_caption_pc_04{
   font-size:clamp(42px, 3.6vw, 54px)!important;
   line-height:1.5em!important;
+  text-shadow:
+    0 0 4px rgba(255,255,255,1),
+    0 0 10px rgba(255,255,255,.9),
+    0 0 18px rgba(255,255,255,.7)!important;
 }
 .heroimage_type .fontsize_sub_pc_05{
   font-size:clamp(18px, 1.8vw, 24px)!important;
   line-height:1.8em!important;
+  text-shadow:
+    0 0 3px rgba(255,255,255,1),
+    0 0 7px rgba(255,255,255,.8),
+    0 0 12px rgba(255,255,255,.6)!important;
 }
 
 /* =======================================
