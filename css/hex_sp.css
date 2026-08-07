@@ -781,21 +781,19 @@
     padding:0!important;
     white-space:nowrap!important;
     text-align:left!important;
-    line-height:1.35em!important;
   }
   .catch_type4 .subcatch{
     display:block!important;
     width:max-content!important;
     max-width:calc(100vw - 32px)!important;
     margin-top:clamp(180px, 55vw, 300px)!important;
-    margin-left:auto!important;
-    margin-right:0!important;
+    margin-left:0!important;
     padding:0!important;
     white-space:nowrap!important;
     text-align:left!important;
-    opacity:1!important;
-    visibility:visible!important;
-    transform:none!important;
+    transform:translateX(
+      calc(100vw - 32px - 100%)
+    )!important;
   }
   .heroimage_type .fontsize_caption_smp_04{
     font-size:clamp(30px, 5.46875vw, 42px)!important;
