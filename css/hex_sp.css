@@ -293,19 +293,19 @@
     font-size:16px!important;
   }
   .hex-btn-main-icon{
-    font-size:20px;
+    font-size:18px!important;
   }
   .hex-link{
     padding:0 0 14px;
   }
   .hex-link-title{
-    font-size:18px!important;
+    font-size:16px!important;
   }
   .hex-link-detail{
-    font-size:16px;
+    font-size:14px!important;
   }
   .hex-link-icon{
-    font-size:16px;
+    font-size:18px!important;
   }
   .hex-card-grid{
     grid-template-columns:1fr;
