@@ -1387,6 +1387,7 @@ br[hex-sp]{
   margin:0 auto;
   box-sizing:border-box;
   border-radius:6px;
+  overflow:hidden;
 }
 .hex-banner-image img{
   display:block;
