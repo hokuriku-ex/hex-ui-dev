@@ -495,18 +495,26 @@ a.hex-text-link[target="_blank"]::after{
   line-height:1.5!important;
   color:#1f2774!important;
   background:#fff!important;
+  border:1px solid #1f2774!important;
   border-radius:6px!important;
+}
+.gc_auto_frame_post_item_title .date::before{
+  content:"";
+  position:absolute;
+  left:14px;
+  bottom:-7px;
+  border-left:7px solid transparent;
+  border-right:7px solid transparent;
+  border-top:7px solid #1f2774;
 }
 .gc_auto_frame_post_item_title .date::after{
   content:"";
   position:absolute;
-  left:14px;
-  bottom:-6px;
-  width:0;
-  height:0;
-  border-top:6px solid #fff;
+  left:15px;
+  bottom:-5px;
   border-left:6px solid transparent;
   border-right:6px solid transparent;
+  border-top:6px solid #fff;
 }
 .gc_auto_frame_post_item_title h2{
   position:relative;
