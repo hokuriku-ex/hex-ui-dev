@@ -776,6 +776,12 @@
     box-sizing:border-box!important;
   }
   .catch_type4 .maincatch{
+    position:relative!important;
+    top:clamp(
+      0px,
+      calc(15.69vw - 56.47px),
+      64px
+    )!important;
     width:auto!important;
     margin:0!important;
     padding:0!important;
