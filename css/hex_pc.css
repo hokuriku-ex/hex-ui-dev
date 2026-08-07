@@ -3105,10 +3105,18 @@ body,
   content:"";
   position:absolute;
   bottom:0;
-  left:-24px;
+  left:50%;
+  transform:translateX(-50%);
   width:calc(100% + 48px);
-  height:1px;
-  background:#c8a874!important;
+  height:8px;
+  box-sizing:border-box;
+  background:repeating-linear-gradient(
+    45deg,
+    #c8a874 0,
+    #c8a874 2px,
+    transparent 2px,
+    transparent 5px
+  )!important;
 }
 #gc_auto_body_company .hex-company-main-first-line{
   display:none!important;
