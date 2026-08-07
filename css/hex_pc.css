@@ -476,18 +476,34 @@ a.hex-text-link[target="_blank"]::after{
 
 /* 記事詳細タイトル */
 .gc_auto_frame_post_item_title{
+  display:grid;
+  justify-content:center;
   max-width:var(--base_width)!important;
   margin:0 auto!important;
   padding:0!important;
   box-sizing:border-box!important;
 }
 .gc_auto_frame_post_item_title .date{
-  margin:0 0 12px!important;
-  padding:0!important;
-  font-size:16px!important;
+  position:relative;
+  justify-self:start;
+  margin:0 0 10px!important;
+  padding:5px 12px!important;
+  font-size:14px!important;
   font-weight:500!important;
-  line-height:1.6!important;
-  color:#1f2774!important;
+  line-height:1.5!important;
+  color:#fff!important;
+  background:#1f2774!important;
+}
+.gc_auto_frame_post_item_title .date::after{
+  content:"";
+  position:absolute;
+  left:14px;
+  bottom:-6px;
+  width:0;
+  height:0;
+  border-top:6px solid #1f2774;
+  border-left:6px solid transparent;
+  border-right:6px solid transparent;
 }
 .gc_auto_frame_post_item_title h2{
   position:relative;
