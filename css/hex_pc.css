@@ -913,21 +913,6 @@ br[hex-sp]{
     8px calc(100% - 8px),
     calc(100% - 8px) calc(100% - 8px)
   );
-  background:
-    linear-gradient(
-      45deg,
-      transparent 42%,
-      currentColor 42%,
-      currentColor 58%,
-      transparent 58%
-    ) top right / 10px 10px no-repeat,
-    linear-gradient(
-      45deg,
-      transparent 42%,
-      currentColor 42%,
-      currentColor 58%,
-      transparent 58%
-    ) bottom left / 10px 10px no-repeat;
 }
 .hex-btn-main.light{
   color:#1f2774;
@@ -935,13 +920,26 @@ br[hex-sp]{
 }
 .hex-btn-main.light::before{
   border-color:#1f2774;
-  background:repeating-linear-gradient(
-    45deg,
-    #1f2774 0,
-    #1f2774 2px,
-    transparent 2px,
-    transparent 5px
-  );
+  background:
+    linear-gradient(
+      135deg,
+      transparent 0 42%,
+      #1f2774 42% 58%,
+      transparent 58% 100%
+    ) top right / 10px 10px no-repeat,
+    linear-gradient(
+      135deg,
+      transparent 0 42%,
+      #1f2774 42% 58%,
+      transparent 58% 100%
+    ) bottom left / 10px 10px no-repeat,
+    repeating-linear-gradient(
+      45deg,
+      #1f2774 0,
+      #1f2774 2px,
+      transparent 2px,
+      transparent 5px
+    );
 }
 .hex-btn-main.light .hex-btn-main-title,
 .hex-btn-main.light .hex-btn-main-icon{
@@ -953,13 +951,26 @@ br[hex-sp]{
 }
 .hex-btn-main.dark::before{
   border-color:#fff;
-  background:repeating-linear-gradient(
-    45deg,
-    #fff 0,
-    #fff 2px,
-    transparent 2px,
-    transparent 5px
-  );
+  background:
+    linear-gradient(
+      135deg,
+      transparent 0 42%,
+      #fff 42% 58%,
+      transparent 58% 100%
+    ) top right / 10px 10px no-repeat,
+    linear-gradient(
+      135deg,
+      transparent 0 42%,
+      #fff 42% 58%,
+      transparent 58% 100%
+    ) bottom left / 10px 10px no-repeat,
+    repeating-linear-gradient(
+      45deg,
+      #fff 0,
+      #fff 2px,
+      transparent 2px,
+      transparent 5px
+    );
 }
 .hex-btn-main.dark .hex-btn-main-title,
 .hex-btn-main.dark .hex-btn-main-icon{
