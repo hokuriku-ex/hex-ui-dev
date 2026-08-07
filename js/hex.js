@@ -2893,7 +2893,7 @@ hexLoad(function(){
           });
           break;
         }
-      },500);
+      },1000);
     }
     setTimeout(hexStaffPostResize,150);
     setTimeout(hexStaffPostResize,400);
