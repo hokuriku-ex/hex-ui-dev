@@ -428,6 +428,7 @@ a.hex-text-link[target="_blank"]::after{
   padding:0 14px!important;
   box-sizing:border-box!important;
   border:1px solid #1f2774!important;
+  border-radius:6px!important;
   background:#fff!important;
   color:#383838!important;
   font-size:13px!important;
