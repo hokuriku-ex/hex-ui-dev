@@ -3998,7 +3998,8 @@ body,
   color:#1f2774!important;
 }
 .gc_auto_frame_post_index_box_contents_cell_image_inner{
-  border-radius:0!important;
+  border-radius:6px!important;
+  overflow:hidden!important;
 }
 
 /* =======================================
