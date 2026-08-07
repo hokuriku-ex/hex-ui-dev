@@ -4002,6 +4002,18 @@ body,
   overflow:hidden!important;
 }
 
+/* 1200px以上：最大5列 */
+@media screen and (min-width:1200px){
+  .post_index_contents >
+  .gc_auto_frame_post_index_box_contents_cell_tile{
+    flex:0 0 calc((100% - 4 * 1.33%) / 5)!important;
+    width:calc((100% - 4 * 1.33%) / 5)!important;
+    max-width:none!important;
+    margin-left:0!important;
+    margin-right:0!important;
+  }
+}
+
 /* 1000px以上：最大4列 */
 @media screen and (min-width:1000px){
   .post_index_contents >
