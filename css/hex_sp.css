@@ -982,9 +982,7 @@
 ======================================= */
 @media screen and (max-width:768px){
   .hex-staff-wrap{
-    width:auto;
-    margin:0 16px;
-    padding:32px 0;
+    padding:0 16px!important;
   }
   .hex-staff-section{
     margin-bottom:48px;
