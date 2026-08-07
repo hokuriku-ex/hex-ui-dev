@@ -4182,6 +4182,11 @@ body,
 }
 
 /* 添付ファイル */
+#form_lp_form .gc_form_lp_data input[type="select"]{
+  background-color:#f4f8ff!important;
+}
+
+/* 添付ファイル */
 #form_lp_form .gc_form_lp_data input[type="file"]{
   max-width:none!important;
 }
