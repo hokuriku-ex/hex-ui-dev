@@ -14,6 +14,7 @@
 /* 共通セクション見出し（h2専用） */
 @media screen and (max-width:768px){
   .hex-section-title{
+    margin:0 auto 24px!important;
     font-size:36px;
   }
   .hex-section-title::after{
