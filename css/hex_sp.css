@@ -888,6 +888,61 @@
 ======================================= */
 /* 記事エリア余白変更 */
 @media screen and (max-width:768px){
+  /* 下層ページ：トップ画像の色を抽出した淡色グラデーション */
+  .pagetitle_type.pagetitle_type4::before{
+    background:
+      /* 中央：紺 */
+      radial-gradient(
+        ellipse 65% 90% at 50% 42%,
+        rgba(31,39,116,.38),
+        transparent 70%
+      ),
+
+      /* 左右：ブルー */
+      radial-gradient(
+        ellipse 50% 80% at 18% 65%,
+        rgba(42,91,172,.26),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 50% 80% at 82% 25%,
+        rgba(42,91,172,.26),
+        transparent 70%
+      ),
+
+      /* 左右：グリーン */
+      radial-gradient(
+        ellipse 38% 65% at 0% 25%,
+        rgba(169,170,149,.32),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 38% 65% at 100% 75%,
+        rgba(169,170,149,.32),
+        transparent 70%
+      ),
+
+      /* 両端：ゴールド */
+      radial-gradient(
+        ellipse 25% 45% at 0% 90%,
+        rgba(200,168,116,.30),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 25% 45% at 100% 10%,
+        rgba(200,168,116,.30),
+        transparent 70%
+      ),
+
+      linear-gradient(
+        135deg,
+        #f7f6f2 0%,
+        #f3f1eb 38%,
+        #eef0e8 68%,
+        #f6f5f1 100%
+      );
+  }
+
   /* 導入文 */
   .hex-intro h4{
     padding-inline:16px!important;
