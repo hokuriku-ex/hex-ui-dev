@@ -155,7 +155,7 @@
   }
   .gc_auto_frame_post_item_title h2::after{
     width:calc(100% + 24px)!important;
-    padding-inline:16px!important;
+    max-width:calc(100vw - 32px)!important;
   }
 }
 
