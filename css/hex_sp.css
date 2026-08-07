@@ -766,6 +766,9 @@
 ======================================= */
 /* キャッチコピー */
 @media screen and (max-width:768px){
+  .heroimage_margintop_normal{
+    margin-top:80px!important;
+  }
   .catch_type4 .catch_contents{
     padding-left:16px!important;
   }
