@@ -1011,7 +1011,7 @@ br[hex-sp]{
   align-items:center;
   justify-content:space-between;
   gap:24px;
-  padding:0 0 18px;
+  padding:0 0 12px;
   border-bottom:1px solid #d8dce8;
   text-decoration:none;
 }
