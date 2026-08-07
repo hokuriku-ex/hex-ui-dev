@@ -126,12 +126,7 @@
     font-size:12px!important;
   }
   .hex-detail-pager-title{
-    display:inline-block!important;
-    overflow:hidden!important;
-    text-overflow:ellipsis!important;
-    white-space:nowrap!important;
-    max-width:70px!important;
-    font-size:12px!important;
+    display:none!important;
   }
   .hex-detail-pager-prev .hex-detail-pager-title{
     margin-left:6px!important;
