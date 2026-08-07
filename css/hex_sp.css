@@ -841,6 +841,10 @@
   .hex-gallery{
     width:100%;
   }
+  .hex-gallery-main-swiper{
+    overflow:hidden!important;
+    border-radius:6px!important;
+  }
   .hex-gallery-main-nav{
     display:none;
   }
