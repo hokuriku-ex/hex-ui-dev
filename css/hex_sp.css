@@ -772,17 +772,22 @@
   .catch_type4 .catch_contents{
     width:100%!important;
     max-width:none!important;
+    height:100%!important;
     box-sizing:border-box!important;
-    padding-left:16px!important;
-    padding-right:16px!important;
+    padding:0!important;
   }
   .catch_type4 .maincatch{
-    padding-left:0!important;
+    position:absolute!important;
+    top:40px!important;
+    left:16px!important;
+    padding:0!important;
     text-align:left!important;
   }
   .catch_type4 .subcatch{
-    padding-left:0!important;
-    margin-top:clamp(80px, 20vw, 150px)!important;
+    position:absolute!important;
+    right:16px!important;
+    bottom:40px!important;
+    padding:0!important;
     text-align:right!important;
   }
   .heroimage_type .fontsize_caption_smp_04{
