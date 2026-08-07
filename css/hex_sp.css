@@ -1302,7 +1302,7 @@
 /* =======================================
    下層ページ：施工事例一覧
 ======================================= */
-/* 481～768px：2列 */
+/* 481～768px：最大2列 */
 @media screen and (min-width:481px) and (max-width:768px){
   .post_index_contents >
   .gc_auto_frame_post_index_box_contents_cell_tile{
@@ -1314,7 +1314,7 @@
   }
 }
 
-/* 480px以下：1列 */
+/* 480px以下：最大1列 */
 @media screen and (max-width:480px){
   .post_index_contents >
   .gc_auto_frame_post_index_box_contents_cell_tile{
