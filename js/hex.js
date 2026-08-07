@@ -3513,6 +3513,9 @@ hexReady(function(){
 
   root.dataset.hexWork25='done';
 
+  /* 組み替えが終わるまで一覧を隠す */
+  root.classList.add('hex-work-loading');
+
   var CARD_SELECTOR=
     '.gc_auto_frame_post_index_box_contents_cell_tile';
 
@@ -3810,12 +3813,14 @@ hexReady(function(){
       });
 
       rebuildPager(totalDisplayPages);
+
+      /* 25件の組み替え完了後に表示 */
+      root.classList.remove('hex-work-loading');
     });
   })
   .catch(function(error){
-    /*
-     * 取得失敗時はCMS本来の24件表示を維持
-     */
+    /* 取得失敗時はCMS本来の24件表示へ戻す */
+    root.classList.remove('hex-work-loading');
     console.error(error);
   });
 });
