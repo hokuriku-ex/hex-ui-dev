@@ -2901,21 +2901,22 @@ body,
   content:"";
   position:absolute;
   inset:0;
+  z-index:0;
   background:
-    /* 中央：紺 */
-    radial-gradient(circle at 50% 45%,rgba(31,39,116,.28),transparent 30%),
+    /* 中央：紺を広め */
+    radial-gradient(circle at 50% 45%,rgba(31,39,116,.28),transparent 42%),
 
-    /* 左右：ブルー */
-    radial-gradient(circle at 32% 75%,rgba(42,91,172,.24),transparent 30%),
-    radial-gradient(circle at 68% 20%,rgba(42,91,172,.24),transparent 30%),
+    /* ブルー */
+    radial-gradient(circle at 27% 75%,rgba(42,91,172,.24),transparent 34%),
+    radial-gradient(circle at 73% 20%,rgba(42,91,172,.24),transparent 34%),
 
-    /* 左右：グリーン */
-    radial-gradient(circle at 17% 20%,rgba(169,170,149,.38),transparent 30%),
-    radial-gradient(circle at 83% 78%,rgba(169,170,149,.38),transparent 30%),
+    /* グリーン */
+    radial-gradient(circle at 10% 20%,rgba(169,170,149,.38),transparent 27%),
+    radial-gradient(circle at 90% 78%,rgba(169,170,149,.38),transparent 27%),
 
-    /* 両端：ゴールド */
-    radial-gradient(circle at 2% 75%,rgba(200,168,116,.32),transparent 28%),
-    radial-gradient(circle at 98% 25%,rgba(200,168,116,.32),transparent 28%),
+    /* ゴールド：両端だけ狭め */
+    radial-gradient(circle at 0% 80%,rgba(200,168,116,.32),transparent 18%),
+    radial-gradient(circle at 100% 20%,rgba(200,168,116,.32),transparent 18%),
 
     linear-gradient(
       135deg,
@@ -2924,7 +2925,6 @@ body,
       #eef0e8 68%,
       #f6f5f1 100%
     );
-  z-index:0;
 }
 .gc_auto_frame_page_title .pagetitle_type4 .bg_text{
   padding:36px 0 22px!important;
