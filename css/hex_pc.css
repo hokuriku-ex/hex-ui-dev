@@ -2902,10 +2902,10 @@ body,
   position:absolute;
   inset:0;
   background:
-    radial-gradient(circle at 8% 16%,rgba(31,39,116,.28),transparent 28%),
-    radial-gradient(circle at 16% 82%,rgba(200,168,116,.32),transparent 30%),
-    radial-gradient(circle at 78% 22%,rgba(169,170,149,.38),transparent 34%),
-    radial-gradient(circle at 88% 78%,rgba(42,91,172,.24),transparent 30%),
+    radial-gradient(circle at 10% 25%,rgba(31,39,116,.28),transparent 30%),
+    radial-gradient(circle at 38% 70%,rgba(42,91,172,.24),transparent 32%),
+    radial-gradient(circle at 68% 25%,rgba(169,170,149,.38),transparent 34%),
+    radial-gradient(circle at 92% 75%,rgba(200,168,116,.32),transparent 30%),
     linear-gradient(135deg,#f7f6f2 0%,#f3f1eb 38%,#eef0e8 68%,#f6f5f1 100%);
   z-index:0;
 }
