@@ -1302,16 +1302,25 @@
 /* =======================================
    下層ページ：施工事例一覧
 ======================================= */
+/* 768px以下：最大2列 */
 @media screen and (max-width:768px){
   .post_index_contents >
   .gc_auto_frame_post_index_box_contents_cell_tile{
-    display:block!important;
+    width:50%!important;
+    max-width:50%!important;
+    box-sizing:border-box!important;
+  }
+}
+
+/* 480px以下：最大1列 */
+@media screen and (max-width:480px){
+  .post_index_contents >
+  .gc_auto_frame_post_index_box_contents_cell_tile{
     float:none!important;
     width:100%!important;
     max-width:100%!important;
     margin-left:0!important;
     margin-right:0!important;
-    box-sizing:border-box!important;
   }
 }
 
