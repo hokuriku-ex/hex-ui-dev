@@ -2885,6 +2885,7 @@ hexLoad(function(){
           var title=sections[i].querySelector('.hex-anchor-target');
           if(!title)continue;
           if(title.textContent.trim()!==anchorParam)continue;
+          var nav=document.querySelector('.hex-anchor-nav');
           var offset=80+(nav?nav.offsetHeight:0)+40;
           var top=sections[i].getBoundingClientRect().top+window.pageYOffset-offset;
           window.scrollTo({
@@ -2893,7 +2894,7 @@ hexLoad(function(){
           });
           break;
         }
-      },1000);
+      },500);
     }
     setTimeout(hexStaffPostResize,150);
     setTimeout(hexStaffPostResize,400);
