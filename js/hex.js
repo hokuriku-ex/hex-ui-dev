@@ -3487,6 +3487,331 @@ hexReady(function(){
 });
 
 /* =======================================
+   施工事例一覧
+======================================= */
+hexLoad(function(){
+  var fiveColumnQuery=window.matchMedia('(min-width:1600px)');
+
+  fiveColumnQuery.addEventListener('change',function(){
+    window.location.reload();
+  });
+
+  /* 1600px未満では何も変更しない */
+  if(!fiveColumnQuery.matches)return;
+
+  var root=document.querySelector('#gc_auto_frame_work_3');
+  if(!root||root.dataset.hexWork25==='done')return;
+
+  root.dataset.hexWork25='done';
+
+  var CARD_SELECTOR=
+    '.gc_auto_frame_post_index_box_contents_cell_tile';
+
+  var LIST_SELECTOR='.post_index_contents';
+  var PAGER_SELECTOR='.bg_page_button';
+
+  var ORIGINAL_LIMIT=24;
+  var DISPLAY_LIMIT=25;
+
+  var currentUrl=new URL(window.location.href);
+  var currentPage=parseInt(
+    currentUrl.searchParams.get('page_no')||'1',
+    10
+  );
+
+  if(!Number.isFinite(currentPage)||currentPage<1){
+    currentPage=1;
+  }
+
+  var documentCache=new Map();
+  documentCache.set(currentPage,document);
+
+  function getPageNumberFromOnclick(value){
+    var match=String(value||'').match(
+      /gc_click_page_jump_page_no\([^)]*['"](\d+)['"]\s*\)/
+    );
+
+    return match?parseInt(match[1],10):null;
+  }
+
+  function getOriginalLastPage(doc){
+    var numbers=[1];
+
+    doc.querySelectorAll(
+      PAGER_SELECTOR+' [onclick*="gc_click_page_jump_page_no"]'
+    ).forEach(function(button){
+      var number=getPageNumberFromOnclick(
+        button.getAttribute('onclick')
+      );
+
+      if(number)numbers.push(number);
+    });
+
+    return Math.max.apply(null,numbers);
+  }
+
+  function getCards(doc){
+    var workRoot=doc.querySelector('#gc_auto_frame_work_3');
+
+    if(!workRoot)return [];
+
+    return Array.from(
+      workRoot.querySelectorAll(CARD_SELECTOR)
+    );
+  }
+
+  function createPageUrl(page){
+    var url=new URL(window.location.href);
+    url.searchParams.set('page_no',String(page));
+    return url;
+  }
+
+  function fetchPage(page){
+    if(documentCache.has(page)){
+      return Promise.resolve(documentCache.get(page));
+    }
+
+    return fetch(createPageUrl(page).href,{
+      credentials:'same-origin'
+    })
+    .then(function(response){
+      if(!response.ok){
+        throw new Error(
+          '施工事例ページの取得に失敗しました：'+page
+        );
+      }
+
+      return response.text();
+    })
+    .then(function(html){
+      var doc=new DOMParser().parseFromString(
+        html,
+        'text/html'
+      );
+
+      documentCache.set(page,doc);
+      return doc;
+    });
+  }
+
+  function goToPage(page){
+    window.location.href=createPageUrl(page).href;
+  }
+
+  function createPagerButton(options){
+    var button=document.createElement('div');
+    button.className='page_button';
+
+    if(options.current){
+      button.classList.add('pagenow');
+    }
+
+    if(options.className){
+      button.classList.add(options.className);
+    }
+
+    button.innerHTML=options.html;
+
+    if(!options.current&&options.page){
+      button.addEventListener('click',function(){
+        goToPage(options.page);
+      });
+    }
+
+    return button;
+  }
+
+  function getPagerNumbers(current,total){
+    if(total<=7){
+      return Array.from(
+        {length:total},
+        function(_,index){
+          return index+1;
+        }
+      );
+    }
+
+    var numbers=[
+      1,
+      current-1,
+      current,
+      current+1,
+      total
+    ]
+    .filter(function(number){
+      return number>=1&&number<=total;
+    })
+    .filter(function(number,index,array){
+      return array.indexOf(number)===index;
+    })
+    .sort(function(a,b){
+      return a-b;
+    });
+
+    var result=[];
+
+    numbers.forEach(function(number,index){
+      if(index>0&&number-numbers[index-1]>1){
+        result.push('…');
+      }
+
+      result.push(number);
+    });
+
+    return result;
+  }
+
+  function rebuildPager(totalPages){
+    var pager=root.querySelector(PAGER_SELECTOR);
+    if(!pager)return;
+
+    pager.innerHTML='';
+
+    if(totalPages<=1){
+      pager.style.display='none';
+      return;
+    }
+
+    pager.style.display='';
+
+    if(currentPage>1){
+      pager.appendChild(
+        createPagerButton({
+          page:currentPage-1,
+          className:'hex-pager-prev',
+          html:
+            '<i class="fa-solid fa-arrow-left"></i>'+
+            '<span>前へ</span>'
+        })
+      );
+    }
+
+    getPagerNumbers(currentPage,totalPages)
+    .forEach(function(number){
+      if(number==='…'){
+        pager.appendChild(
+          createPagerButton({
+            className:'omission_button',
+            html:'…'
+          })
+        );
+        return;
+      }
+
+      pager.appendChild(
+        createPagerButton({
+          page:number,
+          current:number===currentPage,
+          html:String(number)
+        })
+      );
+    });
+
+    if(currentPage<totalPages){
+      pager.appendChild(
+        createPagerButton({
+          page:currentPage+1,
+          className:'hex-pager-next',
+          html:
+            '<span>次へ</span>'+
+            '<i class="fa-solid fa-arrow-right"></i>'
+        })
+      );
+    }
+  }
+
+  var originalLastPage=getOriginalLastPage(document);
+
+  fetchPage(originalLastPage)
+  .then(function(lastDocument){
+    var lastPageCount=getCards(lastDocument).length;
+
+    var totalItems=
+      (originalLastPage-1)*ORIGINAL_LIMIT+
+      lastPageCount;
+
+    var totalDisplayPages=Math.ceil(
+      totalItems/DISPLAY_LIMIT
+    );
+
+    /* 削除などで存在しなくなったページへの対策 */
+    if(currentPage>totalDisplayPages){
+      goToPage(Math.max(totalDisplayPages,1));
+      return null;
+    }
+
+    var startIndex=
+      (currentPage-1)*DISPLAY_LIMIT;
+
+    var firstOriginalPage=
+      Math.floor(startIndex/ORIGINAL_LIMIT)+1;
+
+    var firstOffset=
+      startIndex%ORIGINAL_LIMIT;
+
+    var lastIndex=Math.min(
+      startIndex+DISPLAY_LIMIT,
+      totalItems
+    );
+
+    var lastOriginalPage=
+      Math.floor((lastIndex-1)/ORIGINAL_LIMIT)+1;
+
+    var requests=[];
+
+    for(
+      var page=firstOriginalPage;
+      page<=lastOriginalPage;
+      page++
+    ){
+      requests.push(fetchPage(page));
+    }
+
+    return Promise.all(requests)
+    .then(function(documents){
+      var collectedCards=[];
+
+      documents.forEach(function(doc){
+        collectedCards=collectedCards.concat(
+          getCards(doc)
+        );
+      });
+
+      var displayCards=collectedCards.slice(
+        firstOffset,
+        firstOffset+DISPLAY_LIMIT
+      );
+
+      var list=root.querySelector(LIST_SELECTOR);
+      var pager=root.querySelector(PAGER_SELECTOR);
+
+      if(!list||!pager)return;
+
+      Array.from(
+        list.querySelectorAll(':scope > '+CARD_SELECTOR)
+      ).forEach(function(card){
+        card.remove();
+      });
+
+      displayCards.forEach(function(card){
+        list.insertBefore(
+          document.importNode(card,true),
+          pager
+        );
+      });
+
+      rebuildPager(totalDisplayPages);
+    });
+  })
+  .catch(function(error){
+    /*
+     * 取得失敗時はCMS本来の24件表示を維持
+     */
+    console.error(error);
+  });
+});
+
+/* =======================================
    お問い合わせ
 ======================================= */
 hexLoad(function(){
