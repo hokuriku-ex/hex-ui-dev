@@ -4047,6 +4047,10 @@ body,
 
 /* 1600px以上：最大5列 */
 @media screen and (min-width:1600px){
+  #gc_auto_frame_work_3.hex-work-loading
+  .post_index_contents{
+    visibility:hidden!important;
+  }
   .post_index_contents >
   .gc_auto_frame_post_index_box_contents_cell_tile{
     flex:0 0 calc((100% - 4 * 1.33%) / 5)!important;
