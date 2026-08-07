@@ -347,27 +347,6 @@ function hexInitAnchorNav(){
   function getHexAnchorOffset(){
     return getHexAnchorHeaderHeight()+nav.offsetHeight;
   }
-
-  /* スタッフiframeの高さ変更後にアンカー位置を再補正 */
-  window.addEventListener('hexStaffIframeResize',function(){
-    var target=currentAnchorTarget||hashAnchorTarget;
-    if(!target)return;
-
-    requestAnimationFrame(function(){
-      var correctedTop=
-        target.getBoundingClientRect().top+
-        window.pageYOffset-
-        getHexAnchorOffset();
-
-      if(Math.abs(window.pageYOffset-correctedTop)>2){
-        window.scrollTo({
-          top:correctedTop,
-          behavior:'auto'
-        });
-      }
-    });
-  });
-
   function refreshHexAnchorNav(){
     var mobileAdjust=0;
     nav.classList.remove('is-fixed');
@@ -3450,11 +3429,8 @@ function hexResizeStaffIframe(iframe){
     if(height>0){
       var newHeight=height+4;
       var oldHeight=parseFloat(iframe.style.height)||0;
-
-      if(Math.abs(newHeight-oldHeight)>1){
-        iframe.style.height=newHeight+'px';
-
-        window.dispatchEvent(new CustomEvent('hexStaffIframeResize'));
+      if(height>0){
+        iframe.style.height=(height+4)+'px';
       }
     }
   }catch(e){}
