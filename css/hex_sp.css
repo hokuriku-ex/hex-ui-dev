@@ -770,6 +770,9 @@
     margin-top:80px!important;
   }
   .catch_type4 .catch_contents{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
     padding-left:16px!important;
     padding-right:16px!important;
   }
