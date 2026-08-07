@@ -261,6 +261,16 @@ function hexInitAnchorNav(){
   list.className='hex-anchor-nav-list';
   var pairs=[];
   var currentAnchorTarget=null;
+  var hashAnchorTarget=null;
+
+  if(location.hash){
+    try{
+      hashAnchorTarget=document.getElementById(
+        decodeURIComponent(location.hash.substring(1))
+      );
+    }catch(e){}
+  }
+
   titles.forEach(function(title){
     var target=null;
       targets.forEach(function(h2){
@@ -340,11 +350,12 @@ function hexInitAnchorNav(){
 
   /* スタッフiframeの高さ変更後にアンカー位置を再補正 */
   window.addEventListener('hexStaffIframeResize',function(){
-    if(!currentAnchorTarget)return;
+    var target=currentAnchorTarget||hashAnchorTarget;
+    if(!target)return;
 
     requestAnimationFrame(function(){
       var correctedTop=
-        currentAnchorTarget.getBoundingClientRect().top+
+        target.getBoundingClientRect().top+
         window.pageYOffset-
         getHexAnchorOffset();
 
