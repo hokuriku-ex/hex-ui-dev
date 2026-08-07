@@ -103,10 +103,12 @@ html{
   position:relative;
   margin:0 0 24px!important;
   padding-left:18px!important;
+  padding-bottom:14px!important;
   color:#1f2774;
   font-size:24px;
   font-weight:700;
   line-height:1.4;
+  border-bottom:2px solid #d8dce8;
 }
 .hex-section-subtitle:before{
   content:"";
