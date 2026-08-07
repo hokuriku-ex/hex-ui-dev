@@ -906,11 +906,11 @@ br[hex-sp]{
   border-radius:6px;
   pointer-events:none;
   clip-path:polygon(
-    calc(100% - 8px) 6px,
-    100% 6px,
+    calc(100% - 8px) 0,
+    100% 0,
     100% 100%,
-    6px 100%,
-    6px calc(100% - 8px),
+    0 100%,
+    0 calc(100% - 8px),
     calc(100% - 8px) calc(100% - 8px)
   );
 }
