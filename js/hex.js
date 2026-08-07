@@ -2939,17 +2939,43 @@ hexLoad(function(){
     if(anchorParam){
       setTimeout(function(){
         var sections=wrap.getElementsByClassName('hex-staff-section');
+
         for(var i=0;i<sections.length;i++){
           var title=sections[i].querySelector('.hex-anchor-target');
           if(!title)continue;
           if(title.textContent.trim()!==anchorParam)continue;
-          var nav=document.querySelector('.hex-anchor-nav');
-          var offset=80+(nav?nav.offsetHeight:0);
-          var top=sections[i].getBoundingClientRect().top+window.pageYOffset-offset;
+
+          var target=sections[i];
+
+          function getOffset(){
+            var nav=document.querySelector('.hex-anchor-nav');
+            return 80+(nav?nav.offsetHeight:0);
+          }
+
+          var top=
+            target.getBoundingClientRect().top+
+            window.pageYOffset-
+            getOffset();
+
           window.scrollTo({
             top:top,
             behavior:'smooth'
           });
+
+          window.addEventListener('scrollend',function(){
+            var correctedTop=
+              target.getBoundingClientRect().top+
+              window.pageYOffset-
+              getOffset();
+
+            if(Math.abs(window.pageYOffset-correctedTop)>2){
+              window.scrollTo({
+                top:correctedTop,
+                behavior:'auto'
+              });
+            }
+          },{once:true});
+
           break;
         }
       },500);
