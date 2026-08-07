@@ -2045,21 +2045,21 @@ br[hex-sp]{
 }
 .headermenu_type8
 .pc_menu > .menu_group.menu_menu::after{
-  content:"";
+  content:"\f078";
   position:absolute;
   left:50%;
   bottom:8px;
-  width:6px;
-  height:6px;
-  border-right:1px solid #383838;
-  border-bottom:1px solid #383838;
-  transform:translateX(-50%) rotate(45deg);
+  transform:translateX(-50%);
+  color:#383838;
+  font-family:"Font Awesome 6 Free";
+  font-size:10px;
+  font-weight:900;
+  line-height:1;
   pointer-events:none;
-  opacity:1;
 }
 .headermenu_type8
 .pc_menu > .menu_group.menu_menu:hover::after{
-  opacity:0;
+  display:none;
 }
 
 /* =======================================
