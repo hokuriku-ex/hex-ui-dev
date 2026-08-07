@@ -4002,8 +4002,8 @@ body,
   overflow:hidden!important;
 }
 
-/* 769～999px：最大3列 */
-@media screen and (min-width:769px) and (max-width:999px){
+/* 769～1199px：最大3列 */
+@media screen and (min-width:769px) and (max-width:1199px){
   .post_index_contents >
   .gc_auto_frame_post_index_box_contents_cell_tile{
     flex:0 0 calc((100% - 2 * 1.33%) / 3)!important;
@@ -4014,7 +4014,7 @@ body,
   }
 }
 
-/* 1200px以上：最大4列 */
+/* 1200～1599px以下：最大4列 */
 @media screen and (min-width:1200px){
   .post_index_contents >
   .gc_auto_frame_post_index_box_contents_cell_tile{
