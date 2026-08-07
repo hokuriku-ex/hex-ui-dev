@@ -2250,12 +2250,15 @@ hexReady(function(){
     '.gc_auto_frame_page_title .title_font_big_headline'
   ).forEach(function(title){
     var text=title.textContent.trim();
+    var h1=title.closest('h1');
 
     if(text==='個人のお客様'){
+      if(h1) h1.setAttribute('data-target','個人のお客様');
       title.textContent='外構工事をご検討中の方';
     }
 
     if(text==='法人・事業者の方'){
+      if(h1) h1.setAttribute('data-target','法人・事業者の方');
       title.textContent='外構パートナーをお探しの方';
     }
   });
