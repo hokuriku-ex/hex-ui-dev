@@ -804,7 +804,9 @@
     box-sizing:border-box;
   }
   .welcome .title{
-    padding:16px 24px 16px 16px;
+    padding-block:16px;
+    padding-left:24px;
+    padding-right:16px;
   }
   .welcome .title h2{
     font-size:clamp(
