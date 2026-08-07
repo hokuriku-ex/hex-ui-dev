@@ -1529,11 +1529,11 @@ br[hex-sp]{
 .hex-gallery-main-swiper{
   position:relative;
   width:100%;
-  overflow:hidden;
-  border-radius:6px;
+  overflow:hidden!important;
+  border-radius:6px!important;
 }
 .hex-gallery.is-single .hex-gallery-main-swiper{
-  overflow:visible;
+  overflow:hidden;
 }
 .hex-gallery-main-swiper .swiper-wrapper{
   height:100%;
