@@ -2048,7 +2048,7 @@ br[hex-sp]{
   content:"\f078";
   position:absolute;
   left:50%;
-  bottom:10px;
+  bottom:12px;
   transform:translateX(-50%);
   color:#383838;
   font-family:"Font Awesome 6 Free";
