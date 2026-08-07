@@ -260,6 +260,7 @@ function hexInitAnchorNav(){
   var list=document.createElement('div');
   list.className='hex-anchor-nav-list';
   var pairs=[];
+  var currentAnchorTarget=null;
   titles.forEach(function(title){
     var target=null;
       targets.forEach(function(h2){
@@ -281,8 +282,12 @@ function hexInitAnchorNav(){
     link.className='hex-anchor-nav-link';
     link.href='#'+target.id;
     link.textContent=title;
+    var currentAnchorTarget=null;
+
     link.addEventListener('click',function(e){
       e.preventDefault();
+
+      currentAnchorTarget=target;
 
       var top=
         target.getBoundingClientRect().top+
@@ -295,8 +300,10 @@ function hexInitAnchorNav(){
       });
 
       var correctScroll=function(){
+        if(!currentAnchorTarget)return;
+
         var correctedTop=
-          target.getBoundingClientRect().top+
+          currentAnchorTarget.getBoundingClientRect().top+
           window.pageYOffset-
           getHexAnchorOffset();
 
@@ -331,6 +338,26 @@ function hexInitAnchorNav(){
   function getHexAnchorOffset(){
     return getHexAnchorHeaderHeight()+nav.offsetHeight;
   }
+
+  /* スタッフiframeの高さ変更後にアンカー位置を再補正 */
+  window.addEventListener('hexStaffIframeResize',function(){
+    if(!currentAnchorTarget)return;
+
+    requestAnimationFrame(function(){
+      var correctedTop=
+        currentAnchorTarget.getBoundingClientRect().top+
+        window.pageYOffset-
+        getHexAnchorOffset();
+
+      if(Math.abs(window.pageYOffset-correctedTop)>2){
+        window.scrollTo({
+          top:correctedTop,
+          behavior:'auto'
+        });
+      }
+    });
+  });
+
   function refreshHexAnchorNav(){
     var mobileAdjust=0;
     nav.classList.remove('is-fixed');
@@ -3385,7 +3412,14 @@ function hexResizeStaffIframe(iframe){
       );
     }
     if(height>0){
-      iframe.style.height=(height+4)+'px';
+      var newHeight=height+4;
+      var oldHeight=parseFloat(iframe.style.height)||0;
+
+      if(Math.abs(newHeight-oldHeight)>1){
+        iframe.style.height=newHeight+'px';
+
+        window.dispatchEvent(new CustomEvent('hexStaffIframeResize'));
+      }
     }
   }catch(e){}
 }
