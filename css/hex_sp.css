@@ -792,15 +792,18 @@
     text-align:left!important;
   }
   .catch_type4 .subcatch{
+    display:block!important;
     position:absolute!important;
+    top:70%!important;
     right:16px!important;
-    bottom:40px!important;
+    bottom:auto!important;
     width:auto!important;
     max-width:none!important;
     margin:0!important;
     padding:0!important;
     white-space:nowrap!important;
     text-align:right!important;
+    z-index:10!important;
   }
   .heroimage_type .fontsize_caption_smp_04{
     font-size:clamp(30px, 5.46875vw, 42px)!important;
