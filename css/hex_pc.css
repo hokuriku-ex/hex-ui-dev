@@ -161,12 +161,16 @@ html{
 .bg_post_index .linktext_color_basecolor2 .hex-section-action a i{
   color:#1f2774!important;
   font-size:.9em;
+  transition:.3s ease;
 }
 .hex-section-action a:hover,
 .hex-section-action a:hover i,
 .bg_post_index .linktext_color_basecolor2 .hex-section-action a:hover,
 .bg_post_index .linktext_color_basecolor2 .hex-section-action a:hover i{
   color:#c8a874!important;
+}
+.hex-section-action a:hover i{
+  transform:translateX(3px);
 }
 .hex-section-action h4{
   grid-column:1 / -1;
