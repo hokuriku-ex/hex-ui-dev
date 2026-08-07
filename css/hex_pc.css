@@ -922,13 +922,13 @@ br[hex-sp]{
   border-color:#1f2774;
   background:
     linear-gradient(
-      135deg,
+      45deg,
       transparent 0 42%,
       #1f2774 42% 58%,
       transparent 58% 100%
     ) top right / 10px 10px no-repeat,
     linear-gradient(
-      135deg,
+      45deg,
       transparent 0 42%,
       #1f2774 42% 58%,
       transparent 58% 100%
@@ -953,13 +953,13 @@ br[hex-sp]{
   border-color:#fff;
   background:
     linear-gradient(
-      135deg,
+      45deg,
       transparent 0 42%,
       #fff 42% 58%,
       transparent 58% 100%
     ) top right / 10px 10px no-repeat,
     linear-gradient(
-      135deg,
+      45deg,
       transparent 0 42%,
       #fff 42% 58%,
       transparent 58% 100%
