@@ -128,12 +128,6 @@
   .hex-detail-pager-title{
     display:none!important;
   }
-  .hex-detail-pager-prev .hex-detail-pager-title{
-    margin-left:6px!important;
-  }
-  .hex-detail-pager-next .hex-detail-pager-title{
-    margin-right:6px!important;
-  }
   .gc_auto_frame_post_item_pager_separator{
     font-size:13px!important;
   }
