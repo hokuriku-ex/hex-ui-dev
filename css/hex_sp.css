@@ -792,7 +792,7 @@
     display:block!important;
     width:max-content!important;
     max-width:calc(100vw - 32px)!important;
-    margin-top:clamp(180px, 55vw, 300px)!important;
+    margin-top:300px!important;
     margin-left:0!important;
     padding:0!important;
     white-space:nowrap!important;
