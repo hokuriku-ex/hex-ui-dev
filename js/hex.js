@@ -282,7 +282,6 @@ function hexInitAnchorNav(){
     link.className='hex-anchor-nav-link';
     link.href='#'+target.id;
     link.textContent=title;
-    var currentAnchorTarget=null;
 
     link.addEventListener('click',function(e){
       e.preventDefault();
