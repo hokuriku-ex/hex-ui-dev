@@ -3239,14 +3239,20 @@ body,
   height:clamp(48px, 4.7vw, 60px)!important;
   --kakko-color:#383838!important;
 }
-.welcome .hex-signature-title{
+.content_body:has(.hex-vision-section) .text .text-right{
+  display:block;
+  width:fit-content;
+  margin:28px 0 0 auto;
+  text-align:left;
+}
+.content_body:has(.hex-vision-section) .hex-signature-title{
   display:block;
   margin-bottom:4px;
   font-size:14px;
   font-weight:400;
   color:#666;
 }
-.welcome .hex-signature-name{
+.content_body:has(.hex-vision-section) .hex-signature-name{
   display:block;
   padding-bottom:6px;
   font-size:20px;
