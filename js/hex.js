@@ -3490,6 +3490,15 @@ hexReady(function(){
    施工事例一覧
 ======================================= */
 hexReady(function(){
+  var params=new URLSearchParams(window.location.search);
+
+  /* 本番はp・k、開発環境はshortname・page_type */
+  var shortname=params.get('p')||params.get('shortname')||'';
+  var pageType=params.get('k')||params.get('page_type')||'';
+
+  /* 施工事例の一覧ページだけ実行 */
+  if(shortname!=='work'||pageType!=='work')return;
+
   var fiveColumnQuery=window.matchMedia('(min-width:1600px)');
 
   fiveColumnQuery.addEventListener('change',function(){
