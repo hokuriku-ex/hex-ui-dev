@@ -484,6 +484,7 @@ a.hex-text-link[target="_blank"]::after{
   margin:0 auto!important;
   padding:0!important;
   box-sizing:border-box!important;
+  border-width:0!important;
 }
 .gc_auto_frame_post_item_title .date{
   position:relative;
