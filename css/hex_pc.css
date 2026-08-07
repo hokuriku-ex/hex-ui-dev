@@ -903,14 +903,13 @@ br[hex-sp]{
   height:100%;
   box-sizing:border-box;
   border:2px solid;
-  border-radius:6px;
   pointer-events:none;
   clip-path:polygon(
-    calc(100% - 8px) 0,
+    calc(100% - 8px) 8px,
     100% 0,
     100% 100%,
     0 100%,
-    0 calc(100% - 8px),
+    8px calc(100% - 8px),
     calc(100% - 8px) calc(100% - 8px)
   );
 }
