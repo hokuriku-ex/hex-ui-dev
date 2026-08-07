@@ -3223,7 +3223,7 @@ body,
 /* =======================================
    下層ページ：私たちについて
 ======================================= */
-/* 企業理念 */
+/* 代表あいさつ・企業理念 */
 .content_body:has(.hex-vision-section) .welcome .title{
   padding:
     clamp(14px, 1.5vw, 20px)
@@ -3240,20 +3240,22 @@ body,
   --kakko-color:#383838!important;
 }
 .content_body:has(.hex-vision-section) .welcome .text .text-right{
-  display:block;
+  display:flex;
+  align-items:baseline;
   width:fit-content;
   margin:28px 0 0 auto;
-  text-align:left;
+  gap:16px;
+  white-space:nowrap;
 }
 .content_body:has(.hex-vision-section) .welcome .hex-signature-title{
-  display:block;
-  margin-bottom:4px;
+  display:inline-block;
+  margin:0;
   font-size:14px;
   font-weight:400;
   color:#666;
 }
 .content_body:has(.hex-vision-section) .welcome .hex-signature-name{
-  display:block;
+  display:inline-block;
   padding-bottom:6px;
   font-size:20px;
   font-weight:500;
