@@ -2944,6 +2944,18 @@ body,
   opacity: .6;
 }
 
+/* 日本語タイトル上の小見出し */
+.gc_auto_frame_page_title .hex-page-target{
+  display:block;
+  margin-bottom:6px;
+  color:#383838;
+  font-size:14px;
+  line-height:1.4;
+  letter-spacing:.08em;
+  font-weight:500;
+  opacity:.8;
+}
+
 /* ページ別 英語タイトル */
 #gc_auto_frame_gccat3_1 h1::after { content: "ABOUT US"; }
 #gc_auto_frame_company_1 h1::after { content: "COMPANY"; }
