@@ -4002,12 +4002,12 @@ body,
   overflow:hidden!important;
 }
 
-/* 1200px以上：最大5列 */
-@media screen and (min-width:1200px){
+/* 769～999px：最大3列 */
+@media screen and (min-width:769px) and (max-width:999px){
   .post_index_contents >
   .gc_auto_frame_post_index_box_contents_cell_tile{
-    flex:0 0 calc((100% - 4 * 1.33%) / 5)!important;
-    width:calc((100% - 4 * 1.33%) / 5)!important;
+    flex:0 0 calc((100% - 2 * 1.33%) / 3)!important;
+    width:calc((100% - 2 * 1.33%) / 3)!important;
     max-width:none!important;
     margin-left:0!important;
     margin-right:0!important;
@@ -4026,15 +4026,12 @@ body,
   }
 }
 
-/* 769～999px：最大3列 */
-@media screen and (min-width:769px) and (max-width:999px){
+/* 1200px以上：最大5列 */
+@media screen and (min-width:1200px){
   .post_index_contents >
   .gc_auto_frame_post_index_box_contents_cell_tile{
-    flex:0 0 calc((100% - 2 * 1.33%) / 3)!important;
-    width:calc((100% - 2 * 1.33%) / 3)!important;
-    max-width:none!important;
-    margin-left:0!important;
-    margin-right:0!important;
+    flex:0 0 calc((100% - 4 * 1.33%) / 5)!important;
+    width:calc((100% - 4 * 1.33%) / 5)!important;
   }
 }
 
