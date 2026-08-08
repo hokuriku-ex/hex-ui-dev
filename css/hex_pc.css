@@ -4289,12 +4289,6 @@ body,
   background:#fff!important;
 }
 
-/* セレクト */
-#form_lp_form .gc_form_lp_data select{
-  background-color:#f4f8ff!important;
-  box-sizing:border-box;
-}
-
 /* 郵便番号 */
 #form_lp_form .hex-form-row[data-label*="〒"] .gc_form_lp_data_input{
   width:200px!important;
