@@ -862,6 +862,20 @@ br[hex-sp]{
   display:none;
 }
 
+/* PC・スマホ表示切替 */
+span[hex-pc-inline]{
+  display:inline;
+}
+span[hex-sp-inline]{
+  display:none;
+}
+span[hex-pc-block]{
+  display:block;
+}
+span[hex-sp-block]{
+  display:none;
+}
+
 /* 配置制御：button/link用 */
 .hex-align-left{justify-content:flex-start;}
 .hex-align-center{justify-content:center;}
