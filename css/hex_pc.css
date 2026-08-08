@@ -4174,7 +4174,7 @@ body,
 .hex-news-arrow{
   flex:0 0 auto;
   margin-left:24px;
-  color:#1f2774!important;
+  color:#383838!important;
   font-size:20px!important;
   line-height:1!important;
   display:flex;
@@ -4183,7 +4183,7 @@ body,
   pointer-events:none;
 }
 .hex-news-arrow i{
-  color:#1f2774!important;
+  color:#383838!important;
 }
 
 /* =======================================
