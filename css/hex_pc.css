@@ -1489,7 +1489,7 @@ br[hex-sp]{
   filter:brightness(1.06);
 }
 
-/* 画像未登録時のバナー */
+/* 画像未登録時のバナーとピックアップギャラリー */
 .hex-banner.hex-banner-no-image{
   position:relative;
   background:rgba(31,39,116,.9)!important;
