@@ -2799,6 +2799,20 @@ body,
 }
 
 /* =======================================
+   トップページ：注目アイテム
+======================================= */
+.hex-gallery.hex-pickup-gallery .hex-banner-title,
+.hex-gallery.hex-pickup-gallery .hex-banner-text{
+  color:#fff!important;
+  text-shadow:none!important;
+  paint-order:normal;
+}
+
+.hex-gallery.hex-pickup-gallery .hex-banner-button{
+  /* ボタン周辺 */
+}
+
+/* =======================================
    トップページ：お知らせ
 ======================================= */
 .hex-home-news-tabs{
