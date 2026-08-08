@@ -796,10 +796,8 @@
   .heroimage_margintop_normal{
     margin-top:80px!important;
   }
-  .catch_type4{
-    position:relative!important;
-  }
   .catch_type4 .catch_contents{
+    position:relative!important;
     width:100%!important;
     max-width:none!important;
     padding:0 16px!important;
