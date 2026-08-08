@@ -1619,6 +1619,9 @@ div[hex-sp]{
   .hex-gallery-main-nav:hover{
     color:#c8a874;
   }
+  .hex-gallery-main-nav.is-hover-disabled{
+    color:#fff!important;
+  }
 }
 
 .hex-gallery.is-single .hex-gallery-main-nav{
