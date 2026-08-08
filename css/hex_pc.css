@@ -4161,7 +4161,8 @@ body,
   flex:0 0 64px!important;
   text-align:center;
   color:rgba(31,39,116,.45);
-  transform:translateX(-30px) scaleX(2);
+  font-weight:700;
+  transform:translateX(-30px);
 }
 .gc_auto_frame_post_index_home_box_contents_cell_caption_list,
 .gc_auto_frame_post_index_box_contents_cell_caption_list{
