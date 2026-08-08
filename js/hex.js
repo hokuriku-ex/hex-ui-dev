@@ -1225,7 +1225,7 @@ hexReady(function(){
       if(item.text){
         var text=document.createElement('div');
         text.className='hex-banner-text';
-        text.textContent=item.text;
+        text.innerHTML=item.text;
         inner.appendChild(text);
       }
       if(item.button){
