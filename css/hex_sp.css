@@ -803,9 +803,9 @@
   .catch_type4 .maincatch{
     position:absolute!important;
     top:clamp(
-      64px,
-      calc(94.12px - 3.92vw),
-      80px
+      60px,
+      calc(172.94px - 14.71vw),
+      120px
     )!important;
     left:16px!important;
     right:auto!important;
