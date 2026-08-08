@@ -4347,10 +4347,6 @@ body,
 #form_lp_form .hex-form-notice p:last-child{
   margin-bottom:0;
 }
-#form_lp_form .hex-form-notice p.hex-form-notice-warning{
-  margin-bottom:12px;
-  color:#d91f26;
-}
 
 /* プライバシーポリシー */
 #gc_auto_frame_lp_form_body .privacy_policy{
