@@ -1508,6 +1508,10 @@
     padding-top:0;
     margin-bottom:8px!important;
   }
+  #form_lp_form .gc_form_lp_data select{
+    background-color:#f4f8ff!important;
+    box-sizing:border-box;
+  }
   #form_lp_form textarea{
     min-height:150px;
   }
