@@ -4858,7 +4858,6 @@ body.hex-form-dialog-open{
   padding:0!important;
   overflow:hidden;
   opacity:0;
-  background:#f3f6fc!important;
   border:none!important;
   transition:max-height .6s ease,opacity .45s ease;
 }
