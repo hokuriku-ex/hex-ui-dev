@@ -1184,6 +1184,11 @@ hexReady(function(){
     var thumbList=document.createElement('div');
     var activeIndex=0;
     gallery.className='hex-gallery';
+    galleryStart.classList.forEach(function(className){
+      if(className!=='hex-gallery-start'){
+        gallery.classList.add(className);
+      }
+    });
     if(items.length===1){
       gallery.classList.add('is-single');
     }
