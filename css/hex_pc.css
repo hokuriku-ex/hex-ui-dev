@@ -4818,7 +4818,8 @@ body.hex-form-dialog-open{
   margin:0!important;
   padding:0!important;
   color:#383838!important;
-  font-size:17px;
+  font-size:18px;
+  font-weight:500;
   line-height:1.8;
 }
 .publicinfo_qanda .qanda_content>label:after{
