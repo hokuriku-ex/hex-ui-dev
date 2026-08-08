@@ -1433,7 +1433,9 @@ hexReady(function(){
     if(text){
       var textEl=document.createElement('div');
       textEl.className='hex-banner-text';
-      textEl.innerHTML=text;
+      textEl.innerHTML=text
+        .replace(/\[br\s+hex-pc\]/gi,'<br hex-pc>')
+        .replace(/\[br\]/gi,'<br>');
       inner.appendChild(textEl);
     }
     if(button){
