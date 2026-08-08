@@ -4820,7 +4820,7 @@ body.hex-form-dialog-open{
   color:#383838!important;
   font-size:18px;
   font-weight:500;
-  line-height:1.8;
+  line-height:2;
 }
 .publicinfo_qanda .qanda_content>label:after{
   content:"\f078";
@@ -4849,12 +4849,12 @@ body.hex-form-dialog-open{
   box-sizing:border-box;
   max-height:0;
   margin:0!important;
+  margin-bottom:10px!important;
   padding:0!important;
   overflow:hidden;
   opacity:0;
   background:#f3f6fc!important;
   border:none!important;
-  border-bottom:2px dashed #d8dce8!important;
   transition:max-height .6s ease,opacity .45s ease;
 }
 .publicinfo_qanda .qanda_content>input[type="checkbox"]:checked+.bg_answer_qa{
