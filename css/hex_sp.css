@@ -656,22 +656,24 @@
   /* 親展開アイコン */
   #gc_auto_frame_header_object_smartphone_hum_pupup
   .menu_right > .menu_group > .menu_group_text{
-    position:relative;
-    padding-right:40px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:16px!important;
   }
   #gc_auto_frame_header_object_smartphone_hum_pupup
   .menu_right > .menu_group > .menu_group_text::after{
     content:"\f078";
-    position:absolute;
-    top:50%;
-    right:16px;
-    transform:translateY(-50%);
-    color:#383838;
-    font-family:"Font Awesome 6 Free";
-    font-size:11px;
-    font-weight:900;
-    line-height:1;
-    pointer-events:none;
+    display:inline-flex!important;
+    flex:none!important;
+    align-items:center!important;
+    justify-content:center!important;
+    margin-left:auto!important;
+    color:#383838!important;
+    font-family:"Font Awesome 6 Free"!important;
+    font-size:12px!important;
+    font-weight:900!important;
+    line-height:1!important;
   }
   #gc_auto_frame_header_object_smartphone_hum_pupup
   .menu_right > .menu_group.hex-submenu-open > .menu_group_text::after{
