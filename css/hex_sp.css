@@ -805,11 +805,7 @@
   }
   .catch_type4 .maincatch{
     position:absolute!important;
-    top:clamp(
-      64px,
-      calc(94.12px - 3.92vw),
-      80px
-    )!important;
+    top:20px!important;
     left:16px!important;
     width:auto!important;
     margin:0!important;
@@ -820,7 +816,7 @@
   }
   .catch_type4 .subcatch{
     position:absolute!important;
-    top:360px!important;
+    top:280px!important;
     right:16px!important;
     left:auto!important;
     display:block!important;
