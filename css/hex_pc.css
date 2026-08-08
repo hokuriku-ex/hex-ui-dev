@@ -4155,6 +4155,7 @@ body,
   flex:0 0 74px!important;
   margin:0px 26px 0px 0px!important;
   font-size:inherit!important;
+  font-weight:500!important;
 }
 .hex-news-separator{
   flex:0 0 64px!important;
@@ -4167,6 +4168,7 @@ body,
   flex:1 1 auto!important;
   min-width:0;
   margin-left:-32px!important;
+  font-weight:500!important;
 }
 .hex-news-arrow{
   flex:0 0 auto;
