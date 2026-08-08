@@ -286,16 +286,16 @@
 
 /* PC・スマホ表示切替 */
 @media screen and (max-width:768px){
-  span[hex-pc-inline]{
+  span[hex-pc]{
     display:none;
   }
-  span[hex-sp-inline]{
+  span[hex-sp]{
     display:inline;
   }
-  div[hex-pc-block]{
+  div[hex-pc]{
     display:none;
   }
-  div[hex-sp-block]{
+  div[hex-sp]{
     display:block;
   }
 }
