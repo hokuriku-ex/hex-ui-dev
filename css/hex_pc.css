@@ -1433,7 +1433,7 @@ br[hex-sp]{
   font-size:22px!important;
   line-height:1.9!important;
 }
-.hex-banner:not(.hex-banner-no-image)
+.hex-banner:not(.hex-banner-no-image):not(.hex-pickup-gallery .hex-banner)
 .hex-banner-button .hex-btn-main{
   width:100%;
   max-width:100%;
@@ -1447,29 +1447,29 @@ br[hex-sp]{
   backdrop-filter:blur(3px);
   -webkit-backdrop-filter:blur(3px);
 }
-.hex-banner:not(.hex-banner-no-image)
+.hex-banner:not(.hex-banner-no-image):not(.hex-pickup-gallery .hex-banner)
 .hex-banner-button .hex-btn-main::before{
   content:none!important;
   display:none!important;
 }
-.hex-banner:not(.hex-banner-no-image)
+.hex-banner:not(.hex-banner-no-image):not(.hex-pickup-gallery .hex-banner)
 .hex-banner-button .hex-btn-main i{
   color:#383838!important;
 }
-.hex-banner:not(.hex-banner-no-image)
+.hex-banner:not(.hex-banner-no-image):not(.hex-pickup-gallery .hex-banner)
 .hex-banner-button .hex-btn-main .hex-btn-main-title{
   color:#383838!important;
 }
-.hex-banner:not(.hex-banner-no-image)
+.hex-banner:not(.hex-banner-no-image):not(.hex-pickup-gallery .hex-banner)
 .hex-banner-button .hex-btn-main:hover{
   background:rgba(255,255,255,.96)!important;
   border-color:#fff!important;
   color:#c8a874!important;
   box-shadow:0 0 10px rgba(56,56,56,.45);
 }
-.hex-banner:not(.hex-banner-no-image)
+.hex-banner:not(.hex-banner-no-image):not(.hex-pickup-gallery .hex-banner)
 .hex-banner-button .hex-btn-main:hover i,
-.hex-banner:not(.hex-banner-no-image)
+.hex-banner:not(.hex-banner-no-image):not(.hex-pickup-gallery .hex-banner)
 .hex-banner-button .hex-btn-main:hover .hex-btn-main-title{
   color:#c8a874!important;
 }
