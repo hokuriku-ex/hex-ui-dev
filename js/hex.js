@@ -1433,7 +1433,7 @@ hexReady(function(){
     if(text){
       var textEl=document.createElement('div');
       textEl.className='hex-banner-text';
-      textEl.textContent=text;
+      textEl.innerHTML=text;
       inner.appendChild(textEl);
     }
     if(button){
