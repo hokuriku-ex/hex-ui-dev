@@ -1525,6 +1525,7 @@ br[hex-sp]{
   margin:0 auto;
 }
 .hex-gallery-wrap{
+  position:relative;
   display:block;
 }
 .hex-gallery-main-swiper{
@@ -1553,28 +1554,44 @@ br[hex-sp]{
 }
 .hex-gallery-main-nav{
   position:absolute;
-  top:50%;
+  top:calc(
+    (100% - 104px) / 2
+  );
   z-index:5;
   display:flex;
   justify-content:center;
   align-items:center;
   width:44px;
-  height:44px;
-  border:1px solid rgba(255,255,255,.75);
-  color:#fff;
-  background:rgba(0,0,0,.25);
+  height:60px;
+  padding:0;
+  border:none;
+  color:#1f2774;
+  background:none;
+  font-family:Arial, sans-serif;
+  font-size:48px;
+  font-weight:300;
+  line-height:1;
   transform:translateY(-50%);
   cursor:pointer;
-  transition:background .2s ease;
-}
-.hex-gallery-main-nav:hover{
-  background:rgba(0,0,0,.45);
+  transition:
+    color .25s ease,
+    opacity .25s ease,
+    transform .25s ease;
 }
 .hex-gallery-main-prev{
-  left:18px;
+  left:-58px;
 }
 .hex-gallery-main-next{
-  right:18px;
+  right:-58px;
+}
+.hex-gallery-main-nav:hover{
+  color:#c8a874;
+}
+.hex-gallery-main-prev:hover{
+  transform:translate(-4px,-50%);
+}
+.hex-gallery-main-next:hover{
+  transform:translate(4px,-50%);
 }
 .hex-gallery.is-single .hex-gallery-main-nav{
   display:none;
