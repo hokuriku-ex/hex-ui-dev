@@ -4853,7 +4853,7 @@ body.hex-form-dialog-open{
   opacity:0;
   background:#f3f6fc!important;
   border:none!important;
-  border-bottom:12px dashed #d8dce8!important;
+  border-bottom:2px dashed #d8dce8!important;
   transition:max-height .6s ease,opacity .45s ease;
 }
 .publicinfo_qanda .qanda_content>input[type="checkbox"]:checked+.bg_answer_qa{
