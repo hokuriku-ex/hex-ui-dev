@@ -1596,6 +1596,12 @@ br[hex-sp]{
   .hex-gallery-main-next{
     right:16px;
   }
+  .hex-gallery-main-nav{
+    color:#fff;
+  }
+  .hex-gallery-main-nav:hover{
+    color:#c8a874;
+  }
 }
 
 .hex-gallery.is-single .hex-gallery-main-nav{
