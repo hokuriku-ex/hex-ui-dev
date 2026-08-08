@@ -4807,11 +4807,16 @@ body.hex-form-dialog-open{
   margin:0!important;
   padding:0!important;
   background:none!important;
-  color:#1f2774!important;
   font-size:20px!important;
   font-weight:700!important;
   line-height:1.6!important;
   text-align:left!important;
+}
+.publicinfo_qanda .q_icon{
+  color:#1f2774!important;
+}
+.publicinfo_qanda .a_icon{
+  color:#c8a874!important;
 }
 .publicinfo_qanda .q_title{
   flex:1;
