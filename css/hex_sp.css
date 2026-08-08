@@ -796,16 +796,9 @@
   .heroimage_margintop_normal{
     margin-top:80px!important;
   }
-  .catch_type4 .catch_catch{
+  .catch_type4 .catch_contents{
     position:relative!important;
-  }
-  .catch_type4 .catch_catch > .catch_contents{
-    position:absolute!important;
-    inset:0!important;
-    width:100%!important;
-    height:100%!important;
-    margin:0!important;
-    transform:none!important;
+    top:-100px!important;
   }
   .catch_type4 .maincatch{
     position:absolute!important;
