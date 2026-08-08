@@ -1574,19 +1574,19 @@ br[hex-sp]{
   line-height:1;
 }
 .hex-gallery-main-prev{
-  left:-58px;
+  left:calc(clamp(24px, 4vw, 56px) * -1);
 }
 .hex-gallery-main-next{
-  right:-58px;
+  right:calc(clamp(24px, 4vw, 56px) * -1);
 }
 .hex-gallery-main-nav:hover{
   color:#c8a874;
 }
 .hex-gallery-main-prev:hover{
-  transform:translate(-4px,-50%);
+  transform:translate(-3px,-50%);
 }
 .hex-gallery-main-next:hover{
-  transform:translate(4px,-50%);
+  transform:translate(3px,-50%);
 }
 .hex-gallery.is-single .hex-gallery-main-nav{
   display:none;
