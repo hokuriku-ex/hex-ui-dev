@@ -1201,6 +1201,14 @@ hexReady(function(){
     thumbList.className='hex-gallery-thumb-list';
     prev.innerHTML='<i class="fa-solid fa-chevron-left"></i>';
     next.innerHTML='<i class="fa-solid fa-chevron-right"></i>';
+    [prev,next].forEach(function(nav){
+      nav.addEventListener('pointerdown',function(){
+        nav.classList.add('is-hover-disabled');
+      });
+      nav.addEventListener('pointerleave',function(){
+        nav.classList.remove('is-hover-disabled');
+      });
+    });
     items.forEach(function(item){
       var slide=document.createElement('div');
       var banner=document.createElement('div');
