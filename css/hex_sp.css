@@ -284,6 +284,22 @@
   }
 }
 
+/* PC・スマホ表示切替 */
+@media screen and (max-width:768px){
+  span[hex-pc-inline]{
+    display:none;
+  }
+  span[hex-sp-inline]{
+    display:inline;
+  }
+  div[hex-pc-block]{
+    display:none;
+  }
+  div[hex-sp-block]{
+    display:block;
+  }
+}
+
 /* ボタン・リンク・カード */
 @media screen and (max-width:768px){
   .hex-btn-main{
