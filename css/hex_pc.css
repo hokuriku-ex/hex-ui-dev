@@ -1596,9 +1596,6 @@ div[hex-sp]{
 .hex-gallery-main-nav:hover{
   color:#c8a874;
 }
-.hex-gallery-main-nav.is-hover-disabled{
-  color:#1f2774!important;
-}
 .hex-gallery-main-prev:hover{
   transform:translate(-3px,-50%);
 }
@@ -1618,9 +1615,6 @@ div[hex-sp]{
   }
   .hex-gallery-main-nav:hover{
     color:#c8a874;
-  }
-  .hex-gallery-main-nav.is-hover-disabled{
-    color:#fff!important;
   }
 }
 
