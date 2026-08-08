@@ -2807,9 +2807,38 @@ body,
   text-shadow:none!important;
   paint-order:normal;
 }
-
-.hex-gallery.hex-pickup-gallery .hex-banner-button{
-  /* ボタン周辺 */
+.hex-banner-button .hex-btn-main:not(.hex-pickup-gallery .hex-btn-main){
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  margin:0!important;
+  background:rgba(255,255,255,.88)!important;
+  border:1px solid rgba(255,255,255,.9)!important;
+  color:#383838!important;
+  box-shadow:0 0 8px rgba(56,56,56,.35);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+}
+.hex-banner-button .hex-btn-main:not(.hex-pickup-gallery .hex-btn-main)::before{
+  content:none!important;
+  display:none!important;
+}
+.hex-banner-button .hex-btn-main:not(.hex-pickup-gallery .hex-btn-main) i,
+.hex-banner-button .hex-btn-main:not(.hex-pickup-gallery .hex-btn-main)
+.hex-btn-main-title{
+  color:#383838!important;
+}
+.hex-banner-button .hex-btn-main:not(.hex-pickup-gallery .hex-btn-main):hover{
+  background:rgba(255,255,255,.96)!important;
+  border-color:#fff!important;
+  color:#c8a874!important;
+  box-shadow:0 0 10px rgba(56,56,56,.45);
+}
+.hex-banner-button .hex-btn-main:not(.hex-pickup-gallery .hex-btn-main):hover i,
+.hex-banner-button .hex-btn-main:not(.hex-pickup-gallery .hex-btn-main):hover
+.hex-btn-main-title{
+  color:#c8a874!important;
 }
 
 /* =======================================
