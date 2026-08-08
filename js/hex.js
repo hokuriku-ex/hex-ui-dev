@@ -1262,10 +1262,11 @@ hexReady(function(){
       mainWrapper.appendChild(slide);
     });
     mainSwiper.appendChild(mainWrapper);
-    mainSwiper.appendChild(prev);
-    mainSwiper.appendChild(next);
     mainSwiper.appendChild(pagination);
+
     wrap.appendChild(mainSwiper);
+    wrap.appendChild(prev);
+    wrap.appendChild(next);
     if(items.length>1){
       wrap.appendChild(thumbList);
     }
