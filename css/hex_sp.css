@@ -798,11 +798,11 @@
   }
   .catch_type4 .catch_contents{
     position:relative!important;
-    top:-180px!important;
+    top:-130px!important;
   }
   .catch_type4 .maincatch{
     position:absolute!important;
-    top:50px;
+    top:0px!important;
     left:16px!important;
     right:auto!important;
     width:auto!important;
@@ -814,9 +814,9 @@
   .catch_type4 .subcatch{
     position:absolute!important;
     top:clamp(
-      300px,
+      350px,
       calc(282.35px + 4.90vw),
-      320px
+      370px
     )!important;
     left:calc(100vw - 16px)!important;
     right:auto!important;
