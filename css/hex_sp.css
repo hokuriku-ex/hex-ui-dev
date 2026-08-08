@@ -820,7 +820,7 @@
     top:clamp(
       300px,
       calc(247.06px + 14.71vw),
-      360px
+      320px
     )!important;
     right:16px!important;
     left:auto!important;
