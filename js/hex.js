@@ -1199,8 +1199,8 @@ hexReady(function(){
     prev.className='hex-gallery-main-nav hex-gallery-main-prev';
     next.className='hex-gallery-main-nav hex-gallery-main-next';
     thumbList.className='hex-gallery-thumb-list';
-    prev.textContent='‹';
-    next.textContent='›';
+    prev.innerHTML='<i class="fa-solid fa-chevron-left"></i>';
+    next.innerHTML='<i class="fa-solid fa-chevron-right"></i>';
     items.forEach(function(item){
       var slide=document.createElement('div');
       var banner=document.createElement('div');
