@@ -4155,13 +4155,13 @@ body,
   flex:0 0 74px!important;
   margin:0px 26px 0px 0px!important;
   font-size:inherit!important;
-  font-weight:400!important;
+  font-weight:500!important;
 }
 .hex-news-separator{
   flex:0 0 64px!important;
   text-align:center;
   color:rgba(31,39,116,.45);
-  transform:translateX(-30px);
+  transform:translateX(-30px) scaleX(2);
 }
 .gc_auto_frame_post_index_home_box_contents_cell_caption_list,
 .gc_auto_frame_post_index_box_contents_cell_caption_list{
