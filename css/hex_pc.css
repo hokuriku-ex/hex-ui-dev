@@ -1554,9 +1554,7 @@ br[hex-sp]{
 }
 .hex-gallery-main-nav{
   position:absolute;
-  top:calc(
-    (100% - 104px) / 2
-  );
+  top:calc((100% - 104px) / 2);
   z-index:5;
   display:flex;
   justify-content:center;
@@ -1567,16 +1565,13 @@ br[hex-sp]{
   border:none;
   color:#1f2774;
   background:none;
-  font-family:Arial, sans-serif;
-  font-size:48px;
-  font-weight:300;
-  line-height:1;
   transform:translateY(-50%);
   cursor:pointer;
-  transition:
-    color .25s ease,
-    opacity .25s ease,
-    transform .25s ease;
+  transition:color .25s ease, transform .25s ease;
+}
+.hex-gallery-main-nav i{
+  font-size:32px;
+  line-height:1;
 }
 .hex-gallery-main-prev{
   left:-58px;
