@@ -2843,12 +2843,19 @@ body,
 /* =======================================
    トップページ：注目アイテム
 ======================================= */
-.hex-gallery.hex-pickup-gallery .hex-banner-title,
-.hex-gallery.hex-pickup-gallery .hex-banner-text{
+.hex-gallery.hex-pickup-gallery .hex-banner-title{
+  font-size:32px!important;
   color:#fff!important;
   text-shadow:none!important;
   paint-order:normal;
 }
+.hex-gallery.hex-pickup-gallery .hex-banner-text{
+  font-size:18px!important;
+  color:#fff!important;
+  text-shadow:none!important;
+  paint-order:normal;
+}
+
 
 /* =======================================
    トップページ：お知らせ
