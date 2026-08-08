@@ -819,19 +819,19 @@
     position:absolute!important;
     top:clamp(
       300px,
-      calc(247.06px + 14.71vw),
+      calc(282.35px + 4.90vw),
       320px
     )!important;
-    right:16px!important;
-    left:auto!important;
+    left:calc(100vw - 16px)!important;
+    right:auto!important;
+    transform:translateX(-100%)!important;
     display:block!important;
     width:max-content!important;
-    max-width:calc(100% - 32px)!important;
+    max-width:calc(100vw - 32px)!important;
     margin:0!important;
     padding:0!important;
     white-space:nowrap!important;
     text-align:left!important;
-    transform:none!important;
   }
   .heroimage_type .fontsize_caption_smp_04{
     font-size:clamp(30px, 5.46875vw, 42px)!important;
