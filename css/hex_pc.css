@@ -869,10 +869,10 @@ span[hex-pc-inline]{
 span[hex-sp-inline]{
   display:none;
 }
-span[hex-pc-block]{
+div[hex-pc-block]{
   display:block;
 }
-span[hex-sp-block]{
+div[hex-sp-block]{
   display:none;
 }
 
