@@ -863,16 +863,16 @@ br[hex-sp]{
 }
 
 /* PC・スマホ表示切替 */
-span[hex-pc-inline]{
+span[hex-pc]{
   display:inline;
 }
-span[hex-sp-inline]{
+span[hex-sp]{
   display:none;
 }
-div[hex-pc-block]{
+div[hex-pc]{
   display:block;
 }
-div[hex-sp-block]{
+div[hex-sp]{
   display:none;
 }
 
