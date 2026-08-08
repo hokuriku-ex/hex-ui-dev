@@ -1588,6 +1588,16 @@ br[hex-sp]{
 .hex-gallery-main-next:hover{
   transform:translate(3px,-50%);
 }
+
+@media screen and (max-width:1200px){
+  .hex-gallery-main-prev{
+    left:16px;
+  }
+  .hex-gallery-main-next{
+    right:16px;
+  }
+}
+
 .hex-gallery.is-single .hex-gallery-main-nav{
   display:none;
 }
