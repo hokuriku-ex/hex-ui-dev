@@ -2749,6 +2749,7 @@ body,
 }
 .hex-company-card .hex-card-head{
   margin:0 0 8px;
+  border-bottom:2px solid #d8dce8;
 }
 .hex-company-card .hex-card-title{
   display:grid;
