@@ -408,6 +408,25 @@
   }
 }
 
+/* ギャラリー */
+@media screen and (max-width:768px){
+  .hex-gallery{
+    width:100%;
+  }
+  .hex-gallery-main-nav{
+    display:none;
+  }
+  .hex-gallery-thumb-list{
+    display:none;
+  }
+  .hex-gallery-pagination{
+    display:block;
+    position:relative;
+    margin-top:18px;
+    text-align:center;
+  }
+}
+
 /* 画像グリッド */
 @media screen and (max-width:768px){
   .hex-image-grid{
@@ -914,23 +933,14 @@
 }
 
 /* =======================================
-   トップページ：ギャラリー
+   トップページ：注目アイテム
 ======================================= */
 @media screen and (max-width:768px){
-  .hex-gallery{
-    width:100%;
+  .hex-gallery.hex-pickup-gallery .hex-banner-title{
+    font-size:18px!important;
   }
-  .hex-gallery-main-nav{
-    display:none;
-  }
-  .hex-gallery-thumb-list{
-    display:none;
-  }
-  .hex-gallery-pagination{
-    display:block;
-    position:relative;
-    margin-top:18px;
-    text-align:center;
+  .hex-gallery.hex-pickup-gallery .hex-banner-text{
+    font-size:12px!important;
   }
 }
 
