@@ -814,9 +814,9 @@
   .catch_type4 .subcatch{
     position:absolute!important;
     top:clamp(
-      350px,
+      250px,
       calc(282.35px + 4.90vw),
-      370px
+      270px
     )!important;
     left:calc(100vw - 16px)!important;
     right:auto!important;
