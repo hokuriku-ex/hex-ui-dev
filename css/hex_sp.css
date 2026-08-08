@@ -817,7 +817,11 @@
   }
   .catch_type4 .subcatch{
     position:absolute!important;
-    top:360px!important;
+    top:clamp(
+      300px,
+      calc(247.06px + 14.71vw),
+      360px
+    )!important;
     right:16px!important;
     left:auto!important;
     display:block!important;
