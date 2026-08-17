@@ -2624,21 +2624,7 @@ body,
     linear-gradient(var(--kakko-color) 0 0)
       top right / 2px 8px no-repeat,
     linear-gradient(var(--kakko-color) 0 0)
-      bottom left / 8px 2px no-repeat,
-    repeating-linear-gradient(
-      -45deg,
-      var(--kakko-color) 0,
-      var(--kakko-color) 2px,
-      transparent 2px,
-      transparent 5px
-    ) top left / 100% 8px no-repeat,
-    repeating-linear-gradient(
-      -45deg,
-      var(--kakko-color) 0,
-      var(--kakko-color) 2px,
-      transparent 2px,
-      transparent 5px
-    ) top left / 8px 100% no-repeat;
+      bottom left / 8px 2px no-repeat
 }
 .welcome .kakko_br{
   right:0;
