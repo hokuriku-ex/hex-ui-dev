@@ -877,6 +877,42 @@
     box-sizing:border-box!important;
   }
 
+  /* SMS配置 */
+  .hex-header-sns{
+    position:fixed;
+    top:42px;
+    right:32px;
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:20px;
+    transform:translateY(-50%);
+  }
+  .hex-header-sns a{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:42px;
+    height:42px;
+    color:#1f2774!important;
+    text-decoration:none!important;
+    transition:opacity .25s ease;
+  }
+  .hex-header-sns a:hover{
+    opacity:.75;
+  }
+  .hex-header-sns svg,
+  .hex-header-sns .bg_svg{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:32px!important;
+    height:32px!important;
+    color:#1f2774!important;
+    fill:currentColor!important;
+  }
+
   /* 既存のホバー表現を無効化 */
   #gc_auto_frame_header_object_smartphone_hum_pupup
   .menu_group:hover,
