@@ -109,6 +109,7 @@ html{
   font-size:24px;
   font-weight:700;
   line-height:1.4;
+  text-align:center!important;
   border-bottom:2px solid #d8dce8;
 }
 .hex-section-subtitle:before{
