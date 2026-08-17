@@ -773,45 +773,216 @@ hexLoad(function(){
     }
 
     /* 親メニューのアコーディオン制御 */
-    function syncOpenMenu(){
-      groups.forEach(function(group){
-        var submenu=group.querySelector(':scope > .menu_sub');
-        if(!submenu)return;
+    var submenuDuration=350;
+    var submenuEasing='cubic-bezier(.22,1,.36,1)';
 
-        var isOpen=
-          window.getComputedStyle(submenu).display!=='none';
+    /* 動きを減らす端末設定への対応 */
+    if(
+      window.matchMedia(
+        '(prefers-reduced-motion:reduce)'
+      ).matches
+    ){
+      submenuDuration=0;
+    }
 
-        group.classList.toggle('hex-submenu-open',isOpen);
+    /* 実行中のアニメーションを停止 */
+    function cancelSubmenuAnimation(submenu){
+      if(!submenu.getAnimations)return;
+
+      submenu.getAnimations().forEach(function(animation){
+        animation.cancel();
       });
     }
 
+    /* アニメーション用の一時スタイルを削除 */
+    function clearSubmenuAnimationStyles(submenu){
+      submenu.style.removeProperty('height');
+      submenu.style.removeProperty('opacity');
+      submenu.style.removeProperty('overflow');
+    }
+
+    /* 子メニューを開く */
+    function openSubmenu(submenu){
+      cancelSubmenuAnimation(submenu);
+
+      var displayValue=
+        window.getComputedStyle(submenu).display;
+
+      if(displayValue==='none'){
+        displayValue=
+          submenu.dataset.hexOpenDisplay||'block';
+
+        submenu.style.display=displayValue;
+      }else{
+        submenu.dataset.hexOpenDisplay=displayValue;
+      }
+
+      var endHeight=submenu.scrollHeight;
+
+      submenu.style.overflow='hidden';
+
+      var animation=submenu.animate(
+        [
+          {
+            height:'0px',
+            opacity:0
+          },
+          {
+            height:endHeight+'px',
+            opacity:1
+          }
+        ],
+        {
+          duration:submenuDuration,
+          easing:submenuEasing
+        }
+      );
+
+      animation.onfinish=function(){
+        clearSubmenuAnimationStyles(submenu);
+      };
+
+      animation.oncancel=function(){
+        clearSubmenuAnimationStyles(submenu);
+      };
+    }
+
+    /* 子メニューを閉じる */
+    function closeSubmenu(submenu){
+      cancelSubmenuAnimation(submenu);
+
+      var displayValue=
+        submenu.dataset.hexOpenDisplay||'block';
+
+      /*
+       * CMSがdisplay:noneにした後でも、
+       * 一度表示状態に戻して閉じる動きを再生
+       */
+      submenu.style.display=displayValue;
+      submenu.style.overflow='hidden';
+
+      var startHeight=submenu.scrollHeight;
+
+      var animation=submenu.animate(
+        [
+          {
+            height:startHeight+'px',
+            opacity:1
+          },
+          {
+            height:'0px',
+            opacity:0
+          }
+        ],
+        {
+          duration:submenuDuration,
+          easing:submenuEasing
+        }
+      );
+
+      animation.onfinish=function(){
+        submenu.style.display='none';
+        clearSubmenuAnimationStyles(submenu);
+      };
+
+      animation.oncancel=function(){
+        clearSubmenuAnimationStyles(submenu);
+      };
+    }
+
+    /* 初期状態を同期 */
+    function syncOpenMenu(){
+      groups.forEach(function(group){
+        var submenu=
+          group.querySelector(':scope > .menu_sub');
+
+        if(!submenu)return;
+
+        var displayValue=
+          window.getComputedStyle(submenu).display;
+
+        var isOpen=displayValue!=='none';
+
+        if(isOpen){
+          submenu.dataset.hexOpenDisplay=displayValue;
+        }
+
+        group.classList.toggle(
+          'hex-submenu-open',
+          isOpen
+        );
+      });
+    }
+
+    /* 親メニューをクリックしたとき */
     groups.forEach(function(group){
       group.addEventListener('click',function(event){
-        if(event.target.closest('.menu_inner_group'))return;
 
+        /* 子メニューのクリックでは開閉しない */
+        if(event.target.closest('.menu_inner_group')){
+          return;
+        }
+
+        /*
+         * CMS側のdisplay切り替え完了後に
+         * 開閉状態を取得
+         */
         window.setTimeout(function(){
           var currentSubmenu=
             group.querySelector(':scope > .menu_sub');
 
           if(!currentSubmenu)return;
 
-          var isOpen=
-            window.getComputedStyle(currentSubmenu).display!=='none';
+          var wasOpen=
+            group.classList.contains(
+              'hex-submenu-open'
+            );
 
+          var isOpen=
+            window.getComputedStyle(
+              currentSubmenu
+            ).display!=='none';
+
+          /* ほかの親メニューを閉じる */
           groups.forEach(function(otherGroup){
             if(otherGroup===group)return;
 
             var otherSubmenu=
-              otherGroup.querySelector(':scope > .menu_sub');
+              otherGroup.querySelector(
+                ':scope > .menu_sub'
+              );
 
-            if(otherSubmenu){
-              otherSubmenu.style.display='none';
+            if(
+              otherSubmenu&&
+              otherGroup.classList.contains(
+                'hex-submenu-open'
+              )
+            ){
+              closeSubmenu(otherSubmenu);
             }
 
-            otherGroup.classList.remove('hex-submenu-open');
+            otherGroup.classList.remove(
+              'hex-submenu-open'
+            );
           });
 
-          group.classList.toggle('hex-submenu-open',isOpen);
+          /* 選択した子メニューを開く */
+          if(isOpen&&!wasOpen){
+            group.classList.add(
+              'hex-submenu-open'
+            );
+
+            openSubmenu(currentSubmenu);
+          }
+
+          /* 選択した子メニューを閉じる */
+          if(!isOpen&&wasOpen){
+            group.classList.remove(
+              'hex-submenu-open'
+            );
+
+            closeSubmenu(currentSubmenu);
+          }
         },0);
       });
     });
