@@ -2876,6 +2876,14 @@ body,
   min-height:600px!important;
   object-fit:cover!important;
 }
+.hex-gallery.hex-pickup-gallery .hex-banner{
+  height:600px!important;
+  min-height:600px!important;
+  max-height:600px!important;
+  background-size:cover!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+}
 .hex-gallery.hex-pickup-gallery .hex-banner-title{
   font-size:32px!important;
   color:#fff!important;
