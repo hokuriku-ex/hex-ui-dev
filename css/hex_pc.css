@@ -1914,43 +1914,38 @@ div[hex-sp]{
 
 /* PCヘッダーSNS */
 .hex-header-sns{
-  display:none;
+  position:fixed;
+  right:32px;
+  top:42px;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:20px;
+  transform:translateY(-50%);
 }
-@media screen and (min-width:769px){
-  .hex-header-sns{
-    position:fixed;
-    right:32px;
-    top:42px;
-    z-index:9999;
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
-    gap:20px;
-    transform:translateY(-50%);
-  }
-  .hex-header-sns a{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    width:42px;
-    height:42px;
-    color:#1f2774!important;
-    text-decoration:none!important;
-    transition:opacity .25s ease;
-  }
-  .hex-header-sns a:hover{
-    opacity:.75;
-  }
-  .hex-header-sns svg,
-  .hex-header-sns .bg_svg{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    width:32px!important;
-    height:32px!important;
-    fill:currentColor!important;
-    color:#1f2774!important;
-  }
+.hex-header-sns a{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:42px;
+  height:42px;
+  color:#1f2774!important;
+  text-decoration:none!important;
+  transition:opacity .25s ease;
+}
+.hex-header-sns a:hover{
+  opacity:.75;
+}
+.hex-header-sns svg,
+.hex-header-sns .bg_svg{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:32px!important;
+  height:32px!important;
+  fill:currentColor!important;
+  color:#1f2774!important;
 }
 
 /* 画面幅が狭いPCではSNSアイコンを非表示 */
