@@ -2381,7 +2381,7 @@ hexReady(function(){
     if(!companyText.querySelector('.footer-company-name')){
       var companyName=document.createElement('div');
       companyName.className='footer-company-name';
-      companyName.textContent='Hokuriku-EX. All Rights Reserved.';
+      companyName.textContent='北陸エクステリア株式会社';
       companyText.prepend(companyName);
     }
 
