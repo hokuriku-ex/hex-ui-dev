@@ -1120,6 +1120,7 @@
 @media screen and (max-width:768px){
   .hex-staff-wrap{
     padding:0 16px!important;
+    padding-bottom:10%!important;
   }
   .hex-staff-section{
     margin-bottom:48px;
