@@ -1079,6 +1079,19 @@
    トップページ：注目アイテム
 ======================================= */
 @media screen and (max-width:768px){
+  .hex-gallery.hex-pickup-gallery
+  > .hex-gallery-wrap
+  > .hex-gallery-main-swiper{
+    height:638px!important;
+    min-height:638px!important;
+    max-height:638px!important;
+  }
+  .hex-gallery.hex-pickup-gallery
+  .hex-gallery-pagination{
+    display:block!important;
+    height:20px!important;
+    margin-top:18px!important;
+  }
   .hex-gallery.hex-pickup-gallery .hex-banner-title{
     font-size:26px!important;
   }
