@@ -2472,6 +2472,7 @@ function hexCreateSnsLinks(className){
     a.setAttribute('rel','noopener noreferrer');
     if(href.indexOf('tiktok.com')!==-1){
       a.setAttribute('aria-label','TikTok');
+      a.removeAttribute('data-hex-tiktok-svg');
       hexReplaceTikTokSvg(a);
     }else if(href.indexOf('instagram.com')!==-1){
       a.setAttribute('aria-label','Instagram');
