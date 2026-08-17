@@ -1661,6 +1661,7 @@ div[hex-sp]{
   width:100%;
   height:100%;
   object-fit:cover;
+  object-position:center center;
 }
 .hex-gallery-thumb::before{
   content:"";
@@ -2875,14 +2876,6 @@ body,
   height:100%!important;
   min-height:600px!important;
   object-fit:cover!important;
-}
-.hex-gallery.hex-pickup-gallery .hex-banner{
-  height:600px!important;
-  min-height:600px!important;
-  max-height:600px!important;
-  background-size:cover!important;
-  background-position:center!important;
-  background-repeat:no-repeat!important;
 }
 .hex-gallery.hex-pickup-gallery .hex-banner-title{
   font-size:32px!important;
