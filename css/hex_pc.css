@@ -2838,14 +2838,13 @@ body,
 /* =======================================
    トップページ：注目アイテム
 ======================================= */
-.hex-gallery.hex-pickup-gallery
-.hex-gallery-main-swiper .swiper-wrapper,
-.hex-gallery.hex-pickup-gallery
-.hex-gallery-main-swiper .swiper-slide{
-  height:100%!important;
-}
 .hex-gallery.hex-pickup-gallery .hex-gallery-main-swiper{
   height:600px!important;
+}
+.hex-gallery.hex-pickup-gallery .hex-gallery-main-swiper .swiper-wrapper,
+.hex-gallery.hex-pickup-gallery .hex-gallery-main-swiper .swiper-slide,
+.hex-gallery.hex-pickup-gallery .hex-gallery-main-swiper .hex-banner{
+  height:100%!important;
 }
 .hex-gallery.hex-pickup-gallery .hex-banner-title{
   font-size:32px!important;
