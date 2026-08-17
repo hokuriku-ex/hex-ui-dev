@@ -1047,7 +1047,6 @@
   .welcome .text{
     font-size:20px;
     line-height:2;
-    font-weight:700;
     font-family:var(--hex-font-gothic)!important;
   }
 }
