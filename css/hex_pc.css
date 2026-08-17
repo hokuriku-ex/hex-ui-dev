@@ -101,7 +101,9 @@ html{
 /* 共通セクションサブ見出し（h3専用） */
 .hex-section-subtitle{
   position:relative;
-  max-width:var(--hex_small_width)!important;
+  display:table;
+  width:auto!important;
+  max-width:var(--hex_medium_width)!important;
   margin:0 auto 24px!important;
   padding-left:18px!important;
   padding-bottom:14px!important;
@@ -109,16 +111,21 @@ html{
   font-size:24px;
   font-weight:700;
   line-height:1.4;
-  border-bottom:2px solid #d8dce8;
+  text-align:left;
+  border-bottom:none!important;
 }
-.hex-section-subtitle:before{
+.hex-section-subtitle::after{
   content:"";
   position:absolute;
-  left:0;
-  top:0;
-  width:3px;
-  height:30px;
-  background:#1f2774;
+  bottom:0;
+  left:18px;
+  width:calc(100% - 18px);
+  height:6px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='6' viewBox='0 0 24 6'%3E%3Cpath d='M0 3 Q6 0 12 3 T24 3' fill='none' stroke='%23c8a874' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat:repeat-x;
+  background-position:left center;
+  background-size:24px 6px;
+  pointer-events:none;
 }
 
 /* 共通セクションアクション見出し（h3専用） */
