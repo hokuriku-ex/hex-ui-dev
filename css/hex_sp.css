@@ -631,11 +631,7 @@
     display:none!important;
   }
 
-  /* メニュー内のSNSアイコンを非表示 */
-  #gc_auto_frame_header_object_smartphone_hum_pupup
-  .bg_snsbutton_content{
-    display:none!important;
-  }
+
 
   /* メニュー内にある既存の×ボタンを非表示 */
   #gc_auto_frame_header_object_smartphone_hum_pupup .bg_closebutton{
