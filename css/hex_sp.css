@@ -197,7 +197,7 @@
     width:100vw;
     margin:22px calc(50% - 50vw);
     overflow:hidden;
-    text-align:center!important;
+    text-align:center;
   }
   .hex-anchor-nav.is-fixed{
     top:var(--header_height_smartphone)!important;
@@ -205,10 +205,10 @@
     margin:0;
     padding-bottom:16px;
     overflow:hidden;
-    text-align:center!important;
+    text-align:center;
   }
   .hex-anchor-nav-list{
-    justify-content:flex-start;
+    justify-content:safe center;
     flex-wrap:nowrap;
     width:100%;
     max-width:100%;
