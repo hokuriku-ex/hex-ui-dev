@@ -3039,6 +3039,7 @@ body,
 /* 日本語タイトル共通 */
 .gc_auto_frame_page_title .title_font_big_headline{
   color:#fff!important;
+  font-weight:900!important;
 }
 
 /* 英語タイトル共通 */
