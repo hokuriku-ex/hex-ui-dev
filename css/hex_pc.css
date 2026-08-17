@@ -357,8 +357,8 @@ a.hex-text-link[target="_blank"]::after{
   }
   .bg_page_button .page_button.omission_button{
     background:#fff!important;
-    color:#383838!important;
-    border-color:#d8d8d8!important;
+    color:#1f2774!important;
+    border-color:#d8dce8!important;
     cursor:default!important;
     pointer-events:none!important;
   }
