@@ -1086,6 +1086,7 @@
   }
   .content_body:has(.hex-vision-section) .welcome .title h2{
     font-size:20px!important;
+    font-weight:500!important;
   }
   .content_body:has(.hex-vision-section) .welcome .kakko_l,
   .content_body:has(.hex-vision-section) .welcome .kakko_br{
