@@ -125,8 +125,11 @@ html{
 .hex-section-action{
   display:grid;
   grid-template-columns:1fr auto;
-  gap:0 24px;
+  width:100%;
+  max-width:var(--hex_small_width)!important;
   margin:0 auto 32px!important;
+  gap:0 24px;
+  box-sizing:border-box;
 }
 .hex-section-action h3{
   position:relative;
