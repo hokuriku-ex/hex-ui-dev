@@ -84,11 +84,11 @@ html{
 .hex-section-title::after{
   content:"";
   position:absolute;
-  bottom:16px;
+  bottom:12px;
   left:50%;
   transform:translateX(-50%);
   width:calc(100% + 48px);
-  height:16px;
+  height:12px;
   box-sizing:border-box;
   z-index:-1;
   background:repeating-linear-gradient(
