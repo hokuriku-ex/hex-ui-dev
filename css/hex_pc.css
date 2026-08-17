@@ -197,7 +197,7 @@ html{
   grid-column:1 / -1;
   margin:14px 0 0!important;
   padding-top:18px!important;
-  border-top:2px solid #d8dce8;
+  border-top:2px dashed #c8a874;
   font-size:18px;
   font-weight:500;
   line-height:2;
