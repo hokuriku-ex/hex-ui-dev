@@ -84,7 +84,7 @@ html{
 .hex-section-title::after{
   content:"";
   position:absolute;
-  bottom:10px;
+  bottom:16px;
   left:50%;
   transform:translateX(-50%);
   width:calc(100% + 48px);
