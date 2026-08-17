@@ -507,6 +507,80 @@
   }
 }
 
+@media screen and (max-width:1200px){
+  .hex-footer-frame .footer_contents{
+    grid-template-columns:1fr!important;
+    gap:48px!important;
+    padding-top:80px!important;
+    padding-bottom:48px!important;
+  }
+
+  /* 会社ロゴ */
+  .hex-footer-frame .footer_logo{
+    display:block!important;
+    width:min(340px, 100%)!important;
+    margin:0 auto!important;
+    justify-self:center!important;
+    text-align:center!important;
+  }
+  .hex-footer-frame .footer_logo picture{
+    display:block!important;
+    width:100%!important;
+  }
+  .hex-footer-frame .footer_logo img{
+    display:block!important;
+    width:100%!important;
+    height:auto!important;
+    max-width:100%!important;
+    margin:0 auto!important;
+  }
+
+  /* SNS */
+  .hex-footer-sns{
+    display:grid!important;
+    grid-template-columns:repeat(3, 1fr)!important;
+    width:240px!important;
+    margin:24px auto 0!important;
+  }
+  .hex-footer-sns a{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:80px!important;
+    height:48px!important;
+    color:#fff!important;
+    text-decoration:none!important;
+  }
+  .hex-footer-sns svg,
+  .hex-footer-sns .bg_svg{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:36px!important;
+    height:36px!important;
+    color:#fff!important;
+    fill:currentColor!important;
+  }
+  .hex-footer-sns a[href*="tiktok.com"]::before{
+    content:none!important;
+    display:none!important;
+  }
+
+  /* 会社情報・施工エリア */
+  .hex-footer-frame .footer_text,
+  .hex-footer-frame .hex-footer-area{
+    width:100%!important;
+    text-align:center!important;
+  }
+
+  /* Copyright */
+  .hex-footer-frame .footer_copyright{
+    grid-column:1!important;
+    width:100%!important;
+    text-align:center!important;
+  }
+}
+
 /* =======================================
    固定ヘッダー・フッター
 ======================================= */
