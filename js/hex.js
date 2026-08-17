@@ -2371,6 +2371,14 @@ hexReady(function(){
       return;
     }
 
+    /* Copyrightを英語表記へ変更 */
+    copyright.textContent=copyright.textContent
+      .replace(/^Copyright\s*/, '© ')
+      .replace(
+        /\s*\|\s*北陸エクステリア株式会社\s*$/,
+        ' Hokuriku Exterior Co., Ltd.'
+      );
+
     /* 生成済みなら終了 */
     if(footerContents.querySelector('.hex-footer-area')){
       return;
