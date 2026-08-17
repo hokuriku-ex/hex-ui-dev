@@ -385,7 +385,7 @@ a.hex-text-link[target="_blank"]::after{
   margin-left:auto!important;
   margin-right:auto!important;
   padding:0!important;
-  color:#1f2774!important;
+  color:#383838!important;
 }
 .gc_auto_frame_post_item_pager_prev_box,
 .gc_auto_frame_post_item_pager_next_box{
@@ -431,7 +431,7 @@ a.hex-text-link[target="_blank"]::after{
   border:1px solid #1f2774!important;
   border-radius:6px!important;
   background:#fff!important;
-  color:#383838!important;
+  color:#1f2774!important;
   font-size:13px!important;
   line-height:1!important;
   white-space:nowrap!important;
