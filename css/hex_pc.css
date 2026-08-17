@@ -1656,11 +1656,11 @@ div[hex-sp]{
 .hex-gallery-thumb:hover{
   opacity:1;
 }
-.hex-gallery-thumb img{
-  display:block;
-  width:100%;
-  height:100%;
-  object-fit:cover;
+.gc_auto_frame_spotitem .hex-gallery-thumb img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
   object-position:center center!important;
 }
 .hex-gallery-thumb::before{
