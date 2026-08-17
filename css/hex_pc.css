@@ -2838,6 +2838,9 @@ body,
 /* =======================================
    トップページ：注目アイテム
 ======================================= */
+.hex-gallery.hex-pickup-gallery .hex-gallery-main-swiper{
+  height:600px!important;
+}
 .hex-gallery.hex-pickup-gallery .hex-banner-title{
   font-size:32px!important;
   color:#fff!important;
@@ -2849,6 +2852,9 @@ body,
   color:#fff!important;
   text-shadow:none!important;
   paint-order:normal;
+}
+.hex-gallery.hex-pickup-gallery .hex-banner-text .sub{
+  font-size:24px!important;
 }
 
 /* =======================================
