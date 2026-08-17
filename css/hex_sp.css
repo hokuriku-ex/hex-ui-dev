@@ -1082,9 +1082,9 @@
   .hex-gallery.hex-pickup-gallery
   > .hex-gallery-wrap
   > .hex-gallery-main-swiper{
-    height:638px!important;
-    min-height:638px!important;
-    max-height:638px!important;
+    height:438px!important;
+    min-height:438px!important;
+    max-height:438px!important;
   }
   .hex-gallery.hex-pickup-gallery
   .hex-gallery-pagination{
