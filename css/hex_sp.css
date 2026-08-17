@@ -878,39 +878,42 @@
   }
 
   /* SMS配置 */
+  #gc_auto_frame_header_object_smartphone_hum_pupup
   .hex-header-sns{
-    position:fixed;
-    top:42px;
-    right:32px;
-    z-index:9999;
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
-    gap:20px;
-    transform:translateY(-50%);
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:28px!important;
+    width:100%!important;
+    margin:40px auto 24px!important;
+    padding:0 16px!important;
   }
+  #gc_auto_frame_header_object_smartphone_hum_pupup
   .hex-header-sns a{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    width:42px;
-    height:42px;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:44px!important;
+    height:44px!important;
     color:#1f2774!important;
     text-decoration:none!important;
-    transition:opacity .25s ease;
   }
-  .hex-header-sns a:hover{
-    opacity:.75;
-  }
+  #gc_auto_frame_header_object_smartphone_hum_pupup
   .hex-header-sns svg,
   .hex-header-sns .bg_svg{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    width:32px!important;
-    height:32px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:36px!important;
+    height:36px!important;
     color:#1f2774!important;
     fill:currentColor!important;
+  }
+  #gc_auto_frame_header_object_smartphone_hum_pupup
+  .hex-header-sns
+  a[href*="tiktok.com"]::before{
+    content:none!important;
+    display:none!important;
   }
 
   /* 既存のホバー表現を無効化 */
