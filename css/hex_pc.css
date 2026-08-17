@@ -101,6 +101,7 @@ html{
 /* 共通セクションサブ見出し（h3専用） */
 .hex-section-subtitle{
   position:relative;
+  max-width:var(--base_width)!important;
   margin:0 0 24px!important;
   padding-left:18px!important;
   padding-bottom:14px!important;
