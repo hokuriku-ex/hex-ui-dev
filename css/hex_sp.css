@@ -1085,6 +1085,9 @@
   .hex-gallery.hex-pickup-gallery .hex-banner-text{
     font-size:16px!important;
   }
+  .hex-gallery.hex-pickup-gallery .hex-banner-text .sub{
+    font-size:20px!important;
+  }
 }
 
 /* =======================================
