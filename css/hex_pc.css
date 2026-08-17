@@ -1208,6 +1208,7 @@ div[hex-sp]{
 }
 .hex-card-grid1 .hex-card{
   display:grid;
+  max-width:var(--hex_small_width)!important;
   align-items:center;
   gap:34px;
   padding-top:0;
