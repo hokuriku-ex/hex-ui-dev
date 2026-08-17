@@ -1042,9 +1042,8 @@
     height:clamp(32px, calc(24.94px + 1.96vw), 40px);
   }
   .welcome .text{
-    font-size:20px;
+    font-size:18px;
     line-height:2;
-    font-family:var(--hex-font-gothic)!important;
   }
 }
 
