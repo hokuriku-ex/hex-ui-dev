@@ -2842,39 +2842,39 @@ body,
 .hex-gallery.hex-pickup-gallery
 > .hex-gallery-wrap
 > .hex-gallery-main-swiper{
-  height:600px!important;
-  min-height:600px!important;
-  max-height:600px!important;
+  height:400px!important;
+  min-height:400px!important;
+  max-height:400px!important;
   aspect-ratio:auto!important;
 }
 .hex-gallery.hex-pickup-gallery
 > .hex-gallery-wrap
 > .hex-gallery-main-swiper
 > .swiper-wrapper{
-  height:600px!important;
-  min-height:600px!important;
-  max-height:600px!important;
+  height:400px!important;
+  min-height:400px!important;
+  max-height:400px!important;
 }
 .hex-gallery.hex-pickup-gallery
 > .hex-gallery-wrap
 > .hex-gallery-main-swiper
 > .swiper-wrapper
 > .swiper-slide{
-  height:600px!important;
-  min-height:600px!important;
-  max-height:600px!important;
+  height:400px!important;
+  min-height:400px!important;
+  max-height:400px!important;
 }
 .hex-gallery.hex-pickup-gallery
 .hex-gallery-main-swiper .hex-banner{
-  height:600px!important;
-  min-height:600px!important;
-  max-height:600px!important;
+  height:400px!important;
+  min-height:400px!important;
+  max-height:400px!important;
 }
 .hex-gallery.hex-pickup-gallery
 .hex-gallery-main-swiper .hex-banner img{
   width:100%!important;
   height:100%!important;
-  min-height:600px!important;
+  min-height:400px!important;
   object-fit:cover!important;
 }
 .hex-gallery.hex-pickup-gallery .hex-banner-title{
