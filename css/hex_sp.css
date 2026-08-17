@@ -861,7 +861,7 @@
     line-height:1!important;
   }
 
-  /* 電話番号・カレンダーをSNSより下へ配置 */
+  /* 電話番号・カレンダー配置 */
   #gc_auto_frame_header_object_smartphone_hum_pupup
   .hex-header-info-menu{
     display:flex!important;
@@ -877,9 +877,8 @@
     box-sizing:border-box!important;
   }
 
-  /* SMS配置 */
-  #gc_auto_frame_header_object_smartphone_hum_pupup
-  .hex-header-sns{
+  /* SNS配置 */
+  .bg_menu_button_popup .hex-menu-sns{
     display:flex!important;
     align-items:center!important;
     justify-content:center!important;
@@ -888,8 +887,7 @@
     margin:40px auto 24px!important;
     padding:0 16px!important;
   }
-  #gc_auto_frame_header_object_smartphone_hum_pupup
-  .hex-header-sns a{
+  .bg_menu_button_popup .hex-menu-sns a{
     display:flex!important;
     align-items:center!important;
     justify-content:center!important;
@@ -898,9 +896,8 @@
     color:#1f2774!important;
     text-decoration:none!important;
   }
-  #gc_auto_frame_header_object_smartphone_hum_pupup
-  .hex-header-sns svg,
-  .hex-header-sns .bg_svg{
+  .bg_menu_button_popup .hex-menu-sns svg,
+  .bg_menu_button_popup .hex-menu-sns .bg_svg{
     display:flex!important;
     align-items:center!important;
     justify-content:center!important;
@@ -909,8 +906,8 @@
     color:#1f2774!important;
     fill:currentColor!important;
   }
-  #gc_auto_frame_header_object_smartphone_hum_pupup
-  .hex-header-sns
+  .bg_menu_button_popup
+  .hex-menu-sns
   a[href*="tiktok.com"]::before{
     content:none!important;
     display:none!important;
