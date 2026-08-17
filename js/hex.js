@@ -2422,38 +2422,11 @@ function hexCreateFooterSns(){
   if(!sns)return;
   footerLogo.appendChild(sns);
 }
-function hexCreateHeaderSns(retryCount){
-  retryCount=retryCount||0;
-
-  /* PCヘッダー用 */
-  if(!document.querySelector('.hex-header-sns')){
-    var headerSns=hexCreateSnsLinks('hex-header-sns');
-
-    if(headerSns){
-      document.body.appendChild(headerSns);
-    }
-  }
-
-  /* スマホハンバーガーメニュー用 */
-  var menu=document.querySelector('.bg_menu_button_popup');
-
-  if(!menu){
-    if(retryCountCount<20){
-      setTimeout(function(){
-        hexCreateHeaderSns(retryCount+1);
-      },50);
-    }
-
-    return;
-  }
-
-  if(!menu.querySelector('.hex-menu-sns')){
-    var menuSns=hexCreateSnsLinks('hex-menu-sns');
-
-    if(menuSns){
-      menu.appendChild(menuSns);
-    }
-  }
+function hexCreateHeaderSns(){
+  if(document.querySelector('.hex-header-sns'))return;
+  var sns=hexCreateSnsLinks('hex-header-sns');
+  if(!sns)return;
+  document.body.appendChild(sns);
 }
 function hexCreateSnsLinks(className){
   var source=document.querySelector('.ff_sns');
