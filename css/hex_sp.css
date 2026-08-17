@@ -1080,10 +1080,10 @@
 ======================================= */
 @media screen and (max-width:768px){
   .hex-gallery.hex-pickup-gallery .hex-banner-title{
-    font-size:18px!important;
+    font-size:26px!important;
   }
   .hex-gallery.hex-pickup-gallery .hex-banner-text{
-    font-size:12px!important;
+    font-size:16px!important;
   }
 }
 
