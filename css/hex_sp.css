@@ -885,7 +885,7 @@
     gap:28px!important;
     width:100%!important;
     margin:40px auto 24px!important;
-    padding:0 16px!important;
+    padding:0!important;
   }
   .bg_menu_button_popup .hex-menu-sns a{
     display:flex!important;
