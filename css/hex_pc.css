@@ -79,16 +79,18 @@ html{
   letter-spacing:.02em;
   color:#1f2774!important;
   box-sizing:border-box;
+  isolation:isolate;
 }
 .hex-section-title::after{
   content:"";
   position:absolute;
-  bottom:0;
+  bottom:10px;
   left:50%;
   transform:translateX(-50%);
   width:calc(100% + 48px);
-  height:8px;
+  height:16px;
   box-sizing:border-box;
+  z-index:-1;
   background:repeating-linear-gradient(
     45deg,
     #c8a874 0,
