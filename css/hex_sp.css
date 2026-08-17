@@ -930,6 +930,9 @@
   .hex-company-buttons .hex-btn-main-title .main{
     font-size:18px!important;
   }
+  .hex-company-card .hex-card{
+    padding:8px!important;
+  }
 }
 
 /* =======================================
