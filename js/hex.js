@@ -2423,10 +2423,19 @@ function hexCreateFooterSns(){
   footerLogo.appendChild(sns);
 }
 function hexCreateHeaderSns(){
-  if(document.querySelector('.hex-header-sns'))return;
-  var sns=hexCreateSnsLinks('hex-header-sns');
+  var menu=document.querySelector('.bg_menu_button_popup');
+  if(!menu)return;
+
+  /* すでに生成されている場合はメニュー内へ移動 */
+  var sns=document.querySelector('.hex-header-sns');
+
+  if(!sns){
+    sns=hexCreateSnsLinks('hex-header-sns');
+  }
+
   if(!sns)return;
-  document.body.appendChild(sns);
+
+  menu.appendChild(sns);
 }
 function hexCreateSnsLinks(className){
   var source=document.querySelector('.ff_sns');
