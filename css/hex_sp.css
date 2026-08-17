@@ -803,22 +803,27 @@
     font-size:16px!important;
     font-weight:900!important;
     line-height:1!important;
+    transform:rotate(0deg);
+    transition:transform .35s cubic-bezier(.22,1,.36,1);
   }
   #gc_auto_frame_header_object_smartphone_hum_pupup
   .menu_right > .menu_group.hex-submenu-open > .menu_group_text::after{
-    content:"\f077";
+    content:"\f078";
+    transform:rotate(180deg);
   }
 
   /* 子メニューを1列にする */
   #gc_auto_frame_header_object_smartphone_hum_pupup .menu_sub{
     width:100%!important;
-    height:auto!important;
+    min-height:0!important;
     margin:0!important;
     padding:0!important;
+    overflow:hidden;
     background:#fff!important;
     border:none!important;
     grid-template-columns:1fr!important;
     box-sizing:border-box!important;
+    will-change:height, opacity;
   }
 
   /* 子メニュー */
@@ -878,6 +883,11 @@
   }
 
   /* SNS配置 */
+  #gc_auto_frame_header_object_smartphone_hum_pupup
+  .hex-menu-sns{
+    order:3!important;
+    flex:none!important;
+  }
   .bg_menu_button_popup .hex-menu-sns{
     display:flex!important;
     align-items:center!important;
