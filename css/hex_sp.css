@@ -508,6 +508,26 @@
 }
 
 @media screen and (max-width:1200px){
+  /* 1. 施工エリア */
+  .hex-footer-frame .hex-footer-area{
+    order:1!important;
+  }
+
+  /* 2. 会社情報 */
+  .hex-footer-frame .footer_text{
+    order:2!important;
+  }
+
+  /* 3. 会社ロゴ（内部のSNSがロゴの下に表示） */
+  .hex-footer-frame .footer_logo{
+    order:3!important;
+  }
+
+  /* 4. Copyright */
+  .hex-footer-frame .footer_copyright{
+    order:4!important;
+  }
+
   .hex-footer-frame .footer_contents{
     grid-template-columns:1fr!important;
     gap:48px!important;
