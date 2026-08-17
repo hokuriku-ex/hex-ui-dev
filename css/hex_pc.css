@@ -3073,6 +3073,7 @@ body,
 #gc_auto_frame_gccat5_1 h1::after { content: "FEATURED ITEMS"; }
 #gc_auto_frame_gccat14_1 h1::after { content: "MANUFACTURERS & PRODUCTS"; }
 #gc_auto_frame_work_1 h1::after { content: "WORKS"; }
+#gc_auto_frame_gccat27 h1::after { content: "PLAN"; }
 #gc_auto_frame_information_1 h1::after { content: "NEWS"; }
 #gc_auto_frame_staffblog_1 h1::after { content: "STAFF BLOG"; }
 #gc_auto_frame_contact_1 h1::after { content: "CONTACT"; }
