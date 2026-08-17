@@ -2422,20 +2422,38 @@ function hexCreateFooterSns(){
   if(!sns)return;
   footerLogo.appendChild(sns);
 }
-function hexCreateHeaderSns(){
-  var menu=document.querySelector('.bg_menu_button_popup');
-  if(!menu)return;
+function hexCreateHeaderSns(retryCount){
+  retryCount=retryCount||0;
 
-  /* すでに生成されている場合はメニュー内へ移動 */
-  var sns=document.querySelector('.hex-header-sns');
+  /* PCヘッダー用 */
+  if(!document.querySelector('.hex-header-sns')){
+    var headerSns=hexCreateSnsLinks('hex-header-sns');
 
-  if(!sns){
-    sns=hexCreateSnsLinks('hex-header-sns');
+    if(headerSns){
+      document.body.appendChild(headerSns);
+    }
   }
 
-  if(!sns)return;
+  /* スマホハンバーガーメニュー用 */
+  var menu=document.querySelector('.bg_menu_button_popup');
 
-  menu.appendChild(sns);
+  if(!menu){
+    if(retryCountCount<20){
+      setTimeout(function(){
+        hexCreateHeaderSns(retryCount+1);
+      },50);
+    }
+
+    return;
+  }
+
+  if(!menu.querySelector('.hex-menu-sns')){
+    var menuSns=hexCreateSnsLinks('hex-menu-sns');
+
+    if(menuSns){
+      menu.appendChild(menuSns);
+    }
+  }
 }
 function hexCreateSnsLinks(className){
   var source=document.querySelector('.ff_sns');
