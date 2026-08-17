@@ -1070,7 +1070,7 @@
     margin:72px auto 0;
   }
   #gc_auto_body_company .hex-company-map-link{
-    margin:0 0 72px;
+    margin:0;
   }
   #gc_auto_body_company .hex-company-pair-grid{
     grid-template-columns:1fr;
