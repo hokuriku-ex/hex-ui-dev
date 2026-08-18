@@ -4056,7 +4056,7 @@ body,
    下層ページ：工事メニュー
 ======================================= */
 /* 土木工事・申請 */
-.hex-card-grid.hex-card-grid2.hex-doboku-list{
+.hex-doboku-list{
   max-width:var(--hex_small_width)!important;
 }
 
