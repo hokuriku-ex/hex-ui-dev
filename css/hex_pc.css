@@ -4184,8 +4184,8 @@ body,
 .hex-product-rating-row[data-score="4"] .hex-product-rating-scale span:nth-child(4)::before,
 .hex-product-rating-row[data-score="5"] .hex-product-rating-scale span:nth-child(5)::before{
   color:#1f2774;
-  font-size:14px;
-  font-weight:700;
+  font-size:13px;
+  font-weight:500;
 }
 .hex-product-rating-row[data-score="1"] .hex-product-rating-scale span:nth-child(-n+1),
 .hex-product-rating-row[data-score="2"] .hex-product-rating-scale span:nth-child(-n+2),
