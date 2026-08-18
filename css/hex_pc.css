@@ -4063,6 +4063,25 @@ body,
 /* =======================================
    注目アイテム
 ======================================= */
+/* 全体レイアウト */
+.gc_auto_frame_spotitem_body:has(.hex-pickup-section){
+  display:table;
+  width:auto!important;
+  max-width:1000px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  text-align:left!important;
+}
+.gc_auto_frame_spotitem_body:has(.hex-pickup-section) h2{
+  
+}
+.gc_auto_frame_spotitem_body:has(.hex-pickup-section) h3{
+  
+}
+.gc_auto_frame_spotitem_body:has(.hex-pickup-section) h4{
+  
+}
+
 /* 評価ゲージ */
 .hex-product-rating{
   display:grid;
