@@ -4066,11 +4066,19 @@ body,
 /* 全体レイアウト */
 .content_body:has(.hex-pickup-section){
   width:100%!important;
-  max-width:600px!important;
+  max-width:800px!important;
   margin-left:auto!important;
   margin-right:auto!important;
   text-align:left!important;
   box-sizing:border-box;
+}
+.content_body:has(.hex-pickup-section) h3,
+.content_body:has(.hex-pickup-section) .hex-product-tags,
+.content_body:has(.hex-pickup-section) .hex-product-rating{
+  width:100%;
+  max-width:600px;
+  margin-left:auto!important;
+  margin-right:auto!important;
 }
 .content_body:has(.hex-pickup-section) h2{
   margin: 0 auto 24px !important;
@@ -4102,12 +4110,10 @@ body,
   font-weight:400;
 }
 .content_body:has(.hex-pickup-section) .hex-pickup-description{
-  width:800px!important;
-  max-width:calc(100vw - 32px)!important;
-  margin-left:50%!important;
-  transform:translateX(-50%);
-  text-align:left!important;
-  box-sizing:border-box;
+  width:100%;
+  max-width:800px;
+  margin-left:auto;
+  margin-right:auto;
 }
 
 /* 評価ゲージ */
