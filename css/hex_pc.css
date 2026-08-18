@@ -4065,12 +4065,12 @@ body,
 ======================================= */
 /* 全体レイアウト */
 .content_body:has(.hex-pickup-section){
-  width:100%!important;
-  max-width:var(--hex_small_width)!important;
+  display:table;
+  width:auto!important;
+  max-width:1000px!important;
   margin-left:auto!important;
   margin-right:auto!important;
   text-align:left!important;
-  box-sizing:border-box;
 }
 .content_body:has(.hex-pickup-section) h2{
   
