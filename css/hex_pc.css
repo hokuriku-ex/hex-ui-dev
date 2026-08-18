@@ -149,20 +149,10 @@ html{
 .hex-section-action h3{
   position:relative;
   margin:0!important;
-  padding-left:18px!important;
   color:#1f2774;
   font-size:24px;
   font-weight:700;
   line-height:1.4;
-}
-.hex-section-action h3:before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:0;
-  width:3px;
-  height:30px;
-  background:#c8a874;
 }
 .hex-section-action a,
 .bg_post_index .linktext_color_basecolor2 .hex-section-action a{
