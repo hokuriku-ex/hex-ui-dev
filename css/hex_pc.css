@@ -4066,7 +4066,7 @@ body,
 /* 全体レイアウト */
 .content_body:has(.hex-pickup-section){
   width:100%!important;
-  max-width:800px!important;
+  max-width:600px!important;
   margin-left:auto!important;
   margin-right:auto!important;
   text-align:left!important;
