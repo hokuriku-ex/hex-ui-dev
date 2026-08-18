@@ -4082,6 +4082,7 @@ body,
   align-items:center;
   gap:14px;
   text-align:left;
+  font-weight:500!important;
 }
 .content_body:has(.hex-pickup-section) h3::before{
   content:"";
