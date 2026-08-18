@@ -4287,6 +4287,64 @@ body,
   box-sizing:border-box;
 }
 
+/* 導入文 */
+.hex-contact-nav .hex-contact-phone{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  margin-top:24px;
+}
+.hex-contact-nav .hex-contact-text{
+  font-size:15px;
+}
+.hex-contact-nav .hex-contact-tel{
+  color:#c8a874!important;
+  font-size:22px;
+  font-weight:500;
+  line-height:1.4;
+  letter-spacing:.04em;
+  text-decoration:none!important;
+}
+.hex-contact-nav .hex-contact-tel:hover{
+  text-decoration:none!important;
+}
+.hex-contact-nav .hex-contact-tel span{
+  margin-right:6px;
+  font-size:14px;
+}
+.hex-contact-nav .hex-contact-hours{
+  font-size:14px;
+  color:#ddd;
+}
+.hex-contact-nav .hex-contact-faq-link{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  color:#d6d6d6;
+  font-size:14px;
+  text-decoration:none;
+  transition:color .3s;
+}
+.hex-contact-nav .hex-contact-faq-link span{
+  color:#c8a874;
+  font-weight:500;
+  border-bottom:1px solid rgba(200,168,116,.6);
+  padding-bottom:2px;
+}
+.hex-contact-nav .hex-contact-faq-link i{
+  margin-left:2px;
+  font-size:12px;
+  transition:transform .3s;
+}
+.hex-contact-nav .hex-contact-faq-link:hover{
+  text-decoration:none!important;
+}
+.hex-contact-nav .hex-contact-faq-link:hover i{
+  transform:translateX(3px);
+  text-decoration:none!important;
+}
+
 /* 入力画面：JS整形前のチラつき防止 */
 #form_lp_form{
   opacity:0;
