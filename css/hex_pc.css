@@ -2885,8 +2885,7 @@ body,
 }
 .hex-gallery.hex-pickup-gallery .hex-banner-text .sub{
   font-size:24px!important;
-  min-height:100px!important;
-  padding-bottom:24px!important;
+  margin-bottom:24px!important;
 }
 
 /* =======================================
