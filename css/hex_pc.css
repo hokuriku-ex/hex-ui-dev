@@ -4102,11 +4102,12 @@ body,
   font-weight:400;
 }
 .content_body:has(.hex-pickup-section) .hex-pickup-description{
-  width:100%!important;
-  max-width:800px!important;
-  margin-left:auto!important;
-  margin-right:auto!important;
+  width:800px!important;
+  max-width:calc(100vw - 32px)!important;
+  margin-left:50%!important;
+  transform:translateX(-50%);
   text-align:left!important;
+  box-sizing:border-box;
 }
 
 /* 評価ゲージ */
