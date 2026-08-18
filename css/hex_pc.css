@@ -149,22 +149,20 @@ html{
 .hex-section-action h3{
   position:relative;
   margin:0!important;
-  padding-left:56px!important;
+  padding-left:18px!important;
   color:#1f2774;
   font-size:24px;
   font-weight:700;
   line-height:1.4;
 }
 .hex-section-action h3:before{
-  content:"\f2b4";
+  content:"";
   position:absolute;
   left:0;
-  top:50%;
-  transform:translateY(-50%);
-  font:var(--fa-font-regular);
-  color:#1f2774;
-  font-size:40px;
-  line-height:1;
+  top:0;
+  width:3px;
+  height:30px;
+  background:#1f2774;
 }
 .hex-section-action a,
 .bg_post_index .linktext_color_basecolor2 .hex-section-action a{
