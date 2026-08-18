@@ -4061,6 +4061,71 @@ body,
 }
 
 /* =======================================
+   注目アイテム
+======================================= */
+/* 評価ゲージ */
+.hex-product-rating{
+  display:grid;
+  gap:14px;
+  width:100%;
+  max-width:420px;
+}
+.hex-product-rating-row{
+  display:grid;
+  grid-template-columns:120px 1fr;
+  align-items:end;
+  gap:18px;
+}
+.hex-product-rating-label{
+  color:#383838;
+  font-size:15px;
+  line-height:1.4;
+}
+.hex-product-rating-scale{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:2px;
+  position:relative;
+}
+.hex-product-rating-scale span{
+  position:relative;
+  display:block;
+  height:3px;
+  background:#e5e5e5;
+}
+.hex-product-rating-scale span::before{
+  position:absolute;
+  left:50%;
+  bottom:8px;
+  transform:translateX(-50%);
+  color:#383838;
+  font-size:11px;
+  line-height:1;
+}
+.hex-product-rating-scale span:nth-child(1)::before{
+  content:"1";
+}
+.hex-product-rating-scale span:nth-child(2)::before{
+  content:"2";
+}
+.hex-product-rating-scale span:nth-child(3)::before{
+  content:"3";
+}
+.hex-product-rating-scale span:nth-child(4)::before{
+  content:"4";
+}
+.hex-product-rating-scale span:nth-child(5)::before{
+  content:"5";
+}
+.hex-product-rating-row[data-score="1"] .hex-product-rating-scale span:nth-child(-n+1),
+.hex-product-rating-row[data-score="2"] .hex-product-rating-scale span:nth-child(-n+2),
+.hex-product-rating-row[data-score="3"] .hex-product-rating-scale span:nth-child(-n+3),
+.hex-product-rating-row[data-score="4"] .hex-product-rating-scale span:nth-child(-n+4),
+.hex-product-rating-row[data-score="5"] .hex-product-rating-scale span:nth-child(-n+5){
+  background:#c8a874;
+}
+
+/* =======================================
    下層ページ：エクステリア商品検索
 ======================================= */
 .hex-product-search{
