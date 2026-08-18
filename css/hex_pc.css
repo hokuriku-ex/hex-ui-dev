@@ -4280,10 +4280,11 @@ body,
 /* 画面サイズ */
 .hex-contact-nav{
   display:table;
-  width:auto;
-  max-width:calc(100% - 32px)!important;
+  width:auto!important;
+  max-width:var(--hex_medium_width)!important;
   margin:0 auto!important;
   text-align:left;
+  box-sizing:border-box;
 }
 
 /* 入力画面：JS整形前のチラつき防止 */
