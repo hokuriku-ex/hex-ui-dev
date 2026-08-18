@@ -4066,27 +4066,22 @@ body,
 /* 全体レイアウト */
 .content_body:has(.hex-pickup-section){
   width:100%!important;
-  max-width:var(--hex_small_width)!important;
   margin-left:auto!important;
   margin-right:auto!important;
-  text-align:center!important;
   box-sizing:border-box;
-}
-.content_body:has(.hex-pickup-section) h3,
-.content_body:has(.hex-pickup-section) .hex-product-tags,
-.content_body:has(.hex-pickup-section) .hex-product-rating{
-  width:100%;
-  max-width:600px;
-  margin-left:auto!important;
-  margin-right:auto!important;
 }
 .content_body:has(.hex-pickup-section) h2{
   margin: 0 auto 24px !important;
 }
 .content_body:has(.hex-pickup-section) h3{
   display:flex;
+  width:max-content;
+  max-width:calc(100% - 32px);
+  margin-left:auto!important;
+  margin-right:auto!important;
   align-items:center;
   gap:14px;
+  text-align:left;
 }
 .content_body:has(.hex-pickup-section) h3::before{
   content:"";
@@ -4097,19 +4092,34 @@ body,
 }
 .content_body:has(.hex-pickup-section) .hex-product-tags{
   display:flex;
+  width:max-content;
+  max-width:calc(100% - 32px);
+  margin-left:auto!important;
+  margin-right:auto!important;
   flex-wrap:wrap;
   gap:8px 18px;
-  margin:0!important;
   color:#777;
   font-size:14px;
   font-weight:400;
+  text-align:left;
 }
 .content_body:has(.hex-pickup-section) .hex-product-tags span b{
   color:#c8a874;
   font-weight:400;
 }
+.content_body:has(.hex-pickup-section) .hex-product-rating{
+  width:100%;
+  max-width:600px;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
 .content_body:has(.hex-pickup-section) .hex-pickup-description{
+  width:100%;
+  max-width:800px;
+  margin-left:auto!important;
+  margin-right:auto!important;
   text-align:left!important;
+  box-sizing:border-box;
 }
 
 /* 評価ゲージ */
