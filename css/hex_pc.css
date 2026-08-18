@@ -4277,6 +4277,15 @@ body,
 /* =======================================
    下層ページ：お問い合わせ
 ======================================= */
+/* 画面サイズ */
+.hex-contact-nav{
+  width:calc(100% - 32px);
+  max-width:var(--hex_medium_width)!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  box-sizing:border-box;
+}
+
 /* 入力画面：JS整形前のチラつき防止 */
 #form_lp_form{
   opacity:0;
