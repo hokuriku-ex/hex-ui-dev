@@ -2984,6 +2984,7 @@ body,
 .gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3{
   position:relative;
   padding-bottom:16px;
+  isolation:isolate;
 }
 .gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3::after{
   content:"";
@@ -3252,6 +3253,7 @@ body,
   letter-spacing:.02em;
   color:#1f2774!important;
   box-sizing:border-box;
+  isolation:isolate;
 }
 #gc_auto_body_company .publicinfo_company h2.title::after,
 #gc_auto_body_company .publicinfo_company h2.hex-section-title::after{
