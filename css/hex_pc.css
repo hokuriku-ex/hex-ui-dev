@@ -4325,28 +4325,39 @@ body,
   margin-right:auto;
   align-items:center;
   gap:10px;
-  color:#d6d6d6;
+  color:#2a5bac!important;
   font-size:14px;
-  text-decoration:none;
-  transition:color .3s;
+  text-decoration:none!important;
+  transition:color .2s ease;
 }
 .hex-contact-nav .hex-contact-faq-link span{
-  color:#c8a874;
+  color:#2a5bac!important;
   font-weight:500;
-  border-bottom:1px solid rgba(200,168,116,.6);
+  border-bottom:1px solid #2a5bac;
   padding-bottom:2px;
+  transition:
+    color .2s ease,
+    border-color .2s ease;
 }
 .hex-contact-nav .hex-contact-faq-link i{
   margin-left:2px;
+  color:#2a5bac!important;
   font-size:12px;
-  transition:transform .3s;
+  transition:
+    color .2s ease,
+    transform .3s ease;
 }
 .hex-contact-nav .hex-contact-faq-link:hover{
+  color:#4a7fd0!important;
   text-decoration:none!important;
 }
+.hex-contact-nav .hex-contact-faq-link:hover span{
+  color:#4a7fd0!important;
+  border-color:#4a7fd0;
+}
 .hex-contact-nav .hex-contact-faq-link:hover i{
+  color:#4a7fd0!important;
   transform:translateX(3px);
-  text-decoration:none!important;
 }
 
 /* 入力画面：JS整形前のチラつき防止 */
