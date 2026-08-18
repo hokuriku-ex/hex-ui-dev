@@ -4076,10 +4076,29 @@ body,
   
 }
 .content_body:has(.hex-pickup-section) h3{
-  
+  display:flex;
+  align-items:center;
+  gap:14px;
 }
-.content_body:has(.hex-pickup-section) h4{
-  
+
+.content_body:has(.hex-pickup-section) h3::before{
+  content:"";
+  flex:0 0 32px;
+  width:32px;
+  height:2px;
+  background:#c8a874;
+}
+.content_body:has(.hex-pickup-section) .hex-product-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 18px;
+  margin:0!important;
+  color:#777;
+  font-size:14px;
+  font-weight:400;
+}
+.content_body:has(.hex-pickup-section) .hex-product-tags span::first-letter{
+  color:#c8a874;
 }
 
 /* 評価ゲージ */
