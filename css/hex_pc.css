@@ -149,20 +149,26 @@ html{
 .hex-section-action h3{
   position:relative;
   margin:0!important;
-  padding-left:18px!important;
+  padding-left:38px!important;
   color:#1f2774;
   font-size:24px;
   font-weight:700;
   line-height:1.4;
 }
 .hex-section-action h3:before{
-  content:"";
+  content:"\f61f";
   position:absolute;
   left:0;
-  top:0;
-  width:3px;
-  height:30px;
-  background:#1f2774;
+  top:50%;
+  transform:translateY(-50%);
+  width:auto;
+  height:auto;
+  background:none;
+  color:#1f2774;
+  font-family:"Font Awesome 6 Free";
+  font-size:22px;
+  font-weight:900;
+  line-height:1;
 }
 .hex-section-action a,
 .bg_post_index .linktext_color_basecolor2 .hex-section-action a{
