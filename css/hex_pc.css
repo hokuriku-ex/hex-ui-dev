@@ -4199,6 +4199,21 @@ body,
   line-height:1.6;
 }
 
+/* 埋込動画 */
+.content_body:has(.hex-pickup-section) .hex-product-movie{
+  width:100%;
+  max-width:800px;
+  margin-left:auto;
+  margin-right:auto;
+  aspect-ratio:16/9;
+}
+.content_body:has(.hex-pickup-section) .hex-product-movie iframe{
+  display:block;
+  width:100%;
+  height:100%;
+  border:0;
+}
+
 /* =======================================
    下層ページ：エクステリア商品検索
 ======================================= */
