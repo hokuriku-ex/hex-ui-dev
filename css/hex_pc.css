@@ -149,7 +149,7 @@ html{
 .hex-section-action h3{
   position:relative;
   margin:0!important;
-  padding-left:38px!important;
+  padding-left:56px!important;
   color:#1f2774;
   font-size:24px;
   font-weight:700;
@@ -163,7 +163,7 @@ html{
   transform:translateY(-50%);
   font:var(--fa-font-regular);
   color:#1f2774;
-  font-size:22px;
+  font-size:40px;
   line-height:1;
 }
 .hex-section-action a,
