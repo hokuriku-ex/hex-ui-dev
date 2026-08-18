@@ -4299,7 +4299,7 @@ body,
   font-size:15px;
 }
 .hex-contact-nav .hex-contact-tel{
-  color:#c8a874!important;
+  color:#1f2774!important;
   font-size:22px;
   font-weight:500;
   line-height:1.4;
@@ -4315,7 +4315,7 @@ body,
 }
 .hex-contact-nav .hex-contact-hours{
   font-size:14px;
-  color:#ddd;
+  color:#383838;
 }
 .hex-contact-nav .hex-contact-faq-link{
   display:flex;
