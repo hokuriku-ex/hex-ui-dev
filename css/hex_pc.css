@@ -103,8 +103,8 @@ html{
 /* 共通セクションサブ見出し（h3専用） */
 .hex-section-subtitle{
   position:relative;
-  display:block;
-  width:100%!important;
+  display:table;
+  width:auto!important;
   max-width:var(--hex_medium_width)!important;
   margin:0 auto 24px!important;
   padding:0 0 14px!important;
