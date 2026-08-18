@@ -4097,8 +4097,9 @@ body,
   font-size:14px;
   font-weight:400;
 }
-.content_body:has(.hex-pickup-section) .hex-product-tags span::first-letter{
+.content_body:has(.hex-pickup-section) .hex-product-tags span b{
   color:#c8a874;
+  font-weight:400;
 }
 
 /* 評価ゲージ */
