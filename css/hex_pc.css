@@ -4194,6 +4194,10 @@ body,
 .hex-product-rating-row[data-score="5"] .hex-product-rating-scale span:nth-child(-n+5){
   background:#c8a874;
 }
+.hex-product-rating-note{
+  font-size:12px;
+  line-height:1.6;
+}
 
 /* =======================================
    下層ページ：エクステリア商品検索
