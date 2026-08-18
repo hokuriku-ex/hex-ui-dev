@@ -2994,6 +2994,7 @@ body,
   width:calc(100% + 48px);
   height:12px;
   box-sizing:border-box;
+  z-index:-1;
   background:repeating-linear-gradient(
     -45deg,
     #c8a874 0,
@@ -3262,6 +3263,7 @@ body,
   width:calc(100% + 48px);
   height:12px;
   box-sizing:border-box;
+  z-index:-1;
   background:repeating-linear-gradient(
     45deg,
     #c8a874 0,
