@@ -2988,11 +2988,11 @@ body,
 .gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3::after{
   content:"";
   position:absolute;
-  bottom:0;
+  bottom:16px;
   left:50%;
   transform:translateX(-50%);
   width:calc(100% + 48px);
-  height:8px;
+  height:12px;
   box-sizing:border-box;
   background:repeating-linear-gradient(
     -45deg,
