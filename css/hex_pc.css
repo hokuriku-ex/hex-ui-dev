@@ -4066,10 +4066,10 @@ body,
 /* 全体レイアウト */
 .content_body:has(.hex-pickup-section){
   width:100%!important;
-  max-width:800px!important;
+  max-width:var(--hex_small_width)!important;
   margin-left:auto!important;
   margin-right:auto!important;
-  text-align:left!important;
+  text-align:center!important;
   box-sizing:border-box;
 }
 .content_body:has(.hex-pickup-section) h3,
@@ -4088,7 +4088,6 @@ body,
   align-items:center;
   gap:14px;
 }
-
 .content_body:has(.hex-pickup-section) h3::before{
   content:"";
   flex:0 0 32px;
@@ -4110,10 +4109,7 @@ body,
   font-weight:400;
 }
 .content_body:has(.hex-pickup-section) .hex-pickup-description{
-  width:100%;
-  max-width:800px;
-  margin-left:auto;
-  margin-right:auto;
+  text-align:left!important;
 }
 
 /* 評価ゲージ */
