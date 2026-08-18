@@ -1089,6 +1089,9 @@
     height:20px!important;
     margin-top:18px!important;
   }
+  .hex-gallery.hex-pickup-gallery .hex-banner-inner{
+    text-align:left!important;
+  }
   .hex-gallery.hex-pickup-gallery .hex-banner-title{
     font-size:26px!important;
   }
