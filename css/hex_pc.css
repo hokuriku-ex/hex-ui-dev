@@ -4064,7 +4064,7 @@ body,
    注目アイテム
 ======================================= */
 /* 全体レイアウト */
-.gc_auto_frame_spotitem_body:has(.hex-pickup-section){
+.content_body:has(.hex-pickup-section){
   width:100%!important;
   max-width:var(--hex_small_width)!important;
   margin-left:auto!important;
@@ -4072,13 +4072,13 @@ body,
   text-align:left!important;
   box-sizing:border-box;
 }
-.gc_auto_frame_spotitem_body:has(.hex-pickup-section) h2{
+.content_body:has(.hex-pickup-section) h2{
   
 }
-.gc_auto_frame_spotitem_body:has(.hex-pickup-section) h3{
+.content_body:has(.hex-pickup-section) h3{
   
 }
-.gc_auto_frame_spotitem_body:has(.hex-pickup-section) h4{
+.content_body:has(.hex-pickup-section) h4{
   
 }
 
