@@ -1229,6 +1229,14 @@
     column-gap:0;
     row-gap:8px;
   }
+  #gc_auto_body_company .publicinfo_company .content{
+    flex-wrap:wrap!important;
+  }
+  #gc_auto_body_company .publicinfo_company .content_title,
+  #gc_auto_body_company .publicinfo_company .content_text{
+    width:100%!important;
+    flex:0 0 100%!important;
+  }
   #gc_auto_body_company .publicinfo_company .content::after{
     content:none!important;
   }
