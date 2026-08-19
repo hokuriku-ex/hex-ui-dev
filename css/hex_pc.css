@@ -71,7 +71,7 @@ html{
   width:fit-content;
   display:block;
   margin:0 auto 24px!important;
-  padding:0 0 16px!important;
+  padding:0 0 8px!important;
   text-align:center;
   font-size:32px;
   font-weight:700;
@@ -107,7 +107,7 @@ html{
   width:auto!important;
   max-width:var(--hex_small_width)!important;
   margin:0 auto 24px!important;
-  padding:0 0 14px!important;
+  padding:0 0 16px!important;
   color:#383838;
   font-size:24px;
   font-weight:500;
@@ -3237,7 +3237,7 @@ body,
   width:fit-content;
   display:block;
   margin:0 auto 24px!important;
-  padding:0!important;
+  padding:0 0 8px!important;
   text-align:center;
   font-size:32px;
   font-weight:700;
