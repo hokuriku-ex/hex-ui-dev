@@ -3401,7 +3401,7 @@ body,
 
 /* 項目のウエイト強め */
 #gc_auto_body_company .publicinfo_company .content_title{
-  font-weight:600!important;
+  font-weight:500!important;
 }
 
 /* 既存の丸矢印アイコンを非表示 */
