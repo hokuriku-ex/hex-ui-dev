@@ -3353,7 +3353,7 @@ body,
 #gc_auto_body_company
 .hex-company-section:not(.hex-company-section-access){
   width:100%!important;
-  max-width:var(--hex_small_width)!important;
+  max-width:1100px!important;
   margin-inline:auto;
   box-sizing:border-box;
 }
