@@ -3375,19 +3375,28 @@ body,
   border:0;
 }
 
-/* 既存の行罫線を解除 */
+/* 1行全体に薄グレーの下線 */
 #gc_auto_body_company .publicinfo_company .content{
+  position:relative;
+  border-bottom:1px solid #d8dce8!important;
+}
+
+/* title / text 自体の線は消す */
+#gc_auto_body_company .publicinfo_company .content_title,
+#gc_auto_body_company .publicinfo_company .content_text{
   border-bottom:none!important;
 }
 
-/* 項目側：紺 */
-#gc_auto_body_company .publicinfo_company .content_title{
-  border-bottom:1px solid #1f2774!important;
-}
-
-/* 内容側：薄グレー */
-#gc_auto_body_company .publicinfo_company .content_text{
-  border-bottom:1px solid #d8dce8!important;
+/* PC：項目側だけ紺線を重ねる */
+#gc_auto_body_company .publicinfo_company .content::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:-1px;
+  width:27%;
+  height:1px;
+  background:#1f2774;
+  pointer-events:none;
 }
 
 /* 既存の丸矢印アイコンを非表示 */
