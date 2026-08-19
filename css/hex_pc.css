@@ -3379,17 +3379,13 @@ body,
 #gc_auto_body_company .publicinfo_company .content{
   position:relative;
   border-bottom:2px solid #d8dce8!important;
+  justify-content:flex-start!important;
 }
 
 /* title / text 自体の線は消す */
 #gc_auto_body_company .publicinfo_company .content_title,
 #gc_auto_body_company .publicinfo_company .content_text{
   border-bottom:none!important;
-}
-
-/* 項目は20% */
-.gc_auto_frame_publicinfo_company .publicinfo_company_type1 .content_title{
-  width:20%!important;
 }
 
 /* PC：項目側だけ紺線を重ねる */
@@ -3404,9 +3400,14 @@ body,
   pointer-events:none;
 }
 
-/* 項目のウエイト強め */
+/* 項目の幅20%　ウエイト強め */
 #gc_auto_body_company .publicinfo_company .content_title{
-  font-weight:500!important;
+  width:20%!important;
+  flex:0 0 20%!important;
+}
+#gc_auto_body_company .publicinfo_company .content_text{
+  width:80%!important;
+  flex:0 0 80%!important;
 }
 
 /* 既存の丸矢印アイコンを非表示 */
