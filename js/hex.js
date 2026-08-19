@@ -3044,6 +3044,20 @@ hexLoad(function(){
         mapWrap.appendChild(mapLink);
       }
     }
+
+    /* 施工エリアの■をライン用spanに置換 */
+    companyBox.querySelectorAll('.content').forEach(function(block){
+      if(getTitleText(block)!=='施工エリア')return;
+
+      var textBox=block.querySelector('.content_text');
+      if(!textBox)return;
+
+      textBox.innerHTML=textBox.innerHTML.replace(
+        /■/g,
+        '<span class="hex-company-area-mark"></span>'
+      );
+    });
+
     body.classList.add('hex-company-layout-done');
   },100);
 });
