@@ -4233,19 +4233,32 @@ body,
   border:0;
 }
 
-/* カードタイトル */
+/* フェンスカード */
+.content_body:has(.hex-pickup-section) .hex-card-grid.hex-card-grid3{
+  width:100%!important;
+  max-width:var(--hex_small_width)!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
 .content_body:has(.hex-pickup-section) .hex-card-title-text{
   display:flex;
   flex-direction:column;
-  gap:4px;
+  gap:3px;
   color:#777;
   font-size:12px;
   font-weight:400;
+  line-height:1.4;
+}
+.content_body:has(.hex-pickup-section) .hex-card .hex-link-detail,
+.content_body:has(.hex-pickup-section) .hex-card .hex-link-icon,
+.content_body:has(.hex-pickup-section) .hex-card .hex-link-icon i{
+  color:#1f2774!important;
 }
 .content_body:has(.hex-pickup-section) .hex-card-title-text b{
   color:#1f2774;
   font-size:18px;
   font-weight:500;
+  line-height:1.5;
 }
 
 /* =======================================
