@@ -3194,6 +3194,9 @@ body,
   position:relative;
   z-index:0;
   isolation:isolate;
+  padding-left:16px!important;
+  padding-right:16px!important;
+  box-sizing:border-box;
 }
 .hex-bg-range::before{
   content:"";
