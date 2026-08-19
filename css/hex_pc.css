@@ -70,7 +70,7 @@ html{
   position:relative;
   width:fit-content;
   display:block;
-  margin:0 auto 48px!important;
+  margin:0 auto 24px!important;
   padding:0 0 16px!important;
   text-align:center;
   font-size:32px;
@@ -3236,7 +3236,7 @@ body,
   position:relative;
   width:fit-content;
   display:block;
-  margin:0 auto 48px!important;
+  margin:0 auto 28px!important;
   padding:0 0 16px!important;
   text-align:center;
   font-size:32px;
