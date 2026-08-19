@@ -4306,6 +4306,8 @@ body,
   margin-right:auto!important;
   box-sizing:border-box;
 }
+
+/* 検索窓 */
 .hex-product-search{
   display:flex;
   justify-content:center;
