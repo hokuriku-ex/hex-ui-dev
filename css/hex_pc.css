@@ -3236,8 +3236,8 @@ body,
   position:relative;
   width:fit-content;
   display:block;
-  margin:0 auto 28px!important;
-  padding:0 0 16px!important;
+  margin:0 auto 24px!important;
+  padding:0!important;
   text-align:center;
   font-size:32px;
   font-weight:700;
