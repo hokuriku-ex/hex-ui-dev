@@ -4233,6 +4233,21 @@ body,
   border:0;
 }
 
+/* カードタイトル */
+.content_body:has(.hex-pickup-section) .hex-card-title-text{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  color:#777;
+  font-size:12px;
+  font-weight:400;
+}
+.content_body:has(.hex-pickup-section) .hex-card-title-text b{
+  color:#1f2774;
+  font-size:18px;
+  font-weight:500;
+}
+
 /* =======================================
    下層ページ：エクステリア商品検索
 ======================================= */
