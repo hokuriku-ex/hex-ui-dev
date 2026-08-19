@@ -4524,7 +4524,7 @@ body,
 .hex-contact-nav{
   display:block;
   width:auto!important;
-  max-width:var(--hex_small_width)!important;
+  max-width:600px!important;
   margin:0 auto!important;
   text-align:left;
   box-sizing:border-box;
