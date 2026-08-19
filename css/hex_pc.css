@@ -4258,21 +4258,22 @@ body,
 .content_body:has(.hex-pickup-section) .hex-card-title-link:hover .hex-card-title-text b{
   color:#c8a874!important;
 }
-.content_body:has(.hex-pickup-section) .hex-card .hex-link-detail,
-.content_body:has(.hex-pickup-section) .hex-card .hex-link-icon,
-.content_body:has(.hex-pickup-section) .hex-card .hex-link-icon i{
-  color:#1f2774!important;
-}
 .content_body:has(.hex-pickup-section) .hex-link-detail,
 .content_body:has(.hex-pickup-section) .hex-link-icon{
+  color:#1f2774!important;
   transform:translateY(10px);
+  transition:color .3s ease, transform .3s ease!important;
 }
-.content_body:has(.hex-pickup-section) .hex-card-title-link:hover .hex-link-icon,
-.content_body:has(.hex-pickup-section) .hex-card-title-link:hover .hex-link-icon i{
+.content_body:has(.hex-pickup-section) .hex-link-icon i{
+  color:inherit!important;
+  transition:color .3s ease!important;
+}
+.content_body:has(.hex-pickup-section) .hex-card-title-link:hover .hex-link-detail,
+.content_body:has(.hex-pickup-section) .hex-card-title-link:hover .hex-link-icon{
   color:#c8a874!important;
 }
 .content_body:has(.hex-pickup-section) .hex-card-title-link:hover .hex-link-icon{
-  transform:translate(3px, 10px);
+  transform:translate(3px,10px);
 }
 
 /* =======================================
