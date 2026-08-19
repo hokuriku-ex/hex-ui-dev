@@ -3671,6 +3671,9 @@ body,
     grid-column:1 / -1;
     display:grid;
     grid-template-columns:280px 1fr;
+    width:100%;
+    max-width:1000px;
+    margin-inline:auto;
     min-height:280px;
   }
   .hex-staff-number{
