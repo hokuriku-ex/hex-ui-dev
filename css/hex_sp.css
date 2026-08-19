@@ -1229,22 +1229,11 @@
     column-gap:0;
     row-gap:8px;
   }
-
-  /* SPは行全体に薄グレーの下線 */
-  #gc_auto_body_company .publicinfo_company .content{
-    border-bottom:1px solid #d8dce8!important;
+  #gc_auto_body_company .publicinfo_company .content::after{
+    content:none!important;
   }
-
-  /* PC用の分割線を解除 */
-  #gc_auto_body_company .publicinfo_company .content_title,
-  #gc_auto_body_company .publicinfo_company .content_text{
-    border-bottom:none!important;
-  }
-
-  /* 項目名だけ紺＋少し太く */
   #gc_auto_body_company .publicinfo_company .content_title{
     color:#1f2774!important;
-    font-weight:600!important;
   }
 }
 
