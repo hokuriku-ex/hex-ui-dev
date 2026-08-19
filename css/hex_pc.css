@@ -3388,6 +3388,9 @@ body,
   width:100%!important;
   border:0;
 }
+#gc_auto_body_company .publicinfo_company .content_map{
+  margin:2% 0!important;
+}
 
 /* 1行全体に薄グレーの下線 */
 #gc_auto_body_company .publicinfo_company .content{
