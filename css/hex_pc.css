@@ -4240,6 +4240,13 @@ body,
   margin-left:auto!important;
   margin-right:auto!important;
 }
+.content_body:has(.hex-pickup-section) .hex-product-list-title{
+  width:100%!important;
+  max-width:var(--hex_medium_width)!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  text-align:left!important;
+}
 
 /* ロックガーデンカード幅 */
 .content_body:has(.hex-pickup-section) .hex-card-grid.hex-card-grid2{
