@@ -4522,7 +4522,7 @@ body,
 ======================================= */
 /* 画面サイズ */
 .hex-contact-nav{
-  display:table;
+  display:block;
   width:auto!important;
   max-width:var(--hex_small_width)!important;
   margin:0 auto!important;
