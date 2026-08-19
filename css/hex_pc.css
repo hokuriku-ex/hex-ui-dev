@@ -4262,7 +4262,7 @@ body,
 }
 .content_body:has(.hex-pickup-section) .hex-link-detail,
 .content_body:has(.hex-pickup-section) .hex-link-icon{
-  transform:translateY(8px);
+  transform:translateY(10px);
 }
 
 /* =======================================
