@@ -105,7 +105,7 @@ html{
   position:relative;
   display:table;
   width:auto!important;
-  max-width:var(--hex_small_width)!important;
+  max-width:var(--base_width)!important;
   margin:0 auto 24px!important;
   padding:0 0 16px!important;
   color:#383838;
