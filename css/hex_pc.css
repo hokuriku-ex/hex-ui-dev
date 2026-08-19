@@ -4301,7 +4301,7 @@ body,
 ======================================= */
 /* 全体レイアウト */
 .content_body:has(.hex-search-section){
-  display:table;
+  display:block;
   width:auto!important;
   max-width:var(--hex_small_width)!important;
   margin:0 auto!important;
