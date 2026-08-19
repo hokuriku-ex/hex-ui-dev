@@ -4250,6 +4250,9 @@ body,
 }
 
 /* カード */
+.content_body:has(.hex-pickup-section) br[clear="all"]{
+  display:none!important;
+}
 .content_body:has(.hex-pickup-section) .hex-card-title-text{
   display:flex;
   flex-direction:column;
