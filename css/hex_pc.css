@@ -4255,6 +4255,9 @@ body,
   font-weight:500;
   line-height:1.5;
 }
+.content_body:has(.hex-pickup-section) .hex-card-title-link:hover .hex-card-title-text b{
+  color:#c8a874!important;
+}
 .content_body:has(.hex-pickup-section) .hex-card .hex-link-detail,
 .content_body:has(.hex-pickup-section) .hex-card .hex-link-icon,
 .content_body:has(.hex-pickup-section) .hex-card .hex-link-icon i{
@@ -4265,6 +4268,7 @@ body,
   transform:translateY(10px);
 }
 .content_body:has(.hex-pickup-section) .hex-card-title-link:hover .hex-link-icon{
+  color:#c8a874!important;
   transform:translate(3px, 10px);
 }
 
