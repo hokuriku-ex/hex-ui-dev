@@ -4236,7 +4236,7 @@ body,
 /* フェンスカード */
 .content_body:has(.hex-pickup-section) .hex-card-grid.hex-card-grid3{
   width:100%!important;
-  max-width:var(--hex_medium_width)!important;
+  max-width:1100px!important;
   margin-left:auto!important;
   margin-right:auto!important;
 }
@@ -4263,6 +4263,9 @@ body,
 .content_body:has(.hex-pickup-section) .hex-link-detail,
 .content_body:has(.hex-pickup-section) .hex-link-icon{
   transform:translateY(10px);
+}
+.content_body:has(.hex-pickup-section) .hex-card-title-link:hover .hex-link-icon{
+  transform:translate(3px, 10px);
 }
 
 /* =======================================
