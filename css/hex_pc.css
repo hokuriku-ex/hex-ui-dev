@@ -4061,7 +4061,7 @@ body,
 }
 
 /* =======================================
-   注目アイテム
+   下層ページ：注目アイテム
 ======================================= */
 /* 全体レイアウト */
 .content_body:has(.hex-pickup-section){
@@ -4204,7 +4204,7 @@ body,
   display:flex;
   width:100%;
   max-width:800px;
-  margin:0 auto;
+  margin:0 auto 16px;
   align-items:baseline;
   gap:12px;
   color:#888;
