@@ -4553,11 +4553,11 @@ body,
   margin-top:24px;
 }
 .hex-contact-nav .hex-contact-text{
-  font-size:15px;
+  font-size:20px;
 }
 .hex-contact-nav .hex-contact-tel{
   color:#1f2774!important;
-  font-size:22px;
+  font-size:40px;
   font-weight:500;
   line-height:1.4;
   letter-spacing:.04em;
@@ -4568,10 +4568,10 @@ body,
 }
 .hex-contact-nav .hex-contact-tel span{
   margin-right:6px;
-  font-size:14px;
+  font-size:18px;
 }
 .hex-contact-nav .hex-contact-hours{
-  font-size:14px;
+  font-size:18px;
   color:#383838;
 }
 .hex-contact-nav .hex-contact-faq-link{
