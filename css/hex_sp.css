@@ -1582,6 +1582,17 @@
 }
 
 /* =======================================
+   下層ページ：注目アイテム
+======================================= */
+@media screen and (max-width:768px){
+  .content_body:has(.hex-pickup-section) .hex-product-movie-title{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:2px;
+  }
+}
+
+/* =======================================
    下層ページ：エクステリア商品検索
 ======================================= */
 @media screen and (max-width:768px){
