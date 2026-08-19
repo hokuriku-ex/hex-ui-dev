@@ -4249,16 +4249,20 @@ body,
   font-weight:400;
   line-height:1.4;
 }
-.content_body:has(.hex-pickup-section) .hex-card .hex-link-detail,
-.content_body:has(.hex-pickup-section) .hex-card .hex-link-icon,
-.content_body:has(.hex-pickup-section) .hex-card .hex-link-icon i{
-  color:#1f2774!important;
-}
 .content_body:has(.hex-pickup-section) .hex-card-title-text b{
   color:#1f2774;
   font-size:18px;
   font-weight:500;
   line-height:1.5;
+}
+.content_body:has(.hex-pickup-section) .hex-card .hex-link-detail,
+.content_body:has(.hex-pickup-section) .hex-card .hex-link-icon,
+.content_body:has(.hex-pickup-section) .hex-card .hex-link-icon i{
+  color:#1f2774!important;
+}
+.content_body:has(.hex-pickup-section) .hex-link-detail,
+.content_body:has(.hex-pickup-section) .hex-link-icon{
+  transform:translateY(8px);
 }
 
 /* =======================================
