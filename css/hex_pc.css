@@ -84,7 +84,7 @@ html{
 .hex-section-title::after{
   content:"";
   position:absolute;
-  bottom:16px;
+  bottom:8px;
   left:50%;
   transform:translateX(-50%);
   width:calc(100% + 48px);
@@ -3251,7 +3251,7 @@ body,
 #gc_auto_body_company .publicinfo_company h2.hex-section-title::after{
   content:"";
   position:absolute;
-  bottom:16px;
+  bottom:8px;
   left:50%;
   transform:translateX(-50%);
   width:calc(100% + 48px);
