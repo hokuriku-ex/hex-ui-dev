@@ -4299,6 +4299,13 @@ body,
 /* =======================================
    下層ページ：エクステリア商品検索
 ======================================= */
+/* 全体レイアウト */
+.content_body:has(.hex-search-section){
+  width:100%!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  box-sizing:border-box;
+}
 .hex-product-search{
   display:flex;
   justify-content:center;
