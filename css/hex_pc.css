@@ -3344,6 +3344,11 @@ body,
   vertical-align:middle;
   font-size:0;
 }
+#gc_auto_body_company .hex-company-pair-name::before,
+#gc_auto_body_company .hex-company-area-mark{
+  position:relative;
+  top:-2px;
+}
 #gc_auto_body_company .hex-company-pair-count{
   white-space:nowrap;
   text-align:right;
