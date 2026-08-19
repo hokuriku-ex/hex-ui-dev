@@ -3378,8 +3378,11 @@ body,
 /* 1行全体に薄グレーの下線 */
 #gc_auto_body_company .publicinfo_company .content{
   position:relative;
-  border-bottom:2px solid #d8dce8!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
   justify-content:flex-start!important;
+  align-items:stretch!important;
+  border-bottom:2px solid #d8dce8!important;
 }
 
 /* title / text 自体の線は消す */
@@ -3402,12 +3405,16 @@ body,
 
 /* 項目の幅20%　ウエイト強め */
 #gc_auto_body_company .publicinfo_company .content_title{
-  width:20%!important;
+  width:auto!important;
   flex:0 0 20%!important;
+  box-sizing:border-box!important;
+  font-weight:500!important;
 }
 #gc_auto_body_company .publicinfo_company .content_text{
-  width:80%!important;
-  flex:0 0 80%!important;
+  width:auto!important;
+  flex:1 1 0!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
 }
 
 /* 既存の丸矢印アイコンを非表示 */
