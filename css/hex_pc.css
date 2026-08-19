@@ -4236,7 +4236,7 @@ body,
 /* フェンスカード */
 .content_body:has(.hex-pickup-section) .hex-card-grid.hex-card-grid3{
   width:100%!important;
-  max-width:var(--hex_small_width)!important;
+  max-width:var(--hex_medium_width)!important;
   margin-left:auto!important;
   margin-right:auto!important;
 }
