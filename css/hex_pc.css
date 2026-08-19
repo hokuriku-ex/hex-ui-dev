@@ -3327,9 +3327,13 @@ body,
   min-width:0;
 }
 #gc_auto_body_company .hex-company-pair-name::before{
-  content:"■";
-  margin-right:.25em;
-  color:inherit;
+  content:"";
+  display:inline-block;
+  width:10px;
+  height:2px;
+  margin-right:10px;
+  background:#c8a874;
+  vertical-align:middle;
 }
 #gc_auto_body_company .hex-company-pair-count{
   white-space:nowrap;
@@ -3369,6 +3373,26 @@ body,
   width:100%!important;
   width:100%!important;
   border:0;
+}
+
+/* 既存の行罫線を解除 */
+#gc_auto_body_company .publicinfo_company .content{
+  border-bottom:none!important;
+}
+
+/* 項目側：紺 */
+#gc_auto_body_company .publicinfo_company .content_title{
+  border-bottom:1px solid #1f2774!important;
+}
+
+/* 内容側：薄グレー */
+#gc_auto_body_company .publicinfo_company .content_text{
+  border-bottom:1px solid #d8dce8!important;
+}
+
+/* 既存の丸矢印アイコンを非表示 */
+#gc_auto_body_company .publicinfo_company .content_title > .bg_svg{
+  display:none!important;
 }
 
 /* =======================================
