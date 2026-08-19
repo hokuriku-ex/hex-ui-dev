@@ -3335,6 +3335,15 @@ body,
   background:#c8a874;
   vertical-align:middle;
 }
+#gc_auto_body_company .hex-company-area-mark{
+  display:inline-block;
+  width:10px;
+  height:2px;
+  margin-right:10px;
+  background:#c8a874;
+  vertical-align:middle;
+  font-size:0;
+}
 #gc_auto_body_company .hex-company-pair-count{
   white-space:nowrap;
   text-align:right;
@@ -3397,6 +3406,15 @@ body,
   height:2px;
   background:#1f2774;
   pointer-events:none;
+}
+
+/* アクセスの下の線を消す */
+#gc_auto_body_company .hex-company-section-access .content{
+  border:none!important;
+  padding:0;
+}
+#gc_auto_body_company .hex-company-section-access .content::after{
+  content:none!important;
 }
 
 /* 項目のウエイト強め */
