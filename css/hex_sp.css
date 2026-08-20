@@ -1241,13 +1241,12 @@
   #gc_auto_body_company .hex-company-pair-name{
     padding-left:0;
   }
-  #gc_auto_body_company .hex-company-pair{
+  #gc_auto_body_company .hex-company-pair-item{
     display:flex;
     justify-content:space-between;
     align-items:baseline;
-    gap:32px;
     width:100%;
-    max-width:500px;
+    max-width:500px!important;
     margin-left:0;
     margin-right:auto;
   }
