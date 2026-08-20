@@ -1558,6 +1558,9 @@
     width:100%!important;
     max-width:none!important;
   }
+  .hex-business-list1 .hex-card-body{
+    padding:0!important;
+  }
 }
 
 /* =======================================
