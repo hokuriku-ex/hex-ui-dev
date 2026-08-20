@@ -3007,7 +3007,12 @@ body,
   padding-bottom:16px;
   isolation:isolate;
 }
-.gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3::after{
+.gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3 b{
+  position:relative;
+  padding-bottom:20px;
+  isolation:isolate;
+}
+.gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3 b::after{
   content:"";
   position:absolute;
   bottom:16px;
