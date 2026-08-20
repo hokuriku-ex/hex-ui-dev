@@ -1578,7 +1578,7 @@ div[hex-sp]{
 /* ギャラリー */
 .hex-gallery{
   width:100%;
-  max-width:var(--hex_medium_width);
+  max-width:var(--hex_small_width);
   margin:0 auto;
 }
 .hex-gallery-wrap{
@@ -2856,7 +2856,7 @@ body,
 ======================================= */
 .hex-gallery.hex-pickup-gallery{
   width:100%;
-  max-width:var(--hex_medium_width);
+  max-width:1100px!important;
   margin:0 auto;
 }
 .hex-gallery.hex-pickup-gallery
@@ -3603,7 +3603,7 @@ body,
 /* ギャラリー */
 .hex-gallery.hex-company-gallery{
   width:100%;
-  max-width:var(--hex_small_width);
+  max-width:800px!important;
   margin:0 auto;
 }
 .hex-gallery.hex-company-gallery
