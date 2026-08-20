@@ -1296,15 +1296,32 @@
   .hex-gallery.hex-company-gallery
   > .hex-gallery-wrap
   > .hex-gallery-main-swiper{
-    height:588px!important;
-    min-height:588px!important;
-    max-height:588px!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    aspect-ratio:4 / 3!important;
   }
   .hex-gallery.hex-company-gallery
-  .hex-gallery-pagination{
-    display:block!important;
-    height:20px!important;
-    margin-top:18px!important;
+  > .hex-gallery-wrap
+  > .hex-gallery-main-swiper
+  > .swiper-wrapper,
+  .hex-gallery.hex-company-gallery
+  > .hex-gallery-wrap
+  > .hex-gallery-main-swiper
+  > .swiper-wrapper
+  > .swiper-slide,
+  .hex-gallery.hex-company-gallery
+  .hex-gallery-main-swiper .hex-banner{
+    height:100%!important;
+    min-height:0!important;
+    max-height:none!important;
+  }
+  .hex-gallery.hex-company-gallery
+  .hex-gallery-main-swiper .hex-banner img{
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    object-fit:cover!important;
   }
 }
 
