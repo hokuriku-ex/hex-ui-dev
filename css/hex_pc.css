@@ -17,25 +17,27 @@ h6{
   font-family:'Zen Kaku Gothic New',sans-serif!important;
 }
 
-/* 改行バランス調整 */
-.content_body p,
-.content_body li,
-.content_body dd,
-.hex-card-text{
-  text-wrap:pretty;
-}
-.content_body h1,
-.content_body h2,
-.content_body h3,
-.content_body h4,
-.content_body h5,
-.content_body h6{
-  text-wrap:balance;
-}
-
 /* スクロールバー対策 */
 html{
   overflow-y:scroll;
+}
+
+/* 改行バランス調整 */
+@media screen and (min-width:769px){
+  .content_body p,
+  .content_body li,
+  .content_body dd,
+  .hex-card-text{
+    text-wrap:pretty;
+  }
+  .content_body h1,
+  .content_body h2,
+  .content_body h3,
+  .content_body h4,
+  .content_body h5,
+  .content_body h6{
+    text-wrap:balance;
+  }
 }
 
 /* =======================================
