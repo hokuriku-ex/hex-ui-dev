@@ -4104,11 +4104,14 @@ body,
 .hex-business-list1{
   max-width:var(--hex_small_width)!important;
 }
+.hex-businesse-list1 .hex-card{
+  border:none!important;
+}
 .hex-business-list1 .hex-card-text b{
   display:block;
   margin:18px 0 4px;
   color:#1f2774;
-  font-weight:700;
+  font-weight:500;
 }
 .hex-business-list1 .hex-card-text b:first-child{
   margin-top:0;
