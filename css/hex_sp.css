@@ -1545,6 +1545,22 @@
 }
 
 /* =======================================
+   下層ページ：外構パートナーをお探しの方
+======================================= */
+/* 私たちにできること */
+@media screen and (max-width:768px){
+  .hex-business-list1{
+    display:grid!important;
+    grid-template-columns:minmax(0, 1fr)!important;
+    gap:24px!important;
+  }
+  .hex-business-list1 .hex-card{
+    width:100%!important;
+    max-width:none!important;
+  }
+}
+
+/* =======================================
    下層ページ：工事メニュー
 ======================================= */
 /* 土木工事・申請 申請の流れ */
