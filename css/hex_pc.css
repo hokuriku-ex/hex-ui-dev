@@ -3609,39 +3609,39 @@ body,
 .hex-gallery.hex-company-gallery
 > .hex-gallery-wrap
 > .hex-gallery-main-swiper{
-  height:500px!important;
-  min-height:500px!important;
-  max-height:500px!important;
+  height:600px!important;
+  min-height:600px!important;
+  max-height:600px!important;
   aspect-ratio:auto!important;
 }
 .hex-gallery.hex-company-gallery
 > .hex-gallery-wrap
 > .hex-gallery-main-swiper
 > .swiper-wrapper{
-  height:500px!important;
-  min-height:500px!important;
-  max-height:500px!important;
+  height:600px!important;
+  min-height:600px!important;
+  max-height:600px!important;
 }
 .hex-gallery.hex-company-gallery
 > .hex-gallery-wrap
 > .hex-gallery-main-swiper
 > .swiper-wrapper
 > .swiper-slide{
-  height:500px!important;
-  min-height:500px!important;
-  max-height:500px!important;
+  height:600px!important;
+  min-height:600px!important;
+  max-height:600px!important;
 }
 .hex-gallery.hex-company-gallery
 .hex-gallery-main-swiper .hex-banner{
-  height:500px!important;
-  min-height:500px!important;
-  max-height:500px!important;
+  height:600px!important;
+  min-height:600px!important;
+  max-height:600px!important;
 }
 .hex-gallery.hex-company-gallery
 .hex-gallery-main-swiper .hex-banner img{
   width:100%!important;
   height:100%!important;
-  min-height:500px!important;
+  min-height:600px!important;
   object-fit:cover!important;
 }
 
