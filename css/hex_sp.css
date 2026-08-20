@@ -1235,6 +1235,12 @@
   #gc_auto_body_company .publicinfo_company .content_title{
     color:#1f2774!important;
   }
+  #gc_auto_body_company .hex-company-pair-name::before{
+    display:none;
+  }
+  #gc_auto_body_company .hex-company-pair-name{
+    padding-left:0;
+  }
 }
 
 /* =======================================
