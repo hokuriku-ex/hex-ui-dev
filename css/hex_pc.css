@@ -4103,6 +4103,7 @@ body,
 /* 私たちにできること */
 .hex-businesse-list1{
   max-width:var(--hex_small_width)!important;
+  border:none;
 }
 
 /* ご依頼・連携の流れ */
