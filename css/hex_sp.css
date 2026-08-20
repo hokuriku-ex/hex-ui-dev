@@ -1296,9 +1296,9 @@
   .hex-gallery.hex-company-gallery
   > .hex-gallery-wrap
   > .hex-gallery-main-swiper{
-    height:538px!important;
-    min-height:538px!important;
-    max-height:538px!important;
+    height:638px!important;
+    min-height:638px!important;
+    max-height:638px!important;
   }
   .hex-gallery.hex-company-gallery
   .hex-gallery-pagination{
