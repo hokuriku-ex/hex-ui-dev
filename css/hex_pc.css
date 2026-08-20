@@ -3603,7 +3603,8 @@ body,
 /* ギャラリー */
 .hex-gallery.hex-company-gallery{
   width:100%;
-  max-width:800px!important;
+  max-width:900px!important;
+  height:550px!important;
   margin:0 auto;
 }
 .hex-gallery.hex-company-gallery
