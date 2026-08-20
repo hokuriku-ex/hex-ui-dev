@@ -3006,9 +3006,11 @@ body,
   position:relative;
   padding-bottom:16px;
   isolation:isolate;
+  font-weight:500!important;
 }
 .gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3 b{
-  padding-bottom:28px!important;
+  font-size:28px!important;
+  font-weight:700!important;
 }
 .gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3 b::after{
   content:"";
@@ -3016,7 +3018,7 @@ body,
   bottom:16px;
   left:50%;
   transform:translateX(-50%);
-  width:100%;
+  width:calc(100% + 48px);
   height:12px;
   box-sizing:border-box;
   z-index:-1;
