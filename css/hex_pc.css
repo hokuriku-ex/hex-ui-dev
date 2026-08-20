@@ -4105,7 +4105,29 @@ body,
   max-width:var(--hex_small_width)!important;
 }
 .hex-business-list1 .hex-card{
+  position:relative;
+  overflow:hidden;
   border:none!important;
+  border-radius:6px!important;
+  background:#fafafa!important;
+}
+.hex-business-list1 .hex-card::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:5px;
+  background:repeating-linear-gradient(
+    45deg,
+    #c8a874 0,
+    #c8a874 2px,
+    transparent 2px,
+    transparent 5px
+  );
+}
+.hex-business-list1 .hex-card-body{
+  padding:38px 32px 34px!important;
 }
 .hex-business-list1 .hex-card-text b{
   display:block;
