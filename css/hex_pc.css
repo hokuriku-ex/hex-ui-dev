@@ -4100,9 +4100,19 @@ body,
 /* =======================================
    下層ページ：外構パートナーをお探しの方
 ======================================= */
-/* 土木工事・申請 */
-.hex-businesse-list{
+/* 私たちにできること */
+.hex-businesse-list1{
   max-width:var(--hex_small_width)!important;
+}
+
+/* ご依頼・連携の流れ */
+.hex-businesse-list2{
+  max-width:var(--base_width)!important;
+}
+
+/* なぜ、外構会社が造成段階から関わるのか */
+.hex-businesse-list3{
+  max-width:var(--hex_medium_width)!important;
 }
 
 /* =======================================
