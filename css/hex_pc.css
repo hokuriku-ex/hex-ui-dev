@@ -1578,7 +1578,7 @@ div[hex-sp]{
 /* ギャラリー */
 .hex-gallery{
   width:calc(100% - 20px);
-  max-width:var(--hex_small_width);
+  max-width:var(--hex_medium_width);
   margin:0 auto;
 }
 .hex-gallery-wrap{
