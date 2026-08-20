@@ -1291,6 +1291,23 @@
   }
 }
 
+/* ギャラリー */
+@media screen and (max-width:768px){
+  .hex-gallery.hex-company-gallery
+  > .hex-gallery-wrap
+  > .hex-gallery-main-swiper{
+    height:538px!important;
+    min-height:538px!important;
+    max-height:538px!important;
+  }
+  .hex-gallery.hex-company-gallery
+  .hex-gallery-pagination{
+    display:block!important;
+    height:20px!important;
+    margin-top:18px!important;
+  }
+}
+
 /* =======================================
    下層ページ：スタッフ紹介
 ======================================= */
