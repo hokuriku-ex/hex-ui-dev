@@ -3003,12 +3003,13 @@ body,
   text-align:left!important;
 }
 .gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3{
-  position:relative;
-  padding-bottom:16px;
-  isolation:isolate;
   font-weight:500!important;
 }
 .gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3 b{
+  position:relative;
+  display:inline-block;
+  padding-bottom:16px;
+  isolation:isolate;
   font-size:28px!important;
   font-weight:700!important;
 }
@@ -3018,7 +3019,7 @@ body,
   bottom:16px;
   left:50%;
   transform:translateX(-50%);
-  width:calc(100% + 48px);
+  width:100%;
   height:12px;
   box-sizing:border-box;
   z-index:-1;
