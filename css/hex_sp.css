@@ -1241,6 +1241,16 @@
   #gc_auto_body_company .hex-company-pair-name{
     padding-left:0;
   }
+  #gc_auto_body_company .hex-company-pair{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:32px;
+    width:100%;
+    max-width:500px;
+    margin-left:0;
+    margin-right:auto;
+  }
 }
 
 /* =======================================
