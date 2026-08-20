@@ -4104,6 +4104,25 @@ body,
 .hex-businesse-list1{
   max-width:var(--hex_small_width)!important;
 }
+.hex-businesse-list1 .hex-card-text b{
+  display:block;
+  margin:18px 0 4px;
+  color:#1f2774;
+  font-weight:700;
+}
+.hex-businesse-list1 .hex-card-text b:first-child{
+  margin-top:0;
+}
+.hex-businesse-list1 .hex-card-text b::before{
+  content:"";
+  display:inline-block;
+  width:10px;
+  height:2px;
+  margin-right:10px;
+  background:#c8a874;
+  vertical-align:middle;
+  transform:translateY(-1px);
+}
 
 /* ご依頼・連携の流れ */
 .hex-businesse-list2{
