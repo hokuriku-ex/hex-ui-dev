@@ -1119,8 +1119,8 @@
    トップページ：採用情報
 ======================================= */
 @media screen and (max-width:768px){
-  .gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3::after{
-    width:calc(100% + 24px);
+  .gc_auto_frame_spotitem_body:has(.hex-recruit-section) h3 b{
+    font-size:24px!important;
   }
 }
 
