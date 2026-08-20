@@ -577,6 +577,19 @@ a.hex-text-link[target="_blank"]::after{
 }
 
 /* =======================================
+   YouTube埋め込み
+======================================= */
+.hex-youtube-wrap{
+  border-radius:6px;
+  overflow:hidden;
+}
+.hex-youtube-wrap iframe{
+  display:block;
+  width:100%;
+  border:0;
+}
+
+/* =======================================
    記事パーツ（スペーサー）
 ======================================= */
 .rsp_spacer1{
