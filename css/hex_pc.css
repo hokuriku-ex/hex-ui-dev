@@ -1577,7 +1577,7 @@ div[hex-sp]{
 
 /* ギャラリー */
 .hex-gallery{
-  width:calc(100% - 20px);
+  width:100%;
   max-width:var(--hex_medium_width);
   margin:0 auto;
 }
@@ -2854,6 +2854,11 @@ body,
 /* =======================================
    トップページ：注目アイテム
 ======================================= */
+.hex-gallery.hex-pickup-gallery{
+  width:100%;
+  max-width:var(--hex_medium_width);
+  margin:0 auto;
+}
 .hex-gallery.hex-pickup-gallery
 > .hex-gallery-wrap
 > .hex-gallery-main-swiper{
@@ -3593,6 +3598,51 @@ body,
   .hex-staff-iframe-mode .hex-staff-card.is-leader .hex-staff-joined{
     margin:4px 0 0;
   }
+}
+
+/* ギャラリー */
+.hex-gallery.hex-company-gallery{
+  width:100%;
+  max-width:var(--hex_small_width);
+  margin:0 auto;
+}
+.hex-gallery.hex-company-gallery
+> .hex-gallery-wrap
+> .hex-gallery-main-swiper{
+  height:400px!important;
+  min-height:400px!important;
+  max-height:400px!important;
+  aspect-ratio:auto!important;
+}
+.hex-gallery.hex-company-gallery
+> .hex-gallery-wrap
+> .hex-gallery-main-swiper
+> .swiper-wrapper{
+  height:400px!important;
+  min-height:400px!important;
+  max-height:400px!important;
+}
+.hex-gallery.hex-company-gallery
+> .hex-gallery-wrap
+> .hex-gallery-main-swiper
+> .swiper-wrapper
+> .swiper-slide{
+  height:400px!important;
+  min-height:400px!important;
+  max-height:400px!important;
+}
+.hex-gallery.hex-company-gallery
+.hex-gallery-main-swiper .hex-banner{
+  height:400px!important;
+  min-height:400px!important;
+  max-height:400px!important;
+}
+.hex-gallery.hex-company-gallery
+.hex-gallery-main-swiper .hex-banner img{
+  width:100%!important;
+  height:100%!important;
+  min-height:400px!important;
+  object-fit:cover!important;
 }
 
 /* =======================================
