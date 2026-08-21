@@ -1337,6 +1337,40 @@ hexReady(function(){
     grid.classList.remove('hex-action-grid-debug');
     grid.classList.add('hex-action-grid');
 
+    /* カードグリッドのmax-widthを見出しへ渡す */
+    function syncActionMaxWidth(){
+
+      var gridStyle = window.getComputedStyle(grid);
+      var gridMaxWidth = gridStyle.maxWidth;
+
+      /*
+      * max-widthが指定されていない場合は
+      * 実際に表示されている幅を使用
+      */
+      if(
+        !gridMaxWidth ||
+        gridMaxWidth === 'none'
+      ){
+
+        gridMaxWidth =
+          grid.getBoundingClientRect().width + 'px';
+
+      }
+
+      action.style.setProperty(
+        '--hex-action-grid-max-width',
+        gridMaxWidth
+      );
+
+    }
+
+    syncActionMaxWidth();
+
+    window.addEventListener(
+      'resize',
+      syncActionMaxWidth
+    );
+
     action.dataset.hexAccordionReady = 'true';
 
     trigger.setAttribute('role', 'button');
