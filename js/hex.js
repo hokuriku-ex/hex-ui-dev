@@ -1290,6 +1290,87 @@ hexReady(function(){
 });
 
 /* =======================================
+   アクション見出しアコーディオン
+======================================= */
+hexReady(function(){
+  document
+    .querySelectorAll('.hex-section-action.action-on')
+    .forEach(function(action){
+      var trigger = action.querySelector('a');
+      /* CMSが生成した外側のブロックを取得 */
+      var current = action.closest(
+        '[id^="PageLayoutViewList_PageMain_"]'
+      );
+      if(!trigger || !current){
+        return;
+      }
+      /*
+       * 後続要素を順番に確認し、
+       * 最初のhex-card-gridを取得
+       */
+      var next = current.nextElementSibling;
+      var grid = null;
+      while(next){
+        if(next.classList.contains('hex-card-grid')){
+          grid = next;
+          break;
+        }
+        /*
+         * 次のコンテンツブロックに到達したら
+         * 探索を終了
+         */
+        if(
+          next.matches(
+            '[id^="PageLayoutViewList_PageMain_"]'
+          )
+        ){
+          break;
+        }
+        next = next.nextElementSibling;
+      }
+      if(!grid){
+        return;
+      }
+      grid.classList.add('hex-action-grid');
+      trigger.setAttribute('role', 'button');
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.addEventListener('click', function(event){
+        event.preventDefault();
+        var isOpen = grid.classList.contains('is-open');
+        if(isOpen){
+          grid.style.maxHeight =
+            grid.scrollHeight + 'px';
+          requestAnimationFrame(function(){
+            grid.style.maxHeight = '0px';
+            grid.classList.remove('is-open');
+            action.classList.remove('is-open');
+            trigger.setAttribute(
+              'aria-expanded',
+              'false'
+            );
+          });
+        }else{
+          grid.classList.add('is-open');
+          action.classList.add('is-open');
+          grid.style.maxHeight =
+            grid.scrollHeight + 'px';
+          trigger.setAttribute(
+            'aria-expanded',
+            'true'
+          );
+        }
+      });
+      /* 画面幅変更時に展開高さを再計算 */
+      window.addEventListener('resize', function(){
+        if(grid.classList.contains('is-open')){
+          grid.style.maxHeight =
+            grid.scrollHeight + 'px';
+        }
+      });
+    });
+});
+
+/* =======================================
    ギャラリー
 ======================================= */
 hexReady(function(){
