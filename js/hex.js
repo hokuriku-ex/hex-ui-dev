@@ -2685,8 +2685,8 @@ hexReady(function(){
       title.textContent='外構工事をご検討中の方';
     }
 
-    if(text==='法人・事業者の方'){
-      label='法人・事業者の方';
+    if(text==='ビジネスのお客様'){
+      label='ビジネスのお客様';
       title.textContent='外構パートナーをお探しの方';
     }
 
