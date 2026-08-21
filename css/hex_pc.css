@@ -4619,15 +4619,13 @@ body,
 }
 
 /* =======================================
-   下層ページ：エクステリア商品検索
+   下層ページ：取扱メーカー・商品
 ======================================= */
 /* 全体レイアウト */
-.hex-search-section{
-  display:table;
-  width:auto!important;
-  max-width:var(--hex_small_width)!important;
-  margin:0 auto!important;
-  text-align:left;
+.content_body:has(.hex-search-section){
+  width:100%!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
   box-sizing:border-box;
 }
 
