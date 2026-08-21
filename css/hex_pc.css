@@ -269,7 +269,7 @@ html{
 }
 .hex-section-action{
   --hex-action-grid-max-width:var(--hex_small_width);
-  transition:max-width .5s ease;
+  transition:max-width .3s ease;
 }
 .hex-section-action.action-on.is-open{
   max-width:
