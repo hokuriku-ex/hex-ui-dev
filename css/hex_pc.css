@@ -249,6 +249,24 @@ html{
 .hex-section-action.action-on.is-open a:hover i{
   transform:rotate(180deg);
 }
+.hex-action-grid{
+  margin-bottom:0!important;
+  transition:
+    max-height .6s ease,
+    opacity .4s ease,
+    transform .4s ease,
+    margin-bottom .4s ease,
+    visibility 0s linear .6s;
+}
+.hex-action-grid.is-open{
+  margin-bottom:64px!important;
+  transition:
+    max-height .6s ease,
+    opacity .4s ease,
+    transform .4s ease,
+    margin-bottom .4s ease,
+    visibility 0s;
+}
 
 /* 共通セクション小見出し（h4専用） */
 .hex-section-smalltitle{
