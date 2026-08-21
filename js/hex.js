@@ -1310,7 +1310,9 @@ hexReady(function(){
     }
 
     var grids = Array.from(
-      document.querySelectorAll('.hex-card-grid')
+      document.querySelectorAll(
+        '.hex-card-grid, .hex-image-grid'
+      )
     );
 
     /*
