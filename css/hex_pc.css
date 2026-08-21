@@ -282,8 +282,18 @@ html{
   transition:max-width .4s ease;
 }
 .hex-section-action.action-on.is-open{
-  max-width:
-    var(--hex-action-grid-max-width)!important;
+  max-width:var(--hex-action-grid-max-width)!important;
+}
+.hex-action-label-close{
+  display:none;
+}
+.hex-section-action.action-on.is-open
+.hex-action-label-open{
+  display:none;
+}
+.hex-section-action.action-on.is-open
+.hex-action-label-close{
+  display:inline;
 }
 
 /* 共通セクション小見出し（h4専用） */
