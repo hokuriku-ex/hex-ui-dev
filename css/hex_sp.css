@@ -1321,6 +1321,11 @@
     max-height:none!important;
   }
   .hex-gallery.hex-company-gallery
+  .hex-gallery-main-swiper .hex-banner img{
+    object-fit:contain!important;
+    object-position:center!important;
+  }
+  .hex-gallery.hex-company-gallery
   .hex-gallery-pagination{
     display:block!important;
     height:20px!important;
