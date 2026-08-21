@@ -267,6 +267,14 @@ html{
     margin-bottom .4s ease,
     visibility 0s;
 }
+.hex-section-action{
+  --hex-action-grid-max-width:var(--hex_small_width);
+  transition:max-width .5s ease;
+}
+.hex-section-action.action-on.is-open{
+  max-width:
+    var(--hex-action-grid-max-width)!important;
+}
 
 /* 共通セクション小見出し（h4専用） */
 .hex-section-smalltitle{
