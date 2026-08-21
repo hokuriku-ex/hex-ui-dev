@@ -1292,99 +1292,166 @@ hexReady(function(){
 /* =======================================
    アクション見出しアコーディオン
 ======================================= */
-hexReady(function(){
+(function(){
 
-  var grids = Array.from(
-    document.querySelectorAll('.hex-card-grid')
-  );
+  var accordionObserver = null;
 
-  document
-    .querySelectorAll('.hex-section-action.action-on')
-    .forEach(function(action){
+  function setupAccordion(action){
 
-      var trigger = action.querySelector('a');
+    /* 設定済みなら何もしない */
+    if(action.dataset.hexAccordionReady === 'true'){
+      return;
+    }
 
-      /*
-       * actionより後に配置されている
-       * 最初のhex-card-gridを取得
-       */
-      var grid = grids.find(function(candidate){
+    var trigger = action.querySelector('a');
 
-        return Boolean(
-          action.compareDocumentPosition(candidate) &
-          Node.DOCUMENT_POSITION_FOLLOWING
-        );
+    if(!trigger){
+      return;
+    }
 
-      });
+    var grids = Array.from(
+      document.querySelectorAll('.hex-card-grid')
+    );
 
-      if(!trigger || !grid){
-        return;
-      }
+    /*
+     * actionより後にある
+     * 最初のhex-card-gridを取得
+     */
+    var grid = grids.find(function(candidate){
 
-      /* 対象のカードグリッドに専用クラスを追加 */
-      grid.classList.add('hex-action-grid');
+      return Boolean(
+        action.compareDocumentPosition(candidate) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+      );
 
-      trigger.setAttribute('role', 'button');
-      trigger.setAttribute('aria-expanded', 'false');
+    });
 
-      trigger.addEventListener('click', function(event){
-        event.preventDefault();
+    /*
+     * CMSがまだgridを生成していない場合は
+     * MutationObserverによる次回処理を待つ
+     */
+    if(!grid){
+      return;
+    }
 
-        var isOpen =
-          grid.classList.contains('is-open');
+    grid.classList.remove('hex-action-grid-debug');
+    grid.classList.add('hex-action-grid');
 
-        if(isOpen){
+    action.dataset.hexAccordionReady = 'true';
 
-          grid.style.maxHeight =
-            grid.scrollHeight + 'px';
+    trigger.setAttribute('role', 'button');
+    trigger.setAttribute('aria-expanded', 'false');
 
-          requestAnimationFrame(function(){
+    trigger.addEventListener('click', function(event){
+      event.preventDefault();
 
-            grid.style.maxHeight = '0px';
-            grid.classList.remove('is-open');
-            action.classList.remove('is-open');
+      var isOpen =
+        grid.classList.contains('is-open');
 
-            trigger.setAttribute(
-              'aria-expanded',
-              'false'
-            );
+      if(isOpen){
 
-          });
+        grid.style.maxHeight =
+          grid.scrollHeight + 'px';
 
-        }else{
+        requestAnimationFrame(function(){
 
-          grid.classList.add('is-open');
-          action.classList.add('is-open');
+          grid.style.maxHeight = '0px';
 
-          grid.style.maxHeight =
-            grid.scrollHeight + 'px';
+          grid.classList.remove('is-open');
+          action.classList.remove('is-open');
 
           trigger.setAttribute(
             'aria-expanded',
-            'true'
+            'false'
           );
+
+        });
+
+      }else{
+
+        grid.classList.add('is-open');
+        action.classList.add('is-open');
+
+        grid.style.maxHeight =
+          grid.scrollHeight + 'px';
+
+        trigger.setAttribute(
+          'aria-expanded',
+          'true'
+        );
+
+      }
+
+    });
+
+    /* 画像読み込み後の高さ調整 */
+    grid.querySelectorAll('img').forEach(function(image){
+
+      image.addEventListener('load', function(){
+
+        if(grid.classList.contains('is-open')){
+
+          grid.style.maxHeight =
+            grid.scrollHeight + 'px';
 
         }
 
       });
 
-      /* 画像読み込み後に高さを再計算 */
-      grid.querySelectorAll('img').forEach(function(image){
+    });
 
-        image.addEventListener('load', function(){
+  }
 
-          if(grid.classList.contains('is-open')){
-            grid.style.maxHeight =
-              grid.scrollHeight + 'px';
-          }
+  function initializeAccordions(){
+
+    document
+      .querySelectorAll(
+        '.hex-section-action.action-on'
+      )
+      .forEach(setupAccordion);
+
+  }
+
+  function startAccordion(){
+
+    initializeAccordions();
+
+    /* CMSによる後からのHTML生成・置換を監視 */
+    if(!accordionObserver){
+
+      accordionObserver =
+        new MutationObserver(function(){
+
+          initializeAccordions();
 
         });
 
-      });
+      accordionObserver.observe(
+        document.body,
+        {
+          childList:true,
+          subtree:true
+        }
+      );
 
-    });
+    }
 
-  /* レスポンシブ変更時の高さ調整 */
+  }
+
+  if(document.readyState === 'loading'){
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      startAccordion
+    );
+
+  }else{
+
+    startAccordion();
+
+  }
+
+  /* 画面幅変更時に展開高さを再計算 */
   window.addEventListener('resize', function(){
 
     document
@@ -1398,7 +1465,7 @@ hexReady(function(){
 
   });
 
-});
+})();
 
 /* =======================================
    ギャラリー
