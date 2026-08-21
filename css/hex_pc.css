@@ -4622,7 +4622,7 @@ body,
    下層ページ：取扱メーカー・商品
 ======================================= */
 /* メーカーセクションレイアウト */
-.content_body:has(.hex-search-section){
+.content_body:has(.hex-category-section){
   width:100%!important;
   max-width:var(--hex_small_width)!important;
   margin-left:auto!important;
