@@ -1327,9 +1327,22 @@
   }
   .hex-gallery.hex-company-gallery
   .hex-gallery-pagination{
-    display:block!important;
+    position:relative!important;
+    inset:auto!important;
+    top:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    left:auto!important;
+    transform:none!important;
+    display:flex!important;
+    justify-content:center!important;
+    align-items:center!important;
+    width:100%!important;
     height:20px!important;
-    margin-top:18px!important;
+    margin:18px 0 0!important;
+    opacity:1!important;
+    visibility:visible!important;
+    z-index:10!important;
   }
 }
 
