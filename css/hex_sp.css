@@ -1321,12 +1321,7 @@
     max-height:none!important;
   }
   .hex-gallery.hex-company-gallery
-  .hex-gallery-main-swiper .hex-banner{
-    height:calc((100vw - 32px) * 3 / 4)!important;
-    min-height:0!important;
-    max-height:none!important;
-  }
-  .hex-gallery.hex-company-gallery
+  .hex-gallery-main-swiper .hex-banner
   .hex-gallery-main-swiper .hex-banner img{
     display:block!important;
     width:100%!important;
