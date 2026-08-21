@@ -1293,43 +1293,37 @@
 
 /* ギャラリー */
 @media screen and (max-width:768px){
+  .hex-gallery.hex-company-gallery{
+    --hex-company-image-height:calc((100vw - 32px) * 3 / 4);
+  }
   .hex-gallery.hex-company-gallery
   > .hex-gallery-wrap
   > .hex-gallery-main-swiper{
-    height:calc((100vw - 32px) * 3 / 4 + 38px)!important;
+    height:calc(var(--hex-company-image-height) + 38px)!important;
     min-height:0!important;
     max-height:none!important;
     aspect-ratio:auto!important;
   }
   .hex-gallery.hex-company-gallery
-  > .hex-gallery-wrap
-  > .hex-gallery-main-swiper
-  > .swiper-wrapper{
-    height:calc(100% - 38px)!important;
+  .hex-gallery-main-swiper .swiper-wrapper,
+  .hex-gallery.hex-company-gallery
+  .hex-gallery-main-swiper .swiper-slide,
+  .hex-gallery.hex-company-gallery
+  .hex-gallery-main-swiper .hex-banner,
+  .hex-gallery.hex-company-gallery
+  .hex-gallery-main-swiper .hex-banner-image{
+    height:var(--hex-company-image-height)!important;
     min-height:0!important;
     max-height:none!important;
   }
   .hex-gallery.hex-company-gallery
-  > .hex-gallery-wrap
-  > .hex-gallery-main-swiper
-  > .swiper-wrapper
-  > .swiper-slide,
-  .hex-gallery.hex-company-gallery
-  .hex-gallery-main-swiper .hex-banner{
-    height:100%!important;
-    min-height:0!important;
-    max-height:none!important;
-  }
-  .hex-gallery.hex-company-gallery
-  .hex-gallery-main-swiper .hex-banner
-  .hex-gallery-main-swiper .hex-banner img{
+  .hex-gallery-main-swiper .hex-banner-image img{
     display:block!important;
     width:100%!important;
     height:100%!important;
     min-height:0!important;
     max-height:none!important;
     object-fit:cover!important;
-    object-position:center!important;
   }
   .hex-gallery.hex-company-gallery
   .hex-gallery-pagination{
