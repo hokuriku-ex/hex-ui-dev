@@ -1322,7 +1322,12 @@
   }
   .hex-gallery.hex-company-gallery
   .hex-gallery-main-swiper .hex-banner img{
-    object-fit:contain!important;
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    max-height:none!important;
+    object-fit:cover!important;
     object-position:center!important;
   }
   .hex-gallery.hex-company-gallery
