@@ -1296,15 +1296,19 @@
   .hex-gallery.hex-company-gallery
   > .hex-gallery-wrap
   > .hex-gallery-main-swiper{
-    height:auto!important;
+    height:calc((100vw - 32px) * 3 / 4 + 38px)!important;
     min-height:0!important;
     max-height:none!important;
-    aspect-ratio:4 / 3!important;
+    aspect-ratio:auto!important;
   }
   .hex-gallery.hex-company-gallery
   > .hex-gallery-wrap
   > .hex-gallery-main-swiper
-  > .swiper-wrapper,
+  > .swiper-wrapper{
+    height:calc(100% - 38px)!important;
+    min-height:0!important;
+    max-height:none!important;
+  }
   .hex-gallery.hex-company-gallery
   > .hex-gallery-wrap
   > .hex-gallery-main-swiper
@@ -1317,30 +1321,10 @@
     max-height:none!important;
   }
   .hex-gallery.hex-company-gallery
-  .hex-gallery-main-swiper .hex-banner img{
-    width:100%!important;
-    height:100%!important;
-    min-height:0!important;
-    object-fit:cover!important;
-  }
-  .hex-gallery.hex-company-gallery
-  .hex-gallery-main-swiper{
-    overflow:visible!important;
-    margin-bottom:28px!important;
-  }
-  .hex-gallery.hex-company-gallery
-  .hex-gallery-main-swiper .hex-banner{
-    overflow:hidden!important;
-    border-radius:6px!important;
-  }
-  .hex-gallery.hex-company-gallery
-  .hex-gallery-main-swiper .hex-banner img{
-    display:block!important;
-    border-radius:0!important;
-  }
-  .hex-gallery.hex-company-gallery
   .hex-gallery-pagination{
-    bottom:-18px!important;
+    display:block!important;
+    height:20px!important;
+    margin-top:18px!important;
   }
 }
 
