@@ -4624,6 +4624,7 @@ body,
 /* 全体レイアウト */
 .content_body:has(.hex-search-section){
   width:100%!important;
+  max-width:var(--hex_small_width)!important;
   margin-left:auto!important;
   margin-right:auto!important;
   box-sizing:border-box;
