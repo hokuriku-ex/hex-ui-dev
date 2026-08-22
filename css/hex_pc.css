@@ -342,7 +342,7 @@ h4:not(.hex-section-smalltitle){
   content:""!important;
   position:relative!important;
   top:auto!important;
-  bottom:-7px!important;
+  bottom:0!important;
   display:block!important;
   flex:0 0 18px!important;
   width:18px!important;
@@ -419,10 +419,21 @@ h2.hex-title-rays{
 }
 :is(h2,h3,h4).hex-title-rays::before,
 :is(h2,h3,h4).hex-title-rays::after{
-  bottom:0!important;
   flex-basis:var(--hex-ray-outer-width)!important;
   width:var(--hex-ray-outer-width)!important;
   height:2px!important;
+}
+h2.hex-title-rays::before,
+h2.hex-title-rays::after{
+  bottom:-13px!important;
+}
+h3.hex-title-rays::before,
+h3.hex-title-rays::after{
+  bottom:-10px!important;
+}
+h4.hex-title-rays::before,
+h4.hex-title-rays::after{
+  bottom:-7px!important;
 }
 :is(h2,h3,h4).hex-title-rays::before{
   left:var(--hex-ray-overlap)!important;
