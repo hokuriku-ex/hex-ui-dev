@@ -73,13 +73,12 @@
 /* 見出しに注目線追加 */
 @media screen and (max-width:768px){
   .hex-title-rays{
-    gap:14px;
-    font-size:24px;
-    line-height:1.7;
+    gap:12px;
   }
   .hex-title-rays::before,
   .hex-title-rays::after{
-    width:10px;
+    flex-basis:26px;
+    width:26px;
     height:30px;
   }
 }
