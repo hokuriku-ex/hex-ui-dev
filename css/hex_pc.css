@@ -305,6 +305,40 @@ html{
   text-align:left;
 }
 
+/* 見出しに注目線追加 */
+.hex-title-rays{
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  width:fit-content;
+  max-width:calc(100% - 32px);
+  margin:0 auto!important;
+  gap:24px;
+  color:#1f2774;
+  font-size:clamp(24px, 2.2vw, 32px);
+  font-weight:700;
+  line-height:1.6;
+  text-align:center;
+}
+.hex-title-rays::before,
+.hex-title-rays::after{
+  content:"";
+  flex:0 0 auto;
+  display:block;
+  width:14px;
+  height:38px;
+  border-left:2px solid #1f2774;
+  border-right:2px solid #1f2774;
+  box-sizing:border-box;
+  transform-origin:center bottom;
+}
+.hex-title-rays::before{
+  transform:skew(24deg);
+}
+.hex-title-rays::after{
+  transform:skew(-24deg);
+}
+
 /* 標準見出しフォントサイズ（h2・h3・h4） */
 h2:not(.hex-section-subtitle){
   font-size:32px;
