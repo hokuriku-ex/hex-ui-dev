@@ -1292,7 +1292,7 @@
   .hex-staff-iframe-mode .hex-staff-sp-button-wrap{
     display:none!important;
   }
-  .hex-section-action hex-staff-section-heading{
+  .hex-staff-iframe-mode .hex-section-action{
     margin:0!important;
   }
 }
