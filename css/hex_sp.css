@@ -1292,8 +1292,8 @@
   .hex-staff-iframe-mode .hex-staff-sp-button-wrap{
     display:none!important;
   }
-  .hex-staff-iframe-mode .hex-section-action{
-    margin:0!important;
+  .hex-staff-iframe-mode .hex-staff-section{
+    margin:0 auto 26px!important;
   }
 }
 
