@@ -5851,7 +5851,7 @@ body.hex-form-dialog-open{
 }
 .hex-contact-tel{
   color:#c8a874!important;
-  font-size:22px;
+  font-size:36px;
   font-weight:500;
   line-height:1.4;
   letter-spacing:.04em;
@@ -5862,7 +5862,7 @@ body.hex-form-dialog-open{
 }
 .hex-contact-tel span{
   margin-right:6px;
-  font-size:14px;
+  font-size:18px;
 }
 .hex-contact-hours{
   font-size:14px;
