@@ -40,7 +40,7 @@
   .hex-section-action{
     grid-template-columns:1fr auto;
     gap:0 16px;
-    margin:0 0 26px!important;
+    margin:0 auto 26px!important;
   }
   .hex-section-action:not(h3){
     padding:16px 18px!important;
@@ -1291,6 +1291,9 @@
   }
   .hex-staff-iframe-mode .hex-staff-sp-button-wrap{
     display:none!important;
+  }
+  .hex-section-action hex-staff-section-heading{
+    margin:0!important;
   }
 }
 
