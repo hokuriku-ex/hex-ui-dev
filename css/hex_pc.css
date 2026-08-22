@@ -402,6 +402,40 @@ h4:not(.hex-section-smalltitle){
 :is(h2,h3,h4).hex-title-rays > span::after{
   transform:rotate(-60deg)!important;
 }
+h4.hex-title-rays{
+  --hex-ray-outer-width:18px;
+  --hex-ray-inner-width:28px;
+  --hex-ray-overlap:12px;
+}
+h3.hex-title-rays{
+  --hex-ray-outer-width:27px;
+  --hex-ray-inner-width:42px;
+  --hex-ray-overlap:18px;
+}
+h2.hex-title-rays{
+  --hex-ray-outer-width:36px;
+  --hex-ray-inner-width:56px;
+  --hex-ray-overlap:24px;
+}
+:is(h2,h3,h4).hex-title-rays::before,
+:is(h2,h3,h4).hex-title-rays::after{
+  bottom:0!important;
+  flex-basis:var(--hex-ray-outer-width)!important;
+  width:var(--hex-ray-outer-width)!important;
+  height:2px!important;
+}
+:is(h2,h3,h4).hex-title-rays::before{
+  left:var(--hex-ray-overlap)!important;
+}
+:is(h2,h3,h4).hex-title-rays::after{
+  right:var(--hex-ray-overlap)!important;
+}
+:is(h2,h3,h4).hex-title-rays > span::before,
+:is(h2,h3,h4).hex-title-rays > span::after{
+  flex-basis:var(--hex-ray-inner-width)!important;
+  width:var(--hex-ray-inner-width)!important;
+  height:2px!important;
+}
 
 /* 本文テキストリンク */
 a.hex-text-link,
