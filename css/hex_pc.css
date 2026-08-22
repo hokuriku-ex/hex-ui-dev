@@ -323,20 +323,17 @@ html{
 .hex-title-rays::before,
 .hex-title-rays::after{
   content:"";
-  flex:0 0 auto;
-  display:block;
-  width:14px;
+  flex:0 0 34px;
+  width:34px;
   height:38px;
-  border-left:2px solid #1f2774;
-  border-right:2px solid #1f2774;
-  box-sizing:border-box;
-  transform-origin:center bottom;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='38' viewBox='0 0 34 38'%3E%3Cpath d='M14 3 L30 35' fill='none' stroke='%231f2774' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M2 18 L12 34' fill='none' stroke='%231f2774' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:center bottom;
+  background-size:contain;
 }
-.hex-title-rays::before{
-  transform:skew(24deg);
-}
+/* 右側は反転 */
 .hex-title-rays::after{
-  transform:skew(-24deg);
+  transform:scaleX(-1);
 }
 
 /* 標準見出しフォントサイズ（h2・h3・h4） */
