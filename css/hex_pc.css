@@ -3962,7 +3962,7 @@ body,
 
 /* お悩み相談 */
 #外構のお悩み.hex-center-title{
-  margin:0!important;
+  margin:0 auto 16px!important;
 }
 
 .hex-notch-line{
