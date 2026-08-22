@@ -306,7 +306,7 @@ html{
 }
 
 /* 見出しに注目線追加 */
-.hex-title-rays{
+:is(h2,h3,h4).hex-title-rays{
   position:relative!important;
   display:flex!important;
   align-items:center!important;
@@ -315,15 +315,23 @@ html{
   max-width:calc(100% - 32px)!important;
   margin:0 auto!important;
   color:#1f2774!important;
-  font-size:clamp(24px, 2.2vw, 32px)!important;
   font-weight:700!important;
   line-height:1.6!important;
   text-align:center!important;
   border:none!important;
   background:none!important;
 }
-.hex-title-rays::before,
-.hex-title-rays::after{
+h2.hex-title-rays{
+  font-size:clamp(24px,2.2vw,32px)!important;
+}
+h3.hex-title-rays{
+  font-size:clamp(22px,2vw,28px)!important;
+}
+h4.hex-title-rays{
+  font-size:clamp(20px,1.8vw,24px)!important;
+}
+:is(h2,h3,h4).hex-title-rays::before,
+:is(h2,h3,h4).hex-title-rays::after{
   content:""!important;
   position:relative!important;
   top:auto!important;
@@ -335,38 +343,46 @@ html{
   padding:0!important;
   border:none!important;
   background:#1f2774!important;
+  box-shadow:none!important;
 }
-.hex-title-rays::before{
+:is(h2,h3,h4).hex-title-rays::before{
   left:12px!important;
   right:auto!important;
   transform:rotate(40deg)!important;
 }
-.hex-title-rays::after{
+:is(h2,h3,h4).hex-title-rays::after{
   right:12px!important;
   left:auto!important;
   transform:rotate(-40deg)!important;
 }
-.hex-title-rays > span{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-width:0;
-  gap:5px;
-  text-align:center;
+:is(h2,h3,h4).hex-title-rays > span{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:0!important;
+  max-width:100%!important;
+  gap:5px!important;
+  color:inherit!important;
+  font:inherit!important;
+  white-space:normal!important;
+  text-align:center!important;
+  overflow-wrap:break-word!important;
 }
-.hex-title-rays > span::before,
-.hex-title-rays > span::after{
-  content:"";
-  flex:0 0 28px;
-  width:28px;
-  height:2px;
-  background:#1f2774;
+:is(h2,h3,h4).hex-title-rays > span::before,
+:is(h2,h3,h4).hex-title-rays > span::after{
+  content:""!important;
+  flex:0 0 28px!important;
+  width:28px!important;
+  height:2px!important;
+  border:none!important;
+  background:#1f2774!important;
+  box-shadow:none!important;
 }
-.hex-title-rays > span::before{
-  transform:rotate(60deg);
+:is(h2,h3,h4).hex-title-rays > span::before{
+  transform:rotate(60deg)!important;
 }
-.hex-title-rays > span::after{
-  transform:rotate(-60deg);
+:is(h2,h3,h4).hex-title-rays > span::after{
+  transform:rotate(-60deg)!important;
 }
 
 /* 標準見出しフォントサイズ（h2・h3・h4） */
