@@ -89,15 +89,11 @@
 @media screen and (max-width:768px){
   :is(h2,h3,h4).hex-title-rays{
     max-width:calc(100% - 24px)!important;
+    text-align:center!important;
   }
-  h2.hex-title-rays{
-    font-size:24px!important;
-  }
-  h3.hex-title-rays{
-    font-size:22px!important;
-  }
-  h4.hex-title-rays{
-    font-size:20px!important;
+  :is(h2,h3,h4).hex-title-rays > span{
+    gap:3px!important;
+    text-align:center!important;
   }
   :is(h2,h3,h4).hex-title-rays::before,
   :is(h2,h3,h4).hex-title-rays::after{
@@ -110,9 +106,6 @@
   }
   :is(h2,h3,h4).hex-title-rays::after{
     right:9px!important;
-  }
-  :is(h2,h3,h4).hex-title-rays > span{
-    gap:3px!important;
   }
   :is(h2,h3,h4).hex-title-rays > span::before,
   :is(h2,h3,h4).hex-title-rays > span::after{
