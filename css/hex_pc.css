@@ -305,6 +305,20 @@ html{
   text-align:left;
 }
 
+/* 標準見出しフォントサイズ（h2・h3・h4） */
+h2:not(.hex-section-subtitle){
+  font-size:32px;
+  font-weight:700;
+}
+h3:not(.hex-section-subtitle){
+  font-size:24px;
+  font-weight:700;
+}
+h4:not(.hex-section-smalltitle){
+  font-size:18px;
+  font-weight:500;
+}
+
 /* 見出しに注目線追加 */
 :is(h2,h3,h4).hex-title-rays{
   position:relative!important;
@@ -383,20 +397,6 @@ h4.hex-title-rays{
 }
 :is(h2,h3,h4).hex-title-rays > span::after{
   transform:rotate(-60deg)!important;
-}
-
-/* 標準見出しフォントサイズ（h2・h3・h4） */
-h2:not(.hex-section-subtitle){
-  font-size:32px;
-  font-weight:700;
-}
-h3:not(.hex-section-subtitle){
-  font-size:24px;
-  font-weight:700;
-}
-h4:not(.hex-section-smalltitle){
-  font-size:18px;
-  font-weight:500;
 }
 
 /* 本文テキストリンク */
