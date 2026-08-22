@@ -307,32 +307,50 @@ html{
 
 /* 見出しに注目線追加 */
 .hex-title-rays{
-  display:flex;
-  align-items:flex-end;
-  justify-content:center;
-  width:fit-content;
-  max-width:calc(100% - 32px);
+  position:relative!important;
+  display:table!important;
+  width:auto!important;
+  max-width:calc(100% - 32px)!important;
   margin:0 auto!important;
-  gap:24px;
-  color:#1f2774;
-  font-size:clamp(24px, 2.2vw, 32px);
-  font-weight:700;
-  line-height:1.6;
-  text-align:center;
+  padding:0 52px!important;
+  box-sizing:border-box!important;
+  color:#1f2774!important;
+  font-size:clamp(24px, 2.2vw, 32px)!important;
+  font-weight:700!important;
+  line-height:1.6!important;
+  text-align:center!important;
+  border:none!important;
+  background:none!important;
 }
 .hex-title-rays::before,
 .hex-title-rays::after{
-  content:"";
-  flex:0 0 34px;
-  width:34px;
-  height:38px;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='38' viewBox='0 0 34 38'%3E%3Cpath d='M14 3 L30 35' fill='none' stroke='%231f2774' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M8 25 L21 34' fill='none' stroke='%231f2774' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:center bottom;
-  background-size:contain;
+  content:""!important;
+  position:absolute!important;
+  top:auto!important;
+  bottom:4px!important;
+  display:block!important;
+  width:38px!important;
+  height:42px!important;
+  margin:0!important;
+  padding:0!important;
+  border:none!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background-color:transparent!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='38' height='42' viewBox='0 0 38 42'%3E%3Cpath d='M16 3 L34 39' fill='none' stroke='%231f2774' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M6 25 L25 38' fill='none' stroke='%231f2774' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;
+  background-position:center bottom!important;
+  background-size:contain!important;
+}
+.hex-title-rays::before{
+  left:4px!important;
+  right:auto!important;
+  transform:none!important;
 }
 .hex-title-rays::after{
-  transform:scaleX(-1);
+  right:4px!important;
+  left:auto!important;
+  transform:scaleX(-1)!important;
 }
 
 /* 標準見出しフォントサイズ（h2・h3・h4） */
