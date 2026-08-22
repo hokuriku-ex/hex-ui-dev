@@ -331,7 +331,6 @@ html{
   background-position:center bottom;
   background-size:contain;
 }
-/* 右側は反転 */
 .hex-title-rays::after{
   transform:scaleX(-1);
 }
