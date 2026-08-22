@@ -70,28 +70,6 @@
   }
 }
 
-/* 見出しに注目線追加 */
-@media screen and (max-width:768px){
-  .hex-title-rays{
-    max-width:calc(100% - 24px)!important;
-    padding-inline:38px!important;
-    font-size:24px!important;
-    line-height:1.7!important;
-  }
-  .hex-title-rays::before,
-  .hex-title-rays::after{
-    bottom:5px!important;
-    width:29px!important;
-    height:32px!important;
-  }
-  .hex-title-rays::before{
-    left:2px!important;
-  }
-  .hex-title-rays::after{
-    right:2px!important;
-  }
-}
-
 /* 標準見出しフォントサイズ（h2・h3・h4） */
 @media screen and (max-width:768px){
   h2:not(.hex-section-subtitle){
@@ -104,6 +82,42 @@
   h4:not(.hex-section-smalltitle){
     font-size:16px;
     text-align:left!important;
+  }
+}
+
+/* 見出しに注目線追加 */
+@media screen and (max-width:768px){
+  :is(h2,h3,h4).hex-title-rays{
+    max-width:calc(100% - 24px)!important;
+  }
+  h2.hex-title-rays{
+    font-size:24px!important;
+  }
+  h3.hex-title-rays{
+    font-size:22px!important;
+  }
+  h4.hex-title-rays{
+    font-size:20px!important;
+  }
+  :is(h2,h3,h4).hex-title-rays::before,
+  :is(h2,h3,h4).hex-title-rays::after{
+    bottom:-5px!important;
+    flex-basis:14px!important;
+    width:14px!important;
+  }
+  :is(h2,h3,h4).hex-title-rays::before{
+    left:9px!important;
+  }
+  :is(h2,h3,h4).hex-title-rays::after{
+    right:9px!important;
+  }
+  :is(h2,h3,h4).hex-title-rays > span{
+    gap:3px!important;
+  }
+  :is(h2,h3,h4).hex-title-rays > span::before,
+  :is(h2,h3,h4).hex-title-rays > span::after{
+    flex-basis:22px!important;
+    width:22px!important;
   }
 }
 
