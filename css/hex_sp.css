@@ -334,6 +334,31 @@
 /* =======================================
    共通パーツ（新規）
 ======================================= */
+/* 背景色範囲指定 */
+@media screen and (max-width:768px){
+  .hex-bg-range:is(
+    .hex-bg-curve-both,
+    .hex-bg-curve-top,
+    .hex-bg-curve-bottom
+  )::before{
+    width:140vw;
+    -webkit-clip-path:none;
+    clip-path:none;
+  }
+  /* 上下カーブ */
+  .hex-bg-range.hex-bg-curve-both::before{
+    border-radius:50% / 80px;
+  }
+  /* 上だけカーブ */
+  .hex-bg-range.hex-bg-curve-top::before{
+    border-radius:50% 50% 0 0 / 80px 80px 0 0;
+  }
+  /* 下だけカーブ */
+  .hex-bg-range.hex-bg-curve-bottom::before{
+    border-radius:0 0 50% 50% / 0 0 80px 80px;
+  }
+}
+
 /* PC・スマホ専用改行 */
 @media screen and (max-width:768px){
   br[hex-pc]{
