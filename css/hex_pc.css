@@ -159,7 +159,7 @@ html{
 .hex-section-action:not(h3){
   padding:24px 28px!important;
   border-radius:6px!important;
-  background:#f3f0eb!important;
+  background:#fafafa!important;
 }
 .hex-section-action h3{
   position:relative;
