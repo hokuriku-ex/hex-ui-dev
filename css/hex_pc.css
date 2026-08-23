@@ -448,12 +448,12 @@ h4.hex-title-rays::after{
   height:2px!important;
 }
 
-/* 共通のゴールド下線 */
-.hex-gold-underline{
+/* 共通下線 */
+.hex-straight-line{
   position:relative;
   display:inline-block;
 }
-.hex-gold-underline::after{
+.hex-straight-line::after{
   content:"";
   position:absolute;
   left:50%;
@@ -465,14 +465,39 @@ h4.hex-title-rays::after{
   pointer-events:none;
 }
 
-/* 共通の波線装飾 */
-.hex-wavy-underline{
+/* 共通波線装飾 */
+.hex-wavy-line{
   text-decoration-line:underline!important;
   text-decoration-style:wavy!important;
   text-decoration-color:#c8a874!important;
   text-decoration-thickness:2px!important;
   text-underline-offset:10px!important;
   text-decoration-skip-ink:none!important;
+}
+
+/* 共通斜線 */
+.hex-stripe-line{
+  position:relative;
+  isolation:isolate;
+}
+.hex-stripe-line::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:var(--hex-stripe-bottom, 8px);
+  width:calc(100% + var(--hex-stripe-extra-width, 48px));
+  height:var(--hex-stripe-height, 12px);
+  box-sizing:border-box;
+  z-index:-1;
+  transform:translateX(-50%);
+  background:repeating-linear-gradient(
+    45deg,
+    #c8a874 0,
+    #c8a874 2px,
+    transparent 2px,
+    transparent 5px
+  )!important;
+  pointer-events:none;
 }
 
 /* 本文テキストリンク */
