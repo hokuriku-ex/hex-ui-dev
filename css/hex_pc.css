@@ -326,7 +326,7 @@ h4:not(.hex-section-smalltitle){
   align-items:center!important;
   justify-content:center!important;
   width:fit-content!important;
-  max-width:calc(100% - 32px)!important;
+  max-width:100%!important;
   margin:0 auto!important;
   padding:0!important;
   box-sizing:border-box!important;
