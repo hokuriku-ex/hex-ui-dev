@@ -88,7 +88,7 @@
 /* 見出しに注目線追加 */
 @media screen and (max-width:768px){
   :is(h2,h3,h4).hex-title-rays{
-    max-width:calc(100% - 24px)!important;
+    max-width:100%!important;
     text-align:center!important;
   }
   :is(h2,h3,h4).hex-title-rays > span{
