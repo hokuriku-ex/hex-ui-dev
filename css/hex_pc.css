@@ -503,30 +503,30 @@ span:is(
 }
 
 /* 斜線 */
-h2.hex-gold-stripe{
-  --hex-stripe-bottom:8px;
-  --hex-stripe-extra-width:48px;
-  --hex-stripe-height:12px;
-}
-h3.hex-gold-stripe{
-  --hex-stripe-bottom:6px;
-  --hex-stripe-extra-width:32px;
-  --hex-stripe-height:8px;
-}
-h4.hex-gold-stripe{
-  --hex-stripe-bottom:4px;
-  --hex-stripe-extra-width:20px;
-  --hex-stripe-height:6px;
-}
-span.hex-gold-stripe{
-  --hex-stripe-bottom:4px;
-  --hex-stripe-extra-width:12px;
-  --hex-stripe-height:6px;
-}
 .hex-stripe-line{
   position:relative;
   padding-bottom:8px;
   isolation:isolate;
+}
+h2.hex-stripe-line{
+  --hex-stripe-bottom:8px;
+  --hex-stripe-extra-width:48px;
+  --hex-stripe-height:12px;
+}
+h3.hex-stripe-line{
+  --hex-stripe-bottom:6px;
+  --hex-stripe-extra-width:32px;
+  --hex-stripe-height:8px;
+}
+h4.hex-stripe-line{
+  --hex-stripe-bottom:4px;
+  --hex-stripe-extra-width:20px;
+  --hex-stripe-height:6px;
+}
+span.hex-stripe-line{
+  --hex-stripe-bottom:4px;
+  --hex-stripe-extra-width:12px;
+  --hex-stripe-height:6px;
 }
 .hex-stripe-line::after{
   content:"";
