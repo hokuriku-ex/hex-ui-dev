@@ -448,6 +448,33 @@ h4.hex-title-rays::after{
   height:2px!important;
 }
 
+/* 共通のゴールド下線 */
+.hex-gold-underline{
+  position:relative;
+  display:inline-block;
+}
+.hex-gold-underline::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-5px;
+  width:100%;
+  height:2px;
+  background:#c8a874;
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+
+/* 共通の波線装飾 */
+.hex-wavy-underline{
+  text-decoration-line:underline!important;
+  text-decoration-style:wavy!important;
+  text-decoration-color:#c8a874!important;
+  text-decoration-thickness:2px!important;
+  text-underline-offset:10px!important;
+  text-decoration-skip-ink:none!important;
+}
+
 /* 本文テキストリンク */
 a.hex-text-link,
 a.hex-text-link:link,
