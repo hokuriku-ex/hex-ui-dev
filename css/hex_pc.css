@@ -1236,6 +1236,40 @@ div.NNAttached{
   padding-bottom:0!important;
 }
 
+/* 上下カーブ */
+.hex-bg-range.hex-bg-curve-both::before{
+  -webkit-clip-path:ellipse(100% 60% at 50% 50%);
+  clip-path:ellipse(100% 60% at 50% 50%);
+}
+
+/* 上だけカーブ */
+.hex-bg-range.hex-bg-curve-top::before{
+  -webkit-clip-path:ellipse(100% 100% at 50% 100%);
+  clip-path:ellipse(100% 100% at 50% 100%);
+}
+
+/* 下だけカーブ */
+.hex-bg-range.hex-bg-curve-bottom::before{
+  -webkit-clip-path:ellipse(100% 100% at 50% 0);
+  clip-path:ellipse(100% 100% at 50% 0);
+}
+
+/* 背景範囲の下中央に▽を追加 */
+.hex-bg-range.hex-bg-arrow::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-26px;
+  z-index:2;
+  width:0;
+  height:0;
+  border-left:38px solid transparent;
+  border-right:38px solid transparent;
+  border-top:26px solid var(--hex-bg-range-color, #fff);
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+
 /* PC・スマホ専用改行 */
 br[hex-pc]{
   display:block;
