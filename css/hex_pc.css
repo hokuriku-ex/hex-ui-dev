@@ -448,16 +448,42 @@ h4.hex-title-rays::after{
   height:2px!important;
 }
 
-/* 共通下線 */
+/* 共通装飾 */
+h2:is(
+  .hex-straight-line,
+  .hex-wavy-line,
+  .hex-stripe-line
+),
+h3:is(
+  .hex-straight-line,
+  .hex-wavy-line,
+  .hex-stripe-line
+),
+h4:is(
+  .hex-straight-line,
+  .hex-wavy-line,
+  .hex-stripe-line
+){
+  width:fit-content;
+}
+span:is(
+  .hex-wavy-line,
+  .hex-straight-line,
+  .hex-stripe-line
+){
+  display:inline-block;
+}
+
+/* 下線 */
 .hex-straight-line{
   position:relative;
-  display:inline-block;
+  padding-bottom:8px;
 }
 .hex-straight-line::after{
   content:"";
   position:absolute;
   left:50%;
-  bottom:-5px;
+  bottom:0;
   width:100%;
   height:2px;
   background:#c8a874;
@@ -465,8 +491,9 @@ h4.hex-title-rays::after{
   pointer-events:none;
 }
 
-/* 共通波線装飾 */
+/* 波線装飾 */
 .hex-wavy-line{
+  padding-bottom:8px;
   text-decoration-line:underline!important;
   text-decoration-style:wavy!important;
   text-decoration-color:#c8a874!important;
@@ -475,9 +502,30 @@ h4.hex-title-rays::after{
   text-decoration-skip-ink:none!important;
 }
 
-/* 共通斜線 */
+/* 斜線 */
+h2.hex-gold-stripe{
+  --hex-stripe-bottom:8px;
+  --hex-stripe-extra-width:48px;
+  --hex-stripe-height:12px;
+}
+h3.hex-gold-stripe{
+  --hex-stripe-bottom:6px;
+  --hex-stripe-extra-width:32px;
+  --hex-stripe-height:8px;
+}
+h4.hex-gold-stripe{
+  --hex-stripe-bottom:4px;
+  --hex-stripe-extra-width:20px;
+  --hex-stripe-height:6px;
+}
+span.hex-gold-stripe{
+  --hex-stripe-bottom:4px;
+  --hex-stripe-extra-width:12px;
+  --hex-stripe-height:6px;
+}
 .hex-stripe-line{
   position:relative;
+  padding-bottom:8px;
   isolation:isolate;
 }
 .hex-stripe-line::after{
