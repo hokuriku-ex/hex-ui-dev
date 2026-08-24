@@ -1969,6 +1969,8 @@ div[hex-sp]{
   width:58px;
   height:58px;
   color:#1f2774!important;
+  font-size:18px!important;
+  font-weight:700!important;
   line-height:1;
   letter-spacing:.04em;
   background-color:#E8D575;
