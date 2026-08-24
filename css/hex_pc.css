@@ -1842,7 +1842,7 @@ div[hex-sp]{
   box-sizing:border-box;
   background:
     linear-gradient(#d8dce8,#d8dce8)
-    center 4px / calc(100% - 32px) 2px
+    center 6px / calc(100% - 32px) 2px
     no-repeat;
   pointer-events:none;
 }
@@ -1859,14 +1859,14 @@ div[hex-sp]{
   box-sizing:border-box;
   background:
     linear-gradient(#d8dce8,#d8dce8)
-    center bottom 4px / calc(100% - 32px) 2px
+    center bottom 6px / calc(100% - 32px) 2px
     no-repeat;
 
   pointer-events:none;
 }
 .hex-card-strength.hex-strength-point .hex-number{
   position:absolute;
-  top:5px; /* 内側の線の位置に合わせる */
+  top:2px; /* 内側の線の位置に合わせる */
   left:50%;
   z-index:2;
   display:flex;
