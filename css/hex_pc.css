@@ -1798,7 +1798,7 @@ div[hex-sp]{
   object-fit:contain;
 }
 .hex-card-grid1.hex-card-strength .hex-card{
-  column-gap:16px!important;
+  column-gap:8px!important;
 }
 .hex-card-grid1.hex-card-strength .hex-card-head{
   position:relative;
