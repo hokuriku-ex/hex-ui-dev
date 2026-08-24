@@ -1790,7 +1790,7 @@ div[hex-sp]{
   font-family:var(--hex-font-gothic)!important;
 }
 .hex-card-grid1.hex-card-strength .hex-card{
-  padding-left:24px!important;
+  padding-left:40px!important;
   box-sizing:border-box;
 }
 .hex-card-grid1.hex-card-strength .hex-card-head{
