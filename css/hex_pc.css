@@ -1838,11 +1838,15 @@ div[hex-sp]{
   transform-origin:center;
   pointer-events:none;
 }
+.hex-card-strength.hex-strength-simple .hex-card-body{
+  position:relative;
+  z-index:1;
+}
 .hex-card-strength.hex-strength-simple .hex-number{
   position:absolute;
   top:-11px;
   left:-2px;
-  z-index:2;
+  z-index:3;
   display:block;
   width:auto;
   height:auto;
