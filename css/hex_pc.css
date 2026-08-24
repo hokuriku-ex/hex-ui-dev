@@ -3057,6 +3057,15 @@ body.hex-calendar-modal-open{
 .hex-footer-frame .hex-footer-area{
   text-align:left!important;
 }
+.footer-area-mark{
+  display:inline-block;
+  width:10px;
+  height:2px;
+  margin-right:10px;
+  background:currentColor;
+  vertical-align:middle;
+  font-size:0;
+}
 
 .footer-area h4{
   font-size:20px!important;
