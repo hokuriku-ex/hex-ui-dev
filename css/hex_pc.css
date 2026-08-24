@@ -1837,11 +1837,11 @@ div[hex-sp]{
 .hex-card-strength.hex-strength-simple .hex-card::after{
   content:"";
   position:absolute;
-  top:-2px;
-  left:-2px;
-  z-index:0;
-  width:70px;
-  height:70px;
+  top:-4px;
+  left:-4px;
+  z-index:1;
+  width:82px;
+  height:82px;
   background:var(--hex-strength-simple-bg, #fff);
   clip-path:polygon(
     0 0,
