@@ -4098,6 +4098,51 @@ body,
   border-bottom:2px solid #c8a874;
 }
 
+/* 手書きマーカー風 */
+.hex-hand-marker{
+  position:relative;
+  display:inline-block;
+  isolation:isolate;
+}
+.hex-hand-marker::before{
+  content:"";
+  position:absolute;
+  top:12%;
+  right:-14px;
+  bottom:4%;
+  left:-14px;
+  z-index:-1;
+  background:
+    radial-gradient(
+      ellipse at 8% 50%,
+      var(--hex-marker-color, #f4e7a1) 0 60%,
+      transparent 63%
+    ),
+    radial-gradient(
+      ellipse at 28% 42%,
+      var(--hex-marker-color, #f4e7a1) 0 65%,
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse at 52% 55%,
+      var(--hex-marker-color, #f4e7a1) 0 68%,
+      transparent 71%
+    ),
+    radial-gradient(
+      ellipse at 76% 44%,
+      var(--hex-marker-color, #f4e7a1) 0 65%,
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse at 94% 52%,
+      var(--hex-marker-color, #f4e7a1) 0 60%,
+      transparent 63%
+    );
+  opacity:.72;
+  transform:rotate(-1deg);
+  pointer-events:none;
+}
+
 /* 体制・スタッフ紹介 */
 .hex-staff-iframe-mode .gc_auto_frame_footer_fixed{
   display:none!important;
