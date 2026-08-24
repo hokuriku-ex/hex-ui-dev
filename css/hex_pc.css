@@ -4810,6 +4810,8 @@ body,
 /* ご依頼・連携の流れ */
 .hex-business-list2{
   max-width:var(--base_width)!important;
+}
+.hex-business-list2.hex-card{
   border:none!important;
 }
 
