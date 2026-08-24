@@ -1871,13 +1871,7 @@ div[hex-sp]{
 }
 
 /* 要点用 */
-:is(
-  .hex-card-grid2,
-  .hex-card-grid3,
-  .hex-card-grid4,
-  .hex-card-grid5,
-  .hex-card-grid6
-).hex-card-strength.hex-strength-point .hex-card{
+.hex-card-strength.hex-strength-point .hex-card{
   position:relative;
   overflow:visible;
   margin-top:40px;
@@ -1948,13 +1942,7 @@ div[hex-sp]{
 }
 
 /* 数字マーク */
-:is(
-  .hex-card-grid2,
-  .hex-card-grid3,
-  .hex-card-grid4,
-  .hex-card-grid5,
-  .hex-card-grid6
-).hex-card-strength.hex-strength-mark .hex-number{
+.hex-card-strength.hex-strength-mark .hex-number{
   position:absolute;
   top:0;
   left:0;
