@@ -1842,7 +1842,7 @@ div[hex-sp]{
   box-sizing:border-box;
   background:
     linear-gradient(#d8dce8,#d8dce8)
-    center 4px / calc(100% - 32px) 1px
+    center 4px / calc(100% - 32px) 2px
     no-repeat;
   pointer-events:none;
 }
@@ -1859,29 +1859,32 @@ div[hex-sp]{
   box-sizing:border-box;
   background:
     linear-gradient(#d8dce8,#d8dce8)
-    center bottom 4px / calc(100% - 32px) 1px
+    center bottom 4px / calc(100% - 32px) 2px
     no-repeat;
 
   pointer-events:none;
 }
 .hex-card-strength.hex-strength-point .hex-number{
   position:absolute;
-  top:0;
+  top:5px; /* 内側の線の位置に合わせる */
   left:50%;
   z-index:2;
   display:flex;
   align-items:center;
   justify-content:center;
-  width:70px;
-  height:28px;
+  width:88px;
+  height:36px;
+  padding-top:4px;
   color:#fff;
-  font-size:14px!important;
+  font-size:13px!important;
   font-weight:700;
   line-height:1;
-  letter-spacing:.06em;
-  background:#d8dce8!important;
+  letter-spacing:.04em;
+  background:#d8dce8;
   border:none;
-  border-radius:70px 70px 0 0;
+  border-radius:0;
+  -webkit-clip-path:ellipse(50% 100% at 50% 100%);
+  clip-path:ellipse(50% 100% at 50% 100%);
   transform:translate(-50%,-100%);
   box-sizing:border-box;
 }
@@ -1902,7 +1905,7 @@ div[hex-sp]{
   place-items:center;
   width:56px;
   height:56px;
-  color:#fff!important;
+  color:#c8a874!important;
   font-size:18px!important;
   font-weight:500;
   line-height:1;
