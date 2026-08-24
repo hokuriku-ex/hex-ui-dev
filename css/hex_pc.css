@@ -1838,7 +1838,8 @@ div[hex-sp]{
   transform-origin:center;
   pointer-events:none;
 }
-.hex-card-strength.hex-strength-simple .hex-card-body{
+.hex-card-strength.hex-strength-simple .hex-card-head,
+.hex-card-strength.hex-strength-simple .hex-card-text{
   position:relative;
   z-index:1;
 }
