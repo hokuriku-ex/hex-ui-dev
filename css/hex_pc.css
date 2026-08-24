@@ -1240,12 +1240,16 @@ div.NNAttached{
 .hex-bg-range.hex-bg-curve-both::before{
   -webkit-clip-path:ellipse(100% 60% at 50% 50%);
   clip-path:ellipse(100% 60% at 50% 50%);
+  position:relative;
+  top:-32px;
 }
 
 /* 上だけカーブ */
 .hex-bg-range.hex-bg-curve-top::before{
   -webkit-clip-path:ellipse(100% 100% at 50% 100%);
   clip-path:ellipse(100% 100% at 50% 100%);
+  position:relative;
+  top:-32px;
 }
 
 /* 下だけカーブ */
