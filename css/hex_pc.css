@@ -1828,8 +1828,8 @@ div[hex-sp]{
 .hex-card-strength.hex-strength-simple .hex-card::before{
   content:"";
   position:absolute;
-  top:30px;
-  left:-13px;
+  top:20px;
+  left:-20px;
   z-index:2;
   width:88px;
   height:2px;
