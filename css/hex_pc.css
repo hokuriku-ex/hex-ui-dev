@@ -1806,37 +1806,27 @@ div[hex-sp]{
   border:none!important;
   border-radius:0;
   box-sizing:border-box;
-
   background:
-    /* 上の点線 */
     repeating-linear-gradient(
       to right,
       #d8dce8 0 2px,
       transparent 2px 5px
-    ) left 44px top / calc(100% - 50px) 1px no-repeat,
-
-    /* 右の点線 */
+    ) left 44px top / calc(100% - 50px) 2px no-repeat,
     repeating-linear-gradient(
       to bottom,
       #d8dce8 0 2px,
       transparent 2px 5px
-    ) right top 6px / 1px calc(100% - 12px) no-repeat,
-
-    /* 下の点線 */
+    ) right top 6px / 2px calc(100% - 12px) no-repeat,
     repeating-linear-gradient(
       to left,
       #d8dce8 0 2px,
       transparent 2px 5px
-    ) right 6px bottom / calc(100% - 12px) 1px no-repeat,
-
-    /* 左の点線 */
+    ) right 6px bottom / calc(100% - 12px) 2px no-repeat,
     repeating-linear-gradient(
       to top,
       #d8dce8 0 2px,
       transparent 2px 5px
-    ) left bottom 6px / 1px calc(100% - 50px) no-repeat,
-
-    /* 右上の角丸 */
+    ) left bottom 6px / 2px calc(100% - 50px) no-repeat,
     radial-gradient(
       circle at left bottom,
       transparent 5px,
@@ -1844,8 +1834,6 @@ div[hex-sp]{
       #d8dce8 6.5px,
       transparent 7px
     ) right top / 7px 7px no-repeat,
-
-    /* 右下の角丸 */
     radial-gradient(
       circle at left top,
       transparent 5px,
@@ -1853,8 +1841,6 @@ div[hex-sp]{
       #d8dce8 6.5px,
       transparent 7px
     ) right bottom / 7px 7px no-repeat,
-
-    /* 左下の角丸 */
     radial-gradient(
       circle at right top,
       transparent 5px,
@@ -1862,7 +1848,6 @@ div[hex-sp]{
       #d8dce8 6.5px,
       transparent 7px
     ) left bottom / 7px 7px no-repeat;
-
   background-color:transparent;
 }
 .hex-card-strength.hex-strength-simple .hex-card::before{
@@ -1883,17 +1868,10 @@ div[hex-sp]{
   top:-11px;
   left:-2px;
   z-index:2;
-
   display:block;
   width:auto;
   height:auto;
-
-  color:#1f2774;
-  font-size:22px!important;
-  font-weight:700;
-  line-height:1;
-  letter-spacing:.04em;
-
+  color:#c8a874!important;
   background:none;
   border:none;
   border-radius:0;
