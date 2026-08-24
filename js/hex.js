@@ -167,6 +167,18 @@ hexReady(function(){
     var wrapper=document.createElement('div');
 
     wrapper.className='hex-bg-range';
+
+    var customClass=start.dataset.bgClass;
+
+    if(customClass){
+      customClass
+        .split(/\s+/)
+        .filter(Boolean)
+        .forEach(function(className){
+          wrapper.classList.add(className);
+        });
+    }
+    
     wrapper.style.setProperty(
       '--hex-bg-range-color',
       color
