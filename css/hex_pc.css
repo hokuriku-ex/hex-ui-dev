@@ -1789,6 +1789,10 @@ div[hex-sp]{
   text-align:center;
   font-family:var(--hex-font-gothic)!important;
 }
+.hex-card-grid1.hex-card-strength .hex-card{
+  padding-left:24px!important;
+  box-sizing:border-box;
+}
 .hex-card-grid1.hex-card-strength .hex-card-head{
   position:relative;
   padding-bottom:18px;
