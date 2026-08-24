@@ -1958,7 +1958,7 @@ div[hex-sp]{
   box-sizing:border-box;
 }
 
-/* 数字マーク */
+/* 数字マーク　 */
 .hex-card-strength.hex-strength-mark .hex-number{
   position:absolute;
   top:0;
