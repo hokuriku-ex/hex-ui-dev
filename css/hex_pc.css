@@ -1815,8 +1815,8 @@ div[hex-sp]{
   top:-2px;
   left:-2px;
   z-index:0;
-  width:62px;
-  height:62px;
+  width:70px;
+  height:70px;
   background:var(--hex-strength-simple-bg, #fff);
   clip-path:polygon(
     0 0,
@@ -1828,10 +1828,10 @@ div[hex-sp]{
 .hex-card-strength.hex-strength-simple .hex-card::before{
   content:"";
   position:absolute;
-  top:25px;
-  left:-11px;
+  top:30px;
+  left:-13px;
   z-index:2;
-  width:74px;
+  width:88px;
   height:2px;
   background:#c8a874;
   transform:rotate(-45deg);
@@ -1848,8 +1848,8 @@ div[hex-sp]{
 }
 .hex-card-strength.hex-strength-simple .hex-number{
   position:absolute;
-  top:-11px;
-  left:-2px;
+  top:-18px;
+  left:-10px;
   z-index:3;
   display:block;
   width:auto;
