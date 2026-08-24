@@ -1791,11 +1791,14 @@ div[hex-sp]{
 }
 .hex-card-strength .hex-card-image img{
   display:block;
-  width:90%!important;
+  width:80%!important;
   height:auto!important;
   margin-right:auto;
   margin-left:auto;
   object-fit:contain;
+}
+.hex-card-grid1.hex-card-strength .hex-card{
+  column-gap:16px!important;
 }
 .hex-card-grid1.hex-card-strength .hex-card-head{
   position:relative;
