@@ -2997,7 +2997,7 @@ function hexCreateFooterArea(){
   p3.appendChild(
     document.createTextNode('富山県・福井県の一部')
   );
-  p4.textContent='状況によりご相談させていただきます';
+  p4.textContent='(状況によりご相談させていただきます)';
   text.appendChild(p1);
   text.appendChild(p2);
   text.appendChild(p3);
