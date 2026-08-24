@@ -1840,8 +1840,8 @@ div[hex-sp]{
   top:-4px;
   left:-4px;
   z-index:1;
-  width:78px;
-  height:78px;
+  width:72px;
+  height:72px;
   background:var(--hex-strength-simple-bg, #fff);
   clip-path:polygon(
     0 0,
