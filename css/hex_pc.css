@@ -1641,6 +1641,12 @@ div[hex-sp]{
   background:none;
   border:none;
 }
+.hex-card-grid1 .hex-card-body{
+  padding:24px 28px!important;
+  border-radius:6px!important;
+  background:#fafafa!important;
+  box-sizing:border-box;
+}
 .hex-card-grid1 .hex-card.has-image{
   grid-template-columns:30% 1fr;
 }
