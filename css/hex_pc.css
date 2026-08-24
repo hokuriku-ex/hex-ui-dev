@@ -1806,10 +1806,67 @@ div[hex-sp]{
   .hex-card-grid6
 ).hex-card-strength.hex-strength-simple .hex-card{
   position:relative;
+  overflow:visible;
+  margin-top:32px;
   padding:24px;
-  border:2px dashed #d8dce8!important;
-  border-radius:6px!important;
-  background:transparent;
+  border:none!important;
+  border-radius:0;
+  box-sizing:border-box;
+  background:
+    repeating-linear-gradient(
+      to right,
+      #d8dce8 0 2px,
+      transparent 2px 5px
+    ) left 34px top / calc(100% - 34px) 2px no-repeat,
+    repeating-linear-gradient(
+      to bottom,
+      #d8dce8 0 2px,
+      transparent 2px 5px
+    ) right top / 2px 100% no-repeat,
+    repeating-linear-gradient(
+      to left,
+      #d8dce8 0 2px,
+      transparent 2px 5px
+    ) right bottom / 100% 2px no-repeat,
+    repeating-linear-gradient(
+      to top,
+      #d8dce8 0 2px,
+      transparent 2px 5px
+    ) left bottom / 2px calc(100% - 34px) no-repeat;
+
+  background-color:transparent;
+}
+.hex-card-strength.hex-strength-simple .hex-card::before{
+  content:"";
+  position:absolute;
+  top:17px;
+  left:-7px;
+  z-index:1;
+  width:48px;
+  height:2px;
+  background:#d8dce8!important;
+  transform:rotate(-45deg);
+  transform-origin:center;
+  pointer-events:none;
+}
+.hex-card-strength.hex-strength-simple .hex-number{
+  position:absolute;
+  top:-30px;
+  left:-2px;
+  z-index:2;
+  display:block;
+  width:auto;
+  height:auto;
+  color:#c8a874!important;
+  font-size:22px!important;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:.04em;
+  background:none;
+  border:none;
+  border-radius:0;
+  clip-path:none;
+  transform:none;
 }
 
 /* 要点用 */
