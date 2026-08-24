@@ -1789,6 +1789,14 @@ div[hex-sp]{
   text-align:center;
   font-family:var(--hex-font-gothic)!important;
 }
+.hex-card-strength .hex-card-image img{
+  display:block;
+  width:90%!important;
+  height:auto!important;
+  margin-right:auto;
+  margin-left:auto;
+  object-fit:contain;
+}
 .hex-card-grid1.hex-card-strength .hex-card-head{
   position:relative;
   padding-bottom:18px;
@@ -1803,14 +1811,6 @@ div[hex-sp]{
   line-height:1.5;
   letter-spacing:.04em;
   text-align:left;
-}
-.hex-card-grid1.hex-card-strength .hex-card-image img{
-  display:block;
-  width:90%!important;
-  height:auto!important;
-  margin-right:auto;
-  margin-left:auto;
-  object-fit:contain;
 }
 
 /* シンプル・点線枠 */
