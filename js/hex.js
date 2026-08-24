@@ -178,7 +178,7 @@ hexReady(function(){
           wrapper.classList.add(className);
         });
     }
-    
+
     wrapper.style.setProperty(
       '--hex-bg-range-color',
       color
@@ -2980,7 +2980,12 @@ function hexCreateFooterArea(){
   area.className='footer-area';
   text.className='footer-area-text';
   title.textContent='工事対応エリア';
-  p1.textContent='■ 石川県全域';
+  var mark1=document.createElement('span');
+  var mark2=document.createElement('span');
+  mark1.className='footer-area-mark';
+  mark2.className='footer-area-mark';
+  p1.appendChild(mark1);
+  p1.appendChild(document.createTextNode('石川県全域'));
   p2.appendChild(document.createTextNode('金沢市 / 野々市市 / 白山市 / 津幡町 / 内灘町'));
   p2.appendChild(document.createElement('br'));
   p2.appendChild(document.createTextNode('かほく市 / 能美市 / 川北町 / 小松市 / 加賀市'));
@@ -2988,7 +2993,10 @@ function hexCreateFooterArea(){
   p2.appendChild(document.createTextNode('羽咋市 / 宝達志水町 / 志賀町 / 中能登町'));
   p2.appendChild(document.createElement('br'));
   p2.appendChild(document.createTextNode('七尾市 / 穴水町 / 能登町 / 輪島市 / 珠洲市'));
-  p3.textContent='■ 富山県・福井県の一部';
+  p3.appendChild(mark2);
+  p3.appendChild(
+    document.createTextNode('富山県・福井県の一部')
+  );
   p4.textContent='状況によりご相談させていただきます';
   text.appendChild(p1);
   text.appendChild(p2);
