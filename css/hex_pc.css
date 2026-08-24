@@ -4098,56 +4098,6 @@ body,
   border-bottom:2px solid #c8a874;
 }
 
-/* 手書きマーカー風 */
-.hex-hand-marker{
-  position:relative;
-  display:inline-block;
-  isolation:isolate;
-}
-.hex-hand-marker::before{
-  content:"";
-  position:absolute;
-  top:-8px;
-  right:-16px;
-  bottom:-8px;
-  left:-16px;
-  z-index:-1;
-  background:var(--hex-marker-color, #ead9b5);
-  opacity:.7;
-  -webkit-mask:
-    linear-gradient(#000 0 0)
-      center / 100% calc(100% - 16px) no-repeat,
-    radial-gradient(
-      ellipse 58% 100% at 50% 100%,
-      #000 96%,
-      transparent 100%
-    )
-      left top / 34px 11px repeat-x,
-    radial-gradient(
-      ellipse 58% 100% at 50% 0,
-      #000 96%,
-      transparent 100%
-    )
-      left bottom / 29px 11px repeat-x;
-  mask:
-    linear-gradient(#000 0 0)
-      center / 100% calc(100% - 16px) no-repeat,
-    radial-gradient(
-      ellipse 58% 100% at 50% 100%,
-      #000 96%,
-      transparent 100%
-    )
-      left top / 34px 11px repeat-x,
-    radial-gradient(
-      ellipse 58% 100% at 50% 0,
-      #000 96%,
-      transparent 100%
-    )
-      left bottom / 29px 11px repeat-x;
-  transform:rotate(-1deg);
-  pointer-events:none;
-}
-
 /* 体制・スタッフ紹介 */
 .hex-staff-iframe-mode .gc_auto_frame_footer_fixed{
   display:none!important;
