@@ -1797,7 +1797,7 @@ div[hex-sp]{
   text-align:left;
 }
 
-/* 強みカード シンプル・点線枠 */
+/* シンプル・点線枠 */
 :is(
   .hex-card-grid2,
   .hex-card-grid3,
@@ -1807,7 +1807,7 @@ div[hex-sp]{
 ).hex-card-strength.hex-strength-simple .hex-card{
   position:relative;
   padding:24px;
-  border:2px dashed #1f2774!important;
+  border:2px dashed #d8dce8!important;
   border-radius:6px!important;
   background:transparent;
 }
@@ -1833,13 +1833,17 @@ div[hex-sp]{
   content:"";
   position:absolute;
   top:0;
-  left:0;
   right:0;
+  left:0;
   height:10px;
-  border:2px solid #1f2774!important;
+  border:2px solid #d8dce8;
   border-bottom:none;
   border-radius:8px 8px 0 0;
   box-sizing:border-box;
+  background:
+    linear-gradient(#d8dce8,#d8dce8)
+    center 4px / calc(100% - 32px) 1px
+    no-repeat;
   pointer-events:none;
 }
 .hex-card-strength.hex-strength-point .hex-card::after{
@@ -1849,10 +1853,15 @@ div[hex-sp]{
   bottom:0;
   left:0;
   height:10px;
-  border:2px solid #1f2774!important;
+  border:2px solid #d8dce8;
   border-top:none;
   border-radius:0 0 8px 8px;
   box-sizing:border-box;
+  background:
+    linear-gradient(#d8dce8,#d8dce8)
+    center bottom 4px / calc(100% - 32px) 1px
+    no-repeat;
+
   pointer-events:none;
 }
 .hex-card-strength.hex-strength-point .hex-number{
@@ -1870,7 +1879,7 @@ div[hex-sp]{
   font-weight:700;
   line-height:1;
   letter-spacing:.06em;
-  background:#1f2774!important;
+  background:#d8dce8!important;
   border:none;
   border-radius:70px 70px 0 0;
   transform:translate(-50%,-100%);
