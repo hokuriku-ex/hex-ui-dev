@@ -537,10 +537,6 @@
   }
   .hex-footer-frame .footer_text{
     order:2 !important;
-    display:inline-block;
-    width:fit-content;
-    max-width:100%;
-    text-align:left!important;
   }
   .hex-footer-frame .footer_logo{
     display:none !important;
@@ -571,7 +567,7 @@
   .footer-area-text{
     font-size:16px !important;
     line-height:2 !important;
-    text-align:center !important;
+    text-align:left !important;
   }
   .footer-area-text p{
     margin:0 0 10px !important;
