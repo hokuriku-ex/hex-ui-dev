@@ -1801,62 +1801,37 @@ div[hex-sp]{
 .hex-card-strength.hex-strength-simple .hex-card{
   position:relative;
   overflow:visible;
+  isolation:isolate;
   margin-top:32px;
   padding:24px;
-  border:none!important;
-  border-radius:0;
+  border:2px dotted #d8dce8!important;
+  border-radius:0 8px 8px 8px!important;
+  background:transparent;
   box-sizing:border-box;
-  background:
-    repeating-linear-gradient(
-      to right,
-      #d8dce8 0 2px,
-      transparent 2px 5px
-    ) left 44px top / calc(100% - 50px) 2px no-repeat,
-    repeating-linear-gradient(
-      to bottom,
-      #d8dce8 0 2px,
-      transparent 2px 5px
-    ) right top 6px / 2px calc(100% - 12px) no-repeat,
-    repeating-linear-gradient(
-      to left,
-      #d8dce8 0 2px,
-      transparent 2px 5px
-    ) right 6px bottom / calc(100% - 12px) 2px no-repeat,
-    repeating-linear-gradient(
-      to top,
-      #d8dce8 0 2px,
-      transparent 2px 5px
-    ) left bottom 6px / 2px calc(100% - 50px) no-repeat,
-    radial-gradient(
-      circle at left bottom,
-      transparent 5px,
-      #d8dce8 5.5px,
-      #d8dce8 6.5px,
-      transparent 7px
-    ) right top / 7px 7px no-repeat,
-    radial-gradient(
-      circle at left top,
-      transparent 5px,
-      #d8dce8 5.5px,
-      #d8dce8 6.5px,
-      transparent 7px
-    ) right bottom / 7px 7px no-repeat,
-    radial-gradient(
-      circle at right top,
-      transparent 5px,
-      #d8dce8 5.5px,
-      #d8dce8 6.5px,
-      transparent 7px
-    ) left bottom / 7px 7px no-repeat;
-  background-color:transparent;
+}
+.hex-card-strength.hex-strength-simple .hex-card::after{
+  content:"";
+  position:absolute;
+  top:-2px;
+  left:-2px;
+  z-index:0;
+  width:62px;
+  height:62px;
+  background:var(--hex-strength-simple-bg, #fff);
+  clip-path:polygon(
+    0 0,
+    100% 0,
+    0 100%
+  );
+  pointer-events:none;
 }
 .hex-card-strength.hex-strength-simple .hex-card::before{
   content:"";
   position:absolute;
-  top:18px;
-  left:-16px;
-  z-index:1;
-  width:68px;
+  top:25px;
+  left:-11px;
+  z-index:2;
+  width:74px;
   height:2px;
   background:#c8a874;
   transform:rotate(-45deg);
