@@ -4810,6 +4810,7 @@ body,
 /* ご依頼・連携の流れ */
 .hex-business-list2{
   max-width:var(--base_width)!important;
+  border:none!important;
 }
 
 /* なぜ、外構会社が造成段階から関わるのか */
