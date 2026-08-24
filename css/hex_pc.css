@@ -1966,58 +1966,32 @@ div[hex-sp]{
   z-index:2;
   display:grid;
   place-items:center;
-  width:56px;
-  height:56px;
+  width:58px;
+  height:58px;
   color:#1f2774!important;
-  font-size:24px!important;
-  font-weight:500;
   line-height:1;
   letter-spacing:.04em;
-  background:#E8D575!important;
+  background-color:#E8D575;
+  background-image:
+    radial-gradient(
+      circle,
+      #fff 0 1px,
+      transparent 1.2px
+    );
+  background-size:6px 6px;
+  background-position:center;
   border:none;
   border-radius:0;
-  clip-path:polygon(
-    50% 0%,
-    57% 4%,
-    65% 2%,
-    71% 8%,
-    79% 8%,
-    83% 15%,
-    90% 18%,
-    92% 26%,
-    98% 32%,
-    96% 41%,
-    100% 50%,
-    96% 59%,
-    98% 68%,
-    92% 74%,
-    90% 82%,
-    83% 85%,
-    79% 92%,
-    71% 92%,
-    65% 98%,
-    57% 96%,
-    50% 100%,
-    43% 96%,
-    35% 98%,
-    29% 92%,
-    21% 92%,
-    17% 85%,
-    10% 82%,
-    8% 74%,
-    2% 68%,
-    4% 59%,
-    0% 50%,
-    4% 41%,
-    2% 32%,
-    8% 26%,
-    10% 18%,
-    17% 15%,
-    21% 8%,
-    29% 8%,
-    35% 2%,
-    43% 4%
-  );
+  clip-path:none;
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='50' cy='50' r='34'/%3E%3Ccircle cx='50' cy='19' r='17'/%3E%3Ccircle cx='68.2' cy='24.9' r='17'/%3E%3Ccircle cx='79.5' cy='40.4' r='17'/%3E%3Ccircle cx='79.5' cy='59.6' r='17'/%3E%3Ccircle cx='68.2' cy='75.1' r='17'/%3E%3Ccircle cx='50' cy='81' r='17'/%3E%3Ccircle cx='31.8' cy='75.1' r='17'/%3E%3Ccircle cx='20.5' cy='59.6' r='17'/%3E%3Ccircle cx='20.5' cy='40.4' r='17'/%3E%3Ccircle cx='31.8' cy='24.9' r='17'/%3E%3C/g%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='50' cy='50' r='34'/%3E%3Ccircle cx='50' cy='19' r='17'/%3E%3Ccircle cx='68.2' cy='24.9' r='17'/%3E%3Ccircle cx='79.5' cy='40.4' r='17'/%3E%3Ccircle cx='79.5' cy='59.6' r='17'/%3E%3Ccircle cx='68.2' cy='75.1' r='17'/%3E%3Ccircle cx='50' cy='81' r='17'/%3E%3Ccircle cx='31.8' cy='75.1' r='17'/%3E%3Ccircle cx='20.5' cy='59.6' r='17'/%3E%3Ccircle cx='20.5' cy='40.4' r='17'/%3E%3Ccircle cx='31.8' cy='24.9' r='17'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-repeat:no-repeat;
+  mask-repeat:no-repeat;
+  -webkit-mask-position:center;
+  mask-position:center;
+  -webkit-mask-size:contain;
+  mask-size:contain;
+  transform:none;
   box-sizing:border-box;
 }
 
