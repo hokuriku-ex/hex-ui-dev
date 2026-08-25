@@ -1326,7 +1326,7 @@
 @media screen and (max-width:768px){
   #gc_auto_body_company .hex-company-section{
     width:100%;
-    margin:72px auto 0;
+    margin:0 auto;
   }
   #gc_auto_body_company .hex-company-map-link{
     margin:0;
