@@ -1792,7 +1792,6 @@ div[hex-sp]{
   margin:0;
   padding:0;
   border:none;
-  font-weight:700!important;
   text-align:center;
   font-family:var(--hex-font-gothic)!important;
 }
