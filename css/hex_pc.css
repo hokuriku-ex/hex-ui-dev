@@ -1955,7 +1955,9 @@ div[hex-sp]{
 }
 .hex-card-strength.hex-strength-point .hex-card-title{
   position:relative;
-  margin:0!important;
+  display:table;
+  width:auto;
+  margin:0 auto!important;
   padding-bottom:22px!important;
   text-align:center;
 }
@@ -1963,10 +1965,10 @@ div[hex-sp]{
   content:"";
   position:absolute;
   bottom:8px;
-  left:50%;
-  width:84px;
+  left:0;
+  width:100%;
   border-bottom:2px dashed #d8dce8;
-  transform:translateX(-50%);
+  transform:none;
 }
 .hex-card-strength.hex-strength-point .hex-card-text{
   margin:0!important;
