@@ -1807,6 +1807,14 @@ div[hex-sp]{
   line-height:1.5;
   letter-spacing:.04em;
 }
+.hex-card-strength.hex-strength-point .hex-sub-title::before,
+.hex-card-strength.hex-strength-point .hex-sub-title::after{
+  content:"";
+  flex:0 0 12px;
+  width:12px;
+  height:1px;
+  background:#c8a874;
+}
 .hex-card-strength .hex-card-image img{
   display:block;
   width:80%!important;
