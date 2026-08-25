@@ -1783,18 +1783,6 @@ div[hex-sp]{
   line-height:1;
   letter-spacing:.04em;
 }
-.hex-card-strength .hex-sub-title{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  margin-top:6px;
-  color:#666!important;
-  font-size:14px!important;
-  font-weight:500;
-  line-height:1.5;
-  letter-spacing:.04em;
-}
 .hex-card-strength .hex-card-head{
   margin:0;
   padding:0;
@@ -1806,6 +1794,18 @@ div[hex-sp]{
   border:none;
   text-align:center;
   font-family:var(--hex-font-gothic)!important;
+}
+.hex-card-strength .hex-sub-title{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-top:6px;
+  color:#c8a874!important;
+  font-size:13px!important;
+  font-weight:500;
+  line-height:1.5;
+  letter-spacing:.04em;
 }
 .hex-card-strength .hex-card-image img{
   display:block;
