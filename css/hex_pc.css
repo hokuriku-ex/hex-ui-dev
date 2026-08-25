@@ -1100,18 +1100,18 @@ div.NNAttached{
 .hex-anchor-nav *{
   box-sizing:border-box;
 }
+/* アンカーナビ：初期表示　透明背景・白文字 */
 .hex-anchor-nav{
   z-index:70;
   width:100vw;
   margin:22px calc(50% - 50vw);
   overflow:visible;
+  color:#fff;
   text-align:center;
-  background:#fff!important;
+  background:transparent!important;
   box-shadow:none;
 }
-.bg_post_index .linktext_color_basecolor2 .hex-anchor-nav a{
-  color:#1f2774!important;
-}
+/* アンカーナビ：固定表示　白背景・紺文字 */
 .hex-anchor-nav.is-fixed{
   position:fixed;
   left:50%;
@@ -1121,17 +1121,20 @@ div.NNAttached{
   margin:0;
   padding-bottom:16px;
   overflow:visible;
+  color:#1f2774;
   text-align:center;
   background:#fff!important;
   box-shadow:none;
   transform:translateX(-50%);
 }
+/* 固定時の高さ保持 */
 .hex-anchor-nav-placeholder{
   display:none;
 }
 .hex-anchor-nav-placeholder.is-active{
   display:block;
 }
+/* アンカーナビリスト */
 .hex-anchor-nav-list{
   display:flex;
   justify-content:center;
@@ -1144,6 +1147,7 @@ div.NNAttached{
   gap:0;
   list-style:none;
 }
+/* リンク初期化 */
 .hex-anchor-nav a,
 .hex-anchor-nav a:link,
 .hex-anchor-nav a:visited,
@@ -1154,6 +1158,7 @@ div.NNAttached{
   box-shadow:none!important;
   text-decoration:none!important;
 }
+/* アンカーリンク：初期表示 */
 .hex-anchor-nav-link{
   position:relative;
   display:inline-block;
@@ -1163,7 +1168,7 @@ div.NNAttached{
   min-height:0!important;
   margin:0!important;
   padding:0 18px!important;
-  color:#1f2774!important;
+  color:#fff!important;
   font-size:16px!important;
   line-height:1.8!important;
   font-weight:500!important;
@@ -1175,28 +1180,62 @@ div.NNAttached{
   border-radius:0!important;
   box-shadow:none!important;
   transform:none!important;
-  transition:.3s;
+  transition:color .3s ease;
 }
-.hex-anchor-nav-link:hover{
+/* CMS側のリンク色を上書き：初期表示 */
+.bg_post_index
+.linktext_color_basecolor2
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link,
+.linktext_color_basecolor2
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link{
+  color:#fff!important;
+}
+/* アンカーリンク：固定表示 */
+.hex-anchor-nav.is-fixed .hex-anchor-nav-link,
+.bg_post_index
+.linktext_color_basecolor2
+.hex-anchor-nav.is-fixed
+a.hex-anchor-nav-link,
+.linktext_color_basecolor2
+.hex-anchor-nav.is-fixed
+a.hex-anchor-nav-link{
+  color:#1f2774!important;
+}
+/* ホバー */
+.hex-anchor-nav-link:hover,
+.bg_post_index
+.linktext_color_basecolor2
+.hex-anchor-nav
+a.hex-anchor-nav-link:hover,
+.linktext_color_basecolor2
+.hex-anchor-nav
+a.hex-anchor-nav-link:hover{
   color:#4a7fd0!important;
 }
-.bg_post_index .linktext_color_basecolor2 .hex-anchor-nav a.hex-anchor-nav-link:hover,
-.linktext_color_basecolor2 .hex-anchor-nav a.hex-anchor-nav-link:hover{
-  color:#4a7fd0!important;
-}
+/* 現在表示中のセクション */
 .hex-anchor-nav-link.is-active{
   color:#4a7fd0!important;
   font-weight:500!important;
 }
+/* 区切り線：初期表示 */
 .hex-anchor-nav-link:not(:last-child)::after{
   content:"|";
   position:absolute;
   right:-2px;
   top:50%;
   transform:translateY(-50%);
-  color:#1f2774;
+  color:rgba(255,255,255,.75);
   font-weight:500;
+  transition:color .3s ease;
 }
+/* 区切り線：固定表示 */
+.hex-anchor-nav.is-fixed
+.hex-anchor-nav-link:not(:last-child)::after{
+  color:#1f2774;
+}
+/* ヘッダーメニューの重なり順 */
 .bg_menu_button_popup,
 .bg_menu_button_popup *,
 .global_nav_child,
