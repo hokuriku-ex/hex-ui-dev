@@ -1219,8 +1219,18 @@ a.hex-anchor-nav-link:hover{
   color:#4a7fd0!important;
   font-weight:500!important;
 }
+.hex-anchor-nav-link:first-child::before{
+  content:"|";
+  position:absolute;
+  left:-2px;
+  top:50%;
+  transform:translateY(-50%);
+  color:rgba(255,255,255,.75);
+  font-weight:500;
+  transition:color .3s ease;
+}
 /* 区切り線：初期表示 */
-.hex-anchor-nav-link:not(:last-child)::after{
+.hex-anchor-nav-link::after{
   content:"|";
   position:absolute;
   right:-2px;
@@ -1231,6 +1241,14 @@ a.hex-anchor-nav-link:hover{
   transition:color .3s ease;
 }
 /* 区切り線：固定表示 */
+.hex-anchor-nav.is-fixed
+.hex-anchor-nav-link:first-child::before{
+  content:none;
+}
+.hex-anchor-nav.is-fixed
+.hex-anchor-nav-link:last-child::after{
+  content:none;
+}
 .hex-anchor-nav.is-fixed
 .hex-anchor-nav-link:not(:last-child)::after{
   color:#1f2774;
