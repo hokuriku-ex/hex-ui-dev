@@ -208,6 +208,24 @@
 }
 
 /* =======================================
+   記事パーツ（スペーサー）
+======================================= */
+@media screen and (max-width:768px){
+  .rsp_spacer1{
+    padding-top:24px!important;
+  }
+  .rsp_spacer2{
+    padding-top:48px!important;
+  }
+  .rsp_spacer3{
+    padding-top:72px!important;
+  }
+  .rsp_spacer4{
+    padding-top:96px!important;
+  }
+}
+
+/* =======================================
    記事パーツ（Q&A）
 ======================================= */
 @media screen and (max-width:768px){
