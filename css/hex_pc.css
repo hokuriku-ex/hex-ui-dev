@@ -1907,7 +1907,7 @@ div[hex-sp]{
   transform:none;
 }
 
-/* 要点用 */
+/* ポイントデザイン */
 .hex-card-strength.hex-strength-point .hex-card{
   position:relative;
   overflow:visible;
@@ -1965,7 +1965,7 @@ div[hex-sp]{
   bottom:8px;
   left:50%;
   width:84px;
-  border-bottom:3px dotted #1f2774;
+  border-bottom:2px dashed #d8dce8;
   transform:translateX(-50%);
 }
 .hex-card-strength.hex-strength-point .hex-card-text{
