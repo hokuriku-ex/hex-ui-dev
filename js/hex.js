@@ -3048,9 +3048,15 @@ hexLoad(function(){
     function makeSection(text,type){
       var section=document.createElement('div');
       var title=makeSectionTitle(text);
-      section.className='hex-company-section hex-company-section-'+type;
+
+      section.className=
+        'hex-company-section ' +
+        'hex-company-section-'+type+' ' +
+        'rsp_spacer4';
+
       section.appendChild(title);
       bgContents.appendChild(section);
+
       return section;
     }
     function getTextLines(textBox){
