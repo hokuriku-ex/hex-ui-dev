@@ -1230,6 +1230,26 @@ a.hex-anchor-nav-link:hover{
   color:#4a7fd0!important;
   font-weight:500!important;
 }
+.hex-anchor-nav.is-fixed a.hex-anchor-nav-link:hover,
+.hex-anchor-nav.is-fixed a.hex-anchor-nav-link:focus,
+.hex-anchor-nav.is-fixed a.hex-anchor-nav-link.is-active,
+.bg_post_index
+.linktext_color_basecolor2
+.hex-anchor-nav.is-fixed
+a.hex-anchor-nav-link:hover,
+.bg_post_index
+.linktext_color_basecolor2
+.hex-anchor-nav.is-fixed
+a.hex-anchor-nav-link.is-active,
+.linktext_color_basecolor2
+.hex-anchor-nav.is-fixed
+a.hex-anchor-nav-link:hover,
+.linktext_color_basecolor2
+.hex-anchor-nav.is-fixed
+a.hex-anchor-nav-link.is-active{
+  color:#4a7fd0!important;
+}
+/* 区切り線：初期表示 */
 .hex-anchor-nav-link:first-child::before{
   content:"|";
   position:absolute;
@@ -1240,7 +1260,6 @@ a.hex-anchor-nav-link:hover{
   font-weight:500;
   transition:color .3s ease;
 }
-/* 区切り線：初期表示 */
 .hex-anchor-nav-link::after{
   content:"|";
   position:absolute;
