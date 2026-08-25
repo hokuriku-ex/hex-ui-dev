@@ -1146,6 +1146,7 @@ div.NNAttached{
   padding:0;
   gap:0;
   list-style:none;
+  counter-reset:hex-anchor-number;
 }
 /* リンク初期化 */
 .hex-anchor-nav a,
@@ -1158,28 +1159,87 @@ div.NNAttached{
   box-shadow:none!important;
   text-decoration:none!important;
 }
-/* アンカーリンク：初期表示 */
+/* アンカーリンク：基本設定 */
 .hex-anchor-nav-link{
   position:relative;
-  display:inline-block;
   width:auto!important;
   height:auto!important;
   min-width:0!important;
   min-height:0!important;
   margin:0!important;
-  padding:0 18px!important;
   color:#fff!important;
   font-size:16px!important;
-  line-height:1.8!important;
   font-weight:500!important;
   letter-spacing:normal!important;
   text-align:center!important;
   white-space:nowrap!important;
   background:none!important;
-  border:none!important;
   border-radius:0!important;
   box-shadow:none!important;
   transform:none!important;
+  transition:
+    color .3s ease,
+    border-color .3s ease;
+
+  counter-increment:hex-anchor-number;
+}
+/* 初期表示　SECTION番号／タイトル／下向きアイコン */
+.hex-anchor-nav:not(.is-fixed)
+.hex-anchor-nav-list{
+  justify-content:center;
+  align-items:stretch;
+  flex-wrap:nowrap;
+  width:100%;
+  max-width:var(--hex_small_width);
+  padding:0 16px;
+}
+.hex-anchor-nav:not(.is-fixed)
+.hex-anchor-nav-link{
+  display:flex!important;
+  flex:1 1 0;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  min-width:150px!important;
+  padding:14px 28px!important;
+  color:#fff!important;
+  line-height:1.4!important;
+  /* 各項目の左側の縦線 */
+  border:none!important;
+  border-left:1px solid rgba(255,255,255,.55)!important;
+}
+/* 最後の右側にも縦線 */
+.hex-anchor-nav:not(.is-fixed)
+.hex-anchor-nav-link:last-child{
+  border-right:1px solid rgba(255,255,255,.55)!important;
+}
+/* SECTION.01から自動採番 */
+.hex-anchor-nav:not(.is-fixed)
+.hex-anchor-nav-link::before{
+  content:"SECTION." counter(hex-anchor-number, decimal-leading-zero);
+  position:static;
+  display:block;
+  color:rgba(255,255,255,.78);
+  font-size:9px;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:.12em;
+  transform:none;
+  transition:color .3s ease;
+}
+/* タイトル下の下向きアイコン */
+.hex-anchor-nav:not(.is-fixed)
+.hex-anchor-nav-link::after{
+  content:"\f107";
+  position:static;
+  display:block;
+  color:#fff;
+  font-family:"Font Awesome 6 Free";
+  font-size:11px;
+  font-weight:900;
+  line-height:1;
+  transform:none;
   transition:color .3s ease;
 }
 /* CMS側のリンク色を上書き：初期表示 */
@@ -1192,8 +1252,67 @@ a.hex-anchor-nav-link,
 a.hex-anchor-nav-link{
   color:#fff!important;
 }
-/* アンカーリンク：固定表示 */
-.hex-anchor-nav.is-fixed .hex-anchor-nav-link,
+
+/* 初期表示：ホバー・アクティブ */
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link:hover,
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link:focus,
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link.is-active,
+.bg_post_index
+.linktext_color_basecolor2
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link:hover,
+.bg_post_index
+.linktext_color_basecolor2
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link.is-active,
+.linktext_color_basecolor2
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link:hover,
+.linktext_color_basecolor2
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link.is-active{
+  color:#4a7fd0!important;
+}
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link:hover::before,
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link:hover::after,
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link:focus::before,
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link:focus::after,
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link.is-active::before,
+.hex-anchor-nav:not(.is-fixed)
+a.hex-anchor-nav-link.is-active::after{
+  color:#4a7fd0;
+}
+/* 固定表示　従来の横並びデザイン */
+.hex-anchor-nav.is-fixed
+.hex-anchor-nav-list{
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+  width:100%;
+  max-width:var(--base_width);
+  padding:0;
+}
+.hex-anchor-nav.is-fixed
+.hex-anchor-nav-link{
+  display:inline-block!important;
+  width:auto!important;
+  min-width:0!important;
+  padding:0 18px!important;
+  color:#1f2774!important;
+  font-size:16px!important;
+  font-weight:500!important;
+  line-height:1.8!important;
+  border:none!important;
+}
+/* CMS側のリンク色を上書き：固定表示 */
 .bg_post_index
 .linktext_color_basecolor2
 .hex-anchor-nav.is-fixed
@@ -1203,36 +1322,37 @@ a.hex-anchor-nav-link,
 a.hex-anchor-nav-link{
   color:#1f2774!important;
 }
-/* ホバー */
-.hex-anchor-nav-link:hover,
-.bg_post_index
-.linktext_color_basecolor2
-.hex-anchor-nav
-a.hex-anchor-nav-link:hover,
-.linktext_color_basecolor2
-.hex-anchor-nav
-a.hex-anchor-nav-link:hover{
-  color:#4a7fd0!important;
+/* 固定時はSECTION番号を非表示 */
+.hex-anchor-nav.is-fixed
+.hex-anchor-nav-link::before{
+  content:none;
 }
-.hex-anchor-nav.is-fixed a.hex-anchor-nav-link:hover,
-.hex-anchor-nav.is-fixed a.hex-anchor-nav-link:focus,
-.bg_post_index
-.linktext_color_basecolor2
+/* 固定時は項目間のみ縦線を表示 */
+.hex-anchor-nav.is-fixed
+.hex-anchor-nav-link:not(:last-child)::after{
+  content:"|";
+  position:absolute;
+  right:-2px;
+  top:50%;
+  display:block;
+  color:#1f2774;
+  font-family:inherit;
+  font-size:16px;
+  font-weight:500;
+  line-height:1;
+  transform:translateY(-50%);
+}
+.hex-anchor-nav.is-fixed
+.hex-anchor-nav-link:last-child::after{
+  content:none;
+}
+/* 固定表示：ホバー・アクティブ */
 .hex-anchor-nav.is-fixed
 a.hex-anchor-nav-link:hover,
-.linktext_color_basecolor2
 .hex-anchor-nav.is-fixed
-a.hex-anchor-nav-link:hover{
-  color:#4a7fd0!important;
-}
-/* 現在表示中のセクション */
-.hex-anchor-nav-link.is-active{
-  color:#4a7fd0!important;
-  font-weight:500!important;
-}
-.hex-anchor-nav.is-fixed a.hex-anchor-nav-link:hover,
-.hex-anchor-nav.is-fixed a.hex-anchor-nav-link:focus,
-.hex-anchor-nav.is-fixed a.hex-anchor-nav-link.is-active,
+a.hex-anchor-nav-link:focus,
+.hex-anchor-nav.is-fixed
+a.hex-anchor-nav-link.is-active,
 .bg_post_index
 .linktext_color_basecolor2
 .hex-anchor-nav.is-fixed
@@ -1248,40 +1368,6 @@ a.hex-anchor-nav-link:hover,
 .hex-anchor-nav.is-fixed
 a.hex-anchor-nav-link.is-active{
   color:#4a7fd0!important;
-}
-/* 区切り線：初期表示 */
-.hex-anchor-nav-link:first-child::before{
-  content:"|";
-  position:absolute;
-  left:-2px;
-  top:50%;
-  transform:translateY(-50%);
-  color:rgba(255,255,255,.75);
-  font-weight:500;
-  transition:color .3s ease;
-}
-.hex-anchor-nav-link::after{
-  content:"|";
-  position:absolute;
-  right:-2px;
-  top:50%;
-  transform:translateY(-50%);
-  color:rgba(255,255,255,.75);
-  font-weight:500;
-  transition:color .3s ease;
-}
-/* 区切り線：固定表示 */
-.hex-anchor-nav.is-fixed
-.hex-anchor-nav-link:first-child::before{
-  content:none;
-}
-.hex-anchor-nav.is-fixed
-.hex-anchor-nav-link:last-child::after{
-  content:none;
-}
-.hex-anchor-nav.is-fixed
-.hex-anchor-nav-link:not(:last-child)::after{
-  color:#1f2774;
 }
 /* ヘッダーメニューの重なり順 */
 .bg_menu_button_popup,
