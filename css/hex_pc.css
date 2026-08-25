@@ -1807,8 +1807,8 @@ div[hex-sp]{
   line-height:1.5;
   letter-spacing:.04em;
 }
-.hex-card-strength.hex-strength-point .hex-sub-title::before,
-.hex-card-strength.hex-strength-point .hex-sub-title::after{
+.hex-card-strength .hex-sub-title::before,
+.hex-card-strength .hex-sub-title::after{
   content:"";
   flex:0 0 12px;
   width:12px;
@@ -1911,71 +1911,66 @@ div[hex-sp]{
 .hex-card-strength.hex-strength-point .hex-card{
   position:relative;
   overflow:visible;
-  margin-top:40px;
-  padding:32px 16px;
-  border:none!important;
-  border-radius:0;
+  margin-top:48px;
+  padding:52px 24px 28px;
+  border:2px solid #d8dce8!important;
+  border-radius:6px!important;
   background:transparent;
   box-sizing:border-box;
 }
-.hex-card-strength.hex-strength-point .hex-card::before{
-  content:"";
-  position:absolute;
-  top:0;
-  right:0;
-  left:0;
-  height:10px;
-  border:2px solid #d8dce8;
-  border-bottom:none;
-  border-radius:8px 8px 0 0;
-  box-sizing:border-box;
-  background:
-    linear-gradient(#d8dce8,#d8dce8)
-    center 6px / calc(100% - 32px) 2px
-    no-repeat;
-  pointer-events:none;
-}
-.hex-card-strength.hex-strength-point .hex-card::after{
-  content:"";
-  position:absolute;
-  right:0;
-  bottom:0;
-  left:0;
-  height:10px;
-  border:2px solid #d8dce8;
-  border-top:none;
-  border-radius:0 0 8px 8px;
-  box-sizing:border-box;
-  background:
-    linear-gradient(#d8dce8,#d8dce8)
-    center bottom 6px / calc(100% - 32px) 2px
-    no-repeat;
-
-  pointer-events:none;
-}
 .hex-card-strength.hex-strength-point .hex-number{
   position:absolute;
-  top:8px; /* 内側の線の位置に合わせる */
+  top:0;
   left:50%;
   z-index:2;
   display:flex;
-  align-items:center;
+  align-items:flex-end;
   justify-content:center;
   width:88px;
-  height:36px;
-  padding-top:4px;
+  height:58px;
+  padding:0 0 4px;
   color:#c8a874;
-  font-size:13px!important;
+  font-size:28px!important;
   font-weight:700;
   line-height:1;
   letter-spacing:.04em;
-  background:#d8dce8;
+  background:#fff;
   border:none;
   border-radius:0;
-  -webkit-clip-path:ellipse(50% 100% at 50% 100%);
-  clip-path:ellipse(50% 100% at 50% 100%);
-  transform:translate(-50%,-100%);
+  clip-path:none;
+  transform:translate(-50%,-50%);
   box-sizing:border-box;
+}
+.hex-card-strength.hex-strength-point .hex-number::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:50%;
+  width:70px;
+  height:28px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 70 28'%3E%3Cpath id='curve' d='M7 23 Q35 2 63 23' fill='none'/%3E%3Ctext fill='%23c8a874' font-family='Arial,sans-serif' font-size='13' font-weight='700' letter-spacing='1'%3E%3CtextPath href='%23curve' startOffset='50%25' text-anchor='middle'%3EPOINT%3C/textPath%3E%3C/text%3E%3C/svg%3E")
+    center / contain no-repeat;
+  transform:translateX(-50%);
+}
+.hex-card-strength.hex-strength-point .hex-card-title{
+  position:relative;
+  margin:0!important;
+  padding-bottom:22px!important;
+  text-align:center;
+}
+.hex-card-strength.hex-strength-point .hex-card-title::after{
+  content:"";
+  position:absolute;
+  bottom:8px;
+  left:50%;
+  width:84px;
+  border-bottom:3px dotted #1f2774;
+  transform:translateX(-50%);
+}
+.hex-card-strength.hex-strength-point .hex-card-text{
+  margin:0!important;
+  padding:0!important;
 }
 
 /* 数字マーク */
