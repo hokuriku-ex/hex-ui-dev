@@ -5480,6 +5480,7 @@ body,
   font-weight:500;
   line-height:1;
   letter-spacing:.04em;
+  border-radius:4px;
 }
 #form_lp_form .hex-form-badge.is-required{
   background:#d91f26;
