@@ -1967,7 +1967,7 @@ div[hex-sp]{
   bottom:8px;
   left:0;
   width:100%;
-  border-bottom:2px dashed #d8dce8;
+  border-bottom:1px solid #d8dce8;
   transform:none;
 }
 .hex-card-strength.hex-strength-point .hex-card-text{
