@@ -1214,6 +1214,17 @@ a.hex-anchor-nav-link:hover,
 a.hex-anchor-nav-link:hover{
   color:#4a7fd0!important;
 }
+.hex-anchor-nav.is-fixed a.hex-anchor-nav-link:hover,
+.hex-anchor-nav.is-fixed a.hex-anchor-nav-link:focus,
+.bg_post_index
+.linktext_color_basecolor2
+.hex-anchor-nav.is-fixed
+a.hex-anchor-nav-link:hover,
+.linktext_color_basecolor2
+.hex-anchor-nav.is-fixed
+a.hex-anchor-nav-link:hover{
+  color:#4a7fd0!important;
+}
 /* 現在表示中のセクション */
 .hex-anchor-nav-link.is-active{
   color:#4a7fd0!important;
