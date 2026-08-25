@@ -3771,7 +3771,7 @@ body,
   display:table;
   margin:0 auto!important;
   padding-top:0!important;
-  padding-bottom:48px!important;
+  padding-bottom:0!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box!important;
   text-align:left;
@@ -3785,7 +3785,7 @@ body,
   content:"";
   display:block;
   width:40px;
-  height:1px;
+  height:2px;
   margin:0 auto 22px;
   background:#c8a874;
 }
