@@ -2712,17 +2712,26 @@ hexReady(function(){
 });
 
 /* =======================================
-   導入文をページタイトル内へ移動
+   導入文・アンカーナビをページタイトル内へ移動
 ======================================= */
 hexLoad(function(){
   var hexIntro=document.querySelector('.hex-intro');
+  var hexAnchorSource=document.querySelector('.hex-anchor-source');
   var pageTitleContents=document.querySelector(
     '.pagetitle_type.pagetitle_type4 > .contents'
   );
 
-  if(!hexIntro || !pageTitleContents)return;
+  if(!pageTitleContents)return;
 
-  pageTitleContents.appendChild(hexIntro);
+  /* 導入文を移動 */
+  if(hexIntro){
+    pageTitleContents.appendChild(hexIntro);
+  }
+
+  /* 導入文の下にアンカーナビを移動 */
+  if(hexAnchorSource){
+    pageTitleContents.appendChild(hexAnchorSource);
+  }
 });
 
 /* =======================================
