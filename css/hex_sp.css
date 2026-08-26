@@ -275,7 +275,6 @@
     position:relative;
     width:100vw;
     margin:22px calc(50% - 50vw) 36px;
-    padding-bottom:24px;
     overflow:hidden;
     text-align:center;
   }
@@ -378,8 +377,17 @@
   .hex-anchor-nav-link{
     flex:0 0 auto!important;
   }
-  .hex-anchor-nav.is-fixed.has-anchor-scrollbar{
+  /* 初期表示 */
+  .hex-anchor-nav:not(.is-fixed){
     padding-bottom:24px;
+  }
+  /* 固定後：スクロールバーなし */
+  .hex-anchor-nav.is-fixed{
+    padding-bottom:0!important;
+  }
+  /* 固定後：スクロールバーあり */
+  .hex-anchor-nav.is-fixed.has-anchor-scrollbar{
+    padding-bottom:24px!important;
   }
 }
 
