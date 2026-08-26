@@ -275,7 +275,8 @@
     position:relative;
     width:100vw;
     margin:22px calc(50% - 50vw) 36px;
-    overflow:hidden;
+    padding-bottom:0!important;
+    overflow:visible;
     text-align:center;
   }
   /* アンカーナビ全体：固定表示 */
@@ -283,14 +284,13 @@
     top:var(--header_height_smartphone)!important;
     width:100vw;
     margin:0;
-    padding-bottom:0px;
-    overflow:hidden;
+    padding-bottom:0!important;
+    overflow:visible;
     text-align:center;
   }
   /* 横スクロールリスト */
   .hex-anchor-nav-list{
-    justify-content:safe center;
-    flex-wrap:nowrap;
+    flex-wrap:nowrap!important;
     width:100%;
     max-width:100%;
     margin:0;
@@ -299,8 +299,6 @@
     overflow-y:hidden;
     scrollbar-width:none;
     -webkit-overflow-scrolling:touch;
-    -webkit-mask-image:none!important;
-    mask-image:none!important;
   }
   .hex-anchor-nav-list::-webkit-scrollbar{
     display:none;
@@ -344,7 +342,7 @@
   .hex-anchor-scrollbar{
     position:absolute;
     right:16px;
-    bottom:7px;
+    bottom:-18px;
     left:16px;
     z-index:2;
     display:none;
@@ -376,18 +374,6 @@
   .hex-anchor-nav.is-fixed
   .hex-anchor-nav-link{
     flex:0 0 auto!important;
-  }
-  /* 初期表示 */
-  .hex-anchor-nav:not(.is-fixed){
-    padding-bottom:24px;
-  }
-  /* 固定後：スクロールバーなし */
-  .hex-anchor-nav.is-fixed{
-    padding-bottom:0!important;
-  }
-  /* 固定後：スクロールバーあり */
-  .hex-anchor-nav.is-fixed.has-anchor-scrollbar{
-    padding-bottom:24px!important;
   }
 }
 
