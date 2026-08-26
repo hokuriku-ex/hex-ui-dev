@@ -286,7 +286,20 @@
     margin:0;
     padding-bottom:0!important;
     overflow:visible;
+    isolation:isolate;
     text-align:center;
+  }
+  /* スクロールバー背面の白い帯 */
+  .hex-anchor-nav.is-fixed::before{
+    content:"";
+    position:absolute;
+    top:100%;
+    right:0;
+    left:0;
+    z-index:0;
+    height:36px;
+    background:#fff;
+    pointer-events:none;
   }
   /* 横スクロールリスト */
   .hex-anchor-nav-list{
@@ -363,6 +376,16 @@
   }
   .hex-anchor-scrollbar.is-visible{
     display:block;
+  }
+  .hex-anchor-nav.is-fixed
+  .hex-anchor-scrollbar{
+    bottom:-19px;
+    z-index:2;
+    background:rgba(200,168,116,.3);
+  }
+  .hex-anchor-nav.is-fixed
+  .hex-anchor-scrollbar-thumb{
+    background:#c8a874;
   }
   .hex-anchor-nav.is-fixed
   .hex-anchor-nav-list{
