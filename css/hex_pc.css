@@ -905,22 +905,38 @@ a.hex-text-link[target="_blank"]::after{
 ======================================= */
 .rsp_spacer1{
   width:100%;
-  padding-top:clamp(24px, calc(3.7123vw - 4.55px), 40px)!important;
+  padding-top:clamp(
+    24px,
+    calc(1.8561vw + 9.72px),
+    32px
+  )!important;
   clear:both;
 }
 .rsp_spacer2{
   width:100%;
-  padding-top:clamp(48px, calc(7.4246vw - 9.10px), 80px)!important;
+  padding-top:clamp(
+    48px,
+    calc(3.7123vw + 19.45px),
+    64px
+  )!important;
   clear:both;
 }
 .rsp_spacer3{
   width:100%;
-  padding-top:clamp(72px, calc(11.1369vw - 13.65px), 120px)!important;
+  padding-top:clamp(
+    72px,
+    calc(5.5684vw + 29.18px),
+    96px
+  )!important;
   clear:both;
 }
 .rsp_spacer4{
   width:100%;
-  padding-top:clamp(96px, calc(14.8492vw - 18.20px), 160px)!important;
+  padding-top:clamp(
+    96px,
+    calc(7.4246vw + 38.90px),
+    128px
+  )!important;
   clear:both;
 }
 
