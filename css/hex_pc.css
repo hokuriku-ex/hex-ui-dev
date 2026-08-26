@@ -939,6 +939,12 @@ a.hex-text-link[target="_blank"]::after{
   )!important;
   clear:both;
 }
+/* ヘッダースペーサー */
+.hex-header-spacer{
+  width:100%;
+  padding-top:64px!important;
+  clear:both;
+}
 
 /* =======================================
    記事パーツ（ファイル）
