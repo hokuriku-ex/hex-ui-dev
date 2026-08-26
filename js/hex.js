@@ -449,7 +449,7 @@ function hexInitAnchorNav(){
       var top=
         hashAnchorTarget.getBoundingClientRect().top+
         window.pageYOffset-
-        getHexAnchorOffset();
+        getHexAnchorOffset()+8;
       window.scrollTo({
         top:top,
         behavior:'auto'
