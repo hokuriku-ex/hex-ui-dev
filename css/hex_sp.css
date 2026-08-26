@@ -270,11 +270,7 @@
    共通パーツ（アンカーナビ）
 ======================================= */
 @media screen and (max-width:1000px){
-
-  /* =====================================
-     アンカーナビ全体：初期表示
-  ===================================== */
-
+  /* アンカーナビ全体：初期表示 */
   .hex-anchor-nav{
     position:relative;
     width:100vw;
@@ -283,12 +279,7 @@
     overflow:visible;
     text-align:center;
   }
-
-
-  /* =====================================
-     アンカーナビ全体：固定表示
-  ===================================== */
-
+  /* アンカーナビ全体：固定表示 */
   .hex-anchor-nav.is-fixed{
     top:var(--header_height)!important;
     width:100vw;
@@ -298,13 +289,7 @@
     isolation:isolate;
     text-align:center;
   }
-
-
-  /* =====================================
-     固定時：スクロールバーがある場合だけ
-     白い背景帯を追加
-  ===================================== */
-
+  /* 固定時：スクロールバーがある場合だけ白い背景帯を追加 */
   .hex-anchor-nav.is-fixed.has-anchor-scrollbar::before{
     content:"";
     position:absolute;
@@ -316,12 +301,7 @@
     background:#fff;
     pointer-events:none;
   }
-
-
-  /* =====================================
-     横スクロールリスト
-  ===================================== */
-
+  /* 横スクロールリスト */
   .hex-anchor-nav-list{
     flex-wrap:nowrap!important;
     width:100%;
@@ -333,17 +313,10 @@
     scrollbar-width:none;
     -webkit-overflow-scrolling:touch;
   }
-
   .hex-anchor-nav-list::-webkit-scrollbar{
     display:none;
   }
-
-
-  /* =====================================
-     初期表示
-     SECTION番号／タイトル／アイコン
-  ===================================== */
-
+  /* 初期表示：SECTION番号／タイトル／アイコン */
   .hex-anchor-nav:not(.is-fixed)
   .hex-anchor-nav-list{
     justify-content:flex-start!important;
@@ -351,7 +324,6 @@
     padding-right:16px;
     padding-left:16px;
   }
-
   .hex-anchor-nav:not(.is-fixed)
   .hex-anchor-nav-link{
     flex:0 0 auto;
@@ -360,13 +332,7 @@
     font-size:15px!important;
     white-space:nowrap!important;
   }
-
-
-  /* =====================================
-     固定表示
-     番号＋タイトル
-  ===================================== */
-
+  /* 固定表示：番号＋タイトル */
   .hex-anchor-nav.is-fixed
   .hex-anchor-nav-list{
     justify-content:safe center;
@@ -376,7 +342,6 @@
     overflow-x:auto!important;
     overflow-y:hidden!important;
   }
-
   .hex-anchor-nav.is-fixed
   .hex-anchor-nav-link{
     flex:0 0 auto!important;
@@ -385,18 +350,12 @@
     font-size:15px!important;
     white-space:nowrap!important;
   }
-
   .hex-anchor-nav.is-fixed
   .hex-anchor-nav-link::before{
     margin-right:6px;
     font-size:11px;
   }
-
-
-  /* =====================================
-     ゴールドスクロールインジケーター
-  ===================================== */
-
+  /* ゴールドスクロールインジケーター */
   .hex-anchor-scrollbar{
     position:absolute;
     right:16px;
@@ -409,7 +368,6 @@
     background:rgba(200,168,116,.3);
     pointer-events:none;
   }
-
   .hex-anchor-scrollbar-thumb{
     position:absolute;
     top:0;
@@ -420,37 +378,37 @@
     transform:translateX(0);
     will-change:width,transform;
   }
-
   .hex-anchor-scrollbar.is-visible{
     display:block;
   }
-
-
-  /* =====================================
-     固定時のスクロールインジケーター
-  ===================================== */
-
+  /* 固定時のスクロールインジケーター */
   .hex-anchor-nav.is-fixed.has-anchor-scrollbar
   .hex-anchor-scrollbar{
     bottom:-19px;
     z-index:2;
     background:rgba(200,168,116,.3);
   }
-
   .hex-anchor-nav.is-fixed.has-anchor-scrollbar
   .hex-anchor-scrollbar-thumb{
     background:#c8a874;
   }
-
+  /* スクロールバーがない場合：中央寄せ */
+  .hex-anchor-nav:not(.has-anchor-scrollbar)
+  .hex-anchor-nav-list{
+    justify-content:center!important;
+  }
+  /* スクロールバーがある場合：左端から表示 */
+  .hex-anchor-nav.has-anchor-scrollbar
+  .hex-anchor-nav-list{
+    justify-content:flex-start!important;
+  }
 }
+/* スマホ位置調整用 */
 @media screen and (max-width:768px){
-
   .hex-anchor-nav.is-fixed{
     top:var(--header_height_smartphone)!important;
   }
-
 }
-
 /* 自動生成ページ位置調整用 */
 @media screen and (max-width:768px){
   .hex-anchor-nav-auto-page:not(.is-fixed){
