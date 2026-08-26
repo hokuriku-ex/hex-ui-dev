@@ -944,6 +944,8 @@ a.hex-text-link[target="_blank"]::after{
   width:100%;
   padding-top:64px!important;
   background-color:var(--hex-top-spacer-bg, transparent);
+  font-size:0;
+  line-height:0;
   clear:both;
 }
 
