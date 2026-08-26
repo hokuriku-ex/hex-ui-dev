@@ -358,7 +358,7 @@ function hexInitAnchorNav(){
   }
   function getHexAnchorOffset(){
     var scrollbarArea=0;
-    var titleSpace=36;
+    var titleSpace=16;
 
     /* ゴールドバーと白い帯がある場合は36px追加 */
     if(
