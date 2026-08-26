@@ -357,7 +357,21 @@ function hexInitAnchorNav(){
     return 80;
   }
   function getHexAnchorOffset(){
-    return getHexAnchorHeaderHeight()+nav.offsetHeight;
+    var scrollbarArea=0;
+
+    /* ゴールドバーと白い帯がある場合は36px追加 */
+    if(
+      window.innerWidth<=1000&&
+      nav.classList.contains('has-anchor-scrollbar')
+    ){
+      scrollbarArea=36;
+    }
+
+    return(
+      getHexAnchorHeaderHeight()+
+      nav.offsetHeight+
+      scrollbarArea
+    );
   }
   function refreshHexAnchorNav(){
     var mobileAdjust=0;
