@@ -212,16 +212,32 @@
 ======================================= */
 @media screen and (max-width:768px){
   .rsp_spacer1{
-    padding-top:24px!important;
+    padding-top:clamp(
+      16px,
+      calc(1.9608vw + 8.94px),
+      24px
+    )!important;
   }
   .rsp_spacer2{
-    padding-top:48px!important;
+    padding-top:clamp(
+      32px,
+      calc(3.9216vw + 17.88px),
+      48px
+    )!important;
   }
   .rsp_spacer3{
-    padding-top:72px!important;
+    padding-top:clamp(
+      48px,
+      calc(5.8824vw + 26.82px),
+      72px
+    )!important;
   }
   .rsp_spacer4{
-    padding-top:96px!important;
+    padding-top:clamp(
+      64px,
+      calc(7.8431vw + 35.76px),
+      96px
+    )!important;
   }
 }
 
