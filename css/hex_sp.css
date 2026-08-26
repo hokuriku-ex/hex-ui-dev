@@ -319,7 +319,6 @@
   /* 初期表示：SECTION番号／タイトル／アイコン */
   .hex-anchor-nav:not(.is-fixed)
   .hex-anchor-nav-list{
-    justify-content:flex-start!important;
     align-items:stretch;
     padding-right:16px;
     padding-left:16px;
@@ -335,7 +334,6 @@
   /* 固定表示：番号＋タイトル */
   .hex-anchor-nav.is-fixed
   .hex-anchor-nav-list{
-    justify-content:safe center;
     align-items:center;
     flex-wrap:nowrap!important;
     padding:0;
