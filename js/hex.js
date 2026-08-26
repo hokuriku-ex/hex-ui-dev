@@ -421,7 +421,7 @@ function hexInitAnchorNav(){
   }
   function updateHexAnchorActive(scrollTop){
     var activePair=null;
-    var checkLine=scrollTop+getHexAnchorOffset()+8;
+    var checkLine=scrollTop+getHexAnchorOffset()+32;
     pairs.forEach(function(pair){
       var targetTop=pair.target.getBoundingClientRect().top+window.pageYOffset;
       if(checkLine>=targetTop)activePair=pair;
