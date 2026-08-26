@@ -270,21 +270,25 @@
    共通パーツ（アンカーナビ）
 ======================================= */
 @media screen and (max-width:768px){
+  /* アンカーナビ全体：初期表示 */
   .hex-anchor-nav{
     position:relative;
     width:100vw;
-    margin:22px calc(50% - 50vw);
+    margin:22px calc(50% - 50vw) 36px;
+    padding-bottom:24px;
     overflow:hidden;
     text-align:center;
   }
+  /* アンカーナビ全体：固定表示 */
   .hex-anchor-nav.is-fixed{
     top:var(--header_height_smartphone)!important;
     width:100vw;
     margin:0;
-    padding-bottom:16px;
+    padding-bottom:24px;
     overflow:hidden;
     text-align:center;
   }
+  /* 横スクロールリスト */
   .hex-anchor-nav-list{
     justify-content:safe center;
     flex-wrap:nowrap;
@@ -293,50 +297,78 @@
     margin:0;
     padding:0;
     overflow-x:auto;
+    overflow-y:hidden;
+    scrollbar-width:none;
     -webkit-overflow-scrolling:touch;
+    -webkit-mask-image:none!important;
+    mask-image:none!important;
   }
   .hex-anchor-nav-list::-webkit-scrollbar{
     display:none;
   }
+  /* 初期表示：SECTION番号／タイトル／アイコン */
+  .hex-anchor-nav:not(.is-fixed)
+  .hex-anchor-nav-list{
+    align-items:stretch;
+    padding-right:16px;
+    padding-left:16px;
+  }
+  .hex-anchor-nav:not(.is-fixed)
   .hex-anchor-nav-link{
     flex:0 0 auto;
-    padding:0 18px!important;
-    font-size:16px!important;
+    min-width:150px!important;
+    padding:14px 24px!important;
+    font-size:15px!important;
     white-space:nowrap!important;
   }
-  /* 右スクロール案内 */
-  .hex-anchor-nav::after{
-    content:'\f105';
+  /* 固定表示：番号＋タイトル */
+  .hex-anchor-nav.is-fixed
+  .hex-anchor-nav-list{
+    align-items:center;
+    padding:0;
+  }
+  .hex-anchor-nav.is-fixed
+  .hex-anchor-nav-link{
+    flex:0 0 auto;
+    min-width:0!important;
+    padding:0 16px!important;
+    font-size:15px!important;
+    white-space:nowrap!important;
+  }
+  .hex-anchor-nav.is-fixed
+  .hex-anchor-nav-link::before{
+    margin-right:6px;
+    font-size:11px;
+  }
+  /* ゴールドスクロールインジケーター */
+  .hex-anchor-scrollbar{
     position:absolute;
-    top:1px;
-    right:0;
+    right:16px;
+    bottom:7px;
+    left:16px;
     z-index:2;
     display:none;
-    align-items:center;
-    justify-content:flex-end;
-    width:80px;
-    padding-right:16px;
-    box-sizing:border-box;
-    color:#1f2774;
-    font-family:'Font Awesome 6 Free';
-    font-size:20px;
-    font-weight:900;
-    line-height:1;
+    height:2px;
+    overflow:hidden;
+    background:rgba(200,168,116,.3);
     pointer-events:none;
-    background:linear-gradient(
-      to right,
-      rgba(255,255,255,0) 0%,
-      #fff 50%
-    )!important;
   }
-  .hex-anchor-nav:not(.is-fixed)::after{
+  .hex-anchor-scrollbar-thumb{
+    position:absolute;
+    top:0;
+    left:0;
     height:100%;
+    min-width:32px;
+    background:#c8a874;
+    transform:translateX(0);
+    will-change:width,transform;
   }
-  .hex-anchor-nav.is-fixed::after{
-    height:calc(100% - 16px);
+  .hex-anchor-scrollbar.is-visible{
+    display:block;
   }
-  .hex-anchor-nav.has-scroll-right::after{
-    display:flex;
+  .hex-anchor-nav.is-fixed
+  .hex-anchor-scrollbar{
+    background:#d8dce8;
   }
 }
 
