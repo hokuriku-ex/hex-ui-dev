@@ -435,29 +435,41 @@ function hexInitAnchorNav(){
 
   function syncAnchorScrollbar(){
     if(!anchorList)return;
+
     var visibleWidth=anchorList.clientWidth;
     var totalWidth=anchorList.scrollWidth;
     var maxScroll=totalWidth-visibleWidth;
 
-    if(window.innerWidth>768||maxScroll<=1){
+    /* 1001px以上、または横スクロール不要 */
+    if(window.innerWidth>1000||maxScroll<=1){
       anchorScrollbar.classList.remove('is-visible');
+      nav.classList.remove('has-anchor-scrollbar');
       anchorScrollbarThumb.style.width='100%';
       anchorScrollbarThumb.style.transform='translateX(0)';
+
       return;
     }
-    anchorScrollbar.classList.add('is-visible');
-    var barWidth=anchorScrollbar.clientWidth;
 
+    /* 横スクロールが必要 */
+    anchorScrollbar.classList.add('is-visible');
+    nav.classList.add('has-anchor-scrollbar');
+    var barWidth=anchorScrollbar.clientWidth;
     if(!barWidth)return;
 
     var thumbWidth=Math.max(
       barWidth*(visibleWidth/totalWidth),
       32
     );
-    thumbWidth=Math.min(thumbWidth,barWidth);
-    var scrollProgress=anchorList.scrollLeft/maxScroll;
-    var moveWidth=(barWidth-thumbWidth)*scrollProgress;
-    anchorScrollbarThumb.style.width=thumbWidth+'px';
+    thumbWidth=Math.min(
+      thumbWidth,
+      barWidth
+    );
+    var scrollProgress=
+      anchorList.scrollLeft/maxScroll;
+    var moveWidth=
+      (barWidth-thumbWidth)*scrollProgress;
+    anchorScrollbarThumb.style.width=
+      thumbWidth+'px';
     anchorScrollbarThumb.style.transform=
       'translateX('+moveWidth+'px)';
   }
