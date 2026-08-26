@@ -290,7 +290,7 @@
   ===================================== */
 
   .hex-anchor-nav.is-fixed{
-    top:var(--header_height_smartphone)!important;
+    top:var(--header_height)!important;
     width:100vw;
     margin:0;
     padding-bottom:0!important;
@@ -440,6 +440,13 @@
   .hex-anchor-nav.is-fixed.has-anchor-scrollbar
   .hex-anchor-scrollbar-thumb{
     background:#c8a874;
+  }
+
+}
+@media screen and (max-width:768px){
+
+  .hex-anchor-nav.is-fixed{
+    top:var(--header_height_smartphone)!important;
   }
 
 }
