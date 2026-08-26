@@ -357,7 +357,7 @@ function hexInitAnchorNav(){
     return 80;
   }
   function getHexAnchorOffset(){
-    return getHexAnchorHeaderHeight()+nav.offsetHeight;
+    return getHexAnchorHeaderHeight()+nav.offsetHeight+32;
   }
   function refreshHexAnchorNav(){
     var mobileAdjust=0;
