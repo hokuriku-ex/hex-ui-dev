@@ -942,14 +942,23 @@ a.hex-text-link[target="_blank"]::after{
 /* コンテンツトップ用スペーサー */
 .hex-top-spacer{
   position:relative;
-  left:50%;
-  width:100vw;
-  margin-left:-50vw;
+  z-index:0;
+  isolation:isolate;
+  width:100%;
   padding-top:64px!important;
-  background-color:var(--hex-top-spacer-bg, transparent);
+  box-sizing:border-box;
   font-size:0;
   line-height:0;
   clear:both;
+}
+.hex-top-spacer::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 50%;
+  z-index:-1;
+  width:100vw;
+  background-color:var(--hex-top-spacer-bg, transparent);
+  transform:translateX(-50%);
 }
 
 /* =======================================
