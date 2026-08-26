@@ -1183,7 +1183,7 @@ div.NNAttached{
 
   counter-increment:hex-anchor-number;
 }
-/* 初期表示　SECTION番号／タイトル／下向きアイコン */
+/* 初期表示：SECTION番号／タイトル／下向きアイコン */
 .hex-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-list{
   justify-content:center;
@@ -1253,7 +1253,7 @@ a.hex-anchor-nav-link{
   color:#fff!important;
 }
 
-/* 初期表示：ホバー・アクティブ */
+/* cccホバー・アクティブ */
 .hex-anchor-nav:not(.is-fixed)
 a.hex-anchor-nav-link:hover,
 .hex-anchor-nav:not(.is-fixed)
@@ -1290,7 +1290,7 @@ a.hex-anchor-nav-link.is-active::before,
 a.hex-anchor-nav-link.is-active::after{
   color:#4a7fd0;
 }
-/* 固定表示　従来の横並びデザイン */
+/* 固定表示：従来の横並びデザイン */
 .hex-anchor-nav.is-fixed
 .hex-anchor-nav-list{
   justify-content:center;
@@ -1322,12 +1322,21 @@ a.hex-anchor-nav-link,
 a.hex-anchor-nav-link{
   color:#1f2774!important;
 }
-/* 固定時はSECTION番号を非表示 */
+/* 固定表示：項目の前に自動番号 */
 .hex-anchor-nav.is-fixed
 .hex-anchor-nav-link::before{
-  content:none;
+  content:counter(hex-anchor-number, decimal-leading-zero);
+  position:static;
+  display:inline-block;
+  margin-right:8px;
+  color:#c8a874;
+  font-size:12px;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:.06em;
+  transform:none;
 }
-/* 固定時は項目間のみ縦線を表示 */
+/* 固定表示：項目間のみ縦線を表示 */
 .hex-anchor-nav.is-fixed
 .hex-anchor-nav-link:not(:last-child)::after{
   content:"|";
