@@ -1207,12 +1207,12 @@ div.NNAttached{
   line-height:1.4!important;
   /* 各項目の左側の縦線 */
   border:none!important;
-  border-left:2px solid #fff!important;
+  border-left:1px solid rgba(255,255,255,.55)!important;
 }
 /* 最後の右側にも縦線 */
 .hex-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-link:last-child{
-  border-right:2px solid #fff!important;
+  border-right:1px solid rgba(255,255,255,.55)!important;
 }
 /* SECTION.01から自動採番 */
 .hex-anchor-nav:not(.is-fixed)
@@ -1220,8 +1220,8 @@ div.NNAttached{
   content:"SECTION." counter(hex-anchor-number, decimal-leading-zero);
   position:static;
   display:block;
-  color:#fff;
-  font-size:12px;
+  color:rgba(255,255,255,.78);
+  font-size:10px;
   font-weight:700;
   line-height:1;
   letter-spacing:.12em;
