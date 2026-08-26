@@ -284,7 +284,7 @@
     top:var(--header_height_smartphone)!important;
     width:100vw;
     margin:0;
-    padding-bottom:24px;
+    padding-bottom:16px;
     overflow:hidden;
     text-align:center;
   }
@@ -377,6 +377,9 @@
   .hex-anchor-nav.is-fixed
   .hex-anchor-nav-link{
     flex:0 0 auto!important;
+  }
+  .hex-anchor-nav.is-fixed.has-anchor-scrollbar{
+    padding-bottom:24px;
   }
 }
 
