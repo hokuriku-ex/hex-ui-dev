@@ -358,7 +358,7 @@ function hexInitAnchorNav(){
   }
   function getHexAnchorOffset(){
     var scrollbarArea=0;
-    var titleSpace=0;
+    var titleSpace=16;
 
     /* ゴールドバーと白い帯がある場合は36px追加 */
     if(
@@ -421,7 +421,7 @@ function hexInitAnchorNav(){
   }
   function updateHexAnchorActive(scrollTop){
     var activePair=null;
-    var checkLine=scrollTop+getHexAnchorOffset()+32;
+    var checkLine=scrollTop+getHexAnchorOffset()+36;
     pairs.forEach(function(pair){
       var targetTop=pair.target.getBoundingClientRect().top+window.pageYOffset;
       if(checkLine>=targetTop)activePair=pair;
