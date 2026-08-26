@@ -431,11 +431,29 @@ function hexInitAnchorNav(){
     });
     if(activePair){
       activePair.link.classList.add('is-active');
-      if(window.innerWidth<=768&&nav.classList.contains('is-fixed')){
-        activePair.link.scrollIntoView({
-          behavior:'smooth',
-          inline:'center',
-          block:'nearest'
+      if(
+        window.innerWidth<=1000&&
+        nav.classList.contains('is-fixed')&&
+        anchorList
+      ){
+        var linkCenter=
+          activePair.link.offsetLeft+
+          activePair.link.offsetWidth/2;
+        var listCenter=
+          anchorList.clientWidth/2;
+        var maxScroll=
+          anchorList.scrollWidth-
+          anchorList.clientWidth;
+        var targetLeft=
+          linkCenter-
+          listCenter;
+        targetLeft=Math.max(
+          0,
+          Math.min(targetLeft,maxScroll)
+        );
+        anchorList.scrollTo({
+          left:targetLeft,
+          behavior:'smooth'
         });
       }
     }
