@@ -373,6 +373,29 @@ function hexInitAnchorNav(){
       scrollbarArea
     );
   }
+  /* 別ページからのアンカー移動を補正 */
+  function correctHashAnchorPosition(){
+    if(!hashAnchorTarget)return;
+    currentAnchorTarget=hashAnchorTarget;
+    function correct(){
+      updateHexAnchorNav();
+      var top=
+        hashAnchorTarget.getBoundingClientRect().top+
+        window.pageYOffset-
+        getHexAnchorOffset();
+      window.scrollTo({
+        top:top,
+        behavior:'auto'
+      });
+    }
+    /* 固定ナビとスクロールバーの状態確定後に補正 */
+    requestAnimationFrame(function(){
+      correct();
+      requestAnimationFrame(function(){
+        correct();
+      });
+    });
+  }
   function refreshHexAnchorNav(){
     var mobileAdjust=0;
     nav.classList.remove('is-fixed');
@@ -503,6 +526,9 @@ function hexInitAnchorNav(){
   setTimeout(function(){
     refreshHexAnchorNav();
     refreshAnchorScrollbar();
+    setTimeout(function(){
+      correctHashAnchorPosition();
+    },100);
   },100);
   if(document.fonts&&document.fonts.ready){
     document.fonts.ready.then(function(){
