@@ -365,10 +365,6 @@
     display:block;
   }
   .hex-anchor-nav.is-fixed
-  .hex-anchor-scrollbar{
-    background:#fff;
-  }
-  .hex-anchor-nav.is-fixed
   .hex-anchor-nav-list{
     justify-content:safe center;
     flex-wrap:nowrap!important;
