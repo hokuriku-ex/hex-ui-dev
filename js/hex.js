@@ -365,7 +365,7 @@ function hexInitAnchorNav(){
       window.innerWidth<=1000&&
       nav.classList.contains('has-anchor-scrollbar')
     ){
-      scrollbarArea=36;
+      scrollbarArea=-36;
     }
 
     return(
