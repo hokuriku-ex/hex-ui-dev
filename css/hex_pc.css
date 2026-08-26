@@ -960,6 +960,13 @@ a.hex-text-link[target="_blank"]::after{
   background-color:var(--hex-top-spacer-bg, transparent);
   transform:translateX(-50%);
 }
+.bg_post_index:has(.hex-top-spacer),
+.post_index:has(.hex-top-spacer),
+.post_index_contents:has(.hex-top-spacer),
+.content:has(.hex-top-spacer),
+.content_body:has(.hex-top-spacer){
+  overflow:visible!important;
+}
 
 /* =======================================
    記事パーツ（ファイル）
