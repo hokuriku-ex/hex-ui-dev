@@ -366,6 +366,17 @@
   .hex-anchor-scrollbar.is-visible{
     display:block;
   }
+  .hex-anchor-nav.is-fixed
+  .hex-anchor-nav-list{
+    justify-content:safe center;
+    flex-wrap:nowrap!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+  }
+  .hex-anchor-nav.is-fixed
+  .hex-anchor-nav-link{
+    flex:0 0 auto!important;
+  }
 }
 
 /* 自動生成ページ位置調整用 */
