@@ -269,7 +269,7 @@
 /* =======================================
    共通パーツ（アンカーナビ）
 ======================================= */
-@media screen and (max-width:768px){
+@media screen and (max-width:1000px){
   /* アンカーナビ全体：初期表示 */
   .hex-anchor-nav{
     position:relative;
