@@ -312,6 +312,7 @@
     align-items:stretch;
     padding-right:16px;
     padding-left:16px;
+    justify-content:flex-start!important;
   }
   .hex-anchor-nav:not(.is-fixed)
   .hex-anchor-nav-link{
@@ -320,7 +321,6 @@
     padding:14px 24px!important;
     font-size:15px!important;
     white-space:nowrap!important;
-    justify-content:flex-start!important;
   }
   /* 固定表示：番号＋タイトル */
   .hex-anchor-nav.is-fixed
