@@ -387,6 +387,7 @@ function hexInitAnchorNav(){
       nav.getBoundingClientRect().top+
       window.pageYOffset+
       nav.offsetHeight-
+      36-
       getHexAnchorHeaderHeight()-
       mobileAdjust;
     updateHexAnchorNav();
