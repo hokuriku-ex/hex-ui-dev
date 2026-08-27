@@ -1237,6 +1237,14 @@ div.NNAttached{
   max-width:var(--hex_small_width);
   padding:0 16px;
 }
+/* 3項目以下の場合、全体幅を抑えて中央配置 */
+.hex-anchor-nav:not(.is-fixed)
+.hex-anchor-nav-list:has(> :first-child):not(:has(> :nth-child(4))){
+  width:100%;
+  max-width:720px;
+  margin-right:auto;
+  margin-left:auto;
+}
 .hex-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-link{
   display:flex!important;
