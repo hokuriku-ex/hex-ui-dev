@@ -1240,7 +1240,7 @@ div.NNAttached{
 /* 2項目の場合 */
 .hex-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-list:has(> :nth-child(2):last-child){
-  max-width:600px;
+  max-width:500px;
   margin-right:auto;
   margin-left:auto;
 }
@@ -1248,7 +1248,7 @@ div.NNAttached{
 /* 3項目の場合 */
 .hex-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-list:has(> :nth-child(3):last-child){
-  max-width:720px;
+  max-width:750px;
   margin-right:auto;
   margin-left:auto;
 }
