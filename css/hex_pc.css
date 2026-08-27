@@ -1244,7 +1244,6 @@ div.NNAttached{
   margin-right:auto;
   margin-left:auto;
 }
-
 /* 3項目の場合 */
 .hex-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-list:has(> :nth-child(3):last-child){
