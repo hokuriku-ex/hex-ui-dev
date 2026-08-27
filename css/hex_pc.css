@@ -3672,7 +3672,7 @@ body,
   letter-spacing:.03em;
 }
 /* 2カラム・1カラム */
-@media screen and (max-width:1000px){
+@media screen and (max-width:999px){
   .hex-company-card .hex-card-title{
     grid-template-columns:minmax(0,1fr) auto 3em;
   }
