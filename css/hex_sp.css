@@ -1283,13 +1283,6 @@
   .hex-company-card .hex-card{
     padding:8px!important;
   }
-  .hex-company-card .hex-card-title{
-    grid-template-columns:minmax(0,1fr) auto 3em;
-  }
-  .hex-company-card .hex-unit{
-    justify-self:start;
-    white-space:nowrap;
-  }
 }
 
 /* =======================================
