@@ -2801,12 +2801,12 @@ hexReady(function(){
     var label='';
 
     if(text==='個人のお客様'){
-      label='個人のお客様';
+      /* label='個人のお客様'; */
       title.textContent='外構工事をご検討中の方';
     }
 
     if(text==='ビジネスのお客様'){
-      label='ビジネスのお客様';
+      /* label='ビジネスのお客様'; */
       title.textContent='外構パートナーをお探しの方';
     }
 
