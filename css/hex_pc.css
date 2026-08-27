@@ -4015,6 +4015,11 @@ body,
   margin:0 auto 22px;
   background:#c8a874;
 }
+/* アンカーナビがない場合下に余白追加 */
+.hex-intro:not(:has(.hex-anchor-source))
+.hex-page-description{
+  margin-bottom:36px;
+}
 
 /* 記事エリア余白変更 */
 /* 基本ページ */
