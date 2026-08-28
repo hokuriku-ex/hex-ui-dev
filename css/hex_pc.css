@@ -3468,19 +3468,19 @@ body,
   overflow:visible;
 }
 
+.hex-opening-gold-cover{
+  fill:currentColor;
+}
+
 .hex-opening-path{
   fill:none;
-  stroke:currentColor;
-  stroke-width:360;
-  stroke-linecap:square;
+  stroke:#000;
+  stroke-width:330;
+  stroke-linecap:round;
   stroke-linejoin:round;
   stroke-dasharray:1;
-  stroke-dashoffset:0;
-  vector-effect:non-scaling-stroke;
-  animation-name:hex-opening-erase;
-  animation-timing-function:linear;
-  animation-delay:1s;
-  animation-fill-mode:both;
+  stroke-dashoffset:1;
+  animation:hex-opening-reveal 2s linear 1s both;
   animation-play-state:paused;
 }
 
@@ -3493,21 +3493,15 @@ body,
   animation-play-state:running;
 }
 
-@keyframes hex-opening-erase{
-  from{stroke-dashoffset:0;}
-  to{stroke-dashoffset:1;}
+@keyframes hex-opening-reveal{
+  from{stroke-dashoffset:1;}
+  to{stroke-dashoffset:0;}
 }
 
 html.hex-opening-lock,
 html.hex-opening-lock body{
   overflow:hidden!important;
   overscroll-behavior:none;
-}
-
-@media (prefers-reduced-motion:reduce){
-  .hex-opening{
-    display:none!important;
-  }
 }
 
 /* =======================================
