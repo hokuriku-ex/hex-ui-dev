@@ -2853,7 +2853,6 @@ hexReady(function(){
   }
 
   function initOpening(){
-    var source;
     var opening;
 
     if(!isTopPage()){
@@ -2874,15 +2873,9 @@ hexReady(function(){
       return;
     }
 
-    source=getFirstHeroCopy();
-
-    if(!source.main||!source.sub){
-      return;
-    }
-
     sessionStorage.setItem(STORAGE_KEY,"1");
 
-    opening=createOpeningElement(source);
+    opening=createOpeningElement();
     document.documentElement.classList.add("hex-opening-lock");
     document.body.insertBefore(opening,document.body.firstChild);
 
