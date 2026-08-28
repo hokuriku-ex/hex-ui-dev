@@ -2769,32 +2769,17 @@ hexReady(function(){
     );
   }
 
-  function getFirstHeroCopy(){
-    return{
-      main:document.querySelector(
-        "#gc_auto_frame_home_0 #slideshow0 .catch0 .maincatch"
-      ),
-      sub:document.querySelector(
-        "#gc_auto_frame_home_0 #slideshow0 .catch0 .subcatch"
-      )
-    };
-  }
+  function createCopyElement(){
+    var source=document.querySelector(".hex-opening-copy-source");
 
-  function createCopyElement(source){
-    var copy=document.createElement("div");
-    var main=document.createElement("div");
-    var sub=document.createElement("div");
+    if(!source){
+      return null;
+    }
 
-    copy.className="hex-opening-copy";
-    main.className="hex-opening-main";
-    sub.className="hex-opening-sub";
+    var copy=source.cloneNode(true);
 
-    /* <br>を含め、管理画面で設定した文言をそのまま使用 */
-    main.innerHTML=source.main.innerHTML;
-    sub.innerHTML=source.sub.innerHTML;
-
-    copy.appendChild(main);
-    copy.appendChild(sub);
+    copy.classList.remove("hex-opening-copy-source");
+    copy.classList.add("hex-opening-copy");
 
     return copy;
   }
