@@ -2784,44 +2784,70 @@ hexReady(function(){
     return copy;
   }
 
-  function createOpeningElement(source){
-    var opening=document.createElement("div");
+function createCopyElement(){
+  var source=document.querySelector(".hex-opening-copy-source");
 
-    opening.className="hex-opening";
-    opening.setAttribute("aria-hidden","true");
-
-    opening.innerHTML=
-      '<div class="hex-opening-circle"></div>'+
-      '<div class="hex-opening-cover">'+
-        '<svg xmlns="http://www.w3.org/2000/svg" '+
-          'viewBox="0 0 1600 900" '+
-          'preserveAspectRatio="xMidYMid slice" '+
-          'aria-hidden="true">'+
-          '<defs>'+
-            '<mask id="hex-opening-reveal-mask" '+
-              'maskUnits="userSpaceOnUse" x="-500" y="-400" '+
-              'width="2600" height="1800">'+
-              '<rect x="-500" y="-400" width="2600" height="1800" fill="#fff" />'+
-              '<path class="hex-opening-path is-path01" pathLength="1" '+
-                'd="M-390 1125 C-215 995 -85 1005 78 893 C245 778 290 672 472 585 C655 497 704 388 902 306 C1096 226 1162 116 1360 43 C1538 -23 1690 -108 1945 -245" />'+
-              '<path class="hex-opening-path is-path02" pathLength="1" '+
-                'd="M-470 1390 C-237 1202 -35 1195 160 1057 C350 922 421 810 614 718 C812 623 885 520 1087 429 C1283 340 1375 226 1575 135 C1738 61 1842 -18 2040 -140" />'+
-              '<path class="hex-opening-path is-path03" pathLength="1" '+
-                'd="M-520 805 C-303 653 -119 668 58 546 C240 420 302 313 492 222 C681 131 761 42 956 -50 C1141 -137 1248 -217 1437 -304 C1603 -381 1763 -422 2010 -535" />'+
-              '<path class="hex-opening-path is-path04" pathLength="1" '+
-                'd="M-535 1515 C-312 1338 -128 1350 62 1212 C248 1078 326 969 520 872 C711 776 793 662 993 570 C1187 481 1274 371 1473 278 C1651 195 1816 114 2075 -28" />'+
-            '</mask>'+
-          '</defs>'+
-          '<rect class="hex-opening-gold-cover" '+
-            'x="-500" y="-400" width="2600" height="1800" '+
-            'mask="url(#hex-opening-reveal-mask)" />'+
-        '</svg>'+
-      '</div>';
-
-    opening.appendChild(createCopyElement(source));
-
-    return opening;
+  if(!source){
+    return null;
   }
+
+  var copy=source.cloneNode(true);
+
+  copy.classList.remove("hex-opening-copy-source");
+  copy.classList.add("hex-opening-copy");
+  copy.removeAttribute("id");
+
+  /* 複製によるID重複を防ぐ */
+  copy.querySelectorAll("[id]").forEach(function(element){
+    element.removeAttribute("id");
+  });
+
+  return copy;
+}
+
+function createOpeningElement(){
+  var opening=document.createElement("div");
+  var copy=createCopyElement();
+
+  if(!copy){
+    return null;
+  }
+
+  opening.className="hex-opening";
+  opening.setAttribute("aria-hidden","true");
+
+  opening.innerHTML=
+    '<div class="hex-opening-circle"></div>'+
+    '<div class="hex-opening-cover">'+
+      '<svg xmlns="http://www.w3.org/2000/svg" '+
+        'viewBox="0 0 1600 900" '+
+        'preserveAspectRatio="xMidYMid slice" '+
+        'aria-hidden="true">'+
+        '<defs>'+
+          '<mask id="hex-opening-reveal-mask" '+
+            'maskUnits="userSpaceOnUse" x="-500" y="-400" '+
+            'width="2600" height="1800">'+
+            '<rect x="-500" y="-400" width="2600" height="1800" fill="#fff" />'+
+            '<path class="hex-opening-path is-path01" pathLength="1" '+
+              'd="M-390 1125 C-215 995 -85 1005 78 893 C245 778 290 672 472 585 C655 497 704 388 902 306 C1096 226 1162 116 1360 43 C1538 -23 1690 -108 1945 -245" />'+
+            '<path class="hex-opening-path is-path02" pathLength="1" '+
+              'd="M-470 1390 C-237 1202 -35 1195 160 1057 C350 922 421 810 614 718 C812 623 885 520 1087 429 C1283 340 1375 226 1575 135 C1738 61 1842 -18 2040 -140" />'+
+            '<path class="hex-opening-path is-path03" pathLength="1" '+
+              'd="M-520 805 C-303 653 -119 668 58 546 C240 420 302 313 492 222 C681 131 761 42 956 -50 C1141 -137 1248 -217 1437 -304 C1603 -381 1763 -422 2010 -535" />'+
+            '<path class="hex-opening-path is-path04" pathLength="1" '+
+              'd="M-535 1515 C-312 1338 -128 1350 62 1212 C248 1078 326 969 520 872 C711 776 793 662 993 570 C1187 481 1274 371 1473 278 C1651 195 1816 114 2075 -28" />'+
+          '</mask>'+
+        '</defs>'+
+        '<rect class="hex-opening-gold-cover" '+
+          'x="-500" y="-400" width="2600" height="1800" '+
+          'mask="url(#hex-opening-reveal-mask)" />'+
+      '</svg>'+
+    '</div>';
+
+  opening.appendChild(copy);
+
+  return opening;
+}
 
   function resetHeroToFirstSlide(){
     var slides=document.querySelectorAll(
