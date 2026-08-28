@@ -1192,6 +1192,9 @@
   .hex-opening-path{
     stroke-width:160;
   }
+  .hex-opening-path.is-trowel{
+    filter:none;
+  }
 }
 
 @media (prefers-reduced-motion:reduce){
