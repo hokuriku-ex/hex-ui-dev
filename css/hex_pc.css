@@ -3479,27 +3479,30 @@ body,
 .hex-opening-path{
   fill:none;
   stroke:#000;
-  stroke-width:330;
-  stroke-linecap:round;
+  stroke-width:250;
+  stroke-linecap:butt;
   stroke-linejoin:round;
   stroke-dasharray:1;
   stroke-dashoffset:1;
-  animation:hex-opening-reveal 2s linear 1s both;
-  animation-play-state:paused;
 }
 
-.hex-opening-path.is-path01{animation-duration:1.6s;}
-.hex-opening-path.is-path02{animation-duration:1.2s;}
-.hex-opening-path.is-path03{animation-duration:.6s;}
-.hex-opening-path.is-path04{animation-duration:2s;}
-
-.hex-opening.is-start .hex-opening-path{
-  animation-play-state:running;
+.hex-opening.is-start .hex-opening-path.is-trowel{
+  animation:
+    hex-opening-trowel 2.15s
+    cubic-bezier(.65,0,.35,1)
+    1.85s forwards;
 }
 
-@keyframes hex-opening-reveal{
-  from{stroke-dashoffset:1;}
-  to{stroke-dashoffset:0;}
+@keyframes hex-opening-trowel{
+
+  0%{
+    stroke-dashoffset:1;
+  }
+
+  100%{
+    stroke-dashoffset:0;
+  }
+
 }
 
 html.hex-opening-lock,
