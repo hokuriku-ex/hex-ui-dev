@@ -3348,6 +3348,169 @@ body,
 }
 
 /* =======================================
+   トップページ：開幕アニメーション
+======================================= */
+:root{
+  --hex-opening-navy:#1f2774;
+  --hex-opening-gold:#c8a874;
+  --hex-opening-white:#fff;
+}
+
+.hex-opening{
+  position:fixed;
+  inset:0;
+  z-index:2147483000;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  width:100%;
+  height:100dvh;
+  min-height:100vh;
+  background:var(--hex-opening-white);
+  color:var(--hex-opening-navy);
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transition:
+    background-color 0s linear 1s,
+    opacity 1s ease 3.2s,
+    visibility 0s linear 4.2s;
+}
+
+.hex-opening.is-start{
+  background-color:transparent;
+  opacity:0;
+  visibility:hidden;
+}
+
+.hex-opening.is-end{
+  pointer-events:none;
+}
+
+.hex-opening-copy{
+  position:relative;
+  z-index:4;
+  width:min(82vw,560px);
+  color:var(--hex-opening-navy);
+  text-align:left;
+  opacity:1;
+  transform:translateZ(0);
+}
+
+.hex-opening-main{
+  color:inherit!important;
+  font-family:"Noto Serif JP",serif;
+  font-size:clamp(38px,4.25vw,72px);
+  font-weight:600;
+  line-height:1.3;
+  letter-spacing:.06em;
+}
+
+.hex-opening-sub{
+  margin-top:18px;
+  color:inherit!important;
+  font-family:"Zen Kaku Gothic New",sans-serif;
+  font-size:clamp(13px,1.1vw,17px);
+  font-weight:500;
+  line-height:1.8;
+  letter-spacing:.08em;
+}
+
+.hex-opening.is-start .hex-opening-copy{
+  color:var(--hex-opening-gold);
+  opacity:0;
+  transition:
+    color .6s ease,
+    opacity .3s ease 1.2s;
+}
+
+.hex-opening-circle{
+  position:absolute;
+  top:50%;
+  left:50%;
+  z-index:1;
+  width:130vmax;
+  aspect-ratio:1;
+  border-radius:50%;
+  background:var(--hex-opening-gold);
+  opacity:1;
+  transform:translate(-50%,-50%) scale(0);
+  transform-origin:center;
+  will-change:transform,opacity;
+  transition:
+    transform .5s cubic-bezier(.4,0,.95,.45) .5s,
+    opacity .3s ease 1s;
+}
+
+.hex-opening.is-start .hex-opening-circle{
+  opacity:0;
+  transform:translate(-50%,-50%) scale(1);
+}
+
+.hex-opening-cover{
+  position:absolute;
+  inset:-20%;
+  z-index:2;
+  color:var(--hex-opening-gold);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0s linear .98s;
+}
+
+.hex-opening.is-start .hex-opening-cover{
+  opacity:1;
+}
+
+.hex-opening-cover svg{
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+
+.hex-opening-path{
+  fill:none;
+  stroke:currentColor;
+  stroke-width:360;
+  stroke-linecap:square;
+  stroke-linejoin:round;
+  stroke-dasharray:1;
+  stroke-dashoffset:0;
+  vector-effect:non-scaling-stroke;
+  animation-name:hex-opening-erase;
+  animation-timing-function:linear;
+  animation-delay:1s;
+  animation-fill-mode:both;
+  animation-play-state:paused;
+}
+
+.hex-opening-path.is-path01{animation-duration:1.6s;}
+.hex-opening-path.is-path02{animation-duration:1.2s;}
+.hex-opening-path.is-path03{animation-duration:.6s;}
+.hex-opening-path.is-path04{animation-duration:2s;}
+
+.hex-opening.is-start .hex-opening-path{
+  animation-play-state:running;
+}
+
+@keyframes hex-opening-erase{
+  from{stroke-dashoffset:0;}
+  to{stroke-dashoffset:1;}
+}
+
+html.hex-opening-lock,
+html.hex-opening-lock body{
+  overflow:hidden!important;
+  overscroll-behavior:none;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .hex-opening{
+    display:none!important;
+  }
+}
+
+/* =======================================
    トップページ：ヒーロー画像
 ======================================= */
 /* キャッチコピー */
