@@ -37,6 +37,11 @@ h6{
   font-family:'Zen Kaku Gothic New',sans-serif!important;
 }
 
+/* テキストカラー */
+.textcolor_black{
+  color:#203459!important;
+}
+
 /* スクロールバー対策 */
 html{
   overflow-y:scroll;
