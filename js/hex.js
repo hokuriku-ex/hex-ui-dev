@@ -2902,6 +2902,9 @@ function createOpeningElement(){
     sessionStorage.setItem(STORAGE_KEY,"1");
 
     opening=createOpeningElement();
+    if(!opening){
+      return;
+    }
     document.documentElement.classList.add("hex-opening-lock");
     document.body.insertBefore(opening,document.body.firstChild);
 
