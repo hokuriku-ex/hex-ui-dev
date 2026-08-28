@@ -3491,10 +3491,30 @@ body,
 }
 
 .hex-opening.is-start .hex-opening-path.is-trowel{
-  animation:
-    hex-opening-trowel 2s
-    cubic-bezier(.65,0,.35,1)
-    .80s forwards;
+  animation-name:hex-opening-trowel;
+  animation-duration:.48s;
+  animation-timing-function:cubic-bezier(.55,0,.45,1);
+  animation-fill-mode:forwards;
+}
+
+.hex-opening.is-start .hex-opening-path.is-line1{
+  animation-delay:.80s;
+}
+
+.hex-opening.is-start .hex-opening-path.is-line2{
+  animation-delay:1.18s;
+}
+
+.hex-opening.is-start .hex-opening-path.is-line3{
+  animation-delay:1.56s;
+}
+
+.hex-opening.is-start .hex-opening-path.is-line4{
+  animation-delay:1.94s;
+}
+
+.hex-opening.is-start .hex-opening-path.is-line5{
+  animation-delay:2.32s;
 }
 
 @keyframes hex-opening-trowel{
