@@ -3495,7 +3495,7 @@ body,
   animation-name:hex-opening-trowel;
   animation-duration:.48s;
   animation-timing-function:cubic-bezier(.55,0,.45,1);
-  animation-fill-mode:forwards;
+  animation-fill-mode:both;
 }
 
 .hex-opening.is-start .hex-opening-path.is-line1{
@@ -3519,15 +3519,20 @@ body,
 }
 
 @keyframes hex-opening-trowel{
-
   0%{
+    opacity:0;
+    stroke-dashoffset:1;
+  }
+
+  .5%{
+    opacity:1;
     stroke-dashoffset:1;
   }
 
   100%{
+    opacity:1;
     stroke-dashoffset:0;
   }
-
 }
 
 html.hex-opening-lock,
