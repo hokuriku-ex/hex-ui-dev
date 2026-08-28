@@ -2856,31 +2856,25 @@ function createOpeningElement(){
               'width="2600" height="1800" '+
               'fill="#fff" />'+
 
-            '<path '+
-              'class="hex-opening-path is-trowel" '+
-              'filter="url(#hex-opening-trowel-roughness)" '+
+            '<path class="hex-opening-path is-trowel is-line1" '+
               'pathLength="1" '+
-              'd="'+
-                'M260 150 '+
+              'd="M260 150 C520 125 1010 125 1290 155" />'+
 
-                'C520 125 1010 125 1290 155 '+
-                'L1320 195 '+
-                'L1290 238 '+
+            '<path class="hex-opening-path is-trowel is-line2" '+
+              'pathLength="1" '+
+              'd="M1320 270 C1040 275 590 275 310 300" />'+
 
-                'C1010 270 590 270 310 300 '+
-                'L280 340 '+
-                'L310 382 '+
+            '<path class="hex-opening-path is-trowel is-line3" '+
+              'pathLength="1" '+
+              'd="M280 415 C570 415 1010 415 1290 445" />'+
 
-                'C590 415 1010 415 1290 445 '+
-                'L1320 485 '+
-                'L1290 528 '+
+            '<path class="hex-opening-path is-trowel is-line4" '+
+              'pathLength="1" '+
+              'd="M1320 560 C1040 560 590 560 310 590" />'+
 
-                'C1010 560 590 560 310 590 '+
-                'L280 630 '+
-                'L310 672 '+
-
-                'C590 705 1060 705 1340 750'+
-              '" />'+
+            '<path class="hex-opening-path is-trowel is-line5" '+
+              'pathLength="1" '+
+              'd="M280 705 C570 705 1060 705 1340 750" />'+
 
           '</mask>'+
         '</defs>'+
