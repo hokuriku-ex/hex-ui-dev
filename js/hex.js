@@ -2753,7 +2753,7 @@ hexReady(function(){
   var STORAGE_KEY="hex_top_opening_viewed";
   var OPENING_START_DELAY=200;
   var HERO_CONNECT_DELAY=3000;
-  var OPENING_REMOVE_DELAY=3400;
+  var OPENING_REMOVE_DELAY=4200;
 
   function isReducedMotion(){
     return(
