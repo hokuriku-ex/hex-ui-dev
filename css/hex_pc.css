@@ -3387,6 +3387,10 @@ body,
   pointer-events:none;
 }
 
+.hex-opening-copy-source{
+  display:none!important;
+}
+
 .hex-opening-copy{
   position:relative;
   z-index:4;
