@@ -1193,7 +1193,13 @@
   }
 
   .hex-opening-path{
-    stroke-width:290;
+    stroke-width:360;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .hex-opening{
+    display:none!important;
   }
 }
 
