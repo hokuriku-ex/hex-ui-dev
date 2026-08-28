@@ -2860,13 +2860,17 @@ hexReady(function(){
       return;
     }
 
+    /* デモ環境では解除
     if(sessionStorage.getItem(STORAGE_KEY)){
       return;
     }
+    */
 
     /* 動きを減らす設定の場合も、同一タブ内では再判定しない */
     if(isReducedMotion()){
+      /* デモ環境では解除
       sessionStorage.setItem(STORAGE_KEY,"1");
+      */
       return;
     }
 
