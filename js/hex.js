@@ -2824,6 +2824,28 @@ function createOpeningElement(){
         'preserveAspectRatio="none" '+
         'aria-hidden="true">'+
         '<defs>'+
+
+          '<filter '+ 
+            'id="hex-opening-trowel-roughness" '+
+            'filterUnits="userSpaceOnUse" '+
+            'x="-500" y="-400" '+
+            'width="2600" height="1800">'+
+
+            '<feTurbulence '+
+              'type="fractalNoise" '+
+              'baseFrequency="0.008 0.025" '+
+              'numOctaves="2" '+
+              'seed="8" '+
+              'result="noise" />'+
+
+            '<feDisplacementMap '+
+              'in="SourceGraphic" '+
+              'in2="noise" '+
+              'scale="4" '+
+              'xChannelSelector="R" '+
+              'yChannelSelector="G" />'+
+          '</filter>'+
+
           '<mask id="hex-opening-reveal-mask" '+
             'maskUnits="userSpaceOnUse" '+
             'x="-500" y="-400" '+
@@ -2834,26 +2856,27 @@ function createOpeningElement(){
               'width="2600" height="1800" '+
               'fill="#fff" />'+
 
-              '<path '+
-                'class="hex-opening-path is-trowel" '+
-                'pathLength="1" '+
-                'd="'+
-                  'M260 150 '+
+            '<path '+
+              'class="hex-opening-path is-trowel" '+
+              'filter="url(#hex-opening-trowel-roughness)" '+
+              'pathLength="1" '+
+              'd="'+
+                'M260 150 '+
 
-                  'C520 125 1050 125 1340 155 '+
-                  'C1400 162 1400 230 1340 238 '+
+                'C520 125 1050 125 1340 155 '+
+                'C1400 162 1400 230 1340 238 '+
 
-                  'C1040 270 550 270 260 300 '+
-                  'C200 307 200 375 260 382 '+
+                'C1040 270 550 270 260 300 '+
+                'C200 307 200 375 260 382 '+
 
-                  'C550 415 1040 415 1340 445 '+
-                  'C1400 452 1400 520 1340 528 '+
+                'C550 415 1040 415 1340 445 '+
+                'C1400 452 1400 520 1340 528 '+
 
-                  'C1040 560 550 560 260 590 '+
-                  'C200 597 200 665 260 672 '+
+                'C1040 560 550 560 260 590 '+
+                'C200 597 200 665 260 672 '+
 
-                  'C550 705 1040 705 1340 750'+
-                '" />'+
+                'C550 705 1040 705 1340 750'+
+              '" />'+
 
           '</mask>'+
         '</defs>'+
