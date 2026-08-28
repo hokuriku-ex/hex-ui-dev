@@ -22,6 +22,7 @@
 ======================================= */
 /* フォント */
 body{
+  color:#203459!important;
   font-family:'Zen Kaku Gothic New',sans-serif!important;
 }
 h1,
