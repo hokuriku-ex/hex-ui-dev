@@ -2825,21 +2825,40 @@ function createOpeningElement(){
         'aria-hidden="true">'+
         '<defs>'+
           '<mask id="hex-opening-reveal-mask" '+
-            'maskUnits="userSpaceOnUse" x="-500" y="-400" '+
+            'maskUnits="userSpaceOnUse" '+
+            'x="-500" y="-400" '+
             'width="2600" height="1800">'+
-            '<rect x="-500" y="-400" width="2600" height="1800" fill="#fff" />'+
-            '<path class="hex-opening-path is-path01" pathLength="1" '+
-              'd="M-390 1125 C-215 995 -85 1005 78 893 C245 778 290 672 472 585 C655 497 704 388 902 306 C1096 226 1162 116 1360 43 C1538 -23 1690 -108 1945 -245" />'+
-            '<path class="hex-opening-path is-path02" pathLength="1" '+
-              'd="M-470 1390 C-237 1202 -35 1195 160 1057 C350 922 421 810 614 718 C812 623 885 520 1087 429 C1283 340 1375 226 1575 135 C1738 61 1842 -18 2040 -140" />'+
-            '<path class="hex-opening-path is-path03" pathLength="1" '+
-              'd="M-520 805 C-303 653 -119 668 58 546 C240 420 302 313 492 222 C681 131 761 42 956 -50 C1141 -137 1248 -217 1437 -304 C1603 -381 1763 -422 2010 -535" />'+
-            '<path class="hex-opening-path is-path04" pathLength="1" '+
-              'd="M-535 1515 C-312 1338 -128 1350 62 1212 C248 1078 326 969 520 872 C711 776 793 662 993 570 C1187 481 1274 371 1473 278 C1651 195 1816 114 2075 -28" />'+
+
+            '<rect '+
+              'x="-500" y="-400" '+
+              'width="2600" height="1800" '+
+              'fill="#fff" />'+
+
+            '<path '+
+              'class="hex-opening-path is-trowel" '+
+              'pathLength="1" '+
+              'd="'+
+                'M-320 1040 '+
+                'C180 960 620 900 1920 760 '+
+                'C2070 744 2070 650 1900 660 '+
+                'C1300 700 720 790 -300 820 '+
+                'C-470 825 -470 710 -280 700 '+
+                'C450 665 1120 610 1910 500 '+
+                'C2080 476 2080 380 1890 395 '+
+                'C1120 455 410 535 -290 565 '+
+                'C-470 572 -470 455 -270 440 '+
+                'C520 380 1230 325 1920 230 '+
+                'C2090 207 2090 105 1880 125 '+
+                'C1080 200 370 250 -320 285'+
+              '" />'+
+
           '</mask>'+
         '</defs>'+
-        '<rect class="hex-opening-gold-cover" '+
-          'x="-500" y="-400" width="2600" height="1800" '+
+
+        '<rect '+
+          'class="hex-opening-gold-cover" '+
+          'x="-500" y="-400" '+
+          'width="2600" height="1800" '+
           'mask="url(#hex-opening-reveal-mask)" />'+
       '</svg>'+
     '</div>';
