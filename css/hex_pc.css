@@ -3481,7 +3481,7 @@ body,
   stroke:#000;
   stroke-width:138;
   stroke-linecap:butt;
-  stroke-linejoin:bevel;
+  stroke-linejoin:round;
   stroke-dasharray:1;
   stroke-dashoffset:1;
 }
