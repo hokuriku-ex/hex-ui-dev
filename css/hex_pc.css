@@ -3486,11 +3486,15 @@ body,
   stroke-dashoffset:1;
 }
 
+.hex-opening-path.is-trowel{
+  filter:url(#hex-opening-trowel-roughness);
+}
+
 .hex-opening.is-start .hex-opening-path.is-trowel{
   animation:
-    hex-opening-trowel 2.15s
+    hex-opening-trowel 2s
     cubic-bezier(.65,0,.35,1)
-    1.05s forwards;
+    .80s forwards;
 }
 
 @keyframes hex-opening-trowel{
