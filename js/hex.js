@@ -2745,6 +2745,181 @@ hexLoad(function(){
 });
 
 /* =======================================
+   トップ 開幕アニメーション
+======================================= */
+hexReady(function(){
+  "use strict";
+
+  var STORAGE_KEY="hex_top_opening_viewed";
+  var OPENING_START_DELAY=200;
+  var HERO_CONNECT_DELAY=3200;
+  var OPENING_REMOVE_DELAY=4500;
+
+  function isReducedMotion(){
+    return(
+      window.matchMedia&&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    );
+  }
+
+  function isTopPage(){
+    /* この自動生成フレームはトップページにだけ存在する */
+    return !!document.querySelector(
+      "#gc_auto_frame_home_0 .heroimage_type"
+    );
+  }
+
+  function getFirstHeroCopy(){
+    return{
+      main:document.querySelector(
+        "#gc_auto_frame_home_0 #slideshow0 .catch0 .maincatch"
+      ),
+      sub:document.querySelector(
+        "#gc_auto_frame_home_0 #slideshow0 .catch0 .subcatch"
+      )
+    };
+  }
+
+  function createCopyElement(source){
+    var copy=document.createElement("div");
+    var main=document.createElement("div");
+    var sub=document.createElement("div");
+
+    copy.className="hex-opening-copy";
+    main.className="hex-opening-main";
+    sub.className="hex-opening-sub";
+
+    /* <br>を含め、管理画面で設定した文言をそのまま使用 */
+    main.innerHTML=source.main.innerHTML;
+    sub.innerHTML=source.sub.innerHTML;
+
+    copy.appendChild(main);
+    copy.appendChild(sub);
+
+    return copy;
+  }
+
+  function createOpeningElement(source){
+    var opening=document.createElement("div");
+
+    opening.className="hex-opening";
+    opening.setAttribute("aria-hidden","true");
+
+    opening.innerHTML=
+      '<div class="hex-opening-circle"></div>'+
+      '<div class="hex-opening-cover">'+
+        '<svg xmlns="http://www.w3.org/2000/svg" '+
+          'viewBox="0 0 1600 900" '+
+          'preserveAspectRatio="xMidYMid slice" '+
+          'aria-hidden="true">'+
+          '<path class="hex-opening-path is-path01" pathLength="1" '+
+            'd="M-340 145 C40 -155 405 -55 755 30 C1090 112 1395 -88 1940 -210" />'+
+          '<path class="hex-opening-path is-path02" pathLength="1" '+
+            'd="M-370 525 C55 155 415 255 805 330 C1175 400 1510 185 1970 35" />'+
+          '<path class="hex-opening-path is-path03" pathLength="1" '+
+            'd="M-315 875 C90 500 500 595 875 675 C1225 750 1570 535 1940 390" />'+
+          '<path class="hex-opening-path is-path04" pathLength="1" '+
+            'd="M-120 1190 C285 805 700 900 1090 985 C1420 1055 1700 850 1980 730" />'+
+        '</svg>'+
+      '</div>';
+
+    opening.appendChild(createCopyElement(source));
+
+    return opening;
+  }
+
+  function resetHeroToFirstSlide(){
+    var slides=document.querySelectorAll(
+      "#gc_auto_frame_home_0 .bg_slideimage"
+    );
+
+    if(!slides.length){
+      return;
+    }
+
+    slides.forEach(function(slide,index){
+      slide.stop&&slide.stop(true,true);
+      slide.style.display=index===0?"block":"none";
+      slide.style.zIndex=index===0?"100":"1";
+      slide.style.opacity="";
+    });
+
+    /*
+     * HOPWEB標準スライダーの最初のタイマー実行を空振りさせる。
+     * これにより、開幕直後の1枚目が約0.8秒で消えるのを防ぐ。
+     */
+    if(typeof window.i==="number"){
+      window.i=slides.length-1;
+    }
+
+    if(typeof window.j==="number"){
+      window.j=0;
+    }
+  }
+
+  function initOpening(){
+    var source;
+    var opening;
+
+    if(!isTopPage()){
+      return;
+    }
+
+    if(sessionStorage.getItem(STORAGE_KEY)){
+      return;
+    }
+
+    /* 動きを減らす設定の場合も、同一タブ内では再判定しない */
+    if(isReducedMotion()){
+      sessionStorage.setItem(STORAGE_KEY,"1");
+      return;
+    }
+
+    source=getFirstHeroCopy();
+
+    if(!source.main||!source.sub){
+      return;
+    }
+
+    sessionStorage.setItem(STORAGE_KEY,"1");
+
+    opening=createOpeningElement(source);
+    document.documentElement.classList.add("hex-opening-lock");
+    document.body.insertBefore(opening,document.body.firstChild);
+
+    window.setTimeout(function(){
+      opening.classList.add("is-start");
+
+      window.setTimeout(function(){
+        resetHeroToFirstSlide();
+        opening.classList.add("is-end");
+      },HERO_CONNECT_DELAY);
+    },OPENING_START_DELAY);
+
+    window.setTimeout(function(){
+      document.documentElement.classList.remove("hex-opening-lock");
+
+      if(opening.parentNode){
+        opening.parentNode.removeChild(opening);
+      }
+    },OPENING_REMOVE_DELAY);
+
+    /* 万一途中でエラーが起きても画面を塞ぎ続けない */
+    window.setTimeout(function(){
+      document.documentElement.classList.remove("hex-opening-lock");
+
+      var remaining=document.querySelector(".hex-opening");
+
+      if(remaining&&remaining.parentNode){
+        remaining.parentNode.removeChild(remaining);
+      }
+    },7000);
+  }
+  
+  initOpening();
+});
+
+/* =======================================
    トップ スクロールナビ
 ======================================= */
 hexReady(function(){
