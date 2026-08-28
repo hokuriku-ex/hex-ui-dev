@@ -2812,14 +2812,24 @@ hexReady(function(){
           'viewBox="0 0 1600 900" '+
           'preserveAspectRatio="xMidYMid slice" '+
           'aria-hidden="true">'+
-          '<path class="hex-opening-path is-path01" pathLength="1" '+
-            'd="M-340 145 C40 -155 405 -55 755 30 C1090 112 1395 -88 1940 -210" />'+
-          '<path class="hex-opening-path is-path02" pathLength="1" '+
-            'd="M-370 525 C55 155 415 255 805 330 C1175 400 1510 185 1970 35" />'+
-          '<path class="hex-opening-path is-path03" pathLength="1" '+
-            'd="M-315 875 C90 500 500 595 875 675 C1225 750 1570 535 1940 390" />'+
-          '<path class="hex-opening-path is-path04" pathLength="1" '+
-            'd="M-120 1190 C285 805 700 900 1090 985 C1420 1055 1700 850 1980 730" />'+
+          '<defs>'+
+            '<mask id="hex-opening-reveal-mask" '+
+              'maskUnits="userSpaceOnUse" x="-500" y="-400" '+
+              'width="2600" height="1800">'+
+              '<rect x="-500" y="-400" width="2600" height="1800" fill="#fff" />'+
+              '<path class="hex-opening-path is-path01" pathLength="1" '+
+                'd="M-390 1125 C-215 995 -85 1005 78 893 C245 778 290 672 472 585 C655 497 704 388 902 306 C1096 226 1162 116 1360 43 C1538 -23 1690 -108 1945 -245" />'+
+              '<path class="hex-opening-path is-path02" pathLength="1" '+
+                'd="M-470 1390 C-237 1202 -35 1195 160 1057 C350 922 421 810 614 718 C812 623 885 520 1087 429 C1283 340 1375 226 1575 135 C1738 61 1842 -18 2040 -140" />'+
+              '<path class="hex-opening-path is-path03" pathLength="1" '+
+                'd="M-520 805 C-303 653 -119 668 58 546 C240 420 302 313 492 222 C681 131 761 42 956 -50 C1141 -137 1248 -217 1437 -304 C1603 -381 1763 -422 2010 -535" />'+
+              '<path class="hex-opening-path is-path04" pathLength="1" '+
+                'd="M-535 1515 C-312 1338 -128 1350 62 1212 C248 1078 326 969 520 872 C711 776 793 662 993 570 C1187 481 1274 371 1473 278 C1651 195 1816 114 2075 -28" />'+
+            '</mask>'+
+          '</defs>'+
+          '<rect class="hex-opening-gold-cover" '+
+            'x="-500" y="-400" width="2600" height="1800" '+
+            'mask="url(#hex-opening-reveal-mask)" />'+
         '</svg>'+
       '</div>';
 
@@ -2915,7 +2925,7 @@ hexReady(function(){
       }
     },7000);
   }
-  
+
   initOpening();
 });
 
