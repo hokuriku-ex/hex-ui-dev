@@ -1,4 +1,23 @@
 /* =======================================
+   定数定義
+======================================= */
+/* ベース幅を1200pxから1600pxに広げる */
+@media screen and (min-width:769px){
+  html:root{
+    --base_width:1600px!important;
+    --hex_medium_width:1200px!important;
+    --hex_small_width:1000px!important;
+  }
+}
+
+:root{
+  /* 開幕アニメーション */
+  --hex-opening-navy:#1f2774;
+  --hex-opening-gold:#E8D575;
+  --hex-opening-white:#fff;
+}
+
+/* =======================================
    全ページ共通
 ======================================= */
 /* フォント */
@@ -118,7 +137,7 @@ html{
   max-width:var(--hex_small_width)!important;
   margin:0 auto 24px!important;
   padding:0 0 16px!important;
-  color:#383838;
+  color:#203459;
   font-size:24px;
   font-weight:500;
   line-height:1.4;
@@ -207,7 +226,7 @@ html{
   font-weight:500;
   line-height:2;
   letter-spacing:.03em;
-  color:#383838;
+  color:#203459;
 }
 
 /* アクション見出しアコーディオン */
@@ -301,7 +320,7 @@ html{
   font-weight:500;
   line-height:2;
   letter-spacing:.03em;
-  color:#383838;
+  color:#203459;
   text-align:left;
 }
 
@@ -721,7 +740,7 @@ a.hex-text-link[target="_blank"]::after{
   margin-left:auto!important;
   margin-right:auto!important;
   padding:0!important;
-  color:#383838!important;
+  color:#203459!important;
 }
 .gc_auto_frame_post_item_pager_prev_box,
 .gc_auto_frame_post_item_pager_next_box{
@@ -734,7 +753,7 @@ a.hex-text-link[target="_blank"]::after{
   padding:0!important;
   float:none!important;
   cursor:pointer!important;
-  color:#383838!important;
+  color:#203459!important;
   transition:color .2s ease;
   text-decoration:none!important;
 }
@@ -1096,7 +1115,7 @@ div.NNAttached{
 /* お客様の質問 */
 .kb_qanda_content .q_title{
   background:#E8D575;
-  color:#383838;
+  color:#203459;
 }
 /* お客様：左の人物画像へ向くしっぽ */
 .kb_qanda_content .q_title::before{
@@ -1991,7 +2010,7 @@ div[hex-sp]{
 }
 .hex-card-text{
   margin:0;
-  color:#383838;
+  color:#203459;
   font-size:16px!important;
   line-height:2;
 }
@@ -2014,7 +2033,7 @@ div[hex-sp]{
 }
 .hex-card-strength .hex-card-text{
   margin-top:14px;
-  color:#383838;
+  color:#203459;
   font-size:16px!important;
   line-height:1.9;
   text-align:left;
@@ -2293,7 +2312,7 @@ div[hex-sp]{
   color:#fff;
   paint-order:stroke fill;
   text-shadow:
-    0 0 3px #383838,
+    0 0 3px #203459,
     0 0 7px rgba(56,56,56,.8);
   font-size:28px!important;
   font-weight:700!important;
@@ -2304,7 +2323,7 @@ div[hex-sp]{
   color:#fff;
   paint-order:stroke fill;
   text-shadow:
-    0 0 3px #383838,
+    0 0 3px #203459,
     0 0 7px rgba(56,56,56,.8);
   font-size:22px!important;
   line-height:1.9!important;
@@ -2318,7 +2337,7 @@ div[hex-sp]{
   margin:0!important;
   background:rgba(255,255,255,.88)!important;
   border:1px solid rgba(255,255,255,.9)!important;
-  color:#383838!important;
+  color:#203459!important;
   box-shadow:0 0 8px rgba(56,56,56,.35);
   backdrop-filter:blur(3px);
   -webkit-backdrop-filter:blur(3px);
@@ -2330,11 +2349,11 @@ div[hex-sp]{
 }
 .hex-banner:not(.hex-banner-no-image):not(.hex-pickup-gallery .hex-banner)
 .hex-banner-button .hex-btn-main i{
-  color:#383838!important;
+  color:#203459!important;
 }
 .hex-banner:not(.hex-banner-no-image):not(.hex-pickup-gallery .hex-banner)
 .hex-banner-button .hex-btn-main .hex-btn-main-title{
-  color:#383838!important;
+  color:#203459!important;
 }
 .hex-banner:not(.hex-banner-no-image):not(.hex-pickup-gallery .hex-banner)
 .hex-banner-button .hex-btn-main:hover{
@@ -2691,7 +2710,7 @@ div[hex-sp]{
 }
 .hex-flow dd{
   margin:0;
-  color:#383838;
+  color:#203459;
   font-size:16px;
   line-height:1.9;
 }
@@ -2869,7 +2888,7 @@ div[hex-sp]{
     )!important;
 }
 .headermenu_type8 .menu_group.menu_menu{
-  color:rgb(56,56,56);
+  color:#203459;
   font-weight:900;
   letter-spacing:.05em;
   transition:transform .2s ease;
@@ -2889,7 +2908,7 @@ div[hex-sp]{
 .headermenu_type8 .menu_sub .menu_inner{
   position:relative;
   display:block;
-  color:rgb(56,56,56)!important;
+  color:#203459!important;
   background:transparent!important;
   text-align:left!important;
   border-bottom:none!important;
@@ -2899,7 +2918,7 @@ div[hex-sp]{
   line-height:1.5!important;
 }
 .headermenu_type8 .menu_sub .menu_inner:hover{
-  color:rgb(56,56,56)!important;
+  color:#203459!important;
   background:transparent!important;
 }
 .headermenu_type8 .menu_sub .menu_inner::before{
@@ -2918,7 +2937,7 @@ div[hex-sp]{
   bottom:0;
   width:0;
   height:1px;
-  background:rgb(56,56,56);
+  background:#203459;
   transition:width .28s ease;
 }
 .headermenu_type8 .menu_sub .menu_inner:hover::after{
@@ -2931,7 +2950,7 @@ div[hex-sp]{
   transform:translateY(-50%);
   font-size:13px;
   line-height:1;
-  color:rgb(56,56,56);
+  color:#203459;
   transition:transform .2s ease;
 }
 .headermenu_type8 .menu_sub .menu_inner:hover .hex-menu-icon{
@@ -2950,7 +2969,7 @@ div[hex-sp]{
   left:50%;
   bottom:12px;
   transform:translateX(-50%);
-  color:#383838;
+  color:#203459;
   font-family:"Font Awesome 6 Free";
   font-size:10px;
   font-weight:900;
@@ -3058,7 +3077,7 @@ div[hex-sp]{
   max-height:calc(100dvh - 80px);
   overflow:auto;
   background:#fff!important;
-  color:#383838!important;
+  color:#203459!important;
   box-shadow:0 24px 70px rgba(0,0,0,.28)!important;
   overscroll-behavior:contain;
   transform:translateY(20px);
@@ -3088,7 +3107,7 @@ div[hex-sp]{
   margin:0!important;
   padding:60px 0!important;
   background:#fff!important;
-  color:#383838!important;
+  color:#203459!important;
 }
 
 /* 見出し */
@@ -3114,7 +3133,7 @@ div[hex-sp]{
   box-sizing:border-box;
   width:100%!important;
   margin:0!important;
-  color:#383838!important;
+  color:#203459!important;
 }
 
 /* 閉じるボタン */
@@ -3350,11 +3369,6 @@ body,
 /* =======================================
    トップページ：開幕アニメーション
 ======================================= */
-:root{
-  --hex-opening-navy:#1f2774;
-  --hex-opening-gold:#E8D575;
-  --hex-opening-white:#fff;
-}
 .hex-opening{
   position:fixed;
   inset:0;
@@ -3669,7 +3683,7 @@ html.hex-opening-lock body{
   font-weight:500;
   line-height:2.5;
   letter-spacing:.03em;
-  color:#383838;
+  color:#203459;
   font-family:var(--hex-font-serif)!important;
   text-align:left;
 }
@@ -3828,14 +3842,14 @@ html.hex-opening-lock body{
 .hex-company-card .hex-unit{
   align-self:end;
   margin-bottom:4px;
-  color:#383838;
+  color:#203459;
   font-size:15px;
   font-weight:700;
   line-height:1;
 }
 .hex-company-card .hex-card-text{
   margin:0;
-  color:#383838;
+  color:#203459;
   font-size:14px;
   font-weight:500;
   line-height:1.6;
@@ -4392,7 +4406,7 @@ html.hex-opening-lock body{
   text-align:right;
 }
 .publicinfo_company .bg_svg svg path{
-  fill:#383838!important;
+  fill:#203459!important;
 }
 
 /* 基本情報・会社概要・沿革セクションは最大1100px */
@@ -4481,7 +4495,7 @@ html.hex-opening-lock body{
   padding:
     clamp(14px, 1.5vw, 20px)
     clamp(20px, 3vw, 44px)!important;
-  color:#383838!important;
+  color:#203459!important;
 }
 .content_body:has(.hex-vision-section) .welcome .title h2{
   font-size:24px!important;
@@ -4490,7 +4504,7 @@ html.hex-opening-lock body{
 .content_body:has(.hex-vision-section) .welcome .kakko_br{
   width:clamp(48px, 4.7vw, 60px)!important;
   height:clamp(48px, 4.7vw, 60px)!important;
-  --kakko-color:#383838!important;
+  --kakko-color:#203459!important;
 }
 .content_body:has(.hex-vision-section) .welcome .text .text-right{
   display:flex;
@@ -4512,7 +4526,7 @@ html.hex-opening-lock body{
   font-size:20px;
   font-weight:500;
   letter-spacing:.12em;
-  color:#383838;
+  color:#203459;
   border-bottom:2px solid #c8a874;
 }
 
@@ -4526,7 +4540,7 @@ html.hex-opening-lock body{
   margin:0 auto;
   padding:0!important;
   box-sizing:border-box;
-  color:#383838;
+  color:#203459;
 }
 .hex-staff-iframe-mode .hex-staff-section{
   margin:0 0 48px;
@@ -4640,7 +4654,7 @@ html.hex-opening-lock body{
   padding-bottom:10%!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box;
-  color:#383838;
+  color:#203459;
 }
 .hex-staff-section{
   margin:0 0 64px;
@@ -4693,7 +4707,7 @@ html.hex-opening-lock body{
   font-size:20px;
   font-weight:500;
   line-height:1.5;
-  color:#383838;
+  color:#203459;
 }
 .hex-staff-joined{
   margin:0;
@@ -4911,7 +4925,7 @@ html.hex-opening-lock body{
   border:none;
   border-radius:12px;
   background:#fff;
-  color:#383838;
+  color:#203459;
   font-size:15px;
   font-weight:500;
   line-height:1.7;
@@ -4989,7 +5003,7 @@ html.hex-opening-lock body{
 }
 .hex-solution-text{
   margin:28px 0 0;
-  color:#383838;
+  color:#203459;
   font-size:16px;
   font-weight:500;
   line-height:2;
@@ -5324,7 +5338,7 @@ html.hex-opening-lock body{
   margin-right:auto!important;
   flex-wrap:wrap;
   gap:8px 18px;
-  color:#383838;
+  color:#203459;
   font-size:14px;
   font-weight:400;
   text-align:left;
@@ -5362,7 +5376,7 @@ html.hex-opening-lock body{
   gap:18px;
 }
 .hex-product-rating-label{
-  color:#383838;
+  color:#203459;
   font-size:15px;
   font-weight:500;
   line-height:1.4;
@@ -5384,7 +5398,7 @@ html.hex-opening-lock body{
   left:50%;
   bottom:8px;
   transform:translateX(-50%);
-  color:#383838;
+  color:#203459;
   font-size:11px;
   line-height:1;
 }
@@ -5562,7 +5576,7 @@ html.hex-opening-lock body{
   padding:0 18px;
   border:none;
   background:#fff;
-  color:#383838;
+  color:#203459;
   font-size:16px;
   line-height:1;
 }
@@ -5610,7 +5624,7 @@ html.hex-opening-lock body{
   font-size:17px!important;
   line-height:1.8!important;
   font-weight:500!important;
-  color:#383838!important;
+  color:#203459!important;
   transition:color .25s ease;
 }
 .gc_auto_frame_post_index_box_contents_cell_tile:hover
@@ -5750,7 +5764,7 @@ html.hex-opening-lock body{
 .hex-news-arrow{
   flex:0 0 auto;
   margin-left:24px;
-  color:#383838!important;
+  color:#203459!important;
   font-size:20px!important;
   line-height:1!important;
   display:flex;
@@ -5759,7 +5773,7 @@ html.hex-opening-lock body{
   pointer-events:none;
 }
 .hex-news-arrow i{
-  color:#383838!important;
+  color:#203459!important;
 }
 
 /* =======================================
@@ -5803,7 +5817,7 @@ html.hex-opening-lock body{
 }
 .hex-contact-nav .hex-contact-hours{
   font-size:18px;
-  color:#383838;
+  color:#203459;
 }
 .hex-contact-nav .hex-contact-faq-link{
   display:flex;
@@ -5813,7 +5827,7 @@ html.hex-opening-lock body{
   margin-right:auto;
   align-items:center;
   gap:10px;
-  color:#383838!important;
+  color:#203459!important;
   font-size:14px;
   text-decoration:none!important;
   transition:color .2s ease;
@@ -5836,7 +5850,7 @@ html.hex-opening-lock body{
     transform .3s ease;
 }
 .hex-contact-nav .hex-contact-faq-link:hover{
-  color:#383838!important;
+  color:#203459!important;
   text-decoration:none!important;
 }
 .hex-contact-nav .hex-contact-faq-link:hover span{
@@ -5896,7 +5910,7 @@ html.hex-opening-lock body{
   gap:10px;
   font-size:16px;
   line-height:1.8;
-  color:#383838;
+  color:#203459;
 }
 #form_lp_form .hex-form-badge{
   flex:0 0 44px;
@@ -5938,7 +5952,7 @@ html.hex-opening-lock body{
   padding:12px 14px;
   font-size:16px;
   line-height:1.6;
-  color:#383838;
+  color:#203459;
 }
 
 /* 添付ファイル */
@@ -5992,7 +6006,7 @@ html.hex-opening-lock body{
 /* 確認事項 */
 #form_lp_form .hex-form-notice{
   margin:0 0 18px;
-  color:#383838;
+  color:#203459;
   font-size:16px;
   line-height:1.8;
 }
@@ -6112,7 +6126,7 @@ html.hex-opening-lock body{
   border:1px solid #e5e8f0!important;
   border-radius:0!important;
   background:#fff!important;
-  color:#383838!important;
+  color:#203459!important;
   box-shadow:0 24px 70px rgba(0,0,0,.28)!important;
   box-sizing:border-box!important;
 }
@@ -6121,11 +6135,11 @@ html.hex-opening-lock body{
 }
 #o7cms_dialog,
 #o7cms_dialog *{
-  color:#383838!important;
+  color:#203459!important;
 }
 #o7cms_dialog p{
   margin:0!important;
-  color:#383838!important;
+  color:#203459!important;
   font-size:16px!important;
   line-height:1.8!important;
 }
@@ -6230,7 +6244,7 @@ body.hex-form-dialog-open{
 #gc_auto_frame_lp_form_dialog_box .hex-dialog-confirm{
   max-width:var(--hex_small_width);
   margin:0 auto;
-  color:#383838;
+  color:#203459;
 }
 #gc_auto_frame_lp_form_dialog_box .hex-dialog-confirm-title{
   margin:0 0 32px;
@@ -6244,7 +6258,7 @@ body.hex-form-dialog-open{
 }
 #gc_auto_frame_lp_form_dialog_box .hex-dialog-confirm-lead{
   margin:0 0 36px;
-  color:#383838;
+  color:#203459;
   font-size:16px;
   line-height:1.8;
 }
@@ -6261,14 +6275,14 @@ body.hex-form-dialog-open{
   min-width:0!important;
   margin-right:0!important;
   margin-bottom:0!important;
-  color:#383838;
+  color:#203459;
   font-size:16px;
   line-height:1.8;
   font-weight:500;
 }
 #gc_auto_frame_lp_form_dialog_box .gc_dialog_lp_form_value{
   min-height:24px;
-  color:#383838;
+  color:#203459;
   font-size:16px;
   line-height:1.8;
   word-break:break-word;
@@ -6472,7 +6486,7 @@ body.hex-form-dialog-open{
   flex:1;
   margin:0!important;
   padding:0!important;
-  color:#383838!important;
+  color:#203459!important;
   font-size:18px;
   font-weight:500;
   line-height:2;
@@ -6527,7 +6541,7 @@ body.hex-form-dialog-open{
   flex:1;
   margin:0!important;
   padding:0!important;
-  color:#383838!important;
+  color:#203459!important;
   font-size:16px;
   line-height:2;
 }
@@ -6549,7 +6563,7 @@ body.hex-form-dialog-open{
   margin:0 auto;
   padding:28px 30px;
   box-sizing:border-box;
-  color:#383838;
+  color:#203459;
   background:#fff;
   border:none;
 }
@@ -6574,7 +6588,7 @@ body.hex-form-dialog-open{
   height:40px;
   padding:0;
   border:0;
-  color:#383838;
+  color:#203459;
   font-size:20px;
   background:transparent;
   cursor:pointer;
@@ -6620,7 +6634,7 @@ body.hex-form-dialog-open{
   width:34px;
   height:34px;
   box-sizing:border-box;
-  color:#383838;
+  color:#203459;
   font-size:16px;
   font-weight:500;
   line-height:1;
@@ -6634,17 +6648,17 @@ body.hex-form-dialog-open{
 /* 定休日 */
 .hex-calendar-number.is-closed{
   border-radius:50%;
-  color:#383838!important;
+  color:#203459!important;
   background:var(--hex-calendar-closed);
 }
 /* 大型連休 */
 .hex-calendar-number.is-long-holiday{
-  color:#383838!important;
+  color:#203459!important;
   background:var(--hex-calendar-holiday);
 }
 /* イベント */
 .hex-calendar-number.is-event{
-  color:#383838!important;
+  color:#203459!important;
   background:var(--hex-calendar-event);
   clip-path:polygon(
     25% 6.7%,
@@ -6793,16 +6807,4 @@ body.hex-form-dialog-open{
 .hex-contact-faq-link:hover i{
   transform:translateX(3px);
   text-decoration:none!important;
-}
-
-/* =======================================
-   標準変数上書き
-======================================= */
-/* ベース幅を1200pxから1600pxに広げる */
-@media screen and (min-width:769px){
-  html:root{
-    --base_width:1600px!important;
-    --hex_medium_width:1200px!important;
-    --hex_small_width:1000px!important;
-  }
 }
