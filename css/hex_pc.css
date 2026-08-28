@@ -3490,7 +3490,7 @@ body,
   animation:
     hex-opening-trowel 2.15s
     cubic-bezier(.65,0,.35,1)
-    1.85s forwards;
+    1.25s forwards;
 }
 
 @keyframes hex-opening-trowel{
