@@ -2821,7 +2821,7 @@ function createOpeningElement(){
     '<div class="hex-opening-cover">'+
       '<svg xmlns="http://www.w3.org/2000/svg" '+
         'viewBox="0 0 1600 900" '+
-        'preserveAspectRatio="xMidYMid slice" '+
+        'preserveAspectRatio="none" '+
         'aria-hidden="true">'+
         '<defs>'+
           '<mask id="hex-opening-reveal-mask" '+
@@ -2834,26 +2834,26 @@ function createOpeningElement(){
               'width="2600" height="1800" '+
               'fill="#fff" />'+
 
-            '<path '+
-              'class="hex-opening-path is-trowel" '+
-              'pathLength="1" '+
-              'd="'+
-                'M140 145 '+
+              '<path '+
+                'class="hex-opening-path is-trowel" '+
+                'pathLength="1" '+
+                'd="'+
+                  'M260 150 '+
 
-                'C480 115 1050 120 1460 155 '+
-                'C1525 160 1525 230 1460 235 '+
+                  'C520 125 1050 125 1340 155 '+
+                  'C1400 162 1400 230 1340 238 '+
 
-                'C1080 270 510 265 140 300 '+
-                'C75 305 75 375 140 380 '+
+                  'C1040 270 550 270 260 300 '+
+                  'C200 307 200 375 260 382 '+
 
-                'C520 415 1080 410 1460 445 '+
-                'C1525 450 1525 520 1460 525 '+
+                  'C550 415 1040 415 1340 445 '+
+                  'C1400 452 1400 520 1340 528 '+
 
-                'C1080 560 520 555 140 590 '+
-                'C75 595 75 665 140 670 '+
+                  'C1040 560 550 560 260 590 '+
+                  'C200 597 200 665 260 672 '+
 
-                'C520 705 1080 700 1460 755'+
-              '" />'+
+                  'C550 705 1040 705 1340 750'+
+                '" />'+
 
           '</mask>'+
         '</defs>'+
