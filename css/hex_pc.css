@@ -44,8 +44,9 @@ h6{
 .gc_auto_frame_post_index .text_color_black{
   color:#203459!important;
 }
-.gc_auto_frame_post_item .text_color_black
-
+.gc_auto_frame_post_item .text_color_black{
+  color:#203459!important;
+}
 
 /* スクロールバー対策 */
 html{
