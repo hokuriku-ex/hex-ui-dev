@@ -1200,9 +1200,7 @@
   }
 
   .hex-handoff-copy .hex-opening-main{
-    font-size:clamp(30px,9vw,44px);
-    line-height:1.42;
-    letter-spacing:.06em;
+    font-size:clamp(26px,calc(20px + 1.5vw),32px);
   }
 
   .hex-handoff-copy .hex-opening-sub{
