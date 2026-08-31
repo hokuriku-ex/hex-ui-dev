@@ -3010,23 +3010,35 @@ hexReady(function(){
           '</g>'+ 
           '<g class="hex-story-person is-customer">'+
             '<path class="hex-story-person-line is-body" pathLength="1" '+
-              'd="M-20 0C-10-20-17-50-14-82-11-119-24-153-9-185 0-204 23-202 28-184 32-168 18-158 8-158 25-137 23-105 27-76 31-45 22-18 18 0" />'+
-            '<path class="hex-story-person-line is-arm" pathLength="1" '+
-              'd="M5-132C19-117 33-94 47-70" />'+
-            '<path class="hex-story-person-line is-leg-front" pathLength="1" '+
-              'd="M-3-62C-5-39-8-17-20 0" />'+
-            '<path class="hex-story-person-line is-leg-back" pathLength="1" '+
-              'd="M10-61C13-38 16-17 18 0" />'+
+              'd="M-3-62C-8-91-13-119-9-150-22-164-20-188-7-199 7-211 27-201 29-184 31-169 18-158 8-158 24-139 22-105 10-61" />'+
+            '<g class="hex-walk-pose is-pose-stand">'+
+              '<path class="hex-story-person-line is-arm" pathLength="1" d="M5-132C19-117 33-94 47-70" />'+
+              '<path class="hex-story-person-line is-leg-front" pathLength="1" d="M-3-62C-5-39-8-17-20 0" />'+
+              '<path class="hex-story-person-line is-leg-back" pathLength="1" d="M10-61C13-38 16-17 18 0" />'+
+            '</g>'+ 
+            '<g class="hex-walk-pose is-pose-left">'+
+              '<path class="hex-story-person-line is-arm" pathLength="1" d="M5-132C21-116 36-98 49-84" />'+
+              '<path class="hex-story-person-line is-leg-front" pathLength="1" d="M-3-62C-9-41-18-19-31-3C-27 0-21 1-15 0" />'+
+              '<path class="hex-story-person-line is-leg-back" pathLength="1" d="M10-61C15-41 21-22 27-5C24-2 20-1 16 0" />'+
+            '</g>'+ 
+            '<g class="hex-walk-pose is-pose-pass">'+
+              '<path class="hex-story-person-line is-arm" pathLength="1" d="M5-132C18-116 29-98 39-78" />'+
+              '<path class="hex-story-person-line is-leg-front" pathLength="1" d="M-3-62C-4-40-6-18-9 0" />'+
+              '<path class="hex-story-person-line is-leg-back" pathLength="1" d="M10-61C11-39 13-17 15 0" />'+
+            '</g>'+ 
+            '<g class="hex-walk-pose is-pose-right">'+
+              '<path class="hex-story-person-line is-arm" pathLength="1" d="M5-132C15-113 24-94 32-74" />'+
+              '<path class="hex-story-person-line is-leg-front" pathLength="1" d="M-3-62C1-41 8-22 16-5C13-2 9-1 5 0" />'+
+              '<path class="hex-story-person-line is-leg-back" pathLength="1" d="M10-61C4-41-5-19-18-3C-14 0-8 1-2 0" />'+
+            '</g>'+ 
           '</g>'+ 
           '<g class="hex-story-person is-staff">'+
             '<path class="hex-story-person-line is-body" pathLength="1" '+
-              'd="M-20 0C-10-20-17-50-14-82-11-119-24-153-9-185 0-204 23-202 28-184 32-168 18-158 8-158 25-137 23-105 27-76 31-45 22-18 18 0" />'+
-            '<path class="hex-story-person-line is-arm" pathLength="1" '+
-              'd="M5-132C19-117 33-94 47-70" />'+
-            '<path class="hex-story-person-line is-leg-front" pathLength="1" '+
-              'd="M-3-62C-5-39-8-17-20 0" />'+
-            '<path class="hex-story-person-line is-leg-back" pathLength="1" '+
-              'd="M10-61C13-38 16-17 18 0" />'+
+              'd="M-3-62C-8-91-13-119-9-150-22-164-20-188-7-199 7-211 27-201 29-184 31-169 18-158 8-158 24-139 22-105 10-61" />'+
+            '<g class="hex-walk-pose is-pose-stand"><path class="hex-story-person-line is-arm" pathLength="1" d="M5-132C19-117 33-94 47-70" /><path class="hex-story-person-line is-leg-front" pathLength="1" d="M-3-62C-5-39-8-17-20 0" /><path class="hex-story-person-line is-leg-back" pathLength="1" d="M10-61C13-38 16-17 18 0" /></g>'+ 
+            '<g class="hex-walk-pose is-pose-left"><path class="hex-story-person-line is-arm" pathLength="1" d="M5-132C21-116 36-98 49-84" /><path class="hex-story-person-line is-leg-front" pathLength="1" d="M-3-62C-9-41-18-19-31-3C-27 0-21 1-15 0" /><path class="hex-story-person-line is-leg-back" pathLength="1" d="M10-61C15-41 21-22 27-5C24-2 20-1 16 0" /></g>'+ 
+            '<g class="hex-walk-pose is-pose-pass"><path class="hex-story-person-line is-arm" pathLength="1" d="M5-132C18-116 29-98 39-78" /><path class="hex-story-person-line is-leg-front" pathLength="1" d="M-3-62C-4-40-6-18-9 0" /><path class="hex-story-person-line is-leg-back" pathLength="1" d="M10-61C11-39 13-17 15 0" /></g>'+ 
+            '<g class="hex-walk-pose is-pose-right"><path class="hex-story-person-line is-arm" pathLength="1" d="M5-132C15-113 24-94 32-74" /><path class="hex-story-person-line is-leg-front" pathLength="1" d="M-3-62C1-41 8-22 16-5C13-2 9-1 5 0" /><path class="hex-story-person-line is-leg-back" pathLength="1" d="M10-61C4-41-5-19-18-3C-14 0-8 1-2 0" /></g>'+ 
           '</g>'+ 
           '<circle class="hex-logo-dream" cx="500" cy="327" r="26" />'+
           '<g class="hex-logo-build" transform="translate(370 225) scale(1.4623)">'+
