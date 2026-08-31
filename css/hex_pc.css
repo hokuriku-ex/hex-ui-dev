@@ -3613,7 +3613,8 @@ body,
 
 .hex-logo-story{
   display:block;
-  width:min(100vw,1200px);
+  width:100vw;
+  max-width:none;
   height:min(100dvh,760px);
   overflow:visible;
   color:var(--hex-opening-navy);
@@ -3631,6 +3632,11 @@ body,
   stroke-dashoffset:1;
 }
 
+/* 丸い線端が描画前に反対側へ一瞬現れるのを防ぐ */
+.hex-story-ground-line{
+  stroke-linecap:butt;
+}
+
 .hex-story-person{
   opacity:1;
   transform-box:view-box;
@@ -3643,6 +3649,14 @@ body,
 
 .hex-story-person.is-staff{
   transform:translate(775px,430px) scaleX(-1);
+}
+
+.hex-walk-pose{
+  opacity:0;
+}
+
+.hex-walk-pose.is-pose-stand{
+  opacity:1;
 }
 
 .hex-opening.is-logo-start .hex-story-ground-line,
@@ -3685,6 +3699,42 @@ body,
     hex-person-to-logo .42s ease 3.62s forwards;
 }
 
+.hex-opening.is-logo-start .hex-story-person .is-pose-stand{
+  animation:hex-walk-pose-stand 1.62s steps(1,end) 1.18s forwards;
+}
+
+.hex-opening.is-logo-start .hex-story-person .is-pose-left{
+  animation:hex-walk-pose-left 1.62s steps(1,end) 1.18s forwards;
+}
+
+.hex-opening.is-logo-start .hex-story-person .is-pose-pass{
+  animation:hex-walk-pose-pass 1.62s steps(1,end) 1.18s forwards;
+}
+
+.hex-opening.is-logo-start .hex-story-person .is-pose-right{
+  animation:hex-walk-pose-right 1.62s steps(1,end) 1.18s forwards;
+}
+
+@keyframes hex-walk-pose-stand{
+  0%,82%{opacity:0;}
+  83%,100%{opacity:1;}
+}
+
+@keyframes hex-walk-pose-left{
+  0%,16%,49%,66%,82%,100%{opacity:0;}
+  1%,15%,50%,65%{opacity:1;}
+}
+
+@keyframes hex-walk-pose-pass{
+  0%,15%,33%,49%,67%,82%,100%{opacity:0;}
+  16%,32%,50%,66%{opacity:1;}
+}
+
+@keyframes hex-walk-pose-right{
+  0%,32%,50%,100%{opacity:0;}
+  33%,49%,67%,82%{opacity:1;}
+}
+
 .hex-opening.is-logo-start .hex-story-person.is-staff{
   animation:
     hex-staff-walk 1.62s cubic-bezier(.45,0,.3,1) 1.18s both,
@@ -3693,21 +3743,21 @@ body,
 
 @keyframes hex-customer-walk{
   0%{transform:translate(225px,430px);}
-  16%{transform:translate(258px,421px) rotate(-1deg);}
-  32%{transform:translate(292px,430px) rotate(1deg);}
-  48%{transform:translate(327px,421px) rotate(-1deg);}
-  64%{transform:translate(360px,430px) rotate(1deg);}
-  82%{transform:translate(390px,421px) rotate(-1deg);}
+  16%{transform:translate(258px,428px);}
+  32%{transform:translate(292px,430px);}
+  48%{transform:translate(327px,428px);}
+  64%{transform:translate(360px,430px);}
+  82%{transform:translate(390px,428px);}
   100%{transform:translate(414px,430px);}
 }
 
 @keyframes hex-staff-walk{
   0%{transform:translate(775px,430px) scaleX(-1);}
-  16%{transform:translate(742px,421px) scaleX(-1) rotate(-1deg);}
-  32%{transform:translate(708px,430px) scaleX(-1) rotate(1deg);}
-  48%{transform:translate(673px,421px) scaleX(-1) rotate(-1deg);}
-  64%{transform:translate(640px,430px) scaleX(-1) rotate(1deg);}
-  82%{transform:translate(610px,421px) scaleX(-1) rotate(-1deg);}
+  16%{transform:translate(742px,428px) scaleX(-1);}
+  32%{transform:translate(708px,430px) scaleX(-1);}
+  48%{transform:translate(673px,428px) scaleX(-1);}
+  64%{transform:translate(640px,430px) scaleX(-1);}
+  82%{transform:translate(610px,428px) scaleX(-1);}
   100%{transform:translate(586px,430px) scaleX(-1);}
 }
 
