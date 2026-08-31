@@ -3625,7 +3625,8 @@ body,
 }
 
 .hex-logo-body-layer,
-.hex-logo-arm-layer,
+.hex-logo-front-arm-layer,
+.hex-logo-back-arm-layer,
 .hex-logo-back-hand,
 .hex-logo-exact-final,
 .hex-logo-company-name{
@@ -3637,26 +3638,32 @@ body,
   opacity:1;
 }
 
-.hex-logo-arm-mask-path{
+.hex-logo-front-arm-mask-path,
+.hex-logo-back-arm-mask-path{
   stroke-dasharray:1;
   stroke-dashoffset:1;
 }
 
-.hex-opening.is-logo-start .hex-logo-arm-mask-path{
-  animation:hex-logo-arm-draw .66s cubic-bezier(.45,0,.25,1) .35s forwards;
+.hex-opening.is-logo-start .hex-logo-front-arm-mask-path{
+  animation:hex-logo-arm-draw .72s cubic-bezier(.45,0,.25,1) .25s forwards;
 }
 
-.hex-opening.is-logo-start .hex-logo-arm-layer{
-  animation:hex-logo-show .01s linear .35s forwards;
+.hex-opening.is-logo-start .hex-logo-back-arm-mask-path{
+  animation:hex-logo-arm-draw .30s cubic-bezier(.45,0,.25,1) .97s forwards;
+}
+
+.hex-opening.is-logo-start .hex-logo-front-arm-layer,
+.hex-opening.is-logo-start .hex-logo-back-arm-layer{
+  animation:hex-logo-show .01s linear .25s forwards;
 }
 
 .hex-opening.is-logo-start .hex-logo-back-hand,
 .hex-opening.is-logo-start .hex-logo-company-name{
-  animation:hex-logo-final-pop .48s cubic-bezier(.22,.9,.35,1.35) 1.12s forwards;
+  animation:hex-logo-final-pop .48s cubic-bezier(.22,.9,.35,1.35) 1.36s forwards;
 }
 
 .hex-opening.is-logo-start .hex-logo-exact-final{
-  animation:hex-logo-show .16s linear 1.40s forwards;
+  animation:hex-logo-show .16s linear 1.66s forwards;
 }
 
 .hex-logo-company-name{
