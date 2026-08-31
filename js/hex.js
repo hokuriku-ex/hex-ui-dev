@@ -3000,7 +3000,7 @@ hexReady(function(){
                   'C63 106 116 106 148.887 92.648 '+
                   'C181 82 183 64 160.418 55.09" '+
                 'fill="none" stroke="#fff" stroke-width="36" '+
-                'stroke-linecap="round" stroke-linejoin="round" />'+
+                'stroke-linecap="butt" stroke-linejoin="round" />'+
             '</mask>'+ 
             '<mask id="hex-logo-back-arm-mask" maskUnits="userSpaceOnUse" '+
               'x="45" y="34" width="85" height="25">'+
