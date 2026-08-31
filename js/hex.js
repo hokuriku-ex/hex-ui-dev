@@ -2745,7 +2745,7 @@ hexLoad(function(){
 });
 
 /* =======================================
-   トップ 開幕アニメーション
+   トップ 開幕～ウェルカムアニメーション
 ======================================= */
 hexReady(function(){
   "use strict";
@@ -2806,7 +2806,52 @@ hexReady(function(){
       :"";
   }
 
-  function createOriginalHero(backgroundImage){
+  function removeIds(element){
+    element.removeAttribute("id");
+
+    element.querySelectorAll("[id]").forEach(function(child){
+      child.removeAttribute("id");
+    });
+  }
+
+  function prepareHandoffCopy(){
+    var source=document.querySelector(".hex-opening-copy-source");
+    var fixedCopy;
+
+    if(!source){
+      fixedCopy=document.createElement("h1");
+      fixedCopy.className="hex-handoff-copy hex-original-hero-catch";
+      fixedCopy.innerHTML=
+        '<span class="hex-opening-main">お客様の夢を追いかける良きパートナー</span>'+ 
+        '<span class="hex-opening-sub"></span>';
+
+      return{
+        source:null,
+        fixed:fixedCopy
+      };
+    }
+
+    source.classList.add("hex-handoff-copy","hex-welcome-copy");
+    source.setAttribute("data-hex-copy-handoff","welcome");
+
+    fixedCopy=source.cloneNode(true);
+    fixedCopy.classList.remove(
+      "hex-opening-copy-source",
+      "hex-welcome-copy",
+      "is-copy-active"
+    );
+    fixedCopy.classList.add("hex-handoff-copy","hex-original-hero-catch");
+    fixedCopy.removeAttribute("data-hex-copy-handoff");
+    fixedCopy.setAttribute("aria-hidden","true");
+    removeIds(fixedCopy);
+
+    return{
+      source:source,
+      fixed:fixedCopy
+    };
+  }
+
+  function createOriginalHero(backgroundImage,copyPair){
     var standardHero=getStandardHero();
     var existing=document.querySelector(".hex-original-hero");
     var hero;
@@ -2827,19 +2872,69 @@ hexReady(function(){
     hero.innerHTML=
       '<div class="hex-original-hero-image" aria-hidden="true"></div>'+ 
       '<div class="hex-original-hero-shade" aria-hidden="true"></div>'+ 
-      '<div class="hex-original-hero-copy">'+
-        '<h1 class="hex-original-hero-catch">'+
-          '<span>お客様の夢を追いかける</span>'+ 
-          '<span>良きパートナー</span>'+ 
-        '</h1>'+ 
-      '</div>';
+      '<div class="hex-original-hero-copy"></div>';
 
     image=hero.querySelector(".hex-original-hero-image");
     image.style.backgroundImage=backgroundImage;
 
+    hero.querySelector(".hex-original-hero-copy").appendChild(
+      copyPair.fixed
+    );
+
+    if(copyPair.source){
+      hero.classList.add("has-copy-handoff");
+    }
+
     standardHero.parentNode.insertBefore(hero,standardHero);
 
     return hero;
+  }
+
+  function initCopyHandoff(hero,welcomeCopy){
+    var fixedCopy;
+    var frameRequested=false;
+
+    if(!hero||!welcomeCopy){
+      return;
+    }
+
+    fixedCopy=hero.querySelector(".hex-original-hero-copy");
+
+    if(!fixedCopy){
+      return;
+    }
+
+    function updateCopyHandoff(){
+      var fixedRect;
+      var welcomeRect;
+      var isHandedOff;
+
+      frameRequested=false;
+
+      fixedRect=fixedCopy.getBoundingClientRect();
+      welcomeRect=welcomeCopy.getBoundingClientRect();
+
+      /* 同じサイズのコピー上端が重なった瞬間に入れ替える */
+      isHandedOff=welcomeRect.top<=fixedRect.top+1;
+
+      hero.classList.toggle("is-copy-handed-off",isHandedOff);
+      welcomeCopy.classList.toggle("is-copy-active",isHandedOff);
+    }
+
+    function requestUpdate(){
+      if(frameRequested){
+        return;
+      }
+
+      frameRequested=true;
+      window.requestAnimationFrame(updateCopyHandoff);
+    }
+
+    window.addEventListener("scroll",requestUpdate,{passive:true});
+    window.addEventListener("resize",requestUpdate);
+    window.addEventListener("orientationchange",requestUpdate);
+
+    requestUpdate();
   }
 
   function createOpeningElement(backgroundImage){
@@ -2904,6 +2999,10 @@ hexReady(function(){
 
     if(hero){
       hero.classList.add("is-ready");
+
+      window.setTimeout(function(){
+        hero.classList.add("is-copy-swap-ready");
+      },750);
     }
 
     if(opening&&opening.parentNode){
@@ -2913,6 +3012,7 @@ hexReady(function(){
 
   function initOpening(){
     var backgroundImage;
+    var copyPair;
     var hero;
     var opening;
 
@@ -2921,17 +3021,20 @@ hexReady(function(){
     }
 
     backgroundImage=getRegisteredHeroBackground();
-    hero=createOriginalHero(backgroundImage);
+    copyPair=prepareHandoffCopy();
+    hero=createOriginalHero(backgroundImage,copyPair);
 
     if(!hero){
       return;
     }
 
+    initCopyHandoff(hero,copyPair.source);
+
     if(
       isReducedMotion()||
       (!FORCE_PLAY&&sessionStorage.getItem(STORAGE_KEY))
     ){
-      hero.classList.add("is-ready");
+      hero.classList.add("is-ready","is-copy-swap-ready");
       return;
     }
 
