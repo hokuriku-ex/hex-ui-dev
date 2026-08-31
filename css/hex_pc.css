@@ -3398,7 +3398,7 @@ body,
   height:100vh;
   height:100svh;
   min-height:620px;
-  background:#1f2774;
+  background:#203459;
 }
 
 .hex-original-hero-image,
@@ -3416,7 +3416,6 @@ body,
 
 .hex-original-hero-shade{
   z-index:1;
-  background:rgba(16,32,58,.24);
   display:none;
 }
 
@@ -3438,17 +3437,18 @@ body,
 }
 
 /* ウェルカム側に実体がある場合は、重なるまで画面中央に固定 */
-.hex-original-hero.has-copy-handoff{
-  z-index:auto;
-  isolation:auto;
-  overflow:visible;
-}
-
 .hex-original-hero.has-copy-handoff .hex-original-hero-copy{
   position:fixed;
   right:0;
   left:0;
   z-index:2147482000;
+}
+
+/* 固定コピーをヒーローのスタッキングコンテキストから解放 */
+.hex-original-hero.has-copy-handoff{
+  z-index:auto;
+  isolation:auto;
+  overflow:visible;
 }
 
 .hex-original-hero.is-ready .hex-original-hero-copy{
@@ -3600,40 +3600,236 @@ body,
   position:absolute;
   inset:0;
   z-index:2;
-  display:grid;
-  place-items:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
   pointer-events:none;
 }
 
-.hex-opening-logo-placeholder{
-  position:absolute;
-  top:var(--hex-hero-origin-y);
-  left:var(--hex-hero-origin-x);
-  opacity:0;
-  transform:translate(-50%,-50%);
-}
-
-.hex-opening-logo-dot{
-  display:block;
-  width:clamp(42px,5vw,72px);
-  aspect-ratio:1;
-  border-radius:50%;
-  background:var(--hex-opening-navy);
-  transform:translateY(-8px);
-}
-
-.hex-opening.is-logo-ready .hex-opening-logo-placeholder{
+.hex-opening.is-logo-start .hex-opening-logo-stage{
   opacity:1;
 }
 
-.hex-opening.is-logo-ready .hex-opening-logo-dot{
-  animation:hex-opening-dot-settle .38s cubic-bezier(.22,.9,.35,1.3) both;
+.hex-logo-story{
+  display:block;
+  width:min(100vw,1200px);
+  height:min(100dvh,760px);
+  overflow:visible;
+  color:var(--hex-opening-navy);
 }
 
-@keyframes hex-opening-dot-settle{
-  0%{transform:translateY(-8px);}
-  72%{transform:translateY(2px);}
-  100%{transform:translateY(0);}
+.hex-story-ground-line,
+.hex-story-person-line{
+  fill:none;
+  stroke:currentColor;
+  stroke-width:3;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  vector-effect:non-scaling-stroke;
+  stroke-dasharray:1;
+  stroke-dashoffset:1;
+}
+
+.hex-story-person{
+  opacity:1;
+  transform-box:view-box;
+  transform-origin:0 0;
+}
+
+.hex-story-person.is-customer{
+  transform:translate(225px,430px);
+}
+
+.hex-story-person.is-staff{
+  transform:translate(775px,430px) scaleX(-1);
+}
+
+.hex-opening.is-logo-start .hex-story-ground-line,
+.hex-opening.is-logo-start .hex-story-person-line{
+  animation:hex-story-draw .34s ease-out both;
+}
+
+.hex-opening.is-logo-start .is-ground1{animation-delay:0s;}
+.hex-opening.is-logo-start .is-customer .is-body{animation-delay:.16s;}
+.hex-opening.is-logo-start .is-customer .is-arm{animation-delay:.28s;}
+.hex-opening.is-logo-start .is-customer .is-leg-front,
+.hex-opening.is-logo-start .is-customer .is-leg-back{animation-delay:.34s;}
+.hex-opening.is-logo-start .is-ground2{animation-delay:.46s;}
+.hex-opening.is-logo-start .is-staff .is-body{animation-delay:.70s;}
+.hex-opening.is-logo-start .is-staff .is-arm{animation-delay:.82s;}
+.hex-opening.is-logo-start .is-staff .is-leg-front,
+.hex-opening.is-logo-start .is-staff .is-leg-back{animation-delay:.88s;}
+.hex-opening.is-logo-start .is-ground3{animation-delay:1.02s;}
+
+@keyframes hex-story-draw{
+  0%{
+    opacity:0;
+    stroke-dashoffset:1;
+  }
+  1%{
+    opacity:1;
+    stroke-dashoffset:1;
+  }
+  100%{
+    opacity:1;
+    stroke-dashoffset:0;
+  }
+}
+
+.hex-opening.is-logo-start .hex-story-person.is-customer{
+  animation:
+    hex-customer-walk 1.62s cubic-bezier(.45,0,.3,1) 1.18s both,
+    hex-person-to-logo .42s ease 3.62s forwards;
+}
+
+.hex-opening.is-logo-start .hex-story-person.is-staff{
+  animation:
+    hex-staff-walk 1.62s cubic-bezier(.45,0,.3,1) 1.18s both,
+    hex-person-to-logo .42s ease 3.62s forwards;
+}
+
+@keyframes hex-customer-walk{
+  0%{transform:translate(225px,430px);}
+  16%{transform:translate(258px,421px) rotate(-1deg);}
+  32%{transform:translate(292px,430px) rotate(1deg);}
+  48%{transform:translate(327px,421px) rotate(-1deg);}
+  64%{transform:translate(360px,430px) rotate(1deg);}
+  82%{transform:translate(390px,421px) rotate(-1deg);}
+  100%{transform:translate(414px,430px);}
+}
+
+@keyframes hex-staff-walk{
+  0%{transform:translate(775px,430px) scaleX(-1);}
+  16%{transform:translate(742px,421px) scaleX(-1) rotate(-1deg);}
+  32%{transform:translate(708px,430px) scaleX(-1) rotate(1deg);}
+  48%{transform:translate(673px,421px) scaleX(-1) rotate(-1deg);}
+  64%{transform:translate(640px,430px) scaleX(-1) rotate(1deg);}
+  82%{transform:translate(610px,421px) scaleX(-1) rotate(-1deg);}
+  100%{transform:translate(586px,430px) scaleX(-1);}
+}
+
+@keyframes hex-person-to-logo{
+  0%{opacity:1;}
+  100%{opacity:0;}
+}
+
+.hex-opening.is-logo-start .hex-story-ground{
+  animation:hex-story-ground-away .35s ease 2.88s forwards;
+}
+
+@keyframes hex-story-ground-away{
+  to{opacity:0;}
+}
+
+.hex-logo-dream{
+  fill:var(--hex-opening-navy);
+  opacity:0;
+  transform-box:fill-box;
+  transform-origin:center;
+}
+
+.hex-opening.is-logo-start .hex-logo-dream{
+  animation:hex-logo-dream-fall 2.85s cubic-bezier(.42,0,.22,1) 1.02s both;
+}
+
+@keyframes hex-logo-dream-fall{
+  0%{
+    opacity:0;
+    transform:translateY(-280px) scale(3);
+  }
+  8%{opacity:1;}
+  62%{
+    opacity:1;
+    transform:translateY(-165px) scale(1.65);
+  }
+  74%{
+    opacity:1;
+    transform:translateY(-165px) scale(1.65);
+  }
+  93%{
+    opacity:1;
+    transform:translateY(3px) scale(.98);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+.hex-logo-build{
+  fill:var(--hex-opening-navy);
+}
+
+.hex-logo-body-layer,
+.hex-logo-arm-layer,
+.hex-logo-front-hand,
+.hex-logo-back-hand,
+.hex-logo-exact-final,
+.hex-logo-company-name{
+  opacity:0;
+}
+
+.hex-opening.is-logo-start .hex-logo-body-layer{
+  animation:hex-logo-show .38s ease 3.55s forwards;
+}
+
+.hex-logo-arm-mask-path{
+  stroke-dasharray:1;
+  stroke-dashoffset:1;
+}
+
+.hex-opening.is-logo-start .hex-logo-arm-mask-path{
+  animation:hex-logo-arm-draw .66s cubic-bezier(.45,0,.25,1) 3.90s forwards;
+}
+
+.hex-opening.is-logo-start .hex-logo-arm-layer,
+.hex-opening.is-logo-start .hex-logo-front-hand{
+  animation:hex-logo-show .01s linear 3.90s forwards;
+}
+
+.hex-opening.is-logo-start .hex-logo-back-hand,
+.hex-opening.is-logo-start .hex-logo-company-name{
+  animation:hex-logo-final-pop .34s cubic-bezier(.22,.9,.35,1.3) 4.54s forwards;
+}
+
+.hex-opening.is-logo-start .hex-logo-exact-final{
+  animation:hex-logo-show .16s linear 4.82s forwards;
+}
+
+.hex-opening.is-logo-start .hex-logo-dream{
+  /* 正確なロゴパスへ切り替わる直前まで手前の丸を保持 */
+}
+
+.hex-logo-company-name{
+  fill:var(--hex-opening-navy);
+  font-family:"Zen Kaku Gothic New",sans-serif;
+  font-size:28px;
+  font-weight:700;
+  letter-spacing:.12em;
+}
+
+@keyframes hex-logo-show{
+  to{opacity:1;}
+}
+
+@keyframes hex-logo-arm-draw{
+  to{stroke-dashoffset:0;}
+}
+
+@keyframes hex-logo-final-pop{
+  0%{
+    opacity:0;
+    transform:translateY(-7px);
+  }
+  72%{
+    opacity:1;
+    transform:translateY(2px);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0);
+  }
 }
 
 .hex-opening-hero-reveal{
