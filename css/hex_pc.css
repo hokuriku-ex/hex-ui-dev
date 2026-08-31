@@ -3378,7 +3378,7 @@ body,
   --hex-opening-navy:#1f2774;
   --hex-opening-gold:#e8d575;
   --hex-opening-white:#fff;
-  --hex-hero-copy-color:#203459;
+  --hex-hero-copy-color:#1f2774;
   --hex-hero-origin-x:50%;
   --hex-hero-origin-y:50%;
 }
@@ -3398,7 +3398,7 @@ body,
   height:100vh;
   height:100svh;
   min-height:620px;
-  background:#203459;
+  background:#1f2774;
 }
 
 .hex-original-hero-image,
@@ -3408,14 +3408,14 @@ body,
 }
 
 .hex-original-hero-image{
-  z-index:-2;
+  z-index:0;
   background-position:center;
   background-repeat:no-repeat;
   background-size:cover;
 }
 
 .hex-original-hero-shade{
-  z-index:-1;
+  z-index:1;
   background:rgba(16,32,58,.24);
   display:none;
 }
@@ -3438,10 +3438,17 @@ body,
 }
 
 /* ウェルカム側に実体がある場合は、重なるまで画面中央に固定 */
+.hex-original-hero.has-copy-handoff{
+  z-index:auto;
+  isolation:auto;
+  overflow:visible;
+}
+
 .hex-original-hero.has-copy-handoff .hex-original-hero-copy{
   position:fixed;
   right:0;
   left:0;
+  z-index:2147482000;
 }
 
 .hex-original-hero.is-ready .hex-original-hero-copy{
