@@ -2822,8 +2822,8 @@ hexReady(function(){
       fixedCopy=document.createElement("h1");
       fixedCopy.className="hex-handoff-copy hex-original-hero-catch";
       fixedCopy.innerHTML=
-        '<span class="hex-opening-main">お客様の夢を追いかける</span>'+ 
-        '<span class="hex-opening-sub">良きパートナー</span>';
+        '<span class="hex-opening-main">お客様の夢を追いかける良きパートナー</span>'+ 
+        '<span class="hex-opening-sub"></span>';
 
       return{
         source:null,
