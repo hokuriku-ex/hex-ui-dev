@@ -2752,10 +2752,17 @@ hexLoad(function(){
 hexReady(function(){
   "use strict";
 
-  var STORAGE_KEY="hex_top_opening_viewed";
+  var STORAGE_KEY="hex_top_opening_v2_viewed";
+
+  /* 制作中はtrue。本番公開時にfalseへ変更 */
+  var FORCE_PLAY=true;
+
   var OPENING_START_DELAY=200;
-  var HERO_CONNECT_DELAY=3000;
-  var OPENING_REMOVE_DELAY=4200;
+  var PLASTER_COMPLETE_AT=3000;
+  var LOGO_PLACEHOLDER_AT=3220;
+  var HERO_REVEAL_AT=3900;
+  var HERO_READY_AT=5000;
+  var SAFETY_REMOVE_AT=8000;
 
   function isReducedMotion(){
     return(
@@ -2764,222 +2771,204 @@ hexReady(function(){
     );
   }
 
-  function isTopPage(){
-    /* この自動生成フレームはトップページにだけ存在する */
-    return !!document.querySelector(
-      "#gc_auto_frame_home_0 .heroimage_type"
+  function getStandardHero(){
+    return document.querySelector(
+      "#gc_auto_frame_home_0 > .heroimage_type.heroimage_type1"
     );
   }
 
-  function createCopyElement(){
-    var source=document.querySelector(".hex-opening-copy-source");
+  function isTopPage(){
+    return !!getStandardHero();
+  }
+
+  function getRegisteredHeroBackground(){
+    var standardHero=getStandardHero();
+    var source;
+    var backgroundImage;
+
+    if(!standardHero){
+      return "";
+    }
+
+    source=standardHero.querySelector(
+      ".bg_hero_image, .slideimage"
+    );
 
     if(!source){
+      return "";
+    }
+
+    backgroundImage=(
+      source.style.backgroundImage||
+      window.getComputedStyle(source).backgroundImage
+    );
+
+    return backgroundImage&&backgroundImage!=="none"
+      ?backgroundImage
+      :"";
+  }
+
+  function createOriginalHero(backgroundImage){
+    var standardHero=getStandardHero();
+    var existing=document.querySelector(".hex-original-hero");
+    var hero;
+    var image;
+
+    if(existing){
+      return existing;
+    }
+
+    if(!standardHero||!standardHero.parentNode){
       return null;
     }
 
-    var copy=source.cloneNode(true);
+    hero=document.createElement("section");
+    hero.className="hex-original-hero";
+    hero.setAttribute("aria-label","メインビジュアル");
 
-    copy.classList.remove("hex-opening-copy-source");
-    copy.classList.add("hex-opening-copy");
+    hero.innerHTML=
+      '<div class="hex-original-hero-image" aria-hidden="true"></div>'+ 
+      '<div class="hex-original-hero-shade" aria-hidden="true"></div>'+ 
+      '<div class="hex-original-hero-copy">'+
+        '<h1 class="hex-original-hero-catch">'+
+          '<span>お客様の夢を追いかける</span>'+ 
+          '<span>良きパートナー</span>'+ 
+        '</h1>'+ 
+      '</div>';
 
-    return copy;
+    image=hero.querySelector(".hex-original-hero-image");
+    image.style.backgroundImage=backgroundImage;
+
+    standardHero.parentNode.insertBefore(hero,standardHero);
+
+    return hero;
   }
 
-function createCopyElement(){
-  var source=document.querySelector(".hex-opening-copy-source");
+  function createOpeningElement(backgroundImage){
+    var opening=document.createElement("div");
+    var reveal;
 
-  if(!source){
-    return null;
+    opening.className="hex-opening";
+    opening.setAttribute("aria-hidden","true");
+
+    opening.innerHTML=
+      '<div class="hex-opening-plaster">'+
+        '<svg xmlns="http://www.w3.org/2000/svg" '+
+          'viewBox="0 0 1600 900" '+
+          'preserveAspectRatio="none" '+
+          'aria-hidden="true">'+
+          '<defs>'+ 
+            '<filter id="hex-opening-trowel-roughness" '+
+              'filterUnits="userSpaceOnUse" '+
+              'x="-500" y="-400" width="2600" height="1800">'+
+              '<feTurbulence type="fractalNoise" '+
+                'baseFrequency="0.008 0.025" '+
+                'numOctaves="2" seed="8" result="noise" />'+
+              '<feDisplacementMap in="SourceGraphic" in2="noise" '+
+                'scale="4" xChannelSelector="R" yChannelSelector="G" />'+
+            '</filter>'+
+            '<mask id="hex-opening-plaster-mask" '+
+              'maskUnits="userSpaceOnUse" '+
+              'x="-500" y="-400" width="2600" height="1800">'+
+              '<rect x="-500" y="-400" width="2600" height="1800" fill="#000" />'+
+              '<path class="hex-opening-path is-trowel is-line1" pathLength="1" '+
+                'd="M260 150 C520 125 1010 125 1290 155" />'+
+              '<path class="hex-opening-path is-trowel is-line2" pathLength="1" '+
+                'd="M1320 270 C1040 275 590 275 310 300" />'+
+              '<path class="hex-opening-path is-trowel is-line3" pathLength="1" '+
+                'd="M280 415 C570 415 1010 415 1290 445" />'+
+              '<path class="hex-opening-path is-trowel is-line4" pathLength="1" '+
+                'd="M1320 560 C1040 560 590 560 310 590" />'+
+              '<path class="hex-opening-path is-trowel is-line5" pathLength="1" '+
+                'd="M280 705 C570 705 1060 705 1340 750" />'+
+            '</mask>'+ 
+          '</defs>'+ 
+          '<rect class="hex-opening-white-cover" '+
+            'x="-500" y="-400" width="2600" height="1800" '+
+            'mask="url(#hex-opening-plaster-mask)" />'+
+        '</svg>'+ 
+      '</div>'+ 
+      '<div class="hex-opening-logo-stage">'+
+        '<div class="hex-opening-logo-placeholder">'+
+          '<span class="hex-opening-logo-dot"></span>'+ 
+        '</div>'+ 
+      '</div>'+ 
+      '<div class="hex-opening-hero-reveal" aria-hidden="true"></div>';
+
+    reveal=opening.querySelector(".hex-opening-hero-reveal");
+    reveal.style.backgroundImage=backgroundImage;
+
+    return opening;
   }
 
-  var copy=source.cloneNode(true);
+  function finishOpening(opening,hero){
+    document.documentElement.classList.remove("hex-opening-lock");
 
-  copy.classList.remove("hex-opening-copy-source");
-  copy.classList.add("hex-opening-copy");
-  copy.removeAttribute("id");
-
-  /* 複製によるID重複を防ぐ */
-  copy.querySelectorAll("[id]").forEach(function(element){
-    element.removeAttribute("id");
-  });
-
-  return copy;
-}
-
-function createOpeningElement(){
-  var opening=document.createElement("div");
-  var copy=createCopyElement();
-
-  if(!copy){
-    return null;
-  }
-
-  opening.className="hex-opening";
-  opening.setAttribute("aria-hidden","true");
-
-  opening.innerHTML=
-    '<div class="hex-opening-circle"></div>'+
-    '<div class="hex-opening-cover">'+
-      '<svg xmlns="http://www.w3.org/2000/svg" '+
-        'viewBox="0 0 1600 900" '+
-        'preserveAspectRatio="none" '+
-        'aria-hidden="true">'+
-        '<defs>'+
-
-          '<filter '+ 
-            'id="hex-opening-trowel-roughness" '+
-            'filterUnits="userSpaceOnUse" '+
-            'x="-500" y="-400" '+
-            'width="2600" height="1800">'+
-
-            '<feTurbulence '+
-              'type="fractalNoise" '+
-              'baseFrequency="0.008 0.025" '+
-              'numOctaves="2" '+
-              'seed="8" '+
-              'result="noise" />'+
-
-            '<feDisplacementMap '+
-              'in="SourceGraphic" '+
-              'in2="noise" '+
-              'scale="4" '+
-              'xChannelSelector="R" '+
-              'yChannelSelector="G" />'+
-          '</filter>'+
-
-          '<mask id="hex-opening-reveal-mask" '+
-            'maskUnits="userSpaceOnUse" '+
-            'x="-500" y="-400" '+
-            'width="2600" height="1800">'+
-
-            '<rect '+
-              'x="-500" y="-400" '+
-              'width="2600" height="1800" '+
-              'fill="#fff" />'+
-
-            '<path class="hex-opening-path is-trowel is-line1" '+
-              'pathLength="1" '+
-              'd="M260 150 C520 125 1010 125 1290 155" />'+
-
-            '<path class="hex-opening-path is-trowel is-line2" '+
-              'pathLength="1" '+
-              'd="M1320 270 C1040 275 590 275 310 300" />'+
-
-            '<path class="hex-opening-path is-trowel is-line3" '+
-              'pathLength="1" '+
-              'd="M280 415 C570 415 1010 415 1290 445" />'+
-
-            '<path class="hex-opening-path is-trowel is-line4" '+
-              'pathLength="1" '+
-              'd="M1320 560 C1040 560 590 560 310 590" />'+
-
-            '<path class="hex-opening-path is-trowel is-line5" '+
-              'pathLength="1" '+
-              'd="M280 705 C570 705 1060 705 1340 750" />'+
-
-          '</mask>'+
-        '</defs>'+
-
-        '<rect '+
-          'class="hex-opening-gold-cover" '+
-          'x="-500" y="-400" '+
-          'width="2600" height="1800" '+
-          'mask="url(#hex-opening-reveal-mask)" />'+
-      '</svg>'+
-    '</div>';
-
-  opening.appendChild(copy);
-
-  return opening;
-}
-
-  function resetHeroToFirstSlide(){
-    var slides=document.querySelectorAll(
-      "#gc_auto_frame_home_0 .bg_slideimage"
-    );
-
-    if(!slides.length){
-      return;
+    if(hero){
+      hero.classList.add("is-ready");
     }
 
-    slides.forEach(function(slide,index){
-      slide.stop&&slide.stop(true,true);
-      slide.style.display=index===0?"block":"none";
-      slide.style.zIndex=index===0?"100":"1";
-      slide.style.opacity="";
-    });
-
-    /*
-     * HOPWEB標準スライダーの最初のタイマー実行を空振りさせる。
-     * これにより、開幕直後の1枚目が約0.8秒で消えるのを防ぐ。
-     */
-    if(typeof window.i==="number"){
-      window.i=slides.length-1;
-    }
-
-    if(typeof window.j==="number"){
-      window.j=0;
+    if(opening&&opening.parentNode){
+      opening.parentNode.removeChild(opening);
     }
   }
 
   function initOpening(){
+    var backgroundImage;
+    var hero;
     var opening;
 
     if(!isTopPage()){
       return;
     }
 
-    /* デモ環境では解除
-    if(sessionStorage.getItem(STORAGE_KEY)){
+    backgroundImage=getRegisteredHeroBackground();
+    hero=createOriginalHero(backgroundImage);
+
+    if(!hero){
       return;
     }
-    */
 
-    /* 動きを減らす設定の場合も、同一タブ内では再判定しない */
-    if(isReducedMotion()){
-      /* デモ環境では解除
+    if(
+      isReducedMotion()||
+      (!FORCE_PLAY&&sessionStorage.getItem(STORAGE_KEY))
+    ){
+      hero.classList.add("is-ready");
+      return;
+    }
+
+    if(!FORCE_PLAY){
       sessionStorage.setItem(STORAGE_KEY,"1");
-      */
-      return;
     }
 
-    sessionStorage.setItem(STORAGE_KEY,"1");
-
-    opening=createOpeningElement();
-    if(!opening){
-      return;
-    }
+    opening=createOpeningElement(backgroundImage);
     document.documentElement.classList.add("hex-opening-lock");
     document.body.insertBefore(opening,document.body.firstChild);
 
     window.setTimeout(function(){
-      opening.classList.add("is-start");
-
-      window.setTimeout(function(){
-        resetHeroToFirstSlide();
-        opening.classList.add("is-end");
-      },HERO_CONNECT_DELAY);
+      opening.classList.add("is-plaster-start");
     },OPENING_START_DELAY);
 
     window.setTimeout(function(){
-      document.documentElement.classList.remove("hex-opening-lock");
+      opening.classList.add("is-plaster-complete");
+    },OPENING_START_DELAY+PLASTER_COMPLETE_AT);
 
-      if(opening.parentNode){
-        opening.parentNode.removeChild(opening);
-      }
-    },OPENING_REMOVE_DELAY);
+    window.setTimeout(function(){
+      opening.classList.add("is-logo-ready");
+    },OPENING_START_DELAY+LOGO_PLACEHOLDER_AT);
+
+    window.setTimeout(function(){
+      opening.classList.add("is-hero-reveal");
+    },OPENING_START_DELAY+HERO_REVEAL_AT);
+
+    window.setTimeout(function(){
+      finishOpening(opening,hero);
+    },OPENING_START_DELAY+HERO_READY_AT);
 
     /* 万一途中でエラーが起きても画面を塞ぎ続けない */
     window.setTimeout(function(){
-      document.documentElement.classList.remove("hex-opening-lock");
-
-      var remaining=document.querySelector(".hex-opening");
-
-      if(remaining&&remaining.parentNode){
-        remaining.parentNode.removeChild(remaining);
-      }
-    },7000);
+      finishOpening(opening,hero);
+    },SAFETY_REMOVE_AT);
   }
 
   initOpening();
