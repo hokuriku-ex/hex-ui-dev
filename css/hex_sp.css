@@ -1187,21 +1187,24 @@
    トップページ：開幕アニメーション
 ======================================= */
 @media screen and (max-width:768px){
-  .hex-opening-copy{
-    width:calc(100% - 64px);
+  .hex-original-hero{
+    min-height:560px;
   }
-  .hex-opening-main{
-    font-size:clamp(34px,11vw,48px);
-    line-height:1.35;
+
+  .hex-original-hero-copy{
+    padding:0 20px;
   }
-  .hex-opening-sub{
-    margin-top:14px;
-    font-size:13px;
-    line-height:1.75;
+
+  .hex-original-hero-catch{
+    font-size:clamp(30px,9vw,44px);
+    line-height:1.42;
+    letter-spacing:.06em;
   }
+
   .hex-opening-path{
     stroke-width:160;
   }
+
   .hex-opening-path.is-trowel{
     filter:none;
   }
@@ -1211,56 +1214,17 @@
   .hex-opening{
     display:none!important;
   }
+
+  .hex-original-hero-copy{
+    opacity:1;
+    transition:none;
+  }
 }
 
 /* =======================================
-   トップページ：ヒーロー画像
+   トップページ：ヒーロー画像(オリジナル)
 ======================================= */
-/* キャッチコピー */
-@media screen and (max-width:768px){
-  .heroimage_margintop_normal{
-    margin-top:80px!important;
-  }
-  .catch_type4 .catch_contents{
-    position:relative!important;
-    top:-130px!important;
-  }
-  .catch_type4 .maincatch{
-    position:absolute!important;
-    top:0px!important;
-    left:16px!important;
-    right:auto!important;
-    width:auto!important;
-    margin:0!important;
-    padding:0!important;
-    white-space:nowrap!important;
-    text-align:left!important;
-  }
-  .catch_type4 .subcatch{
-    position:absolute!important;
-    top:clamp(
-      250px,
-      calc(282.35px + 4.90vw),
-      270px
-    )!important;
-    left:calc(100vw - 16px)!important;
-    right:auto!important;
-    transform:translateX(-100%)!important;
-    display:block!important;
-    width:max-content!important;
-    max-width:calc(100vw - 32px)!important;
-    margin:0!important;
-    padding:0!important;
-    white-space:nowrap!important;
-    text-align:left!important;
-  }
-  .heroimage_type .fontsize_caption_smp_04{
-    font-size:clamp(30px, 5.46875vw, 42px)!important;
-  }
-  .heroimage_type .fontsize_sub_smp_05{
-    font-size:clamp(16px, 3.125vw, 24px)!important;
-  }
-}
+
 
 /* =======================================
    トップページ：ウェルカムメッセージ
