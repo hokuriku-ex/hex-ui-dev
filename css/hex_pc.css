@@ -10,13 +10,6 @@
   }
 }
 
-:root{
-  /* 開幕アニメーション */
-  --hex-opening-navy:#1f2774;
-  --hex-opening-gold:#E8D575;
-  --hex-opening-white:#fff;
-}
-
 /* =======================================
    全ページ共通
 ======================================= */
@@ -3381,115 +3374,54 @@ body,
 /* =======================================
    トップページ：開幕アニメーション
 ======================================= */
+:root{
+  --hex-opening-navy:#1f2774;
+  --hex-opening-gold:#e8d575;
+  --hex-opening-white:#fff;
+  --hex-hero-copy-color:#fff;
+  --hex-hero-origin-x:50%;
+  --hex-hero-origin-y:50%;
+}
+
 .hex-opening{
   position:fixed;
   inset:0;
   z-index:2147483000;
-  display:grid;
-  place-items:center;
   overflow:hidden;
   width:100%;
+  height:100vh;
   height:100dvh;
-  min-height:100vh;
-  background:var(--hex-opening-white);
+  background:var(--hex-opening-navy);
   color:var(--hex-opening-navy);
-  opacity:1;
-  visibility:visible;
   pointer-events:auto;
-  transition:
-    background-color 0s linear 1s,
-    opacity 1s ease 3.2s,
-    visibility 0s linear 4.2s;
+  transition:background-color .16s linear;
 }
-.hex-opening.is-start{
-  background-color:transparent;
-  opacity:0;
-  visibility:hidden;
+
+.hex-opening.is-plaster-complete{
+  background:var(--hex-opening-white);
 }
-.hex-opening.is-end{
-  pointer-events:none;
-}
-.hex-opening-copy-source{
-  display:none!important;
-}
-.hex-opening-copy{
-  position:relative;
-  z-index:4;
-  width:min(82vw,560px);
-  color:var(--hex-opening-navy);
-  text-align:left;
-  opacity:1;
-  transform:translateZ(0);
-}
-.hex-opening-main{
-  color:inherit!important;
-  font-family:"Noto Serif JP",serif;
-  font-size:clamp(38px,4.25vw,72px);
-  font-weight:600;
-  line-height:1.3;
-  letter-spacing:.06em;
-}
-.hex-opening-sub{
-  margin-top:18px;
-  color:inherit!important;
-  font-family:"Zen Kaku Gothic New",sans-serif;
-  font-size:clamp(13px,1.1vw,17px);
-  font-weight:500;
-  line-height:1.8;
-  letter-spacing:.08em;
-}
-.hex-opening.is-start .hex-opening-copy{
-  color:var(--hex-opening-gold);
-  opacity:0;
-  transition:
-    color .6s ease,
-    opacity .3s ease 1.2s;
-}
-.hex-opening-circle{
-  position:absolute;
-  top:50%;
-  left:50%;
-  z-index:1;
-  width:130vmax;
-  aspect-ratio:1;
-  border-radius:50%;
-  background:var(--hex-opening-gold);
-  opacity:1;
-  transform:translate(-50%,-50%) scale(0);
-  transform-origin:center;
-  will-change:transform,opacity;
-  transition:
-    transform .5s cubic-bezier(.4,0,.95,.45) .5s,
-    opacity .3s ease 1s;
-}
-.hex-opening.is-start .hex-opening-circle{
-  opacity:0;
-  transform:translate(-50%,-50%) scale(1);
-}
-.hex-opening-cover{
+
+.hex-opening-plaster{
   position:absolute;
   inset:-20%;
-  z-index:2;
-  color:var(--hex-opening-gold);
-  opacity:0;
+  z-index:1;
   pointer-events:none;
-  transition:opacity 0s linear .98s;
 }
-.hex-opening.is-start .hex-opening-cover{
-  opacity:1;
-}
-.hex-opening-cover svg{
+
+.hex-opening-plaster svg{
   display:block;
   width:100%;
   height:100%;
   overflow:visible;
 }
-.hex-opening-gold-cover{
-  fill:currentColor;
+
+.hex-opening-white-cover{
+  fill:var(--hex-opening-white);
 }
+
 .hex-opening-path{
   fill:none;
-  stroke:#000;
+  stroke:#fff;
   stroke-width:138;
   stroke-linecap:butt;
   stroke-linejoin:round;
@@ -3497,30 +3429,20 @@ body,
   stroke-dashoffset:1;
   opacity:0;
 }
+
 .hex-opening-path.is-trowel{
   filter:url(#hex-opening-trowel-roughness);
 }
-.hex-opening.is-start .hex-opening-path.is-trowel{
-  animation-name:hex-opening-trowel;
-  animation-duration:.48s;
-  animation-timing-function:cubic-bezier(.55,0,.45,1);
-  animation-fill-mode:both;
+
+.hex-opening.is-plaster-start .hex-opening-path.is-trowel{
+  animation:hex-opening-trowel .48s cubic-bezier(.55,0,.45,1) both;
 }
-.hex-opening.is-start .hex-opening-path.is-line1{
-  animation-delay:.80s;
-}
-.hex-opening.is-start .hex-opening-path.is-line2{
-  animation-delay:1.18s;
-}
-.hex-opening.is-start .hex-opening-path.is-line3{
-  animation-delay:1.56s;
-}
-.hex-opening.is-start .hex-opening-path.is-line4{
-  animation-delay:1.94s;
-}
-.hex-opening.is-start .hex-opening-path.is-line5{
-  animation-delay:2.32s;
-}
+
+.hex-opening.is-plaster-start .hex-opening-path.is-line1{animation-delay:.80s;}
+.hex-opening.is-plaster-start .hex-opening-path.is-line2{animation-delay:1.18s;}
+.hex-opening.is-plaster-start .hex-opening-path.is-line3{animation-delay:1.56s;}
+.hex-opening.is-plaster-start .hex-opening-path.is-line4{animation-delay:1.94s;}
+.hex-opening.is-plaster-start .hex-opening-path.is-line5{animation-delay:2.32s;}
 
 @keyframes hex-opening-trowel{
   0%{
@@ -3537,6 +3459,63 @@ body,
   }
 }
 
+/* 後でロゴSVGを入れる独立領域 */
+.hex-opening-logo-stage{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  display:grid;
+  place-items:center;
+  pointer-events:none;
+}
+
+.hex-opening-logo-placeholder{
+  position:absolute;
+  top:var(--hex-hero-origin-y);
+  left:var(--hex-hero-origin-x);
+  opacity:0;
+  transform:translate(-50%,-50%);
+}
+
+.hex-opening-logo-dot{
+  display:block;
+  width:clamp(42px,5vw,72px);
+  aspect-ratio:1;
+  border-radius:50%;
+  background:var(--hex-opening-navy);
+  transform:translateY(-8px);
+}
+
+.hex-opening.is-logo-ready .hex-opening-logo-placeholder{
+  opacity:1;
+}
+
+.hex-opening.is-logo-ready .hex-opening-logo-dot{
+  animation:hex-opening-dot-settle .38s cubic-bezier(.22,.9,.35,1.3) both;
+}
+
+@keyframes hex-opening-dot-settle{
+  0%{transform:translateY(-8px);}
+  72%{transform:translateY(2px);}
+  100%{transform:translateY(0);}
+}
+
+.hex-opening-hero-reveal{
+  position:absolute;
+  inset:0;
+  z-index:3;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-size:cover;
+  clip-path:circle(0 at var(--hex-hero-origin-x) var(--hex-hero-origin-y));
+  will-change:clip-path;
+}
+
+.hex-opening.is-hero-reveal .hex-opening-hero-reveal{
+  clip-path:circle(150vmax at var(--hex-hero-origin-x) var(--hex-hero-origin-y));
+  transition:clip-path 1s cubic-bezier(.65,0,.25,1);
+}
+
 html.hex-opening-lock,
 html.hex-opening-lock body{
   overflow:hidden!important;
@@ -3544,48 +3523,78 @@ html.hex-opening-lock body{
 }
 
 /* =======================================
-   トップページ：ヒーロー画像(標準)
+   トップページ：ヒーロー画像(オリジナル)
 ======================================= */
-/* 非表示 */
+/* 標準ヒーロー非表示(ヘッダーは残す) */
 #gc_auto_frame_home_0 > .heroimage_type.heroimage_type1{
   display:none!important;
 }
 
-/* キャッチコピー */
-.catch_type4 .catch_contents{
-  padding-left:clamp(
-    24px,
-    calc(6.74vw - 27.82px),
-    80px
-  )!important;
-}
-.catch_type4 .maincatch{
-  padding-left:0!important;
-}
-.catch_type4 .subcatch{
-  padding-left:0!important;
-}
-.heroimage_type .fontsize_caption_pc_04{
-  font-size:clamp(42px, 3.6vw, 54px)!important;
-  line-height:1.5em!important;
-  text-shadow:
-    0 0 4px rgba(255,255,255,1),
-    0 0 10px rgba(255,255,255,.9),
-    0 0 18px rgba(255,255,255,.7)!important;
-}
-.heroimage_type .fontsize_sub_pc_05{
-  font-size:clamp(18px, 1.8vw, 24px)!important;
-  line-height:1.8em!important;
-  text-shadow:
-    0 0 3px rgba(255,255,255,1),
-    0 0 7px rgba(255,255,255,.8),
-    0 0 12px rgba(255,255,255,.6)!important;
+.hex-original-hero{
+  position:relative;
+  z-index:0;
+  isolation:isolate;
+  overflow:clip;
+  width:100%;
+  height:100vh;
+  height:100svh;
+  min-height:620px;
+  background:#203459;
 }
 
-/* =======================================
-   トップページ：スクロールナビ(オリジナル)
-======================================= */
+.hex-original-hero-image,
+.hex-original-hero-shade{
+  position:absolute;
+  inset:0;
+}
 
+.hex-original-hero-image{
+  z-index:-2;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-size:cover;
+}
+
+.hex-original-hero-shade{
+  z-index:-1;
+  background:rgba(16,32,58,.24);
+}
+
+.hex-original-hero-copy{
+  position:sticky;
+  top:50vh;
+  top:50dvh;
+  z-index:2;
+  display:grid;
+  place-items:center;
+  width:100%;
+  padding:0 24px;
+  box-sizing:border-box;
+  color:var(--hex-hero-copy-color);
+  text-align:center;
+  opacity:0;
+  transform:translateY(-50%);
+  transition:opacity .7s ease;
+}
+
+.hex-original-hero.is-ready .hex-original-hero-copy{
+  opacity:1;
+}
+
+.hex-original-hero-catch{
+  margin:0;
+  color:inherit!important;
+  font-family:"Noto Serif JP",serif!important;
+  font-size:clamp(34px,4vw,68px);
+  font-weight:600;
+  line-height:1.35;
+  letter-spacing:.08em;
+  text-shadow:0 2px 18px rgba(0,0,0,.24);
+}
+
+.hex-original-hero-catch span{
+  display:block;
+}
 
 /* =======================================
    トップページ：スクロールナビ
