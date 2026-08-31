@@ -1184,7 +1184,7 @@
 }
 
 /* =======================================
-   トップページ：開幕アニメーション
+   トップページ：開幕～ウェルカムアニメーション
 ======================================= */
 @media screen and (max-width:768px){
   .hex-original-hero{
@@ -1196,9 +1196,19 @@
   }
 
   .hex-original-hero-catch{
+    width:calc(100vw - 40px);
+  }
+
+  .hex-handoff-copy .hex-opening-main{
     font-size:clamp(30px,9vw,44px);
     line-height:1.42;
     letter-spacing:.06em;
+  }
+
+  .hex-handoff-copy .hex-opening-sub{
+    margin-top:12px;
+    font-size:13px;
+    line-height:1.7;
   }
 
   .hex-opening-path{
@@ -1220,11 +1230,6 @@
     transition:none;
   }
 }
-
-/* =======================================
-   トップページ：ヒーロー画像(オリジナル)
-======================================= */
-
 
 /* =======================================
    トップページ：ウェルカムメッセージ
