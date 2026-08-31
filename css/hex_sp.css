@@ -1201,6 +1201,8 @@
 
   .hex-handoff-copy .hex-opening-main{
     font-size:clamp(26px,calc(20px + 1.5vw),32px);
+    line-height:1.4;
+    letter-spacing:.04em;
   }
 
   .hex-handoff-copy .hex-opening-sub{
@@ -1215,6 +1217,21 @@
 
   .hex-opening-path.is-trowel{
     filter:none;
+  }
+
+  .hex-logo-story{
+    width:160vw;
+    max-width:none;
+    height:100dvh;
+  }
+
+  .hex-story-ground-line,
+  .hex-story-person-line{
+    stroke-width:2.5;
+  }
+
+  .hex-logo-company-name{
+    font-size:25px;
   }
 }
 
