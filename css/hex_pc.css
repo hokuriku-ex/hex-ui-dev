@@ -3378,7 +3378,7 @@ body,
   --hex-opening-navy:#1f2774;
   --hex-opening-gold:#e8d575;
   --hex-opening-white:#fff;
-  --hex-hero-copy-color:#fff;
+  --hex-hero-copy-color:#203459;
   --hex-hero-origin-x:50%;
   --hex-hero-origin-y:50%;
 }
@@ -3417,6 +3417,7 @@ body,
 .hex-original-hero-shade{
   z-index:-1;
   background:rgba(16,32,58,.24);
+  display:none;
 }
 
 .hex-original-hero-copy{
@@ -3472,10 +3473,10 @@ body,
 
 .hex-handoff-copy .hex-opening-main{
   font-family:"Noto Serif JP",serif!important;
-  font-size:clamp(34px,4vw,68px);
-  font-weight:600;
-  line-height:1.35;
-  letter-spacing:.08em;
+  font-size:32px;
+  font-weight:700;
+  line-height:1.4;
+  letter-spacing:.04em;
 }
 
 .hex-handoff-copy .hex-opening-sub{
@@ -3489,7 +3490,7 @@ body,
 
 .hex-original-hero-catch{
   color:var(--hex-hero-copy-color)!important;
-  text-shadow:0 2px 18px rgba(0,0,0,.24);
+  text-shadow:none;
 }
 
 /* 通常レイアウト上のウェルカムコピー。重なるまでは透明 */
