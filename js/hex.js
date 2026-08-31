@@ -2757,10 +2757,10 @@ hexReady(function(){
 
   var OPENING_START_DELAY=200;
   var PLASTER_COMPLETE_AT=3000;
-  var LOGO_PLACEHOLDER_AT=3220;
-  var HERO_REVEAL_AT=3900;
-  var HERO_READY_AT=5000;
-  var SAFETY_REMOVE_AT=8000;
+  var LOGO_START_AT=3220;
+  var HERO_REVEAL_AT=8350;
+  var HERO_READY_AT=9450;
+  var SAFETY_REMOVE_AT=12000;
 
   function isReducedMotion(){
     return(
@@ -2822,8 +2822,8 @@ hexReady(function(){
       fixedCopy=document.createElement("h1");
       fixedCopy.className="hex-handoff-copy hex-original-hero-catch";
       fixedCopy.innerHTML=
-        '<span class="hex-opening-main">お客様の夢を追いかける良きパートナー</span>'+ 
-        '<span class="hex-opening-sub"></span>';
+        '<span class="hex-opening-main">お客様の夢を追いかける</span>'+ 
+        '<span class="hex-opening-sub">良きパートナー</span>';
 
       return{
         source:null,
@@ -2982,9 +2982,65 @@ hexReady(function(){
         '</svg>'+ 
       '</div>'+ 
       '<div class="hex-opening-logo-stage">'+
-        '<div class="hex-opening-logo-placeholder">'+
-          '<span class="hex-opening-logo-dot"></span>'+ 
-        '</div>'+ 
+        '<svg class="hex-logo-story" xmlns="http://www.w3.org/2000/svg" '+
+          'viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" '+
+          'role="img" aria-label="お客様と私たちが夢を受け止め、ロゴになるアニメーション">'+
+          '<defs>'+ 
+            '<path id="hex-logo-final-path" fill-rule="nonzero" '+
+              'd="M53.664064 66.60547V49.27734c10.76562-1.53515 22.72656-2.33984 35.23828-2.33984 11.402336 0 22.363276.67969 32.390616 1.96094v32.01562c-6.28515.79297-13.03125 1.35938-20.10937 1.66797 3.32812-3.21875 5.40625-7.71875 5.40625-12.71094 0-9.76953-7.917966-17.6875-17.687496-17.6875-9.76953 0-17.6875 7.91797-17.6875 17.6875 0 4.99219 2.07812 9.49219 5.40234 12.71094-8.15625-.35547-15.875-1.05859-22.95312-2.04687ZM177.80468 71.8125c0-6.26563-6.50781-12.03516-17.38672-16.72266 3.14844 2.25 4.94922 4.67578 4.94922 7.21875 0 4.8086-6.17187 9.23047-16.48047 12.73047V26.57031c0-16.92187 1.6836-18.07031 19.95313-19.69531V0h-67.50391v6.875c17.58594 1.55469 19.95703 2.84375 19.95703 19.69531v16.39453c-7.57812-.9414-15.65625-1.54297-24.035146-1.78515 1.46484-1.82813 2.34765-4.14844 2.34765-6.67969 0-5.91016-4.79296-10.70313-10.70312-10.70313-5.91406 0-10.70313 4.79297-10.70313 10.70313 0 2.53125.87891 4.84766 2.34766 6.67969-9.44922.26953-18.5 1-26.88281 2.15625V26.57031c0-16.85156 1.99219-18.27344 19.72265-19.69531V0H6.117184v6.875c17.8125 1.35547 19.8711 2.77344 19.8711 19.69531v47.41016c-8.53907-3.31641-13.55078-7.33594-13.55078-11.67188 0-2.54297 1.80078-4.96875 4.94921-7.21484C6.507814 59.77734.000004 65.54687.000004 71.8125c0 7.78906 9.93359 14.83984 25.98828 19.94922v13.8789c0 16.92579-2.35938 17.80079-19.8711 19.4961v6.875h67.26953v-6.875c-17.74218-1.76563-19.72265-2.64063-19.72265-19.4961v-7.90234c10.80859 1.48438 22.71875 2.30859 35.23828 2.30859 11.433586 0 22.351556-.6914 32.390616-1.9414v7.53515c0 16.92579-1.53906 17.46485-19.95703 19.4961v6.875h67.50391v-6.875c-18.03906-1.5625-19.95313-2.57031-19.95313-19.4961V92.64844c17.76563-5.16016 28.91797-12.58594 28.91797-20.83594Z" />'+
+            '<clipPath id="hex-logo-body-clip">'+
+              '<rect x="0" y="0" width="58" height="132.1" />'+
+              '<rect x="120" y="0" width="58" height="132.1" />'+
+            '</clipPath>'+ 
+            '<mask id="hex-logo-arm-mask" maskUnits="userSpaceOnUse" '+
+              'x="-20" y="15" width="220" height="115">'+
+              '<rect x="-20" y="15" width="220" height="115" fill="#000" />'+
+              '<path class="hex-logo-arm-mask-path" pathLength="1" '+
+                'd="M0 72C0 104 40 112 89 112S178 104 178 72 138 30 89 30 0 40 0 72" '+
+                'fill="none" stroke="#fff" stroke-width="72" />'+
+            '</mask>'+ 
+          '</defs>'+ 
+          '<g class="hex-story-ground">'+
+            '<path class="hex-story-ground-line is-ground1" pathLength="1" '+
+              'd="M20 430C90 428 150 433 225 430" />'+
+            '<path class="hex-story-ground-line is-ground2" pathLength="1" '+
+              'd="M225 430C380 426 620 434 775 430" />'+
+            '<path class="hex-story-ground-line is-ground3" pathLength="1" '+
+              'd="M775 430C850 427 915 433 980 430" />'+
+          '</g>'+ 
+          '<g class="hex-story-person is-customer">'+
+            '<path class="hex-story-person-line is-body" pathLength="1" '+
+              'd="M-20 0C-10-20-17-50-14-82-11-119-24-153-9-185 0-204 23-202 28-184 32-168 18-158 8-158 25-137 23-105 27-76 31-45 22-18 18 0" />'+
+            '<path class="hex-story-person-line is-arm" pathLength="1" '+
+              'd="M5-132C19-117 33-94 47-70" />'+
+            '<path class="hex-story-person-line is-leg-front" pathLength="1" '+
+              'd="M-3-62C-5-39-8-17-20 0" />'+
+            '<path class="hex-story-person-line is-leg-back" pathLength="1" '+
+              'd="M10-61C13-38 16-17 18 0" />'+
+          '</g>'+ 
+          '<g class="hex-story-person is-staff">'+
+            '<path class="hex-story-person-line is-body" pathLength="1" '+
+              'd="M-20 0C-10-20-17-50-14-82-11-119-24-153-9-185 0-204 23-202 28-184 32-168 18-158 8-158 25-137 23-105 27-76 31-45 22-18 18 0" />'+
+            '<path class="hex-story-person-line is-arm" pathLength="1" '+
+              'd="M5-132C19-117 33-94 47-70" />'+
+            '<path class="hex-story-person-line is-leg-front" pathLength="1" '+
+              'd="M-3-62C-5-39-8-17-20 0" />'+
+            '<path class="hex-story-person-line is-leg-back" pathLength="1" '+
+              'd="M10-61C13-38 16-17 18 0" />'+
+          '</g>'+ 
+          '<circle class="hex-logo-dream" cx="500" cy="327" r="26" />'+
+          '<g class="hex-logo-build" transform="translate(370 225) scale(1.4623)">'+
+            '<use class="hex-logo-body-layer" href="#hex-logo-final-path" '+
+              'clip-path="url(#hex-logo-body-clip)" />'+
+            '<use class="hex-logo-arm-layer" href="#hex-logo-final-path" '+
+              'mask="url(#hex-logo-arm-mask)" />'+
+            '<circle class="hex-logo-front-hand" cx="88.902" cy="69.871" r="17.688" />'+
+            '<circle class="hex-logo-back-hand" cx="88.902" cy="34.5" r="10.703" />'+
+            '<use class="hex-logo-exact-final" href="#hex-logo-final-path" />'+
+          '</g>'+ 
+          '<text class="hex-logo-company-name" x="500" y="478" '+
+            'text-anchor="middle">北陸エクステリア</text>'+ 
+        '</svg>'+ 
       '</div>'+ 
       '<div class="hex-opening-hero-reveal" aria-hidden="true"></div>';
 
@@ -2992,6 +3048,27 @@ hexReady(function(){
     reveal.style.backgroundImage=backgroundImage;
 
     return opening;
+  }
+
+  function syncHeroRevealOrigin(opening){
+    var dream=opening.querySelector(".hex-logo-dream");
+    var rect;
+
+    if(!dream){
+      return;
+    }
+
+    rect=dream.getBoundingClientRect();
+
+    opening.style.setProperty(
+      "--hex-hero-origin-x",
+      (rect.left+rect.width/2)+"px"
+    );
+
+    opening.style.setProperty(
+      "--hex-hero-origin-y",
+      (rect.top+rect.height/2)+"px"
+    );
   }
 
   function finishOpening(opening,hero){
@@ -3055,10 +3132,12 @@ hexReady(function(){
     },OPENING_START_DELAY+PLASTER_COMPLETE_AT);
 
     window.setTimeout(function(){
-      opening.classList.add("is-logo-ready");
-    },OPENING_START_DELAY+LOGO_PLACEHOLDER_AT);
+      opening.classList.add("is-logo-start");
+    },OPENING_START_DELAY+LOGO_START_AT);
 
     window.setTimeout(function(){
+      syncHeroRevealOrigin(opening);
+      opening.offsetWidth;
       opening.classList.add("is-hero-reveal");
     },OPENING_START_DELAY+HERO_REVEAL_AT);
 
