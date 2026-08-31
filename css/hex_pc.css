@@ -3666,6 +3666,11 @@ html.hex-opening-lock body{
   position:relative;
 }
 
+.hex-scroll-indicator,
+.hex-scroll-indicator span{
+  background:transparent!important;
+}
+
 .hex-scroll-indicator span::after{
   content:"";
   display:block;
