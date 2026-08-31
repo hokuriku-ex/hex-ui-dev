@@ -1200,7 +1200,7 @@
   }
 
   .hex-handoff-copy .hex-opening-main{
-    font-size:clamp(26px,calc(20px + 1.5vw),32px);
+    font-size:26px;
     line-height:1.4;
     letter-spacing:.04em;
   }
@@ -1223,11 +1223,6 @@
     width:160vw;
     max-width:none;
     height:100dvh;
-  }
-
-  .hex-story-ground-line,
-  .hex-story-person-line{
-    stroke-width:2.5;
   }
 
 }
