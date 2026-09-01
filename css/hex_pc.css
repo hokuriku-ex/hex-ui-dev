@@ -1,41 +1,35 @@
-.hero-test{
-  position:relative;
-  width:100%;
-  overflow:hidden;
+.vp9-test{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:24px;
+  padding:24px;
+  background:#1f2774;
 }
 
-.hero-test-bg{
+.vp9-test-item{
+  min-width:0;
+}
+
+.vp9-test-item p{
+  margin:0 0 8px;
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+  text-align:center;
+}
+
+.vp9-test video{
   display:block;
   width:100%;
   height:auto;
 }
 
-/* 3人共通 */
-.hero-worker{
-  position:absolute;
-  z-index:2;
-  display:block;
-  width:250px;
-  height:auto;
-  pointer-events:none;
-}
-
-/* 1人目 */
-.worker-1{
-  top:10%;
-  left:5%;
-}
-
-/* 2人目 */
-.worker-2{
-  top:30%;
-  left:35%;
-}
-
-/* 3人目 */
-.worker-3{
-  top:15%;
-  left:65%;
+@media screen and (max-width:768px){
+  .vp9-test{
+    grid-template-columns:1fr;
+    gap:32px;
+    padding:16px;
+  }
 }
 
 /* =======================================
