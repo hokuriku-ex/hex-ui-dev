@@ -3635,7 +3635,6 @@ body,
   opacity:1;
 }
 
-.hex-logo-front-left-mask-path,
 .hex-logo-front-center-mask-path,
 .hex-logo-back-arm-mask-path{
   opacity:0;
@@ -3644,7 +3643,10 @@ body,
 }
 
 .hex-logo-front-left-mask-path{
-  --hex-logo-arm-length:92;
+  --hex-logo-arm-length:1;
+  opacity:1;
+  stroke-dasharray:1;
+  stroke-dashoffset:1;
 }
 
 .hex-logo-front-center-mask-path{
@@ -3656,7 +3658,7 @@ body,
 }
 
 .hex-opening.is-logo-start .hex-logo-front-left-mask-path{
-  animation:hex-logo-arm-draw .27s cubic-bezier(.45,0,.25,1) .25s forwards;
+  animation:hex-logo-arm-draw-stable .27s cubic-bezier(.45,0,.25,1) .25s forwards;
 }
 
 .hex-opening.is-logo-start .hex-logo-front-center-mask-path{
@@ -3699,6 +3701,11 @@ body,
     opacity:1;
     stroke-dashoffset:0;
   }
+}
+
+@keyframes hex-logo-arm-draw-stable{
+  from{stroke-dashoffset:1;}
+  to{stroke-dashoffset:0;}
 }
 
 @keyframes hex-logo-right-reveal{
