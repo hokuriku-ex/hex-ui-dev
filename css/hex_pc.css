@@ -1,3 +1,38 @@
+.hero-test{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+}
+
+/* 背景画像 */
+.hero-test-bg{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+/* 左官職人 */
+.hero-test-worker{
+  position:absolute;
+
+  /* 位置 */
+  top:20%;
+  left:50%;
+
+  /* サイズ */
+  width:300px;
+  height:auto;
+
+  /* 中央基準 */
+  transform:translateX(-50%);
+
+  /* 背景画像より手前 */
+  z-index:2;
+
+  /* 動画がクリック等を邪魔しない */
+  pointer-events:none;
+}
+
 /* =======================================
    定数定義
 ======================================= */
