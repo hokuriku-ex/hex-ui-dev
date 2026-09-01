@@ -3003,6 +3003,7 @@ hexReady(function(){
               'x="48" y="76" width="82" height="32">'+
               '<rect x="48" y="76" width="82" height="32" fill="#000" />'+
               '<path class="hex-logo-front-center-mask-path" '+
+                'pathLength="1" '+
                 'd="M44 88 L51 91 C72 100 103 100 124 91" '+
                 'fill="none" stroke="#fff" stroke-width="28" '+
                 'stroke-linecap="square" stroke-linejoin="round" />'+
