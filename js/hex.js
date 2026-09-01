@@ -2757,7 +2757,7 @@ hexReady(function(){
 
   /* アニメーションごとの表示切替 */
   var ENABLE_PLASTER_ANIMATION=false;
-  var ENABLE_LOGO_ANIMATION=true;
+  var ENABLE_LOGO_ANIMATION=false;
 
   var OPENING_START_DELAY=200;
   var PLASTER_DURATION=2500;
