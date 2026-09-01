@@ -2990,33 +2990,33 @@ hexReady(function(){
               'x="-20" y="40" width="78" height="72">'+
               '<rect x="-20" y="40" width="78" height="72" fill="#000" />'+
               '<path class="hex-logo-front-left-mask-path" '+
-                'd="M17.386 55.094 C-4 64 -4 79 25.988 91.762 C35 95 45 97 55 98" '+
-                'fill="none" stroke="#fff" stroke-width="36" '+
-                'stroke-linecap="butt" stroke-linejoin="round" />'+
+                'd="M10 52 L17.386 55.094 C-4 64 -4 79 25.988 91.762 C35 95 45 97 55 98" '+
+                'fill="none" stroke="#fff" stroke-width="40" '+
+                'stroke-linecap="square" stroke-linejoin="round" />'+
             '</mask>'+ 
             '<mask id="hex-logo-front-center-mask" maskUnits="userSpaceOnUse" '+
               'x="48" y="76" width="82" height="32">'+
               '<rect x="48" y="76" width="82" height="32" fill="#000" />'+
               '<path class="hex-logo-front-center-mask-path" '+
-                'd="M51 91 C72 100 103 100 124 91" '+
-                'fill="none" stroke="#fff" stroke-width="25" '+
-                'stroke-linecap="butt" stroke-linejoin="round" />'+
+                'd="M44 88 L51 91 C72 100 103 100 124 91" '+
+                'fill="none" stroke="#fff" stroke-width="28" '+
+                'stroke-linecap="square" stroke-linejoin="round" />'+
             '</mask>'+ 
             '<mask id="hex-logo-front-right-mask" maskUnits="userSpaceOnUse" '+
               'x="120" y="40" width="72" height="72">'+
               '<rect x="120" y="40" width="72" height="72" fill="#000" />'+
               '<path class="hex-logo-front-right-mask-path" '+
-                'd="M121 98 C132 97 141 95 148.887 92.648 C181 82 183 64 160.418 55.09" '+
-                'fill="none" stroke="#fff" stroke-width="36" '+
-                'stroke-linecap="butt" stroke-linejoin="round" />'+
+                'd="M114 99 L121 98 C132 97 141 95 148.887 92.648 C181 82 183 64 160.418 55.09" '+
+                'fill="none" stroke="#fff" stroke-width="40" '+
+                'stroke-linecap="square" stroke-linejoin="round" />'+
             '</mask>'+ 
             '<mask id="hex-logo-back-arm-mask" maskUnits="userSpaceOnUse" '+
               'x="45" y="34" width="85" height="25">'+
               '<rect x="45" y="34" width="85" height="25" fill="#000" />'+
               '<path class="hex-logo-back-arm-mask-path" '+
-                'd="M121.293 48.899 C101 46.2 75 46.2 53.664 49.277" '+
-                'fill="none" stroke="#fff" stroke-width="14" '+
-                'stroke-linecap="butt" />'+
+                'd="M129 50 L121.293 48.899 C101 46.2 75 46.2 53.664 49.277" '+
+                'fill="none" stroke="#fff" stroke-width="16" '+
+                'stroke-linecap="square" />'+
             '</mask>'+ 
             '<path id="hex-logo-front-left-path" '+
               'd="M -32.887113,10.258946 C -42.533616,6.0614317 -48.29727,0.90748595 -48.29727,-4.6868551 c 0,-7.0063119 8.931522,-13.3479159 23.370118,-17.9443369 h 0.0015 v -0.0015 l 0.0015,-0.0015 h 0.0015 c 0.0043,-0.0018 0.0086,-0.0031 0.01318,-0.0044 0.01068,-0.0031 0.02199,-0.0044 0.03369,-0.0044 h 0.03516 c 0.06655,0 0.120117,0.05357 0.120117,0.120117 v 0.213867 c 0,0.0333 -0.01341,0.06324 -0.03516,0.08496 h 0.215332 0.0015 0.0015 l 0.0015,0.0015 h 0.0015 l 0.0015,0.0015 h 0.0015 v 0.0015 l 0.0015,0.0015 v 0.0015 l 0.0015,0.0015 v 0.0015 0.0015 15.1069338 0.00146 0.00146 l -0.0015,0.00146 v 0.00146 l -0.0015,0.00146 -0.0015,0.00146 h -0.0015 v 0.00146 h -0.0015 -0.0015 v 0.00146 h -0.0015 -0.0015 -0.191895 c 0.0058,0.014123 0.0088,0.029143 0.0088,0.04541 v 0.1552734 c 0,0.066548 -0.05358,0.1201172 -0.120117,0.1201172 h -0.06592 v 0.020508 a 68.835687,18.587533 0 0 0 -8.802246,4.8925783 c -0.131146,0.1079292 -0.25256,0.2164039 -0.376465,0.3251953 a 68.835687,18.587533 0 0 0 -1.36084,1.36962895 c -0.380251,0.4579575 -0.696862,0.92296595 -0.947754,1.39306645 a 68.835687,18.587533 0 0 0 -0.310547,0.6679688 c -0.218727,0.5527081 -0.345157,1.1124523 -0.377929,1.6787109 a 68.835687,18.587533 0 0 0 -0.05566,0.2504883 68.835687,18.587533 0 0 0 0.04248,0.1918946 c 0.01854,0.5933076 0.154724,1.1785115 0.383789,1.7563477 a 68.835687,18.587533 0 0 0 0.209473,0.4760742 c 0.256541,0.5167858 0.597539,1.0268745 1.010742,1.5292969 a 68.835687,18.587533 0 0 0 0.764648,0.8393555 c 0.174899,0.173926 0.385907,0.3436831 0.578614,0.515625 a 68.835687,18.587533 0 0 0 1.26416,1.1249997 z" '+
@@ -3041,19 +3041,15 @@ hexReady(function(){
             '<g class="hex-logo-front-left-layer" mask="url(#hex-logo-front-left-mask)">'+
               '<use href="#hex-logo-front-left-path" />'+
             '</g>'+
-            '<use class="hex-logo-front-left-final" href="#hex-logo-front-left-path" />'+
             '<g class="hex-logo-front-center-layer" mask="url(#hex-logo-front-center-mask)">'+
               '<use href="#hex-logo-front-center-path" />'+
             '</g>'+
-            '<use class="hex-logo-front-center-final" href="#hex-logo-front-center-path" />'+
             '<g class="hex-logo-front-right-layer" mask="url(#hex-logo-front-right-mask)">'+
               '<use href="#hex-logo-front-right-path" />'+
             '</g>'+
-            '<use class="hex-logo-front-right-final" href="#hex-logo-front-right-path" />'+
             '<g class="hex-logo-back-arm-layer" mask="url(#hex-logo-back-arm-mask)">'+
               '<use href="#hex-logo-back-arm-path" />'+
             '</g>'+
-            '<use class="hex-logo-back-arm-final" href="#hex-logo-back-arm-path" />'+
             '<circle class="hex-logo-front-hand" cx="88.902" cy="69.871" r="17.688" />'+
             '<circle class="hex-logo-back-hand" cx="88.902" cy="34.5" r="10.703" />'+
           '</g>'+ 
