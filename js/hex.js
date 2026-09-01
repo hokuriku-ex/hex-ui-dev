@@ -2755,12 +2755,16 @@ hexReady(function(){
   /* 制作中はtrue。本番公開時にfalseへ変更 */
   var FORCE_PLAY=true;
 
+  /* アニメーションごとの表示切替 */
+  var ENABLE_PLASTER_ANIMATION=true;
+  var ENABLE_LOGO_ANIMATION=true;
+
   var OPENING_START_DELAY=200;
-  var PLASTER_COMPLETE_AT=2500;
-  var LOGO_START_AT=2920;
-  var HERO_REVEAL_AT=5270;
-  var HERO_READY_AT=6370;
-  var SAFETY_REMOVE_AT=9000;
+  var PLASTER_DURATION=2500;
+  var PHASE_CONNECT_DELAY=420;
+  var LOGO_DURATION=2350;
+  var HERO_REVEAL_DURATION=1100;
+  var SAFETY_EXTRA_TIME=2600;
 
   function isReducedMotion(){
     return(
@@ -3106,6 +3110,7 @@ hexReady(function(){
     var copyPair;
     var hero;
     var opening;
+    var timeline;
 
     if(!isTopPage()){
       return;
@@ -3133,36 +3138,61 @@ hexReady(function(){
       sessionStorage.setItem(STORAGE_KEY,"1");
     }
 
+    /* 両方OFFなら開幕レイヤーを作らずヒーローを即時表示 */
+    if(!ENABLE_PLASTER_ANIMATION&&!ENABLE_LOGO_ANIMATION){
+      hero.classList.add("is-ready","is-copy-swap-ready");
+      return;
+    }
+
     opening=createOpeningElement(backgroundImage);
     document.documentElement.classList.add("hex-opening-lock");
     document.body.insertBefore(opening,document.body.firstChild);
 
-    window.setTimeout(function(){
-      opening.classList.add("is-plaster-start");
-    },OPENING_START_DELAY);
+    timeline=OPENING_START_DELAY;
 
-    window.setTimeout(function(){
+    if(ENABLE_PLASTER_ANIMATION){
+      window.setTimeout(function(){
+        opening.classList.add("is-plaster-start");
+      },timeline);
+
+      timeline+=PLASTER_DURATION;
+
+      window.setTimeout(function(){
+        opening.classList.add("is-plaster-complete");
+      },timeline);
+
+      if(ENABLE_LOGO_ANIMATION){
+        timeline+=PHASE_CONNECT_DELAY;
+      }
+    }else{
+      /* 左官を省略する場合は最初から白いロゴ舞台にする */
       opening.classList.add("is-plaster-complete");
-    },OPENING_START_DELAY+PLASTER_COMPLETE_AT);
+    }
 
-    window.setTimeout(function(){
-      opening.classList.add("is-logo-start");
-    },OPENING_START_DELAY+LOGO_START_AT);
+    if(ENABLE_LOGO_ANIMATION){
+      window.setTimeout(function(){
+        opening.classList.add("is-logo-start");
+      },timeline);
+
+      timeline+=LOGO_DURATION;
+    }
 
     window.setTimeout(function(){
       syncHeroRevealOrigin(opening);
       opening.offsetWidth;
       opening.classList.add("is-hero-reveal");
-    },OPENING_START_DELAY+HERO_REVEAL_AT);
+    },timeline);
+
+    timeline+=HERO_REVEAL_DURATION;
 
     window.setTimeout(function(){
       finishOpening(opening,hero);
-    },OPENING_START_DELAY+HERO_READY_AT);
+    },timeline);
 
     /* 万一途中でエラーが起きても画面を塞ぎ続けない */
     window.setTimeout(function(){
       finishOpening(opening,hero);
-    },SAFETY_REMOVE_AT);
+    },timeline+SAFETY_EXTRA_TIME);
   }
 
   initOpening();
