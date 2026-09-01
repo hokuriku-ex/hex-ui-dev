@@ -3625,10 +3625,6 @@ body,
 }
 
 .hex-logo-body-layer,
-.hex-logo-front-left-layer,
-.hex-logo-front-center-layer,
-.hex-logo-front-right-layer,
-.hex-logo-back-arm-layer,
 .hex-logo-back-hand,
 .hex-logo-company-name{
   opacity:0;
@@ -3664,23 +3660,11 @@ body,
 }
 
 .hex-opening.is-logo-start .hex-logo-front-center-mask-path{
-  animation:hex-logo-arm-draw .26s cubic-bezier(.45,0,.25,1) .48s forwards;
+  animation:hex-logo-arm-draw .26s cubic-bezier(.45,0,.25,1) .38s forwards;
 }
 
 .hex-opening.is-logo-start .hex-logo-back-arm-mask-path{
-  animation:hex-logo-arm-draw .30s cubic-bezier(.45,0,.25,1) .93s forwards;
-}
-
-.hex-opening.is-logo-start .hex-logo-front-left-layer{
-  animation:hex-logo-show .01s linear .25s forwards;
-}
-
-.hex-opening.is-logo-start .hex-logo-front-center-layer{
-  animation:hex-logo-show .01s linear .48s forwards;
-}
-
-.hex-opening.is-logo-start .hex-logo-front-right-layer{
-  animation:hex-logo-show .01s linear .70s forwards;
+  animation:hex-logo-arm-draw .30s cubic-bezier(.45,0,.25,1) .74s forwards;
 }
 
 .hex-logo-front-right-clip-rect{
@@ -3688,26 +3672,18 @@ body,
 }
 
 .hex-opening.is-logo-start .hex-logo-front-right-clip-rect{
-  animation:hex-logo-right-reveal .27s cubic-bezier(.45,0,.25,1) .70s forwards;
-}
-
-.hex-opening.is-logo-start .hex-logo-back-arm-layer{
-  animation:hex-logo-show .01s linear .93s forwards;
+  animation:hex-logo-right-reveal .27s cubic-bezier(.45,0,.25,1) .56s forwards;
 }
 
 .hex-opening.is-logo-start .hex-logo-back-hand,
 .hex-opening.is-logo-start .hex-logo-company-name{
-  animation:hex-logo-final-pop .48s cubic-bezier(.22,.9,.35,1.35) 1.32s forwards;
+  animation:hex-logo-final-pop .48s cubic-bezier(.22,.9,.35,1.35) 1.13s forwards;
 }
 
 .hex-logo-company-name{
   fill:var(--hex-opening-navy);
   transform-box:fill-box;
   transform-origin:center;
-}
-
-@keyframes hex-logo-show{
-  to{opacity:1;}
 }
 
 @keyframes hex-logo-arm-draw{
