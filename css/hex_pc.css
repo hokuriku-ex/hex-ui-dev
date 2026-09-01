@@ -3664,11 +3664,11 @@ body,
 }
 
 .hex-opening.is-logo-start .hex-logo-front-center-mask-path{
-  animation:hex-logo-arm-draw .26s cubic-bezier(.45,0,.25,1) .52s forwards;
+  animation:hex-logo-arm-draw .26s cubic-bezier(.45,0,.25,1) .48s forwards;
 }
 
 .hex-opening.is-logo-start .hex-logo-back-arm-mask-path{
-  animation:hex-logo-arm-draw .30s cubic-bezier(.45,0,.25,1) 1.05s forwards;
+  animation:hex-logo-arm-draw .30s cubic-bezier(.45,0,.25,1) .93s forwards;
 }
 
 .hex-opening.is-logo-start .hex-logo-front-left-layer{
@@ -3676,11 +3676,11 @@ body,
 }
 
 .hex-opening.is-logo-start .hex-logo-front-center-layer{
-  animation:hex-logo-show .01s linear .52s forwards;
+  animation:hex-logo-show .01s linear .48s forwards;
 }
 
 .hex-opening.is-logo-start .hex-logo-front-right-layer{
-  animation:hex-logo-show .01s linear .78s forwards;
+  animation:hex-logo-show .01s linear .70s forwards;
 }
 
 .hex-logo-front-right-clip-rect{
@@ -3688,16 +3688,16 @@ body,
 }
 
 .hex-opening.is-logo-start .hex-logo-front-right-clip-rect{
-  animation:hex-logo-right-reveal .27s cubic-bezier(.45,0,.25,1) .78s forwards;
+  animation:hex-logo-right-reveal .27s cubic-bezier(.45,0,.25,1) .70s forwards;
 }
 
 .hex-opening.is-logo-start .hex-logo-back-arm-layer{
-  animation:hex-logo-show .01s linear 1.05s forwards;
+  animation:hex-logo-show .01s linear .93s forwards;
 }
 
 .hex-opening.is-logo-start .hex-logo-back-hand,
 .hex-opening.is-logo-start .hex-logo-company-name{
-  animation:hex-logo-final-pop .48s cubic-bezier(.22,.9,.35,1.35) 1.44s forwards;
+  animation:hex-logo-final-pop .48s cubic-bezier(.22,.9,.35,1.35) 1.32s forwards;
 }
 
 .hex-logo-company-name{
