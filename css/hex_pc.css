@@ -3629,10 +3629,6 @@ body,
 .hex-logo-front-center-layer,
 .hex-logo-front-right-layer,
 .hex-logo-back-arm-layer,
-.hex-logo-front-left-final,
-.hex-logo-front-center-final,
-.hex-logo-front-right-final,
-.hex-logo-back-arm-final,
 .hex-logo-back-hand,
 .hex-logo-company-name{
   opacity:0;
@@ -3653,19 +3649,19 @@ body,
 }
 
 .hex-logo-front-left-mask-path{
-  --hex-logo-arm-length:82;
+  --hex-logo-arm-length:92;
 }
 
 .hex-logo-front-center-mask-path{
-  --hex-logo-arm-length:78;
+  --hex-logo-arm-length:88;
 }
 
 .hex-logo-front-right-mask-path{
-  --hex-logo-arm-length:82;
+  --hex-logo-arm-length:92;
 }
 
 .hex-logo-back-arm-mask-path{
-  --hex-logo-arm-length:80;
+  --hex-logo-arm-length:90;
 }
 
 .hex-opening.is-logo-start .hex-logo-front-left-mask-path{
@@ -3698,26 +3694,6 @@ body,
 
 .hex-opening.is-logo-start .hex-logo-back-arm-layer{
   animation:hex-logo-show .01s linear 1.05s forwards;
-}
-
-/*
- * 描画完了後は、提供された分割パーツ本体をそのまま表示する。
- * マスクの縁による欠けを完成ロゴへ持ち越さないための確定レイヤー。
- */
-.hex-opening.is-logo-start .hex-logo-front-left-final{
-  animation:hex-logo-show .01s linear .52s forwards;
-}
-
-.hex-opening.is-logo-start .hex-logo-front-center-final{
-  animation:hex-logo-show .01s linear .78s forwards;
-}
-
-.hex-opening.is-logo-start .hex-logo-front-right-final{
-  animation:hex-logo-show .01s linear 1.05s forwards;
-}
-
-.hex-opening.is-logo-start .hex-logo-back-arm-final{
-  animation:hex-logo-show .01s linear 1.35s forwards;
 }
 
 .hex-opening.is-logo-start .hex-logo-back-hand,
