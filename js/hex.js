@@ -2986,13 +2986,27 @@ hexReady(function(){
           'viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" '+
           'role="img" aria-label="お客様と私たちが夢を受け止め、ロゴになるアニメーション">'+
           '<defs>'+ 
-            '<mask id="hex-logo-front-arm-mask" maskUnits="userSpaceOnUse" '+
-              'x="-20" y="40" width="220" height="80">'+
-              '<rect x="-20" y="40" width="220" height="80" fill="#000" />'+
-              '<path class="hex-logo-front-arm-mask-path" '+
-                'd="M17.386 55.094 C-4 64 -4 79 25.988 91.762 '+
-                  'C63 106 116 106 148.887 92.648 '+
-                  'C181 82 183 64 160.418 55.09" '+
+            '<mask id="hex-logo-front-left-mask" maskUnits="userSpaceOnUse" '+
+              'x="-20" y="40" width="78" height="72">'+
+              '<rect x="-20" y="40" width="78" height="72" fill="#000" />'+
+              '<path class="hex-logo-front-left-mask-path" '+
+                'd="M17.386 55.094 C-4 64 -4 79 25.988 91.762 C35 95 45 97 55 98" '+
+                'fill="none" stroke="#fff" stroke-width="36" '+
+                'stroke-linecap="butt" stroke-linejoin="round" />'+
+            '</mask>'+ 
+            '<mask id="hex-logo-front-center-mask" maskUnits="userSpaceOnUse" '+
+              'x="48" y="76" width="82" height="32">'+
+              '<rect x="48" y="76" width="82" height="32" fill="#000" />'+
+              '<path class="hex-logo-front-center-mask-path" '+
+                'd="M51 91 C72 100 103 100 124 91" '+
+                'fill="none" stroke="#fff" stroke-width="25" '+
+                'stroke-linecap="butt" stroke-linejoin="round" />'+
+            '</mask>'+ 
+            '<mask id="hex-logo-front-right-mask" maskUnits="userSpaceOnUse" '+
+              'x="120" y="40" width="72" height="72">'+
+              '<rect x="120" y="40" width="72" height="72" fill="#000" />'+
+              '<path class="hex-logo-front-right-mask-path" '+
+                'd="M121 98 C132 97 141 95 148.887 92.648 C181 82 183 64 160.418 55.09" '+
                 'fill="none" stroke="#fff" stroke-width="36" '+
                 'stroke-linecap="butt" stroke-linejoin="round" />'+
             '</mask>'+ 
@@ -3057,11 +3071,17 @@ hexReady(function(){
           '<g class="hex-logo-build" transform="translate(370 225) scale(1.4623)">'+
             '<use class="hex-logo-body-layer" href="#hex-logo-left-person" />'+
             '<use class="hex-logo-body-layer" href="#hex-logo-right-person" />'+
-            '<g class="hex-logo-front-arm-layer" mask="url(#hex-logo-front-arm-mask)">'+
+            '<g class="hex-logo-front-left-layer" mask="url(#hex-logo-front-left-mask)">'+
               '<use href="#hex-logo-front-arm-path" />'+
               '<rect x="25.66" y="74.49" width=".75" height="16.81" />'+
+            '</g>'+
+            '<g class="hex-logo-front-center-layer" mask="url(#hex-logo-front-center-mask)">'+
+              '<use href="#hex-logo-front-arm-path" />'+
               '<rect x="53.41" y="80.81" width=".75" height="16.81" />'+
               '<rect x="121.14" y="81.13" width=".75" height="16.81" />'+
+            '</g>'+
+            '<g class="hex-logo-front-right-layer" mask="url(#hex-logo-front-right-mask)">'+
+              '<use href="#hex-logo-front-arm-path" />'+
               '<rect x="148.47" y="75.32" width=".75" height="16.81" />'+
             '</g>'+
             '<g class="hex-logo-back-arm-layer" mask="url(#hex-logo-back-arm-mask)">'+
