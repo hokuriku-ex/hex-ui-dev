@@ -3641,7 +3641,6 @@ body,
 
 .hex-logo-front-left-mask-path,
 .hex-logo-front-center-mask-path,
-.hex-logo-front-right-mask-path,
 .hex-logo-back-arm-mask-path{
   opacity:0;
   stroke-dasharray:var(--hex-logo-arm-length);
@@ -3656,10 +3655,6 @@ body,
   --hex-logo-arm-length:88;
 }
 
-.hex-logo-front-right-mask-path{
-  --hex-logo-arm-length:1;
-}
-
 .hex-logo-back-arm-mask-path{
   --hex-logo-arm-length:90;
 }
@@ -3670,10 +3665,6 @@ body,
 
 .hex-opening.is-logo-start .hex-logo-front-center-mask-path{
   animation:hex-logo-arm-draw .26s cubic-bezier(.45,0,.25,1) .52s forwards;
-}
-
-.hex-opening.is-logo-start .hex-logo-front-right-mask-path{
-  animation:hex-logo-arm-draw .27s cubic-bezier(.45,0,.25,1) .78s forwards;
 }
 
 .hex-opening.is-logo-start .hex-logo-back-arm-mask-path{
@@ -3690,6 +3681,14 @@ body,
 
 .hex-opening.is-logo-start .hex-logo-front-right-layer{
   animation:hex-logo-show .01s linear .78s forwards;
+}
+
+.hex-logo-front-right-clip-rect{
+  transform:translateX(140px) scaleX(0);
+}
+
+.hex-opening.is-logo-start .hex-logo-front-right-clip-rect{
+  animation:hex-logo-right-reveal .27s cubic-bezier(.45,0,.25,1) .78s forwards;
 }
 
 .hex-opening.is-logo-start .hex-logo-back-arm-layer{
@@ -3724,6 +3723,11 @@ body,
     opacity:1;
     stroke-dashoffset:0;
   }
+}
+
+@keyframes hex-logo-right-reveal{
+  from{transform:translateX(140px) scaleX(0);}
+  to{transform:translateX(140px) scaleX(1);}
 }
 
 @keyframes hex-logo-final-pop{
