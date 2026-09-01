@@ -3002,15 +3002,10 @@ hexReady(function(){
                 'fill="none" stroke="#fff" stroke-width="28" '+
                 'stroke-linecap="square" stroke-linejoin="round" />'+
             '</mask>'+ 
-            '<mask id="hex-logo-front-right-mask" maskUnits="userSpaceOnUse" '+
-              'x="120" y="40" width="72" height="72">'+
-              '<rect x="120" y="40" width="72" height="72" fill="#000" />'+
-              '<path class="hex-logo-front-right-mask-path" '+
-                'pathLength="1" '+
-                'd="M114 99 L121 98 C132 97 141 95 148.887 92.648 C181 82 183 64 160.418 55.09" '+
-                'fill="none" stroke="#fff" stroke-width="40" '+
-                'stroke-linecap="square" stroke-linejoin="round" />'+
-            '</mask>'+ 
+            '<clipPath id="hex-logo-front-right-clip" clipPathUnits="userSpaceOnUse">'+
+              '<rect class="hex-logo-front-right-clip-rect" '+
+                'x="0" y="35" width="52" height="80" />'+
+            '</clipPath>'+ 
             '<mask id="hex-logo-back-arm-mask" maskUnits="userSpaceOnUse" '+
               'x="45" y="34" width="85" height="25">'+
               '<rect x="45" y="34" width="85" height="25" fill="#000" />'+
@@ -3045,7 +3040,7 @@ hexReady(function(){
             '<g class="hex-logo-front-center-layer" mask="url(#hex-logo-front-center-mask)">'+
               '<use href="#hex-logo-front-center-path" />'+
             '</g>'+
-            '<g class="hex-logo-front-right-layer" mask="url(#hex-logo-front-right-mask)">'+
+            '<g class="hex-logo-front-right-layer" clip-path="url(#hex-logo-front-right-clip)">'+
               '<use href="#hex-logo-front-right-path" />'+
             '</g>'+
             '<g class="hex-logo-back-arm-layer" mask="url(#hex-logo-back-arm-mask)">'+
