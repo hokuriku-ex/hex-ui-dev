@@ -2745,7 +2745,7 @@ hexLoad(function(){
 });
 
 /* =======================================
-   トップ 開幕～ウェルカムアニメーション 
+   トップ 開幕～ウェルカムアニメーション
 ======================================= */
 hexReady(function(){
   "use strict";
@@ -2756,8 +2756,8 @@ hexReady(function(){
   var FORCE_PLAY=true;
 
   /* アニメーションごとの表示切替 */
-  var ENABLE_PLASTER_ANIMATION=false;
-  var ENABLE_LOGO_ANIMATION=true;
+  var ENABLE_PLASTER_ANIMATION=true;
+  var ENABLE_LOGO_ANIMATION=false;
 
   var OPENING_START_DELAY=200;
   var PLASTER_DURATION=2500;
@@ -2994,6 +2994,7 @@ hexReady(function(){
               'x="-20" y="40" width="78" height="72">'+
               '<rect x="-20" y="40" width="78" height="72" fill="#000" />'+
               '<path class="hex-logo-front-left-mask-path" '+
+                'pathLength="1" '+
                 'd="M10 52 L17.386 55.094 C-4 64 -4 79 25.988 91.762 C35 95 45 97 55 98" '+
                 'fill="none" stroke="#fff" stroke-width="40" '+
                 'stroke-linecap="square" stroke-linejoin="round" />'+
