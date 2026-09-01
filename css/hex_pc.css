@@ -3635,7 +3635,6 @@ body,
   opacity:1;
 }
 
-.hex-logo-front-center-mask-path,
 .hex-logo-back-arm-mask-path{
   opacity:0;
   stroke-dasharray:var(--hex-logo-arm-length);
@@ -3650,7 +3649,10 @@ body,
 }
 
 .hex-logo-front-center-mask-path{
-  --hex-logo-arm-length:88;
+  --hex-logo-arm-length:1;
+  opacity:1;
+  stroke-dasharray:1;
+  stroke-dashoffset:1;
 }
 
 .hex-logo-back-arm-mask-path{
@@ -3662,7 +3664,7 @@ body,
 }
 
 .hex-opening.is-logo-start .hex-logo-front-center-mask-path{
-  animation:hex-logo-arm-draw .26s cubic-bezier(.45,0,.25,1) .38s forwards;
+  animation:hex-logo-arm-draw-stable .26s cubic-bezier(.45,0,.25,1) .38s forwards;
 }
 
 .hex-opening.is-logo-start .hex-logo-back-arm-mask-path{
