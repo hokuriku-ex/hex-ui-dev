@@ -3316,6 +3316,8 @@ hexReady(function(){
       return;
     }
 
+    hero.classList.add("has-copy-handoff");
+
     welcomeCopy.classList.add(
       "hex-handoff-copy",
       "hex-welcome-copy"
@@ -3395,6 +3397,7 @@ hexReady(function(){
 
     loadHeroVideos();
     initCopyHandoff();
+    showHero();
   }
 
   window.hexHero={
