@@ -3682,6 +3682,8 @@ html.hex-opening-lock body{
 
 /* PC・スマホ切替 */
 .hex-hero-pc{
+  min-width:1200px!important;
+  min-height:var(--hex-hero-base-height,675px)!important;
   display:block;
 }
 .hex-hero-sp{
