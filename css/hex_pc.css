@@ -3659,8 +3659,9 @@ html.hex-opening-lock body{
   isolation:isolate;
   overflow:hidden;
   width:100%!important;
+  min-width:1200px!important;
   height:calc(100dvh - 80px)!important;
-  min-height:540px!important;
+  min-height:var(--hex-hero-base-height,675px)!important;
   margin-top:80px!important;
   background:#fff;
 }
