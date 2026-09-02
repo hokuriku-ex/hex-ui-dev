@@ -3670,12 +3670,19 @@ html.hex-opening-lock body{
   position:absolute;
   inset:0;
   z-index:0;
+  overflow:hidden;
+  text-align:center;
 }
 .hex-hero-bg img{
+  position:absolute;
+  top:0;
+  left:50%;
   display:block;
-  width:100%;
+  width:auto;
+  max-width:none!important;
   height:100%;
-  object-fit:cover;
+  object-fit:unset;
+  transform:translateX(-50%);
 }
 
 /* この部分は仮 */
