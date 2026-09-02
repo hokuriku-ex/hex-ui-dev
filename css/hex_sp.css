@@ -1187,52 +1187,24 @@
    トップページ：開幕アニメーション
 ======================================= */
 @media screen and (max-width:768px){
-  .hex-original-hero{
-    min-height:560px;
-  }
-
-  .hex-original-hero-copy{
-    padding:0 16px;
-  }
-
-  .hex-original-hero-catch{
-    width:calc(100vw - 40px);
-  }
-
-  .hex-handoff-copy .hex-opening-main{
-    font-size:26px;
-    line-height:1.4;
-    letter-spacing:.04em;
-  }
-
-  .hex-handoff-copy .hex-opening-sub{
-    margin-top:12px;
-    font-size:13px;
-    line-height:1.7;
-  }
-
   .hex-opening-path{
     stroke-width:160;
   }
-
   .hex-opening-path.is-trowel{
     filter:none;
   }
-
   .hex-logo-story{
     width:160vw;
     max-width:none;
     height:100dvh;
   }
-
 }
 
 @media (prefers-reduced-motion:reduce){
   .hex-opening{
     display:none!important;
   }
-
-  .hex-original-hero-copy{
+  .hex-hero-catch{
     opacity:1;
     transition:none;
   }
@@ -1242,6 +1214,24 @@
    トップページ：ヒーロー画像
 ======================================= */
 @media screen and (max-width:768px){
+  .hex-hero{
+    min-height:560px;
+  }
+  .hex-hero-catch{
+    width:calc(100vw - 40px);
+    padding:0 16px;
+  }
+  .hex-handoff-copy .hex-opening-main{
+    font-size:26px;
+    line-height:1.4;
+    letter-spacing:.04em;
+  }
+  .hex-handoff-copy .hex-opening-sub{
+    margin-top:12px;
+    font-size:13px;
+    line-height:1.7;
+  }
+
   .hex-hero-pc{
     display:none;
   }
