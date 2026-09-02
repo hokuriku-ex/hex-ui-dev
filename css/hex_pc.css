@@ -3637,8 +3637,8 @@ html.hex-opening-lock body{
   z-index:0;
   isolation:isolate;
   overflow:hidden;
-  width:100%;
-  height:calc(100dvh - 80px)!important;
+  width:100%!important;
+  height:100dvh!important;
   min-height:0!important;
   background:#fff;
 }
