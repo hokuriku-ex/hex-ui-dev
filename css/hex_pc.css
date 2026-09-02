@@ -3806,7 +3806,11 @@ html.hex-opening-lock body{
 .hex-welcome-copy{
   position:relative;
   z-index:2;
+  width:min(90vw,960px);
+  margin-left:auto!important;
+  margin-right:auto!important;
   color:var(--hex-opening-navy)!important;
+  text-align:center!important;
   opacity:0;
   visibility:hidden;
 }
