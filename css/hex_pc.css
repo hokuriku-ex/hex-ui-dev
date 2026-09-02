@@ -3640,7 +3640,6 @@ html.hex-opening-lock body{
   width:100%!important;
   height:calc(100dvh - 80px)!important;
   margin-top:80px!important;
-  overflow:hidden;
   background:#fff;
 }
 .gc_auto_frame_spotitem_box:has(.hex-hero-wrap){
