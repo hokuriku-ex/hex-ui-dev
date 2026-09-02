@@ -3652,8 +3652,10 @@ html.hex-opening-lock body{
 @media screen and (min-width:769px){
   html:has(.hex-hero-wrap){
     overflow-x:auto!important;
+    overflow-y:scroll;
   }
   body:has(.hex-hero-wrap){
+    min-width:1200px!important;
     overflow-x:visible!important;
   }
   .bg_post_index:has(.hex-hero-wrap),
@@ -3669,6 +3671,7 @@ html.hex-opening-lock body{
 }
 @media screen and (min-width:769px) and (max-width:1199px){
   .gc_auto_frame_spotitem_body:has(.hex-hero-wrap){
+    width:100%!important;
     margin-left:0!important;
     margin-right:0!important;
   }
