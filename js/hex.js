@@ -3369,7 +3369,7 @@ hexReady(function(){
       requestUpdate
     );
 
-    requestUpdate();
+    // requestUpdate();
   }
 
   function showHero(){
