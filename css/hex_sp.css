@@ -1184,7 +1184,7 @@
 }
 
 /* =======================================
-   トップページ：開幕～ウェルカムアニメーション
+   トップページ：開幕アニメーション
 ======================================= */
 @media screen and (max-width:768px){
   .hex-original-hero{
@@ -1235,6 +1235,18 @@
   .hex-original-hero-copy{
     opacity:1;
     transition:none;
+  }
+}
+
+/* =======================================
+   トップページ：ヒーロー画像
+======================================= */
+@media screen and (max-width:768px){
+  .hex-hero-pc{
+    display:none;
+  }
+  .hex-hero-sp{
+    display:block;
   }
 }
 
