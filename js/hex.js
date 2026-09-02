@@ -3335,9 +3335,9 @@ hexReady(function(){
     document.documentElement.classList.add("hex-opening-lock");
     document.body.insertBefore(opening,document.body.firstChild);
 
-    /* 開幕画面を配置できたので、ページを表示 */
     requestAnimationFrame(function(){
       document.documentElement.classList.remove('hex-opening-pending');
+      document.documentElement.classList.add('hex-opening-ready');
     });
 
     timeline=OPENING_START_DELAY;
