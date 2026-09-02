@@ -3112,7 +3112,7 @@ hexReady(function(){
 
   var STORAGE_KEY="hex_top_opening_v2_viewed";
 
-  /* 制作中はtrue。本番公開時にfalseへ変更 */
+  /* 初回アクセス表示切替　本番ではfalseへ変更 */
   var FORCE_PLAY=true;
 
   /* アニメーションごとの表示切替 */
