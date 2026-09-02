@@ -3701,7 +3701,7 @@ html.hex-opening-lock body{
 
 /* キャッチコピー共通 */
 .hex-hero-catch{
-  position:fixed!important;
+  position:absolute;
   top:50%;
   right:0;
   left:0;
@@ -3718,6 +3718,7 @@ html.hex-opening-lock body{
   transition:opacity .7s ease;
 }
 .hex-hero-wrap.has-copy-handoff .hex-hero-catch{
+  position:fixed!important;
   top:50%;
   right:0;
   left:0;
