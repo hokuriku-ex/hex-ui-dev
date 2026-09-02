@@ -3648,6 +3648,27 @@ html.hex-opening-lock body{
   display:none!important;
 }
 
+/* 横スクロール用最低幅設定 */
+@media screen and (min-width:769px){
+  html:has(.hex-hero-wrap){
+    overflow-x:auto!important;
+  }
+  body:has(.hex-hero-wrap){
+    min-width:1200px!important;
+    overflow-x:visible!important;
+  }
+  .bg_post_index:has(.hex-hero-wrap),
+  .post_index:has(.hex-hero-wrap),
+  .post_index_contents:has(.hex-hero-wrap),
+  .content:has(.hex-hero-wrap),
+  .content_body:has(.hex-hero-wrap),
+  .gc_auto_frame_spotitem_box:has(.hex-hero-wrap),
+  .gc_auto_frame_spotitem_body:has(.hex-hero-wrap),
+  .hex-hero-wrap{
+    overflow:visible!important;
+  }
+}
+
 /* オリジナルヒーローを画面高さ合わせ表示 */
 .hex-hero-wrap{
   position:relative;
