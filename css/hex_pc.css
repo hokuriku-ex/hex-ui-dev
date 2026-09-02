@@ -3701,11 +3701,11 @@ html.hex-opening-lock body{
 
 /* キャッチコピー共通 */
 .hex-hero-catch{
-  position:fixed;
+  position:absolute;
   top:50%;
   right:0;
   left:0;
-  z-index:2147482000;
+  z-index:3;
   display:grid;
   place-items:center;
   width:100%;
@@ -3717,9 +3717,31 @@ html.hex-opening-lock body{
   transform:translateY(-50%);
   transition:opacity .7s ease;
 }
+.hex-hero-wrap.has-copy-handoff .hex-hero-catch{
+  position:fixed!important;
+  top:50%;
+  right:0;
+  left:0;
+  z-index:2147482000;
+  transform:translateY(-50%);
+}
+
+/* 固定キャッチをヒーローのスタッキングコンテキストから解放 */
+.hex-hero-wrap.has-copy-handoff{
+  z-index:auto;
+  isolation:auto;
+  overflow:visible;
+}
 .hex-hero-wrap.is-ready .hex-hero-catch{
   opacity:1;
-} 
+}
+.hex-hero-wrap.is-copy-handed-off .hex-hero-catch{
+  opacity:0;
+  transition:none;
+}
+.hex-hero-wrap.is-copy-swap-ready .hex-hero-catch{
+  transition:none;
+}
 
 /* キャッチ本文 */
 .hex-handoff-copy{
