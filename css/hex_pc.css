@@ -3717,13 +3717,13 @@ html.hex-opening-lock body{
   transform:translateY(-50%);
   transition:opacity .7s ease;
 }
+
+/* ウェルカム側に実体がある場合は中央固定 */
 .hex-hero-wrap.has-copy-handoff .hex-hero-catch{
-  position:fixed!important;
-  top:50%;
+  position:fixed;
   right:0;
   left:0;
   z-index:2147482000;
-  transform:translateY(-50%);
 }
 
 /* 固定キャッチをヒーローのスタッキングコンテキストから解放 */
