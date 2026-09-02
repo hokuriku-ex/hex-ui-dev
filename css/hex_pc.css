@@ -3742,11 +3742,13 @@ html.hex-opening-lock body{
 /* ウェルカム側に実体がある場合は中央固定 */
 .hex-hero-wrap.has-copy-handoff .hex-hero-catch{
   position:fixed;
-  top:50%;
   right:0;
   left:0;
   z-index:2147482000;
-  transform:translateY(-50%);
+}
+.hex-hero-wrap.is-copy-handed-off .hex-hero-catch{
+  opacity:0;
+  transition:none;
 }
 
 /* 固定キャッチをヒーローのスタッキングコンテキストから解放 */
@@ -3758,13 +3760,10 @@ html.hex-opening-lock body{
 .hex-hero-wrap.is-ready .hex-hero-catch{
   opacity:1;
 }
-.hex-hero-wrap.is-copy-handed-off .hex-hero-catch{
-  opacity:0;
-  transition:none;
-}
 .hex-hero-wrap.is-copy-swap-ready .hex-hero-catch{
   transition:none;
 }
+
 
 /* キャッチ本文 */
 .hex-handoff-copy{
