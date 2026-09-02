@@ -3303,12 +3303,6 @@ hexReady(function(){
       '</div>'+ 
       '<div class="hex-opening-hero-reveal" aria-hidden="true"></div>';
 
-    reveal=opening.querySelector(".hex-opening-hero-reveal");
-
-    if(reveal){
-      reveal.style.backgroundImage="none";
-    }
-
     return opening;
   }
 
