@@ -26,9 +26,8 @@
     'uniform sampler2D uTex;'+
     'varying vec2 vUV;'+
     'void main(){'+
-      'vec3 rgb=texture2D(uTex,vec2(vUV.x,vUV.y*0.5)).rgb;'+
-      'float a=texture2D(uTex,vec2(vUV.x,0.5+vUV.y*0.5)).r;'+
-      'gl_FragColor=vec4(rgb*a,a);'+
+      'vec3 rgb=texture2D(uTex,vec2(vUV.x,0.5+vUV.y*0.5)).rgb;'+
+      'gl_FragColor=vec4(rgb,1.0);'+
     '}';
 
   function createShader(type,source){
@@ -141,7 +140,7 @@
 
   gl.pixelStorei(
     gl.UNPACK_FLIP_Y_WEBGL,
-    true
+    false
   );
 
   function render(){
