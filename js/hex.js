@@ -3471,22 +3471,21 @@ hexReady(function(){
         0
       );
 
-      if(viewportWidth>=1200){
-        /* 1200px以上：ヒーロー枠を画面いっぱいにする */
-        stageWidth=viewportWidth;
-        stageHeight=viewportHeight;
-      }else{
-        /*
-        * 1200px未満：
-        * 横幅は1200pxを維持し、
-        * 高さも画像比率の基準以下に縮小しない
-        */
-        stageWidth=baseWidth;
-        stageHeight=Math.max(
-          baseHeight,
-          viewportHeight
-        );
-      }
+      widthScale=viewportWidth/baseWidth;
+      heightScale=viewportHeight/baseHeight;
+
+      /*
+       * 1未満には縮小しない。
+       * 横幅・高さのうち大きい倍率で拡大する。
+       */
+      scale=Math.max(
+        1,
+        widthScale,
+        heightScale
+      );
+
+      stageWidth=Math.ceil(baseWidth*scale);
+      stageHeight=Math.ceil(baseHeight*scale);
 
       pcHero.style.setProperty(
         "--hex-hero-stage-width",
