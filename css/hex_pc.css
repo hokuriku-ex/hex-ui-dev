@@ -3633,12 +3633,13 @@ html.hex-opening-lock body{
   width:100%;
 }
 .hex-hero{
+  position:relative;
   z-index:0;
   isolation:isolate;
   overflow:hidden;
   width:100%;
-  height:100dvh!important;
-  min-height:0!important;
+  height:calc(100dvh - 80px);
+  min-height:540px;
   background:#fff;
 }
 .gc_auto_frame_spotitem_box:has(.hex-hero-wrap){
