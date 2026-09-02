@@ -3472,20 +3472,12 @@ hexReady(function(){
       );
 
       if(viewportWidth>=1200){
-        /* 1200px以上：画面サイズをヒーロー枠にする */
         stageWidth=viewportWidth;
         stageHeight=viewportHeight;
       }else{
-        /*
-        * 1200px未満：
-        * 元画像比率を維持しながら、
-        * 基準サイズ以下には縮小しない
-        */
-        heightScale=viewportHeight/baseHeight;
-        scale=Math.max(1,heightScale);
-
-        stageWidth=baseWidth*scale;
-        stageHeight=baseHeight*scale;
+        /* 横は1200pxを維持、縦は画面高さいっぱい */
+        stageWidth=baseWidth;
+        stageHeight=viewportHeight;
       }
 
       pcHero.style.setProperty(
