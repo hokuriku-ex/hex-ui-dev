@@ -3441,6 +3441,9 @@ hexReady(function(){
 
     hero.classList.add("has-copy-handoff");
 
+    fixedCopy.classList.add("is-fixed-handoff");
+    document.body.appendChild(fixedCopy);
+
     welcomeCopy.classList.add(
       "hex-handoff-copy",
       "hex-welcome-copy"
@@ -3458,7 +3461,7 @@ hexReady(function(){
 
       isHandedOff=welcomeRect.top<=fixedRect.top+1;
 
-      hero.classList.toggle(
+      fixedCopy.classList.toggle(
         "is-copy-handed-off",
         isHandedOff
       );
