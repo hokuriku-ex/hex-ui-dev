@@ -2748,6 +2748,363 @@ hexLoad(function(){
 });
 
 /* =======================================
+   透明動画埋め込み共通処理
+======================================= */
+function hexInitAlphaVideo(root){
+
+  var video=root.querySelector('video');
+  var canvas=root.querySelector('canvas');
+
+  if(!video||!canvas)return;
+  if(root.dataset.alphaInitialized==='true')return;
+
+  root.dataset.alphaInitialized='true';
+
+  var src=video.dataset.src;
+
+  if(src&&!video.getAttribute('src')){
+    video.src=src;
+  }
+
+  var gl=canvas.getContext('webgl',{
+    alpha:true,
+    premultipliedAlpha:true,
+    antialias:false,
+    preserveDrawingBuffer:false
+  });
+
+  if(!gl){
+    console.warn('WebGL is not supported.');
+    return;
+  }
+
+  var vertexShaderSource=
+    'attribute vec2 aPosition;'+
+    'attribute vec2 aUV;'+
+    'varying vec2 vUV;'+
+    'void main(){'+
+      'gl_Position=vec4(aPosition,0.0,1.0);'+
+      'vUV=aUV;'+
+    '}';
+
+  var fragmentShaderSource=
+    'precision mediump float;'+
+    'uniform sampler2D uTex;'+
+    'varying vec2 vUV;'+
+    'void main(){'+
+      'vec2 colorUV=vec2(vUV.x,0.5+vUV.y*0.5);'+
+      'vec2 alphaUV=vec2(vUV.x,vUV.y*0.5);'+
+      'vec3 rgb=texture2D(uTex,colorUV).rgb;'+
+      'float a=texture2D(uTex,alphaUV).r;'+
+      'gl_FragColor=vec4(rgb*a,a);'+
+    '}';
+
+  function createShader(type,source){
+    var shader=gl.createShader(type);
+
+    gl.shaderSource(shader,source);
+    gl.compileShader(shader);
+
+    if(!gl.getShaderParameter(shader,gl.COMPILE_STATUS)){
+      console.error(gl.getShaderInfoLog(shader));
+      gl.deleteShader(shader);
+      return null;
+    }
+
+    return shader;
+  }
+
+  var vertexShader=createShader(
+    gl.VERTEX_SHADER,
+    vertexShaderSource
+  );
+
+  var fragmentShader=createShader(
+    gl.FRAGMENT_SHADER,
+    fragmentShaderSource
+  );
+
+  if(!vertexShader||!fragmentShader)return;
+
+  var program=gl.createProgram();
+
+  gl.attachShader(program,vertexShader);
+  gl.attachShader(program,fragmentShader);
+  gl.linkProgram(program);
+
+  if(!gl.getProgramParameter(program,gl.LINK_STATUS)){
+    console.error(gl.getProgramInfoLog(program));
+    return;
+  }
+
+  gl.useProgram(program);
+
+  var positions=new Float32Array([
+    -1,-1,
+     1,-1,
+    -1, 1,
+    -1, 1,
+     1,-1,
+     1, 1
+  ]);
+
+  var uvs=new Float32Array([
+    0,0,
+    1,0,
+    0,1,
+    0,1,
+    1,0,
+    1,1
+  ]);
+
+  var positionBuffer=gl.createBuffer();
+
+  gl.bindBuffer(gl.ARRAY_BUFFER,positionBuffer);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    positions,
+    gl.STATIC_DRAW
+  );
+
+  var positionLocation=gl.getAttribLocation(
+    program,
+    'aPosition'
+  );
+
+  gl.enableVertexAttribArray(positionLocation);
+
+  gl.vertexAttribPointer(
+    positionLocation,
+    2,
+    gl.FLOAT,
+    false,
+    0,
+    0
+  );
+
+  var uvBuffer=gl.createBuffer();
+
+  gl.bindBuffer(gl.ARRAY_BUFFER,uvBuffer);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    uvs,
+    gl.STATIC_DRAW
+  );
+
+  var uvLocation=gl.getAttribLocation(
+    program,
+    'aUV'
+  );
+
+  gl.enableVertexAttribArray(uvLocation);
+
+  gl.vertexAttribPointer(
+    uvLocation,
+    2,
+    gl.FLOAT,
+    false,
+    0,
+    0
+  );
+
+  var texture=gl.createTexture();
+
+  gl.bindTexture(gl.TEXTURE_2D,texture);
+
+  gl.texParameteri(
+    gl.TEXTURE_2D,
+    gl.TEXTURE_WRAP_S,
+    gl.CLAMP_TO_EDGE
+  );
+
+  gl.texParameteri(
+    gl.TEXTURE_2D,
+    gl.TEXTURE_WRAP_T,
+    gl.CLAMP_TO_EDGE
+  );
+
+  gl.texParameteri(
+    gl.TEXTURE_2D,
+    gl.TEXTURE_MIN_FILTER,
+    gl.LINEAR
+  );
+
+  gl.texParameteri(
+    gl.TEXTURE_2D,
+    gl.TEXTURE_MAG_FILTER,
+    gl.LINEAR
+  );
+
+  gl.pixelStorei(
+    gl.UNPACK_FLIP_Y_WEBGL,
+    true
+  );
+
+  function resizeCanvas(){
+
+    if(!video.videoWidth||!video.videoHeight)return;
+
+    var width=video.videoWidth;
+    var height=video.videoHeight/2;
+
+    if(
+      canvas.width!==width||
+      canvas.height!==height
+    ){
+      canvas.width=width;
+      canvas.height=height;
+
+      gl.viewport(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+    }
+
+  }
+
+  function drawFrame(){
+
+    if(
+      video.readyState<2||
+      video.paused||
+      video.ended
+    ){
+      requestNextFrame();
+      return;
+    }
+
+    resizeCanvas();
+
+    gl.bindTexture(
+      gl.TEXTURE_2D,
+      texture
+    );
+
+    try{
+
+      gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        gl.RGBA,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        video
+      );
+
+    }catch(error){
+
+      console.warn(
+        'Alpha video texture error:',
+        error
+      );
+
+      requestNextFrame();
+      return;
+    }
+
+    gl.clearColor(
+      0,
+      0,
+      0,
+      0
+    );
+
+    gl.clear(
+      gl.COLOR_BUFFER_BIT
+    );
+
+    gl.drawArrays(
+      gl.TRIANGLES,
+      0,
+      6
+    );
+
+    requestNextFrame();
+
+  }
+
+  function requestNextFrame(){
+
+    if(
+      'requestVideoFrameCallback' in video
+    ){
+
+      video.requestVideoFrameCallback(
+        drawFrame
+      );
+
+    }else{
+
+      requestAnimationFrame(
+        drawFrame
+      );
+
+    }
+
+  }
+
+  video.addEventListener(
+    'loadedmetadata',
+    function(){
+
+      resizeCanvas();
+
+      var playPromise=video.play();
+
+      if(
+        playPromise&&
+        typeof playPromise.catch==='function'
+      ){
+        playPromise.catch(function(){});
+      }
+
+    }
+  );
+
+  video.addEventListener(
+    'playing',
+    function(){
+
+      if(root.dataset.alphaRendering==='true')return;
+
+      root.dataset.alphaRendering='true';
+
+      requestNextFrame();
+
+    }
+  );
+
+  video.load();
+
+}
+
+
+function hexLoadAlphaVideo(root){
+
+  if(!root)return;
+
+  hexInitAlphaVideo(root);
+
+}
+
+
+function hexLoadAllAlphaVideos(scope){
+
+  var target=scope||document;
+
+  target
+    .querySelectorAll('.hex-alpha-video')
+    .forEach(function(root){
+
+      hexInitAlphaVideo(root);
+
+    });
+
+}
+
+/* =======================================
    トップ 開幕～ウェルカムアニメーション
 ======================================= */
 hexReady(function(){
