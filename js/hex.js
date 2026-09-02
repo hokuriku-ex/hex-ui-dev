@@ -1,212 +1,224 @@
 (function(){
 
-  var video=document.getElementById('alpha-video');
-  var canvas=document.getElementById('alpha-canvas');
+  document.querySelectorAll('.alpha-worker').forEach(function(worker){
 
-  var gl=canvas.getContext('webgl',{
-    alpha:true,
-    premultipliedAlpha:true,
-    antialias:false,
-    preserveDrawingBuffer:false
-  });
+    var video=worker.querySelector('video');
+    var canvas=worker.querySelector('canvas');
 
-  if(!gl)return;
+    var gl=canvas.getContext('webgl',{
+      alpha:true,
+      premultipliedAlpha:true,
+      antialias:false,
+      preserveDrawingBuffer:false
+    });
 
-  var vs=
-    'attribute vec2 aPos;'+
-    'attribute vec2 aUV;'+
-    'varying vec2 vUV;'+
-    'void main(){'+
-      'vUV=aUV;'+
-      'gl_Position=vec4(aPos,0.0,1.0);'+
-    '}';
+    if(!gl)return;
 
-  var fs=
-    'precision mediump float;'+
-    'uniform sampler2D uTex;'+
-    'varying vec2 vUV;'+
-    'void main(){'+
-      'vec2 colorUV=vec2(vUV.x,0.5+vUV.y*0.5);'+
-      'vec2 alphaUV=vec2(vUV.x,vUV.y*0.5);'+
-      'vec3 rgb=texture2D(uTex,colorUV).rgb;'+
-      'float a=texture2D(uTex,alphaUV).r;'+
-      'gl_FragColor=vec4(rgb*a,a);'+
-    '}';
+    var vs=
+      'attribute vec2 aPos;'+
+      'attribute vec2 aUV;'+
+      'varying vec2 vUV;'+
+      'void main(){'+
+        'vUV=aUV;'+
+        'gl_Position=vec4(aPos,0.0,1.0);'+
+      '}';
 
-  function createShader(type,source){
-    var shader=gl.createShader(type);
-    gl.shaderSource(shader,source);
-    gl.compileShader(shader);
-    return shader;
-  }
+    var fs=
+      'precision mediump float;'+
+      'uniform sampler2D uTex;'+
+      'varying vec2 vUV;'+
+      'void main(){'+
+        'vec2 colorUV=vec2(vUV.x,0.5+vUV.y*0.5);'+
+        'vec2 alphaUV=vec2(vUV.x,vUV.y*0.5);'+
+        'vec3 rgb=texture2D(uTex,colorUV).rgb;'+
+        'float a=texture2D(uTex,alphaUV).r;'+
+        'gl_FragColor=vec4(rgb*a,a);'+
+      '}';
 
-  var program=gl.createProgram();
+    function createShader(type,source){
 
-  gl.attachShader(
-    program,
-    createShader(gl.VERTEX_SHADER,vs)
-  );
+      var shader=gl.createShader(type);
 
-  gl.attachShader(
-    program,
-    createShader(gl.FRAGMENT_SHADER,fs)
-  );
+      gl.shaderSource(shader,source);
+      gl.compileShader(shader);
 
-  gl.linkProgram(program);
-  gl.useProgram(program);
-
-  var data=new Float32Array([
-    -1,-1,0,0,
-     1,-1,1,0,
-    -1, 1,0,1,
-
-    -1, 1,0,1,
-     1,-1,1,0,
-     1, 1,1,1
-  ]);
-
-  var buffer=gl.createBuffer();
-
-  gl.bindBuffer(
-    gl.ARRAY_BUFFER,
-    buffer
-  );
-
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    data,
-    gl.STATIC_DRAW
-  );
-
-  var aPos=gl.getAttribLocation(
-    program,
-    'aPos'
-  );
-
-  var aUV=gl.getAttribLocation(
-    program,
-    'aUV'
-  );
-
-  gl.enableVertexAttribArray(aPos);
-
-  gl.vertexAttribPointer(
-    aPos,
-    2,
-    gl.FLOAT,
-    false,
-    16,
-    0
-  );
-
-  gl.enableVertexAttribArray(aUV);
-
-  gl.vertexAttribPointer(
-    aUV,
-    2,
-    gl.FLOAT,
-    false,
-    16,
-    8
-  );
-
-  var texture=gl.createTexture();
-
-  gl.bindTexture(
-    gl.TEXTURE_2D,
-    texture
-  );
-
-  gl.texParameteri(
-    gl.TEXTURE_2D,
-    gl.TEXTURE_MIN_FILTER,
-    gl.LINEAR
-  );
-
-  gl.texParameteri(
-    gl.TEXTURE_2D,
-    gl.TEXTURE_MAG_FILTER,
-    gl.LINEAR
-  );
-
-  gl.texParameteri(
-    gl.TEXTURE_2D,
-    gl.TEXTURE_WRAP_S,
-    gl.CLAMP_TO_EDGE
-  );
-
-  gl.texParameteri(
-    gl.TEXTURE_2D,
-    gl.TEXTURE_WRAP_T,
-    gl.CLAMP_TO_EDGE
-  );
-
-  gl.pixelStorei(
-    gl.UNPACK_FLIP_Y_WEBGL,
-    true
-  );
-
-  function render(){
-
-    if(video.readyState>=2){
-
-      gl.bindTexture(
-        gl.TEXTURE_2D,
-        texture
-      );
-
-      gl.texImage2D(
-        gl.TEXTURE_2D,
-        0,
-        gl.RGBA,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        video
-      );
-
-      gl.clearColor(0,0,0,0);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-
-      gl.drawArrays(
-        gl.TRIANGLES,
-        0,
-        6
-      );
+      return shader;
 
     }
 
-    if(video.requestVideoFrameCallback){
-      video.requestVideoFrameCallback(render);
-    }else{
-      requestAnimationFrame(render);
-    }
+    var program=gl.createProgram();
 
-  }
+    gl.attachShader(
+      program,
+      createShader(gl.VERTEX_SHADER,vs)
+    );
 
-  video.addEventListener(
-    'loadedmetadata',
-    function(){
+    gl.attachShader(
+      program,
+      createShader(gl.FRAGMENT_SHADER,fs)
+    );
 
-      canvas.width=video.videoWidth;
+    gl.linkProgram(program);
+    gl.useProgram(program);
 
-      canvas.height=
-        Math.floor(
-          video.videoHeight/2
+    var data=new Float32Array([
+      -1,-1,0,0,
+       1,-1,1,0,
+      -1, 1,0,1,
+
+      -1, 1,0,1,
+       1,-1,1,0,
+       1, 1,1,1
+    ]);
+
+    var buffer=gl.createBuffer();
+
+    gl.bindBuffer(
+      gl.ARRAY_BUFFER,
+      buffer
+    );
+
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      data,
+      gl.STATIC_DRAW
+    );
+
+    var aPos=gl.getAttribLocation(
+      program,
+      'aPos'
+    );
+
+    var aUV=gl.getAttribLocation(
+      program,
+      'aUV'
+    );
+
+    gl.enableVertexAttribArray(aPos);
+
+    gl.vertexAttribPointer(
+      aPos,
+      2,
+      gl.FLOAT,
+      false,
+      16,
+      0
+    );
+
+    gl.enableVertexAttribArray(aUV);
+
+    gl.vertexAttribPointer(
+      aUV,
+      2,
+      gl.FLOAT,
+      false,
+      16,
+      8
+    );
+
+    var texture=gl.createTexture();
+
+    gl.bindTexture(
+      gl.TEXTURE_2D,
+      texture
+    );
+
+    gl.texParameteri(
+      gl.TEXTURE_2D,
+      gl.TEXTURE_MIN_FILTER,
+      gl.LINEAR
+    );
+
+    gl.texParameteri(
+      gl.TEXTURE_2D,
+      gl.TEXTURE_MAG_FILTER,
+      gl.LINEAR
+    );
+
+    gl.texParameteri(
+      gl.TEXTURE_2D,
+      gl.TEXTURE_WRAP_S,
+      gl.CLAMP_TO_EDGE
+    );
+
+    gl.texParameteri(
+      gl.TEXTURE_2D,
+      gl.TEXTURE_WRAP_T,
+      gl.CLAMP_TO_EDGE
+    );
+
+    gl.pixelStorei(
+      gl.UNPACK_FLIP_Y_WEBGL,
+      true
+    );
+
+    function render(){
+
+      if(video.readyState>=2){
+
+        gl.bindTexture(
+          gl.TEXTURE_2D,
+          texture
         );
 
-      gl.viewport(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
+        gl.texImage2D(
+          gl.TEXTURE_2D,
+          0,
+          gl.RGBA,
+          gl.RGBA,
+          gl.UNSIGNED_BYTE,
+          video
+        );
 
-      video.play().catch(function(){});
+        gl.clearColor(0,0,0,0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
-      render();
+        gl.drawArrays(
+          gl.TRIANGLES,
+          0,
+          6
+        );
+
+      }
+
+      if(video.requestVideoFrameCallback){
+
+        video.requestVideoFrameCallback(render);
+
+      }else{
+
+        requestAnimationFrame(render);
+
+      }
 
     }
-  );
+
+    video.addEventListener(
+      'loadedmetadata',
+      function(){
+
+        canvas.width=video.videoWidth;
+
+        canvas.height=
+          Math.floor(
+            video.videoHeight/2
+          );
+
+        gl.viewport(
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
+
+        video.play().catch(function(){});
+
+        render();
+
+      }
+    );
+
+  });
 
 })();
 
