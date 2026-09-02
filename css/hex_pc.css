@@ -3700,9 +3700,10 @@ html.hex-opening-lock body{
 
 /* キャッチコピー共通 */
 .hex-hero-catch{
-  position:sticky;
-  top:50vh;
-  top:50dvh;
+  position:absolute;
+  top:50%;
+  right:0;
+  left:0;
   z-index:3;
   display:grid;
   place-items:center;
@@ -3717,9 +3718,11 @@ html.hex-opening-lock body{
 }
 .hex-hero-wrap.has-copy-handoff .hex-hero-catch{
   position:fixed;
+  top:50%;
   right:0;
   left:0;
   z-index:2147482000;
+  transform:translateY(-50%);
 }
 
 /* 固定キャッチをヒーローのスタッキングコンテキストから解放 */
