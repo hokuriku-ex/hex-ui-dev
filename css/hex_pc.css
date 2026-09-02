@@ -3730,7 +3730,7 @@ html:not(.hex-opening-lock) body{
     overflow-y:scroll;
   }
   body:has(.hex-hero-wrap){
-    min-width:1200px!important;
+    min-width:var(--hex_medium_width)!important;
     overflow-x:visible!important;
   }
   .bg_post_index:has(.hex-hero-wrap),
