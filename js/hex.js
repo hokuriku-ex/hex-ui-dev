@@ -3395,7 +3395,6 @@ hexReady(function(){
 
     loadHeroVideos();
     initCopyHandoff();
-    showHero();
   }
 
   window.hexHero={
