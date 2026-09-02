@@ -3640,7 +3640,7 @@ html.hex-opening-lock body{
   width:100%;
   height:calc(100svh - 80px);
   min-height:540px;
-  background:#203459;
+  background:#fff;
 }
 .hex-hero-pc{
   display:block;
