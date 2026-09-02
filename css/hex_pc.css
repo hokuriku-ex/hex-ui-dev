@@ -3372,7 +3372,7 @@ body,
 }
 
 /* =======================================
-   トップページ：開幕～ウェルカムアニメーション
+   トップページ：開幕アニメーション
 ======================================= */
 :root{
   --hex-opening-navy:#1f2774;
@@ -3383,142 +3383,6 @@ body,
   --hex-hero-origin-y:50%;
 }
 
-/* 標準ヒーローを非表示（ヘッダーは残す） */
-#gc_auto_frame_home_0 > .heroimage_type.heroimage_type1{
-  display:none!important;
-}
-
-/* オリジナル静止ヒーロー */
-.hex-original-hero{
-  position:relative;
-  z-index:0;
-  isolation:isolate;
-  overflow:clip;
-  width:100%;
-  height:100vh;
-  height:100svh;
-  min-height:620px;
-  background:#203459;
-}
-
-.hex-original-hero-image,
-.hex-original-hero-shade{
-  position:absolute;
-  inset:0;
-}
-
-.hex-original-hero-image{
-  z-index:0;
-  background-position:center;
-  background-repeat:no-repeat;
-  background-size:cover;
-}
-
-.hex-original-hero-shade{
-  z-index:1;
-  display:none;
-}
-
-.hex-original-hero-copy{
-  position:sticky;
-  top:50vh;
-  top:50dvh;
-  z-index:2;
-  display:grid;
-  place-items:center;
-  width:100%;
-  padding:0 24px;
-  box-sizing:border-box;
-  color:var(--hex-hero-copy-color);
-  text-align:center;
-  opacity:0;
-  transform:translateY(-50%);
-  transition:opacity .7s ease;
-}
-
-/* ウェルカム側に実体がある場合は、重なるまで画面中央に固定 */
-.hex-original-hero.has-copy-handoff .hex-original-hero-copy{
-  position:fixed;
-  right:0;
-  left:0;
-  z-index:2147482000;
-}
-
-/* 固定コピーをヒーローのスタッキングコンテキストから解放 */
-.hex-original-hero.has-copy-handoff{
-  z-index:auto;
-  isolation:auto;
-  overflow:visible;
-}
-
-.hex-original-hero.is-ready .hex-original-hero-copy{
-  opacity:1;
-}
-
-.hex-original-hero.is-copy-handed-off .hex-original-hero-copy{
-  opacity:0;
-  transition:none;
-}
-
-.hex-original-hero.is-copy-swap-ready .hex-original-hero-copy{
-  transition:none;
-}
-
-.hex-handoff-copy{
-  width:min(90vw,960px);
-  margin:0;
-  color:inherit!important;
-  text-align:center;
-  box-sizing:border-box;
-}
-
-.hex-handoff-copy .hex-opening-main,
-.hex-handoff-copy .hex-opening-sub{
-  display:block;
-  color:inherit!important;
-}
-
-.hex-handoff-copy .hex-opening-main{
-  font-family:"Noto Serif JP",serif!important;
-  font-size:32px;
-  font-weight:700;
-  line-height:1.4;
-  letter-spacing:.04em;
-}
-
-.hex-handoff-copy .hex-opening-sub{
-  margin-top:14px;
-  font-family:"Zen Kaku Gothic New",sans-serif!important;
-  font-size:clamp(14px,1.15vw,18px);
-  font-weight:500;
-  line-height:1.7;
-  letter-spacing:.1em;
-}
-
-.hex-original-hero-catch{
-  color:var(--hex-hero-copy-color)!important;
-  text-shadow:none;
-}
-
-/* 通常レイアウト上のウェルカムコピー。重なるまでは透明 */
-.hex-opening-copy-source.hex-welcome-copy{
-  display:block!important;
-}
-
-.hex-welcome-copy{
-  position:relative;
-  z-index:2;
-  color:var(--hex-opening-navy)!important;
-  opacity:0;
-  visibility:hidden;
-}
-
-.hex-welcome-copy.is-copy-active{
-  opacity:1;
-  visibility:visible;
-}
-
-/* 開幕：左官 → 仮ロゴ丸 → ヒーロー */
 .hex-opening{
   position:fixed;
   inset:0;
@@ -3537,24 +3401,22 @@ body,
   background:var(--hex-opening-white);
 }
 
+/* 左官アニメーション */
 .hex-opening-plaster{
   position:absolute;
   inset:-20%;
   z-index:1;
   pointer-events:none;
 }
-
 .hex-opening-plaster svg{
   display:block;
   width:100%;
   height:100%;
   overflow:visible;
 }
-
 .hex-opening-white-cover{
   fill:var(--hex-opening-white);
 }
-
 .hex-opening-path{
   fill:none;
   stroke:#fff;
@@ -3565,37 +3427,45 @@ body,
   stroke-dashoffset:1;
   opacity:0;
 }
-
 .hex-opening-path.is-trowel{
   filter:url(#hex-opening-trowel-roughness);
 }
-
 .hex-opening.is-plaster-start .hex-opening-path.is-trowel{
   animation:hex-opening-trowel .42s cubic-bezier(.55,0,.45,1) both;
 }
-
-.hex-opening.is-plaster-start .hex-opening-path.is-line1{animation-delay:.65s;}
-.hex-opening.is-plaster-start .hex-opening-path.is-line2{animation-delay:.98s;}
-.hex-opening.is-plaster-start .hex-opening-path.is-line3{animation-delay:1.31s;}
-.hex-opening.is-plaster-start .hex-opening-path.is-line4{animation-delay:1.64s;}
-.hex-opening.is-plaster-start .hex-opening-path.is-line5{animation-delay:1.97s;}
-
+.hex-opening.is-plaster-start .hex-opening-path.is-line1{
+  animation-delay:.65s;
+}
+.hex-opening.is-plaster-start .hex-opening-path.is-line2{
+  animation-delay:.98s;
+}
+.hex-opening.is-plaster-start .hex-opening-path.is-line3{
+  animation-delay:1.31s;
+}
+.hex-opening.is-plaster-start .hex-opening-path.is-line4{
+  animation-delay:1.64s;
+}
+.hex-opening.is-plaster-start .hex-opening-path.is-line5{
+  animation-delay:1.97s;
+}
 @keyframes hex-opening-trowel{
   0%{
     opacity:0;
     stroke-dashoffset:1;
   }
+
   .5%{
     opacity:1;
     stroke-dashoffset:1;
   }
+
   100%{
     opacity:1;
     stroke-dashoffset:0;
   }
 }
 
-/* 後でロゴSVGを入れる独立領域 */
+/* ロゴアニメーション */
 .hex-opening-logo-stage{
   position:absolute;
   inset:0;
@@ -3606,11 +3476,9 @@ body,
   opacity:0;
   pointer-events:none;
 }
-
 .hex-opening.is-logo-start .hex-opening-logo-stage{
   opacity:1;
 }
-
 .hex-logo-story{
   display:block;
   width:100vw;
@@ -3619,77 +3487,62 @@ body,
   overflow:visible;
   color:var(--hex-opening-navy);
 }
-
 .hex-logo-build{
   fill:var(--hex-opening-navy);
 }
-
 .hex-logo-body-layer,
 .hex-logo-back-hand,
 .hex-logo-company-name{
   opacity:0;
 }
-
 .hex-logo-body-layer,
 .hex-logo-front-hand{
   opacity:1;
 }
-
 .hex-logo-back-arm-mask-path{
   opacity:0;
   stroke-dasharray:var(--hex-logo-arm-length);
   stroke-dashoffset:var(--hex-logo-arm-length);
 }
-
 .hex-logo-front-left-mask-path{
   --hex-logo-arm-length:1;
   opacity:1;
   stroke-dasharray:1;
   stroke-dashoffset:1;
 }
-
 .hex-logo-front-center-mask-path{
   --hex-logo-arm-length:1;
   opacity:1;
   stroke-dasharray:1;
   stroke-dashoffset:1;
 }
-
 .hex-logo-back-arm-mask-path{
   --hex-logo-arm-length:90;
 }
-
 .hex-opening.is-logo-start .hex-logo-front-left-mask-path{
   animation:hex-logo-arm-draw-stable .27s cubic-bezier(.45,0,.25,1) .25s forwards;
 }
-
 .hex-opening.is-logo-start .hex-logo-front-center-mask-path{
   animation:hex-logo-arm-draw-stable .26s cubic-bezier(.45,0,.25,1) .38s forwards;
 }
-
 .hex-opening.is-logo-start .hex-logo-back-arm-mask-path{
   animation:hex-logo-arm-draw .30s cubic-bezier(.45,0,.25,1) .74s forwards;
 }
-
 .hex-logo-front-right-clip-rect{
   transform:translateX(140px) scaleX(0);
 }
-
 .hex-opening.is-logo-start .hex-logo-front-right-clip-rect{
   animation:hex-logo-right-reveal .27s cubic-bezier(.45,0,.25,1) .56s forwards;
 }
-
 .hex-opening.is-logo-start .hex-logo-back-hand,
 .hex-opening.is-logo-start .hex-logo-company-name{
   animation:hex-logo-final-pop .48s cubic-bezier(.22,.9,.35,1.35) 1.13s forwards;
 }
-
 .hex-logo-company-name{
   fill:var(--hex-opening-navy);
   transform-box:fill-box;
   transform-origin:center;
 }
-
 @keyframes hex-logo-arm-draw{
   0%{
     opacity:0;
@@ -3704,17 +3557,22 @@ body,
     stroke-dashoffset:0;
   }
 }
-
 @keyframes hex-logo-arm-draw-stable{
-  from{stroke-dashoffset:1;}
-  to{stroke-dashoffset:0;}
+  from{
+    stroke-dashoffset:1;
+  }
+  to{
+    stroke-dashoffset:0;
+  }
 }
-
 @keyframes hex-logo-right-reveal{
-  from{transform:translateX(140px) scaleX(0);}
-  to{transform:translateX(140px) scaleX(1);}
+  from{
+    transform:translateX(140px) scaleX(0);
+  }
+  to{
+    transform:translateX(140px) scaleX(1);
+  }
 }
-
 @keyframes hex-logo-final-pop{
   0%{
     opacity:0;
@@ -3730,6 +3588,7 @@ body,
   }
 }
 
+/* 開幕 → ヒーロー切替 */
 .hex-opening-hero-reveal{
   position:absolute;
   inset:0;
@@ -3737,15 +3596,23 @@ body,
   background-position:center;
   background-repeat:no-repeat;
   background-size:cover;
-  clip-path:circle(0 at var(--hex-hero-origin-x) var(--hex-hero-origin-y));
+  clip-path:circle(
+    0 at
+    var(--hex-hero-origin-x)
+    var(--hex-hero-origin-y)
+  );
   will-change:clip-path;
 }
-
 .hex-opening.is-hero-reveal .hex-opening-hero-reveal{
-  clip-path:circle(150vmax at var(--hex-hero-origin-x) var(--hex-hero-origin-y));
+  clip-path:circle(
+    150vmax at
+    var(--hex-hero-origin-x)
+    var(--hex-hero-origin-y)
+  );
   transition:clip-path 1s cubic-bezier(.65,0,.25,1);
 }
 
+/* 開幕中スクロールロック */
 html.hex-opening-lock,
 html.hex-opening-lock body{
   overflow:hidden!important;
@@ -3753,25 +3620,179 @@ html.hex-opening-lock body{
 }
 
 /* =======================================
+   トップページ：ヒーロー画像
+======================================= */
+/* 標準ヒーローを非表示（ヘッダーは残す） */
+#gc_auto_frame_home_0 > .heroimage_type.heroimage_type1{
+  display:none!important;
+}
+
+/* オリジナルヒーローを画面高さ表示 */
+.hex-hero-wrap{
+  position:relative;
+  width:100%;
+}
+.hex-hero{
+  position:relative;
+  z-index:0;
+  isolation:isolate;
+  overflow:hidden;
+  width:100%;
+  height:calc(100svh - 80px);
+  min-height:540px;
+  background:#203459;
+}
+.hex-hero-pc{
+  display:block;
+}
+.hex-hero-sp{
+  display:none;
+}
+
+.hex-hero-bg{
+  position:absolute;
+  inset:0;
+  z-index:0;
+}
+.hex-hero-bg img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* この部分は仮 */
+.hex-hero-workers{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+}
+.hex-hero-worker{
+  position:absolute;
+}
+
+/* 前景イラスト */
+.hex-hero-foreground{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+}
+
+/* キャッチコピー共通 */
+.hex-hero-catch{
+  position:sticky;
+  top:50vh;
+  top:50dvh;
+  z-index:3;
+  display:grid;
+  place-items:center;
+  width:100%;
+  padding:0 24px;
+  box-sizing:border-box;
+  color:var(--hex-hero-copy-color);
+  text-align:center;
+  opacity:0;
+  transform:translateY(-50%);
+  transition:opacity .7s ease;
+}
+.hex-hero-wrap.has-copy-handoff .hex-hero-catch{
+  position:fixed;
+  right:0;
+  left:0;
+  z-index:2147482000;
+}
+
+/* 固定キャッチをヒーローのスタッキングコンテキストから解放 */
+.hex-hero-wrap.has-copy-handoff{
+  z-index:auto;
+  isolation:auto;
+  overflow:visible;
+}
+.hex-hero-wrap.is-ready .hex-hero-catch{
+  opacity:1;
+}
+.hex-hero-wrap.is-copy-handed-off .hex-hero-catch{
+  opacity:0;
+  transition:none;
+}
+.hex-hero-wrap.is-copy-swap-ready .hex-hero-catch{
+  transition:none;
+}
+
+/* キャッチ本文 */
+.hex-handoff-copy{
+  width:min(90vw,960px);
+  margin:0;
+  color:inherit!important;
+  text-align:center;
+  box-sizing:border-box;
+}
+.hex-handoff-copy .hex-opening-main,
+.hex-handoff-copy .hex-opening-sub{
+  display:block;
+  color:inherit!important;
+}
+.hex-handoff-copy .hex-opening-main{
+  font-family:"Noto Serif JP",serif!important;
+  font-size:32px;
+  font-weight:700;
+  line-height:1.4;
+  letter-spacing:.04em;
+}
+.hex-handoff-copy .hex-opening-sub{
+  margin-top:14px;
+  font-family:"Zen Kaku Gothic New",sans-serif!important;
+  font-size:clamp(14px,1.15vw,18px);
+  font-weight:500;
+  line-height:1.7;
+  letter-spacing:.1em;
+}
+.hex-hero-catch{
+  color:var(--hex-hero-copy-color)!important;
+  text-shadow:none;
+}
+
+/* ウェルカム側コピー */
+.hex-opening-copy-source.hex-welcome-copy{
+  display:block!important;
+}
+.hex-welcome-copy{
+  position:relative;
+  z-index:2;
+  color:var(--hex-opening-navy)!important;
+  opacity:0;
+  visibility:hidden;
+}
+.hex-welcome-copy.is-copy-active{
+  opacity:1;
+  visibility:visible;
+}
+
+/* =======================================
    トップページ：スクロールナビ
 ======================================= */
 .hex-scroll-indicator{
+  position:absolute;
+  right:0;
+  bottom:16px;
+  left:0;
+  z-index:10;
+  padding-top:0;
   text-align:center;
-  padding-top:8px;
+  pointer-events:none;
 }
-
 .hex-scroll-indicator span{
+  position:relative;
+  color:#203459;
   font-size:12px;
   letter-spacing:.2em;
-  color:#203459;
-  position:relative;
 }
-
 .hex-scroll-indicator,
 .hex-scroll-indicator span{
   background:transparent!important;
 }
-
 .hex-scroll-indicator span::after{
   content:"";
   display:block;
