@@ -26,8 +26,8 @@
     'uniform sampler2D uTex;'+
     'varying vec2 vUV;'+
     'void main(){'+
-      'vec2 colorUV=vec2(vUV.x,0.5+(1.0-vUV.y)*0.5);'+
-      'vec2 alphaUV=vec2(vUV.x,(1.0-vUV.y)*0.5);'+
+      'vec2 colorUV=vec2(vUV.x,0.5+vUV.y*0.5);'+
+      'vec2 alphaUV=vec2(vUV.x,vUV.y*0.5);'+
       'vec3 rgb=texture2D(uTex,colorUV).rgb;'+
       'float a=texture2D(uTex,alphaUV).r;'+
       'gl_FragColor=vec4(rgb*a,a);'+
