@@ -3668,20 +3668,24 @@ html.hex-opening-lock body{
 /* 背景・画像 */
 .hex-hero-bg{
   position:absolute;
-  inset:0;
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
   z-index:0;
+  width:100%;
+  height:100%;
   overflow:hidden;
-  text-align:center;
 }
 .hex-hero-bg img{
   position:absolute;
   top:0;
   left:50%;
   display:block;
-  width:auto;
+  width:auto!important;
   max-width:none!important;
-  height:100%;
-  object-fit:unset;
+  height:100%!important;
+  max-height:none!important;
   transform:translateX(-50%);
 }
 
