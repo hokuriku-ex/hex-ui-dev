@@ -3305,8 +3305,8 @@ hexReady(function(){
 
     reveal=opening.querySelector(".hex-opening-hero-reveal");
 
-    if(reveal&&backgroundImage){
-      reveal.style.backgroundImage=backgroundImage;
+    if(reveal){
+      reveal.style.backgroundImage="none";
     }
 
     return opening;
@@ -3338,13 +3338,6 @@ hexReady(function(){
       "hex-opening-lock"
     );
 
-    if(
-      window.hexHero&&
-      typeof window.hexHero.show==="function"
-    ){
-      window.hexHero.show();
-    }
-
     if(opening&&opening.parentNode){
       opening.parentNode.removeChild(opening);
     }
@@ -3360,6 +3353,13 @@ hexReady(function(){
     }
 
     backgroundImage=getHeroBackgroundImage();
+
+    if(
+      window.hexHero&&
+      typeof window.hexHero.show==="function"
+    ){
+      window.hexHero.show();
+    }
 
     if(
       isReducedMotion()||
