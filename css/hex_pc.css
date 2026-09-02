@@ -3739,15 +3739,22 @@ html.hex-opening-lock body{
   transition:opacity .7s ease;
 }
 
-/* ウェルカム側に実体がある場合は中央固定 */
-.hex-hero-wrap.has-copy-handoff .hex-hero-catch{
+/* 固定キャッチ */
+.hex-hero-catch.is-fixed-handoff{
   position:fixed;
+  top:50%;
   right:0;
   left:0;
   z-index:2147482000;
+  opacity:1;
+  visibility:visible;
+  transform:translateY(-50%);
 }
-.hex-hero-wrap.is-copy-handed-off .hex-hero-catch{
+
+/* WELCOMEコピーへ切り替わった後 */
+.hex-hero-catch.is-fixed-handoff.is-copy-handed-off{
   opacity:0;
+  visibility:hidden;
   transition:none;
 }
 
@@ -3756,12 +3763,6 @@ html.hex-opening-lock body{
   z-index:auto;
   isolation:auto;
   overflow:visible;
-}
-.hex-hero-wrap.is-ready .hex-hero-catch{
-  opacity:1;
-}
-.hex-hero-wrap.is-copy-swap-ready .hex-hero-catch{
-  transition:none;
 }
 
 /* キャッチ本文 */
