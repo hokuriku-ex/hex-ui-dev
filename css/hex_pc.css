@@ -24,21 +24,18 @@
   pointer-events:none;
 }
 
-/* 左 */
 .worker-1{
   left:8%;
   bottom:5%;
   width:220px;
 }
 
-/* 中央 */
 .worker-2{
   left:43%;
   bottom:18%;
   width:150px;
 }
 
-/* 右 */
 .worker-3{
   right:8%;
   bottom:8%;
@@ -46,7 +43,6 @@
 }
 
 @media screen and (max-width:768px){
-
   .alpha-test{
     height:500px;
   }
@@ -68,7 +64,6 @@
     bottom:12%;
     width:110px;
   }
-
 }
 
 /* =======================================
