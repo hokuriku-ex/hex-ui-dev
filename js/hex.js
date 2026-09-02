@@ -3414,6 +3414,57 @@ hexReady(function(){
     return hero.querySelector(".hex-hero-pc");
   }
 
+  function setPcHeroBaseHeight(){
+    var hero=getHero();
+    var pcHero;
+    var image;
+
+    if(!hero){
+      return;
+    }
+
+    pcHero=hero.querySelector(".hex-hero-pc");
+
+    if(!pcHero){
+      return;
+    }
+
+    image=pcHero.querySelector(".hex-hero-bg img");
+
+    if(!image){
+      return;
+    }
+
+    function updateBaseHeight(){
+      var baseWidth=1200;
+      var baseHeight;
+
+      if(!image.naturalWidth||!image.naturalHeight){
+        return;
+      }
+
+      baseHeight=
+        baseWidth*
+        image.naturalHeight/
+        image.naturalWidth;
+
+      pcHero.style.setProperty(
+        "--hex-hero-base-height",
+        baseHeight+"px"
+      );
+    }
+
+    if(image.complete){
+      updateBaseHeight();
+    }else{
+      image.addEventListener(
+        "load",
+        updateBaseHeight,
+        {once:true}
+      );
+    }
+  }
+
   function loadHeroVideos(){
     var activeHero=getActiveHero();
 
@@ -3526,6 +3577,7 @@ hexReady(function(){
       return;
     }
 
+    setPcHeroBaseHeight();
     loadHeroVideos();
     initCopyHandoff();
     showHero();
