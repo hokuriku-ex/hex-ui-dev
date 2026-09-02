@@ -3627,7 +3627,7 @@ html.hex-opening-lock body{
   display:none!important;
 }
 
-/* オリジナルヒーローを画面高さ表示 */
+/* オリジナルヒーローを画面高さ合わせ表示 */
 .hex-hero-wrap{
   position:relative;
   width:100%;
@@ -3642,6 +3642,8 @@ html.hex-opening-lock body{
   min-height:540px;
   background:#fff;
 }
+
+/* PC・スマホ切替 */
 .hex-hero-pc{
   display:block;
 }
@@ -3649,6 +3651,7 @@ html.hex-opening-lock body{
   display:none;
 }
 
+/* 背景・画像 */
 .hex-hero-bg{
   position:absolute;
   inset:0;
