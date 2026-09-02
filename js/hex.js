@@ -3304,7 +3304,6 @@ hexReady(function(){
     var hero=getHero();
     var fixedCopy;
     var welcomeCopy=document.querySelector(".hex-opening-copy-source");
-    var frameRequested=false;
 
     if(!hero||!welcomeCopy){
       return;
@@ -3322,56 +3321,6 @@ hexReady(function(){
       "hex-handoff-copy",
       "hex-welcome-copy"
     );
-
-    function updateCopyHandoff(){
-      var fixedRect;
-      var welcomeRect;
-      var isHandedOff;
-
-      frameRequested=false;
-
-      fixedRect=fixedCopy.getBoundingClientRect();
-      welcomeRect=welcomeCopy.getBoundingClientRect();
-
-      isHandedOff=welcomeRect.top<=fixedRect.top+1;
-
-      hero.classList.toggle(
-        "is-copy-handed-off",
-        isHandedOff
-      );
-
-      welcomeCopy.classList.toggle(
-        "is-copy-active",
-        isHandedOff
-      );
-    }
-
-    function requestUpdate(){
-      if(frameRequested){
-        return;
-      }
-
-      frameRequested=true;
-      window.requestAnimationFrame(updateCopyHandoff);
-    }
-
-    window.addEventListener(
-      "scroll",
-      requestUpdate,
-      {passive:true}
-    );
-
-    window.addEventListener(
-      "resize",
-      requestUpdate
-    );
-
-    window.addEventListener(
-      "orientationchange",
-      requestUpdate
-    );
-
-    requestUpdate();
   }
 
   function showHero(){
