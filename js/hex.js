@@ -3157,6 +3157,8 @@ hexReady(function(){
   }
 
   function initOpening(){
+return;
+
     var opening;
     var timeline;
 
