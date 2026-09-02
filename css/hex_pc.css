@@ -3642,6 +3642,20 @@ html.hex-opening-lock body{
   min-height:540px;
   background:#fff;
 }
+.gc_auto_frame_spotitem_box:has(.hex-hero-wrap){
+  width:100%!important;
+  max-width:none!important;
+  padding-left:0!important;
+  padding-right:0!important;
+}
+.gc_auto_frame_spotitem_body:has(.hex-hero-wrap){
+  width:100vw!important;
+  max-width:none!important;
+  margin-left:calc(50% - 50vw)!important;
+  margin-right:calc(50% - 50vw)!important;
+  padding-left:0!important;
+  padding-right:0!important;
+}
 
 /* PC・スマホ切替 */
 .hex-hero-pc{
