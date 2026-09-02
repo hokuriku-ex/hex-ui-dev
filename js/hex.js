@@ -3414,10 +3414,11 @@ hexReady(function(){
     return hero.querySelector(".hex-hero-pc");
   }
 
-  function setPcHeroBaseHeight(){
+  function initPcHeroStage(){
     var hero=getHero();
     var pcHero;
     var image;
+    var resizeRequested=false;
 
     if(!hero){
       return;
@@ -3435,34 +3436,99 @@ hexReady(function(){
       return;
     }
 
-    function updateBaseHeight(){
+    function updatePcHeroStage(){
       var baseWidth=1200;
       var baseHeight;
+      var viewportWidth;
+      var viewportHeight;
+      var widthScale;
+      var heightScale;
+      var scale;
+      var stageWidth;
+      var stageHeight;
+
+      resizeRequested=false;
+
+      if(window.matchMedia("(max-width:768px)").matches){
+        return;
+      }
 
       if(!image.naturalWidth||!image.naturalHeight){
         return;
       }
 
+      /* 横1200pxに対する元画像比率の高さ */
       baseHeight=
         baseWidth*
         image.naturalHeight/
         image.naturalWidth;
 
+      viewportWidth=
+        document.documentElement.clientWidth;
+
+      viewportHeight=Math.max(
+        document.documentElement.clientHeight-80,
+        0
+      );
+
+      widthScale=viewportWidth/baseWidth;
+      heightScale=viewportHeight/baseHeight;
+
+      /*
+       * 1未満には縮小しない。
+       * 横幅・高さのうち大きい倍率で拡大する。
+       */
+      scale=Math.max(
+        1,
+        widthScale,
+        heightScale
+      );
+
+      stageWidth=Math.ceil(baseWidth*scale);
+      stageHeight=Math.ceil(baseHeight*scale);
+
       pcHero.style.setProperty(
-        "--hex-hero-base-height",
-        baseHeight+"px"
+        "--hex-hero-stage-width",
+        stageWidth+"px"
+      );
+
+      pcHero.style.setProperty(
+        "--hex-hero-stage-height",
+        stageHeight+"px"
+      );
+    }
+
+    function requestStageUpdate(){
+      if(resizeRequested){
+        return;
+      }
+
+      resizeRequested=true;
+
+      window.requestAnimationFrame(
+        updatePcHeroStage
       );
     }
 
     if(image.complete){
-      updateBaseHeight();
+      updatePcHeroStage();
     }else{
       image.addEventListener(
         "load",
-        updateBaseHeight,
+        updatePcHeroStage,
         {once:true}
       );
     }
+
+    window.addEventListener(
+      "resize",
+      requestStageUpdate
+    );
+
+    window.addEventListener(
+      "orientationchange",
+      requestStageUpdate
+    );
   }
 
   function loadHeroVideos(){
@@ -3577,7 +3643,7 @@ hexReady(function(){
       return;
     }
 
-    setPcHeroBaseHeight();
+    initPcHeroStage();
     loadHeroVideos();
     initCopyHandoff();
     showHero();
