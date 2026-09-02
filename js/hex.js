@@ -1,227 +1,3 @@
-(function(){
-
-  document.querySelectorAll('.alpha-worker').forEach(function(worker){
-
-    var video=worker.querySelector('video');
-    var canvas=worker.querySelector('canvas');
-
-    var gl=canvas.getContext('webgl',{
-      alpha:true,
-      premultipliedAlpha:true,
-      antialias:false,
-      preserveDrawingBuffer:false
-    });
-
-    if(!gl)return;
-
-    var vs=
-      'attribute vec2 aPos;'+
-      'attribute vec2 aUV;'+
-      'varying vec2 vUV;'+
-      'void main(){'+
-        'vUV=aUV;'+
-        'gl_Position=vec4(aPos,0.0,1.0);'+
-      '}';
-
-    var fs=
-      'precision mediump float;'+
-      'uniform sampler2D uTex;'+
-      'varying vec2 vUV;'+
-      'void main(){'+
-        'vec2 colorUV=vec2(vUV.x,0.5+vUV.y*0.5);'+
-        'vec2 alphaUV=vec2(vUV.x,vUV.y*0.5);'+
-        'vec3 rgb=texture2D(uTex,colorUV).rgb;'+
-        'float a=texture2D(uTex,alphaUV).r;'+
-        'gl_FragColor=vec4(rgb*a,a);'+
-      '}';
-
-    function createShader(type,source){
-
-      var shader=gl.createShader(type);
-
-      gl.shaderSource(shader,source);
-      gl.compileShader(shader);
-
-      return shader;
-
-    }
-
-    var program=gl.createProgram();
-
-    gl.attachShader(
-      program,
-      createShader(gl.VERTEX_SHADER,vs)
-    );
-
-    gl.attachShader(
-      program,
-      createShader(gl.FRAGMENT_SHADER,fs)
-    );
-
-    gl.linkProgram(program);
-    gl.useProgram(program);
-
-    var data=new Float32Array([
-      -1,-1,0,0,
-       1,-1,1,0,
-      -1, 1,0,1,
-
-      -1, 1,0,1,
-       1,-1,1,0,
-       1, 1,1,1
-    ]);
-
-    var buffer=gl.createBuffer();
-
-    gl.bindBuffer(
-      gl.ARRAY_BUFFER,
-      buffer
-    );
-
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      data,
-      gl.STATIC_DRAW
-    );
-
-    var aPos=gl.getAttribLocation(
-      program,
-      'aPos'
-    );
-
-    var aUV=gl.getAttribLocation(
-      program,
-      'aUV'
-    );
-
-    gl.enableVertexAttribArray(aPos);
-
-    gl.vertexAttribPointer(
-      aPos,
-      2,
-      gl.FLOAT,
-      false,
-      16,
-      0
-    );
-
-    gl.enableVertexAttribArray(aUV);
-
-    gl.vertexAttribPointer(
-      aUV,
-      2,
-      gl.FLOAT,
-      false,
-      16,
-      8
-    );
-
-    var texture=gl.createTexture();
-
-    gl.bindTexture(
-      gl.TEXTURE_2D,
-      texture
-    );
-
-    gl.texParameteri(
-      gl.TEXTURE_2D,
-      gl.TEXTURE_MIN_FILTER,
-      gl.LINEAR
-    );
-
-    gl.texParameteri(
-      gl.TEXTURE_2D,
-      gl.TEXTURE_MAG_FILTER,
-      gl.LINEAR
-    );
-
-    gl.texParameteri(
-      gl.TEXTURE_2D,
-      gl.TEXTURE_WRAP_S,
-      gl.CLAMP_TO_EDGE
-    );
-
-    gl.texParameteri(
-      gl.TEXTURE_2D,
-      gl.TEXTURE_WRAP_T,
-      gl.CLAMP_TO_EDGE
-    );
-
-    gl.pixelStorei(
-      gl.UNPACK_FLIP_Y_WEBGL,
-      true
-    );
-
-    function render(){
-
-      if(video.readyState>=2){
-
-        gl.bindTexture(
-          gl.TEXTURE_2D,
-          texture
-        );
-
-        gl.texImage2D(
-          gl.TEXTURE_2D,
-          0,
-          gl.RGBA,
-          gl.RGBA,
-          gl.UNSIGNED_BYTE,
-          video
-        );
-
-        gl.clearColor(0,0,0,0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-
-        gl.drawArrays(
-          gl.TRIANGLES,
-          0,
-          6
-        );
-
-      }
-
-      if(video.requestVideoFrameCallback){
-
-        video.requestVideoFrameCallback(render);
-
-      }else{
-
-        requestAnimationFrame(render);
-
-      }
-
-    }
-
-    video.addEventListener(
-      'loadedmetadata',
-      function(){
-
-        canvas.width=video.videoWidth;
-
-        canvas.height=
-          Math.floor(
-            video.videoHeight/2
-          );
-
-        gl.viewport(
-          0,
-          0,
-          canvas.width,
-          canvas.height
-        );
-
-        video.play().catch(function(){});
-
-        render();
-
-      }
-    );
-
-  });
-
-})();
-
 /* =======================================
    定数定義
 ======================================= */
@@ -249,23 +25,24 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
 
 /* トップページセクション */
 const HOME_SECTIONS={
-  HOPWEB:'gc_auto_frame_home_0', /* ヒーロー画像 */
-  WELCOME:'gc_auto_frame_home_1', /* Welcomeメッセージ */
-  ABOUT:'gc_auto_frame_home_2', /* 私たちについて */
-  FIRST:'gc_auto_frame_home_3', /* 初めての方へ */
-  SERVICE:'gc_auto_frame_home_4', /* サービス案内 */
-  PICKUP:'gc_auto_frame_home_5', /* 注目アイテム */
-  NEWS_SECTION:'gc_auto_frame_home_6', /* お知らせセクション */
-  NEWS:'gc_auto_frame_home_7', /* 重要なお知らせ */
-  BLOG:'gc_auto_frame_home_8', /* スタッフブログ */
-  BANNER:'gc_auto_frame_home_9', /* バナー */
-  MOVIE:'gc_auto_frame_home_10', /* プロモーション動画 */
-  RECRUIT:'gc_auto_frame_home_11', /* 採用情報 */
-  CONTACT:'gc_auto_frame_home_12', /* お問い合わせ */
-  CALENDAR:'gc_auto_frame_home_13', /* 営業日カレンダー */
-  AREA:'gc_auto_frame_home_14', /* 施工エリア */
-  FOOTER:'gc_auto_frame_home_15', /* フッター */
-  FIXED_FOOTER:'gc_auto_frame_home_16' /* 固定フッター */
+  HOPWEB:'gc_auto_frame_home_0', /* 標準ヒーロー画像(非表示) */
+  HOPWEB:'gc_auto_frame_home_1', /* オリジナルヒーロー画像 */
+  WELCOME:'gc_auto_frame_home_2', /* Welcomeメッセージ */
+  ABOUT:'gc_auto_frame_home_3', /* 私たちについて */
+  FIRST:'gc_auto_frame_home_4', /* 初めての方へ */
+  SERVICE:'gc_auto_frame_home_5', /* サービス案内 */
+  PICKUP:'gc_auto_frame_home_6', /* 注目アイテム */
+  NEWS_SECTION:'gc_auto_frame_home_7', /* お知らせセクション */
+  NEWS:'gc_auto_frame_home_8', /* 重要なお知らせ */
+  BLOG:'gc_auto_frame_home_9', /* スタッフブログ */
+  BANNER:'gc_auto_frame_home_10', /* バナー */
+  MOVIE:'gc_auto_frame_home_11', /* プロモーション動画 */
+  RECRUIT:'gc_auto_frame_home_12', /* 採用情報 */
+  CONTACT:'gc_auto_frame_home_13', /* お問い合わせ */
+  CALENDAR:'gc_auto_frame_home_14', /* 営業日カレンダー */
+  AREA:'gc_auto_frame_home_15', /* 施工エリア */
+  FOOTER:'gc_auto_frame_home_16', /* フッター */
+  FIXED_FOOTER:'gc_auto_frame_home_17' /* 固定フッター */
 };
 
 /* トップページ交互背景対象 */
