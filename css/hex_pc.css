@@ -3622,11 +3622,11 @@ html.hex-opening-lock body{
 /* =======================================
    トップページ：ヒーロー画像
 ======================================= */
-/* 標準ヒーローを非表示（ヘッダーは残す） 
+/* 標準ヒーローを非表示（ヘッダーは残す） */
 #gc_auto_frame_home_0 > .heroimage_type.heroimage_type1{
   display:none!important;
 }
-*/
+
 /* オリジナルヒーローを画面高さ合わせ表示 */
 .hex-hero-wrap{
   position:relative;
