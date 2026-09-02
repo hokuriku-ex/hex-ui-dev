@@ -3658,10 +3658,6 @@ html.hex-opening-lock body{
   z-index:0;
   isolation:isolate;
   overflow:hidden;
-  width:100%!important;
-  min-width:1200px!important;
-  height:calc(100dvh - 80px)!important;
-  min-height:var(--hex-hero-base-height,675px)!important;
   margin-top:80px!important;
   background:#fff;
 }
@@ -3670,6 +3666,7 @@ html.hex-opening-lock body{
   max-width:none!important;
   padding-left:0!important;
   padding-right:0!important;
+  overflow:visible!important;
 }
 .gc_auto_frame_spotitem_body:has(.hex-hero-wrap){
   width:100vw!important;
@@ -3678,13 +3675,16 @@ html.hex-opening-lock body{
   margin-right:calc(50% - 50vw)!important;
   padding-left:0!important;
   padding-right:0!important;
+  overflow:visible!important;
 }
 
 /* PC・スマホ切替 */
 .hex-hero-pc{
-  min-width:1200px!important;
-  min-height:var(--hex-hero-base-height,675px)!important;
   display:block;
+  width:var(--hex-hero-stage-width,1200px)!important;
+  min-width:0!important;
+  height:var(--hex-hero-stage-height,675px)!important;
+  min-height:0!important;
 }
 .hex-hero-sp{
   display:none;
@@ -3702,7 +3702,25 @@ html.hex-opening-lock body{
   width:100%;
   height:100%;
   object-fit:cover!important;
-  object-position:center center!important;
+  object-position:left top!important;
+}
+
+/* 上位要素の横方向を開放 */
+html:not(.hex-opening-lock){
+  overflow-x:auto!important;
+}
+html:not(.hex-opening-lock) body{
+  overflow-x:visible!important;
+}
+.bg_post_index:has(.hex-hero-wrap),
+.post_index:has(.hex-hero-wrap),
+.post_index_contents:has(.hex-hero-wrap),
+.content:has(.hex-hero-wrap),
+.content_body:has(.hex-hero-wrap),
+.gc_auto_frame_spotitem_box:has(.hex-hero-wrap),
+.gc_auto_frame_spotitem_body:has(.hex-hero-wrap),
+.hex-hero-wrap{
+  overflow:visible!important;
 }
 
 /* この部分は仮 */
