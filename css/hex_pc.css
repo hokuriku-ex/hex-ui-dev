@@ -3654,7 +3654,7 @@ html.hex-opening-lock body{
     overflow-x:auto!important;
   }
   body:has(.hex-hero-wrap){
-    min-width:1200px!important;
+    min-width:var(--hex_medium_width)!important;
     overflow-x:visible!important;
   }
   .bg_post_index:has(.hex-hero-wrap),
@@ -3702,7 +3702,7 @@ html.hex-opening-lock body{
 /* PC・スマホ切替 */
 .hex-hero-pc{
   display:block;
-  width:var(--hex-hero-stage-width,1200px)!important;
+  width:var(--hex-hero-stage-width,var(--hex_medium_width))!important;
   min-width:0!important;
   height:var(--hex-hero-stage-height,675px)!important;
   min-height:0!important;
