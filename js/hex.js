@@ -3105,6 +3105,38 @@ function hexLoadAllAlphaVideos(scope){
 }
 
 /* =======================================
+   ヒーロー画像用動画
+======================================= */
+function hexInitHero(){
+
+  var heroPc=document.querySelector('.hex-hero-pc');
+  var heroSp=document.querySelector('.hex-hero-sp');
+
+  if(!heroPc&&!heroSp)return;
+
+  var isSp=window.matchMedia('(max-width:768px)').matches;
+
+  var activeHero=isSp?heroSp:heroPc;
+
+  if(!activeHero)return;
+
+  activeHero
+    .querySelectorAll('.hex-alpha-video')
+    .forEach(function(videoRoot){
+
+      hexLoadAlphaVideo(videoRoot);
+
+    });
+
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+
+  hexInitHero();
+
+});
+
+/* =======================================
    トップ 開幕～ウェルカムアニメーション
 ======================================= */
 hexReady(function(){
