@@ -26,28 +26,28 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
 /* トップページセクション */
 const HOME_SECTIONS={
   HOPWEB:'gc_auto_frame_home_0', /* 標準ヒーロー画像(非表示) */
-  HOPWEB:'gc_auto_frame_home_1', /* オリジナルヒーロー画像 */
-  WELCOME:'gc_auto_frame_home_2', /* Welcomeメッセージ */
-  ABOUT:'gc_auto_frame_home_3', /* 私たちについて */
-  FIRST:'gc_auto_frame_home_4', /* 初めての方へ */
-  SERVICE:'gc_auto_frame_home_5', /* サービス案内 */
-  PICKUP:'gc_auto_frame_home_6', /* 注目アイテム */
-  NEWS_SECTION:'gc_auto_frame_home_7', /* お知らせセクション */
-  NEWS:'gc_auto_frame_home_8', /* 重要なお知らせ */
-  BLOG:'gc_auto_frame_home_9', /* スタッフブログ */
-  BANNER:'gc_auto_frame_home_10', /* バナー */
-  MOVIE:'gc_auto_frame_home_11', /* プロモーション動画 */
-  RECRUIT:'gc_auto_frame_home_12', /* 採用情報 */
-  CONTACT:'gc_auto_frame_home_13', /* お問い合わせ */
-  CALENDAR:'gc_auto_frame_home_14', /* 営業日カレンダー */
-  AREA:'gc_auto_frame_home_15', /* 施工エリア */
-  FOOTER:'gc_auto_frame_home_16', /* フッター */
-  FIXED_FOOTER:'gc_auto_frame_home_17' /* 固定フッター */
+  OPENING:'gc_auto_frame_home_1', /* 開幕アニメーション */
+  HERO:'gc_auto_frame_home_2', /* オリジナルヒーロー画像 */
+  WELCOME:'gc_auto_frame_home_3', /* Welcomeメッセージ */
+  ABOUT:'gc_auto_frame_home_4', /* 私たちについて */
+  FIRST:'gc_auto_frame_home_5', /* 初めての方へ */
+  SERVICE:'gc_auto_frame_home_6', /* サービス案内 */
+  PICKUP:'gc_auto_frame_home_7', /* 注目アイテム */
+  NEWS_SECTION:'gc_auto_frame_home_8', /* お知らせセクション */
+  NEWS:'gc_auto_frame_home_9', /* 重要なお知らせ */
+  BLOG:'gc_auto_frame_home_10', /* スタッフブログ */
+  BANNER:'gc_auto_frame_home_11', /* バナー */
+  MOVIE:'gc_auto_frame_home_12', /* プロモーション動画 */
+  RECRUIT:'gc_auto_frame_home_13', /* 採用情報 */
+  CONTACT:'gc_auto_frame_home_14', /* お問い合わせ */
+  CALENDAR:'gc_auto_frame_home_15', /* 営業日カレンダー */
+  AREA:'gc_auto_frame_home_16', /* 施工エリア */
+  FOOTER:'gc_auto_frame_home_17', /* フッター */
+  FIXED_FOOTER:'gc_auto_frame_home_18' /* 固定フッター */
 };
 
 /* トップページ交互背景対象 */
 const HOME_DISPLAY_SECTIONS=[
-  HOME_SECTIONS.WELCOME,
   HOME_SECTIONS.ABOUT,
   HOME_SECTIONS.FIRST,
   HOME_SECTIONS.SERVICE,
@@ -59,6 +59,8 @@ const HOME_DISPLAY_SECTIONS=[
 
 /* スマホ左右余白対象 */
 const HOME_PADDING_SECTIONS=[
+  HOME_SECTIONS.OPENING,
+  HOME_SECTIONS.HERO,
   HOME_SECTIONS.WELCOME,
   HOME_SECTIONS.ABOUT,
   HOME_SECTIONS.FIRST,
