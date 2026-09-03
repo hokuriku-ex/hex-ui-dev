@@ -3402,30 +3402,8 @@ body,
   color:var(--hex-opening-navy);
   pointer-events:auto;
   transition:background-color .16s linear;
-  -webkit-mask-image:radial-gradient(
-    circle at
-    var(--hex-hero-origin-x)
-    var(--hex-hero-origin-y),
-    transparent 0,
-    transparent var(--hex-opening-hole),
-    #000 calc(var(--hex-opening-hole) + 1px),
-    #000 100%
-  );
-  mask-image:radial-gradient(
-    circle at
-    var(--hex-hero-origin-x)
-    var(--hex-hero-origin-y),
-    transparent 0,
-    transparent var(--hex-opening-hole),
-    #000 calc(var(--hex-opening-hole) + 1px),
-    #000 100%
-  );
-  -webkit-mask-repeat:no-repeat;
-  mask-repeat:no-repeat;
-  -webkit-mask-position:0 0;
-  mask-position:0 0;
-  -webkit-mask-size:100% 100%;
-  mask-size:100% 100%;
+  -webkit-mask-image:none;
+  mask-image:none;
 }
 .hex-opening.is-plaster-complete{
   background:var(--hex-opening-white);
@@ -3625,7 +3603,35 @@ body,
 
 /* 開幕 → 本物のヒーローを円形表示 */
 .hex-opening.is-hero-reveal{
-  animation:hex-opening-hero-reveal 1.1s cubic-bezier(.65,0,.25,1) forwards;
+  -webkit-mask-image:radial-gradient(
+    circle at
+    var(--hex-hero-origin-x)
+    var(--hex-hero-origin-y),
+    transparent 0,
+    transparent var(--hex-opening-hole),
+    #000 calc(var(--hex-opening-hole) + 1px),
+    #000 100%
+  );
+  mask-image:radial-gradient(
+    circle at
+    var(--hex-hero-origin-x)
+    var(--hex-hero-origin-y),
+    transparent 0,
+    transparent var(--hex-opening-hole),
+    #000 calc(var(--hex-opening-hole) + 1px),
+    #000 100%
+  );
+  -webkit-mask-repeat:no-repeat;
+  mask-repeat:no-repeat;
+  -webkit-mask-position:0 0;
+  mask-position:0 0;
+  -webkit-mask-size:100% 100%;
+  mask-size:100% 100%;
+  animation:
+    hex-opening-hero-reveal
+    1.1s
+    cubic-bezier(.65,0,.25,1)
+    forwards;
 }
 
 @keyframes hex-opening-hero-reveal{
