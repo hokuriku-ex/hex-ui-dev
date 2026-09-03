@@ -3780,15 +3780,6 @@ html body
 
   html:not(.hex-opening-lock)
   body:has(.hex-hero-wrap){
-    /*
-    * ヒーロー幅にbody幅を合わせることで、
-    * 1200px未満では横スクロールを発生させる。
-    */
-    min-width:var(
-      --hex-hero-stage-width,
-      var(--hex_medium_width)
-    )!important;
-
     overflow-x:visible!important;
   }
 }
