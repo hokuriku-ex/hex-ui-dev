@@ -3665,7 +3665,7 @@ html.hex-opening-lock body{
 .hex-hero-wrap{
   position:relative;
   width:100%;
-  max-width:100vw;
+  max-width:none;
   height:100vh;
   height:100dvh;
   overflow-x:auto!important;
