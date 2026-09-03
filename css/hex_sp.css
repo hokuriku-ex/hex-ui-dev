@@ -1215,10 +1215,9 @@
 ======================================= */
 @media screen and (max-width:768px){
   .hex-hero{
-    min-height:560px;
+    min-height:0;
   }
   .hex-hero-catch{
-    width:calc(100vw - 40px);
     padding:0 16px;
   }
   .hex-handoff-copy .hex-opening-main{
