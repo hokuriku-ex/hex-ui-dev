@@ -3397,7 +3397,9 @@ hexReady(function(){
   "use strict";
 
   function getHero(){
-    return document.querySelector(".hex-hero-wrap");
+    return document.querySelector(
+      ".hex-hero-wrap"
+    );
   }
 
   function getActiveHero(){
@@ -3407,57 +3409,85 @@ hexReady(function(){
       return null;
     }
 
-    if(window.matchMedia("(max-width:768px)").matches){
-      return hero.querySelector(".hex-hero-sp");
+    if(
+      window.matchMedia(
+        "(max-width:768px)"
+      ).matches
+    ){
+      return hero.querySelector(
+        ".hex-hero-sp"
+      );
     }
 
-    return hero.querySelector(".hex-hero-pc");
+    return hero.querySelector(
+      ".hex-hero-pc"
+    );
   }
 
-  function initPcHeroStage(){
+  function initHeroStage(){
     var hero=getHero();
-    var pcHero;
-    var image;
     var resizeRequested=false;
+    var waitingImage=null;
 
     if(!hero){
       return;
     }
 
-    pcHero=hero.querySelector(".hex-hero-pc");
-
-    if(!pcHero){
-      return;
-    }
-
-    image=pcHero.querySelector(".hex-hero-bg img");
-
-    if(!image){
-      return;
-    }
-
-    function updatePcHeroStage(){
+    function updateHeroStage(){
+      var activeHero;
+      var image;
       var baseWidth=1200;
+      var headerHeight=80;
       var baseHeight;
       var viewportWidth;
       var viewportHeight;
-      var widthScale;
-      var heightScale;
-      var scale;
       var stageWidth;
-      var stageHeight;
+      var imageHeight;
 
       resizeRequested=false;
 
-      if(window.matchMedia("(max-width:768px)").matches){
+      activeHero=getActiveHero();
+
+      if(!activeHero){
         return;
       }
 
-      if(!image.naturalWidth||!image.naturalHeight){
+      image=activeHero.querySelector(
+        ".hex-hero-bg img"
+      );
+
+      if(!image){
         return;
       }
 
-      /* 横1200pxに対する元画像比率の高さ */
+      /*
+       * PC・SP切替直後など、
+       * 対象画像が未読込の場合は
+       * 読込完了後に再計算する。
+       */
+      if(
+        !image.naturalWidth||
+        !image.naturalHeight
+      ){
+        if(waitingImage!==image){
+          waitingImage=image;
+
+          image.addEventListener(
+            "load",
+            requestStageUpdate,
+            {once:true}
+          );
+        }
+
+        return;
+      }
+
+      waitingImage=null;
+
+      /*
+       * 横1200pxに対する
+       * 元画像比率上の縦基準。
+       */
       baseHeight=
         baseWidth*
         image.naturalHeight/
@@ -3466,36 +3496,59 @@ hexReady(function(){
       viewportWidth=
         document.documentElement.clientWidth;
 
+      /*
+       * ヒーローの表示高。
+       * ヘッダー80pxを除いた
+       * 画面高さいっぱいにする。
+       */
       viewportHeight=Math.max(
-        document.documentElement.clientHeight-80,
-        0
+        document.documentElement.clientHeight-
+        headerHeight,
+        1
       );
 
-      if(viewportWidth>=1200){
-        /* 1200px以上：画面サイズをヒーロー枠にする */
-        stageWidth=viewportWidth;
-        stageHeight=viewportHeight;
-      }else{
-        /*
-        * 1200px未満：
-        * 元画像比率を維持しながら、
-        * 基準サイズ以下には縮小しない
-        */
-        heightScale=viewportHeight/baseHeight;
-        scale=Math.max(1,heightScale);
+      /*
+       * 横幅は1200pxを最低基準とする。
+       *
+       * 1200px未満：
+       *   1200pxを維持して横スクロール
+       *
+       * 1200px以上：
+       *   画面幅100%
+       */
+      stageWidth=Math.max(
+        baseWidth,
+        viewportWidth
+      );
 
-        stageWidth=baseWidth*scale;
-        stageHeight=baseHeight*scale;
-      }
+      /*
+       * 背景画像の高さ。
+       *
+       * 画面高が縦基準より高い：
+       *   画面高に合わせる
+       *
+       * 画面高が縦基準より低い：
+       *   縦基準を維持し、
+       *   ヒーロー枠から出た下部を見切る
+       */
+      imageHeight=Math.max(
+        baseHeight,
+        viewportHeight
+      );
 
-      pcHero.style.setProperty(
+      document.documentElement.style.setProperty(
         "--hex-hero-stage-width",
-        stageWidth+"px"
+        Math.ceil(stageWidth)+"px"
       );
 
-      pcHero.style.setProperty(
-        "--hex-hero-stage-height",
-        stageHeight+"px"
+      document.documentElement.style.setProperty(
+        "--hex-hero-viewport-height",
+        Math.ceil(viewportHeight)+"px"
+      );
+
+      document.documentElement.style.setProperty(
+        "--hex-hero-image-height",
+        Math.ceil(imageHeight)+"px"
       );
     }
 
@@ -3507,19 +3560,11 @@ hexReady(function(){
       resizeRequested=true;
 
       window.requestAnimationFrame(
-        updatePcHeroStage
+        updateHeroStage
       );
     }
 
-    if(image.complete){
-      updatePcHeroStage();
-    }else{
-      image.addEventListener(
-        "load",
-        updatePcHeroStage,
-        {once:true}
-      );
-    }
+    updateHeroStage();
 
     window.addEventListener(
       "resize",
@@ -3539,33 +3584,53 @@ hexReady(function(){
       return;
     }
 
-    activeHero.querySelectorAll(".hex-alpha-video").forEach(function(videoRoot){
-      if(typeof window.hexLoadAlphaVideo==="function"){
-        window.hexLoadAlphaVideo(videoRoot);
-      }
-    });
+    activeHero
+      .querySelectorAll(
+        ".hex-alpha-video"
+      )
+      .forEach(function(videoRoot){
+        if(
+          typeof window.hexLoadAlphaVideo===
+          "function"
+        ){
+          window.hexLoadAlphaVideo(
+            videoRoot
+          );
+        }
+      });
   }
 
   function initCopyHandoff(){
     var hero=getHero();
     var fixedCopy;
-    var welcomeCopy=document.querySelector(".hex-opening-copy-source");
+    var welcomeCopy=document.querySelector(
+      ".hex-opening-copy-source"
+    );
     var frameRequested=false;
 
     if(!hero||!welcomeCopy){
       return;
     }
 
-    fixedCopy=hero.querySelector(".hex-hero-catch");
+    fixedCopy=hero.querySelector(
+      ".hex-hero-catch"
+    );
 
     if(!fixedCopy){
       return;
     }
 
-    hero.classList.add("has-copy-handoff");
+    hero.classList.add(
+      "has-copy-handoff"
+    );
 
-    fixedCopy.classList.add("is-fixed-handoff");
-    document.body.appendChild(fixedCopy);
+    fixedCopy.classList.add(
+      "is-fixed-handoff"
+    );
+
+    document.body.appendChild(
+      fixedCopy
+    );
 
     welcomeCopy.classList.add(
       "hex-handoff-copy",
@@ -3579,10 +3644,14 @@ hexReady(function(){
 
       frameRequested=false;
 
-      fixedRect=fixedCopy.getBoundingClientRect();
-      welcomeRect=welcomeCopy.getBoundingClientRect();
+      fixedRect=
+        fixedCopy.getBoundingClientRect();
 
-      isHandedOff=welcomeRect.top<=fixedRect.top+1;
+      welcomeRect=
+        welcomeCopy.getBoundingClientRect();
+
+      isHandedOff=
+        welcomeRect.top<=fixedRect.top+1;
 
       fixedCopy.classList.toggle(
         "is-copy-handed-off",
@@ -3601,7 +3670,10 @@ hexReady(function(){
       }
 
       frameRequested=true;
-      window.requestAnimationFrame(updateCopyHandoff);
+
+      window.requestAnimationFrame(
+        updateCopyHandoff
+      );
     }
 
     window.addEventListener(
@@ -3630,10 +3702,14 @@ hexReady(function(){
       return;
     }
 
-    hero.classList.add("is-ready");
+    hero.classList.add(
+      "is-ready"
+    );
 
     window.setTimeout(function(){
-      hero.classList.add("is-copy-swap-ready");
+      hero.classList.add(
+        "is-copy-swap-ready"
+      );
     },750);
   }
 
@@ -3644,7 +3720,7 @@ hexReady(function(){
       return;
     }
 
-    initPcHeroStage();
+    initHeroStage();
     loadHeroVideos();
     initCopyHandoff();
     showHero();
