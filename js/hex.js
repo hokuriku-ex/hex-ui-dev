@@ -3488,8 +3488,11 @@ hexReady(function(){
         image.naturalHeight/
         image.naturalWidth;
 
-      viewportWidth=
-        document.documentElement.clientWidth;
+      /*
+      * スクロール領域そのものの表示幅を基準にする。
+      * 縦スクロールバーによる幅の差も吸収される。
+      */
+      viewportWidth=hero.clientWidth;
 
       /*
       * ヒーロー表示高。
