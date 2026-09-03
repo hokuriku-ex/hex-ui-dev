@@ -3105,7 +3105,7 @@ function hexLoadAllAlphaVideos(scope){
 /* =======================================
    開幕アニメーション
 ======================================= */
-(function(){
+hexReady(function(){
   "use strict";
 
   /* <head>内の初期非表示判定と同じキーにする */
@@ -3404,31 +3404,8 @@ function hexLoadAllAlphaVideos(scope){
     });
   }
 
-  function bootOpening(){
-    try{
-      initOpening();
-    }catch(e){
-      document.documentElement.classList.remove(
-        "hex-opening-pending",
-        "hex-opening-lock"
-      );
-
-      if(window.console&&console.error){
-        console.error("Opening animation error:",e);
-      }
-    }
-  }
-
-  if(document.readyState==="loading"){
-    document.addEventListener(
-      "DOMContentLoaded",
-      bootOpening,
-      {once:true}
-    );
-  }else{
-    bootOpening();
-  }
-})();
+  initOpening();
+});
 
 /* =======================================
    トップページ：ヒーロー画像
