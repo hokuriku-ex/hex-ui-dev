@@ -3438,7 +3438,8 @@ hexReady(function(){
       var image;
       var baseWidth=1200;
       var headerHeight=80;
-      var baseHeight;
+      var imageRatio;
+      var referenceHeight;
       var viewportWidth;
       var viewportHeight;
       var stageWidth;
@@ -3461,10 +3462,10 @@ hexReady(function(){
       }
 
       /*
-       * PC・SP切替直後など、
-       * 対象画像が未読込の場合は
-       * 読込完了後に再計算する。
-       */
+      * PC・SP切替直後など、
+      * 対象画像が未読込の場合は
+      * 読込完了後に再計算する。
+      */
       if(
         !image.naturalWidth||
         !image.naturalHeight
@@ -3484,12 +3485,8 @@ hexReady(function(){
 
       waitingImage=null;
 
-      /*
-       * 横1200pxに対する
-       * 元画像比率上の縦基準。
-       */
-      baseHeight=
-        baseWidth*
+      /* 元画像の縦横比 */
+      imageRatio=
         image.naturalHeight/
         image.naturalWidth;
 
@@ -3497,10 +3494,9 @@ hexReady(function(){
         document.documentElement.clientWidth;
 
       /*
-       * ヒーローの表示高。
-       * ヘッダー80pxを除いた
-       * 画面高さいっぱいにする。
-       */
+      * ヒーロー表示高。
+      * 画面高さからヘッダー80pxを引く。
+      */
       viewportHeight=Math.max(
         document.documentElement.clientHeight-
         headerHeight,
@@ -3508,31 +3504,36 @@ hexReady(function(){
       );
 
       /*
-       * 横幅は1200pxを最低基準とする。
-       *
-       * 1200px未満：
-       *   1200pxを維持して横スクロール
-       *
-       * 1200px以上：
-       *   画面幅100%
-       */
+      * 横幅
+      *
+      * 1200px未満：
+      *   1200pxを維持して横スクロール
+      *
+      * 1200px以上：
+      *   画面幅100%
+      */
       stageWidth=Math.max(
         baseWidth,
         viewportWidth
       );
 
       /*
-       * 背景画像の高さ。
-       *
-       * 画面高が縦基準より高い：
-       *   画面高に合わせる
-       *
-       * 画面高が縦基準より低い：
-       *   縦基準を維持し、
-       *   ヒーロー枠から出た下部を見切る
-       */
+      * 現在の表示幅に対応する
+      * 画像比率上の縦基準。
+      */
+      referenceHeight=
+        stageWidth*
+        imageRatio;
+
+      /*
+      * 画面高が縦基準以上：
+      *   画面高に合わせる
+      *
+      * 画面高が縦基準未満：
+      *   縦基準を維持する
+      */
       imageHeight=Math.max(
-        baseHeight,
+        referenceHeight,
         viewportHeight
       );
 
