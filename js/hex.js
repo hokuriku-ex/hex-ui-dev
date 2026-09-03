@@ -3108,7 +3108,8 @@ function hexLoadAllAlphaVideos(scope){
 hexReady(function(){
   "use strict";
 
-  var STORAGE_KEY="hex_top_opening_v2_viewed";
+  /* <head>内の初期非表示判定と同じキーにする */
+  var STORAGE_KEY="hex_top_opening_viewed";
 
   /* 制作中はtrue。本番公開時にfalseへ変更 */
   var FORCE_PLAY=true;
@@ -3300,45 +3301,14 @@ hexReady(function(){
     }
   }
 
-  function initOpening(){
-    var opening;
-    var timeline;
+  function showPendingPage(){
+    document.documentElement.classList.remove(
+      "hex-opening-pending"
+    );
+  }
 
-    if(!isTopPage()){
-      return;
-    }
-
-
-    if(
-      isReducedMotion()||
-      (!FORCE_PLAY&&sessionStorage.getItem(STORAGE_KEY))
-    ){
-      ensureHeroReady();
-      return;
-    }
-
-    if(!FORCE_PLAY){
-      sessionStorage.setItem(STORAGE_KEY,"1");
-    }
-
-    /* 両方OFFなら開幕レイヤーを作らずヒーローを即時表示 */
-    if(!ENABLE_PLASTER_ANIMATION&&!ENABLE_LOGO_ANIMATION){
-      ensureHeroReady();
-      return;
-    }
-
-    ensureHeroReady();
-
-    opening=createOpeningElement();
-    document.documentElement.classList.add("hex-opening-lock");
-    document.body.insertBefore(opening,document.body.firstChild);
-
-    requestAnimationFrame(function(){
-      document.documentElement.classList.remove('hex-opening-pending');
-      document.documentElement.classList.add('hex-opening-ready');
-    });
-
-    timeline=OPENING_START_DELAY;
+  function startOpeningTimeline(opening){
+    var timeline=OPENING_START_DELAY;
 
     if(ENABLE_PLASTER_ANIMATION){
       window.setTimeout(function(){
@@ -3383,6 +3353,55 @@ hexReady(function(){
     window.setTimeout(function(){
       finishOpening(opening);
     },timeline+SAFETY_EXTRA_TIME);
+  }
+
+  function initOpening(){
+    var opening;
+
+    if(!isTopPage()){
+      showPendingPage();
+      return;
+    }
+
+
+    if(
+      isReducedMotion()||
+      (!FORCE_PLAY&&sessionStorage.getItem(STORAGE_KEY))
+    ){
+      ensureHeroReady();
+      showPendingPage();
+      return;
+    }
+
+    if(!FORCE_PLAY){
+      sessionStorage.setItem(STORAGE_KEY,"1");
+    }
+
+    /* 両方OFFなら開幕レイヤーを作らずヒーローを即時表示 */
+    if(!ENABLE_PLASTER_ANIMATION&&!ENABLE_LOGO_ANIMATION){
+      ensureHeroReady();
+      showPendingPage();
+      return;
+    }
+
+    ensureHeroReady();
+
+    opening=createOpeningElement();
+    document.documentElement.classList.add("hex-opening-lock");
+    document.body.insertBefore(opening,document.body.firstChild);
+
+    /*
+     * 開幕レイヤーを先に設置してからページを表示する。
+     * 2フレーム待ち、初期状態が描画されてからタイムラインを開始する。
+     */
+    showPendingPage();
+
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        document.documentElement.classList.add("hex-opening-ready");
+        startOpeningTimeline(opening);
+      });
+    });
   }
 
   initOpening();
