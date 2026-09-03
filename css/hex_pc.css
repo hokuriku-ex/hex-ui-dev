@@ -3630,7 +3630,7 @@ body,
 
 @keyframes hex-opening-hero-reveal{
   from{
-    --hex-opening-hole:0px;
+    --hex-opening-hole:1px;
   }
   to{
     --hex-opening-hole:150vmax;
