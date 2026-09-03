@@ -3648,19 +3648,50 @@ html.hex-opening-lock body{
   display:none!important;
 }
 
-/* オリジナルヒーローを画面高さ合わせ表示 */
+/* オリジナルヒーローを画面高さ合わせ表示
+ * JSでhtmlへ設定される変数
+ *
+ * --hex-hero-stage-width
+ *   画面幅と1200pxの大きい方
+ *
+ * --hex-hero-viewport-height
+ *   画面高さからヘッダー80pxを引いた高さ
+ *
+ * --hex-hero-image-height
+ *   画面高と画像比率基準高の大きい方
+ */
+
+/* ヒーロー全体 */
 .hex-hero-wrap{
   position:relative;
   width:100%;
 }
+
+/* PC・SP共通の表示枠 */
 .hex-hero{
   position:relative;
   z-index:0;
   isolation:isolate;
   overflow:hidden;
+
+  width:var(
+    --hex-hero-stage-width,
+    var(--hex_medium_width)
+  )!important;
+
+  min-width:0!important;
+
+  height:var(
+    --hex-hero-viewport-height,
+    calc(100dvh - 80px)
+  )!important;
+
+  min-height:0!important;
   margin-top:80px!important;
   background:#fff;
 }
+
+/* CMSの横幅・余白を解除 */
 .gc_auto_frame_spotitem_box:has(.hex-hero-wrap){
   width:100%!important;
   max-width:none!important;
@@ -3668,11 +3699,27 @@ html.hex-opening-lock body{
   padding-right:0!important;
   overflow:visible!important;
 }
+
+html body
 .gc_auto_frame_spotitem_body:has(.hex-hero-wrap){
   width:100vw!important;
   max-width:none!important;
-  margin-left:calc(50% - 50vw)!important;
-  margin-right:calc(50% - 50vw)!important;
+
+  /*
+   * 通常画面ではフルワイド補正。
+   * bodyが1200px以上になった場合は
+   * 左側へ余計に移動させない。
+   */
+  margin-left:min(
+    0px,
+    calc(50% - 50vw)
+  )!important;
+
+  margin-right:min(
+    0px,
+    calc(50% - 50vw)
+  )!important;
+
   padding-left:0!important;
   padding-right:0!important;
   overflow:visible!important;
@@ -3681,22 +3728,29 @@ html.hex-opening-lock body{
 /* PC・スマホ切替 */
 .hex-hero-pc{
   display:block;
-  width:var(--hex-hero-stage-width,var(--hex_medium_width))!important;
-  min-width:0!important;
-  height:var(--hex-hero-stage-height,675px)!important;
-  min-height:0!important;
 }
+
 .hex-hero-sp{
   display:none;
 }
 
-/* 背景・画像 */
+/* 背景画像領域 */
 .hex-hero-bg{
   position:absolute;
-  inset:0;
+  top:0;
+  right:0;
+  bottom:auto;
+  left:0;
+
   width:100%;
-  height:100%;
+
+  height:var(
+    --hex-hero-image-height,
+    675px
+  );
 }
+
+/* 背景画像 */
 .hex-hero-bg img{
   display:block;
   width:100%;
@@ -3705,13 +3759,7 @@ html.hex-opening-lock body{
   object-position:left top!important;
 }
 
-/* 上位要素の横方向を開放 */
-html:not(.hex-opening-lock){
-  overflow-x:auto!important;
-}
-html:not(.hex-opening-lock) body{
-  overflow-x:visible!important;
-}
+/* ヒーローを含む上位要素の切り抜きを解除 */
 .bg_post_index:has(.hex-hero-wrap),
 .post_index:has(.hex-hero-wrap),
 .post_index_contents:has(.hex-hero-wrap),
@@ -3723,33 +3771,24 @@ html:not(.hex-opening-lock) body{
   overflow:visible!important;
 }
 
-/* 横スクロール対応 */
-@media screen and (min-width:769px){
-  html:has(.hex-hero-wrap){
-    overflow-x:auto!important;
-    overflow-y:scroll;
-  }
-  body:has(.hex-hero-wrap){
-    min-width:var(--hex_medium_width)!important;
-    overflow-x:visible!important;
-  }
-  .bg_post_index:has(.hex-hero-wrap),
-  .post_index:has(.hex-hero-wrap),
-  .post_index_contents:has(.hex-hero-wrap),
-  .content:has(.hex-hero-wrap),
-  .content_body:has(.hex-hero-wrap),
-  .gc_auto_frame_spotitem_box:has(.hex-hero-wrap),
-  .gc_auto_frame_spotitem_body:has(.hex-hero-wrap),
-  .hex-hero-wrap{
-    overflow:visible!important;
-  }
+/* 開幕終了後の横スクロール */
+html:not(.hex-opening-lock):has(.hex-hero-wrap){
+  overflow-x:auto!important;
+  overflow-y:scroll;
 }
-@media screen and (min-width:769px) and (max-width:1199px){
-  html body
-  .gc_auto_frame_spotitem_body:has(.hex-hero-wrap){
-    margin-left:0!important;
-    margin-right:0!important;
-  }
+
+html:not(.hex-opening-lock)
+body:has(.hex-hero-wrap){
+  /*
+   * ヒーロー幅にbody幅を合わせることで、
+   * 1200px未満では横スクロールを発生させる。
+   */
+  min-width:var(
+    --hex-hero-stage-width,
+    var(--hex_medium_width)
+  )!important;
+
+  overflow-x:visible!important;
 }
 
 /* この部分は仮 */
