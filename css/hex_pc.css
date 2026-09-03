@@ -3766,8 +3766,7 @@ html body
 .content:has(.hex-hero-wrap),
 .content_body:has(.hex-hero-wrap),
 .gc_auto_frame_spotitem_box:has(.hex-hero-wrap),
-.gc_auto_frame_spotitem_body:has(.hex-hero-wrap),
-.hex-hero-wrap{
+.gc_auto_frame_spotitem_body:has(.hex-hero-wrap){
   overflow:visible!important;
 }
 
