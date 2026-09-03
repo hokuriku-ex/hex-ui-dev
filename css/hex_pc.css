@@ -3772,23 +3772,25 @@ html body
 }
 
 /* 開幕終了後の横スクロール */
-html:not(.hex-opening-lock):has(.hex-hero-wrap){
-  overflow-x:auto!important;
-  overflow-y:scroll;
-}
+@media screen and (min-width:769px){
+  html:not(.hex-opening-lock):has(.hex-hero-wrap){
+    overflow-x:auto!important;
+    overflow-y:scroll;
+  }
 
-html:not(.hex-opening-lock)
-body:has(.hex-hero-wrap){
-  /*
-   * ヒーロー幅にbody幅を合わせることで、
-   * 1200px未満では横スクロールを発生させる。
-   */
-  min-width:var(
-    --hex-hero-stage-width,
-    var(--hex_medium_width)
-  )!important;
+  html:not(.hex-opening-lock)
+  body:has(.hex-hero-wrap){
+    /*
+    * ヒーロー幅にbody幅を合わせることで、
+    * 1200px未満では横スクロールを発生させる。
+    */
+    min-width:var(
+      --hex-hero-stage-width,
+      var(--hex_medium_width)
+    )!important;
 
-  overflow-x:visible!important;
+    overflow-x:visible!important;
+  }
 }
 
 /* この部分は仮 */
