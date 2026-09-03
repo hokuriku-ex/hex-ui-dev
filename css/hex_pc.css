@@ -43,7 +43,7 @@ h6{
 
 /* スクロールバー対策 */
 html{
-  overflow-y:scroll;
+  overflow-y:auto;
 }
 
 /* 改行バランス調整 */
