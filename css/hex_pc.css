@@ -3377,7 +3377,7 @@ body,
 @property --hex-opening-hole{
   syntax:"<length>";
   inherits:false;
-  initial-value:0px;
+  initial-value:1px;
 }
 
 :root{
@@ -3390,7 +3390,7 @@ body,
 }
 
 .hex-opening{
-  --hex-opening-hole:0px;
+  --hex-opening-hole:1px;
   position:fixed;
   inset:0;
   z-index:2147483000;
@@ -3403,25 +3403,29 @@ body,
   pointer-events:auto;
   transition:background-color .16s linear;
   -webkit-mask-image:radial-gradient(
-    circle var(--hex-opening-hole) at
+    circle at
     var(--hex-hero-origin-x)
     var(--hex-hero-origin-y),
     transparent 0,
-    transparent calc(var(--hex-opening-hole) - 1px),
-    #000 var(--hex-opening-hole),
+    transparent var(--hex-opening-hole),
+    #000 calc(var(--hex-opening-hole) + 1px),
     #000 100%
   );
   mask-image:radial-gradient(
-    circle var(--hex-opening-hole) at
+    circle at
     var(--hex-hero-origin-x)
     var(--hex-hero-origin-y),
     transparent 0,
-    transparent calc(var(--hex-opening-hole) - 1px),
-    #000 var(--hex-opening-hole),
+    transparent var(--hex-opening-hole),
+    #000 calc(var(--hex-opening-hole) + 1px),
     #000 100%
   );
   -webkit-mask-repeat:no-repeat;
   mask-repeat:no-repeat;
+  -webkit-mask-position:0 0;
+  mask-position:0 0;
+  -webkit-mask-size:100% 100%;
+  mask-size:100% 100%;
 }
 .hex-opening.is-plaster-complete{
   background:var(--hex-opening-white);
