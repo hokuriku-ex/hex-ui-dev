@@ -3661,10 +3661,26 @@ html.hex-opening-lock body{
  *   画面高と画像比率基準高の大きい方
  */
 
-/* ヒーロー全体 */
+/* ヒーローだけを独立した横スクロール領域にする */
 .hex-hero-wrap{
   position:relative;
   width:100%;
+  max-width:100vw;
+  height:100vh;
+  height:100dvh;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  box-sizing:border-box;
+  overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* ページ全体には横スクロールを出さない */
+html:not(.hex-opening-lock):has(.hex-hero-wrap),
+html:not(.hex-opening-lock)
+body:has(.hex-hero-wrap){
+  min-width:0!important;
+  overflow-x:hidden!important;
 }
 
 /* PC・SP共通の表示枠 */
@@ -3768,28 +3784,6 @@ html body
 .gc_auto_frame_spotitem_box:has(.hex-hero-wrap),
 .gc_auto_frame_spotitem_body:has(.hex-hero-wrap){
   overflow:visible!important;
-}
-
-/* ヒーローだけを独立した横スクロール領域にする */
-.hex-hero-wrap{
-  position:relative;
-  width:100%;
-  max-width:100vw;
-  height:100vh;
-  height:100dvh;
-  overflow-x:auto!important;
-  overflow-y:hidden!important;
-  box-sizing:border-box;
-  overscroll-behavior-x:contain;
-  -webkit-overflow-scrolling:touch;
-}
-
-/* ページ全体には横スクロールを出さない */
-html:not(.hex-opening-lock):has(.hex-hero-wrap),
-html:not(.hex-opening-lock)
-body:has(.hex-hero-wrap){
-  min-width:0!important;
-  overflow-x:hidden!important;
 }
 
 /* この部分は仮 */
