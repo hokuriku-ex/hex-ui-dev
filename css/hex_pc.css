@@ -3960,9 +3960,16 @@ html body
   bottom:16px;
   left:0;
   z-index:10;
+  width:100vw;
   padding-top:0;
   text-align:center;
   pointer-events:none;
+  transform:translate3d(
+    var(--hex-hero-scroll-x,0px),
+    0,
+    0
+  );
+  will-change:transform;
 }
 .hex-scroll-indicator span{
   position:relative;
