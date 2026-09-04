@@ -3538,6 +3538,8 @@ hexReady(function(){
       var viewportHeight;
       var stageWidth;
       var imageHeight;
+      var centerOffsetY;
+      var horizontalScroller;
 
       resizeRequested=false;
 
@@ -3601,11 +3603,17 @@ hexReady(function(){
         viewportHeight
       );
 
-      /*
-      * 画面から見切れる画像の高さ
-      */
+      /* 画面から見切れる画像の高さ */
+      centerOffsetY=Math.max(
+        (imageHeight-viewportHeight)/2,
+        0
+      );
+
+      /* 中央位置から画像下端までの移動距離 */
       scrollDistance=Math.max(
-        imageHeight-viewportHeight,
+        imageHeight-
+        viewportHeight-
+        centerOffsetY,
         0
       );
 
@@ -3628,6 +3636,29 @@ hexReady(function(){
         "--hex-hero-scroll-distance",
         Math.ceil(scrollDistance)+"px"
       );
+
+      document.documentElement.style.setProperty(
+        "--hex-hero-start-y",
+        (-centerOffsetY)+"px"
+      );
+      
+      /* 横方向の中央開始位置 */
+      horizontalScroller=hero.querySelector(
+        ".hex-hero-sticky"
+      );
+
+      if(horizontalScroller){
+        window.requestAnimationFrame(function(){
+          horizontalScroller.scrollLeft=
+            Math.max(
+              (
+                horizontalScroller.scrollWidth-
+                horizontalScroller.clientWidth
+              )/2,
+              0
+            );
+        });
+      }
 
       requestScrollUpdate();
     }
