@@ -3122,6 +3122,7 @@ hexReady(function(){
   var PLASTER_DURATION=2500;
   var PHASE_CONNECT_DELAY=420;
   var LOGO_DURATION=2350;
+  var HERO_POSITION_PREPARE_DELAY=80;
   var HERO_REVEAL_DURATION=1100;
   var SAFETY_EXTRA_TIME=2600;
 
@@ -3338,9 +3339,21 @@ hexReady(function(){
     }
 
     window.setTimeout(function(){
+      document.documentElement.classList.remove(
+        "hex-opening-lock"
+      );
+    },timeline);
+
+    timeline+=HERO_POSITION_PREPARE_DELAY;
+
+    window.setTimeout(function(){
       syncHeroRevealOrigin(opening);
+
       opening.offsetWidth;
-      opening.classList.add("is-hero-reveal");
+
+      opening.classList.add(
+        "is-hero-reveal"
+      );
     },timeline);
 
     timeline+=HERO_REVEAL_DURATION;
