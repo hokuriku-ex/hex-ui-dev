@@ -1220,16 +1220,6 @@
   .hex-hero-catch{
     padding:0 16px;
   }
-  .hex-hero-catch.is-fixed-handoff{
-    top:calc(
-      80px +
-      (100svh - 80px) / 2
-    );
-  }
-  .hex-scroll-indicator{
-    top:calc(100svh - 66px);
-    bottom:auto;
-  }
   .hex-handoff-copy .hex-opening-main{
     font-size:26px;
     line-height:1.4;
