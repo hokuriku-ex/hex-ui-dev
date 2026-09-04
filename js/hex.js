@@ -3644,6 +3644,121 @@ hexReady(function(){
       );
     }
 
+    function initHeroMouseDrag(){
+      var scroller=hero.querySelector(
+        ".hex-hero-sticky"
+      );
+
+      var isDragging=false;
+      var startX=0;
+      var startScrollLeft=0;
+
+      if(!scroller){
+        return;
+      }
+
+      scroller.addEventListener(
+        "dragstart",
+        function(event){
+          event.preventDefault();
+        }
+      );
+
+      scroller.addEventListener(
+        "pointerdown",
+        function(event){
+          /*
+          * タッチ操作はSafari標準の
+          * スクロールに任せる
+          */
+          if(event.pointerType!=="mouse"){
+            return;
+          }
+
+          /*
+          * 左クリックだけを対象にする
+          */
+          if(event.button!==0){
+            return;
+          }
+
+          isDragging=true;
+          startX=event.clientX;
+          startScrollLeft=scroller.scrollLeft;
+
+          scroller.classList.add(
+            "is-dragging"
+          );
+
+          scroller.setPointerCapture(
+            event.pointerId
+          );
+
+          event.preventDefault();
+        }
+      );
+
+      scroller.addEventListener(
+        "pointermove",
+        function(event){
+          var moveX;
+
+          if(!isDragging){
+            return;
+          }
+
+          moveX=event.clientX-startX;
+
+          scroller.scrollLeft=
+            startScrollLeft-moveX;
+
+          event.preventDefault();
+        }
+      );
+
+      function finishDrag(event){
+        if(!isDragging){
+          return;
+        }
+
+        isDragging=false;
+
+        scroller.classList.remove(
+          "is-dragging"
+        );
+
+        if(
+          event&&
+          scroller.hasPointerCapture(event.pointerId)
+        ){
+          scroller.releasePointerCapture(
+            event.pointerId
+          );
+        }
+      }
+
+      scroller.addEventListener(
+        "pointerup",
+        finishDrag
+      );
+
+      scroller.addEventListener(
+        "pointercancel",
+        finishDrag
+      );
+
+      scroller.addEventListener(
+        "lostpointercapture",
+        function(){
+          isDragging=false;
+
+          scroller.classList.remove(
+            "is-dragging"
+          );
+        }
+      );
+    }
+
     updateHeroStage();
 
     window.addEventListener(
@@ -3661,6 +3776,9 @@ hexReady(function(){
       "orientationchange",
       requestStageUpdate
     );
+
+    /* PCのマウスドラッグ操作を有効化 */
+    initHeroMouseDrag();
   }
 
   function loadHeroVideos(){
