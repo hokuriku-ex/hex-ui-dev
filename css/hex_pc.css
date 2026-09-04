@@ -3955,21 +3955,15 @@ html body
    トップページ：スクロールナビ
 ======================================= */
 .hex-scroll-indicator{
-  position:absolute;
+  position:fixed;
   right:0;
   bottom:16px;
   left:0;
-  z-index:10;
-  width:100vw;
+  z-index:100;
+  width:100%;
   padding-top:0;
   text-align:center;
   pointer-events:none;
-  transform:translate3d(
-    var(--hex-hero-scroll-x,0px),
-    0,
-    0
-  );
-  will-change:transform;
 }
 .hex-scroll-indicator span{
   position:relative;
