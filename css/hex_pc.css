@@ -3811,6 +3811,7 @@ html body
     0
   );
   will-change:transform;
+  transform-origin:center center;
 }
 
 /* 背景画像領域 */
