@@ -3827,7 +3827,7 @@ html body
   width:100%!important;
   height:100%!important;
   object-fit:cover!important;
-  object-position:left top!important;
+  object-position:center center!important;
 }
 
 /* ヒーローを含む上位要素の切り抜きを解除 */
