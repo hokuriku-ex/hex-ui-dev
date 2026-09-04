@@ -3443,6 +3443,9 @@ hexReady(function(){
 
   function initHeroStage(){
     var hero=getHero();
+    var horizontalScroller=hero.querySelector(
+      ".hex-hero-sticky"
+    );
     var resizeRequested=false;
     var scrollRequested=false;
     var waitingImage=null;
@@ -3644,6 +3647,17 @@ hexReady(function(){
       );
     }
 
+    function updateHorizontalIndicator(){
+      if(!horizontalScroller){
+        return;
+      }
+
+      document.documentElement.style.setProperty(
+        "--hex-hero-scroll-x",
+        horizontalScroller.scrollLeft+"px"
+      );
+    }
+
     updateHeroStage();
 
     window.addEventListener(
@@ -3661,6 +3675,16 @@ hexReady(function(){
       "orientationchange",
       requestStageUpdate
     );
+
+    if(horizontalScroller){
+      horizontalScroller.addEventListener(
+        "scroll",
+        updateHorizontalIndicator,
+        {passive:true}
+      );
+    }
+
+    updateHorizontalIndicator();
   }
 
   function loadHeroVideos(){
