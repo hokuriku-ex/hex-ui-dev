@@ -3796,22 +3796,25 @@ html body
 
 /* 背景・職人・前景をまとめて縦移動 */
 .hex-hero-scene{
-  position:absolute;
-  top:0;
-  right:0;
-  left:0;
-  width:100%;
+  position:absolute!important;
+  top:0!important;
+  right:0!important;
+  left:0!important;
+  width:100%!important;
   height:var(
     --hex-hero-image-height,
     675px
-  );
+  )!important;
   transform:translate3d(
     0,
-    var(--hex-hero-pan-y,0px),
+    calc(
+      var(--hex-hero-start-y,0px) +
+      var(--hex-hero-pan-y,0px)
+    ),
     0
-  );
-  will-change:transform;
+  )!important;
   transform-origin:center center;
+  will-change:transform;
 }
 
 /* 背景画像領域 */
