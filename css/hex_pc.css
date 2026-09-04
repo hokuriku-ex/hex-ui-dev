@@ -3898,6 +3898,21 @@ html body
   isolation:auto;
 }
 
+/* ドラッグ移動 */
+@media screen and (min-width:769px){
+  .hex-hero-sticky{
+    cursor:grab;
+    user-select:none;
+  }
+  .hex-hero-sticky.is-dragging{
+    cursor:grabbing;
+  }
+  .hex-hero-sticky img{
+    -webkit-user-drag:none;
+    user-drag:none;
+  }
+}
+
 /* キャッチ本文 */
 .hex-handoff-copy{
   width:min(90vw,960px);
