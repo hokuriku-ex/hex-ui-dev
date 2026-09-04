@@ -3911,6 +3911,11 @@ html body
     -webkit-user-drag:none;
     user-drag:none;
   }
+  .hex-hero-catch,
+  .hex-hero-catch.is-fixed-handoff{
+    pointer-events:none!important;
+    user-select:none;
+  }
 }
 
 /* キャッチ本文 */
