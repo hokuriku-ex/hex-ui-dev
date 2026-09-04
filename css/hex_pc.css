@@ -3697,6 +3697,17 @@ html.hex-opening-lock body{
   -webkit-overflow-scrolling:touch;
 }
 
+/* 横スクロールバー非表示 */
+.hex-hero-sticky{
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+.hex-hero-sticky::-webkit-scrollbar{
+  display:none;
+  width:0;
+  height:0;
+}
+
 /* HOPWEB側のoverflowを解除 */
 html body
 .gc_auto_body:has(.hex-hero-wrap),
