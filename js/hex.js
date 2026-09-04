@@ -3444,10 +3444,87 @@ hexReady(function(){
   function initHeroStage(){
     var hero=getHero();
     var resizeRequested=false;
+    var scrollRequested=false;
     var waitingImage=null;
+    var scrollDistance=0;
 
     if(!hero){
       return;
+    }
+
+    function updateHeroScroll(){
+      var heroTop;
+      var scrolled;
+      var pan;
+      var fadeDistance;
+      var opacity;
+      var scrollIndicator;
+
+      scrollRequested=false;
+
+      /*
+      * ヒーローラッパーのページ上の開始位置
+      */
+      heroTop=
+        window.scrollY+
+        hero.getBoundingClientRect().top;
+
+      /*
+      * ヒーロー開始位置からのスクロール量
+      */
+      scrolled=Math.max(
+        window.scrollY-heroTop,
+        0
+      );
+
+      pan=Math.min(
+        scrolled,
+        scrollDistance
+      );
+
+      document.documentElement.style.setProperty(
+        "--hex-hero-pan-y",
+        (-pan)+"px"
+      );
+
+      /*
+      * SCROLL表示はスクロール開始後、
+      * 画面高の半分を使ってフェードアウト
+      */
+      scrollIndicator=hero.querySelector(
+        ".hex-scroll-indicator"
+      );
+
+      if(scrollIndicator){
+        fadeDistance=Math.max(
+          window.innerHeight*.5,
+          1
+        );
+
+        opacity=
+          1-
+          scrolled/fadeDistance;
+
+        opacity=Math.max(
+          0,
+          Math.min(1,opacity)
+        );
+
+        scrollIndicator.style.opacity=
+          opacity;
+      }
+    }
+
+    function requestScrollUpdate(){
+      if(scrollRequested){
+        return;
+      }
+
+      scrollRequested=true;
+
+      window.requestAnimationFrame(
+        updateHeroScroll
+      );
     }
 
     function updateHeroStage(){
@@ -3478,11 +3555,6 @@ hexReady(function(){
         return;
       }
 
-      /*
-      * PC・SP切替直後など、
-      * 対象画像が未読込の場合は
-      * 読込完了後に再計算する。
-      */
       if(
         !image.naturalWidth||
         !image.naturalHeight
@@ -3502,7 +3574,6 @@ hexReady(function(){
 
       waitingImage=null;
 
-      /* 元画像の縦横比 */
       imageRatio=
         image.naturalHeight/
         image.naturalWidth;
@@ -3510,48 +3581,32 @@ hexReady(function(){
       viewportWidth=
         document.documentElement.clientWidth;
 
-      /*
-      * ヒーロー表示高。
-      * 画面高さからヘッダー80pxを引く。
-      */
       viewportHeight=Math.max(
         document.documentElement.clientHeight-
         headerHeight,
         1
       );
 
-      /*
-      * 横幅
-      *
-      * 1200px未満：
-      *   1200pxを維持して横スクロール
-      *
-      * 1200px以上：
-      *   画面幅100%
-      */
       stageWidth=Math.max(
         baseWidth,
         viewportWidth
       );
 
-      /*
-      * 現在の表示幅に対応する
-      * 画像比率上の縦基準。
-      */
       referenceHeight=
         stageWidth*
         imageRatio;
 
-      /*
-      * 画面高が縦基準以上：
-      *   画面高に合わせる
-      *
-      * 画面高が縦基準未満：
-      *   縦基準を維持する
-      */
       imageHeight=Math.max(
         referenceHeight,
         viewportHeight
+      );
+
+      /*
+      * 画面から見切れる画像の高さ
+      */
+      scrollDistance=Math.max(
+        imageHeight-viewportHeight,
+        0
       );
 
       document.documentElement.style.setProperty(
@@ -3568,6 +3623,13 @@ hexReady(function(){
         "--hex-hero-image-height",
         Math.ceil(imageHeight)+"px"
       );
+
+      document.documentElement.style.setProperty(
+        "--hex-hero-scroll-distance",
+        Math.ceil(scrollDistance)+"px"
+      );
+
+      requestScrollUpdate();
     }
 
     function requestStageUpdate(){
@@ -3583,6 +3645,12 @@ hexReady(function(){
     }
 
     updateHeroStage();
+
+    window.addEventListener(
+      "scroll",
+      requestScrollUpdate,
+      {passive:true}
+    );
 
     window.addEventListener(
       "resize",
@@ -3752,33 +3820,6 @@ hexReady(function(){
   };
 
   initHero();
-});
-
-/* =======================================
-   トップ スクロールナビ
-======================================= */
-hexReady(function(){
-
-  const scrollIndicator=document.querySelector('.hex-scroll-indicator');
-  if(!scrollIndicator)return;
-
-  function updateScrollIndicator(){
-
-    const rect = scrollIndicator.getBoundingClientRect();
-
-    const start = window.innerHeight;
-    const end = window.innerHeight / 2;
-
-    let opacity = (rect.top - end) / (start - end);
-
-    opacity = Math.max(0, Math.min(1, opacity));
-
-    scrollIndicator.style.opacity = opacity;
-  }
-
-  window.addEventListener('scroll',updateScrollIndicator,{passive:true});
-  updateScrollIndicator();
-
 });
 
 /* =======================================
