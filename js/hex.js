@@ -3651,10 +3651,55 @@ hexReady(function(){
 
       var isDragging=false;
       var startX=0;
+      var startY=0;
+      var currentX=0;
+      var currentY=0;
       var startScrollLeft=0;
+      var startScrollTop=0;
+      var frameRequested=false;
 
       if(!scroller){
         return;
+      }
+
+      function updateDrag(){
+        var moveX;
+        var moveY;
+
+        frameRequested=false;
+
+        if(!isDragging){
+          return;
+        }
+
+        moveX=currentX-startX;
+        moveY=currentY-startY;
+
+        /*
+        * 左右ドラッグ
+        */
+        scroller.scrollLeft=
+          startScrollLeft-moveX;
+
+        /*
+        * 上下ドラッグ
+        */
+        window.scrollTo(
+          0,
+          startScrollTop-moveY
+        );
+      }
+
+      function requestDragUpdate(){
+        if(frameRequested){
+          return;
+        }
+
+        frameRequested=true;
+
+        window.requestAnimationFrame(
+          updateDrag
+        );
       }
 
       scroller.addEventListener(
@@ -3668,23 +3713,29 @@ hexReady(function(){
         "pointerdown",
         function(event){
           /*
-          * タッチ操作はSafari標準の
-          * スクロールに任せる
+          * タッチ操作はブラウザ標準に任せる
           */
           if(event.pointerType!=="mouse"){
             return;
           }
 
           /*
-          * 左クリックだけを対象にする
+          * 左クリックのみ対象
           */
           if(event.button!==0){
             return;
           }
 
           isDragging=true;
+
           startX=event.clientX;
+          startY=event.clientY;
+
+          currentX=startX;
+          currentY=startY;
+
           startScrollLeft=scroller.scrollLeft;
+          startScrollTop=window.scrollY;
 
           scroller.classList.add(
             "is-dragging"
@@ -3701,16 +3752,14 @@ hexReady(function(){
       scroller.addEventListener(
         "pointermove",
         function(event){
-          var moveX;
-
           if(!isDragging){
             return;
           }
 
-          moveX=event.clientX-startX;
+          currentX=event.clientX;
+          currentY=event.clientY;
 
-          scroller.scrollLeft=
-            startScrollLeft-moveX;
+          requestDragUpdate();
 
           event.preventDefault();
         }
@@ -3721,6 +3770,11 @@ hexReady(function(){
           return;
         }
 
+        currentX=event.clientX;
+        currentY=event.clientY;
+
+        updateDrag();
+
         isDragging=false;
 
         scroller.classList.remove(
@@ -3728,8 +3782,9 @@ hexReady(function(){
         );
 
         if(
-          event&&
-          scroller.hasPointerCapture(event.pointerId)
+          scroller.hasPointerCapture(
+            event.pointerId
+          )
         ){
           scroller.releasePointerCapture(
             event.pointerId
