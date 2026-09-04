@@ -3807,10 +3807,7 @@ html body
   )!important;
   transform:translate3d(
     0,
-    calc(
-      var(--hex-hero-start-y,0px) +
-      var(--hex-hero-pan-y,0px)
-    ),
+    var(--hex-hero-pan-y,0px),
     0
   )!important;
   transform-origin:center center;
