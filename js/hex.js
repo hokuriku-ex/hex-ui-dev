@@ -3449,6 +3449,9 @@ hexReady(function(){
     var scrollDistance=0;
     var initialPositionSet=false;
 
+    var initialCenterOffsetY=0;
+    var openingObserver=null;
+
     if(!hero){
       return;
     }
@@ -3526,6 +3529,74 @@ hexReady(function(){
       window.requestAnimationFrame(
         updateHeroScroll
       );
+    }
+
+    function applyInitialCenterPosition(){
+      var root=document.documentElement;
+      var heroTop;
+
+      if(initialPositionSet){
+        return;
+      }
+
+      /*
+      * 開幕アニメーション中はスクロールできないため、
+      * ロック解除まで待つ
+      */
+      if(
+        root.classList.contains(
+          "hex-opening-lock"
+        )
+      ){
+        if(!openingObserver){
+          openingObserver=new MutationObserver(
+            function(){
+              if(
+                !root.classList.contains(
+                  "hex-opening-lock"
+                )
+              ){
+                openingObserver.disconnect();
+                openingObserver=null;
+
+                applyInitialCenterPosition();
+              }
+            }
+          );
+
+          openingObserver.observe(
+            root,
+            {
+              attributes:true,
+              attributeFilter:["class"]
+            }
+          );
+        }
+
+        return;
+      }
+
+      initialPositionSet=true;
+
+      if(
+        window.scrollY>1||
+        initialCenterOffsetY<=0
+      ){
+        return;
+      }
+
+      heroTop=
+        window.scrollY+
+        hero.getBoundingClientRect().top;
+
+      window.requestAnimationFrame(function(){
+        window.scrollTo(
+          0,
+          heroTop+initialCenterOffsetY
+        );
+
+        requestScrollUpdate();
+      });
     }
 
     function updateHeroStage(){
@@ -3654,29 +3725,10 @@ hexReady(function(){
         });
       }
 
-      /* 縦方向の初期位置を中央にする */
-      if(
-        !initialPositionSet&&
-        window.scrollY<=1&&
-        centerOffsetY>0
-      ){
-        initialPositionSet=true;
+      /* 縦方向は開幕ロック解除後に中央開始位置へ移動 */
+      initialCenterOffsetY=centerOffsetY;
 
-        window.requestAnimationFrame(function(){
-          var heroTop=
-            window.scrollY+
-            hero.getBoundingClientRect().top;
-
-          window.scrollTo(
-            0,
-            heroTop+centerOffsetY
-          );
-
-          requestScrollUpdate();
-        });
-      }else{
-        initialPositionSet=true;
-      }
+      applyInitialCenterPosition();
 
       requestScrollUpdate();
     }
