@@ -3930,6 +3930,10 @@ html body
 }
 
 /* キャッチ本文 */
+.hex-hero-catch{
+  color:var(--hex-hero-copy-color)!important;
+  text-shadow:none;
+}
 .hex-handoff-copy{
   width:min(90vw,960px);
   margin:0;
@@ -3948,16 +3952,6 @@ html body
   font-weight:700;
   line-height:1.4;
   letter-spacing:.04em;
-}
-.hex-handoff-copy .hex-opening-sub{
-  margin-top:14px;
-  font-family:var(--hex-font-gothic)!important;
-  font-size:clamp(14px,1.15vw,18px);
-  font-weight:500;
-  line-height:1.7;
-  letter-spacing:.1em;
-}
-.hex-hero-catch{
   color:#fffaf0;
   -webkit-text-stroke:2px #1f2774;
   paint-order:stroke fill;
@@ -3971,6 +3965,17 @@ html body
     7px 7px 0 #1f2774,
     8px 8px 0 #1f2774;
 }
+.hex-handoff-copy .hex-opening-sub{
+  margin-top:14px;
+  font-family:var(--hex-font-gothic)!important;
+  font-size:clamp(14px,1.15vw,18px);
+  font-weight:500;
+  line-height:1.7;
+  letter-spacing:.1em;
+  text-shadow:
+    0 1px 3px rgba(31,39,116,.9),
+    0 0 8px rgba(31,39,116,.65);
+}
 
 /* ウェルカム側コピー */
 .hex-opening-copy-source.hex-welcome-copy{
@@ -3982,7 +3987,6 @@ html body
   width:min(90vw,960px);
   margin-left:auto!important;
   margin-right:auto!important;
-  color:var(--hex-opening-navy)!important;
   text-align:center!important;
   opacity:0;
   visibility:hidden;
