@@ -21,7 +21,7 @@ body{
 h1,
 h2
 {
-  font-family:"Oleo Script","M PLUS Rounded 1c",serif!important;
+  font-family:"GF_NotoSerifJapanese_Bold",serif!important;
 }
 h3,
 h4,
@@ -4216,7 +4216,7 @@ html body
 
 .hex-founded-year{
   color:#c8a874;
-  font-family:var(--hex-font-pop-en);
+  font-family:var(--hex-font-serif);
   font-size:58px;
   font-weight:400;
   line-height:.9;
