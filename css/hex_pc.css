@@ -3948,7 +3948,7 @@ html body
 }
 .hex-handoff-copy .hex-opening-main{
   font-family:var(--hex-font-pop-en)!important;
-  font-size:32px;
+  font-size:clamp(32px,3.5vw,56px);
   font-weight:700;
   line-height:1.4;
   letter-spacing:.04em;
