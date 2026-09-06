@@ -3384,7 +3384,6 @@ body,
   --hex-opening-navy:#1f2774;
   --hex-opening-gold:#e8d575;
   --hex-opening-white:#fff;
-  --hex-hero-copy-color:#1f2774;
   --hex-hero-origin-x:50%;
   --hex-hero-origin-y:50%;
 }
@@ -3952,15 +3951,25 @@ html body
 }
 .hex-handoff-copy .hex-opening-sub{
   margin-top:14px;
-  font-family:var(--hex-font-pop-ja)!important;
+  font-family:var(--hex-font-gothic)!important;
   font-size:clamp(14px,1.15vw,18px);
   font-weight:500;
   line-height:1.7;
   letter-spacing:.1em;
 }
 .hex-hero-catch{
-  color:var(--hex-hero-copy-color)!important;
-  text-shadow:none;
+  color:#fffaf0;
+  -webkit-text-stroke:2px #203459;
+  paint-order:stroke fill;
+  text-shadow:
+    1px 1px 0 #203459,
+    2px 2px 0 #203459,
+    3px 3px 0 #203459,
+    4px 4px 0 #203459,
+    5px 5px 0 #203459,
+    6px 6px 0 #203459,
+    7px 7px 0 #203459,
+    8px 8px 0 #203459;
 }
 
 /* ウェルカム側コピー */
