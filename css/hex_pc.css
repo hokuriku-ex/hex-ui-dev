@@ -4283,7 +4283,7 @@ html body
 .hex-handoff-copy .hex-opening-main{
   font-family:var(--hex-font-pop-en)!important;
   font-size:clamp(32px,3.5vw,56px);
-  font-weight:700;
+  font-weight:400;
   line-height:1.4;
   letter-spacing:.04em;
   color:#fafafa!important;
