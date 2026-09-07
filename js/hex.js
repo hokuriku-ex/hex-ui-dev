@@ -3151,15 +3151,31 @@ hexReady(function(){
     var pcSlides=[];
     var spSlides=[];
 
+    window.hexOpeningDebug={
+      startFound:!!start,
+      pcMarkersBefore:
+        document.querySelectorAll(".hex-img-pc-start").length,
+      spMarkersBefore:
+        document.querySelectorAll(".hex-img-sp-start").length,
+      startBlockFound:false,
+      endBlockFound:false,
+      scannedBlocks:0,
+      pcSlides:0,
+      spSlides:0,
+      resultSlides:0
+    };
+
     if(
       !start||
       typeof window.hexBaseBlock!=="function"||
       typeof window.hexNextBlock!=="function"
     ){
+      console.log("hexOpeningDebug",window.hexOpeningDebug);
       return [];
     }
 
     startBlock=window.hexBaseBlock(start);
+    window.hexOpeningDebug.startBlockFound=!!startBlock;
     endBlock=window.hexNextBlock(startBlock);
 
     while(endBlock){
@@ -3170,8 +3186,11 @@ hexReady(function(){
     }
 
     if(!startBlock||!endBlock){
+      console.log("hexOpeningDebug",window.hexOpeningDebug);
       return [];
     }
+
+    window.hexOpeningDebug.endBlockFound=true;
 
     function getImageData(marker,markerBlock,endSelector){
       var imageBlock=window.hexNextBlock(markerBlock);
@@ -3221,6 +3240,8 @@ hexReady(function(){
       var spMarker=searchBlock.querySelector(".hex-img-sp-start");
       var data;
 
+      window.hexOpeningDebug.scannedBlocks+=1;
+
       if(pcMarker){
         data=getImageData(
           pcMarker,
@@ -3248,6 +3269,9 @@ hexReady(function(){
       searchBlock=window.hexNextBlock(searchBlock);
     }
 
+    window.hexOpeningDebug.pcSlides=pcSlides.length;
+    window.hexOpeningDebug.spSlides=spSlides.length;
+
     /* バナー等と同様に、変換元のHOPWEBブロックを削除する */
     searchBlock=startBlock;
 
@@ -3262,7 +3286,7 @@ hexReady(function(){
       searchBlock=nextBlock;
     }
 
-    return pcSlides.map(function(pc,index){
+    var resultSlides=pcSlides.map(function(pc,index){
       var sp=spSlides[index]||pc;
 
       return{
@@ -3274,6 +3298,11 @@ hexReady(function(){
         spPosition:sp.position||pc.position
       };
     });
+
+    window.hexOpeningDebug.resultSlides=resultSlides.length;
+    console.log("hexOpeningDebug",window.hexOpeningDebug);
+
+    return resultSlides;
   }
 
   function createOpeningSlides(opening,slides){
