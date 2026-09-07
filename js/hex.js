@@ -4315,6 +4315,7 @@ hexReady(function(){
     var welcomeWrap=document.querySelector(
       ".hex-welcome-wrap"
     );
+    var welcomeTextOverlay=null;
     var frameRequested=false;
 
     if(!hero||!welcomeCopy){
@@ -4346,10 +4347,66 @@ hexReady(function(){
       "hex-welcome-copy"
     );
 
+    if(welcomeWrap){
+      var welcomeContents=welcomeWrap.querySelector(
+        ".welcome_contents"
+      );
+
+      var overlayInner=document.createElement(
+        "div"
+      );
+
+      var overlayCopy=welcomeCopy.cloneNode(true);
+
+      welcomeTextOverlay=document.createElement(
+        "div"
+      );
+
+      welcomeTextOverlay.className=
+        "hex-welcome-text-overlay";
+
+      welcomeTextOverlay.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+      overlayInner.className=
+        "hex-welcome-text-overlay-inner";
+
+      overlayCopy.classList.remove(
+        "hex-welcome-copy",
+        "is-copy-active"
+      );
+
+      overlayCopy.classList.add(
+        "hex-welcome-overlay-copy"
+      );
+
+      overlayInner.appendChild(
+        overlayCopy
+      );
+
+      if(welcomeContents){
+        overlayInner.appendChild(
+          welcomeContents.cloneNode(true)
+        );
+      }
+
+      welcomeTextOverlay.appendChild(
+        overlayInner
+      );
+
+      document.body.appendChild(
+        welcomeTextOverlay
+      );
+    }
+
     function updateCopyHandoff(){
       var fixedRect;
       var welcomeRect;
       var isHandedOff;
+      var circleEnabled;
+      var welcomeStageFinished=false;
 
       frameRequested=false;
 
@@ -4361,6 +4418,15 @@ hexReady(function(){
 
       isHandedOff=
         welcomeRect.top<=fixedRect.top+1;
+
+      circleEnabled=window.matchMedia(
+        "(min-width:1001px)"
+      ).matches;
+
+      if(welcomeWrap){
+        welcomeStageFinished=
+          welcomeWrap.getBoundingClientRect().bottom<=0;
+      }
 
       fixedCopy.classList.toggle(
         "is-copy-handed-off",
@@ -4376,6 +4442,15 @@ hexReady(function(){
         welcomeWrap.classList.toggle(
           "is-welcome-active",
           isHandedOff
+        );
+      }
+
+      if(welcomeTextOverlay){
+        welcomeTextOverlay.classList.toggle(
+          "is-active",
+          circleEnabled&&
+          isHandedOff&&
+          !welcomeStageFinished
         );
       }
 
@@ -4467,6 +4542,7 @@ hexReady(function(){
 
   initHero();
 });
+
 
 /* =======================================
    トップ サービス案内
