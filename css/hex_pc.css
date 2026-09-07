@@ -4188,7 +4188,7 @@ html body
     margin-left:50%;
     padding:
       calc(80px + clamp(24px, 3vh, 40px))
-      clamp(32px, 4vw, 72px)
+      0
       clamp(32px, 5vh, 64px);
     transform:translate3d(
       0,
