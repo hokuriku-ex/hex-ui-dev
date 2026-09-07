@@ -3926,6 +3926,26 @@ html body
 }
 
 /*
+ * CMSのWELCOMEブロックが後ろから重なっても、
+ * 画像固定中だけヒーロー側を前面に保つ。
+ * 固定クラスが外れると、この指定も自動で解除される。
+ */
+.gc_auto_frame_spotitem:has(
+  .hex-hero-sticky.is-image-screen-fixed
+),
+.gc_auto_frame_spotitem_box:has(
+  .hex-hero-sticky.is-image-screen-fixed
+),
+.gc_auto_frame_spotitem_body:has(
+  .hex-hero-sticky.is-image-screen-fixed
+){
+  position:relative!important;
+  z-index:50!important;
+  isolation:auto!important;
+  overflow:visible!important;
+}
+
+/*
  * 固定解除時の画面位置へ着地させる。
  * position:stickyへ直接戻さないため、解除時に画像が跳ねない。
  */
