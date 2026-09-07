@@ -3544,7 +3544,7 @@ body,
     'M PLUS Rounded 1c',
     sans-serif!important;
   font-size:clamp(38px,4.5vw,68px)!important;
-  font-weight:700!important;
+  font-weight:400!important;
   line-height:1.65!important;
   letter-spacing:.08em!important;
 
@@ -3568,7 +3568,7 @@ body,
   margin-top:20px;
   color:#fafafa!important;
   font-size:clamp(14px,1.15vw,18px)!important;
-  font-weight:700!important;
+  font-weight:400!important;
   line-height:1.8!important;
   letter-spacing:.08em!important;
 
