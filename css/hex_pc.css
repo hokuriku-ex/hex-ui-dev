@@ -4079,14 +4079,48 @@ html body
 /* =======================================
    トップページ：ウェルカムメッセージ
 ======================================= */
+.hex-welcome-wrap{
+  position:relative;
+  width:100%;
+  min-height:100vh;
+  min-height:100dvh;
+  box-sizing:border-box;
+}
+
 .welcome{
   padding:0;
 }
 .welcome.has-padding{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
   width:100%;
-  padding-top:min(10%, 120px);
+  min-height:100vh;
+  min-height:100dvh;
+  padding:
+    calc(80px + clamp(24px, 3vh, 40px))
+    0
+    clamp(32px, 5vh, 64px);
   box-sizing:border-box;
 }
+
+.hex-welcome-wrap
+.hex-welcome-copy{
+  flex:0 0 auto;
+  margin-bottom:clamp(32px, 5vh, 64px)!important;
+}
+
+.hex-welcome-wrap
+.welcome_contents{
+  flex:0 0 auto;
+}
+
+/* HTML上で空のタイトル枠は高さ・余白を持たせない */
+.hex-welcome-wrap
+.welcome .title:empty{
+  display:none!important;
+}
+
 .welcome_contents{
   width:100%;
   max-width:var(--base_width);
