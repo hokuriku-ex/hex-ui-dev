@@ -3461,12 +3461,177 @@ hexReady(function(){
     var waitingImage=null;
     var scrollDistance=0;
     var initialPositionSet=false;
+    var imageHoldState="normal";
+    var stageReady=false;
 
     var initialCenterOffsetY=0;
     var openingObserver=null;
 
     if(!hero){
       return;
+    }
+
+    var heroSticky=hero.querySelector(
+      ".hex-hero-sticky"
+    );
+
+    function clearImageHoldPosition(){
+      if(!heroSticky){
+        return;
+      }
+
+      heroSticky.classList.remove(
+        "is-image-screen-fixed",
+        "is-image-screen-released"
+      );
+
+      heroSticky.style.removeProperty(
+        "--hex-hero-fixed-top"
+      );
+
+      heroSticky.style.removeProperty(
+        "--hex-hero-fixed-left"
+      );
+
+      heroSticky.style.removeProperty(
+        "--hex-hero-fixed-width"
+      );
+
+      heroSticky.style.removeProperty(
+        "--hex-hero-fixed-height"
+      );
+
+      heroSticky.style.removeProperty(
+        "--hex-hero-release-top"
+      );
+
+      imageHoldState="normal";
+    }
+
+    function fixImageAtCurrentPosition(){
+      var rect;
+
+      if(
+        !heroSticky||
+        imageHoldState==="fixed"
+      ){
+        return;
+      }
+
+      rect=heroSticky.getBoundingClientRect();
+
+      heroSticky.style.setProperty(
+        "--hex-hero-fixed-top",
+        rect.top+"px"
+      );
+
+      heroSticky.style.setProperty(
+        "--hex-hero-fixed-left",
+        rect.left+"px"
+      );
+
+      heroSticky.style.setProperty(
+        "--hex-hero-fixed-width",
+        rect.width+"px"
+      );
+
+      heroSticky.style.setProperty(
+        "--hex-hero-fixed-height",
+        rect.height+"px"
+      );
+
+      heroSticky.classList.remove(
+        "is-image-screen-released"
+      );
+
+      heroSticky.classList.add(
+        "is-image-screen-fixed"
+      );
+
+      imageHoldState="fixed";
+    }
+
+    function releaseImageAtCurrentPosition(heroTop){
+      var rect;
+      var releaseTop;
+
+      if(
+        !heroSticky||
+        imageHoldState==="released"
+      ){
+        return;
+      }
+
+      rect=heroSticky.getBoundingClientRect();
+
+      releaseTop=
+        window.scrollY+
+        rect.top-
+        heroTop;
+
+      heroSticky.style.setProperty(
+        "--hex-hero-release-top",
+        releaseTop+"px"
+      );
+
+      heroSticky.style.setProperty(
+        "--hex-hero-fixed-left",
+        rect.left+"px"
+      );
+
+      heroSticky.style.setProperty(
+        "--hex-hero-fixed-width",
+        rect.width+"px"
+      );
+
+      heroSticky.style.setProperty(
+        "--hex-hero-fixed-height",
+        rect.height+"px"
+      );
+
+      heroSticky.classList.remove(
+        "is-image-screen-fixed"
+      );
+
+      heroSticky.classList.add(
+        "is-image-screen-released"
+      );
+
+      imageHoldState="released";
+    }
+
+    function updateImageHold(scrolled,heroTop){
+      var reachedImageBottom;
+      var isHandedOff;
+
+      if(!heroSticky){
+        return;
+      }
+
+      if(!stageReady){
+        return;
+      }
+
+      reachedImageBottom=
+        scrolled>=scrollDistance;
+
+      isHandedOff=hero.classList.contains(
+        "is-copy-handed-off"
+      );
+
+      if(!reachedImageBottom){
+        clearImageHoldPosition();
+        return;
+      }
+
+      if(isHandedOff){
+        releaseImageAtCurrentPosition(
+          heroTop
+        );
+        return;
+      }
+
+      fixImageAtCurrentPosition();
     }
 
     function updateHeroScroll(){
@@ -3502,6 +3667,11 @@ hexReady(function(){
       document.documentElement.style.setProperty(
         "--hex-hero-pan-y",
         (-pan)+"px"
+      );
+
+      updateImageHold(
+        scrolled,
+        heroTop
       );
 
       /*
@@ -3628,6 +3798,9 @@ hexReady(function(){
 
       resizeRequested=false;
 
+      stageReady=false;
+      clearImageHoldPosition();
+
       activeHero=getActiveHero();
 
       if(!activeHero){
@@ -3719,6 +3892,8 @@ hexReady(function(){
         "--hex-hero-scroll-distance",
         Math.ceil(scrollDistance)+"px"
       );
+
+      stageReady=true;
       
       /* 横方向の中央開始位置 */
       horizontalScroller=hero.querySelector(
@@ -3946,6 +4121,11 @@ hexReady(function(){
       requestStageUpdate
     );
 
+    hero.addEventListener(
+      "hex:copy-handoff-change",
+      requestScrollUpdate
+    );
+
     /* PCのマウスドラッグ操作を有効化 */
     initHeroMouseDrag();
   }
@@ -4034,6 +4214,22 @@ hexReady(function(){
       welcomeCopy.classList.toggle(
         "is-copy-active",
         isHandedOff
+      );
+
+      hero.classList.toggle(
+        "is-copy-handed-off",
+        isHandedOff
+      );
+
+      hero.dispatchEvent(
+        new CustomEvent(
+          "hex:copy-handoff-change",
+          {
+            detail:{
+              isHandedOff:isHandedOff
+            }
+          }
+        )
       );
     }
 
