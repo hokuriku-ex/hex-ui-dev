@@ -3761,7 +3761,8 @@ hexReady(function(){
           welcomeWrap.getBoundingClientRect();
 
         welcomeStageFinished=
-          welcomeRect.bottom<=0;
+          welcomeRect.bottom<
+          window.innerHeight-1;
       }
 
       if(!reachedImageBottom){
