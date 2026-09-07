@@ -3356,28 +3356,118 @@ hexReady(function(){
     return stage;
   }
 
-  function createOpeningDreamCopy(opening){
-    var stage=document.createElement("div");
-    var copy=document.createElement("p");
+  function collectOpeningIntro(){
+    var source=document.querySelector(".hex-opening-intro-source");
+    var pcImage;
+    var spImage;
+    var main;
+    var sub;
+    var sourceBlock;
+    var data;
 
-    stage.className="hex-opening-dream-copy-stage";
-    copy.className="hex-opening-dream-copy";
-    copy.textContent="What’s Your Dream?";
-    stage.appendChild(copy);
+    if(!source){
+      return null;
+    }
+
+    pcImage=source.querySelector(".hex-opening-intro-pc img");
+    spImage=source.querySelector(".hex-opening-intro-sp img");
+    main=source.querySelector(".hex-opening-intro-main");
+    sub=source.querySelector(".hex-opening-intro-sub");
+
+    if(!pcImage&&!spImage){
+      return null;
+    }
+
+    pcImage=pcImage||spImage;
+    spImage=spImage||pcImage;
+
+    data={
+      pcSrc:pcImage.currentSrc||
+        pcImage.getAttribute("src")||
+        pcImage.getAttribute("data-src")||"",
+      spSrc:spImage.currentSrc||
+        spImage.getAttribute("src")||
+        spImage.getAttribute("data-src")||"",
+      alt:pcImage.getAttribute("alt")||"",
+      pcPosition:pcImage.getAttribute("data-position")||"center",
+      spPosition:spImage.getAttribute("data-position")||"center",
+      main:main ? main.innerHTML : "",
+      sub:sub ? sub.innerHTML : ""
+    };
+
+    if(typeof window.hexBaseBlock==="function"){
+      sourceBlock=window.hexBaseBlock(source);
+    }
+
+    if(sourceBlock){
+      sourceBlock.remove();
+    }else{
+      source.remove();
+    }
+
+    return data;
+  }
+
+  function createOpeningIntro(opening,data){
+    var stage=document.createElement("div");
+    var picture=document.createElement("picture");
+    var source=document.createElement("source");
+    var image=document.createElement("img");
+    var catchBox=document.createElement("div");
+    var main=document.createElement("span");
+    var sub=document.createElement("span");
+
+    stage.className="hex-opening-intro-stage";
+    picture.className="hex-opening-intro-picture";
+    source.media="(max-width:768px)";
+    source.srcset=data.spSrc;
+
+    image.className="hex-opening-intro-photo";
+    image.src=data.pcSrc;
+    image.alt=data.alt;
+    image.decoding="async";
+    image.loading="eager";
+    image.fetchPriority="high";
+    image.draggable=false;
+    image.style.setProperty("--hex-intro-pc-position",data.pcPosition);
+    image.style.setProperty("--hex-intro-sp-position",data.spPosition);
+
+    picture.appendChild(source);
+    picture.appendChild(image);
+    stage.appendChild(picture);
+
+    catchBox.className="hex-opening-intro-catch";
+
+    if(data.main){
+      main.className="hex-opening-intro-main";
+      main.innerHTML=data.main;
+      catchBox.appendChild(main);
+    }
+
+    if(data.sub){
+      sub.className="hex-opening-intro-sub";
+      sub.innerHTML=data.sub;
+      catchBox.appendChild(sub);
+    }
+
+    if(data.main||data.sub){
+      stage.appendChild(catchBox);
+    }
+
     opening.insertBefore(stage,opening.firstChild);
 
     return stage;
   }
 
-  function startOpeningDreamCopy(opening,startTime){
+  function startOpeningIntro(opening,startTime){
     window.setTimeout(function(){
-      opening.classList.add("is-dream-copy-start");
+      opening.classList.add("is-intro-start");
     },startTime);
 
     startTime+=DREAM_COPY_DURATION;
 
     window.setTimeout(function(){
-      opening.classList.add("is-dream-copy-complete");
+      opening.classList.add("is-intro-complete");
     },startTime);
 
     return startTime+DREAM_COPY_FADE_DURATION;
@@ -3587,7 +3677,7 @@ hexReady(function(){
     );
   }
 
-  function startOpeningTimeline(opening,slideStage,slides){
+  function startOpeningTimeline(opening,introStage,slideStage,slides){
     var timeline=OPENING_START_DELAY;
 
     if(ENABLE_PLASTER_ANIMATION){
@@ -3609,8 +3699,11 @@ hexReady(function(){
       opening.classList.add("is-plaster-complete");
     }
 
+    if(ENABLE_SLIDE_ANIMATION&&introStage){
+      timeline=startOpeningIntro(opening,timeline);
+    }
+
     if(ENABLE_SLIDE_ANIMATION&&slideStage&&slides.length){
-      timeline=startOpeningDreamCopy(opening,timeline);
 
       timeline=startOpeningSlides(
         opening,
@@ -3664,6 +3757,8 @@ hexReady(function(){
 
   function initOpening(){
     var opening;
+    var introData;
+    var introStage=null;
     var slides;
     var slideStage=null;
 
@@ -3700,10 +3795,14 @@ hexReady(function(){
     ensureHeroReady();
 
     opening=createOpeningElement();
+    introData=collectOpeningIntro();
     slides=collectOpeningSlides();
 
+    if(ENABLE_SLIDE_ANIMATION&&introData){
+      introStage=createOpeningIntro(opening,introData);
+    }
+
     if(ENABLE_SLIDE_ANIMATION&&slides.length){
-      createOpeningDreamCopy(opening);
       slideStage=createOpeningSlides(opening,slides);
     }
     document.documentElement.classList.add("hex-opening-lock");
@@ -3718,7 +3817,12 @@ hexReady(function(){
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
         document.documentElement.classList.add("hex-opening-ready");
-        startOpeningTimeline(opening,slideStage,slides);
+        startOpeningTimeline(
+          opening,
+          introStage,
+          slideStage,
+          slides
+        );
       });
     });
   }
