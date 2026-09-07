@@ -3936,7 +3936,7 @@ html body
  * PCでは全面のヒーロー画像に白いレイヤーを重ね、
  * 透明な円の内側だけ画像を見せる。
  */
-@media screen and (min-width:1001px){
+@media screen and (min-width:769px){
   .hex-hero-image-handoff::after{
     content:"";
     position:absolute;
@@ -4181,7 +4181,7 @@ html body
  * 要素自体は通常の文書フローに置くため、
  * フェードではなくスクロールに伴って画面下から現れる。
  */
-@media screen and (min-width:1001px){
+@media screen and (min-width:769px){
   .hex-welcome-wrap
   .welcome.has-padding{
     width:50%;
