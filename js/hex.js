@@ -3660,7 +3660,6 @@ hexReady(function(){
     function releaseImageHandoff(welcomeWrap){
       var handoffRect;
       var welcomeRect;
-      var welcomePanel;
 
       if(
         !welcomeWrap||
@@ -3831,6 +3830,7 @@ hexReady(function(){
       var isHandedOff;
       var circleEnabled;
       var welcomeWrap;
+      var welcomePanel;
       var welcomeRect;
       var welcomeStageFinished=false;
       var welcomeCenterReached=false;
@@ -4495,8 +4495,8 @@ hexReady(function(){
       var fixedRect;
       var welcomeRect;
 
-      if(welcomePanel){
-        welcomePanel.style.removeProperty(
+      if(welcomeWrap){
+        welcomeWrap.style.removeProperty(
           "--hex-welcome-entry-offset"
         );
       }
@@ -4521,7 +4521,7 @@ hexReady(function(){
         return;
       }
 
-      welcomePanel.style.removeProperty(
+      welcomeWrap.style.removeProperty(
         "--hex-welcome-entry-offset"
       );
 
@@ -4533,7 +4533,7 @@ hexReady(function(){
         0
       );
 
-      welcomePanel.style.setProperty(
+      welcomeWrap.style.setProperty(
         "--hex-welcome-entry-offset",
         entryOffset+"px"
       );
@@ -4582,8 +4582,8 @@ hexReady(function(){
           isHandedOff
         );
 
-        if(!isHandedOff&&welcomePanel){
-          welcomePanel.style.removeProperty(
+        if(!isHandedOff){
+          welcomeWrap.style.removeProperty(
             "--hex-welcome-entry-offset"
           );
         }
@@ -4689,6 +4689,7 @@ hexReady(function(){
 
   initHero();
 });
+
 
 /* =======================================
    トップ サービス案内
