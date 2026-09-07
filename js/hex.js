@@ -3145,45 +3145,54 @@ hexReady(function(){
   /* CMSに登録されたPC/SP画像を記述順で取得する */
   function collectOpeningSlides(){
     var start=document.querySelector(".hex-opening-slide-start");
-    var end=document.querySelector(".hex-opening-slide-end");
+    var startBlock;
+    var endBlock;
+    var searchBlock;
     var pcSlides=[];
     var spSlides=[];
 
-    if(!start||!end){
+    if(
+      !start||
+      typeof window.hexBaseBlock!=="function"||
+      typeof window.hexNextBlock!=="function"
+    ){
       return [];
     }
 
-    function isBetweenOpeningMarkers(element){
-      return !!(
-        start.compareDocumentPosition(element)&Node.DOCUMENT_POSITION_FOLLOWING
-      )&&!!(
-        end.compareDocumentPosition(element)&Node.DOCUMENT_POSITION_PRECEDING
-      );
+    startBlock=window.hexBaseBlock(start);
+    endBlock=window.hexNextBlock(startBlock);
+
+    while(endBlock){
+      if(endBlock.querySelector(".hex-opening-slide-end")){
+        break;
+      }
+      endBlock=window.hexNextBlock(endBlock);
     }
 
-    function getImageData(marker,endSelector){
-      var walker=document.createTreeWalker(
-        document.body,
-        NodeFilter.SHOW_ELEMENT
-      );
-      var element;
+    if(!startBlock||!endBlock){
+      return [];
+    }
+
+    function getImageData(marker,markerBlock,endSelector){
+      var imageBlock=window.hexNextBlock(markerBlock);
       var image=null;
 
-      walker.currentNode=marker;
-
-      while((element=walker.nextNode())){
-        if(element.matches(endSelector)){
+      while(imageBlock){
+        if(imageBlock===endBlock){
           break;
         }
 
-        if(element.matches(".hex-opening-slide-end")){
+        if(imageBlock.querySelector(endSelector)){
           break;
         }
 
-        if(element.matches("img")){
-          image=element;
+        image=imageBlock.querySelector("img");
+
+        if(image){
           break;
         }
+
+        imageBlock=window.hexNextBlock(imageBlock);
       }
 
       if(!image){
@@ -3197,62 +3206,61 @@ hexReady(function(){
 
       return{
         title:marker.getAttribute("data-title")||"",
-        src:image.getAttribute("src")||"",
+        src:image.currentSrc||
+          image.getAttribute("src")||
+          image.getAttribute("data-src")||"",
         alt:image.getAttribute("alt")||marker.getAttribute("data-title")||"",
         position:image.getAttribute("data-position")||"center"
       };
     }
 
-    start.style.display="none";
-    end.style.display="none";
-    start.setAttribute("aria-hidden","true");
-    end.setAttribute("aria-hidden","true");
+    searchBlock=window.hexNextBlock(startBlock);
 
-    Array.prototype.forEach.call(
-      document.querySelectorAll(".hex-img-pc-start"),
-      function(marker){
-        var data;
+    while(searchBlock&&searchBlock!==endBlock){
+      var pcMarker=searchBlock.querySelector(".hex-img-pc-start");
+      var spMarker=searchBlock.querySelector(".hex-img-sp-start");
+      var data;
 
-        if(!isBetweenOpeningMarkers(marker)){
-          return;
-        }
-
-        data=getImageData(marker,".hex-img-pc-end");
+      if(pcMarker){
+        data=getImageData(
+          pcMarker,
+          searchBlock,
+          ".hex-img-pc-end"
+        );
 
         if(data){
           pcSlides.push(data);
         }
       }
-    );
 
-    Array.prototype.forEach.call(
-      document.querySelectorAll(".hex-img-sp-start"),
-      function(marker){
-        var data;
-
-        if(!isBetweenOpeningMarkers(marker)){
-          return;
-        }
-
-        data=getImageData(marker,".hex-img-sp-end");
+      if(spMarker){
+        data=getImageData(
+          spMarker,
+          searchBlock,
+          ".hex-img-sp-end"
+        );
 
         if(data){
           spSlides.push(data);
         }
       }
-    );
 
-    Array.prototype.forEach.call(
-      document.querySelectorAll(
-        ".hex-img-pc-end,.hex-img-sp-end"
-      ),
-      function(marker){
-        if(isBetweenOpeningMarkers(marker)){
-          marker.style.display="none";
-          marker.setAttribute("aria-hidden","true");
-        }
+      searchBlock=window.hexNextBlock(searchBlock);
+    }
+
+    /* バナー等と同様に、変換元のHOPWEBブロックを削除する */
+    searchBlock=startBlock;
+
+    while(searchBlock){
+      var nextBlock=window.hexNextBlock(searchBlock);
+      searchBlock.remove();
+
+      if(searchBlock===endBlock){
+        break;
       }
-    );
+
+      searchBlock=nextBlock;
+    }
 
     return pcSlides.map(function(pc,index){
       var sp=spSlides[index]||pc;
