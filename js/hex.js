@@ -3145,29 +3145,55 @@ hexReady(function(){
   /* CMSに登録されたPC/SP画像を記述順で取得する */
   function collectOpeningSlides(){
     var start=document.querySelector(".hex-opening-slide-start");
+    var end=document.querySelector(".hex-opening-slide-end");
     var pcSlides=[];
     var spSlides=[];
-    var node;
 
-    if(!start){
+    if(!start||!end){
       return [];
     }
 
-    function getImageData(marker){
-      var image=marker.nextElementSibling;
+    function isBetweenOpeningMarkers(element){
+      return !!(
+        start.compareDocumentPosition(element)&Node.DOCUMENT_POSITION_FOLLOWING
+      )&&!!(
+        end.compareDocumentPosition(element)&Node.DOCUMENT_POSITION_PRECEDING
+      );
+    }
 
-      while(
-        image&&
-        !image.matches(
-          "img,.hex-img-pc-end,.hex-img-sp-end,.hex-opening-slide-end"
-        )
-      ){
-        image=image.nextElementSibling;
+    function getImageData(marker,endSelector){
+      var walker=document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_ELEMENT
+      );
+      var element;
+      var image=null;
+
+      walker.currentNode=marker;
+
+      while((element=walker.nextNode())){
+        if(element.matches(endSelector)){
+          break;
+        }
+
+        if(element.matches(".hex-opening-slide-end")){
+          break;
+        }
+
+        if(element.matches("img")){
+          image=element;
+          break;
+        }
       }
 
-      if(!image||!image.matches("img")){
+      if(!image){
         return null;
       }
+
+      marker.style.display="none";
+      marker.setAttribute("aria-hidden","true");
+      image.style.display="none";
+      image.setAttribute("aria-hidden","true");
 
       return{
         title:marker.getAttribute("data-title")||"",
@@ -3177,34 +3203,56 @@ hexReady(function(){
       };
     }
 
-    node=start;
+    start.style.display="none";
+    end.style.display="none";
+    start.setAttribute("aria-hidden","true");
+    end.setAttribute("aria-hidden","true");
 
-    while(node){
-      var data;
+    Array.prototype.forEach.call(
+      document.querySelectorAll(".hex-img-pc-start"),
+      function(marker){
+        var data;
 
-      node.style.display="none";
-      node.setAttribute("aria-hidden","true");
+        if(!isBetweenOpeningMarkers(marker)){
+          return;
+        }
 
-      if(node.classList.contains("hex-opening-slide-end")){
-        break;
-      }
+        data=getImageData(marker,".hex-img-pc-end");
 
-      if(node.classList.contains("hex-img-pc-start")){
-        data=getImageData(node);
         if(data){
           pcSlides.push(data);
         }
       }
+    );
 
-      if(node.classList.contains("hex-img-sp-start")){
-        data=getImageData(node);
+    Array.prototype.forEach.call(
+      document.querySelectorAll(".hex-img-sp-start"),
+      function(marker){
+        var data;
+
+        if(!isBetweenOpeningMarkers(marker)){
+          return;
+        }
+
+        data=getImageData(marker,".hex-img-sp-end");
+
         if(data){
           spSlides.push(data);
         }
       }
+    );
 
-      node=node.nextElementSibling;
-    }
+    Array.prototype.forEach.call(
+      document.querySelectorAll(
+        ".hex-img-pc-end,.hex-img-sp-end"
+      ),
+      function(marker){
+        if(isBetweenOpeningMarkers(marker)){
+          marker.style.display="none";
+          marker.setAttribute("aria-hidden","true");
+        }
+      }
+    );
 
     return pcSlides.map(function(pc,index){
       var sp=spSlides[index]||pc;
