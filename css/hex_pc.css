@@ -3963,6 +3963,25 @@ html body
   visibility:visible;
 }
 
+/*
+ * WELCOME中心が円の中心へ来た後は、
+ * 固定を解除してWELCOMEと一緒にスクロールさせる。
+ */
+.hex-hero-image-handoff.is-released{
+  position:absolute!important;
+  inset:auto!important;
+  top:var(--hex-welcome-release-top,0px)!important;
+  right:auto!important;
+  bottom:auto!important;
+  left:var(--hex-welcome-release-left,0px)!important;
+  z-index:0!important;
+}
+
+.hex-welcome-wrap
+.hex-hero-image-handoff{
+  z-index:1!important;
+}
+
 .hex-hero-image-handoff
 .hex-hero-handoff-clone{
   position:relative!important;
@@ -4129,6 +4148,8 @@ html body
 }
 
 .welcome{
+  position:relative;
+  z-index:2;
   padding:0;
 }
 .welcome.has-padding{
@@ -4149,134 +4170,78 @@ html body
 .hex-welcome-copy{
   flex:0 0 auto;
   margin-bottom:clamp(32px, 5vh, 64px)!important;
+  opacity:1!important;
+  visibility:visible!important;
+  transition:none!important;
+}
+
+/*
+ * PCのWELCOMEは円の右側に配置する。
+ * 要素自体は通常の文書フローに置くため、
+ * フェードではなくスクロールに伴って画面下から現れる。
+ */
+@media screen and (min-width:1001px){
+  .hex-welcome-wrap
+  .welcome.has-padding{
+    width:50%;
+    margin-left:50%;
+    padding:
+      calc(80px + clamp(24px, 3vh, 40px))
+      clamp(32px, 4vw, 72px)
+      clamp(32px, 5vh, 64px);
+  }
+
+  .hex-welcome-wrap
+  .hex-welcome-copy{
+    width:100%;
+    max-width:680px;
+    margin-right:auto!important;
+    margin-left:auto!important;
+    text-align:left!important;
+  }
+
+  .hex-welcome-wrap
+  .welcome_contents{
+    width:100%;
+    max-width:680px;
+    margin-right:auto;
+    margin-left:auto;
+    padding-inline:0;
+  }
+}
+
+/*
+ * ヒーロー固定中のキャッチとは別デザインにできる
+ * WELCOME専用のフック。
+ */
+.hex-welcome-final-copy{
+  color:#1f2774!important;
+}
+
+.hex-welcome-final-copy
+.hex-opening-main,
+.hex-welcome-final-copy
+.hex-opening-sub{
+  color:inherit!important;
+  -webkit-text-stroke:0!important;
+  text-shadow:none!important;
 }
 
 .hex-welcome-wrap
 .welcome_contents{
   flex:0 0 auto;
-  opacity:0;
-  visibility:hidden;
-  transform:translateY(24px);
-  transition:
-    opacity .8s ease,
-    transform .8s ease,
-    visibility 0s linear .8s;
+  opacity:1;
+  visibility:visible;
+  transform:none;
+  transition:none;
 }
 
 .hex-welcome-wrap.is-welcome-active
 .welcome_contents{
   opacity:1;
   visibility:visible;
-  transform:translateY(0);
-  transition-delay:.12s;
-}
-
-/* =======================================
-   PC：円形画像より前面に出すWELCOME文字
-======================================= */
-@media screen and (min-width:1001px){
-  /* 元要素は判定と高さの基準として残し、表示だけ複製側へ任せる */
-  .hex-welcome-wrap
-  .hex-welcome-copy,
-  .hex-welcome-wrap
-  .welcome_contents{
-    opacity:0!important;
-    visibility:hidden!important;
-  }
-
-  .hex-welcome-text-overlay{
-    position:fixed;
-    inset:80px 0 0;
-    z-index:100;
-    display:block;
-    width:100%;
-    height:calc(100dvh - 80px);
-    overflow:hidden;
-    opacity:0;
-    visibility:hidden;
-    pointer-events:none;
-    transition:
-      opacity .6s ease,
-      visibility 0s linear .6s;
-  }
-
-  .hex-welcome-text-overlay.is-active{
-    opacity:1;
-    visibility:visible;
-    transition-delay:.08s;
-  }
-
-  .hex-welcome-text-overlay-inner{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    width:50%;
-    height:100%;
-    margin-left:50%;
-    padding:
-      clamp(32px, 4vw, 64px)
-      clamp(40px, 5vw, 80px);
-    box-sizing:border-box;
-    opacity:0;
-    transform:translateY(24px);
-    transition:
-      opacity .8s ease .12s,
-      transform .8s ease .12s;
-  }
-
-  .hex-welcome-text-overlay.is-active
-  .hex-welcome-text-overlay-inner{
-    opacity:1;
-    transform:translateY(0);
-  }
-
-  .hex-welcome-overlay-copy{
-    position:relative!important;
-    top:auto!important;
-    right:auto!important;
-    left:auto!important;
-    display:block!important;
-    width:100%!important;
-    margin:0 0 clamp(32px, 5vh, 56px)!important;
-    padding:0!important;
-    color:var(--hex-hero-copy-color)!important;
-    text-align:center!important;
-    opacity:1!important;
-    visibility:visible!important;
-    transform:none!important;
-  }
-
-  .hex-welcome-text-overlay
-  .welcome_contents{
-    width:100%;
-    max-width:none;
-    margin:0;
-    padding:0;
-    opacity:1!important;
-    visibility:visible!important;
-    transform:none!important;
-  }
-
-  .hex-welcome-text-overlay
-  .welcome .title:empty,
-  .hex-welcome-text-overlay
-  .title:empty{
-    display:none!important;
-  }
-
-  .hex-welcome-text-overlay
-  .welcome .text,
-  .hex-welcome-text-overlay
-  .text{
-    font-size:clamp(14px, 1.15vw, 18px)!important;
-    line-height:2.25!important;
-  }
-}
-
-@media screen and (max-width:1000px){
-  .hex-welcome-text-overlay{
-    display:none!important;
-  }
+  transform:none;
+  transition:none;
 }
 
 /* HTML上で空のタイトル枠は高さ・余白を持たせない */
