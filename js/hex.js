@@ -3475,10 +3475,42 @@ hexReady(function(){
       ".hex-hero-sticky"
     );
 
+    var heroStickyAnchor=null;
+
+    if(heroSticky&&heroSticky.parentNode){
+      heroStickyAnchor=document.createComment(
+        "hex-hero-sticky-anchor"
+      );
+
+      heroSticky.parentNode.insertBefore(
+        heroStickyAnchor,
+        heroSticky
+      );
+    }
+
+    function restoreHeroStickyToWrap(){
+      if(
+        !heroSticky||
+        !heroStickyAnchor||
+        !heroStickyAnchor.parentNode||
+        heroSticky.parentNode===
+          heroStickyAnchor.parentNode
+      ){
+        return;
+      }
+
+      heroStickyAnchor.parentNode.insertBefore(
+        heroSticky,
+        heroStickyAnchor.nextSibling
+      );
+    }
+
     function clearImageHoldPosition(){
       if(!heroSticky){
         return;
       }
+
+      restoreHeroStickyToWrap();
 
       heroSticky.classList.remove(
         "is-image-screen-fixed",
@@ -3548,6 +3580,14 @@ hexReady(function(){
         "is-image-screen-fixed"
       );
 
+      /*
+       * CMS側の重なり階層から抜き、
+       * WELCOME背景より確実に前へ出す
+       */
+      document.body.appendChild(
+        heroSticky
+      );
+
       imageHoldState="fixed";
     }
 
@@ -3588,6 +3628,9 @@ hexReady(function(){
         "--hex-hero-fixed-height",
         rect.height+"px"
       );
+
+      /* absoluteの基準をヒーローラッパーへ戻す */
+      restoreHeroStickyToWrap();
 
       heroSticky.classList.remove(
         "is-image-screen-fixed"
