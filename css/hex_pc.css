@@ -4185,7 +4185,7 @@ html body
   .welcome.has-padding{
     width:50%;
     margin-left:50%;
-    padding-top:calc(50dvh + 80px);
+    padding-top:calc(100dvh + 80px);
     padding-right:clamp(32px,4vw,72px);
     padding-bottom:clamp(32px,5vh,64px);
     padding-left:clamp(32px,4vw,72px);
