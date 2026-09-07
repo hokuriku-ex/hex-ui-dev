@@ -3914,6 +3914,9 @@ html body
  * 元のsticky要素は移動・変更しない。
  */
 .hex-hero-image-handoff{
+  --hex-welcome-circle-radius:150vmax;
+  --hex-welcome-circle-x:50vw;
+  --hex-welcome-circle-y:50vh;
   position:fixed!important;
   inset:0!important;
   z-index:90!important;
@@ -3927,6 +3930,32 @@ html body
   opacity:0;
   visibility:hidden;
   pointer-events:none;
+}
+
+/*
+ * PCでは全面のヒーロー画像に白いレイヤーを重ね、
+ * 透明な円の内側だけ画像を見せる。
+ */
+@media screen and (min-width:1001px){
+  .hex-hero-image-handoff::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:2;
+    pointer-events:none;
+    background:
+      radial-gradient(
+        circle var(--hex-welcome-circle-radius)
+        at var(--hex-welcome-circle-x)
+           var(--hex-welcome-circle-y),
+        transparent 0,
+        transparent calc(
+          var(--hex-welcome-circle-radius) - 1px
+        ),
+        #fff var(--hex-welcome-circle-radius),
+        #fff 100%
+      );
+  }
 }
 
 .hex-hero-image-handoff.is-active{
@@ -3949,6 +3978,11 @@ html body
     --hex-hero-viewport-height,
     calc(100dvh - 80px)
   )!important;
+}
+
+.hex-hero-image-handoff
+.hex-hero-handoff-clone{
+  z-index:0!important;
 }
 
 /* ドラッグ移動 */
@@ -4081,10 +4115,17 @@ html body
 ======================================= */
 .hex-welcome-wrap{
   position:relative;
+  z-index:95;
   width:100%;
   min-height:100vh;
   min-height:100dvh;
+  background:transparent!important;
   box-sizing:border-box;
+}
+
+.hex-welcome-wrap
+.welcome{
+  background:transparent!important;
 }
 
 .welcome{
@@ -4113,6 +4154,21 @@ html body
 .hex-welcome-wrap
 .welcome_contents{
   flex:0 0 auto;
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(24px);
+  transition:
+    opacity .8s ease,
+    transform .8s ease,
+    visibility 0s linear .8s;
+}
+
+.hex-welcome-wrap.is-welcome-active
+.welcome_contents{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+  transition-delay:.12s;
 }
 
 /* HTML上で空のタイトル枠は高さ・余白を持たせない */
