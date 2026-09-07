@@ -3854,7 +3854,7 @@ hexReady(function(){
       );
 
       circleEnabled=window.matchMedia(
-        "(min-width:1001px)"
+        "(min-width:769px)"
       ).matches;
 
       welcomeWrap=document.querySelector(
