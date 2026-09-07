@@ -3909,6 +3909,38 @@ html body
   isolation:auto;
 }
 
+/*
+ * 画像下端が画面下へ到達してから、
+ * WELCOMEコピーへ切り替わるまで画面内に固定
+ */
+.hex-hero-wrap.has-copy-handoff
+.hex-hero-sticky.is-image-screen-fixed{
+  position:fixed!important;
+  top:var(--hex-hero-fixed-top,0px)!important;
+  right:auto!important;
+  left:var(--hex-hero-fixed-left,0px)!important;
+  z-index:50!important;
+  width:var(--hex-hero-fixed-width,100vw)!important;
+  max-width:none!important;
+  height:var(--hex-hero-fixed-height,100dvh)!important;
+}
+
+/*
+ * 固定解除時の画面位置へ着地させる。
+ * position:stickyへ直接戻さないため、解除時に画像が跳ねない。
+ */
+.hex-hero-wrap.has-copy-handoff
+.hex-hero-sticky.is-image-screen-released{
+  position:absolute!important;
+  top:var(--hex-hero-release-top,0px)!important;
+  right:auto!important;
+  left:var(--hex-hero-fixed-left,0px)!important;
+  z-index:1!important;
+  width:var(--hex-hero-fixed-width,100vw)!important;
+  max-width:none!important;
+  height:var(--hex-hero-fixed-height,100dvh)!important;
+}
+
 /* ドラッグ移動 */
 @media screen and (min-width:769px){
   .hex-hero-sticky{
