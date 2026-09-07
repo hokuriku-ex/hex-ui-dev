@@ -1202,7 +1202,6 @@
   .hex-opening-dream-copy{
     font-size:clamp(42px,12vw,64px)!important;
     -webkit-text-stroke:1.5px var(--hex-opening-navy);
-
     text-shadow:
       1px 1px 0 var(--hex-opening-navy),
       2px 2px 0 var(--hex-opening-navy),
