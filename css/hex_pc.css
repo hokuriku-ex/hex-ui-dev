@@ -4171,6 +4171,114 @@ html body
   transition-delay:.12s;
 }
 
+/* =======================================
+   PC：円形画像より前面に出すWELCOME文字
+======================================= */
+@media screen and (min-width:1001px){
+  /* 元要素は判定と高さの基準として残し、表示だけ複製側へ任せる */
+  .hex-welcome-wrap
+  .hex-welcome-copy,
+  .hex-welcome-wrap
+  .welcome_contents{
+    opacity:0!important;
+    visibility:hidden!important;
+  }
+
+  .hex-welcome-text-overlay{
+    position:fixed;
+    inset:80px 0 0;
+    z-index:100;
+    display:block;
+    width:100%;
+    height:calc(100dvh - 80px);
+    overflow:hidden;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:
+      opacity .6s ease,
+      visibility 0s linear .6s;
+  }
+
+  .hex-welcome-text-overlay.is-active{
+    opacity:1;
+    visibility:visible;
+    transition-delay:.08s;
+  }
+
+  .hex-welcome-text-overlay-inner{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    width:50%;
+    height:100%;
+    margin-left:50%;
+    padding:
+      clamp(32px, 4vw, 64px)
+      clamp(40px, 5vw, 80px);
+    box-sizing:border-box;
+    opacity:0;
+    transform:translateY(24px);
+    transition:
+      opacity .8s ease .12s,
+      transform .8s ease .12s;
+  }
+
+  .hex-welcome-text-overlay.is-active
+  .hex-welcome-text-overlay-inner{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  .hex-welcome-overlay-copy{
+    position:relative!important;
+    top:auto!important;
+    right:auto!important;
+    left:auto!important;
+    display:block!important;
+    width:100%!important;
+    margin:0 0 clamp(32px, 5vh, 56px)!important;
+    padding:0!important;
+    color:var(--hex-hero-copy-color)!important;
+    text-align:center!important;
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+  }
+
+  .hex-welcome-text-overlay
+  .welcome_contents{
+    width:100%;
+    max-width:none;
+    margin:0;
+    padding:0;
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+  }
+
+  .hex-welcome-text-overlay
+  .welcome .title:empty,
+  .hex-welcome-text-overlay
+  .title:empty{
+    display:none!important;
+  }
+
+  .hex-welcome-text-overlay
+  .welcome .text,
+  .hex-welcome-text-overlay
+  .text{
+    font-size:clamp(14px, 1.15vw, 18px)!important;
+    line-height:2.25!important;
+  }
+}
+
+@media screen and (max-width:1000px){
+  .hex-welcome-text-overlay{
+    display:none!important;
+  }
+}
+
 /* HTML上で空のタイトル枠は高さ・余白を持たせない */
 .hex-welcome-wrap
 .welcome .title:empty{
