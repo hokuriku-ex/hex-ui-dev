@@ -4189,6 +4189,11 @@ html body
       calc(80px + clamp(24px, 3vh, 40px))
       clamp(32px, 4vw, 72px)
       clamp(32px, 5vh, 64px);
+    transform:translate3d(
+      0,
+      var(--hex-welcome-entry-offset,0px),
+      0
+    );
   }
 
   .hex-welcome-wrap
@@ -4207,6 +4212,22 @@ html body
     margin-right:auto;
     margin-left:auto;
     padding-inline:0;
+  }
+
+  /* 中央の固定キャッチが消えるまでは表示しない */
+  .hex-welcome-wrap:not(.is-welcome-copy-ready)
+  .hex-welcome-copy,
+  .hex-welcome-wrap:not(.is-welcome-copy-ready)
+  .welcome_contents{
+    visibility:hidden!important;
+  }
+
+  /* 切替後は画面下から通常スクロールで入ってくる */
+  .hex-welcome-wrap.is-welcome-copy-ready
+  .hex-welcome-copy,
+  .hex-welcome-wrap.is-welcome-copy-ready
+  .welcome_contents{
+    visibility:visible!important;
   }
 }
 
