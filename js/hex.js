@@ -3785,7 +3785,7 @@ hexReady(function(){
       );
 
       endRadius=Math.min(
-        Math.max(window.innerWidth*.2,200),
+        Math.max(window.innerWidth*.2,180),
         400
       );
 
@@ -3800,7 +3800,7 @@ hexReady(function(){
         startX+
         (endX-startX)*eased;
 
-      centerY=window.innerHeight*.5;
+      centerY=window.innerHeight*.5+40;
 
       imageHandoff.style.setProperty(
         "--hex-welcome-circle-radius",
