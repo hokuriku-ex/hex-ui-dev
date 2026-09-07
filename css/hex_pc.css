@@ -3478,32 +3478,79 @@ body,
 /* =======================================
    開幕キャッチコピー
 ======================================= */
-.hex-opening-dream-copy-stage{
+/* CMS登録用HTML */
+.hex-opening-intro-source{
+  display:none!important;
+}
+
+/* 開幕画像全体 */
+.hex-opening-intro-stage{
   position:absolute;
   inset:0;
   z-index:4;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:24px;
-  box-sizing:border-box;
+  overflow:hidden;
+  width:100%;
+  height:100%;
   background:var(--hex-opening-white);
   opacity:0;
   visibility:hidden;
   pointer-events:none;
 }
 
-.hex-opening-dream-copy{
+/* picture */
+.hex-opening-intro-picture{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+}
+
+/* 背景画像 */
+.hex-opening-intro-photo{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:
+    var(--hex-intro-pc-position,center);
+  transform:scale(1);
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+/* キャッチ全体 */
+.hex-opening-intro-catch{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:32px;
+  box-sizing:border-box;
+  text-align:center;
+  opacity:0;
+  transform:translateY(18px);
+}
+
+/* メインキャッチ */
+.hex-opening-intro-main{
+  display:block;
   margin:0!important;
   color:#fafafa!important;
-  font-family:var(--hex-font-pop-en);
-  font-size:clamp(52px,7vw,108px)!important;
-  font-weight:400!important;
-  line-height:1.2!important;
-  letter-spacing:.04em!important;
-  text-align:center;
+  font-family:
+    'M PLUS Rounded 1c',
+    sans-serif!important;
+  font-size:clamp(38px,4.5vw,68px)!important;
+  font-weight:700!important;
+  line-height:1.65!important;
+  letter-spacing:.08em!important;
+
   -webkit-text-stroke:2px var(--hex-opening-navy);
   paint-order:stroke fill;
+
   text-shadow:
     1px 1px 0 var(--hex-opening-navy),
     2px 2px 0 var(--hex-opening-navy),
@@ -3513,29 +3560,55 @@ body,
     6px 6px 0 var(--hex-opening-navy),
     7px 7px 0 var(--hex-opening-navy),
     8px 8px 0 var(--hex-opening-navy);
-  opacity:0;
-  transform:translateY(16px) scale(.97);
 }
 
-/* 表示開始 */
-.hex-opening.is-dream-copy-start
-.hex-opening-dream-copy-stage{
+/* サブキャッチ */
+.hex-opening-intro-sub{
+  display:block;
+  margin-top:20px;
+  color:#fafafa!important;
+  font-size:clamp(14px,1.15vw,18px)!important;
+  font-weight:700!important;
+  line-height:1.8!important;
+  letter-spacing:.08em!important;
+
+  -webkit-text-stroke:1px var(--hex-opening-navy);
+  paint-order:stroke fill;
+
+  text-shadow:
+    1px 1px 0 var(--hex-opening-navy),
+    2px 2px 0 var(--hex-opening-navy),
+    3px 3px 0 var(--hex-opening-navy),
+    4px 4px 0 var(--hex-opening-navy);
+}
+
+/* 開幕画像開始 */
+.hex-opening.is-intro-start
+.hex-opening-intro-stage{
   opacity:1;
   visibility:visible;
 }
 
-.hex-opening.is-dream-copy-start
-.hex-opening-dream-copy{
+/* キャッチ表示 */
+.hex-opening.is-intro-start
+.hex-opening-intro-catch{
   opacity:1;
-  transform:translateY(0) scale(1);
+  transform:translateY(0);
   transition:
-    opacity .65s ease,
-    transform .8s cubic-bezier(.22,.8,.3,1);
+    opacity .7s ease .2s,
+    transform .85s cubic-bezier(.22,.8,.3,1) .2s;
 }
 
-/* 表示終了 */
-.hex-opening.is-dream-copy-complete
-.hex-opening-dream-copy-stage{
+/* 画像を緩やかに拡大 */
+.hex-opening.is-intro-start
+.hex-opening-intro-photo{
+  transform:scale(1.025);
+  transition:transform 3s linear;
+}
+
+/* 開幕画像終了 */
+.hex-opening.is-intro-complete
+.hex-opening-intro-stage{
   opacity:0;
   visibility:hidden;
   transition:
