@@ -3883,7 +3883,7 @@ hexReady(function(){
         welcomeCenterReached=
           welcomeRect.top+
           welcomeRect.height/2<=
-          window.innerHeight/2;
+          window.innerHeight/2+40;
       }
 
       if(!reachedImageBottom){
