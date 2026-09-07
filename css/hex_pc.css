@@ -4123,6 +4123,20 @@ html body
   box-sizing:border-box;
 }
 
+/*
+ * 固定された円形マスクより、WELCOMEの文字だけを前面へ出す。
+ * CMS側の背景は透明にして円形画像を隠さない。
+ */
+.gc_auto_frame_spotitem:has(.hex-welcome-wrap),
+.gc_auto_frame_spotitem_box:has(.hex-welcome-wrap),
+.gc_auto_frame_spotitem_body:has(.hex-welcome-wrap){
+  position:relative!important;
+  z-index:95!important;
+  isolation:auto!important;
+  overflow:visible!important;
+  background:transparent!important;
+}
+
 .hex-welcome-wrap
 .welcome{
   background:transparent!important;
