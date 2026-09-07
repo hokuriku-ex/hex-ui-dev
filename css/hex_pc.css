@@ -3476,6 +3476,74 @@ body,
 }
 
 /* =======================================
+   開幕キャッチコピー
+======================================= */
+.hex-opening-dream-copy-stage{
+  position:absolute;
+  inset:0;
+  z-index:4;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  box-sizing:border-box;
+  background:var(--hex-opening-white);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.hex-opening-dream-copy{
+  margin:0!important;
+  color:#fafafa!important;
+  font-family:var(--hex-font-pop-en);
+  font-size:clamp(52px,7vw,108px)!important;
+  font-weight:700!important;
+  line-height:1.2!important;
+  letter-spacing:.04em!important;
+  text-align:center;
+  -webkit-text-stroke:2px var(--hex-opening-navy);
+  paint-order:stroke fill;
+  text-shadow:
+    1px 1px 0 var(--hex-opening-navy),
+    2px 2px 0 var(--hex-opening-navy),
+    3px 3px 0 var(--hex-opening-navy),
+    4px 4px 0 var(--hex-opening-navy),
+    5px 5px 0 var(--hex-opening-navy),
+    6px 6px 0 var(--hex-opening-navy),
+    7px 7px 0 var(--hex-opening-navy),
+    8px 8px 0 var(--hex-opening-navy);
+  opacity:0;
+  transform:translateY(16px) scale(.97);
+}
+
+/* 表示開始 */
+.hex-opening.is-dream-copy-start
+.hex-opening-dream-copy-stage{
+  opacity:1;
+  visibility:visible;
+}
+
+.hex-opening.is-dream-copy-start
+.hex-opening-dream-copy{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  transition:
+    opacity .65s ease,
+    transform .8s cubic-bezier(.22,.8,.3,1);
+}
+
+/* 表示終了 */
+.hex-opening.is-dream-copy-complete
+.hex-opening-dream-copy-stage{
+  opacity:0;
+  visibility:hidden;
+  transition:
+    opacity .6s ease,
+    visibility 0s linear .6s;
+}
+
+/* =======================================
    静止画スライド
 ======================================= */
 
