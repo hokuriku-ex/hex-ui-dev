@@ -3785,8 +3785,8 @@ hexReady(function(){
       );
 
       endRadius=Math.min(
-        Math.max(window.innerWidth*.2,220),
-        300
+        Math.max(window.innerWidth*.2,200),
+        400
       );
 
       radius=
