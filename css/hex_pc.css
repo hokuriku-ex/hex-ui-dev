@@ -3913,43 +3913,21 @@ html body
  * 画像下端が画面下へ到達してから、
  * WELCOMEコピーへ切り替わるまで画面内に固定
  */
-.hex-hero-wrap.has-copy-handoff
 .hex-hero-sticky.is-image-screen-fixed{
   position:fixed!important;
   top:var(--hex-hero-fixed-top,0px)!important;
   right:auto!important;
   left:var(--hex-hero-fixed-left,0px)!important;
-  z-index:50!important;
+  z-index:90!important;
   width:var(--hex-hero-fixed-width,100vw)!important;
   max-width:none!important;
   height:var(--hex-hero-fixed-height,100dvh)!important;
 }
 
 /*
- * CMSのWELCOMEブロックが後ろから重なっても、
- * 画像固定中だけヒーロー側を前面に保つ。
- * 固定クラスが外れると、この指定も自動で解除される。
- */
-.gc_auto_frame_spotitem:has(
-  .hex-hero-sticky.is-image-screen-fixed
-),
-.gc_auto_frame_spotitem_box:has(
-  .hex-hero-sticky.is-image-screen-fixed
-),
-.gc_auto_frame_spotitem_body:has(
-  .hex-hero-sticky.is-image-screen-fixed
-){
-  position:relative!important;
-  z-index:50!important;
-  isolation:auto!important;
-  overflow:visible!important;
-}
-
-/*
  * 固定解除時の画面位置へ着地させる。
  * position:stickyへ直接戻さないため、解除時に画像が跳ねない。
  */
-.hex-hero-wrap.has-copy-handoff
 .hex-hero-sticky.is-image-screen-released{
   position:absolute!important;
   top:var(--hex-hero-release-top,0px)!important;
