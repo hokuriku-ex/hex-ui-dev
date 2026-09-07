@@ -1187,12 +1187,39 @@
    トップページ：開幕アニメーション
 ======================================= */
 @media screen and (max-width:768px){
+  /* 左官アニメーション */
   .hex-opening-path{
     stroke-width:160;
   }
   .hex-opening-path.is-trowel{
     filter:none;
   }
+
+  /* 静止画スライド */
+  .hex-opening-slide-image{
+    object-position:
+      var(--hex-slide-sp-position,center);
+  }
+  .hex-opening-slide.is-active
+  .hex-opening-slide-image{
+    transform:scale(1.025);
+  }
+  .hex-opening-slide-title{
+    left:24px;
+    bottom:max(
+      48px,
+      calc(env(safe-area-inset-bottom) + 32px)
+    );
+    font-size:clamp(38px,12vw,58px);
+    -webkit-text-stroke:1.5px #1f2774;
+    text-shadow:
+      1px 1px 0 #1f2774,
+      2px 2px 0 #1f2774,
+      3px 3px 0 #1f2774,
+      4px 4px 0 #1f2774;
+  }
+
+  /* ロゴアニメーション */
   .hex-logo-story{
     width:160vw;
     max-width:none;
