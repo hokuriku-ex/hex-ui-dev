@@ -1195,6 +1195,22 @@
     filter:none;
   }
 
+  /* 開幕キャッチコピー */
+  .hex-opening-dream-copy-stage{
+    padding:24px;
+  }
+  .hex-opening-dream-copy{
+    font-size:clamp(42px,12vw,64px)!important;
+    -webkit-text-stroke:1.5px var(--hex-opening-navy);
+
+    text-shadow:
+      1px 1px 0 var(--hex-opening-navy),
+      2px 2px 0 var(--hex-opening-navy),
+      3px 3px 0 var(--hex-opening-navy),
+      4px 4px 0 var(--hex-opening-navy),
+      5px 5px 0 var(--hex-opening-navy);
+  }
+
   /* 静止画スライド */
   .hex-opening-slide-image{
     object-position:
