@@ -3461,7 +3461,7 @@ hexReady(function(){
     var waitingImage=null;
     var scrollDistance=0;
     var initialPositionSet=false;
-    var imageHandoffActive=false;
+    var imageHandoffState="hidden";
     var stageReady=false;
 
     var initialCenterOffsetY=0;
@@ -3552,7 +3552,7 @@ hexReady(function(){
       var removableItems;
 
       if(
-        imageHandoffActive||
+        imageHandoffState!=="hidden"||
         !heroSticky
       ){
         return;
@@ -3596,13 +3596,29 @@ hexReady(function(){
         "is-active"
       );
 
-      imageHandoffActive=true;
+      imageHandoffState="fixed";
     }
 
     function hideImageHandoff(){
-      if(!imageHandoffActive){
+      if(imageHandoffState==="hidden"){
         return;
       }
+
+      imageHandoff.classList.remove(
+        "is-released"
+      );
+
+      imageHandoff.style.removeProperty(
+        "--hex-welcome-release-top"
+      );
+
+      imageHandoff.style.removeProperty(
+        "--hex-welcome-release-left"
+      );
+
+      document.body.appendChild(
+        imageHandoff
+      );
 
       imageHandoff.classList.remove(
         "is-active"
@@ -3610,7 +3626,97 @@ hexReady(function(){
 
       imageHandoff.replaceChildren();
 
-      imageHandoffActive=false;
+      imageHandoffState="hidden";
+    }
+
+    function attachHandoffToWelcome(welcomeWrap){
+      if(
+        !welcomeWrap||
+        imageHandoffState==="released"||
+        imageHandoff.parentNode===welcomeWrap
+      ){
+        return;
+      }
+
+      welcomeWrap.insertBefore(
+        imageHandoff,
+        welcomeWrap.firstChild
+      );
+    }
+
+    function attachHandoffToBody(){
+      if(
+        imageHandoffState==="released"||
+        imageHandoff.parentNode===document.body
+      ){
+        return;
+      }
+
+      document.body.appendChild(
+        imageHandoff
+      );
+    }
+
+    function releaseImageHandoff(welcomeWrap){
+      var handoffRect;
+      var welcomeRect;
+
+      if(
+        !welcomeWrap||
+        imageHandoffState!=="fixed"
+      ){
+        return;
+      }
+
+      handoffRect=
+        imageHandoff.getBoundingClientRect();
+
+      welcomeRect=
+        welcomeWrap.getBoundingClientRect();
+
+      imageHandoff.style.setProperty(
+        "--hex-welcome-release-top",
+        (handoffRect.top-welcomeRect.top)+"px"
+      );
+
+      imageHandoff.style.setProperty(
+        "--hex-welcome-release-left",
+        (handoffRect.left-welcomeRect.left)+"px"
+      );
+
+      attachHandoffToWelcome(
+        welcomeWrap
+      );
+
+      imageHandoff.classList.add(
+        "is-released"
+      );
+
+      imageHandoffState="released";
+    }
+
+    function refixImageHandoff(welcomeWrap){
+      if(imageHandoffState!=="released"){
+        return;
+      }
+
+      imageHandoff.classList.remove(
+        "is-released"
+      );
+
+      imageHandoff.style.removeProperty(
+        "--hex-welcome-release-top"
+      );
+
+      imageHandoff.style.removeProperty(
+        "--hex-welcome-release-left"
+      );
+
+      imageHandoffState="fixed";
+
+      attachHandoffToWelcome(
+        welcomeWrap
+      );
     }
 
     function updateCircleMask(
@@ -3640,7 +3746,7 @@ hexReady(function(){
       if(
         !fixedCopy||
         !welcomeCopy||
-        !imageHandoffActive
+        imageHandoffState==="hidden"
       ){
         return;
       }
@@ -3726,6 +3832,8 @@ hexReady(function(){
       var welcomeWrap;
       var welcomeRect;
       var welcomeStageFinished=false;
+      var welcomeCenterReached=false;
+      var welcomeEntered=false;
 
       if(!heroSticky){
         return;
@@ -3754,14 +3862,21 @@ hexReady(function(){
 
       if(
         circleEnabled&&
-        isHandedOff&&
         welcomeWrap
       ){
         welcomeRect=
           welcomeWrap.getBoundingClientRect();
 
+        welcomeEntered=
+          welcomeRect.top<window.innerHeight;
+
         welcomeStageFinished=
           welcomeRect.bottom<=0;
+
+        welcomeCenterReached=
+          welcomeRect.top+
+          welcomeRect.height/2<=
+          window.innerHeight/2;
       }
 
       if(!reachedImageBottom){
@@ -3784,6 +3899,24 @@ hexReady(function(){
           heroTop,
           isHandedOff
         );
+
+        if(welcomeEntered&&welcomeWrap){
+          attachHandoffToWelcome(
+            welcomeWrap
+          );
+
+          if(welcomeCenterReached){
+            releaseImageHandoff(
+              welcomeWrap
+            );
+          }else{
+            refixImageHandoff(
+              welcomeWrap
+            );
+          }
+        }else{
+          attachHandoffToBody();
+        }
       }
     }
 
@@ -4315,7 +4448,6 @@ hexReady(function(){
     var welcomeWrap=document.querySelector(
       ".hex-welcome-wrap"
     );
-    var welcomeTextOverlay=null;
     var frameRequested=false;
 
     if(!hero||!welcomeCopy){
@@ -4347,66 +4479,10 @@ hexReady(function(){
       "hex-welcome-copy"
     );
 
-    if(welcomeWrap){
-      var welcomeContents=welcomeWrap.querySelector(
-        ".welcome_contents"
-      );
-
-      var overlayInner=document.createElement(
-        "div"
-      );
-
-      var overlayCopy=welcomeCopy.cloneNode(true);
-
-      welcomeTextOverlay=document.createElement(
-        "div"
-      );
-
-      welcomeTextOverlay.className=
-        "hex-welcome-text-overlay";
-
-      welcomeTextOverlay.setAttribute(
-        "aria-hidden",
-        "true"
-      );
-
-      overlayInner.className=
-        "hex-welcome-text-overlay-inner";
-
-      overlayCopy.classList.remove(
-        "hex-welcome-copy",
-        "is-copy-active"
-      );
-
-      overlayCopy.classList.add(
-        "hex-welcome-overlay-copy"
-      );
-
-      overlayInner.appendChild(
-        overlayCopy
-      );
-
-      if(welcomeContents){
-        overlayInner.appendChild(
-          welcomeContents.cloneNode(true)
-        );
-      }
-
-      welcomeTextOverlay.appendChild(
-        overlayInner
-      );
-
-      document.body.appendChild(
-        welcomeTextOverlay
-      );
-    }
-
     function updateCopyHandoff(){
       var fixedRect;
       var welcomeRect;
       var isHandedOff;
-      var circleEnabled;
-      var welcomeStageFinished=false;
 
       frameRequested=false;
 
@@ -4418,15 +4494,6 @@ hexReady(function(){
 
       isHandedOff=
         welcomeRect.top<=fixedRect.top+1;
-
-      circleEnabled=window.matchMedia(
-        "(min-width:1001px)"
-      ).matches;
-
-      if(welcomeWrap){
-        welcomeStageFinished=
-          welcomeWrap.getBoundingClientRect().bottom<=0;
-      }
 
       fixedCopy.classList.toggle(
         "is-copy-handed-off",
@@ -4442,15 +4509,6 @@ hexReady(function(){
         welcomeWrap.classList.toggle(
           "is-welcome-active",
           isHandedOff
-        );
-      }
-
-      if(welcomeTextOverlay){
-        welcomeTextOverlay.classList.toggle(
-          "is-active",
-          circleEnabled&&
-          isHandedOff&&
-          !welcomeStageFinished
         );
       }
 
