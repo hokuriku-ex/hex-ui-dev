@@ -3891,8 +3891,7 @@ hexReady(function(){
       }
 
       if(
-        (!circleEnabled&&isHandedOff)||
-        welcomeStageFinished
+        !circleEnabled&&isHandedOff
       ){
         hideImageHandoff();
         return;
