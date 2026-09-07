@@ -4139,6 +4139,7 @@ html body
   min-height:100vh;
   min-height:100dvh;
   background:transparent!important;
+  padding-bottom:var(--hex-welcome-entry-offset,0px);
   box-sizing:border-box;
 }
 
