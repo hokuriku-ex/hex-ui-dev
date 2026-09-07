@@ -3123,6 +3123,8 @@ hexReady(function(){
   var OPENING_START_DELAY=200;
   var PLASTER_DURATION=2500;
   var PHASE_CONNECT_DELAY=420;
+  var DREAM_COPY_DURATION=1600;
+  var DREAM_COPY_FADE_DURATION=600;
   var SLIDE_DURATION=2200;
   var SLIDE_FADE_DURATION=800;
   var LAST_SLIDE_DURATION=2600;
@@ -3354,6 +3356,33 @@ hexReady(function(){
     return stage;
   }
 
+  function createOpeningDreamCopy(opening){
+    var stage=document.createElement("div");
+    var copy=document.createElement("p");
+
+    stage.className="hex-opening-dream-copy-stage";
+    copy.className="hex-opening-dream-copy";
+    copy.textContent="What’s Your Dream?";
+    stage.appendChild(copy);
+    opening.insertBefore(stage,opening.firstChild);
+
+    return stage;
+  }
+
+  function startOpeningDreamCopy(opening,startTime){
+    window.setTimeout(function(){
+      opening.classList.add("is-dream-copy-start");
+    },startTime);
+
+    startTime+=DREAM_COPY_DURATION;
+
+    window.setTimeout(function(){
+      opening.classList.add("is-dream-copy-complete");
+    },startTime);
+
+    return startTime+DREAM_COPY_FADE_DURATION;
+  }
+
   function startOpeningSlides(opening,stage,slides,startTime){
     var slideElements=stage.querySelectorAll(".hex-opening-slide");
     var elapsed=startTime;
@@ -3581,6 +3610,8 @@ hexReady(function(){
     }
 
     if(ENABLE_SLIDE_ANIMATION&&slideStage&&slides.length){
+      timeline=startOpeningDreamCopy(opening,timeline);
+
       timeline=startOpeningSlides(
         opening,
         slideStage,
@@ -3672,6 +3703,7 @@ hexReady(function(){
     slides=collectOpeningSlides();
 
     if(ENABLE_SLIDE_ANIMATION&&slides.length){
+      createOpeningDreamCopy(opening);
       slideStage=createOpeningSlides(opening,slides);
     }
     document.documentElement.classList.add("hex-opening-lock");
