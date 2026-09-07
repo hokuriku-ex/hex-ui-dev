@@ -3117,11 +3117,15 @@ hexReady(function(){
 
   /* アニメーションごとの表示切替 */
   var ENABLE_PLASTER_ANIMATION=false;
+  var ENABLE_SLIDE_ANIMATION=true;
   var ENABLE_LOGO_ANIMATION=true;
 
   var OPENING_START_DELAY=200;
   var PLASTER_DURATION=2500;
   var PHASE_CONNECT_DELAY=420;
+  var SLIDE_DURATION=3600;
+  var SLIDE_FADE_DURATION=1200;
+  var LAST_SLIDE_DURATION=4200;
   var LOGO_DURATION=2350;
   var HERO_POSITION_PREPARE_DELAY=80;
   var HERO_REVEAL_DURATION=1100;
@@ -3136,6 +3140,166 @@ hexReady(function(){
 
   function isTopPage(){
     return !!document.querySelector(".hex-hero-wrap");
+  }
+
+  /* CMSに登録されたPC/SP画像を記述順で取得する */
+  function collectOpeningSlides(){
+    var start=document.querySelector(".hex-opening-slide-start");
+    var pcSlides=[];
+    var spSlides=[];
+    var node;
+
+    if(!start){
+      return [];
+    }
+
+    function getImageData(marker){
+      var image=marker.nextElementSibling;
+
+      while(
+        image&&
+        !image.matches(
+          "img,.hex-img-pc-end,.hex-img-sp-end,.hex-opening-slide-end"
+        )
+      ){
+        image=image.nextElementSibling;
+      }
+
+      if(!image||!image.matches("img")){
+        return null;
+      }
+
+      return{
+        title:marker.getAttribute("data-title")||"",
+        src:image.getAttribute("src")||"",
+        alt:image.getAttribute("alt")||marker.getAttribute("data-title")||"",
+        position:image.getAttribute("data-position")||"center"
+      };
+    }
+
+    node=start;
+
+    while(node){
+      var data;
+
+      node.style.display="none";
+      node.setAttribute("aria-hidden","true");
+
+      if(node.classList.contains("hex-opening-slide-end")){
+        break;
+      }
+
+      if(node.classList.contains("hex-img-pc-start")){
+        data=getImageData(node);
+        if(data){
+          pcSlides.push(data);
+        }
+      }
+
+      if(node.classList.contains("hex-img-sp-start")){
+        data=getImageData(node);
+        if(data){
+          spSlides.push(data);
+        }
+      }
+
+      node=node.nextElementSibling;
+    }
+
+    return pcSlides.map(function(pc,index){
+      var sp=spSlides[index]||pc;
+
+      return{
+        title:pc.title||sp.title,
+        pcSrc:pc.src,
+        spSrc:sp.src||pc.src,
+        alt:pc.alt||sp.alt,
+        pcPosition:pc.position,
+        spPosition:sp.position||pc.position
+      };
+    });
+  }
+
+  function createOpeningSlides(opening,slides){
+    var stage=document.createElement("div");
+
+    stage.className="hex-opening-slides";
+
+    slides.forEach(function(item,index){
+      var slide=document.createElement("div");
+      var picture=document.createElement("picture");
+      var source=document.createElement("source");
+      var image=document.createElement("img");
+      var title=document.createElement("p");
+
+      slide.className="hex-opening-slide";
+      slide.setAttribute("data-slide-index",String(index));
+
+      picture.className="hex-opening-slide-picture";
+      source.media="(max-width:768px)";
+      source.srcset=item.spSrc;
+
+      image.className="hex-opening-slide-image";
+      image.src=item.pcSrc;
+      image.alt=item.alt;
+      image.decoding="async";
+      image.loading="eager";
+      image.draggable=false;
+      image.style.setProperty("--hex-slide-pc-position",item.pcPosition);
+      image.style.setProperty("--hex-slide-sp-position",item.spPosition);
+
+      if(index===0){
+        image.fetchPriority="high";
+      }
+
+      picture.appendChild(source);
+      picture.appendChild(image);
+      slide.appendChild(picture);
+
+      if(item.title){
+        title.className="hex-opening-slide-title";
+        title.textContent=item.title;
+        slide.appendChild(title);
+      }
+
+      stage.appendChild(slide);
+    });
+
+    opening.insertBefore(stage,opening.firstChild);
+    return stage;
+  }
+
+  function startOpeningSlides(opening,stage,slides,startTime){
+    var slideElements=stage.querySelectorAll(".hex-opening-slide");
+    var elapsed=startTime;
+
+    window.setTimeout(function(){
+      opening.classList.add("is-slides-start");
+    },startTime);
+
+    Array.prototype.forEach.call(slideElements,function(slide,index){
+      window.setTimeout(function(){
+        Array.prototype.forEach.call(slideElements,function(item){
+          item.classList.remove("is-active","is-previous");
+        });
+
+        if(index>0){
+          slideElements[index-1].classList.add("is-previous");
+        }
+
+        slide.classList.add("is-active");
+      },elapsed);
+
+      elapsed+=index===slides.length-1
+        ? LAST_SLIDE_DURATION
+        : SLIDE_DURATION;
+    });
+
+    window.setTimeout(function(){
+      opening.classList.add("is-slides-complete");
+    },elapsed);
+
+    return elapsed+SLIDE_FADE_DURATION;
   }
 
 
@@ -3309,7 +3473,7 @@ hexReady(function(){
     );
   }
 
-  function startOpeningTimeline(opening){
+  function startOpeningTimeline(opening,slideStage,slides){
     var timeline=OPENING_START_DELAY;
 
     if(ENABLE_PLASTER_ANIMATION){
@@ -3329,6 +3493,19 @@ hexReady(function(){
     }else{
       /* 左官を省略する場合は最初から白いロゴ舞台にする */
       opening.classList.add("is-plaster-complete");
+    }
+
+    if(ENABLE_SLIDE_ANIMATION&&slideStage&&slides.length){
+      timeline=startOpeningSlides(
+        opening,
+        slideStage,
+        slides,
+        timeline
+      );
+
+      if(ENABLE_LOGO_ANIMATION){
+        timeline+=PHASE_CONNECT_DELAY;
+      }
     }
 
     if(ENABLE_LOGO_ANIMATION){
@@ -3371,6 +3548,8 @@ hexReady(function(){
 
   function initOpening(){
     var opening;
+    var slides;
+    var slideStage=null;
 
     if(!isTopPage()){
       showPendingPage();
@@ -3392,7 +3571,11 @@ hexReady(function(){
     }
 
     /* 両方OFFなら開幕レイヤーを作らずヒーローを即時表示 */
-    if(!ENABLE_PLASTER_ANIMATION&&!ENABLE_LOGO_ANIMATION){
+    if(
+      !ENABLE_PLASTER_ANIMATION&&
+      !ENABLE_SLIDE_ANIMATION&&
+      !ENABLE_LOGO_ANIMATION
+    ){
       ensureHeroReady();
       showPendingPage();
       return;
@@ -3401,6 +3584,11 @@ hexReady(function(){
     ensureHeroReady();
 
     opening=createOpeningElement();
+    slides=collectOpeningSlides();
+
+    if(ENABLE_SLIDE_ANIMATION&&slides.length){
+      slideStage=createOpeningSlides(opening,slides);
+    }
     document.documentElement.classList.add("hex-opening-lock");
     document.body.insertBefore(opening,document.body.firstChild);
 
@@ -3413,7 +3601,7 @@ hexReady(function(){
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
         document.documentElement.classList.add("hex-opening-ready");
-        startOpeningTimeline(opening);
+        startOpeningTimeline(opening,slideStage,slides);
       });
     });
   }
