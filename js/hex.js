@@ -3613,9 +3613,119 @@ hexReady(function(){
       imageHandoffActive=false;
     }
 
-    function updateImageHandoff(scrolled){
+    function updateCircleMask(
+      heroTop,
+      isHandedOff
+    ){
+      var fixedCopy=document.querySelector(
+        ".hex-hero-catch.is-fixed-handoff"
+      );
+
+      var welcomeCopy=document.querySelector(
+        ".hex-opening-copy-source.hex-welcome-copy"
+      );
+
+      var startScroll;
+      var endScroll;
+      var progress;
+      var eased;
+      var startRadius;
+      var endRadius;
+      var radius;
+      var startX;
+      var endX;
+      var centerX;
+      var centerY;
+
+      if(
+        !fixedCopy||
+        !welcomeCopy||
+        !imageHandoffActive
+      ){
+        return;
+      }
+
+      startScroll=
+        heroTop+
+        scrollDistance;
+
+      endScroll=
+        window.scrollY+
+        welcomeCopy.getBoundingClientRect().top-
+        fixedCopy.getBoundingClientRect().top;
+
+      progress=
+        (window.scrollY-startScroll)/
+        Math.max(endScroll-startScroll,1);
+
+      progress=Math.max(
+        0,
+        Math.min(1,progress)
+      );
+
+      if(isHandedOff){
+        progress=1;
+      }
+
+      /* なめらかな加減速 */
+      eased=
+        progress*progress*
+        (3-2*progress);
+
+      startRadius=Math.hypot(
+        window.innerWidth,
+        window.innerHeight
+      );
+
+      endRadius=Math.min(
+        Math.max(window.innerWidth*.2,220),
+        300
+      );
+
+      radius=
+        startRadius+
+        (endRadius-startRadius)*eased;
+
+      startX=window.innerWidth*.5;
+      endX=window.innerWidth*.25;
+
+      centerX=
+        startX+
+        (endX-startX)*eased;
+
+      centerY=window.innerHeight*.5;
+
+      imageHandoff.style.setProperty(
+        "--hex-welcome-circle-radius",
+        radius+"px"
+      );
+
+      imageHandoff.style.setProperty(
+        "--hex-welcome-circle-x",
+        centerX+"px"
+      );
+
+      imageHandoff.style.setProperty(
+        "--hex-welcome-circle-y",
+        centerY+"px"
+      );
+
+      imageHandoff.style.setProperty(
+        "--hex-welcome-circle-progress",
+        progress
+      );
+    }
+
+    function updateImageHandoff(
+      scrolled,
+      heroTop
+    ){
       var reachedImageBottom;
       var isHandedOff;
+      var circleEnabled;
+      var welcomeWrap;
+      var welcomeRect;
+      var welcomeStageFinished=false;
 
       if(!heroSticky){
         return;
@@ -3634,17 +3744,48 @@ hexReady(function(){
         "is-copy-handed-off"
       );
 
+      circleEnabled=window.matchMedia(
+        "(min-width:1001px)"
+      ).matches;
+
+      welcomeWrap=document.querySelector(
+        ".hex-welcome-wrap"
+      );
+
+      if(
+        circleEnabled&&
+        isHandedOff&&
+        welcomeWrap
+      ){
+        welcomeRect=
+          welcomeWrap.getBoundingClientRect();
+
+        welcomeStageFinished=
+          welcomeRect.bottom<
+          window.innerHeight-1;
+      }
+
       if(!reachedImageBottom){
         hideImageHandoff();
         return;
       }
 
-      if(isHandedOff){
+      if(
+        (!circleEnabled&&isHandedOff)||
+        welcomeStageFinished
+      ){
         hideImageHandoff();
         return;
       }
 
       showImageHandoff();
+
+      if(circleEnabled){
+        updateCircleMask(
+          heroTop,
+          isHandedOff
+        );
+      }
     }
 
     function updateHeroScroll(){
@@ -3683,7 +3824,8 @@ hexReady(function(){
       );
 
       updateImageHandoff(
-        scrolled
+        scrolled,
+        heroTop
       );
 
       /*
@@ -4171,6 +4313,9 @@ hexReady(function(){
     var welcomeCopy=document.querySelector(
       ".hex-opening-copy-source"
     );
+    var welcomeWrap=document.querySelector(
+      ".hex-welcome-wrap"
+    );
     var frameRequested=false;
 
     if(!hero||!welcomeCopy){
@@ -4227,6 +4372,13 @@ hexReady(function(){
         "is-copy-active",
         isHandedOff
       );
+
+      if(welcomeWrap){
+        welcomeWrap.classList.toggle(
+          "is-welcome-active",
+          isHandedOff
+        );
+      }
 
       hero.classList.toggle(
         "is-copy-handed-off",
