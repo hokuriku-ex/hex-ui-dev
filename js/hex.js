@@ -3660,6 +3660,7 @@ hexReady(function(){
     function releaseImageHandoff(welcomeWrap){
       var handoffRect;
       var welcomeRect;
+      var welcomePanel;
 
       if(
         !welcomeWrap||
@@ -3864,8 +3865,13 @@ hexReady(function(){
         circleEnabled&&
         welcomeWrap
       ){
-        welcomeRect=
-          welcomeWrap.getBoundingClientRect();
+        welcomePanel=welcomeWrap.querySelector(
+          ".welcome.has-padding"
+        );
+
+        welcomeRect=(
+          welcomePanel||welcomeWrap
+        ).getBoundingClientRect();
 
         welcomeEntered=
           welcomeRect.top<window.innerHeight;
@@ -4448,7 +4454,13 @@ hexReady(function(){
     var welcomeWrap=document.querySelector(
       ".hex-welcome-wrap"
     );
+    var welcomePanel=welcomeWrap
+      ?welcomeWrap.querySelector(
+        ".welcome.has-padding"
+      )
+      :null;
     var frameRequested=false;
+    var handoffScrollY=null;
 
     if(!hero||!welcomeCopy){
       return;
@@ -4479,12 +4491,15 @@ hexReady(function(){
       "hex-welcome-copy"
     );
 
-    function updateCopyHandoff(){
+    function measureHandoffScrollY(){
       var fixedRect;
       var welcomeRect;
-      var isHandedOff;
 
-      frameRequested=false;
+      if(welcomePanel){
+        welcomePanel.style.removeProperty(
+          "--hex-welcome-entry-offset"
+        );
+      }
 
       fixedRect=
         fixedCopy.getBoundingClientRect();
@@ -4492,8 +4507,59 @@ hexReady(function(){
       welcomeRect=
         welcomeCopy.getBoundingClientRect();
 
+      handoffScrollY=
+        window.scrollY+
+        welcomeRect.top-
+        fixedRect.top;
+    }
+
+    function positionWelcomeAtViewportBottom(){
+      var welcomeRect;
+      var entryOffset;
+
+      if(!welcomePanel){
+        return;
+      }
+
+      welcomePanel.style.removeProperty(
+        "--hex-welcome-entry-offset"
+      );
+
+      welcomeRect=
+        welcomeCopy.getBoundingClientRect();
+
+      entryOffset=Math.max(
+        window.innerHeight-welcomeRect.top,
+        0
+      );
+
+      welcomePanel.style.setProperty(
+        "--hex-welcome-entry-offset",
+        entryOffset+"px"
+      );
+    }
+
+    function updateCopyHandoff(){
+      var isHandedOff;
+
+      frameRequested=false;
+
+      if(handoffScrollY===null){
+        measureHandoffScrollY();
+      }
+
       isHandedOff=
-        welcomeRect.top<=fixedRect.top+1;
+        window.scrollY>=handoffScrollY-1;
+
+      if(
+        isHandedOff&&
+        welcomeWrap&&
+        !welcomeWrap.classList.contains(
+          "is-welcome-copy-ready"
+        )
+      ){
+        positionWelcomeAtViewportBottom();
+      }
 
       fixedCopy.classList.toggle(
         "is-copy-handed-off",
@@ -4510,6 +4576,17 @@ hexReady(function(){
           "is-welcome-active",
           isHandedOff
         );
+
+        welcomeWrap.classList.toggle(
+          "is-welcome-copy-ready",
+          isHandedOff
+        );
+
+        if(!isHandedOff&&welcomePanel){
+          welcomePanel.style.removeProperty(
+            "--hex-welcome-entry-offset"
+          );
+        }
       }
 
       hero.classList.toggle(
@@ -4547,14 +4624,26 @@ hexReady(function(){
       {passive:true}
     );
 
+    function requestMeasureAndUpdate(){
+      handoffScrollY=null;
+
+      if(welcomeWrap){
+        welcomeWrap.classList.remove(
+          "is-welcome-copy-ready"
+        );
+      }
+
+      requestUpdate();
+    }
+
     window.addEventListener(
       "resize",
-      requestUpdate
+      requestMeasureAndUpdate
     );
 
     window.addEventListener(
       "orientationchange",
-      requestUpdate
+      requestMeasureAndUpdate
     );
 
     requestUpdate();
