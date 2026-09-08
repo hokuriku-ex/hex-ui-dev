@@ -4170,6 +4170,64 @@ html.hex-opening-lock body{
 }
 
 /* =======================================
+   開幕リプレイボタン
+======================================= */
+.hex-opening-replay{
+  position:absolute;
+  right:max(24px,calc(env(safe-area-inset-right) + 20px));
+  bottom:max(24px,calc(env(safe-area-inset-bottom) + 20px));
+  z-index:30;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  column-gap:8px;
+  min-width:104px;
+  height:40px;
+  padding:0 18px;
+  border:1px solid rgba(31,39,116,.3);
+  border-radius:999px;
+  background:rgba(255,255,255,.82);
+  color:var(--hex-opening-navy);
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:11px;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:.12em;
+  cursor:pointer;
+  box-sizing:border-box;
+  appearance:none;
+  -webkit-appearance:none;
+  -webkit-backdrop-filter:blur(6px);
+  backdrop-filter:blur(6px);
+  transition:
+    color .25s ease,
+    background-color .25s ease,
+    border-color .25s ease,
+    transform .25s ease;
+}
+
+.hex-opening-replay i{
+  font-size:13px;
+  transition:transform .4s ease;
+}
+
+.hex-opening-replay:hover{
+  border-color:var(--hex-opening-navy);
+  background:var(--hex-opening-navy);
+  color:#fff;
+  transform:translateY(-2px);
+}
+
+.hex-opening-replay:hover i{
+  transform:rotate(-180deg);
+}
+
+.hex-opening-replay:focus-visible{
+  outline:2px solid var(--hex-opening-gold);
+  outline-offset:3px;
+}
+
+/* =======================================
    トップページ：ヒーロー画像
 ======================================= */
 /* 標準ヒーローを非表示（ヘッダーは残す） */
