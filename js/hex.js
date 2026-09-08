@@ -4003,7 +4003,7 @@ hexReady(function(){
 });
 
 /* =======================================
-   トップページ：ヒーロー画像　
+   トップページ：ヒーロー画像
 ======================================= */
 hexReady(function(){
   "use strict";
@@ -4040,6 +4040,55 @@ hexReady(function(){
     return hero.querySelector(
       ".hex-hero-pc"
     );
+  }
+
+  /* SPのヒーローキャッチを開幕終了に合わせて表示する */
+  function prepareSpHeroCatch(catchElement){
+    var opening=document.querySelector(
+      ".hex-opening"
+    );
+    var observer;
+    var timer=null;
+
+    if(!catchElement){
+      return;
+    }
+
+    function reveal(delay){
+      if(timer!==null){
+        return;
+      }
+
+      timer=window.setTimeout(function(){
+        catchElement.classList.add(
+          "is-catch-visible"
+        );
+      },delay);
+    }
+
+    /* 開幕を省略した通常表示 */
+    if(!opening){
+      reveal(180);
+      return;
+    }
+
+    /* すでにヒーロー円形表示が始まっている場合 */
+    if(opening.classList.contains("is-hero-reveal")){
+      reveal(320);
+      return;
+    }
+
+    observer=new MutationObserver(function(){
+      if(opening.classList.contains("is-hero-reveal")){
+        observer.disconnect();
+        reveal(320);
+      }
+    });
+
+    observer.observe(opening,{
+      attributes:true,
+      attributeFilter:["class"]
+    });
   }
 
   function initHeroStage(){
@@ -4529,6 +4578,8 @@ hexReady(function(){
       var fadeDistance;
       var opacity;
       var scrollIndicator;
+      var replayButton;
+      var reachedHeroBottom;
 
       scrollRequested=false;
 
@@ -4561,6 +4612,23 @@ hexReady(function(){
         scrolled,
         heroTop
       );
+
+      /* ヒーロー画像の下端以降はREPLAYを非表示 */
+      replayButton=document.querySelector(
+        ".hex-opening-replay"
+      );
+
+      if(replayButton){
+        reachedHeroBottom=
+          scrollDistance>0
+            ?scrolled>=scrollDistance-1
+            :scrolled>0;
+
+        replayButton.classList.toggle(
+          "is-outside-hero",
+          reachedHeroBottom
+        );
+      }
 
       /*
       * SCROLL表示はスクロール開始後、
@@ -5075,6 +5143,8 @@ hexReady(function(){
      * WELCOMEコピーは通常の文書内要素として表示する。
      */
     if(isSpHeroView()){
+      prepareSpHeroCatch(fixedCopy);
+
       welcomeCopy.classList.add(
         "hex-handoff-copy",
         "hex-welcome-copy",
