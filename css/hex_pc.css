@@ -3409,6 +3409,76 @@ body,
 }
 
 /* =======================================
+   開幕スキップボタン
+======================================= */
+
+.hex-opening-skip{
+  position:absolute;
+  top:max(20px,calc(env(safe-area-inset-top) + 12px));
+  right:max(24px,calc(env(safe-area-inset-right) + 20px));
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-width:76px;
+  height:38px;
+  padding:0 18px;
+  border:1px solid rgba(31,39,116,.3);
+  border-radius:999px;
+  background:rgba(255,255,255,.82);
+  color:var(--hex-opening-navy);
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:12px;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:.14em;
+  cursor:pointer;
+  box-sizing:border-box;
+  appearance:none;
+  -webkit-appearance:none;
+  -webkit-backdrop-filter:blur(6px);
+  backdrop-filter:blur(6px);
+  transition:
+    color .25s ease,
+    background-color .25s ease,
+    border-color .25s ease,
+    opacity .25s ease,
+    transform .25s ease;
+}
+
+.hex-opening-skip:hover{
+  border-color:var(--hex-opening-navy);
+  background:var(--hex-opening-navy);
+  color:#fff;
+  transform:translateY(-2px);
+}
+
+.hex-opening-skip:focus-visible{
+  outline:2px solid var(--hex-opening-gold);
+  outline-offset:3px;
+}
+
+/* トップへ切り替わる直前は非表示 */
+.hex-opening.is-hero-reveal
+.hex-opening-skip{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+/* スキップ実行時 */
+.hex-opening.is-skipping{
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s ease;
+}
+
+.hex-opening.is-skipping
+.hex-opening-skip{
+  opacity:0;
+}
+
+/* =======================================
    左官アニメーション
 ======================================= */
 .hex-opening-plaster{
