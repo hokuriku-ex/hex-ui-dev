@@ -3478,6 +3478,19 @@ body,
   opacity:0;
 }
 
+/* 右下へ配置 */
+.hex-opening-skip{
+  top:auto;
+  right:max(
+    24px,
+    calc(env(safe-area-inset-right) + 20px)
+  );
+  bottom:max(
+    24px,
+    calc(env(safe-area-inset-bottom) + 20px)
+  );
+}
+
 /* =======================================
    左官アニメーション
 ======================================= */
