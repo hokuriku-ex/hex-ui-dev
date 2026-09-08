@@ -3727,6 +3727,7 @@ body,
   position:absolute;
   inset:0;
   z-index:3;
+  display:none!important;
   overflow:hidden;
   width:100%;
   height:100%;
@@ -3739,6 +3740,7 @@ body,
 /* スライド開始 */
 .hex-opening.is-slides-start
 .hex-opening-slides{
+  display:block!important;
   opacity:1;
   visibility:visible;
 }
