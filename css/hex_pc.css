@@ -3444,6 +3444,12 @@ body,
     border-color .25s ease,
     opacity .25s ease,
     transform .25s ease;
+  column-gap:8px;
+}
+
+.hex-opening-skip i{
+  font-size:14px;
+  line-height:1;
 }
 
 .hex-opening-skip:hover{
