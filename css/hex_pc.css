@@ -4675,7 +4675,7 @@ html body
 }
 .hex-handoff-copy .hex-opening-sub{
   margin-top:14px;
-  font-family:var(--hex-font-gothic)!important;
+  font-family:var(--hex-font-pop-ja)!important;
   font-size:clamp(14px,1.15vw,18px);
   font-weight:500;
   line-height:1.7;
