@@ -3128,10 +3128,10 @@ hexReady(function(){
   var PLASTER_DURATION=2500;
 
   /* 各演出をつなぐ間の待機時間 */
-  var PHASE_CONNECT_DELAY=420;
+  var PHASE_CONNECT_DELAY=500;
 
   /* 更地画像・導入キャッチの表示時間 */
-  var DREAM_COPY_DURATION=2000;
+  var DREAM_COPY_DURATION=2500;
 
   /* 更地画像・導入キャッチが消える時間 */
   var DREAM_COPY_FADE_DURATION=800;
