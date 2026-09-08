@@ -16,18 +16,21 @@
 /* フォント */
 body{
   color:#203459!important;
-  font-family:"Zen Kaku Gothic New",sans-serif!important;
+  font-family:var(--hex-font-gothic)!important;
 }
-h1,
-h2
-{
-  font-family:"GF_NotoSerifJapanese_Bold",serif!important;
+h1{
+  font-family:var(--hex-font-pop-ja)!important;
+  font-weight:700;
+}
+h2{
+  font-family:var(--hex-font-pop-ja)!important;
+  font-weight:500;
 }
 h3,
 h4,
 h5,
 h6{
-  font-family:"Zen Kaku Gothic New",sans-serif!important;
+  font-family:var(--hex-font-gothic)!important;
 }
 
 /* テキストカラー */
