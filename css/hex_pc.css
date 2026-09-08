@@ -3539,12 +3539,10 @@ body,
     opacity:0;
     stroke-dashoffset:1;
   }
-
   .5%{
     opacity:1;
     stroke-dashoffset:1;
   }
-
   100%{
     opacity:1;
     stroke-dashoffset:0;
