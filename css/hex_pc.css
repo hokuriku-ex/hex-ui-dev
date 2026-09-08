@@ -3978,7 +3978,7 @@ body,
 /* ロゴ開始時に英語コピー全体を上へ移動 */
 .hex-opening.is-logo-start
 .hex-opening-message-final{
-  top:clamp(40px,7vh,72px);
+  top:calc(80px + clamp(40px,7vh,72px));
   opacity:1;
   transform:translate(-50%,0);
   transition:
