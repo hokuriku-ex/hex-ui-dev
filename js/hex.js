@@ -3199,34 +3199,21 @@ hexReady(function(){
     event.preventDefault();
     event.stopPropagation();
 
-    /*
-     * reload開始までの一瞬にヒーローやCMS入力画像が
-     * 再描画されるのを防ぐ。
-     */
-    var cover=document.createElement("div");
-    cover.className="hex-opening-replay-cover";
-    cover.setAttribute("aria-hidden","true");
-    document.body.appendChild(cover);
-    button.disabled=true;
-
+    /* 次の読み込みで開幕を強制再生 */
     try{
       sessionStorage.setItem(REPLAY_KEY,"1");
     }catch(error){}
 
+    /* REPLAY後はページ先頭から開始 */
     if("scrollRestoration" in window.history){
       window.history.scrollRestoration="manual";
     }
 
-    /* カバーが確実に描画されてから再読み込み */
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        window.location.reload();
-      });
-    });
+    window.location.reload();
   });
 
-    hero.appendChild(button);
-  }
+  hero.appendChild(button);
+}
 
   /* CMSに登録されたPC/SP画像URLを記述順で取得する */
   function collectOpeningSlides(){
