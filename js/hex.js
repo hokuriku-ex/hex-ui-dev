@@ -3128,6 +3128,9 @@ hexReady(function(){
   var SLIDE_DURATION=2200;
   var SLIDE_FADE_DURATION=800;
   var LAST_SLIDE_DURATION=2600;
+  var MESSAGE_FIRST_DURATION=1800;
+  var MESSAGE_SWITCH_DURATION=650;
+  var MESSAGE_LOGO_LEAD=800;
   var LOGO_DURATION=2350;
   var HERO_POSITION_PREPARE_DELAY=80;
   var HERO_REVEAL_DURATION=1100;
@@ -3506,6 +3509,79 @@ hexReady(function(){
     return elapsed+SLIDE_FADE_DURATION;
   }
 
+  function collectOpeningMessage(){
+    var source=document.querySelector(".hex-opening-message-source");
+    var first;
+    var finalCopy;
+    var sourceBlock;
+    var data;
+
+    if(!source){
+      return null;
+    }
+
+    first=source.querySelector(".hex-opening-message-first");
+    finalCopy=source.querySelector(".hex-opening-message-final");
+
+    if(!first&&!finalCopy){
+      return null;
+    }
+
+    data={
+      first:first ? first.innerHTML : "",
+      finalCopy:finalCopy ? finalCopy.innerHTML : ""
+    };
+
+    if(typeof window.hexBaseBlock==="function"){
+      sourceBlock=window.hexBaseBlock(source);
+    }
+
+    if(sourceBlock){
+      sourceBlock.remove();
+    }else{
+      source.remove();
+    }
+
+    return data;
+  }
+
+  function createOpeningMessage(opening,data){
+    var stage=document.createElement("div");
+    var first=document.createElement("div");
+    var finalCopy=document.createElement("div");
+
+    stage.className="hex-opening-message-stage";
+
+    if(data.first){
+      first.className="hex-opening-message-first";
+      first.innerHTML=data.first;
+      stage.appendChild(first);
+    }
+
+    if(data.finalCopy){
+      finalCopy.className="hex-opening-message-final";
+      finalCopy.innerHTML=data.finalCopy;
+      stage.appendChild(finalCopy);
+    }
+
+    opening.insertBefore(stage,opening.firstChild);
+    return stage;
+  }
+
+  function startOpeningMessage(opening,startTime){
+    window.setTimeout(function(){
+      opening.classList.add("is-message-start");
+    },startTime);
+
+    startTime+=MESSAGE_FIRST_DURATION;
+
+    window.setTimeout(function(){
+      opening.classList.add("is-message-switch");
+    },startTime);
+
+    return startTime+MESSAGE_SWITCH_DURATION+MESSAGE_LOGO_LEAD;
+  }
+
 
   function createOpeningElement(){
     var opening=document.createElement("div");
@@ -3677,7 +3753,13 @@ hexReady(function(){
     );
   }
 
-  function startOpeningTimeline(opening,introStage,slideStage,slides){
+  function startOpeningTimeline(
+    opening,
+    introStage,
+    slideStage,
+    slides,
+    messageStage
+  ){
     var timeline=OPENING_START_DELAY;
 
     if(ENABLE_PLASTER_ANIMATION){
@@ -3715,6 +3797,10 @@ hexReady(function(){
       if(ENABLE_LOGO_ANIMATION){
         timeline+=PHASE_CONNECT_DELAY;
       }
+    }
+
+    if(messageStage){
+      timeline=startOpeningMessage(opening,timeline);
     }
 
     if(ENABLE_LOGO_ANIMATION){
@@ -3761,6 +3847,8 @@ hexReady(function(){
     var introStage=null;
     var slides;
     var slideStage=null;
+    var messageData;
+    var messageStage=null;
 
     if(!isTopPage()){
       showPendingPage();
@@ -3797,6 +3885,7 @@ hexReady(function(){
     opening=createOpeningElement();
     introData=collectOpeningIntro();
     slides=collectOpeningSlides();
+    messageData=collectOpeningMessage();
 
     if(ENABLE_SLIDE_ANIMATION&&introData){
       introStage=createOpeningIntro(opening,introData);
@@ -3804,6 +3893,10 @@ hexReady(function(){
 
     if(ENABLE_SLIDE_ANIMATION&&slides.length){
       slideStage=createOpeningSlides(opening,slides);
+    }
+
+    if(messageData){
+      messageStage=createOpeningMessage(opening,messageData);
     }
     document.documentElement.classList.add("hex-opening-lock");
     document.body.insertBefore(opening,document.body.firstChild);
@@ -3821,7 +3914,8 @@ hexReady(function(){
           opening,
           introStage,
           slideStage,
-          slides
+          slides,
+          messageStage
         );
       });
     });
