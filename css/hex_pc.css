@@ -3572,10 +3572,10 @@ body,
 /* picture：ヘッダー80pxの下から画面下まで */
 .hex-opening-intro-picture{
   position:absolute;
-  inset:80px 0 0;
+  inset:0;
   display:block;
   width:100%;
-  height:auto;
+  height:100%;
 }
 
 /* 背景画像 */
@@ -3766,10 +3766,10 @@ body,
 /* picture要素：ヘッダー80pxの下から画面下まで */
 .hex-opening-slide-picture{
   position:absolute;
-  inset:80px 0 0;
+  inset:0;
   display:block;
   width:100%;
-  height:auto;
+  height:100%;
 }
 
 /* スライド画像 */
