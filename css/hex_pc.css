@@ -2763,40 +2763,12 @@ div[hex-sp]{
     display:flex!important;
     margin-right:80px!important;
   }
-
-  /* ハンバーガーボタンの親枠 */
-  .headermenu_type8 .bg_contactbutton{
-    display:block!important;
-    visibility:visible!important;
-    opacity:1!important;
-    pointer-events:auto!important;
-    z-index:2147483647!important;
-  }
-
-  /* 三本線ボタン本体 */
-  .headermenu_type8
-  .menu_button.contactbutton_none_menubutton_position{
-    display:block!important;
-    visibility:visible!important;
-    opacity:1!important;
-    pointer-events:auto!important;
-    z-index:2147483647!important;
-  }
-
-  /* 開いたメニュー */
-  #gc_auto_frame_header_object_smartphone_hum_pupup{
-    top:var(--header_height)!important;
-    height:calc(100dvh - var(--header_height))!important;
-    max-height-height:calc(
-      100dvh - var(--header_height)
-    )!important;
-    z-index:2147483647!important;
-  }
 }
 
 /* ハンバーガーメニューをヘッダーの下から表示 */
 @media screen and (min-width:769px) and (max-width:1200px){
   #gc_auto_frame_header_object_smartphone_hum_pupup{
+    z-index:2147483200!important;
     top:var(--header_height)!important;
     height:calc(
       100dvh - var(--header_height)
@@ -3083,7 +3055,7 @@ div[hex-sp]{
 .hex-calendar-modal{
   position:fixed;
   inset:0;
-  z-index:2147483600;
+  z-index:2147483600!important;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -3438,15 +3410,9 @@ body,
 
 /* 固定ヘッダーを表示 */
 #gc_auto_frame_home_0 > .bg_headermenu{
-  z-index:2147483646!important;
+  z-index:2147483100!important;
   visibility:visible!important;
   overflow:visible!important;
-}
-#gc_auto_frame_header_object_smartphone_hum_pupup{
-  z-index:2147483200!important;
-}
-.hex-calendar-modal{
-  z-index:2147483600!important;
 }
 
 /* =======================================
