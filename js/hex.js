@@ -3111,8 +3111,9 @@ hexReady(function(){
 
   /* <head>内の初期非表示判定と同じキーにする */
   var STORAGE_KEY="hex_top_opening_viewed";
+  var REPLAY_KEY="hex_top_opening_replay";
 
-  /* 制作中はtrue。本番公開時にfalseへ変更 */
+  /* 常に表示true　本番公開時false */
   var FORCE_PLAY=true;
 
   /* アニメーションごとの表示切替 */
@@ -3145,6 +3146,49 @@ hexReady(function(){
 
   function isTopPage(){
     return !!document.querySelector(".hex-hero-wrap");
+  }
+
+  function isReplayRequested(){
+    try{
+      return sessionStorage.getItem(REPLAY_KEY)==="1";
+    }catch(error){
+      return false;
+    }
+  }
+
+  function clearReplayRequest(){
+    try{
+      sessionStorage.removeItem(REPLAY_KEY);
+    }catch(error){}
+  }
+
+  function createOpeningReplayButton(){
+    var hero=document.querySelector(".hex-hero-sticky")||
+      document.querySelector(".hex-hero-wrap");
+    var button;
+
+    if(!hero||hero.querySelector(".hex-opening-replay")){
+      return;
+    }
+
+    button=document.createElement("button");
+    button.className="hex-opening-replay";
+    button.type="button";
+    button.setAttribute("aria-label","開幕演出をもう一度見る");
+    button.innerHTML=
+      '<i class="fa-solid fa-rotate-right" aria-hidden="true"></i>'+
+      '<span>REPLAY</span>';
+
+    button.addEventListener("click",function(){
+      try{
+        sessionStorage.setItem(REPLAY_KEY,"1");
+      }catch(error){}
+
+      window.scrollTo(0,0);
+      window.location.reload();
+    });
+
+    hero.appendChild(button);
   }
 
   /* CMSに登録されたPC/SP画像を記述順で取得する */
@@ -3884,10 +3928,15 @@ hexReady(function(){
       return;
     }
 
+    createOpeningReplayButton();
+
+    var replayRequested=isReplayRequested();
+    clearReplayRequest();
+
 
     if(
       isReducedMotion()||
-      (!FORCE_PLAY&&sessionStorage.getItem(STORAGE_KEY))
+      (!FORCE_PLAY&&!replayRequested&&sessionStorage.getItem(STORAGE_KEY))
     ){
       ensureHeroReady();
       showPendingPage();
