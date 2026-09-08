@@ -3179,7 +3179,24 @@ hexReady(function(){
       '<i class="fa-solid fa-rotate-right" aria-hidden="true"></i>'+
       '<span>REPLAY</span>';
 
-    button.addEventListener("click",function(){
+    [
+      "pointerdown",
+      "mousedown",
+      "touchstart"
+    ].forEach(function(eventName){
+      button.addEventListener(
+        eventName,
+        function(event){
+          event.stopPropagation();
+        },
+        {passive:eventName==="touchstart"}
+      );
+    });
+
+    button.addEventListener("click",function(event){
+      event.preventDefault();
+      event.stopPropagation();
+
       try{
         sessionStorage.setItem(REPLAY_KEY,"1");
       }catch(error){}
