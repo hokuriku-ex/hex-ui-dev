@@ -3407,19 +3407,15 @@ body,
   background:var(--hex-opening-white);
 }
 
-/* 固定ヘッダー */
+/* 固定ヘッダーを表示 */
 #gc_auto_frame_home_0 > .bg_headermenu{
   z-index:2147483100!important;
   visibility:visible!important;
   overflow:visible!important;
 }
-
-/* ハンバーガーメニュー */
 #gc_auto_frame_header_object_smartphone_hum_pupup{
   z-index:2147483200!important;
 }
-
-/* 営業日カレンダーモーダル */
 .hex-calendar-modal{
   z-index:2147483600!important;
 }
