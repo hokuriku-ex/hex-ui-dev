@@ -3722,7 +3722,6 @@ body,
   position:absolute;
   inset:0;
   z-index:3;
-  display:none!important;
   overflow:hidden;
   width:100%;
   height:100%;
@@ -3735,7 +3734,6 @@ body,
 /* スライド開始 */
 .hex-opening.is-slides-start
 .hex-opening-slides{
-  display:block!important;
   opacity:1;
   visibility:visible;
 }
@@ -4271,15 +4269,6 @@ html.hex-direct-hero-fade.hex-direct-hero-fade-ready
 .hex-opening-replay:focus-visible{
   outline:2px solid var(--hex-opening-gold);
   outline-offset:3px;
-}
-
-/* REPLAYから再読み込みまでのチラ見え防止 */
-.hex-opening-replay-cover{
-  position:fixed;
-  inset:0;
-  z-index:2147483646;
-  background:var(--hex-opening-white,#fff);
-  pointer-events:auto;
 }
 
 /* =======================================
