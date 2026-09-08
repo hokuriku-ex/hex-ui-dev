@@ -4008,6 +4008,12 @@ hexReady(function(){
 hexReady(function(){
   "use strict";
 
+  function isSpHeroView(){
+    return window.matchMedia(
+      "(max-width:768px)"
+    ).matches;
+  }
+
   function getHero(){
     return document.querySelector(
       ".hex-hero-wrap"
@@ -4423,6 +4429,15 @@ hexReady(function(){
       }
 
       if(!stageReady){
+        return;
+      }
+
+      /*
+       * SPは固定複製画像と丸画像アクションを使用しない。
+       * ヒーロー下端到達後はstickyの自然解除に任せる。
+       */
+      if(isSpHeroView()){
+        hideImageHandoff();
         return;
       }
 
@@ -5052,6 +5067,27 @@ hexReady(function(){
     );
 
     if(!fixedCopy){
+      return;
+    }
+
+    /*
+     * SPはヒーローキャッチを固定しない。
+     * WELCOMEコピーは通常の文書内要素として表示する。
+     */
+    if(isSpHeroView()){
+      welcomeCopy.classList.add(
+        "hex-handoff-copy",
+        "hex-welcome-copy",
+        "is-copy-active"
+      );
+
+      if(welcomeWrap){
+        welcomeWrap.classList.add(
+          "is-welcome-active",
+          "is-welcome-copy-ready"
+        );
+      }
+
       return;
     }
 
