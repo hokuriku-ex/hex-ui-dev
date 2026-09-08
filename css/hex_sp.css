@@ -1326,7 +1326,18 @@
     display:none!important;
   }
   .hex-hero-catch{
-    padding:0 16px;
+    left:50%;
+    right:auto;
+    width:100vw;
+    max-width:100vw;
+    padding-right:16px;
+    padding-left:16px;
+    transform:translate(-50%,-50%);
+  }
+  .hex-hero-catch .hex-handoff-copy{
+    width:100%;
+    max-width:100%;
+    min-width:0;
   }
   .hex-scroll-indicator{
     top:calc(100svh - 66px);
