@@ -4218,10 +4218,11 @@ html.hex-direct-hero-fade.hex-direct-hero-fade-ready
    トップページ：開幕リプレイボタン
 ======================================= */
 .hex-opening-replay{
-  position:absolute;
-  right:max(24px,calc(env(safe-area-inset-right) + 20px));
-  bottom:max(24px,calc(env(safe-area-inset-bottom) + 20px));
-  z-index:30;
+  position:fixed!important;
+  right:max(20px,env(safe-area-inset-right))!important;
+  bottom:max(20px,env(safe-area-inset-bottom))!important;
+  left:auto!important;
+  z-index:2147482000!important;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -4273,6 +4274,15 @@ html.hex-direct-hero-fade.hex-direct-hero-fade-ready
 .hex-opening-replay:focus-visible{
   outline:2px solid var(--hex-opening-gold);
   outline-offset:3px;
+}
+
+/* REPLAYから再読み込みまでのチラ見え防止 */
+.hex-opening-replay-cover{
+  position:fixed;
+  inset:0;
+  z-index:2147483646;
+  background:var(--hex-opening-white,#fff);
+  pointer-events:auto;
 }
 
 /* =======================================
