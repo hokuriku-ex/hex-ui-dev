@@ -3736,22 +3736,32 @@ hexReady(function(){
 
   function syncHeroRevealOrigin(opening){
     var frontHand=opening.querySelector(".hex-logo-front-hand");
-    var rect;
+    var handRect;
+    var openingRect;
 
     if(!frontHand){
       return;
     }
 
-    rect=frontHand.getBoundingClientRect();
+    handRect=frontHand.getBoundingClientRect();
+    openingRect=opening.getBoundingClientRect();
 
     opening.style.setProperty(
       "--hex-hero-origin-x",
-      (rect.left+rect.width/2)+"px"
+      (
+        handRect.left+
+        handRect.width/2-
+        openingRect.left
+      )+"px"
     );
 
     opening.style.setProperty(
       "--hex-hero-origin-y",
-      (rect.top+rect.height/2)+"px"
+      (
+        handRect.top+
+        handRect.height/2-
+        openingRect.top
+      )+"px"
     );
   }
 
