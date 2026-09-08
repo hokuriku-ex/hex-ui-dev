@@ -3411,7 +3411,6 @@ body,
 /* =======================================
    開幕スキップボタン
 ======================================= */
-
 .hex-opening-skip{
   position:absolute;
   top:max(20px,calc(env(safe-area-inset-top) + 12px));
@@ -3694,7 +3693,6 @@ body,
 /* =======================================
    静止画スライド
 ======================================= */
-
 /*
  * CMS入力用要素を非表示
  * URLだけをJSで取得するため、元画像は本文に出力しない
@@ -3838,7 +3836,6 @@ body,
 
 /* 動きを減らす設定 */
 @media (prefers-reduced-motion:reduce){
-
   .hex-opening-slide,
   .hex-opening-slides,
   .hex-opening-slide-title,
@@ -3850,13 +3847,11 @@ body,
   .hex-opening-slide-image{
     transform:none;
   }
-
 }
 
 /* =======================================
    スライド後キャッチコピー
 ======================================= */
-
 /* CMS入力用HTML */
 .hex-opening-message-source{
   display:none!important;
@@ -4172,7 +4167,6 @@ html.hex-opening-lock body{
 /* =======================================
    開幕なし・SKIP時のヒーローフェード
 ======================================= */
-
 html.hex-direct-hero-fade
 .hex-hero-wrap{
   opacity:0!important;
