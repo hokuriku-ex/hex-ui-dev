@@ -1187,6 +1187,16 @@
    トップページ：開幕アニメーション
 ======================================= */
 @media screen and (max-width:768px){
+  /* 開幕スキップボタン */
+  .hex-opening-skip{
+    top:max(14px,calc(env(safe-area-inset-top) + 10px));
+    right:max(14px,calc(env(safe-area-inset-right) + 12px));
+    min-width:68px;
+    height:34px;
+    padding:0 14px;
+    font-size:11px;
+  }
+
   /* 左官アニメーション */
   .hex-opening-path{
     stroke-width:160;
