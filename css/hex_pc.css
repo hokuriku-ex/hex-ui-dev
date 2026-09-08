@@ -3407,6 +3407,12 @@ body,
   background:var(--hex-opening-white);
 }
 
+/* 開幕アニメーション中もヘッダーを最前面に表示 */
+#gc_auto_frame_home_0 > .bg_headermenu{
+  z-index:2147483646!important;
+  visibility:visible!important;
+}
+
 /* =======================================
    開幕スキップボタン
 ======================================= */
