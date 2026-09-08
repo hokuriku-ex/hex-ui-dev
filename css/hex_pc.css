@@ -4187,6 +4187,34 @@ html.hex-opening-lock body{
 }
 
 /* =======================================
+   開幕なし・SKIP時のヒーローフェード
+======================================= */
+
+html.hex-direct-hero-fade
+.hex-hero-wrap{
+  opacity:0!important;
+}
+
+html.hex-direct-hero-fade.hex-direct-hero-fade-ready
+.hex-hero-wrap{
+  opacity:1!important;
+  transition:opacity .9s ease!important;
+}
+
+/* SKIP時は開幕レイヤーもフェードアウト */
+.hex-opening.is-skipping{
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .65s ease!important;
+}
+
+.hex-opening.is-skipping
+.hex-opening-skip{
+  opacity:0;
+  pointer-events:none;
+}
+
+/* =======================================
    トップページ：開幕リプレイボタン
 ======================================= */
 .hex-opening-replay{
