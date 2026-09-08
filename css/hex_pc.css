@@ -3054,7 +3054,7 @@ div[hex-sp]{
 .hex-calendar-modal{
   position:fixed;
   inset:0;
-  z-index:99999;
+  z-index:2147483600;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -3407,10 +3407,21 @@ body,
   background:var(--hex-opening-white);
 }
 
-/* 開幕アニメーション中もヘッダーを最前面に表示 */
+/* 固定ヘッダー */
 #gc_auto_frame_home_0 > .bg_headermenu{
-  z-index:2147483646!important;
+  z-index:2147483100!important;
   visibility:visible!important;
+  overflow:visible!important;
+}
+
+/* ハンバーガーメニュー */
+#gc_auto_frame_header_object_smartphone_hum_pupup{
+  z-index:2147483200!important;
+}
+
+/* 営業日カレンダーモーダル */
+.hex-calendar-modal{
+  z-index:2147483600!important;
 }
 
 /* =======================================
