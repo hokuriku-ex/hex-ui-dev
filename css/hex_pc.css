@@ -3472,18 +3472,6 @@ body,
   pointer-events:none;
 }
 
-/* スキップ実行時 */
-.hex-opening.is-skipping{
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .35s ease;
-}
-
-.hex-opening.is-skipping
-.hex-opening-skip{
-  opacity:0;
-}
-
 /* 右下へ配置 */
 .hex-opening-skip{
   top:auto;
