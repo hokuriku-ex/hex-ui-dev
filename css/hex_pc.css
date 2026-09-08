@@ -4309,6 +4309,11 @@ html.hex-direct-hero-fade.hex-direct-hero-fade-ready
   overscroll-behavior-x:contain;
   -webkit-overflow-scrolling:touch;
 }
+.hex-hero-wrap,
+.hex-hero-sticky{
+  width:100vw!important;
+  max-width:100vw!important;
+}
 
 /* 横スクロールバー非表示 */
 .hex-hero-sticky{
