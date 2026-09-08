@@ -3201,7 +3201,10 @@ hexReady(function(){
         sessionStorage.setItem(REPLAY_KEY,"1");
       }catch(error){}
 
-      window.scrollTo(0,0);
+      if("scrollRestoration" in window.history){
+        window.history.scrollRestoration="manual";
+      }
+
       window.location.reload();
     });
 
@@ -3654,6 +3657,7 @@ hexReady(function(){
       '<button class="hex-opening-skip" type="button" '+
         'aria-label="開幕演出をスキップ">'+
         '<span>SKIP</span>'+
+        '<i class="fa-solid fa-forward-step" aria-hidden="true"></i>'+
       '</button>'+
       '<div class="hex-opening-plaster">'+
         '<svg xmlns="http://www.w3.org/2000/svg" '+
@@ -3996,6 +4000,14 @@ hexReady(function(){
     }
     document.documentElement.classList.add("hex-opening-lock");
     document.body.insertBefore(opening,document.body.firstChild);
+
+    /*
+     * リプレイ時は開幕レイヤーを設置してから、
+     * その裏側でページを先頭へ戻す。
+     */
+    if(replayRequested){
+      window.scrollTo(0,0);
+    }
 
     /*
      * 開幕レイヤーを先に設置してからページを表示する。
