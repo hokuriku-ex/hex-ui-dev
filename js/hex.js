@@ -3121,22 +3121,55 @@ hexReady(function(){
   var ENABLE_SLIDE_ANIMATION=true;
   var ENABLE_LOGO_ANIMATION=true;
 
+  /* 開幕アニメーション開始までの待機時間 */
   var OPENING_START_DELAY=200;
+
+  /* 左官アニメーションの再生時間 */
   var PLASTER_DURATION=2500;
+
+  /* 各演出をつなぐ間の待機時間 */
   var PHASE_CONNECT_DELAY=420;
-  var DREAM_COPY_DURATION=1600;
-  var DREAM_COPY_FADE_DURATION=600;
-  var SLIDE_DURATION=2200;
+
+  /* 更地画像・導入キャッチの表示時間 */
+  var DREAM_COPY_DURATION=2000;
+
+  /* 更地画像・導入キャッチが消える時間 */
+  var DREAM_COPY_FADE_DURATION=800;
+
+  /* 通常スライド1枚あたりの表示時間 */
+  var SLIDE_DURATION=2000;
+
+  /* スライド終了時のフェード時間 */
   var SLIDE_FADE_DURATION=800;
-  var LAST_SLIDE_DURATION=2600;
-  var MESSAGE_FIRST_DURATION=1800;
-  var MESSAGE_SWITCH_DURATION=650;
+
+  /* 最後のスライドの表示時間 */
+  var LAST_SLIDE_DURATION=2500;
+
+  /* 最初のメッセージの表示時間 */
+  var MESSAGE_FIRST_DURATION=2000;
+
+  /* 最初から最後のメッセージへ切り替える時間 */
+  var MESSAGE_SWITCH_DURATION=800;
+
+  /* 最終メッセージからロゴ開始までの待機時間 */
   var MESSAGE_LOGO_LEAD=800;
+
+  /* ロゴアニメーションの再生時間 */
   var LOGO_DURATION=2350;
+
+  /* ヒーロー表示位置を準備する待機時間 */
   var HERO_POSITION_PREPARE_DELAY=80;
-  var HERO_REVEAL_DURATION=1100;
-  var SKIP_FADE_DURATION=650;
-  var DIRECT_HERO_FADE_DURATION=900;
+
+  /* ロゴからヒーローへ切り替わる時間 */
+  var HERO_REVEAL_DURATION=1000;
+
+  /* SKIP時に開幕画面が消える時間 */
+  var SKIP_FADE_DURATION=1000;
+
+  /* 開幕を再生せず直接ヒーローを表示する際のフェード時間 */
+  var DIRECT_HERO_FADE_DURATION=1000;
+
+  /* エラー時に開幕画面を強制終了するまでの予備時間 */
   var SAFETY_EXTRA_TIME=2600;
 
   function isReducedMotion(){
