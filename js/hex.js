@@ -4820,9 +4820,8 @@ hexReady(function(){
         image.naturalHeight/
         image.naturalWidth;
 
-      viewportWidth=isSpHeroView()
-        ?document.documentElement.clientWidth
-        :window.innerWidth;
+      viewportWidth=
+        document.documentElement.clientWidth;
 
       viewportHeight=Math.max(
         document.documentElement.clientHeight-
