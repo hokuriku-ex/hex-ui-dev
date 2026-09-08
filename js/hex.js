@@ -3135,6 +3135,8 @@ hexReady(function(){
   var LOGO_DURATION=2350;
   var HERO_POSITION_PREPARE_DELAY=80;
   var HERO_REVEAL_DURATION=1100;
+  var SKIP_FADE_DURATION=650;
+  var DIRECT_HERO_FADE_DURATION=900;
   var SAFETY_EXTRA_TIME=2600;
 
   function isReducedMotion(){
@@ -3789,7 +3791,7 @@ hexReady(function(){
       }
 
       opening.classList.add("is-skipping");
-      ensureHeroReady();
+      showHeroWithFade();
 
       document.documentElement.classList.remove(
         "hex-opening-lock"
@@ -3797,7 +3799,7 @@ hexReady(function(){
 
       window.setTimeout(function(){
         finishOpening(opening);
-      },380);
+      },SKIP_FADE_DURATION+50);
     });
   }
 
@@ -3829,6 +3831,27 @@ hexReady(function(){
     ){
       window.hexHero.show();
     }
+  }
+
+  function showHeroWithFade(){
+    document.documentElement.classList.add("hex-direct-hero-fade");
+    ensureHeroReady();
+    showPendingPage();
+
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        document.documentElement.classList.add(
+          "hex-direct-hero-fade-ready"
+        );
+
+        window.setTimeout(function(){
+          document.documentElement.classList.remove(
+            "hex-direct-hero-fade",
+            "hex-direct-hero-fade-ready"
+          );
+        },DIRECT_HERO_FADE_DURATION+100);
+      });
+    });
   }
 
   function finishOpening(opening){
@@ -3959,8 +3982,7 @@ hexReady(function(){
       isReducedMotion()||
       (!FORCE_PLAY&&!replayRequested&&sessionStorage.getItem(STORAGE_KEY))
     ){
-      ensureHeroReady();
-      showPendingPage();
+      showHeroWithFade();
       return;
     }
 
@@ -3974,8 +3996,7 @@ hexReady(function(){
       !ENABLE_SLIDE_ANIMATION&&
       !ENABLE_LOGO_ANIMATION
     ){
-      ensureHeroReady();
-      showPendingPage();
+      showHeroWithFade();
       return;
     }
 
