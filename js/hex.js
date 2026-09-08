@@ -4112,6 +4112,32 @@ hexReady(function(){
       ".hex-hero-sticky"
     );
 
+    var spHeroCatch=hero.querySelector(
+      ".hex-hero-catch"
+    );
+
+    /*
+     * SPではキャッチの中心を横スクロール位置に追従させる。
+     * 1200pxのステージ座標ではなく、常に表示画面の中央へ置く。
+     */
+    function syncSpHeroCatchHorizontal(){
+      if(
+        !isSpHeroView()||
+        !heroSticky||
+        !spHeroCatch
+      ){
+        return;
+      }
+
+      spHeroCatch.style.left=
+        (
+          heroSticky.scrollLeft+
+          heroSticky.clientWidth/2
+        )+"px";
+
+      spHeroCatch.style.right="auto";
+    }
+
     var imageHandoff=document.createElement(
       "div"
     );
@@ -4620,9 +4646,9 @@ hexReady(function(){
 
       if(replayButton){
         reachedHeroBottom=
-          scrollDistance>0
-            ?scrolled>=scrollDistance-1
-            :scrolled>0;
+          hero.getBoundingClientRect().bottom<=
+          window.innerHeight+
+          replayButton.offsetHeight+16;
 
         replayButton.classList.toggle(
           "is-outside-hero",
@@ -4866,6 +4892,8 @@ hexReady(function(){
               )/2,
               0
             );
+
+          syncSpHeroCatchHorizontal();
         });
       }
 
@@ -5077,6 +5105,14 @@ hexReady(function(){
       requestStageUpdate
     );
 
+    if(heroSticky){
+      heroSticky.addEventListener(
+        "scroll",
+        syncSpHeroCatchHorizontal,
+        {passive:true}
+      );
+    }
+
     hero.addEventListener(
       "hex:copy-handoff-change",
       requestScrollUpdate
@@ -5143,8 +5179,6 @@ hexReady(function(){
      * WELCOMEコピーは通常の文書内要素として表示する。
      */
     if(isSpHeroView()){
-      prepareSpHeroCatch(fixedCopy);
-
       welcomeCopy.classList.add(
         "hex-handoff-copy",
         "hex-welcome-copy",
@@ -5359,6 +5393,13 @@ hexReady(function(){
 
     if(!hero){
       return;
+    }
+
+    /* WELCOME側の状態に依存せずSPキャッチを準備する */
+    if(isSpHeroView()){
+      prepareSpHeroCatch(
+        hero.querySelector(".hex-hero-catch")
+      );
     }
 
     initHeroStage();
