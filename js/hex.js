@@ -3228,167 +3228,86 @@ hexReady(function(){
     hero.appendChild(button);
   }
 
-  /* CMSに登録されたPC/SP画像を記述順で取得する */
+  /* CMSに登録されたPC/SP画像URLを記述順で取得する */
   function collectOpeningSlides(){
     var start=document.querySelector(".hex-opening-slide-start");
-    var startBlock;
-    var endBlock;
-    var searchBlock;
-    var pcSlides=[];
-    var spSlides=[];
+    var end=document.querySelector(".hex-opening-slide-end");
+    var sources=[];
+    var slides=[];
+    var current;
 
-    window.hexOpeningDebug={
-      startFound:!!start,
-      pcMarkersBefore:
-        document.querySelectorAll(".hex-img-pc-start").length,
-      spMarkersBefore:
-        document.querySelectorAll(".hex-img-sp-start").length,
-      startBlockFound:false,
-      endBlockFound:false,
-      scannedBlocks:0,
-      pcSlides:0,
-      spSlides:0,
-      resultSlides:0
-    };
-
-    if(
-      !start||
-      typeof window.hexBaseBlock!=="function"||
-      typeof window.hexNextBlock!=="function"
-    ){
-      console.log("hexOpeningDebug",window.hexOpeningDebug);
-      return [];
+    if(!start||!end){
+      return slides;
     }
 
-    startBlock=window.hexBaseBlock(start);
-    window.hexOpeningDebug.startBlockFound=!!startBlock;
-    endBlock=window.hexNextBlock(startBlock);
+    /* 開始・終了マーカー間にある登録要素だけを取得する */
+    current=start.nextElementSibling;
 
-    while(endBlock){
-      if(endBlock.querySelector(".hex-opening-slide-end")){
-        break;
+    while(current&&current!==end){
+      if(current.matches(".hex-opening-slide-source")){
+        sources.push(current);
       }
-      endBlock=window.hexNextBlock(endBlock);
+
+      current=current.nextElementSibling;
     }
 
-    if(!startBlock||!endBlock){
-      console.log("hexOpeningDebug",window.hexOpeningDebug);
-      return [];
-    }
-
-    window.hexOpeningDebug.endBlockFound=true;
-
-    function getImageData(marker,markerBlock,endSelector){
-      var imageBlock=window.hexNextBlock(markerBlock);
-      var image=null;
-
-      while(imageBlock){
-        if(imageBlock===endBlock){
-          break;
+    /* HOPWEB側で各要素が別ブロックになる場合にも対応 */
+    if(!sources.length){
+      sources=Array.prototype.filter.call(
+        document.querySelectorAll(".hex-opening-slide-source"),
+        function(source){
+          return source.compareDocumentPosition(start)&
+            Node.DOCUMENT_POSITION_PRECEDING&&
+            source.compareDocumentPosition(end)&
+            Node.DOCUMENT_POSITION_FOLLOWING;
         }
-
-        if(imageBlock.querySelector(endSelector)){
-          break;
-        }
-
-        image=imageBlock.querySelector("img");
-
-        if(image){
-          break;
-        }
-
-        imageBlock=window.hexNextBlock(imageBlock);
-      }
-
-      if(!image){
-        return null;
-      }
-
-      marker.style.display="none";
-      marker.setAttribute("aria-hidden","true");
-      image.style.display="none";
-      image.setAttribute("aria-hidden","true");
-
-      return{
-        title:marker.getAttribute("data-title")||"",
-        src:image.currentSrc||
-          image.getAttribute("src")||
-          image.getAttribute("data-src")||"",
-        alt:image.getAttribute("alt")||marker.getAttribute("data-title")||"",
-        position:image.getAttribute("data-position")||"center"
-      };
+      );
     }
 
-    searchBlock=window.hexNextBlock(startBlock);
+    sources.forEach(function(source){
+      var pcSrc=(source.getAttribute("data-pc-image")||"").trim();
+      var spSrc=(source.getAttribute("data-sp-image")||"").trim();
+      var title=source.getAttribute("data-title")||"";
 
-    while(searchBlock&&searchBlock!==endBlock){
-      var pcMarker=searchBlock.querySelector(".hex-img-pc-start");
-      var spMarker=searchBlock.querySelector(".hex-img-sp-start");
-      var data;
+      pcSrc=pcSrc||spSrc;
+      spSrc=spSrc||pcSrc;
 
-      window.hexOpeningDebug.scannedBlocks+=1;
-
-      if(pcMarker){
-        data=getImageData(
-          pcMarker,
-          searchBlock,
-          ".hex-img-pc-end"
-        );
-
-        if(data){
-          pcSlides.push(data);
-        }
+      if(!pcSrc){
+        return;
       }
 
-      if(spMarker){
-        data=getImageData(
-          spMarker,
-          searchBlock,
-          ".hex-img-sp-end"
-        );
-
-        if(data){
-          spSlides.push(data);
-        }
-      }
-
-      searchBlock=window.hexNextBlock(searchBlock);
-    }
-
-    window.hexOpeningDebug.pcSlides=pcSlides.length;
-    window.hexOpeningDebug.spSlides=spSlides.length;
-
-    /* バナー等と同様に、変換元のHOPWEBブロックを削除する */
-    searchBlock=startBlock;
-
-    while(searchBlock){
-      var nextBlock=window.hexNextBlock(searchBlock);
-      searchBlock.remove();
-
-      if(searchBlock===endBlock){
-        break;
-      }
-
-      searchBlock=nextBlock;
-    }
-
-    var resultSlides=pcSlides.map(function(pc,index){
-      var sp=spSlides[index]||pc;
-
-      return{
-        title:pc.title||sp.title,
-        pcSrc:pc.src,
-        spSrc:sp.src||pc.src,
-        alt:pc.alt||sp.alt,
-        pcPosition:pc.position,
-        spPosition:sp.position||pc.position
-      };
+      slides.push({
+        title:title,
+        pcSrc:pcSrc,
+        spSrc:spSrc,
+        alt:source.getAttribute("data-alt")||title,
+        pcPosition:
+          source.getAttribute("data-pc-position")||
+          source.getAttribute("data-position")||
+          "center",
+        spPosition:
+          source.getAttribute("data-sp-position")||
+          source.getAttribute("data-position")||
+          "center"
+      });
     });
 
-    window.hexOpeningDebug.resultSlides=resultSlides.length;
-    console.log("hexOpeningDebug",window.hexOpeningDebug);
+    /* CMS入力用ブロックを本文から取り除く */
+    [start].concat(sources,[end]).forEach(function(element){
+      var block=null;
 
-    return resultSlides;
+      if(typeof window.hexBaseBlock==="function"){
+        block=window.hexBaseBlock(element);
+      }
+
+      if(block&&block.parentNode){
+        block.parentNode.removeChild(block);
+      }else if(element.parentNode){
+        element.parentNode.removeChild(element);
+      }
+    });
+
+    return slides;
   }
 
   function createOpeningSlides(opening,slides){
