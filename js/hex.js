@@ -3114,7 +3114,7 @@ hexReady(function(){
   var REPLAY_KEY="hex_top_opening_replay";
 
   /* 常に表示true　本番公開時false */
-  var FORCE_PLAY=true;
+  var FORCE_PLAY=false;
 
   /* アニメーションごとの表示切替 */
   var ENABLE_PLASTER_ANIMATION=false;
