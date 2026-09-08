@@ -3590,6 +3590,10 @@ hexReady(function(){
     opening.setAttribute("aria-hidden","true");
 
     opening.innerHTML=
+      '<button class="hex-opening-skip" type="button" '+
+        'aria-label="開幕演出をスキップ">'+
+        '<span>SKIP</span>'+
+      '</button>'+
       '<div class="hex-opening-plaster">'+
         '<svg xmlns="http://www.w3.org/2000/svg" '+
           'viewBox="0 0 1600 900" '+
@@ -3705,6 +3709,31 @@ hexReady(function(){
       '</div>';
 
     return opening;
+  }
+
+  function setupOpeningSkip(opening){
+    var button=opening.querySelector(".hex-opening-skip");
+
+    if(!button){
+      return;
+    }
+
+    button.addEventListener("click",function(){
+      if(opening.classList.contains("is-skipping")){
+        return;
+      }
+
+      opening.classList.add("is-skipping");
+      ensureHeroReady();
+
+      document.documentElement.classList.remove(
+        "hex-opening-lock"
+      );
+
+      window.setTimeout(function(){
+        finishOpening(opening);
+      },380);
+    });
   }
 
   function syncHeroRevealOrigin(opening){
@@ -3883,6 +3912,7 @@ hexReady(function(){
     ensureHeroReady();
 
     opening=createOpeningElement();
+    setupOpeningSkip(opening);
     introData=collectOpeningIntro();
     slides=collectOpeningSlides();
     messageData=collectOpeningMessage();
