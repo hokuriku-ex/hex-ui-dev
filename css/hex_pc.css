@@ -3390,7 +3390,7 @@ body,
 .hex-opening{
   --hex-opening-hole:1px;
   position:fixed;
-  inset:0;
+  inset:80px 0 0 0;
   z-index:2147483000;
   overflow:hidden;
   width:100%;
