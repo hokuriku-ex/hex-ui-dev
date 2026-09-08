@@ -3648,6 +3648,16 @@ hexReady(function(){
     return startTime+MESSAGE_SWITCH_DURATION+MESSAGE_LOGO_LEAD;
   }
 
+  /*
+   * 開幕を再生しない場合も、CMSへ登録した
+   * 開幕専用の入力ブロックを本文上から取り除く。
+   */
+  function removeOpeningSourceBlocks(){
+    collectOpeningIntro();
+    collectOpeningSlides();
+    collectOpeningMessage();
+  }
+
 
   function createOpeningElement(){
     var opening=document.createElement("div");
@@ -3833,6 +3843,18 @@ hexReady(function(){
     }
   }
 
+  function showHeroCatch(delay){
+    var heroCatch=document.querySelector(".hex-hero-catch");
+
+    if(!heroCatch){
+      return;
+    }
+
+    window.setTimeout(function(){
+      heroCatch.classList.add("is-catch-visible");
+    },delay||0);
+  }
+
   function showHeroWithFade(){
     document.documentElement.classList.add("hex-direct-hero-fade");
     ensureHeroReady();
@@ -3843,6 +3865,8 @@ hexReady(function(){
         document.documentElement.classList.add(
           "hex-direct-hero-fade-ready"
         );
+
+        showHeroCatch(180);
 
         window.setTimeout(function(){
           document.documentElement.classList.remove(
@@ -3944,6 +3968,8 @@ hexReady(function(){
       opening.classList.add(
         "is-hero-reveal"
       );
+
+      showHeroCatch(320);
     },timeline);
 
     timeline+=HERO_REVEAL_DURATION;
@@ -3982,6 +4008,7 @@ hexReady(function(){
       isReducedMotion()||
       (!FORCE_PLAY&&!replayRequested&&sessionStorage.getItem(STORAGE_KEY))
     ){
+      removeOpeningSourceBlocks();
       showHeroWithFade();
       return;
     }
@@ -3996,6 +4023,7 @@ hexReady(function(){
       !ENABLE_SLIDE_ANIMATION&&
       !ENABLE_LOGO_ANIMATION
     ){
+      removeOpeningSourceBlocks();
       showHeroWithFade();
       return;
     }
