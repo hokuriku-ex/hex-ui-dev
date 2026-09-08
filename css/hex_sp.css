@@ -1291,6 +1291,22 @@
 }
 
 /* =======================================
+   トップページ：開幕リプレイボタン
+======================================= */
+@media screen and (max-width:768px){
+
+  .hex-opening-replay{
+    right:max(14px,calc(env(safe-area-inset-right) + 12px));
+    bottom:max(16px,calc(env(safe-area-inset-bottom) + 12px));
+    min-width:92px;
+    height:36px;
+    padding:0 14px;
+    font-size:10px;
+  }
+
+}
+
+/* =======================================
    トップページ：ヒーロー画像
 ======================================= */
 @media screen and (max-width:768px){
