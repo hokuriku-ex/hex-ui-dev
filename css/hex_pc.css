@@ -4251,6 +4251,18 @@ html.hex-direct-hero-fade.hex-direct-hero-fade-ready
   outline-offset:3px;
 }
 
+/* ヒーロー画像の表示範囲を過ぎたら非表示 */
+.hex-opening-replay.is-outside-hero{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none!important;
+  transform:translateY(8px);
+  transition:
+    opacity .3s ease,
+    visibility 0s linear .3s,
+    transform .3s ease;
+}
+
 /* =======================================
    トップページ：ヒーロー画像
 ======================================= */
