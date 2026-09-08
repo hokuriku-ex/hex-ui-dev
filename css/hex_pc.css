@@ -5121,6 +5121,7 @@ html body
   font-family:var(--hex-font-number);
   font-size:58px;
   font-weight:400;
+  font-style:italic;
   line-height:.9;
   letter-spacing:0;
 }
@@ -5165,6 +5166,7 @@ html body
   font-family:var(--hex-font-number);
   font-size:58px;
   font-weight:400;
+  font-style:italic;
   line-height:.9;
   letter-spacing:0;
 }
