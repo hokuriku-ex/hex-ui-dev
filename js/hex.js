@@ -4856,6 +4856,11 @@ hexReady(function(){
       );
 
       document.documentElement.style.setProperty(
+        "--hex-hero-client-width",
+        Math.ceil(viewportWidth)+"px"
+      );
+
+      document.documentElement.style.setProperty(
         "--hex-hero-stage-width",
         Math.ceil(stageWidth)+"px"
       );
