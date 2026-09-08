@@ -1196,6 +1196,17 @@
     padding:0 14px;
     font-size:11px;
   }
+  .hex-opening-skip{
+    top:auto;
+    right:max(
+      14px,
+      calc(env(safe-area-inset-right) + 12px)
+    );
+    bottom:max(
+      16px,
+      calc(env(safe-area-inset-bottom) + 12px)
+    );
+  }
 
   /* 左官アニメーション */
   .hex-opening-path{
