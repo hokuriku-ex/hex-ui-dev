@@ -3143,7 +3143,7 @@ hexReady(function(){
   var SLIDE_FADE_DURATION=800;
 
   /* 最後のスライドの表示時間 */
-  var LAST_SLIDE_DURATION=2500;
+  var LAST_SLIDE_DURATION=2000;
 
   /* 最初のメッセージの表示時間 */
   var MESSAGE_FIRST_DURATION=2000;
