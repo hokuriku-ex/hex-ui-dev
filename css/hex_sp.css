@@ -1357,6 +1357,28 @@
 }
 
 /* =======================================
+   ヒーローキャッチ表示アニメーション
+======================================= */
+@media screen and (max-width:768px){
+  .hex-hero-catch
+  .hex-handoff-copy
+  .hex-opening-main,
+  .hex-hero-catch
+  .hex-handoff-copy
+  .hex-opening-sub{
+    transform:translateY(12px);
+  }
+  .hex-hero-catch.is-catch-visible
+  .hex-handoff-copy
+  .hex-opening-main,
+  .hex-hero-catch.is-catch-visible
+  .hex-handoff-copy
+  .hex-opening-sub{
+    transform:translateY(0);
+  }
+}
+
+/* =======================================
    トップページ：ウェルカムメッセージ
 ======================================= */
 @media screen and (max-width:768px){
