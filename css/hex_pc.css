@@ -4251,7 +4251,7 @@ html.hex-direct-hero-fade.hex-direct-hero-fade-ready
   outline-offset:3px;
 }
 
-/* ヒーロー画像の表示範囲を過ぎたら非表示 */
+/* ヒーロー画像の表示範囲を過ぎたら非表示　 */
 .hex-opening-replay.is-outside-hero{
   opacity:0;
   visibility:hidden;
