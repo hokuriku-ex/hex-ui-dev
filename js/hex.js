@@ -3195,20 +3195,35 @@ hexReady(function(){
       );
     });
 
-    button.addEventListener("click",function(event){
-      event.preventDefault();
-      event.stopPropagation();
+  button.addEventListener("click",function(event){
+    event.preventDefault();
+    event.stopPropagation();
 
-      try{
-        sessionStorage.setItem(REPLAY_KEY,"1");
-      }catch(error){}
+    /*
+     * reload開始までの一瞬にヒーローやCMS入力画像が
+     * 再描画されるのを防ぐ。
+     */
+    var cover=document.createElement("div");
+    cover.className="hex-opening-replay-cover";
+    cover.setAttribute("aria-hidden","true");
+    document.body.appendChild(cover);
+    button.disabled=true;
 
-      if("scrollRestoration" in window.history){
-        window.history.scrollRestoration="manual";
-      }
+    try{
+      sessionStorage.setItem(REPLAY_KEY,"1");
+    }catch(error){}
 
-      window.location.reload();
+    if("scrollRestoration" in window.history){
+      window.history.scrollRestoration="manual";
+    }
+
+    /* カバーが確実に描画されてから再読み込み */
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        window.location.reload();
+      });
     });
+  });
 
     hero.appendChild(button);
   }
