@@ -3709,16 +3709,11 @@ body,
 
 /*
  * CMS入力用要素を非表示
- * JS実行前に元画像が一瞬表示されるのも防ぐ
+ * URLだけをJSで取得するため、元画像は本文に出力しない
  */
 .hex-opening-slide-start,
-.hex-opening-slide-end,
-.hex-img-pc-start,
-.hex-img-pc-end,
-.hex-img-sp-start,
-.hex-img-sp-end,
-.hex-img-pc-start + img,
-.hex-img-sp-start + img{
+.hex-opening-slide-source,
+.hex-opening-slide-end{
   display:none!important;
 }
 
