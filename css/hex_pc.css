@@ -5118,7 +5118,7 @@ html body
 
 .hex-founded-year{
   color:#c8a874;
-  font-family:var(--hex-font-pop-en);
+  font-family:var(--hex-font-number);
   font-size:58px;
   font-weight:400;
   line-height:.9;
@@ -5162,7 +5162,7 @@ html body
 }
 .hex-company-card .hex-number{
   color:#c8a874;
-  font-family:var(--hex-font-pop-en);
+  font-family:var(--hex-font-number);
   font-size:58px;
   font-weight:400;
   line-height:.9;
