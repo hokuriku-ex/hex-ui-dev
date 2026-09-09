@@ -89,8 +89,8 @@ html{
   font-size:16px!important;
   line-height:1.4;
   letter-spacing:.22em;
-  font-family:"Times New Roman",serif;
-  font-weight:normal;
+  font-family:var(--hex-font-pop-en);
+  font-weight:400;
   opacity:.6;
 }
 .hex-center-title-light[data-en]::after{
@@ -5560,8 +5560,8 @@ html body
   font-size: 16px;
   line-height: 1.4;
   letter-spacing: 0.22em;
-  font-family: "Times New Roman",serif;
-  font-weight: normal;
+  font-family:var(--hex-font-pop-en);
+  font-weight:400;
   opacity: .6;
 }
 
