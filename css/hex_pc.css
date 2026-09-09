@@ -4166,6 +4166,29 @@ html.hex-opening-lock body{
 }
 
 /* =======================================
+   開幕中のヒーロー表示制御
+======================================= */
+/* 最後の円形表示が始まるまでヒーロー本体を非表示 */
+html:has(.hex-opening:not(.is-hero-reveal))
+.hex-hero{
+  visibility:hidden!important;
+}
+
+/* 開幕要素が存在する間はヒーローの操作UIを非表示 */
+html:has(.hex-opening)
+.hex-opening-replay,
+
+html:has(.hex-opening)
+.hex-scroll-indicator,
+
+html:has(.hex-opening)
+.hex-hero-image-handoff{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
+/* =======================================
    開幕なし・SKIP時のヒーローフェード
 ======================================= */
 html.hex-direct-hero-fade
