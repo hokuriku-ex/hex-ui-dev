@@ -4168,7 +4168,22 @@ html.hex-opening-lock body{
 /* =======================================
    開幕中のヒーロー表示制御
 ======================================= */
-/* 円形表示開始まではヒーロー領域全体を透明化 */
+/* 開幕中はヒーローを囲むCMSレイヤーを下げる */
+html:has(.hex-opening)
+.gc_auto_frame_spotitem:has(.hex-hero-wrap),
+
+html:has(.hex-opening)
+.gc_auto_frame_spotitem_basewidth:has(.hex-hero-wrap),
+
+html:has(.hex-opening)
+.gc_auto_frame_spotitem_box:has(.hex-hero-wrap),
+
+html:has(.hex-opening)
+.gc_auto_frame_spotitem_body:has(.hex-hero-wrap){
+  z-index:0!important;
+}
+
+/* 円形表示開始まではヒーロー本体を隠す */
 html:has(.hex-opening:not(.is-hero-reveal))
 .hex-hero-wrap{
   opacity:0!important;
@@ -4176,20 +4191,18 @@ html:has(.hex-opening:not(.is-hero-reveal))
   pointer-events:none!important;
 }
 
-/* 開幕が存在する間はドラッグ操作を停止 */
+/* 開幕中はドラッグ操作を停止 */
 html:has(.hex-opening)
 .hex-hero-sticky{
   pointer-events:none!important;
   cursor:default!important;
 }
 
-/* 開幕要素が存在する間はヒーローの操作UIを非表示 */
+/* 開幕中はヒーローUIを隠す */
 html:has(.hex-opening)
 .hex-opening-replay,
-
 html:has(.hex-opening)
 .hex-scroll-indicator,
-
 html:has(.hex-opening)
 .hex-hero-image-handoff{
   opacity:0!important;
