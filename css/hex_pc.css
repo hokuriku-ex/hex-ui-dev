@@ -4168,10 +4168,19 @@ html.hex-opening-lock body{
 /* =======================================
    開幕中のヒーロー表示制御
 ======================================= */
-/* 最後の円形表示が始まるまでヒーロー本体を非表示 */
+/* 円形表示開始まではヒーロー領域全体を透明化 */
 html:has(.hex-opening:not(.is-hero-reveal))
-.hex-hero{
+.hex-hero-wrap{
+  opacity:0!important;
   visibility:hidden!important;
+  pointer-events:none!important;
+}
+
+/* 開幕が存在する間はドラッグ操作を停止 */
+html:has(.hex-opening)
+.hex-hero-sticky{
+  pointer-events:none!important;
+  cursor:default!important;
 }
 
 /* 開幕要素が存在する間はヒーローの操作UIを非表示 */
