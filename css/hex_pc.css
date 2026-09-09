@@ -3406,11 +3406,6 @@ body,
   background:var(--hex-opening-white);
 }
 
-html.hex-opening-pending
-#gc_auto_frame_home_0 > .bg_headermenu{
-  visibility:visible!important;
-}
-
 /* =======================================
    開幕スキップボタン
 ======================================= */
