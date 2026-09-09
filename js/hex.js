@@ -3820,22 +3820,12 @@ hexReady(function(){
   }
 
   function showHeroWithFade(){
-    document.documentElement.classList.add(
-      "hex-direct-hero-fade"
-    );
-
+    document.documentElement.classList.add("hex-direct-hero-fade");
     ensureHeroReady();
+    showPendingPage();
 
-    /*
-    * ヒーローのサイズ・位置計算が
-    * 描画へ反映されるまでページを表示しない
-    */
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
-
-        /* 補正後に初期非表示を解除 */
-        showPendingPage();
-
         document.documentElement.classList.add(
           "hex-direct-hero-fade-ready"
         );
