@@ -3390,11 +3390,10 @@ body,
 .hex-opening{
   --hex-opening-hole:1px;
   position:fixed;
-  inset:80px 0 0;
+  inset:var(--header_height) 0 0;
   overflow:hidden;
   width:100%;
   height:auto;
-  z-index:2147483000;
   pointer-events:auto;
   background:var(--hex-opening-navy);
   color:var(--hex-opening-navy);
