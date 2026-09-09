@@ -5580,23 +5580,23 @@ html body
 }
 
 /* ページ別 英語タイトル */
-#gc_auto_frame_gccat3_1 h1::after { content: "ABOUT US"; }
-#gc_auto_frame_company_1 h1::after { content: "COMPANY"; }
-#gc_auto_frame_gccat8_1 h1::after { content: "RECRUIT"; }
-#gc_auto_frame_staff_1 h1::after { content: "STAFF"; }
-#gc_auto_frame_gccat2_1 h1::after { content: "FOR HOMEOWNERS"; }
-#gc_auto_frame_gccat1_1 h1::after { content: "FOR BUSINESSES"; }
-#gc_auto_frame_gccat7_1 h1::after { content: "PROJECT FLOW"; }
-#gc_auto_frame_gccat26_1 h1::after { content: "APPLICATION FLOW"; }
-#gc_auto_frame_gccat9_1 h1::after { content: "WORK MENU"; }
-#gc_auto_frame_gccat5_1 h1::after { content: "FEATURED ITEMS"; }
-#gc_auto_frame_gccat14_1 h1::after { content: "MANUFACTURERS & PRODUCTS"; }
-#gc_auto_frame_work_1 h1::after { content: "WORKS"; }
-#gc_auto_frame_gccat27_1 h1::after { content: "PLANS"; }
-#gc_auto_frame_information_1 h1::after { content: "NEWS"; }
-#gc_auto_frame_staffblog_1 h1::after { content: "STAFF BLOG"; }
-#gc_auto_frame_contact_1 h1::after { content: "CONTACT"; }
-#gc_auto_frame_gccat21_1 h1::after { content: "DRAWINGS & DOCUMENTS"; }
+#gc_auto_frame_gccat3_1 h1::after { content: "About Us"; }
+#gc_auto_frame_company_1 h1::after { content: "Company"; }
+#gc_auto_frame_gccat8_1 h1::after { content: "Recruit"; }
+#gc_auto_frame_staff_1 h1::after { content: "Staff"; }
+#gc_auto_frame_gccat2_1 h1::after { content: "For Homeowners"; }
+#gc_auto_frame_gccat1_1 h1::after { content: "For Businesses"; }
+#gc_auto_frame_gccat7_1 h1::after { content: "Project Flow"; }
+#gc_auto_frame_gccat26_1 h1::after { content: "Application Flow"; }
+#gc_auto_frame_gccat9_1 h1::after { content: "Work Menu"; }
+#gc_auto_frame_gccat5_1 h1::after { content: "Featured Items"; }
+#gc_auto_frame_gccat14_1 h1::after { content: "Manufacturers & Products"; }
+#gc_auto_frame_work_1 h1::after { content: "Works"; }
+#gc_auto_frame_gccat27_1 h1::after { content: "Plans"; }
+#gc_auto_frame_information_1 h1::after { content: "News"; }
+#gc_auto_frame_staffblog_1 h1::after { content: "Staff Blog"; }
+#gc_auto_frame_contact_1 h1::after { content: "Contact"; }
+#gc_auto_frame_gccat21_1 h1::after { content: "Drawings & Documents"; }
 #gc_auto_frame_qanda_1 h1::after { content: "FAQ"; }
 
 /* 記事タイトル非表示 */
