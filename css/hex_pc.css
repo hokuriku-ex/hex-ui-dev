@@ -4178,7 +4178,7 @@ html:has(.hex-opening)
   z-index:0!important;
 }
 
-/* 円形表示開始まではヒーロー全体を隠す */
+/* 丸演出開始まではヒーローを隠す */
 html:has(.hex-opening:not(.is-hero-reveal))
 .hex-hero-wrap{
   opacity:0!important;
@@ -4186,7 +4186,7 @@ html:has(.hex-opening:not(.is-hero-reveal))
   pointer-events:none!important;
 }
 
-/* 円形表示開始時はCMSの白背景より前へ戻す */
+/* 丸演出開始時にヒーローを白背景より前へ戻す */
 html:has(.hex-opening.is-hero-reveal)
 .hex-hero-wrap{
   position:relative;
@@ -4195,23 +4195,21 @@ html:has(.hex-opening.is-hero-reveal)
   visibility:visible!important;
 }
 
+/* 開幕中は操作UIだけ隠す */
+html:has(.hex-opening)
+.hex-opening-replay,
+html:has(.hex-opening)
+.hex-scroll-indicator{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
 /* 開幕中はドラッグ操作を停止 */
 html:has(.hex-opening)
 .hex-hero-sticky{
   pointer-events:none!important;
   cursor:default!important;
-}
-
-/* 開幕中はヒーローUIを隠す */
-html:has(.hex-opening)
-.hex-opening-replay,
-html:has(.hex-opening)
-.hex-scroll-indicator,
-html:has(.hex-opening)
-.hex-hero-image-handoff{
-  opacity:0!important;
-  visibility:hidden!important;
-  pointer-events:none!important;
 }
 
 /* =======================================
