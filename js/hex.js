@@ -5505,6 +5505,152 @@ hexReady(function(){
 });
 
 /* =======================================
+   ウェルカム→私たちについて切り替え
+======================================= */
+hexReady(function(){
+  "use strict";
+
+  function clamp(value,min,max){
+    return Math.min(Math.max(value,min),max);
+  }
+
+  function getHeaderHeight(){
+    const value=getComputedStyle(
+      document.documentElement
+    ).getPropertyValue('--header_height');
+
+    return parseFloat(value)||80;
+  }
+
+  function initWelcomeAboutSequence(){
+    const welcomeFrame=document.getElementById(
+      HOME_SECTIONS.WELCOME
+    );
+
+    const aboutFrame=document.getElementById(
+      HOME_SECTIONS.ABOUT
+    );
+
+    if(!welcomeFrame||!aboutFrame){
+      return;
+    }
+
+    /* すでに作成済みなら重複させない */
+    if(
+      welcomeFrame.parentElement&&
+      welcomeFrame.parentElement.classList.contains(
+        'hex-welcome-founding-sequence'
+      )
+    ){
+      return;
+    }
+
+    /*
+     * CMSによる並び順変更などで親が異なる場合は
+     * DOMを移動させない。
+     */
+    if(welcomeFrame.parentNode!==aboutFrame.parentNode){
+      return;
+    }
+
+    const sequence=document.createElement('div');
+
+    sequence.className=
+      'hex-welcome-founding-sequence';
+
+    welcomeFrame.parentNode.insertBefore(
+      sequence,
+      welcomeFrame
+    );
+
+    sequence.appendChild(welcomeFrame);
+    sequence.appendChild(aboutFrame);
+
+    let ticking=false;
+
+    function update(){
+      ticking=false;
+
+      /*
+       * スマホでは固定演出を使わず、
+       * 通常スクロールで表示する。
+       */
+      if(window.innerWidth<=768){
+        sequence.style.setProperty(
+          '--hex-welcome-exit-progress',
+          '1'
+        );
+
+        sequence.classList.add(
+          'is-founding-active'
+        );
+
+        return;
+      }
+
+      const headerHeight=getHeaderHeight();
+      const viewportHeight=window.innerHeight;
+      const aboutRect=aboutFrame.getBoundingClientRect();
+
+      /*
+       * ABOUT上端が画面下に到達したところから開始し、
+       * ヘッダー下に到達したところで完了。
+       */
+      const start=viewportHeight;
+      const end=headerHeight;
+      const distance=Math.max(start-end,1);
+
+      const progress=clamp(
+        (start-aboutRect.top)/distance,
+        0,
+        1
+      );
+
+      sequence.style.setProperty(
+        '--hex-welcome-exit-progress',
+        String(progress)
+      );
+
+      sequence.classList.toggle(
+        'is-founding-active',
+        progress>=0.999
+      );
+    }
+
+    function requestUpdate(){
+      if(ticking){
+        return;
+      }
+
+      ticking=true;
+      requestAnimationFrame(update);
+    }
+
+    sequence.classList.add('is-ready');
+
+    window.addEventListener(
+      'scroll',
+      requestUpdate,
+      {passive:true}
+    );
+
+    window.addEventListener(
+      'resize',
+      requestUpdate
+    );
+
+    window.addEventListener(
+      'pageshow',
+      requestUpdate
+    );
+
+    requestUpdate();
+  }
+
+  initWelcomeAboutSequence();
+});
+
+/* =======================================
    トップ サービス案内
 ======================================= */
 hexReady(function(){
