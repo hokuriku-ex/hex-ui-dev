@@ -4197,6 +4197,19 @@ html:has(.hex-opening)
   pointer-events:none!important;
 }
 
+/* 白背景の発生元を確認する一時コード */
+.hex-opening.is-plaster-complete{
+  background:red!important;
+}
+
+.hex-opening-intro-stage{
+  background:blue!important;
+}
+
+.hex-opening-slides{
+  background:green!important;
+}
+
 /* =======================================
    開幕なし・SKIP時のヒーローフェード
 ======================================= */
