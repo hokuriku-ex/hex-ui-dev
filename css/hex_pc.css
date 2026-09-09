@@ -5101,32 +5101,64 @@ html body
 /* =======================================
    トップページ：ウェルカム→私たちについて切り替え
 ======================================= */
+/*
+ * WELCOME → 私たちについて
+ * スクロによる画切り替え
+ */
 .hex-welcome-founding-sequence{
   --hex-welcome-exit-progress:0;
   --hex-founding-bg:#f6f6f3;
-
   position:relative;
+  z-index:100;
+  isolation:isolate;
   width:100%;
 }
 
-/* WELCOMEを固定 */
+/*
+ * 元ヒーローをCMSフレーム内の下層に閉じ込める。
+ * ヒーロー内部のz-indexがWELCOMEより前に出るのを防ぐ。
+ */
+.gc_auto_frame_spotitem:has(.hex-hero-wrap){
+  position:relative!important;
+  z-index:0!important;
+  isolation:isolate!important;
+}
+
+.gc_auto_frame_spotitem:has(.hex-hero-wrap)
+.hex-hero-wrap{
+  z-index:0!important;
+}
+
+/*
+  * PC：スクロール連動切り替え
+  */
 @media screen and (min-width:769px){
 
+  /*
+   * WELCOMEを含むCMSフレーム。
+   * 私たちについてが上がってくる間、画面に固定する。
+   */
   .hex-welcome-founding-sequence
-  #gc_auto_frame_home_3{
+  > .gc_auto_frame_spotitem:has(.hex-welcome-wrap){
     position:sticky!important;
     top:var(--header_height,80px);
     z-index:1;
   }
 
+  /*
+   * WELCOME本体。
+   * 擬似要素の重なりをこの中だけに限定する。
+   */
   .hex-welcome-founding-sequence
   .hex-welcome-wrap{
+    position:relative;
+    z-index:1;
     isolation:isolate;
   }
 
   /*
-   * 丸画像と文章の上に薄グレーを重ねる。
-   * 透明度はJSから0～1で変更する。
+   * 白から薄いグレーへ変化するレイヤー。
+   * JSから渡される進行率に合わせて濃くなる。
    */
   .hex-welcome-founding-sequence
   .hex-welcome-wrap::after{
@@ -5139,59 +5171,110 @@ html body
     pointer-events:none;
   }
 
-  /* 創業セクション */
+  /*
+   * WELCOMEの丸画像。
+   * 元ヒーローより前、グレー被せより後ろ。
+   */
   .hex-welcome-founding-sequence
-  #gc_auto_frame_home_4{
+  .hex-hero-image-handoff{
+    z-index:1!important;
+  }
+
+  /*
+   * WELCOME文章。
+   */
+  .hex-welcome-founding-sequence
+  .welcome{
     position:relative;
     z-index:2;
   }
 
-  /* CMS標準フェードを無効化 */
+  /*
+   * 私たちについてを含むCMSフレーム
+   */
   .hex-welcome-founding-sequence
-  #gc_auto_frame_home_4
+  > .gc_auto_frame_spotitem:has(.hex-company-card){
+    position:relative!important;
+    z-index:2;
+  }
+
+  /*
+   * HOPWEB標準のフェードアニメーションを無効化。
+   * 後ほど独自演出を追加しやすくする。
+   */
+  .hex-welcome-founding-sequence
+  > .gc_auto_frame_spotitem:has(.hex-company-card)
   .add_animation_fadein_fadein{
     animation:none!important;
     transition:none!important;
   }
 
-  /* 到達前は創業セクションの背景を透明化 */
+  /*
+   * 切り替え完了前CMSが持つ白背景を一時的に透明化。
+   * WELCOME上のグレーレイヤーを見せる。
+   */
   .hex-welcome-founding-sequence.is-ready:not(.is-founding-active)
-  #gc_auto_frame_home_4,
+  > .gc_auto_frame_spotitem:has(.hex-company-card),
+
   .hex-welcome-founding-sequence.is-ready:not(.is-founding-active)
-  #gc_auto_frame_home_4 .background_color,
+  > .gc_auto_frame_spotitem:has(.hex-company-card)
+  > .gc_auto_frame_spotitem,
+
   .hex-welcome-founding-sequence.is-ready:not(.is-founding-active)
-  #gc_auto_frame_home_4 .gc_auto_frame_spotitem_basewidth{
-    background:transparent!important;
+  > .gc_auto_frame_spotitem:has(.hex-company-card)
+  .background_color,
+
+  .hex-welcome-founding-sequence.is-ready:not(.is-founding-active)
+  > .gc_auto_frame_spotitem:has(.hex-company-card)
+  .gc_auto_frame_spotitem_basewidth{
+    background-color:transparent!important;
+    background-image:none!important;
   }
 
-  /* 到達前は創業内容を非表示 */
+  /*
+   * 「1972年創業」以下の内容はまだ表示しない。
+   */
   .hex-welcome-founding-sequence.is-ready:not(.is-founding-active)
-  #gc_auto_frame_home_4 .gc_auto_frame_spotitem_body{
+  > .gc_auto_frame_spotitem:has(.hex-company-card)
+  .gc_auto_frame_spotitem_body{
     opacity:0!important;
     visibility:hidden!important;
     pointer-events:none!important;
   }
 
-  /* 到達後は薄グレー背景に統一 */
+  /*
+   * 切り替え完了後背景を薄いグレーに確定。
+   */
   .hex-welcome-founding-sequence.is-founding-active
-  #gc_auto_frame_home_4,
+  > .gc_auto_frame_spotitem:has(.hex-company-card),
+
   .hex-welcome-founding-sequence.is-founding-active
-  #gc_auto_frame_home_4 .background_color,
+  > .gc_auto_frame_spotitem:has(.hex-company-card)
+  > .gc_auto_frame_spotitem,
+
   .hex-welcome-founding-sequence.is-founding-active
-  #gc_auto_frame_home_4 .gc_auto_frame_spotitem_basewidth{
-    background:var(--hex-founding-bg)!important;
+  > .gc_auto_frame_spotitem:has(.hex-company-card)
+  .background_color,
+
+  .hex-welcome-founding-sequence.is-founding-active
+  > .gc_auto_frame_spotitem:has(.hex-company-card)
+  .gc_auto_frame_spotitem_basewidth{
+    background-color:var(--hex-founding-bg)!important;
+    background-image:none!important;
   }
 
-  /* 創業内容は一旦まとめて通常表示 */
+  /*
+   * 「1972年創業」以下をまとめて通常表示。
+   * 現段階では各項目の個別アニメーションなし。
+   */
   .hex-welcome-founding-sequence.is-founding-active
-  #gc_auto_frame_home_4 .gc_auto_frame_spotitem_body{
+  > .gc_auto_frame_spotitem:has(.hex-company-card)
+  .gc_auto_frame_spotitem_body{
     opacity:1!important;
     visibility:visible!important;
     pointer-events:auto!important;
   }
-
 }
-
 
 /* =======================================
    トップページ：私たちについて
