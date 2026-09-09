@@ -4178,12 +4178,21 @@ html:has(.hex-opening)
   z-index:0!important;
 }
 
-/* 円形表示開始まではヒーロー本体を隠す */
+/* 円形表示開始まではヒーロー全体を隠す */
 html:has(.hex-opening:not(.is-hero-reveal))
 .hex-hero-wrap{
   opacity:0!important;
   visibility:hidden!important;
   pointer-events:none!important;
+}
+
+/* 円形表示開始時はCMSの白背景より前へ戻す */
+html:has(.hex-opening.is-hero-reveal)
+.hex-hero-wrap{
+  position:relative;
+  z-index:100!important;
+  opacity:1!important;
+  visibility:visible!important;
 }
 
 /* 開幕中はドラッグ操作を停止 */
