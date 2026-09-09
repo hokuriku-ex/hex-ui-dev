@@ -5474,6 +5474,36 @@ hexReady(function(){
   };
 
   initHero();
+
+  /*
+  * リロード位置復元後の再同期
+  */
+  function resyncHeroAfterRestore(){
+    window.requestAnimationFrame(function(){
+      window.requestAnimationFrame(function(){
+        window.dispatchEvent(
+          new Event("resize")
+        );
+
+        window.requestAnimationFrame(function(){
+          window.dispatchEvent(
+            new Event("scroll")
+          );
+        });
+      });
+    });
+  }
+
+  window.addEventListener(
+    "pageshow",
+    resyncHeroAfterRestore
+  );
+
+  window.addEventListener(
+    "load",
+    resyncHeroAfterRestore,
+    {once:true}
+  );
 });
 
 /* =======================================
