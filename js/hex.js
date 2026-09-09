@@ -3164,7 +3164,7 @@ hexReady(function(){
   var HERO_REVEAL_DURATION=1000;
 
   /* SKIP時に開幕画面が消える時間 */
-  var SKIP_FADE_DURATION=1000;
+  var SKIP_FADE_DURATION=500;
 
   /* 開幕を再生せず直接ヒーローを表示する際のフェード時間 */
   var DIRECT_HERO_FADE_DURATION=1000;
