@@ -4302,10 +4302,7 @@ html.hex-direct-hero-fade.hex-direct-hero-fade-ready
    トップページ：ヒーロー画像
 ======================================= */
 /* 標準ヒーローを非表示（ヘッダーは残す） */
-#gc_auto_frame_home_0 .heroimage_type.heroimage_type1,
-#gc_auto_frame_home_0 .bg_heroimage_heroimage,
-#gc_auto_frame_home_0 .bg_hero_image,
-#gc_auto_frame_home_0 .heroimage_heroimage{
+#gc_auto_frame_home_0 > .heroimage_type.heroimage_type1{
   display:none!important;
 }
 
