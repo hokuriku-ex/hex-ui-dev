@@ -89,8 +89,9 @@ html{
   font-size:16px!important;
   line-height:1.4;
   letter-spacing:.22em;
-  font-family:var(--hex-font-pop-en);
+  font-family:var(--hex-font-italic);
   font-weight:400;
+  font-style:italic;
   opacity:.6;
 }
 .hex-center-title-light[data-en]::after{
@@ -5190,7 +5191,7 @@ html body
 
 .hex-founded-year{
   color:#c8a874;
-  font-family:var(--hex-font-number);
+  font-family:var(--hex-font-italic);
   font-size:58px;
   font-weight:400;
   font-style:italic;
@@ -5235,7 +5236,7 @@ html body
 }
 .hex-company-card .hex-number{
   color:#c8a874;
-  font-family:var(--hex-font-number);
+  font-family:var(--hex-font-italic);
   font-size:58px;
   font-weight:400;
   font-style:italic;
@@ -5560,8 +5561,9 @@ html body
   font-size: 16px;
   line-height: 1.4;
   letter-spacing: 0.22em;
-  font-family:var(--hex-font-pop-en);
+  font-family:var(--hex-font-italic);
   font-weight:400;
+  font-style:italic;
   opacity: .6;
 }
 
