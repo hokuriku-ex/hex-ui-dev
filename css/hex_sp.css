@@ -1385,6 +1385,49 @@
 }
 
 /* =======================================
+   トップページ：ウェルカム→私たちについて切り替え
+======================================= */
+@media screen and (max-width:768px){
+
+  .hex-welcome-founding-sequence{
+    z-index:auto;
+    isolation:auto;
+  }
+
+  .hex-welcome-founding-sequence
+  > .gc_auto_frame_spotitem:has(.hex-welcome-wrap){
+    position:relative!important;
+    top:auto!important;
+  }
+
+  .hex-welcome-founding-sequence
+  .hex-welcome-wrap::after{
+    display:none;
+  }
+
+  .hex-welcome-founding-sequence
+  > .gc_auto_frame_spotitem:has(.hex-company-card),
+
+  .hex-welcome-founding-sequence
+  > .gc_auto_frame_spotitem:has(.hex-company-card)
+  .background_color,
+
+  .hex-welcome-founding-sequence
+  > .gc_auto_frame_spotitem:has(.hex-company-card)
+  .gc_auto_frame_spotitem_basewidth{
+    background-color:var(--hex-founding-bg,#f6f6f3)!important;
+  }
+
+  .hex-welcome-founding-sequence
+  > .gc_auto_frame_spotitem:has(.hex-company-card)
+  .gc_auto_frame_spotitem_body{
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+  }
+}
+
+/* =======================================
    トップページ：ウェルカムメッセージ
 ======================================= */
 @media screen and (max-width:768px){
