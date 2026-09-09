@@ -21,7 +21,7 @@ body{
 h1,
 h2{
   font-family:var(--hex-font-pop-ja)!important;
-  -webkit-text-stroke:0.3px currentColor;
+  -webkit-text-stroke:0.5px currentColor;
   paint-order:stroke fill;
 }
 h3,
