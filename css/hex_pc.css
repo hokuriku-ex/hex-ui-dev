@@ -4163,6 +4163,21 @@ html.hex-opening-lock body{
 /* =======================================
    開幕中のヒーロー表示制御
 ======================================= */
+/* 開幕中はヒーローブロックのCMS白背景を無効化 */
+html:has(.hex-opening)
+.gc_auto_frame_spotitem:has(.hex-hero-wrap)
+.background_color.backgroundcolor_auto{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
+/* CMS本体側の白背景も透明化 */
+html:has(.hex-opening)
+.gc_auto_frame_spotitem_basewidth:has(.hex-hero-wrap){
+  background-color:transparent!important;
+}
+
 /* 開幕中はヒーローを囲むCMSレイヤーを下げる */
 html:has(.hex-opening)
 .gc_auto_frame_spotitem:has(.hex-hero-wrap),
