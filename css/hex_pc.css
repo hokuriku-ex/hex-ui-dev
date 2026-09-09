@@ -5099,6 +5099,101 @@ html body
 }
 
 /* =======================================
+   トップページ：ウェルカム→私たちについて切り替え
+======================================= */
+.hex-welcome-founding-sequence{
+  --hex-welcome-exit-progress:0;
+  --hex-founding-bg:#f6f6f3;
+
+  position:relative;
+  width:100%;
+}
+
+/* WELCOMEを固定 */
+@media screen and (min-width:769px){
+
+  .hex-welcome-founding-sequence
+  #gc_auto_frame_home_3{
+    position:sticky!important;
+    top:var(--header_height,80px);
+    z-index:1;
+  }
+
+  .hex-welcome-founding-sequence
+  .hex-welcome-wrap{
+    isolation:isolate;
+  }
+
+  /*
+   * 丸画像と文章の上に薄グレーを重ねる。
+   * 透明度はJSから0～1で変更する。
+   */
+  .hex-welcome-founding-sequence
+  .hex-welcome-wrap::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:100;
+    background:var(--hex-founding-bg);
+    opacity:var(--hex-welcome-exit-progress);
+    pointer-events:none;
+  }
+
+  /* 創業セクション */
+  .hex-welcome-founding-sequence
+  #gc_auto_frame_home_4{
+    position:relative;
+    z-index:2;
+  }
+
+  /* CMS標準フェードを無効化 */
+  .hex-welcome-founding-sequence
+  #gc_auto_frame_home_4
+  .add_animation_fadein_fadein{
+    animation:none!important;
+    transition:none!important;
+  }
+
+  /* 到達前は創業セクションの背景を透明化 */
+  .hex-welcome-founding-sequence.is-ready:not(.is-founding-active)
+  #gc_auto_frame_home_4,
+  .hex-welcome-founding-sequence.is-ready:not(.is-founding-active)
+  #gc_auto_frame_home_4 .background_color,
+  .hex-welcome-founding-sequence.is-ready:not(.is-founding-active)
+  #gc_auto_frame_home_4 .gc_auto_frame_spotitem_basewidth{
+    background:transparent!important;
+  }
+
+  /* 到達前は創業内容を非表示 */
+  .hex-welcome-founding-sequence.is-ready:not(.is-founding-active)
+  #gc_auto_frame_home_4 .gc_auto_frame_spotitem_body{
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+
+  /* 到達後は薄グレー背景に統一 */
+  .hex-welcome-founding-sequence.is-founding-active
+  #gc_auto_frame_home_4,
+  .hex-welcome-founding-sequence.is-founding-active
+  #gc_auto_frame_home_4 .background_color,
+  .hex-welcome-founding-sequence.is-founding-active
+  #gc_auto_frame_home_4 .gc_auto_frame_spotitem_basewidth{
+    background:var(--hex-founding-bg)!important;
+  }
+
+  /* 創業内容は一旦まとめて通常表示 */
+  .hex-welcome-founding-sequence.is-founding-active
+  #gc_auto_frame_home_4 .gc_auto_frame_spotitem_body{
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+  }
+
+}
+
+
+/* =======================================
    トップページ：私たちについて
 ======================================= */
 .hex-company-buttons{
