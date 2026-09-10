@@ -5521,9 +5521,15 @@ hexReady(function(){
 hexReady(function(){
   "use strict";
 
-  var WHEEL_THRESHOLD=45;
-  var STEP_LOCK_TIME=900;
-  var RETURN_FADE_TIME=550;
+  /* 1段階と判定するホイール移動量 */
+  var WHEEL_THRESHOLD=70;
+
+  /* 次の段階を受け付けるまでの待機時間 */
+  var STEP_LOCK_TIME=1300;
+
+  /* 上方向へスクロールフェードアウト時間 */
+  var RETURN_FADE_TIME=700;
+
   var active=false;
   var foundedActive=false;
   var foundedReleased=false;
