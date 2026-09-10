@@ -5103,19 +5103,16 @@ html body
 ======================================= */
 :root{
   --hex-welcome-exit-progress:0;
-  --hex-founded-progress:0;
   --hex-founding-bg:#f6f6f3;
 }
 
-/* WELCOMEを創業セクションより前へ */
+/* WELCOME固定フェード */
 .hex-welcome-exit-active
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap){
   position:relative!important;
   z-index:90!important;
   isolation:isolate!important;
 }
-
-/* WELCOME背景を白からグレーへ */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap)::after{
   content:"";
@@ -5126,11 +5123,8 @@ html body
   opacity:var(--hex-welcome-exit-progress,0);
   pointer-events:none;
 }
-
-/* WELCOME本文を現在位置で固定 */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
-.hex-welcome-wrap
-.welcome.has-padding{
+.hex-welcome-wrap .welcome.has-padding{
   position:fixed!important;
   top:var(--hex-welcome-fixed-top)!important;
   left:var(--hex-welcome-fixed-left)!important;
@@ -5144,8 +5138,6 @@ html body
   visibility:visible!important;
   pointer-events:none!important;
 }
-
-/* 丸画像を固定したまま薄くする */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .hex-hero-image-handoff{
   position:fixed!important;
@@ -5155,317 +5147,6 @@ html body
   visibility:visible!important;
   pointer-events:none!important;
 }
-
-/* 旧オーバーレイは使用しない */
-.hex-welcome-exit-overlay{
-  display:none!important;
-}
-
-/* =======================================
-   創業セクション固定ステージ
-======================================= */
-
-@media screen and (min-width:769px){
-
-  /*
-   * 外枠で創業演出用のスクロール距離を確保。
-   * この外枠が終わるまで次のセクションは入らない。
-   */
-  .hex-founded-stage{
-    position:relative!important;
-    z-index:0!important;
-    isolation:isolate!important;
-
-    min-height:calc(
-      100dvh -
-      var(--header_height,80px) +
-      var(--hex-founded-scroll-distance,1000px)
-    )!important;
-
-    box-sizing:border-box;
-  }
-
-
-  /* =====================================
-     固定するCMS表示面
-  ===================================== */
-
-  /* 創業セクションの外枠 */
-  .hex-founded-stage{
-    overflow:visible!important;
-  }
-
-
-  /* ヘッダー下で固定するCMS表示面 */
-  .hex-founded-stage
-  > .gc_auto_frame_spotitem:has(.hex-company-card){
-    position:sticky!important;
-    top:var(--header_height,80px)!important;
-
-    width:100%!important;
-
-    height:calc(
-      100dvh - var(--header_height,80px)
-    )!important;
-
-    min-height:calc(
-      100dvh - var(--header_height,80px)
-    )!important;
-
-    max-height:calc(
-      100dvh - var(--header_height,80px)
-    )!important;
-
-    overflow:visible!important;
-    background:var(--hex-founding-bg)!important;
-    box-sizing:border-box;
-  }
-
-
-  /* basewidthは固定表示面いっぱいに広げる */
-  .hex-founded-stage
-  > .gc_auto_frame_spotitem:has(.hex-company-card)
-  > .gc_auto_frame_spotitem_basewidth{
-    position:relative!important;
-    top:auto!important;
-
-    width:100%!important;
-
-    height:calc(
-      100dvh - var(--header_height,80px)
-    )!important;
-
-    min-height:calc(
-      100dvh - var(--header_height,80px)
-    )!important;
-
-    max-height:calc(
-      100dvh - var(--header_height,80px)
-    )!important;
-
-    overflow:visible!important;
-    background:transparent!important;
-    box-sizing:border-box;
-  }
-
-
-  /* CMSの横幅・余白用ボックス */
-  .hex-founded-stage
-  .gc_auto_frame_spotitem_box{
-    height:100%!important;
-    min-height:0!important;
-    max-height:100%!important;
-    box-sizing:border-box;
-  }
-
-
-  /*
-  * 見出しからカードまでを、
-  * 完成状態で画面中央に配置する。
-  */
-  .hex-founded-stage
-  .gc_auto_frame_spotitem_body{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-
-    height:100%!important;
-    min-height:0!important;
-    max-height:100%!important;
-
-    overflow:visible!important;
-    box-sizing:border-box;
-  }
-
-
-  /* =====================================
-     WELCOME切り替え完了前
-  ===================================== */
-
-  /*
-   * 創業セクションはWELCOMEの後ろで移動するが、
-   * 背景と内容はまだ表示しない。
-   */
-  .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
-  .hex-founded-stage,
-
-  .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
-  .hex-founded-stage
-  .gc_auto_frame_spotitem,
-
-  .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
-  .hex-founded-stage
-  .background_color,
-
-  .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
-  .hex-founded-stage
-  .gc_auto_frame_spotitem_basewidth,
-
-  .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
-  .hex-founded-stage
-  .gc_auto_frame_spotitem_box,
-
-  .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
-  .hex-founded-stage
-  .gc_auto_frame_spotitem_body{
-    background:transparent!important;
-  }
-
-  /* 擬似要素による背景も非表示 */
-  .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
-  .hex-founded-stage::before,
-
-  .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
-  .hex-founded-stage::after{
-    opacity:0!important;
-    visibility:hidden!important;
-  }
-
-  /* 創業セクションの内容を非表示 */
-  .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
-  .hex-founded-stage
-  .gc_auto_frame_spotitem_body{
-    opacity:0!important;
-    visibility:hidden!important;
-    pointer-events:none!important;
-  }
-
-
-  /* =====================================
-     WELCOME切り替え完了後
-  ===================================== */
-
-  /* 創業セクションをグレー背景で表示 */
-  .hex-welcome-exit-complete
-  .hex-founded-stage,
-
-  .hex-welcome-exit-complete
-  .hex-founded-stage
-  > .gc_auto_frame_spotitem:has(.hex-company-card),
-
-  .hex-welcome-exit-complete
-  .hex-founded-stage
-  .background_color,
-
-  .hex-welcome-exit-complete
-  .hex-founded-stage
-  .gc_auto_frame_spotitem_basewidth{
-    background:var(--hex-founding-bg)!important;
-  }
-
-  /* 創業セクションの内容領域を有効化 */
-  .hex-welcome-exit-complete
-  .hex-founded-stage
-  .gc_auto_frame_spotitem_body{
-    opacity:1!important;
-    visibility:visible!important;
-    pointer-events:auto!important;
-  }
-
-
-  /* =====================================
-     「1972年創業」
-  ===================================== */
-
-  .hex-founded-stage-active
-  .hex-founded-stage
-  .hex-center-title{
-    opacity:var(
-      --hex-founded-title-opacity,
-      0
-    )!important;
-
-    transform:translate3d(
-      0,
-      var(--hex-founded-title-y,0px),
-      0
-    )!important;
-
-    will-change:transform,opacity;
-  }
-
-
-  /* =====================================
-     説明文
-  ===================================== */
-
-  .hex-founded-stage-active
-  .hex-founded-stage
-  .hex-center{
-    opacity:var(
-      --hex-founded-description-opacity,
-      0
-    )!important;
-
-    transform:translate3d(
-      0,
-      var(--hex-founded-description-y,0px),
-      0
-    )!important;
-
-    will-change:transform,opacity;
-  }
-
-
-  /* =====================================
-     実績カード
-  ===================================== */
-
-  /*
-   * 現段階では4枚まとめてフェード表示。
-   * 後から個別表示へ変更可能。
-   */
-  .hex-founded-stage-active
-  .hex-founded-stage
-  .hex-company-card{
-    opacity:var(
-      --hex-founded-cards-opacity,
-      0
-    )!important;
-
-    transform:translate3d(
-      0,
-      var(--hex-founded-cards-y,24px),
-      0
-    )!important;
-
-    will-change:transform,opacity;
-  }
-
-
-  /* =====================================
-     創業演出完成後
-  ===================================== */
-
-  .hex-founded-stage-complete
-  .hex-founded-stage
-  .hex-center-title,
-
-  .hex-founded-stage-complete
-  .hex-founded-stage
-  .hex-center,
-
-  .hex-founded-stage-complete
-  .hex-founded-stage
-  .hex-company-card{
-    opacity:1!important;
-    transform:none!important;
-    will-change:auto;
-  }
-}
-
-/* HOPWEB標準フェードを無効化 */
-.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
-.add_animation_fadein_fadein{
-  animation:none!important;
-  transition:none!important;
-}
-
-/* =======================================
-   切り替え完了後の表示順
-======================================= */
-
-/* 完了後はWELCOMEフレームを非表示 */
 .hex-welcome-exit-complete
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap){
   z-index:0!important;
@@ -5473,30 +5154,164 @@ html body
   visibility:hidden!important;
   pointer-events:none!important;
 }
+.hex-welcome-exit-overlay{display:none!important;}
 
-/* 創業セクションを前面へ */
-.hex-welcome-exit-complete
-.hex-founded-stage{
-  position:relative!important;
-  z-index:90!important;
-  opacity:1!important;
-  visibility:visible!important;
+@media screen and (min-width:769px){
+  /* 創業固定面 */
+  .hex-founded-stage{
+    position:relative!important;
+    z-index:0!important;
+    isolation:isolate!important;
+    min-height:100dvh!important;
+    overflow:visible!important;
+    box-sizing:border-box;
+  }
+  .hex-founded-stage
+  > .gc_auto_frame_spotitem:has(.hex-company-card){
+    position:sticky!important;
+    top:var(--header_height,80px)!important;
+    width:100%!important;
+    height:calc(100dvh - var(--header_height,80px))!important;
+    min-height:calc(100dvh - var(--header_height,80px))!important;
+    max-height:calc(100dvh - var(--header_height,80px))!important;
+    overflow:visible!important;
+    background:var(--hex-founding-bg)!important;
+    box-sizing:border-box;
+  }
+  .hex-founded-stage
+  > .gc_auto_frame_spotitem:has(.hex-company-card)
+  > .gc_auto_frame_spotitem_basewidth{
+    position:relative!important;
+    top:auto!important;
+    width:100%!important;
+    height:calc(100dvh - var(--header_height,80px))!important;
+    min-height:calc(100dvh - var(--header_height,80px))!important;
+    max-height:calc(100dvh - var(--header_height,80px))!important;
+    overflow:visible!important;
+    background:transparent!important;
+    box-sizing:border-box;
+  }
+  .hex-founded-stage .gc_auto_frame_spotitem_box{
+    height:100%!important;
+    min-height:0!important;
+    max-height:100%!important;
+    box-sizing:border-box;
+  }
+  .hex-founded-stage .gc_auto_frame_spotitem_body{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    height:100%!important;
+    min-height:0!important;
+    max-height:100%!important;
+    overflow:visible!important;
+    box-sizing:border-box;
+  }
+
+  /* WELCOME完了前は創業側を透明化 */
+  .hex-welcome-exit-active:not(.hex-welcome-exit-complete) .hex-founded-stage,
+  .hex-welcome-exit-active:not(.hex-welcome-exit-complete) .hex-founded-stage .gc_auto_frame_spotitem,
+  .hex-welcome-exit-active:not(.hex-welcome-exit-complete) .hex-founded-stage .background_color,
+  .hex-welcome-exit-active:not(.hex-welcome-exit-complete) .hex-founded-stage .gc_auto_frame_spotitem_basewidth,
+  .hex-welcome-exit-active:not(.hex-welcome-exit-complete) .hex-founded-stage .gc_auto_frame_spotitem_box,
+  .hex-welcome-exit-active:not(.hex-welcome-exit-complete) .hex-founded-stage .gc_auto_frame_spotitem_body{
+    background:transparent!important;
+  }
+  .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
+  .hex-founded-stage .gc_auto_frame_spotitem_body{
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+
+  /* 創業ステージ表示 */
+  .hex-welcome-exit-complete .hex-founded-stage{
+    z-index:90!important;
+    background:var(--hex-founding-bg)!important;
+    opacity:1!important;
+    visibility:visible!important;
+  }
+  .hex-welcome-exit-complete .hex-founded-stage .background_color,
+  .hex-welcome-exit-complete .hex-founded-stage .gc_auto_frame_spotitem_basewidth{
+    background:var(--hex-founding-bg)!important;
+  }
+  .hex-welcome-exit-complete .hex-founded-stage .gc_auto_frame_spotitem_body{
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+  }
+
+  /* 完成位置測定 */
+  .hex-founded-stage.is-founded-measuring .hex-center-title,
+  .hex-founded-stage.is-founded-measuring .hex-center,
+  .hex-founded-stage.is-founded-measuring .hex-company-card{
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+    transition:none!important;
+  }
+
+  /* 配置・演出専用。パーツ装飾には触れない */
+  .hex-founded-stage-active .hex-founded-stage .hex-center-title,
+  .hex-founded-stage-active .hex-founded-stage .hex-center,
+  .hex-founded-stage-active .hex-founded-stage .hex-company-card{
+    opacity:0!important;
+    visibility:hidden!important;
+    transition:
+      opacity .75s ease,
+      transform .85s cubic-bezier(.22,.8,.3,1);
+    will-change:opacity,transform;
+  }
+
+  /* STEP 1：見出し中央表示 */
+  .hex-founded-stage[data-founded-step="1"] .hex-center-title{
+    opacity:1!important;
+    visibility:visible!important;
+    transform:translate3d(0,var(--hex-founded-title-center-y,0px),0)!important;
+  }
+  /* STEP 2以降：見出しを完成位置へ */
+  .hex-founded-stage[data-founded-step="2"] .hex-center-title,
+  .hex-founded-stage[data-founded-step="3"] .hex-center-title,
+  .hex-founded-stage[data-founded-step="4"] .hex-center-title{
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+  }
+  /* STEP 3：説明中央表示 */
+  .hex-founded-stage[data-founded-step="3"] .hex-center{
+    opacity:1!important;
+    visibility:visible!important;
+    transform:translate3d(0,var(--hex-founded-description-center-y,0px),0)!important;
+  }
+  /* STEP 4：説明を見出し下へ。カードは暫定で表示 */
+  .hex-founded-stage[data-founded-step="4"] .hex-center,
+  .hex-founded-stage[data-founded-step="4"] .hex-company-card{
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+  }
+
+  /* 逆方向は現在配置のまま全体フェード */
+  .hex-founded-stage.is-founded-returning .gc_auto_frame_spotitem_body{
+    opacity:0!important;
+    visibility:visible!important;
+    transition:opacity .55s ease!important;
+    pointer-events:none!important;
+  }
+  .hex-founded-stage.is-founded-released .hex-center-title,
+  .hex-founded-stage.is-founded-released .hex-center,
+  .hex-founded-stage.is-founded-released .hex-company-card{
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+  }
 }
 
-/* 創業セクションの固定表示面 */
-.hex-welcome-exit-complete
-.hex-founded-stage
-.gc_auto_frame_spotitem_basewidth{
-  opacity:1!important;
-  visibility:visible!important;
-}
-
-/* 創業セクションの内容 */
-.hex-welcome-exit-complete
-.hex-founded-stage
-.gc_auto_frame_spotitem_body{
-  opacity:1!important;
-  visibility:visible!important;
+/* CMS標準フェードを無効化 */
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+.add_animation_fadein_fadein{
+  animation:none!important;
+  transition:none!important;
 }
 
 /* =======================================
