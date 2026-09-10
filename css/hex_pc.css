@@ -5219,6 +5219,42 @@ html.hex-welcome-exit-complete
   pointer-events:auto!important;
 }
 
+/* WELCOMEを創業セクションより前へ */
+html.hex-welcome-exit-active
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap){
+  position:relative!important;
+  z-index:90!important;
+  isolation:isolate!important;
+}
+
+/* 創業セクションを下層へ */
+html.hex-welcome-exit-active
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
+  position:relative!important;
+  z-index:0!important;
+  isolation:isolate!important;
+}
+
+/* 創業セクション内のCMS背景も下層へ固定 */
+html.hex-welcome-exit-active:not(
+  .hex-welcome-exit-complete
+)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+.background_color{
+  z-index:0!important;
+}
+
+/* 切り替え完了までは創業セクションの内容を隠す */
+html.hex-welcome-exit-active:not(
+  .hex-welcome-exit-complete
+)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+.gc_auto_frame_spotitem_body{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
 /* =======================================
    トップページ：私たちについて
 ======================================= */
