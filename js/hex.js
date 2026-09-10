@@ -4634,10 +4634,51 @@ hexReady(function(){
           );
 
           if(welcomeCenterReached){
-            releaseImageHandoff(
-              welcomeWrap
+            /*
+             * WELCOME完成を別JSへ通知する。
+             * 切替JSがpreventDefault()した間は、
+             * 丸画像の固定を解除しない。
+             */
+            var welcomeExitEvent=
+              new CustomEvent(
+                "hex:welcome-exit-ready",
+                {
+                  cancelable:true,
+                  detail:{
+                    welcomeWrap:welcomeWrap,
+                    welcomePanel:
+                      welcomePanel||welcomeWrap,
+                    imageHandoff:imageHandoff
+                  }
+                }
+              );
+
+            document.dispatchEvent(
+              welcomeExitEvent
             );
+
+            if(welcomeExitEvent.defaultPrevented){
+              refixImageHandoff(
+                welcomeWrap
+              );
+            }else{
+              releaseImageHandoff(
+                welcomeWrap
+              );
+            }
           }else{
+            document.dispatchEvent(
+              new CustomEvent(
+                "hex:welcome-exit-cancel",
+                {
+                  detail:{
+                    welcomeWrap:welcomeWrap,
+                    imageHandoff:imageHandoff
+                  }
+                }
+              )
+            );
+
             refixImageHandoff(
               welcomeWrap
             );
@@ -5472,36 +5513,6 @@ hexReady(function(){
   };
 
   initHero();
-
-  /*
-  * リロード位置復元後の再同期
-  */
-  function resyncHeroAfterRestore(){
-    window.requestAnimationFrame(function(){
-      window.requestAnimationFrame(function(){
-        window.dispatchEvent(
-          new Event("resize")
-        );
-
-        window.requestAnimationFrame(function(){
-          window.dispatchEvent(
-            new Event("scroll")
-          );
-        });
-      });
-    });
-  }
-
-  window.addEventListener(
-    "pageshow",
-    resyncHeroAfterRestore
-  );
-
-  window.addEventListener(
-    "load",
-    resyncHeroAfterRestore,
-    {once:true}
-  );
 });
 
 /* =======================================
@@ -5510,144 +5521,239 @@ hexReady(function(){
 hexReady(function(){
   "use strict";
 
+  var active=false;
+  var startScrollY=0;
+  var scrollDistance=1;
+  var welcomeWrap=null;
+  var welcomePanel=null;
+  var imageHandoff=null;
+  var overlay=null;
+
   function clamp(value,min,max){
-    return Math.min(Math.max(value,min),max);
+    return Math.min(
+      Math.max(value,min),
+      max
+    );
   }
 
   function getHeaderHeight(){
-    const value=getComputedStyle(
+    var value=getComputedStyle(
       document.documentElement
-    ).getPropertyValue('--header_height');
+    ).getPropertyValue(
+      "--header_height"
+    );
 
     return parseFloat(value)||80;
   }
 
-  function initWelcomeAboutSequence(){
-    const welcomeFrame=document.getElementById(
-      HOME_SECTIONS.WELCOME
-    );
-
-    const aboutFrame=document.getElementById(
+  function getAboutFrame(){
+    return document.getElementById(
       HOME_SECTIONS.ABOUT
     );
+  }
 
-    if(!welcomeFrame||!aboutFrame){
+  function createOverlay(){
+    if(overlay){
       return;
     }
 
-    /* すでに作成済みなら重複させない */
+    overlay=document.createElement(
+      "div"
+    );
+
+    overlay.className=
+      "hex-welcome-exit-overlay";
+
+    document.body.appendChild(
+      overlay
+    );
+  }
+
+  function setFixedPanelPosition(){
+    var rect;
+
+    if(!welcomeWrap||!welcomePanel){
+      return;
+    }
+
+    rect=welcomePanel.getBoundingClientRect();
+
+    welcomeWrap.style.setProperty(
+      "--hex-welcome-fixed-top",
+      rect.top+"px"
+    );
+
+    welcomeWrap.style.setProperty(
+      "--hex-welcome-fixed-left",
+      rect.left+"px"
+    );
+
+    welcomeWrap.style.setProperty(
+      "--hex-welcome-fixed-width",
+      rect.width+"px"
+    );
+
+    welcomeWrap.style.setProperty(
+      "--hex-welcome-fixed-height",
+      rect.height+"px"
+    );
+  }
+
+  function start(detail){
+    var aboutFrame;
+    var aboutRect;
+
+    if(active){
+      return;
+    }
+
+    welcomeWrap=detail.welcomeWrap;
+    welcomePanel=detail.welcomePanel;
+    imageHandoff=detail.imageHandoff;
+    aboutFrame=getAboutFrame();
+
     if(
-      welcomeFrame.parentElement&&
-      welcomeFrame.parentElement.classList.contains(
-        'hex-welcome-founding-sequence'
-      )
+      !welcomeWrap||
+      !welcomePanel||
+      !imageHandoff||
+      !aboutFrame
     ){
       return;
     }
 
-    /*
-     * CMSによる並び順変更などで親が異なる場合は
-     * DOMを移動させない。
-     */
-    if(welcomeFrame.parentNode!==aboutFrame.parentNode){
+    createOverlay();
+    setFixedPanelPosition();
+
+    aboutRect=aboutFrame.getBoundingClientRect();
+    startScrollY=window.scrollY;
+
+    scrollDistance=Math.max(
+      aboutRect.top-getHeaderHeight(),
+      window.innerHeight*.75,
+      1
+    );
+
+    active=true;
+
+    document.documentElement.classList.add(
+      "hex-welcome-exit-active"
+    );
+  }
+
+  function clear(){
+    if(!active){
       return;
     }
 
-    const sequence=document.createElement('div');
+    active=false;
+    startScrollY=0;
+    scrollDistance=1;
 
-    sequence.className=
-      'hex-welcome-founding-sequence';
-
-    welcomeFrame.parentNode.insertBefore(
-      sequence,
-      welcomeFrame
+    document.documentElement.classList.remove(
+      "hex-welcome-exit-active",
+      "hex-welcome-exit-complete"
     );
 
-    sequence.appendChild(welcomeFrame);
-    sequence.appendChild(aboutFrame);
+    document.documentElement.style.removeProperty(
+      "--hex-welcome-exit-progress"
+    );
 
-    let ticking=false;
-
-    function update(){
-      ticking=false;
-
-      /*
-       * スマホでは固定演出を使わず、
-       * 通常スクロールで表示する。
-       */
-      if(window.innerWidth<=768){
-        sequence.style.setProperty(
-          '--hex-welcome-exit-progress',
-          '1'
-        );
-
-        sequence.classList.add(
-          'is-founding-active'
-        );
-
-        return;
-      }
-
-      const headerHeight=getHeaderHeight();
-      const viewportHeight=window.innerHeight;
-      const aboutRect=aboutFrame.getBoundingClientRect();
-
-      /*
-       * ABOUT上端が画面下に到達したところから開始し、
-       * ヘッダー下に到達したところで完了。
-       */
-      const start=viewportHeight;
-      const end=headerHeight;
-      const distance=Math.max(start-end,1);
-
-      const progress=clamp(
-        (start-aboutRect.top)/distance,
-        0,
-        1
+    if(welcomeWrap){
+      welcomeWrap.style.removeProperty(
+        "--hex-welcome-fixed-top"
       );
 
-      sequence.style.setProperty(
-        '--hex-welcome-exit-progress',
-        String(progress)
+      welcomeWrap.style.removeProperty(
+        "--hex-welcome-fixed-left"
       );
 
-      sequence.classList.toggle(
-        'is-founding-active',
-        progress>=0.999
+      welcomeWrap.style.removeProperty(
+        "--hex-welcome-fixed-width"
+      );
+
+      welcomeWrap.style.removeProperty(
+        "--hex-welcome-fixed-height"
       );
     }
 
-    function requestUpdate(){
-      if(ticking){
-        return;
-      }
-
-      ticking=true;
-      requestAnimationFrame(update);
-    }
-
-    sequence.classList.add('is-ready');
-
-    window.addEventListener(
-      'scroll',
-      requestUpdate,
-      {passive:true}
-    );
-
-    window.addEventListener(
-      'resize',
-      requestUpdate
-    );
-
-    window.addEventListener(
-      'pageshow',
-      requestUpdate
-    );
-
-    requestUpdate();
+    welcomeWrap=null;
+    welcomePanel=null;
+    imageHandoff=null;
   }
 
-  initWelcomeAboutSequence();
+  function update(){
+    var progress;
+
+    if(!active){
+      return 0;
+    }
+
+    progress=clamp(
+      (
+        window.scrollY-
+        startScrollY
+      )/scrollDistance,
+      0,
+      1
+    );
+
+    document.documentElement.style.setProperty(
+      "--hex-welcome-exit-progress",
+      progress
+    );
+
+    document.documentElement.classList.toggle(
+      "hex-welcome-exit-complete",
+      progress>=1
+    );
+
+    return progress;
+  }
+
+  document.addEventListener(
+    "hex:welcome-exit-ready",
+    function(event){
+      var progress;
+
+      /* SPでは従来どおり通常表示 */
+      if(window.innerWidth<=768){
+        return;
+      }
+
+      start(event.detail);
+      progress=update();
+
+      /* 完了するまではヒーローJSの固定解除を止める */
+      if(active&&progress<1){
+        event.preventDefault();
+      }
+    }
+  );
+
+  document.addEventListener(
+    "hex:welcome-exit-cancel",
+    function(){
+      clear();
+    }
+  );
+
+  window.addEventListener(
+    "resize",
+    function(){
+      if(window.innerWidth<=768){
+        clear();
+      }
+    }
+  );
+
+  window.addEventListener(
+    "pageshow",
+    function(){
+      if(active){
+        update();
+      }
+    }
+  );
 });
 
 /* =======================================
