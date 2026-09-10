@@ -5101,12 +5101,13 @@ html body
 /* =======================================
    トップページ：ウェルカム→私たちについて切り替え
 ======================================= */
-html{
+:root{
   --hex-welcome-exit-progress:0;
   --hex-founding-bg:#f6f6f3;
 }
 
-/* グレー背景 */
+
+/* 固定グレー背景 */
 .hex-welcome-exit-overlay{
   position:fixed;
   inset:0;
@@ -5117,8 +5118,8 @@ html{
   pointer-events:none;
 }
 
-/* WELCOME終了演出を開始 */
-html.hex-welcome-exit-active
+/* スクロールに合わせてグレーを表示 */
+.hex-welcome-exit-active
 .hex-welcome-exit-overlay{
   opacity:var(
     --hex-welcome-exit-progress,
@@ -5127,13 +5128,28 @@ html.hex-welcome-exit-active
   visibility:visible;
 }
 
-/*
- * WELCOME本文を現在の表示位置で固定。
- * transformは既存のentry-offsetを解除する。
- */
-html.hex-welcome-exit-active:not(
-  .hex-welcome-exit-complete
-)
+/* 完了後は創業セクション背景へ引き継ぐ */
+.hex-welcome-exit-complete
+.hex-welcome-exit-overlay{
+  opacity:0;
+  visibility:hidden;
+}
+
+
+/* =======================================
+   WELCOME
+======================================= */
+
+/* WELCOMEを創業セクションより前へ */
+.hex-welcome-exit-active
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap){
+  position:relative!important;
+  z-index:90!important;
+  isolation:isolate!important;
+}
+
+/* WELCOME本文を現在位置で固定 */
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .hex-welcome-wrap
 .welcome.has-padding{
   position:fixed!important;
@@ -5151,12 +5167,13 @@ html.hex-welcome-exit-active:not(
   opacity:calc(
     1 - var(--hex-welcome-exit-progress)
   )!important;
+
+  visibility:visible!important;
+  pointer-events:none!important;
 }
 
-/* 丸画像も固定したまま薄くする */
-html.hex-welcome-exit-active:not(
-  .hex-welcome-exit-complete
-)
+/* 丸画像を固定したまま薄くする */
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .hex-hero-image-handoff{
   position:fixed!important;
   inset:0!important;
@@ -5167,130 +5184,143 @@ html.hex-welcome-exit-active:not(
   )!important;
 
   visibility:visible!important;
-}
-
-/*
- * 完了前は私たちについての中身を非表示。
- * gc_auto_frame_home番号は使用しない。
- */
-html.hex-welcome-exit-active:not(
-  .hex-welcome-exit-complete
-)
-.gc_auto_frame_spotitem:has(.hex-company-card)
-.gc_auto_frame_spotitem_body{
-  opacity:0!important;
-  visibility:hidden!important;
   pointer-events:none!important;
 }
 
-/* 私たちについてのCMS背景をグレーにする */
-.gc_auto_frame_spotitem:has(.hex-company-card),
-.gc_auto_frame_spotitem:has(.hex-company-card)
-.background_color,
-.gc_auto_frame_spotitem:has(.hex-company-card)
-.gc_auto_frame_spotitem_basewidth{
-  background-color:var(
-    --hex-founding-bg
-  )!important;
-}
 
-/* HOPWEB標準フェードを無効化 */
-.gc_auto_frame_spotitem:has(.hex-company-card)
-.add_animation_fadein_fadein{
-  animation:none!important;
-  transition:none!important;
-}
+/* =======================================
+   創業セクション
+======================================= */
 
-/*
- * 切り替え完了。
- * 固定グレーを消して、同色のABOUT背景へつなぐ。
- */
-html.hex-welcome-exit-complete
-.hex-welcome-exit-overlay{
-  opacity:0;
-  visibility:hidden;
-}
-
-html.hex-welcome-exit-complete
-.gc_auto_frame_spotitem:has(.hex-company-card)
-.gc_auto_frame_spotitem_body{
-  opacity:1!important;
-  visibility:visible!important;
-  pointer-events:auto!important;
-}
-
-/* WELCOMEを創業セクションより前へ */
-html.hex-welcome-exit-active
-.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap){
-  position:relative!important;
-  z-index:90!important;
-  isolation:isolate!important;
-}
-
-/* 創業セクションを下層へ */
-html.hex-welcome-exit-active
+/* 創業セクションをWELCOMEより下層へ */
+.hex-welcome-exit-active
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
   position:relative!important;
   z-index:0!important;
   isolation:isolate!important;
 }
 
-/* 創業セクション内のCMS背景も下層へ固定 */
-html.hex-welcome-exit-active:not(
-  .hex-welcome-exit-complete
-)
-.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
-.background_color{
-  z-index:0!important;
+
+/* 切り替え完了前：外側背景を透明化 */
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
+  background:transparent!important;
 }
 
-/* 切り替え完了までは創業セクションの内容を隠す */
-html.hex-welcome-exit-active:not(
-  .hex-welcome-exit-complete
-)
+/* 切り替え完了前：CMS背景を透明化 */
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+.background_color,
+
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+.gc_auto_frame_spotitem_basewidth,
+
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+.gc_auto_frame_spotitem_box{
+  background:transparent!important;
+}
+
+/* 擬似要素による背景も非表示 */
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)::before,
+
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)::after{
+  opacity:0!important;
+  visibility:hidden!important;
+}
+
+/* 完了前は創業セクションの内容を隠す */
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
 .gc_auto_frame_spotitem_body{
+  background:transparent!important;
   opacity:0!important;
   visibility:hidden!important;
   pointer-events:none!important;
 }
 
-/* 切り替え完了前は創業背景を透明化 */
-html.hex-welcome-exit-active:not(
-  .hex-welcome-exit-complete
-)
+
+/* =======================================
+   切り替え完了後
+======================================= */
+
+/* 創業セクションをグレーにする */
+.hex-welcome-exit-complete
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card),
 
-html.hex-welcome-exit-active:not(
-  .hex-welcome-exit-complete
-)
+.hex-welcome-exit-complete
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
 .background_color,
 
-html.hex-welcome-exit-active:not(
-  .hex-welcome-exit-complete
-)
+.hex-welcome-exit-complete
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
 .gc_auto_frame_spotitem_basewidth{
-  background-color:transparent!important;
-  background-image:none!important;
+  background:var(--hex-founding-bg)!important;
 }
 
-/*
- * hex-home-bg-grayなどが擬似要素で
- * 背景を作っている場合も非表示
- */
-html.hex-welcome-exit-active:not(
-  .hex-welcome-exit-complete
-)
-.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)::before,
+/* 創業セクションの内容を表示 */
+.hex-welcome-exit-complete
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+.gc_auto_frame_spotitem_body{
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+}
 
-html.hex-welcome-exit-active:not(
-  .hex-welcome-exit-complete
-)
-.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)::after{
-  opacity:0!important;
-  visibility:hidden!important;
+
+/* HOPWEB標準フェードを無効化 */
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+.add_animation_fadein_fadein{
+  animation:none!important;
+  transition:none!important;
+}
+
+
+/* =======================================
+   SPは固定切り替えを使用しない
+======================================= */
+
+@media screen and (max-width:768px){
+
+  .hex-welcome-exit-overlay{
+    display:none!important;
+  }
+
+  .hex-welcome-exit-active
+  .hex-welcome-wrap
+  .welcome.has-padding{
+    position:relative!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:100dvh!important;
+    margin:0!important;
+    opacity:1!important;
+    transform:none!important;
+  }
+
+  .hex-welcome-exit-active
+  .hex-hero-image-handoff{
+    display:none!important;
+  }
+
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card),
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+  .background_color,
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+  .gc_auto_frame_spotitem_basewidth{
+    background:var(--hex-founding-bg)!important;
+  }
+
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+  .gc_auto_frame_spotitem_body{
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+  }
 }
 
 /* =======================================
