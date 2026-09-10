@@ -5524,145 +5524,384 @@ hexReady(function(){
   /* 1段階と判定するホイール移動量 */
   var WHEEL_THRESHOLD=70;
 
-  /* 次の段階を受け付けるまでの待機時間 */
+  /* 次の段階を受け付けるまでの最低待機時間 */
   var STEP_LOCK_TIME=1300;
 
-  /* 上方向へスクロールフェードアウト時間 */
+  /* ホイール入力終了と判定する無入力時間 */
+  var WHEEL_IDLE_TIME=220;
+
+  /* 上方向へ戻るときのフェードアウト時間 */
   var RETURN_FADE_TIME=700;
 
   var active=false;
   var foundedActive=false;
   var foundedReleased=false;
   var returning=false;
+
   var stepLocked=false;
+  var minimumLockEnded=true;
+  var wheelIdle=true;
   var wheelAmount=0;
+
   var startScrollY=0;
   var scrollDistance=1;
   var foundedStartY=0;
+
   var stepTimer=null;
+  var wheelIdleTimer=null;
   var returnTimer=null;
+
   var welcomeWrap=null;
   var welcomePanel=null;
   var aboutFrame=null;
 
+
   function clamp(value,min,max){
-    return Math.min(Math.max(value,min),max);
+    return Math.min(
+      Math.max(value,min),
+      max
+    );
   }
+
 
   function getHeaderHeight(){
     var value=getComputedStyle(
       document.documentElement
-    ).getPropertyValue("--header_height");
+    ).getPropertyValue(
+      "--header_height"
+    );
+
     return parseFloat(value)||80;
   }
 
+
   function setWelcomePosition(){
-    var rect=welcomePanel.getBoundingClientRect();
-    welcomeWrap.style.setProperty("--hex-welcome-fixed-top",rect.top+"px");
-    welcomeWrap.style.setProperty("--hex-welcome-fixed-left",rect.left+"px");
-    welcomeWrap.style.setProperty("--hex-welcome-fixed-width",rect.width+"px");
-    welcomeWrap.style.setProperty("--hex-welcome-fixed-height",rect.height+"px");
+    var rect=
+      welcomePanel.getBoundingClientRect();
+
+    welcomeWrap.style.setProperty(
+      "--hex-welcome-fixed-top",
+      rect.top+"px"
+    );
+
+    welcomeWrap.style.setProperty(
+      "--hex-welcome-fixed-left",
+      rect.left+"px"
+    );
+
+    welcomeWrap.style.setProperty(
+      "--hex-welcome-fixed-width",
+      rect.width+"px"
+    );
+
+    welcomeWrap.style.setProperty(
+      "--hex-welcome-fixed-height",
+      rect.height+"px"
+    );
   }
 
+
   function measureFoundedPositions(){
-    var title=aboutFrame.querySelector(".hex-center-title");
-    var description=aboutFrame.querySelector(".hex-center");
+    var title=aboutFrame.querySelector(
+      ".hex-center-title"
+    );
+
+    var description=aboutFrame.querySelector(
+      ".hex-center"
+    );
+
     var headerHeight=getHeaderHeight();
-    var center=headerHeight+(window.innerHeight-headerHeight)/2;
+
+    var center=
+      headerHeight+
+      (
+        window.innerHeight-
+        headerHeight
+      )/2;
+
     var titleRect;
     var descriptionRect;
 
-    if(!title||!description){return;}
-    aboutFrame.classList.add("is-founded-measuring");
-    titleRect=title.getBoundingClientRect();
-    descriptionRect=description.getBoundingClientRect();
+    if(!title||!description){
+      return;
+    }
+
+    aboutFrame.classList.add(
+      "is-founded-measuring"
+    );
+
+    titleRect=
+      title.getBoundingClientRect();
+
+    descriptionRect=
+      description.getBoundingClientRect();
+
     aboutFrame.style.setProperty(
       "--hex-founded-title-center-y",
-      center-(titleRect.top+titleRect.height/2)+"px"
+      (
+        center-
+        (
+          titleRect.top+
+          titleRect.height/2
+        )
+      )+"px"
     );
+
     aboutFrame.style.setProperty(
       "--hex-founded-description-center-y",
-      center-(descriptionRect.top+descriptionRect.height/2)+"px"
+      (
+        center-
+        (
+          descriptionRect.top+
+          descriptionRect.height/2
+        )
+      )+"px"
     );
-    aboutFrame.classList.remove("is-founded-measuring");
+
+    aboutFrame.classList.remove(
+      "is-founded-measuring"
+    );
   }
+
 
   function start(detail){
     var aboutRect;
-    if(active){return;}
+
+    if(active){
+      return;
+    }
+
     welcomeWrap=detail.welcomeWrap;
     welcomePanel=detail.welcomePanel;
-    aboutFrame=document.getElementById(HOME_SECTIONS.ABOUT);
-    if(!welcomeWrap||!welcomePanel||!detail.imageHandoff||!aboutFrame){return;}
-    aboutFrame.classList.add("hex-founded-stage");
+
+    aboutFrame=document.getElementById(
+      HOME_SECTIONS.ABOUT
+    );
+
+    if(
+      !welcomeWrap||
+      !welcomePanel||
+      !detail.imageHandoff||
+      !aboutFrame
+    ){
+      return;
+    }
+
+    aboutFrame.classList.add(
+      "hex-founded-stage"
+    );
+
     setWelcomePosition();
-    aboutRect=aboutFrame.getBoundingClientRect();
+
+    aboutRect=
+      aboutFrame.getBoundingClientRect();
+
     startScrollY=window.scrollY;
-    scrollDistance=Math.max(aboutRect.top-getHeaderHeight(),1);
-    foundedStartY=startScrollY+scrollDistance;
+
+    scrollDistance=Math.max(
+      aboutRect.top-getHeaderHeight(),
+      1
+    );
+
+    foundedStartY=
+      startScrollY+
+      scrollDistance;
+
     active=true;
-    document.documentElement.classList.add("hex-welcome-exit-active");
+
+    document.documentElement.classList.add(
+      "hex-welcome-exit-active"
+    );
   }
 
+
+  function tryUnlockStep(){
+    /*
+     * 最低待機時間が終了し、
+     * ホイール入力も止まった場合だけ解除する。
+     */
+    if(
+      minimumLockEnded&&
+      wheelIdle
+    ){
+      stepLocked=false;
+      wheelAmount=0;
+    }
+  }
+
+
+  function markWheelActivity(){
+    wheelIdle=false;
+
+    window.clearTimeout(
+      wheelIdleTimer
+    );
+
+    /*
+     * 指定時間ホイール入力が来なければ、
+     * 1回のスクロール操作が終了したと判断する。
+     */
+    wheelIdleTimer=window.setTimeout(
+      function(){
+        wheelIdle=true;
+        tryUnlockStep();
+      },
+      WHEEL_IDLE_TIME
+    );
+  }
+
+
+  function lockStep(){
+    stepLocked=true;
+    minimumLockEnded=false;
+    wheelAmount=0;
+
+    window.clearTimeout(
+      stepTimer
+    );
+
+    stepTimer=window.setTimeout(
+      function(){
+        minimumLockEnded=true;
+        tryUnlockStep();
+      },
+      STEP_LOCK_TIME
+    );
+  }
+
+
   function activateFounded(){
-    if(foundedActive||returning||!aboutFrame){return;}
+    if(
+      foundedActive||
+      returning||
+      !aboutFrame
+    ){
+      return;
+    }
+
     foundedActive=true;
     foundedReleased=false;
+
     wheelAmount=0;
+    wheelIdle=true;
+    minimumLockEnded=false;
+
+    /*
+     * 見出しの最初の表示が完了するまで、
+     * 次の段階を受け付けない。
+     */
     lockStep();
+
     aboutFrame.dataset.foundedStep="0";
-    document.documentElement.classList.add("hex-founded-stage-active");
+
+    document.documentElement.classList.add(
+      "hex-founded-stage-active"
+    );
+
     window.scrollTo({
       top:Math.ceil(foundedStartY),
       left:window.scrollX,
       behavior:"auto"
     });
+
     requestAnimationFrame(function(){
       measureFoundedPositions();
+
       requestAnimationFrame(function(){
-        if(foundedActive&&!returning){
+        if(
+          foundedActive&&
+          !returning
+        ){
           aboutFrame.dataset.foundedStep="1";
         }
       });
     });
   }
 
-  function lockStep(){
-    stepLocked=true;
-    clearTimeout(stepTimer);
-    stepTimer=setTimeout(function(){
-      stepLocked=false;
-      wheelAmount=0;
-    },STEP_LOCK_TIME);
-  }
 
   function releaseFounded(){
     foundedReleased=true;
-    aboutFrame.classList.add("is-founded-released");
-    document.documentElement.classList.add("hex-founded-stage-complete");
+
+    aboutFrame.classList.add(
+      "is-founded-released"
+    );
+
+    document.documentElement.classList.add(
+      "hex-founded-stage-complete"
+    );
   }
 
+
   function returnToWelcome(){
-    if(returning||!aboutFrame){return;}
+    if(
+      returning||
+      !aboutFrame
+    ){
+      return;
+    }
+
     returning=true;
     stepLocked=true;
+    minimumLockEnded=false;
+    wheelIdle=false;
     wheelAmount=0;
-    aboutFrame.classList.add("is-founded-returning");
-    clearTimeout(returnTimer);
-    returnTimer=setTimeout(function(){
-      aboutFrame.classList.remove("is-founded-returning","is-founded-released");
-      aboutFrame.dataset.foundedStep="0";
-      document.documentElement.classList.remove(
-        "hex-founded-stage-active","hex-founded-stage-complete"
-      );
-      foundedActive=false;
-      foundedReleased=false;
-      returning=false;
-      stepLocked=false;
-      window.scrollTo({top:Math.max(foundedStartY-2,0),left:window.scrollX,behavior:"auto"});
-      window.dispatchEvent(new Event("scroll"));
-    },RETURN_FADE_TIME);
+
+    window.clearTimeout(
+      stepTimer
+    );
+
+    window.clearTimeout(
+      wheelIdleTimer
+    );
+
+    aboutFrame.classList.add(
+      "is-founded-returning"
+    );
+
+    window.clearTimeout(
+      returnTimer
+    );
+
+    returnTimer=window.setTimeout(
+      function(){
+        aboutFrame.classList.remove(
+          "is-founded-returning",
+          "is-founded-released"
+        );
+
+        aboutFrame.dataset.foundedStep="0";
+
+        document.documentElement.classList.remove(
+          "hex-founded-stage-active",
+          "hex-founded-stage-complete"
+        );
+
+        foundedActive=false;
+        foundedReleased=false;
+        returning=false;
+
+        stepLocked=false;
+        minimumLockEnded=true;
+        wheelIdle=true;
+        wheelAmount=0;
+
+        window.scrollTo({
+          top:Math.max(
+            foundedStartY-2,
+            0
+          ),
+          left:window.scrollX,
+          behavior:"auto"
+        });
+
+        window.dispatchEvent(
+          new Event("scroll")
+        );
+      },
+      RETURN_FADE_TIME
+    );
   }
+
 
   function isFoundedFullyVisible(){
     var surface;
@@ -5674,7 +5913,9 @@ hexReady(function(){
     }
 
     surface=aboutFrame.querySelector(
-      ':scope > .gc_auto_frame_spotitem:has(.hex-company-card)'
+      ":scope > "+
+      ".gc_auto_frame_spotitem"+
+      ":has(.hex-company-card)"
     );
 
     if(!surface){
@@ -5685,25 +5926,38 @@ hexReady(function(){
     headerHeight=getHeaderHeight();
 
     /*
-    * 創業セクションの固定面が、
-    * ヘッダー下から画面下まで表示されているか。
-    */
+     * 創業セクションの固定面が、
+     * ヘッダー下から画面下まで表示されているか。
+     */
     return(
       rect.top<=headerHeight+2&&
       rect.bottom>=window.innerHeight-2
     );
   }
 
+
   function handleWheel(event){
     var step;
-    if(window.innerWidth<=768||!foundedActive||returning){return;}
+
+    if(
+      window.innerWidth<=768||
+      !foundedActive||
+      returning
+    ){
+      return;
+    }
+
+    /*
+     * 上方向は各段階を逆再生せず、
+     * 創業内容全体をまとめて消す。
+     */
     if(event.deltaY<0){
 
       /*
-      * 次のセクションまで進んだ後は、
-      * 創業セクションが全画面へ戻るまで
-      * 通常の逆スクロールを許可する。
-      */
+       * 次のセクションまで進んだ後は、
+       * 創業セクションが全画面に戻るまで
+       * 通常の逆スクロールを許可する。
+       */
       if(
         foundedReleased&&
         !isFoundedFullyVisible()
@@ -5711,23 +5965,53 @@ hexReady(function(){
         return;
       }
 
-      /*
-      * 創業セクションが全画面表示された後、
-      * 次の上方向操作で全体をフェードアウトする。
-      */
       event.preventDefault();
       returnToWelcome();
       return;
     }
-    if(foundedReleased){return;}
+
+    /*
+     * 創業演出完成後は、
+     * 下方向の通常スクロールを許可する。
+     */
+    if(foundedReleased){
+      return;
+    }
+
     event.preventDefault();
-    if(stepLocked){return;}
-    wheelAmount+=Math.abs(event.deltaY);
-    if(wheelAmount<WHEEL_THRESHOLD){return;}
+
+    /*
+     * 継続中のホイール・慣性入力を記録する。
+     */
+    markWheelActivity();
+
+    /*
+     * アニメーション中の入力は、
+     * 次の段階には使用しない。
+     */
+    if(stepLocked){
+      return;
+    }
+
+    wheelAmount+=Math.abs(
+      event.deltaY
+    );
+
+    if(wheelAmount<WHEEL_THRESHOLD){
+      return;
+    }
+
     wheelAmount=0;
-    step=parseInt(aboutFrame.dataset.foundedStep||"1",10);
+
+    step=parseInt(
+      aboutFrame.dataset.foundedStep||"1",
+      10
+    );
+
     if(step<4){
-      aboutFrame.dataset.foundedStep=String(step+1);
+      aboutFrame.dataset.foundedStep=
+        String(step+1);
+
       lockStep();
     }else{
       releaseFounded();
@@ -5735,33 +6019,90 @@ hexReady(function(){
     }
   }
 
+
   function clearAll(){
-    clearTimeout(stepTimer);
-    clearTimeout(returnTimer);
+    window.clearTimeout(
+      stepTimer
+    );
+
+    window.clearTimeout(
+      wheelIdleTimer
+    );
+
+    window.clearTimeout(
+      returnTimer
+    );
+
     if(welcomeWrap){
-      ["--hex-welcome-fixed-top","--hex-welcome-fixed-left","--hex-welcome-fixed-width","--hex-welcome-fixed-height"].forEach(function(name){
-        welcomeWrap.style.removeProperty(name);
+      [
+        "--hex-welcome-fixed-top",
+        "--hex-welcome-fixed-left",
+        "--hex-welcome-fixed-width",
+        "--hex-welcome-fixed-height"
+      ].forEach(function(name){
+        welcomeWrap.style.removeProperty(
+          name
+        );
       });
     }
+
     if(aboutFrame){
-      aboutFrame.classList.remove("is-founded-returning","is-founded-released");
-      aboutFrame.removeAttribute("data-founded-step");
+      aboutFrame.classList.remove(
+        "is-founded-returning",
+        "is-founded-released"
+      );
+
+      aboutFrame.removeAttribute(
+        "data-founded-step"
+      );
     }
+
     document.documentElement.classList.remove(
-      "hex-welcome-exit-active","hex-welcome-exit-complete",
-      "hex-founded-stage-active","hex-founded-stage-complete"
+      "hex-welcome-exit-active",
+      "hex-welcome-exit-complete",
+      "hex-founded-stage-active",
+      "hex-founded-stage-complete"
     );
-    document.documentElement.style.removeProperty("--hex-welcome-exit-progress");
-    active=foundedActive=foundedReleased=returning=stepLocked=false;
-    wheelAmount=startScrollY=foundedStartY=0;
+
+    document.documentElement.style.removeProperty(
+      "--hex-welcome-exit-progress"
+    );
+
+    active=false;
+    foundedActive=false;
+    foundedReleased=false;
+    returning=false;
+
+    stepLocked=false;
+    minimumLockEnded=true;
+    wheelIdle=true;
+    wheelAmount=0;
+
+    startScrollY=0;
+    foundedStartY=0;
     scrollDistance=1;
-    welcomeWrap=welcomePanel=aboutFrame=null;
+
+    welcomeWrap=null;
+    welcomePanel=null;
+    aboutFrame=null;
   }
+
 
   function update(){
     var progress;
-    if(!active){return 0;}
-    if(!foundedActive&&window.scrollY<startScrollY-1){clearAll();return -1;}
+
+    if(!active){
+      return 0;
+    }
+
+    if(
+      !foundedActive&&
+      window.scrollY<startScrollY-1
+    ){
+      clearAll();
+      return -1;
+    }
+
     progress=clamp(
       (
         window.scrollY-
@@ -5772,11 +6113,14 @@ hexReady(function(){
     );
 
     /*
-    * 創業ステージへ入った後は、
-    * 座標の小数誤差でWELCOME完了状態が
-    * 解除されないようにする。
-    */
-    if(foundedActive&&!returning){
+     * 創業ステージへ入った後は、
+     * 座標の小数誤差でWELCOME完了状態が
+     * 解除されないようにする。
+     */
+    if(
+      foundedActive&&
+      !returning
+    ){
       progress=1;
     }
 
@@ -5784,28 +6128,72 @@ hexReady(function(){
       "--hex-welcome-exit-progress",
       progress
     );
-    document.documentElement.classList.toggle("hex-welcome-exit-complete",progress>=1);
-    if(progress>=1){activateFounded();}
+
+    document.documentElement.classList.toggle(
+      "hex-welcome-exit-complete",
+      progress>=1
+    );
+
+    if(progress>=1){
+      activateFounded();
+    }
+
     return progress;
   }
 
-  document.addEventListener("hex:welcome-exit-ready",function(event){
-    var progress;
-    if(window.innerWidth<=768){return;}
-    start(event.detail);
-    progress=update();
-    if(progress<1){event.preventDefault();}
-  });
 
-  document.addEventListener("hex:welcome-exit-cancel",function(){
-    if(!foundedActive&&!returning){clearAll();}
-  });
+  document.addEventListener(
+    "hex:welcome-exit-ready",
+    function(event){
+      var progress;
 
-  window.addEventListener("wheel",handleWheel,{passive:false});
-  window.addEventListener("resize",function(){
-    if(window.innerWidth<=768){clearAll();}
-    else if(foundedActive){measureFoundedPositions();}
-  });
+      if(window.innerWidth<=768){
+        return;
+      }
+
+      start(event.detail);
+      progress=update();
+
+      if(progress<1){
+        event.preventDefault();
+      }
+    }
+  );
+
+
+  document.addEventListener(
+    "hex:welcome-exit-cancel",
+    function(){
+      if(
+        !foundedActive&&
+        !returning
+      ){
+        clearAll();
+      }
+    }
+  );
+
+
+  window.addEventListener(
+    "wheel",
+    handleWheel,
+    {passive:false}
+  );
+
+
+  window.addEventListener(
+    "resize",
+    function(){
+      if(window.innerWidth<=768){
+        clearAll();
+        return;
+      }
+
+      if(foundedActive){
+        measureFoundedPositions();
+      }
+    }
+  );
 });
 
 /* =======================================
