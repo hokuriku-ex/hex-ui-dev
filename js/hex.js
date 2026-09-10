@@ -5635,7 +5635,6 @@ hexReady(function(){
 
     scrollDistance=Math.max(
       aboutRect.top-getHeaderHeight(),
-      window.innerHeight*.25,
       1
     );
 
