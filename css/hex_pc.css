@@ -5314,6 +5314,28 @@ html body
   transition:none!important;
 }
 
+/* HOPWEB標準フェードの透明状態を解除 */
+.hex-welcome-exit-complete
+.hex-founded-stage
+.gc_auto_frame_spotitem_basewidth{
+  opacity:1!important;
+  visibility:visible!important;
+  transform:none!important;
+}
+
+/* 標準アニメーションクラスを確実に解除 */
+.hex-founded-stage
+.add_animation_fadein_fadein,
+
+.hex-founded-stage
+.animation_fadein_fadein{
+  opacity:1!important;
+  visibility:visible!important;
+  transform:none!important;
+  animation:none!important;
+  transition:none!important;
+}
+
 /* =======================================
    トップページ：私たちについて
 ======================================= */
