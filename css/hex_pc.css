@@ -5255,6 +5255,44 @@ html.hex-welcome-exit-active:not(
   pointer-events:none!important;
 }
 
+/* 切り替え完了前は創業背景を透明化 */
+html.hex-welcome-exit-active:not(
+  .hex-welcome-exit-complete
+)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card),
+
+html.hex-welcome-exit-active:not(
+  .hex-welcome-exit-complete
+)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+.background_color,
+
+html.hex-welcome-exit-active:not(
+  .hex-welcome-exit-complete
+)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+.gc_auto_frame_spotitem_basewidth{
+  background-color:transparent!important;
+  background-image:none!important;
+}
+
+/*
+ * hex-home-bg-grayなどが擬似要素で
+ * 背景を作っている場合も非表示
+ */
+html.hex-welcome-exit-active:not(
+  .hex-welcome-exit-complete
+)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)::before,
+
+html.hex-welcome-exit-active:not(
+  .hex-welcome-exit-complete
+)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)::after{
+  opacity:0!important;
+  visibility:hidden!important;
+}
+
 /* =======================================
    トップページ：私たちについて
 ======================================= */
