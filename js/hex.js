@@ -5521,512 +5521,214 @@ hexReady(function(){
 hexReady(function(){
   "use strict";
 
+  var WHEEL_THRESHOLD=45;
+  var STEP_LOCK_TIME=900;
+  var RETURN_FADE_TIME=550;
   var active=false;
+  var foundedActive=false;
+  var foundedReleased=false;
+  var returning=false;
+  var stepLocked=false;
+  var wheelAmount=0;
   var startScrollY=0;
   var scrollDistance=1;
+  var foundedStartY=0;
+  var stepTimer=null;
+  var returnTimer=null;
   var welcomeWrap=null;
   var welcomePanel=null;
-  var imageHandoff=null;
-  var overlay=null;
   var aboutFrame=null;
-  var foundedTitle=null;
-  var foundedDescription=null;
-  var foundedCards=null;
-  var foundedStartY=0;
-  var foundedDistance=1;
-  var foundedOffsetsReady=false;
-  var foundedTitleStartY=0;
-  var foundedDescriptionStartY=0;
 
   function clamp(value,min,max){
-    return Math.min(
-      Math.max(value,min),
-      max
-    );
+    return Math.min(Math.max(value,min),max);
   }
 
   function getHeaderHeight(){
     var value=getComputedStyle(
       document.documentElement
-    ).getPropertyValue(
-      "--header_height"
-    );
-
+    ).getPropertyValue("--header_height");
     return parseFloat(value)||80;
   }
 
-  function getAboutFrame(){
-    return document.getElementById(
-      HOME_SECTIONS.ABOUT
-    );
+  function setWelcomePosition(){
+    var rect=welcomePanel.getBoundingClientRect();
+    welcomeWrap.style.setProperty("--hex-welcome-fixed-top",rect.top+"px");
+    welcomeWrap.style.setProperty("--hex-welcome-fixed-left",rect.left+"px");
+    welcomeWrap.style.setProperty("--hex-welcome-fixed-width",rect.width+"px");
+    welcomeWrap.style.setProperty("--hex-welcome-fixed-height",rect.height+"px");
   }
 
-  function smoothstep(value,start,end){
-    var progress=clamp(
-      (value-start)/Math.max(end-start,.001),
-      0,
-      1
+  function measureFoundedPositions(){
+    var title=aboutFrame.querySelector(".hex-center-title");
+    var description=aboutFrame.querySelector(".hex-center");
+    var headerHeight=getHeaderHeight();
+    var center=headerHeight+(window.innerHeight-headerHeight)/2;
+    var titleRect;
+    var descriptionRect;
+
+    if(!title||!description){return;}
+    aboutFrame.classList.add("is-founded-measuring");
+    titleRect=title.getBoundingClientRect();
+    descriptionRect=description.getBoundingClientRect();
+    aboutFrame.style.setProperty(
+      "--hex-founded-title-center-y",
+      center-(titleRect.top+titleRect.height/2)+"px"
     );
-
-    return progress*progress*(3-2*progress);
-  }
-
-  function createOverlay(){
-    if(overlay){
-      return;
-    }
-
-    overlay=document.createElement(
-      "div"
+    aboutFrame.style.setProperty(
+      "--hex-founded-description-center-y",
+      center-(descriptionRect.top+descriptionRect.height/2)+"px"
     );
-
-    overlay.className=
-      "hex-welcome-exit-overlay";
-
-    document.body.appendChild(
-      overlay
-    );
-  }
-
-  function setFixedPanelPosition(){
-    var rect;
-
-    if(!welcomeWrap||!welcomePanel){
-      return;
-    }
-
-    rect=welcomePanel.getBoundingClientRect();
-
-    welcomeWrap.style.setProperty(
-      "--hex-welcome-fixed-top",
-      rect.top+"px"
-    );
-
-    welcomeWrap.style.setProperty(
-      "--hex-welcome-fixed-left",
-      rect.left+"px"
-    );
-
-    welcomeWrap.style.setProperty(
-      "--hex-welcome-fixed-width",
-      rect.width+"px"
-    );
-
-    welcomeWrap.style.setProperty(
-      "--hex-welcome-fixed-height",
-      rect.height+"px"
-    );
+    aboutFrame.classList.remove("is-founded-measuring");
   }
 
   function start(detail){
     var aboutRect;
-
-    if(active){
-      return;
-    }
-
+    if(active){return;}
     welcomeWrap=detail.welcomeWrap;
     welcomePanel=detail.welcomePanel;
-    imageHandoff=detail.imageHandoff;
-    aboutFrame=getAboutFrame();
-
-    if(
-      !welcomeWrap||
-      !welcomePanel||
-      !imageHandoff||
-      !aboutFrame
-    ){
-      return;
-    }
-
-    createOverlay();
-    setFixedPanelPosition();
-
-    aboutFrame.classList.add(
-      "hex-founded-stage"
-    );
-
-    foundedTitle=aboutFrame.querySelector(
-      ".hex-center-title"
-    );
-
-    foundedDescription=aboutFrame.querySelector(
-      ".hex-center"
-    );
-
-    foundedCards=aboutFrame.querySelector(
-      ".hex-company-card"
-    );
-
-    foundedDistance=Math.max(
-      window.innerHeight*1.4,
-      800
-    );
-
-    aboutFrame.style.setProperty(
-      "--hex-founded-scroll-distance",
-      foundedDistance+"px"
-    );
-
+    aboutFrame=document.getElementById(HOME_SECTIONS.ABOUT);
+    if(!welcomeWrap||!welcomePanel||!detail.imageHandoff||!aboutFrame){return;}
+    aboutFrame.classList.add("hex-founded-stage");
+    setWelcomePosition();
     aboutRect=aboutFrame.getBoundingClientRect();
     startScrollY=window.scrollY;
-
-    scrollDistance=Math.max(
-      aboutRect.top-getHeaderHeight(),
-      1
-    );
-
-    foundedStartY=
-      startScrollY+scrollDistance;
-
-    foundedOffsetsReady=false;
-
+    scrollDistance=Math.max(aboutRect.top-getHeaderHeight(),1);
+    foundedStartY=startScrollY+scrollDistance;
     active=true;
-
-    document.documentElement.classList.add(
-      "hex-welcome-exit-active"
-    );
+    document.documentElement.classList.add("hex-welcome-exit-active");
   }
 
-  function clear(){
-    if(!active){
+  function activateFounded(){
+    if(foundedActive||returning||!aboutFrame){return;}
+    foundedActive=true;
+    foundedReleased=false;
+    wheelAmount=0;
+    lockStep();
+    aboutFrame.dataset.foundedStep="0";
+    document.documentElement.classList.add("hex-founded-stage-active");
+    window.scrollTo({top:foundedStartY,left:window.scrollX,behavior:"auto"});
+    requestAnimationFrame(function(){
+      measureFoundedPositions();
+      requestAnimationFrame(function(){
+        if(foundedActive&&!returning){
+          aboutFrame.dataset.foundedStep="1";
+        }
+      });
+    });
+  }
+
+  function lockStep(){
+    stepLocked=true;
+    clearTimeout(stepTimer);
+    stepTimer=setTimeout(function(){
+      stepLocked=false;
+      wheelAmount=0;
+    },STEP_LOCK_TIME);
+  }
+
+  function releaseFounded(){
+    foundedReleased=true;
+    aboutFrame.classList.add("is-founded-released");
+    document.documentElement.classList.add("hex-founded-stage-complete");
+  }
+
+  function returnToWelcome(){
+    if(returning||!aboutFrame){return;}
+    returning=true;
+    stepLocked=true;
+    wheelAmount=0;
+    aboutFrame.classList.add("is-founded-returning");
+    clearTimeout(returnTimer);
+    returnTimer=setTimeout(function(){
+      aboutFrame.classList.remove("is-founded-returning","is-founded-released");
+      aboutFrame.dataset.foundedStep="0";
+      document.documentElement.classList.remove(
+        "hex-founded-stage-active","hex-founded-stage-complete"
+      );
+      foundedActive=false;
+      foundedReleased=false;
+      returning=false;
+      stepLocked=false;
+      window.scrollTo({top:Math.max(foundedStartY-2,0),left:window.scrollX,behavior:"auto"});
+      window.dispatchEvent(new Event("scroll"));
+    },RETURN_FADE_TIME);
+  }
+
+  function handleWheel(event){
+    var step;
+    if(window.innerWidth<=768||!foundedActive||returning){return;}
+    if(event.deltaY<0){
+      event.preventDefault();
+      returnToWelcome();
       return;
     }
+    if(foundedReleased){return;}
+    event.preventDefault();
+    if(stepLocked){return;}
+    wheelAmount+=Math.abs(event.deltaY);
+    if(wheelAmount<WHEEL_THRESHOLD){return;}
+    wheelAmount=0;
+    step=parseInt(aboutFrame.dataset.foundedStep||"1",10);
+    if(step<4){
+      aboutFrame.dataset.foundedStep=String(step+1);
+      lockStep();
+    }else{
+      releaseFounded();
+      lockStep();
+    }
+  }
 
-    active=false;
-    startScrollY=0;
-    scrollDistance=1;
-
-    document.documentElement.classList.remove(
-      "hex-welcome-exit-active",
-      "hex-welcome-exit-complete",
-      "hex-founded-stage-active",
-      "hex-founded-stage-complete"
-    );
-
-    document.documentElement.style.removeProperty(
-      "--hex-welcome-exit-progress"
-    );
-
-    document.documentElement.style.removeProperty(
-      "--hex-founded-progress"
-    );
-
+  function clearAll(){
+    clearTimeout(stepTimer);
+    clearTimeout(returnTimer);
     if(welcomeWrap){
-      welcomeWrap.style.removeProperty(
-        "--hex-welcome-fixed-top"
-      );
-
-      welcomeWrap.style.removeProperty(
-        "--hex-welcome-fixed-left"
-      );
-
-      welcomeWrap.style.removeProperty(
-        "--hex-welcome-fixed-width"
-      );
-
-      welcomeWrap.style.removeProperty(
-        "--hex-welcome-fixed-height"
-      );
+      ["--hex-welcome-fixed-top","--hex-welcome-fixed-left","--hex-welcome-fixed-width","--hex-welcome-fixed-height"].forEach(function(name){
+        welcomeWrap.style.removeProperty(name);
+      });
     }
-
     if(aboutFrame){
-      aboutFrame.style.removeProperty(
-        "--hex-founded-title-start-y"
-      );
-
-      aboutFrame.style.removeProperty(
-        "--hex-founded-description-start-y"
-      );
-
-      aboutFrame.style.removeProperty(
-        "--hex-founded-title-opacity"
-      );
-
-      aboutFrame.style.removeProperty(
-        "--hex-founded-title-move"
-      );
-
-      aboutFrame.style.removeProperty(
-        "--hex-founded-title-y"
-      );
-
-      aboutFrame.style.removeProperty(
-        "--hex-founded-description-opacity"
-      );
-
-      aboutFrame.style.removeProperty(
-        "--hex-founded-description-move"
-      );
-
-      aboutFrame.style.removeProperty(
-        "--hex-founded-description-y"
-      );
-
-      aboutFrame.style.removeProperty(
-        "--hex-founded-cards-opacity"
-      );
-
-      aboutFrame.style.removeProperty(
-        "--hex-founded-cards-y"
-      );
+      aboutFrame.classList.remove("is-founded-returning","is-founded-released");
+      aboutFrame.removeAttribute("data-founded-step");
     }
-
-    welcomeWrap=null;
-    welcomePanel=null;
-    imageHandoff=null;
-    aboutFrame=null;
-    foundedTitle=null;
-    foundedDescription=null;
-    foundedCards=null;
-    foundedStartY=0;
-    foundedDistance=1;
-    foundedOffsetsReady=false;
-    foundedTitleStartY=0;
-    foundedDescriptionStartY=0;
-  }
-
-  function prepareFoundedOffsets(){
-    var headerHeight;
-    var stageCenter;
-    var titleRect;
-    var descriptionRect;
-
-    if(
-      foundedOffsetsReady||
-      !aboutFrame||
-      !foundedTitle||
-      !foundedDescription
-    ){
-      return;
-    }
-
-    headerHeight=getHeaderHeight();
-
-    stageCenter=
-      headerHeight+
-      (window.innerHeight-headerHeight)/2;
-
-    titleRect=foundedTitle.getBoundingClientRect();
-    descriptionRect=
-      foundedDescription.getBoundingClientRect();
-
-    foundedTitleStartY=
-      stageCenter-
-      (titleRect.top+titleRect.height/2);
-
-    foundedDescriptionStartY=
-      stageCenter-
-      (
-        descriptionRect.top+
-        descriptionRect.height/2
-      );
-
-    foundedOffsetsReady=true;
-  }
-
-  function updateFoundedStage(){
-    var progress;
-    var titleOpacity;
-    var titleMove;
-    var descriptionOpacity;
-    var descriptionMove;
-    var cardsOpacity;
-
-    if(!aboutFrame){
-      return;
-    }
-
-    prepareFoundedOffsets();
-
-    progress=clamp(
-      (
-        window.scrollY-
-        foundedStartY
-      )/foundedDistance,
-      0,
-      1
+    document.documentElement.classList.remove(
+      "hex-welcome-exit-active","hex-welcome-exit-complete",
+      "hex-founded-stage-active","hex-founded-stage-complete"
     );
-
-    titleOpacity=smoothstep(
-      progress,
-      0,
-      .16
-    );
-
-    titleMove=smoothstep(
-      progress,
-      .18,
-      .42
-    );
-
-    descriptionOpacity=smoothstep(
-      progress,
-      .34,
-      .54
-    );
-
-    descriptionMove=smoothstep(
-      progress,
-      .56,
-      .78
-    );
-
-    cardsOpacity=smoothstep(
-      progress,
-      .78,
-      1
-    );
-
-    aboutFrame.style.setProperty(
-      "--hex-founded-title-opacity",
-      titleOpacity
-    );
-
-    aboutFrame.style.setProperty(
-      "--hex-founded-title-move",
-      titleMove
-    );
-
-    aboutFrame.style.setProperty(
-      "--hex-founded-title-y",
-      (
-        foundedTitleStartY*
-        (1-titleMove)
-      )+"px"
-    );
-
-    aboutFrame.style.setProperty(
-      "--hex-founded-description-opacity",
-      descriptionOpacity
-    );
-
-    aboutFrame.style.setProperty(
-      "--hex-founded-description-move",
-      descriptionMove
-    );
-
-    aboutFrame.style.setProperty(
-      "--hex-founded-description-y",
-      (
-        foundedDescriptionStartY*
-        (1-descriptionMove)
-      )+"px"
-    );
-
-    aboutFrame.style.setProperty(
-      "--hex-founded-cards-opacity",
-      cardsOpacity
-    );
-
-    aboutFrame.style.setProperty(
-      "--hex-founded-cards-y",
-      (24*(1-cardsOpacity))+"px"
-    );
-
-    document.documentElement.style.setProperty(
-      "--hex-founded-progress",
-      progress
-    );
-
-    document.documentElement.classList.toggle(
-      "hex-founded-stage-complete",
-      progress>=1
-    );
+    document.documentElement.style.removeProperty("--hex-welcome-exit-progress");
+    active=foundedActive=foundedReleased=returning=stepLocked=false;
+    wheelAmount=startScrollY=foundedStartY=0;
+    scrollDistance=1;
+    welcomeWrap=welcomePanel=aboutFrame=null;
   }
 
   function update(){
     var progress;
-
-    if(!active){
-      return 0;
-    }
-
-    /* WELCOME終了開始位置より上へ戻った場合 */
-    if(window.scrollY<startScrollY-1){
-      clear();
-      return -1;
-    }
-
-    progress=clamp(
-      (
-        window.scrollY-
-        startScrollY
-      )/scrollDistance,
-      0,
-      1
-    );
-
-    document.documentElement.style.setProperty(
-      "--hex-welcome-exit-progress",
-      progress
-    );
-
-    document.documentElement.classList.toggle(
-      "hex-welcome-exit-complete",
-      progress>=1
-    );
-
-    document.documentElement.classList.toggle(
-      "hex-founded-stage-active",
-      progress>=1
-    );
-
-    if(progress>=1){
-      updateFoundedStage();
-    }else{
-      document.documentElement.classList.remove(
-        "hex-founded-stage-complete"
-      );
-    }
-
+    if(!active){return 0;}
+    if(!foundedActive&&window.scrollY<startScrollY-1){clearAll();return -1;}
+    progress=clamp((window.scrollY-startScrollY)/scrollDistance,0,1);
+    document.documentElement.style.setProperty("--hex-welcome-exit-progress",progress);
+    document.documentElement.classList.toggle("hex-welcome-exit-complete",progress>=1);
+    if(progress>=1){activateFounded();}
     return progress;
   }
 
-  document.addEventListener(
-    "hex:welcome-exit-ready",
-    function(event){
-      var progress;
+  document.addEventListener("hex:welcome-exit-ready",function(event){
+    var progress;
+    if(window.innerWidth<=768){return;}
+    start(event.detail);
+    progress=update();
+    if(progress<1){event.preventDefault();}
+  });
 
-      /* SPでは従来どおり通常表示 */
-      if(window.innerWidth<=768){
-        return;
-      }
+  document.addEventListener("hex:welcome-exit-cancel",function(){
+    if(!foundedActive&&!returning){clearAll();}
+  });
 
-      start(event.detail);
-      progress=update();
-
-      /* 完了するまではヒーローJSの固定解除を止める */
-      if(progress<1){
-        event.preventDefault();
-      }
-    }
-  );
-
-  document.addEventListener(
-    "hex:welcome-exit-cancel",
-    function(){
-      clear();
-    }
-  );
-
-  window.addEventListener(
-    "resize",
-    function(){
-      if(window.innerWidth<=768){
-        clear();
-      }
-    }
-  );
-
-  window.addEventListener(
-    "pageshow",
-    function(){
-      if(active){
-        update();
-      }
-    }
-  );
+  window.addEventListener("wheel",handleWheel,{passive:false});
+  window.addEventListener("resize",function(){
+    if(window.innerWidth<=768){clearAll();}
+    else if(foundedActive){measureFoundedPositions();}
+  });
 });
 
 /* =======================================
