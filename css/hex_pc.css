@@ -5113,6 +5113,24 @@ html body
   z-index:90!important;
   isolation:isolate!important;
 }
+
+/*
+ * グレーフェードの下に完全不透明の白を置き、
+ * 創業セクションより後ろを見せない。
+ */
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap)::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:88;
+  background:#fff;
+  opacity:1;
+  visibility:visible;
+  pointer-events:none;
+}
+
+/* 白い下地の上で、グレーを徐々に濃くする */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap)::after{
   content:"";
