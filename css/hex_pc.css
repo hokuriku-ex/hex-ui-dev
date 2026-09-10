@@ -4233,12 +4233,12 @@ html:has(.hex-opening)
 /* =======================================
    開幕なし・SKIP時のヒーローフェード
 ======================================= */
-html.hex-direct-hero-fade
+.hex-direct-hero-fade
 .hex-hero-wrap{
   opacity:0!important;
 }
 
-html.hex-direct-hero-fade.hex-direct-hero-fade-ready
+.hex-direct-hero-fade.hex-direct-hero-fade-ready
 .hex-hero-wrap{
   opacity:1!important;
   transition:opacity .9s ease!important;
