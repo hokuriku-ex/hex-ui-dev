@@ -5664,10 +5664,57 @@ hexReady(function(){
     },RETURN_FADE_TIME);
   }
 
+  function isFoundedFullyVisible(){
+    var surface;
+    var rect;
+    var headerHeight;
+
+    if(!aboutFrame){
+      return false;
+    }
+
+    surface=aboutFrame.querySelector(
+      ':scope > .gc_auto_frame_spotitem:has(.hex-company-card)'
+    );
+
+    if(!surface){
+      return false;
+    }
+
+    rect=surface.getBoundingClientRect();
+    headerHeight=getHeaderHeight();
+
+    /*
+    * 創業セクションの固定面が、
+    * ヘッダー下から画面下まで表示されているか。
+    */
+    return(
+      rect.top<=headerHeight+2&&
+      rect.bottom>=window.innerHeight-2
+    );
+  }
+
   function handleWheel(event){
     var step;
     if(window.innerWidth<=768||!foundedActive||returning){return;}
     if(event.deltaY<0){
+
+      /*
+      * 次のセクションまで進んだ後は、
+      * 創業セクションが全画面へ戻るまで
+      * 通常の逆スクロールを許可する。
+      */
+      if(
+        foundedReleased&&
+        !isFoundedFullyVisible()
+      ){
+        return;
+      }
+
+      /*
+      * 創業セクションが全画面表示された後、
+      * 次の上方向操作で全体をフェードアウトする。
+      */
       event.preventDefault();
       returnToWelcome();
       return;
