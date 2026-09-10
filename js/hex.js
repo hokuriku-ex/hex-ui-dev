@@ -5528,6 +5528,15 @@ hexReady(function(){
   var welcomePanel=null;
   var imageHandoff=null;
   var overlay=null;
+  var aboutFrame=null;
+  var foundedTitle=null;
+  var foundedDescription=null;
+  var foundedCards=null;
+  var foundedStartY=0;
+  var foundedDistance=1;
+  var foundedOffsetsReady=false;
+  var foundedTitleStartY=0;
+  var foundedDescriptionStartY=0;
 
   function clamp(value,min,max){
     return Math.min(
@@ -5550,6 +5559,16 @@ hexReady(function(){
     return document.getElementById(
       HOME_SECTIONS.ABOUT
     );
+  }
+
+  function smoothstep(value,start,end){
+    var progress=clamp(
+      (value-start)/Math.max(end-start,.001),
+      0,
+      1
+    );
+
+    return progress*progress*(3-2*progress);
   }
 
   function createOverlay(){
@@ -5600,7 +5619,6 @@ hexReady(function(){
   }
 
   function start(detail){
-    var aboutFrame;
     var aboutRect;
 
     if(active){
@@ -5611,12 +5629,6 @@ hexReady(function(){
     welcomePanel=detail.welcomePanel;
     imageHandoff=detail.imageHandoff;
     aboutFrame=getAboutFrame();
-
-    if(aboutFrame){
-      aboutFrame.classList.add(
-        "hex-home-about-frame"
-      );
-    }
 
     if(
       !welcomeWrap||
@@ -5630,6 +5642,32 @@ hexReady(function(){
     createOverlay();
     setFixedPanelPosition();
 
+    aboutFrame.classList.add(
+      "hex-founded-stage"
+    );
+
+    foundedTitle=aboutFrame.querySelector(
+      ".hex-center-title"
+    );
+
+    foundedDescription=aboutFrame.querySelector(
+      ".hex-center"
+    );
+
+    foundedCards=aboutFrame.querySelector(
+      ".hex-company-card"
+    );
+
+    foundedDistance=Math.max(
+      window.innerHeight*1.4,
+      800
+    );
+
+    aboutFrame.style.setProperty(
+      "--hex-founded-scroll-distance",
+      foundedDistance+"px"
+    );
+
     aboutRect=aboutFrame.getBoundingClientRect();
     startScrollY=window.scrollY;
 
@@ -5637,6 +5675,11 @@ hexReady(function(){
       aboutRect.top-getHeaderHeight(),
       1
     );
+
+    foundedStartY=
+      startScrollY+scrollDistance;
+
+    foundedOffsetsReady=false;
 
     active=true;
 
@@ -5656,11 +5699,17 @@ hexReady(function(){
 
     document.documentElement.classList.remove(
       "hex-welcome-exit-active",
-      "hex-welcome-exit-complete"
+      "hex-welcome-exit-complete",
+      "hex-founded-stage-active",
+      "hex-founded-stage-complete"
     );
 
     document.documentElement.style.removeProperty(
       "--hex-welcome-exit-progress"
+    );
+
+    document.documentElement.style.removeProperty(
+      "--hex-founded-progress"
     );
 
     if(welcomeWrap){
@@ -5681,9 +5730,209 @@ hexReady(function(){
       );
     }
 
+    if(aboutFrame){
+      aboutFrame.style.removeProperty(
+        "--hex-founded-title-start-y"
+      );
+
+      aboutFrame.style.removeProperty(
+        "--hex-founded-description-start-y"
+      );
+
+      aboutFrame.style.removeProperty(
+        "--hex-founded-title-opacity"
+      );
+
+      aboutFrame.style.removeProperty(
+        "--hex-founded-title-move"
+      );
+
+      aboutFrame.style.removeProperty(
+        "--hex-founded-title-y"
+      );
+
+      aboutFrame.style.removeProperty(
+        "--hex-founded-description-opacity"
+      );
+
+      aboutFrame.style.removeProperty(
+        "--hex-founded-description-move"
+      );
+
+      aboutFrame.style.removeProperty(
+        "--hex-founded-description-y"
+      );
+
+      aboutFrame.style.removeProperty(
+        "--hex-founded-cards-opacity"
+      );
+
+      aboutFrame.style.removeProperty(
+        "--hex-founded-cards-y"
+      );
+    }
+
     welcomeWrap=null;
     welcomePanel=null;
     imageHandoff=null;
+    aboutFrame=null;
+    foundedTitle=null;
+    foundedDescription=null;
+    foundedCards=null;
+    foundedStartY=0;
+    foundedDistance=1;
+    foundedOffsetsReady=false;
+    foundedTitleStartY=0;
+    foundedDescriptionStartY=0;
+  }
+
+  function prepareFoundedOffsets(){
+    var headerHeight;
+    var stageCenter;
+    var titleRect;
+    var descriptionRect;
+
+    if(
+      foundedOffsetsReady||
+      !aboutFrame||
+      !foundedTitle||
+      !foundedDescription
+    ){
+      return;
+    }
+
+    headerHeight=getHeaderHeight();
+
+    stageCenter=
+      headerHeight+
+      (window.innerHeight-headerHeight)/2;
+
+    titleRect=foundedTitle.getBoundingClientRect();
+    descriptionRect=
+      foundedDescription.getBoundingClientRect();
+
+    foundedTitleStartY=
+      stageCenter-
+      (titleRect.top+titleRect.height/2);
+
+    foundedDescriptionStartY=
+      stageCenter-
+      (
+        descriptionRect.top+
+        descriptionRect.height/2
+      );
+
+    foundedOffsetsReady=true;
+  }
+
+  function updateFoundedStage(){
+    var progress;
+    var titleOpacity;
+    var titleMove;
+    var descriptionOpacity;
+    var descriptionMove;
+    var cardsOpacity;
+
+    if(!aboutFrame){
+      return;
+    }
+
+    prepareFoundedOffsets();
+
+    progress=clamp(
+      (
+        window.scrollY-
+        foundedStartY
+      )/foundedDistance,
+      0,
+      1
+    );
+
+    titleOpacity=smoothstep(
+      progress,
+      0,
+      .16
+    );
+
+    titleMove=smoothstep(
+      progress,
+      .18,
+      .42
+    );
+
+    descriptionOpacity=smoothstep(
+      progress,
+      .34,
+      .54
+    );
+
+    descriptionMove=smoothstep(
+      progress,
+      .56,
+      .78
+    );
+
+    cardsOpacity=smoothstep(
+      progress,
+      .78,
+      1
+    );
+
+    aboutFrame.style.setProperty(
+      "--hex-founded-title-opacity",
+      titleOpacity
+    );
+
+    aboutFrame.style.setProperty(
+      "--hex-founded-title-move",
+      titleMove
+    );
+
+    aboutFrame.style.setProperty(
+      "--hex-founded-title-y",
+      (
+        foundedTitleStartY*
+        (1-titleMove)
+      )+"px"
+    );
+
+    aboutFrame.style.setProperty(
+      "--hex-founded-description-opacity",
+      descriptionOpacity
+    );
+
+    aboutFrame.style.setProperty(
+      "--hex-founded-description-move",
+      descriptionMove
+    );
+
+    aboutFrame.style.setProperty(
+      "--hex-founded-description-y",
+      (
+        foundedDescriptionStartY*
+        (1-descriptionMove)
+      )+"px"
+    );
+
+    aboutFrame.style.setProperty(
+      "--hex-founded-cards-opacity",
+      cardsOpacity
+    );
+
+    aboutFrame.style.setProperty(
+      "--hex-founded-cards-y",
+      (24*(1-cardsOpacity))+"px"
+    );
+
+    document.documentElement.style.setProperty(
+      "--hex-founded-progress",
+      progress
+    );
+
+    document.documentElement.classList.toggle(
+      "hex-founded-stage-complete",
+      progress>=1
+    );
   }
 
   function update(){
@@ -5693,18 +5942,9 @@ hexReady(function(){
       return 0;
     }
 
-    /*
-    * フェード開始位置より上へ戻った場合は、
-    * WELCOME終了演出を解除する。
-    */
+    /* WELCOME終了開始位置より上へ戻った場合 */
     if(window.scrollY<startScrollY-1){
       clear();
-
-      /*
-      * -1は、ヒーローJSへ
-      * 「このフレームでは固定を維持する」
-      * ことを伝えるための値。
-      */
       return -1;
     }
 
@@ -5726,6 +5966,19 @@ hexReady(function(){
       "hex-welcome-exit-complete",
       progress>=1
     );
+
+    document.documentElement.classList.toggle(
+      "hex-founded-stage-active",
+      progress>=1
+    );
+
+    if(progress>=1){
+      updateFoundedStage();
+    }else{
+      document.documentElement.classList.remove(
+        "hex-founded-stage-complete"
+      );
+    }
 
     return progress;
   }
