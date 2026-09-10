@@ -5612,6 +5612,12 @@ hexReady(function(){
     imageHandoff=detail.imageHandoff;
     aboutFrame=getAboutFrame();
 
+    if(aboutFrame){
+      aboutFrame.classList.add(
+        "hex-home-about-frame"
+      );
+    }
+
     if(
       !welcomeWrap||
       !welcomePanel||
