@@ -5120,7 +5120,10 @@ html{
 /* WELCOME終了演出を開始 */
 html.hex-welcome-exit-active
 .hex-welcome-exit-overlay{
-  opacity:1;
+  opacity:var(
+    --hex-welcome-exit-progress,
+    0
+  );
   visibility:visible;
 }
 
