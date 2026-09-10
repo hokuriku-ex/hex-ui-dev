@@ -1387,26 +1387,41 @@
 /* =======================================
    トップページ：ウェルカム→私たちについて切り替え
 ======================================= */
-/* SPは固定演出を使用しない */
+/* SPは切り替え演出を使用しない */
 @media screen and (max-width:768px){
-  .hex-welcome-exit-overlay{
-    display:none!important;
-  }
-  html.hex-welcome-exit-active
+
+  .hex-welcome-exit-active
   .hex-welcome-wrap
   .welcome.has-padding{
     position:relative!important;
-    top:auto!important;
-    left:auto!important;
+    inset:auto!important;
     width:100%!important;
     height:auto!important;
+    min-height:100dvh!important;
+    margin:0!important;
     opacity:1!important;
+    transform:none!important;
   }
-  html.hex-welcome-exit-active
+
+  .hex-welcome-exit-active
   .hex-hero-image-handoff{
     display:none!important;
   }
-  .gc_auto_frame_spotitem:has(.hex-company-card)
+
+  .hex-welcome-exit-active
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap)::after{
+    display:none!important;
+  }
+
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card),
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+  .background_color,
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+  .gc_auto_frame_spotitem_basewidth{
+    background:var(--hex-founding-bg)!important;
+  }
+
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
   .gc_auto_frame_spotitem_body{
     opacity:1!important;
     visibility:visible!important;
