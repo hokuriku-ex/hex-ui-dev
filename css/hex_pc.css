@@ -5384,11 +5384,17 @@ html body
   }
 }
 
-/* CMS標準フェードを無効化 */
-.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
-.add_animation_fadein_fadein{
-  animation:none!important;
-  transition:none!important;
+/* PCのみHOPWEB標準フェードを無効化 */
+@media screen and (min-width:769px){
+
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+  .add_animation_fadein_fadein{
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+    animation:none!important;
+    transition:none!important;
+  }
 }
 
 /* HOPWEB標準フェードの透明状態を解除 */
