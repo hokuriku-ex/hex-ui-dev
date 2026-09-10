@@ -5502,6 +5502,89 @@ html body
 /* =======================================
    トップページ：私たちについて
 ======================================= */
+/* 創業セクション */
+.hex-founded-year{
+  color:#c8a874;
+  font-family:var(--hex-font-italic);
+  font-size:58px;
+  font-weight:400;
+  font-style:italic;
+  line-height:.9;
+  letter-spacing:0;
+}
+.hex-founded-text{
+  color:#1f2774;
+  margin-left:6px;
+}
+.hex-company-card{
+  column-gap:0;
+}
+.hex-company-card .hex-card{
+  display:flex;
+  border:none;
+  background:transparent;
+}
+.hex-company-card .hex-card-body{
+  display:flex;
+  flex-direction:column;
+  width:100%;
+}
+.hex-company-card .hex-card-head{
+  margin:0 0 8px;
+  border-bottom:2px solid #d8dce8;
+}
+.hex-company-card .hex-card-title{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  align-items:end;
+  column-gap:6px;
+  margin:0;
+}
+.hex-company-card .hex-title{
+  align-self:center;
+  color:#1f2774;
+  font-size:15px;
+  font-weight:700;
+  line-height:1.6;
+  letter-spacing:.04em;
+}
+.hex-company-card .hex-number{
+  color:#c8a874;
+  font-family:var(--hex-font-italic);
+  font-size:58px;
+  font-weight:400;
+  font-style:italic;
+  line-height:.9;
+  letter-spacing:0;
+}
+.hex-company-card .hex-unit{
+  align-self:end;
+  margin-bottom:4px;
+  color:#203459;
+  font-size:15px;
+  font-weight:700;
+  line-height:1;
+}
+.hex-company-card .hex-card-text{
+  margin:0;
+  color:#203459;
+  font-size:14px;
+  font-weight:500;
+  line-height:1.6;
+  letter-spacing:.03em;
+}
+/* 2カラム・1カラム */
+@media screen and (max-width:999px){
+  .hex-company-card .hex-card-title{
+    grid-template-columns:minmax(0,1fr) auto 3em;
+  }
+  .hex-company-card .hex-unit{
+    justify-self:start;
+    white-space:nowrap;
+  }
+}
+
+/* 初めての方へ */
 .hex-company-buttons{
   display:flex;
   justify-content:center;
@@ -5588,87 +5671,6 @@ html body
 .hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon i,
 .hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon i::before{
   color:#c8a874!important;
-}
-
-.hex-founded-year{
-  color:#c8a874;
-  font-family:var(--hex-font-italic);
-  font-size:58px;
-  font-weight:400;
-  font-style:italic;
-  line-height:.9;
-  letter-spacing:0;
-}
-.hex-founded-text{
-  color:#1f2774;
-  margin-left:6px;
-}
-.hex-company-card{
-  column-gap:0;
-}
-.hex-company-card .hex-card{
-  display:flex;
-  border:none;
-  background:transparent;
-}
-.hex-company-card .hex-card-body{
-  display:flex;
-  flex-direction:column;
-  width:100%;
-}
-.hex-company-card .hex-card-head{
-  margin:0 0 8px;
-  border-bottom:2px solid #d8dce8;
-}
-.hex-company-card .hex-card-title{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto auto;
-  align-items:end;
-  column-gap:6px;
-  margin:0;
-}
-.hex-company-card .hex-title{
-  align-self:center;
-  color:#1f2774;
-  font-size:15px;
-  font-weight:700;
-  line-height:1.6;
-  letter-spacing:.04em;
-}
-.hex-company-card .hex-number{
-  color:#c8a874;
-  font-family:var(--hex-font-italic);
-  font-size:58px;
-  font-weight:400;
-  font-style:italic;
-  line-height:.9;
-  letter-spacing:0;
-}
-.hex-company-card .hex-unit{
-  align-self:end;
-  margin-bottom:4px;
-  color:#203459;
-  font-size:15px;
-  font-weight:700;
-  line-height:1;
-}
-.hex-company-card .hex-card-text{
-  margin:0;
-  color:#203459;
-  font-size:14px;
-  font-weight:500;
-  line-height:1.6;
-  letter-spacing:.03em;
-}
-/* 2カラム・1カラム */
-@media screen and (max-width:999px){
-  .hex-company-card .hex-card-title{
-    grid-template-columns:minmax(0,1fr) auto 3em;
-  }
-  .hex-company-card .hex-unit{
-    justify-self:start;
-    white-space:nowrap;
-  }
 }
 
 /* =======================================
