@@ -5693,6 +5693,21 @@ hexReady(function(){
       return 0;
     }
 
+    /*
+    * フェード開始位置より上へ戻った場合は、
+    * WELCOME終了演出を解除する。
+    */
+    if(window.scrollY<startScrollY-1){
+      clear();
+
+      /*
+      * -1は、ヒーローJSへ
+      * 「このフレームでは固定を維持する」
+      * ことを伝えるための値。
+      */
+      return -1;
+    }
+
     progress=clamp(
       (
         window.scrollY-
@@ -5729,7 +5744,7 @@ hexReady(function(){
       progress=update();
 
       /* 完了するまではヒーローJSの固定解除を止める */
-      if(active&&progress<1){
+      if(progress<1){
         event.preventDefault();
       }
     }
