@@ -5106,7 +5106,11 @@ html body
   --hex-founding-bg:#f6f6f3;
 }
 
-/* WELCOME固定フェード */
+/* =======================================
+   WELCOME固定フェード
+======================================= */
+
+/* WELCOMEフレーム全体 */
 .hex-welcome-exit-active
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap){
   position:relative!important;
@@ -5114,57 +5118,107 @@ html body
   isolation:isolate!important;
 }
 
-/*
- * グレーフェードの下に完全不透明の白を置き、
- * 創業セクションより後ろを見せない。
- */
-.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
-.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap)::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:88;
-  background:#fff;
-  opacity:1;
-  visibility:visible;
-  pointer-events:none;
-}
 
-/* 白い下地の上で、グレーを徐々に濃くする */
+/* =======================================
+   WELCOME背景
+======================================= */
+
+/*
+ * 常に不透明な背景。
+ * 白の上に、進行率に応じた半透明グレーを重ねる。
+ */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap)::after{
   content:"";
   position:fixed;
   inset:0;
-  z-index:89;
-  background:var(--hex-founding-bg);
-  opacity:var(--hex-welcome-exit-progress,0);
+  z-index:0;
+
+  background:
+    linear-gradient(
+      rgba(
+        246,
+        246,
+        243,
+        var(--hex-welcome-exit-progress,0)
+      ),
+      rgba(
+        246,
+        246,
+        243,
+        var(--hex-welcome-exit-progress,0)
+      )
+    ),
+    #fff;
+
+  opacity:1;
+  visibility:visible;
   pointer-events:none;
 }
+
+
+/* =======================================
+   WELCOMEコンテンツ
+======================================= */
+
+/*
+ * 背景用の擬似要素より、
+ * WELCOME本体を前面に配置する。
+ */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
-.hex-welcome-wrap .welcome.has-padding{
+.hex-welcome-wrap{
+  position:relative!important;
+  z-index:1!important;
+}
+
+/* WELCOME本文を現在位置で固定 */
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
+.hex-welcome-wrap
+.welcome.has-padding{
   position:fixed!important;
   top:var(--hex-welcome-fixed-top)!important;
   left:var(--hex-welcome-fixed-left)!important;
   z-index:91!important;
+
   width:var(--hex-welcome-fixed-width)!important;
   height:var(--hex-welcome-fixed-height)!important;
   min-height:0!important;
   margin:0!important;
+
   transform:none!important;
-  opacity:calc(1 - var(--hex-welcome-exit-progress))!important;
+
+  opacity:calc(
+    1 - var(--hex-welcome-exit-progress)
+  )!important;
+
   visibility:visible!important;
   pointer-events:none!important;
 }
+
+
+/* =======================================
+   丸画像
+======================================= */
+
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .hex-hero-image-handoff{
   position:fixed!important;
   inset:0!important;
   z-index:90!important;
-  opacity:calc(1 - var(--hex-welcome-exit-progress))!important;
+
+  opacity:calc(
+    1 - var(--hex-welcome-exit-progress)
+  )!important;
+
   visibility:visible!important;
   pointer-events:none!important;
 }
+
+
+/* =======================================
+   WELCOME切り替え完了後
+======================================= */
+
 .hex-welcome-exit-complete
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap){
   z-index:0!important;
@@ -5172,7 +5226,12 @@ html body
   visibility:hidden!important;
   pointer-events:none!important;
 }
-.hex-welcome-exit-overlay{display:none!important;}
+
+
+/* 旧オーバーレイは使用しない */
+.hex-welcome-exit-overlay{
+  display:none!important;
+}
 
 @media screen and (min-width:769px){
   /* 創業固定面 */
