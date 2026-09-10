@@ -5938,12 +5938,53 @@ hexReady(function(){
 
   function handleWheel(event){
     var step;
+    var remainingDistance;
 
     if(
       window.innerWidth<=768||
-      !foundedActive||
       returning
     ){
+      return;
+    }
+
+    /*
+    * WELCOMEフェード中に、今回のホイール入力で
+    * 創業セクションの開始位置を越えそうな場合。
+    */
+    if(
+      active&&
+      !foundedActive&&
+      event.deltaY>0
+    ){
+      remainingDistance=
+        foundedStartY-
+        window.scrollY;
+
+      if(
+        remainingDistance<=
+        Math.abs(event.deltaY)+2
+      ){
+        /*
+        * 境界を越えるホイール入力を無効化し、
+        * 創業セクション開始位置へ正確に合わせる。
+        */
+        event.preventDefault();
+
+        window.scrollTo({
+          top:Math.ceil(foundedStartY),
+          left:window.scrollX,
+          behavior:"auto"
+        });
+
+        return;
+      }
+    }
+
+    /*
+    * 創業セクション開始前は、
+    * 上記の境界処理以外は通常スクロール。
+    */
+    if(!foundedActive){
       return;
     }
 
