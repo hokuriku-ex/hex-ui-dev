@@ -5522,10 +5522,10 @@ hexReady(function(){
   "use strict";
 
   /* 1段階と判定するホイール移動量 */
-  var WHEEL_THRESHOLD=70;
+  var WHEEL_THRESHOLD=45;
 
   /* 次の段階を受け付けるまでの最低待機時間 */
-  var STEP_LOCK_TIME=1300;
+  var STEP_LOCK_TIME=900;
 
   /* ホイール入力終了と判定する無入力時間 */
   var WHEEL_IDLE_TIME=220;
