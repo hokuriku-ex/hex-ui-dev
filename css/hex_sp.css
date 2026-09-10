@@ -1420,18 +1420,16 @@
 /* =======================================
    トップページ：ウェルカム→私たちについて切り替え
 ======================================= */
-/* SPは従来どおり通常表示 */
+/* SPは演出対象外 */
 @media screen and (max-width:768px){
-  .hex-founded-stage{
-    min-height:0!important;
-  }
-  .hex-founded-stage
-  .gc_auto_frame_spotitem_basewidth,
-  .hex-founded-stage
-  .gc_auto_frame_spotitem_body{
+  .hex-founded-stage,
+  .hex-founded-stage .gc_auto_frame_spotitem_basewidth,
+  .hex-founded-stage .gc_auto_frame_spotitem_body{
     position:relative!important;
     top:auto!important;
+    height:auto!important;
     min-height:0!important;
+    max-height:none!important;
     opacity:1!important;
     visibility:visible!important;
     transform:none!important;
