@@ -1420,7 +1420,7 @@
 /* =======================================
    トップページ：ウェルカム→私たちについて切り替え
 ======================================= */
-/* SPは演出対象外 */
+/* SPは通常表示 */
 @media screen and (max-width:768px){
   .hex-founded-stage,
   .hex-founded-stage .gc_auto_frame_spotitem_basewidth,
@@ -1430,6 +1430,44 @@
     height:auto!important;
     min-height:0!important;
     max-height:none!important;
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+  }
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
+    position:relative!important;
+    z-index:auto!important;
+    min-height:0!important;
+    opacity:1!important;
+    visibility:visible!important;
+    background:var(--hex-founding-bg,#f6f6f3)!important;
+  }
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+  .gc_auto_frame_spotitem,
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+  .gc_auto_frame_spotitem_basewidth,
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+  .gc_auto_frame_spotitem_box,
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+  .gc_auto_frame_spotitem_body{
+    position:relative!important;
+    top:auto!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+  }
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+  .add_animation_fadein_fadein{
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+  }
+  .hex-center-title,
+  .hex-center,
+  .hex-company-card{
     opacity:1!important;
     visibility:visible!important;
     transform:none!important;
