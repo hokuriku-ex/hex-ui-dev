@@ -1423,7 +1423,7 @@
   /* SPでは内容を常時表示 */
   .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
   .gc_auto_frame_spotitem_body{
-    min-height:auto;
+    min-height:auto!important;
 
     opacity:1!important;
     visibility:visible!important;
