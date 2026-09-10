@@ -5108,10 +5108,9 @@ html body
 
 
 /* =======================================
-   WELCOME
+   WELCOMEの重なり順
 ======================================= */
 
-/* WELCOMEを創業セクションより前へ */
 .hex-welcome-exit-active
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap){
   position:relative!important;
@@ -5119,9 +5118,14 @@ html body
   isolation:isolate!important;
 }
 
+
+/* =======================================
+   WELCOME背景
+======================================= */
+
 /*
- * 固定中のWELCOME全面にグレーを重ねる。
- * スクロール進行率に合わせて白→グレーへ変化。
+ * 固定中のWELCOMEにグレーを重ねる。
+ * opacityはJSのスクロール進行率に連動する。
  */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap)::after{
@@ -5129,17 +5133,19 @@ html body
   position:fixed;
   inset:0;
   z-index:89;
-
   background:var(--hex-founding-bg);
-
   opacity:var(
     --hex-welcome-exit-progress,
     0
   );
-
   visibility:visible;
   pointer-events:none;
 }
+
+
+/* =======================================
+   WELCOME本文
+======================================= */
 
 /* WELCOME本文を現在位置で固定 */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
@@ -5165,7 +5171,12 @@ html body
   pointer-events:none!important;
 }
 
-/* 丸画像も固定したまま薄くする */
+
+/* =======================================
+   WELCOME丸画像
+======================================= */
+
+/* 丸画像を現在位置で固定したまま薄くする */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .hex-hero-image-handoff{
   position:fixed!important;
@@ -5182,21 +5193,68 @@ html body
 
 
 /* =======================================
-   創業セクション
+   創業セクションの基本サイズ
 ======================================= */
 
-/* 切り替え中はWELCOMEより下層へ */
+/*
+ * 内容が少なくても、ヘッダー下から画面下まで確保する。
+ * 次のセクションが途中で見えるのを防ぐ。
+ */
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
+  position:relative;
+  min-height:calc(
+    100dvh - var(--header_height,80px)
+  );
+  box-sizing:border-box;
+}
+
+/* CMSベース幅領域 */
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+.gc_auto_frame_spotitem_basewidth{
+  min-height:calc(
+    100dvh - var(--header_height,80px)
+  );
+  box-sizing:border-box;
+}
+
+/* 創業セクション内容を縦方向中央に配置 */
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+.gc_auto_frame_spotitem_body{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+
+  min-height:calc(
+    100dvh - var(--header_height,80px)
+  );
+
+  box-sizing:border-box;
+}
+
+
+/* =======================================
+   創業セクションの重なり順
+======================================= */
+
+/* 切り替え中はWELCOMEより後ろへ配置 */
 .hex-welcome-exit-active
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
-  position:relative!important;
   z-index:0!important;
   isolation:isolate!important;
 }
 
-/* 完全に切り替わるまでは背景を透明にする */
-.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
-.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card),
 
+/* =======================================
+   切り替え完了前の創業セクション
+======================================= */
+
+/* 外側フレームの背景を透明化 */
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
+  background:transparent!important;
+}
+
+/* CMS内部の背景を透明化 */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
 .gc_auto_frame_spotitem,
@@ -5221,7 +5279,7 @@ html body
   background-image:none!important;
 }
 
-/* 擬似要素の背景も切り替え中は非表示 */
+/* 背景用の擬似要素も非表示 */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)::before,
 
@@ -5231,7 +5289,7 @@ html body
   visibility:hidden!important;
 }
 
-/* 創業セクションの内容も非表示 */
+/* 創業セクションの内容を非表示 */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
 .gc_auto_frame_spotitem_body{
@@ -5242,10 +5300,10 @@ html body
 
 
 /* =======================================
-   切り替え完了
+   切り替え完了後の創業セクション
 ======================================= */
 
-/* 創業セクションをグレー背景にする */
+/* 背景をWELCOME完成時と同じグレーにする */
 .hex-welcome-exit-complete
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card),
 
@@ -5281,7 +5339,7 @@ html body
 
 
 /* =======================================
-   旧オーバーレイは使用しない
+   旧固定オーバーレイは使用しない
 ======================================= */
 
 .hex-welcome-exit-overlay{
