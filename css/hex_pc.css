@@ -5168,46 +5168,90 @@ html body
 @media screen and (min-width:769px){
 
   /*
-   * 外枠で創業演出用のスクロール距離を確保する。
+   * 外枠で創業演出用のスクロール距離を確保。
    * この外枠が終わるまで次のセクションは入らない。
    */
   .hex-founded-stage{
     position:relative!important;
     z-index:0!important;
     isolation:isolate!important;
+
     min-height:calc(
-      100dvh - var(--header_height,80px) +
+      100dvh -
+      var(--header_height,80px) +
       var(--hex-founded-scroll-distance,1000px)
     )!important;
+
     box-sizing:border-box;
   }
 
-  /* ヘッダー下で固定する表示面 */
+
+  /* =====================================
+     固定するCMS表示面
+  ===================================== */
+
+  /*
+   * basewidthではなく、その親をstickyにする。
+   */
   .hex-founded-stage
-  > .gc_auto_frame_spotitem
-  > .gc_auto_frame_spotitem_basewidth{
+  > .gc_auto_frame_spotitem:has(.hex-company-card){
     position:sticky!important;
     top:var(--header_height,80px)!important;
+
+    width:100%;
     min-height:calc(
       100dvh - var(--header_height,80px)
     )!important;
+
     background:var(--hex-founding-bg)!important;
     box-sizing:border-box;
   }
 
-  /* 見出しからカードまでを完成状態で中央配置 */
+  /*
+   * basewidthはstickyにせず、
+   * 固定表示面いっぱいに広げる。
+   */
+  .hex-founded-stage
+  > .gc_auto_frame_spotitem:has(.hex-company-card)
+  > .gc_auto_frame_spotitem_basewidth{
+    position:relative!important;
+    top:auto!important;
+
+    width:100%;
+    min-height:calc(
+      100dvh - var(--header_height,80px)
+    )!important;
+
+    background:transparent!important;
+    box-sizing:border-box;
+  }
+
+  /*
+   * 見出しからカードまでを、
+   * 完成状態で画面中央に配置する。
+   */
   .hex-founded-stage
   .gc_auto_frame_spotitem_body{
     display:flex;
     flex-direction:column;
     justify-content:center;
+
     min-height:calc(
       100dvh - var(--header_height,80px)
     )!important;
+
     box-sizing:border-box;
   }
 
-  /* WELCOME切り替え完了前は創業背景を透明にする */
+
+  /* =====================================
+     WELCOME切り替え完了前
+  ===================================== */
+
+  /*
+   * 創業セクションはWELCOMEの後ろで移動するが、
+   * 背景と内容はまだ表示しない。
+   */
   .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
   .hex-founded-stage,
 
@@ -5233,6 +5277,7 @@ html body
     background:transparent!important;
   }
 
+  /* 擬似要素による背景も非表示 */
   .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
   .hex-founded-stage::before,
 
@@ -5242,7 +5287,7 @@ html body
     visibility:hidden!important;
   }
 
-  /* 切り替え完了前は創業内容も非表示 */
+  /* 創業セクションの内容を非表示 */
   .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
   .hex-founded-stage
   .gc_auto_frame_spotitem_body{
@@ -5251,9 +5296,18 @@ html body
     pointer-events:none!important;
   }
 
-  /* 創業演出中の背景 */
+
+  /* =====================================
+     WELCOME切り替え完了後
+  ===================================== */
+
+  /* 創業セクションをグレー背景で表示 */
   .hex-welcome-exit-complete
   .hex-founded-stage,
+
+  .hex-welcome-exit-complete
+  .hex-founded-stage
+  > .gc_auto_frame_spotitem:has(.hex-company-card),
 
   .hex-welcome-exit-complete
   .hex-founded-stage
@@ -5265,6 +5319,7 @@ html body
     background:var(--hex-founding-bg)!important;
   }
 
+  /* 創業セクションの内容領域を有効化 */
   .hex-welcome-exit-complete
   .hex-founded-stage
   .gc_auto_frame_spotitem_body{
@@ -5273,46 +5328,81 @@ html body
     pointer-events:auto!important;
   }
 
-  /* 「1972年創業」 */
+
+  /* =====================================
+     「1972年創業」
+  ===================================== */
+
   .hex-founded-stage-active
   .hex-founded-stage
   .hex-center-title{
-    opacity:var(--hex-founded-title-opacity,0)!important;
+    opacity:var(
+      --hex-founded-title-opacity,
+      0
+    )!important;
+
     transform:translate3d(
       0,
       var(--hex-founded-title-y,0px),
       0
     )!important;
+
     will-change:transform,opacity;
   }
 
-  /* 説明文 */
+
+  /* =====================================
+     説明文
+  ===================================== */
+
   .hex-founded-stage-active
   .hex-founded-stage
   .hex-center{
-    opacity:var(--hex-founded-description-opacity,0)!important;
+    opacity:var(
+      --hex-founded-description-opacity,
+      0
+    )!important;
+
     transform:translate3d(
       0,
       var(--hex-founded-description-y,0px),
       0
     )!important;
+
     will-change:transform,opacity;
   }
 
-  /* カードは今回は最後にまとめてフェード表示 */
+
+  /* =====================================
+     実績カード
+  ===================================== */
+
+  /*
+   * 現段階では4枚まとめてフェード表示。
+   * 後から個別表示へ変更可能。
+   */
   .hex-founded-stage-active
   .hex-founded-stage
   .hex-company-card{
-    opacity:var(--hex-founded-cards-opacity,0)!important;
+    opacity:var(
+      --hex-founded-cards-opacity,
+      0
+    )!important;
+
     transform:translate3d(
       0,
       var(--hex-founded-cards-y,24px),
       0
-    );
+    )!important;
+
     will-change:transform,opacity;
   }
 
-  /* 完成後は通常の完成レイアウト */
+
+  /* =====================================
+     創業演出完成後
+  ===================================== */
+
   .hex-founded-stage-complete
   .hex-founded-stage
   .hex-center-title,
