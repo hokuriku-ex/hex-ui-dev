@@ -5520,7 +5520,7 @@ hexReady(function(){
 ======================================= */
 hexReady(function(){
   "use strict";
-  
+
   var WELCOME_WHEEL_THRESHOLD=240;
   var RETURN_WHEEL_THRESHOLD=160;
   var WELCOME_FADE_TIME=1100;
@@ -5916,16 +5916,17 @@ hexReady(function(){
 
     requestAnimationFrame(function(){
       animateProgress(1,0,WELCOME_RESTORE_TIME,function(){
-        aboutFrame.classList.remove("is-founded-returning","is-founded-released");
-        aboutFrame.removeAttribute("data-founded-step");
-        document.documentElement.classList.remove(
-          "hex-founded-stage-active","hex-founded-stage-complete"
-        );
-        resetFoundedParts();
-        phase="welcome-wait";
-        welcomeWheelAmount=returnWheelAmount=stepWheelAmount=0;
-        stepLocked=false;
-        window.dispatchEvent(new Event("scroll"));
+        /*
+         * WELCOMEの復元が完了したら、切替側の固定・レイヤー・
+         * wheel制御をすべて終了してヒーローJSへ制御を返す。
+         * activeを残すと本文が固定され、丸演出とヒーロー画像も
+         * 復元されなくなる。
+         */
+        clearAll();
+
+        requestAnimationFrame(function(){
+          window.dispatchEvent(new Event("scroll"));
+        });
       });
     });
   }
