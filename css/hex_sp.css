@@ -1439,10 +1439,9 @@
 }
 
 /* =======================================
-   トップページ：私たちについて
+   トップページ：初めての方へ
 ======================================= */
 @media screen and (max-width:768px){
-  /* 初めての方へ */
   .hex-company-buttons{
     flex-direction:column;
     align-items:center;
