@@ -5892,9 +5892,7 @@ hexReady(function(){
       "--hex-founded-title-y",
       (
         foundedTitleStartY*
-        (1-titleMove)+
-        18*
-        (1-titleOpacity)
+        (1-titleMove)
       )+"px"
     );
 
@@ -5912,9 +5910,7 @@ hexReady(function(){
       "--hex-founded-description-y",
       (
         foundedDescriptionStartY*
-        (1-descriptionMove)+
-        18*
-        (1-descriptionOpacity)
+        (1-descriptionMove)
       )+"px"
     );
 
