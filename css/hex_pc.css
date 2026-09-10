@@ -5107,35 +5107,6 @@ html body
 }
 
 
-/* 固定グレー背景 */
-.hex-welcome-exit-overlay{
-  position:fixed;
-  inset:0;
-  z-index:89;
-  background:var(--hex-founding-bg);
-  opacity:0;
-  visibility:hidden;
-  pointer-events:none;
-}
-
-/* スクロールに合わせてグレーを表示 */
-.hex-welcome-exit-active
-.hex-welcome-exit-overlay{
-  opacity:var(
-    --hex-welcome-exit-progress,
-    0
-  );
-  visibility:visible;
-}
-
-/* 完了後は創業セクション背景へ引き継ぐ */
-.hex-welcome-exit-complete
-.hex-welcome-exit-overlay{
-  opacity:0;
-  visibility:hidden;
-}
-
-
 /* =======================================
    WELCOME
 ======================================= */
@@ -5146,6 +5117,28 @@ html body
   position:relative!important;
   z-index:90!important;
   isolation:isolate!important;
+}
+
+/*
+ * 固定中のWELCOME全面にグレーを重ねる。
+ * スクロール進行率に合わせて白→グレーへ変化。
+ */
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap)::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:89;
+
+  background:var(--hex-founding-bg);
+
+  opacity:var(
+    --hex-welcome-exit-progress,
+    0
+  );
+
+  visibility:visible;
+  pointer-events:none;
 }
 
 /* WELCOME本文を現在位置で固定 */
@@ -5172,7 +5165,7 @@ html body
   pointer-events:none!important;
 }
 
-/* 丸画像を固定したまま薄くする */
+/* 丸画像も固定したまま薄くする */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .hex-hero-image-handoff{
   position:fixed!important;
@@ -5192,7 +5185,7 @@ html body
    創業セクション
 ======================================= */
 
-/* 創業セクションをWELCOMEより下層へ */
+/* 切り替え中はWELCOMEより下層へ */
 .hex-welcome-exit-active
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
   position:relative!important;
@@ -5200,14 +5193,14 @@ html body
   isolation:isolate!important;
 }
 
-
-/* 切り替え完了前：外側背景を透明化 */
+/* 完全に切り替わるまでは背景を透明にする */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
-.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
-  background:transparent!important;
-}
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card),
 
-/* 切り替え完了前：CMS背景を透明化 */
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+.gc_auto_frame_spotitem,
+
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
 .background_color,
@@ -5218,11 +5211,17 @@ html body
 
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
-.gc_auto_frame_spotitem_box{
+.gc_auto_frame_spotitem_box,
+
+.hex-welcome-exit-active:not(.hex-welcome-exit-complete)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
+.gc_auto_frame_spotitem_body{
   background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
 }
 
-/* 擬似要素による背景も非表示 */
+/* 擬似要素の背景も切り替え中は非表示 */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)::before,
 
@@ -5232,11 +5231,10 @@ html body
   visibility:hidden!important;
 }
 
-/* 完了前は創業セクションの内容を隠す */
+/* 創業セクションの内容も非表示 */
 .hex-welcome-exit-active:not(.hex-welcome-exit-complete)
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
 .gc_auto_frame_spotitem_body{
-  background:transparent!important;
   opacity:0!important;
   visibility:hidden!important;
   pointer-events:none!important;
@@ -5244,10 +5242,10 @@ html body
 
 
 /* =======================================
-   切り替え完了後
+   切り替え完了
 ======================================= */
 
-/* 創業セクションをグレーにする */
+/* 創業セクションをグレー背景にする */
 .hex-welcome-exit-complete
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card),
 
@@ -5271,7 +5269,10 @@ html body
 }
 
 
-/* HOPWEB標準フェードを無効化 */
+/* =======================================
+   HOPWEB標準アニメーションを無効化
+======================================= */
+
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
 .add_animation_fadein_fadein{
   animation:none!important;
@@ -5280,47 +5281,11 @@ html body
 
 
 /* =======================================
-   SPは固定切り替えを使用しない
+   旧オーバーレイは使用しない
 ======================================= */
 
-@media screen and (max-width:768px){
-
-  .hex-welcome-exit-overlay{
-    display:none!important;
-  }
-
-  .hex-welcome-exit-active
-  .hex-welcome-wrap
-  .welcome.has-padding{
-    position:relative!important;
-    inset:auto!important;
-    width:100%!important;
-    height:auto!important;
-    min-height:100dvh!important;
-    margin:0!important;
-    opacity:1!important;
-    transform:none!important;
-  }
-
-  .hex-welcome-exit-active
-  .hex-hero-image-handoff{
-    display:none!important;
-  }
-
-  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card),
-  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
-  .background_color,
-  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
-  .gc_auto_frame_spotitem_basewidth{
-    background:var(--hex-founding-bg)!important;
-  }
-
-  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
-  .gc_auto_frame_spotitem_body{
-    opacity:1!important;
-    visibility:visible!important;
-    pointer-events:auto!important;
-  }
+.hex-welcome-exit-overlay{
+  display:none!important;
 }
 
 /* =======================================
