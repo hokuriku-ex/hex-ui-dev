@@ -5338,6 +5338,44 @@ html body
 }
 
 /* =======================================
+   切り替え完了後の表示順
+======================================= */
+
+/* 完了後はWELCOMEフレームを非表示 */
+.hex-welcome-exit-complete
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-welcome-wrap){
+  z-index:0!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
+/* 創業セクションを前面へ */
+.hex-welcome-exit-complete
+.hex-founded-stage{
+  position:relative!important;
+  z-index:90!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+/* 創業セクションの固定表示面 */
+.hex-welcome-exit-complete
+.hex-founded-stage
+.gc_auto_frame_spotitem_basewidth{
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+/* 創業セクションの内容 */
+.hex-welcome-exit-complete
+.hex-founded-stage
+.gc_auto_frame_spotitem_body{
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+/* =======================================
    トップページ：私たちについて
 ======================================= */
 .hex-company-buttons{
