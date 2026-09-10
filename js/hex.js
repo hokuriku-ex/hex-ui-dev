@@ -5535,6 +5535,7 @@ hexReady(function(){
   var COUNT_DURATION=1500;
 
   var active=false;
+  var suppressHeroReady=false;
   var phase="idle";
   var foundedReleased=false;
   var stepLocked=false;
@@ -5683,7 +5684,7 @@ hexReady(function(){
   }
 
   function start(detail){
-    if(active){return;}
+    if(active||suppressHeroReady){return;}
     welcomeWrap=detail&&detail.welcomeWrap;
     welcomePanel=detail&&detail.welcomePanel;
     aboutFrame=document.getElementById(HOME_SECTIONS.ABOUT);
@@ -5691,6 +5692,17 @@ hexReady(function(){
       !welcomeWrap||!welcomePanel||
       !detail.imageHandoff||!aboutFrame
     ){
+      return;
+    }
+
+    /*
+     * 復元途中の固定WELCOMEを完成位置と誤認したイベントでは
+     * 新しい切替処理を開始しない。
+     */
+    if(getComputedStyle(welcomePanel).position==="fixed"){
+      welcomeWrap=null;
+      welcomePanel=null;
+      aboutFrame=null;
       return;
     }
     active=true;
@@ -5905,6 +5917,7 @@ hexReady(function(){
   function beginWelcomeRestore(){
     if(phase!=="return-wait"||!aboutFrame){return;}
     phase="welcome-restoring";
+    suppressHeroReady=true;
     returnWheelAmount=0;
     window.scrollTo({
       top:Math.max(startScrollY,0),
@@ -5924,8 +5937,16 @@ hexReady(function(){
          */
         clearAll();
 
+        /*
+         * 固定解除後の通常レイアウトをヒーローJSに再計算させる。
+         * 再計算が終わるまではreadyイベントを受け付けない。
+         */
+        window.dispatchEvent(new Event("scroll"));
+
         requestAnimationFrame(function(){
-          window.dispatchEvent(new Event("scroll"));
+          requestAnimationFrame(function(){
+            suppressHeroReady=false;
+          });
         });
       });
     });
@@ -6046,6 +6067,11 @@ hexReady(function(){
 
   document.addEventListener("hex:welcome-exit-ready",function(event){
     if(window.innerWidth<=768){return;}
+
+    if(suppressHeroReady){
+      return;
+    }
+
     start(event.detail);
     if(active){event.preventDefault();}
   });
