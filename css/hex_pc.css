@@ -5197,36 +5197,37 @@ html body
 ======================================= */
 
 /*
- * 内容が少なくても、ヘッダー下から画面下まで確保する。
- * 次のセクションが途中で見えるのを防ぐ。
+ * 画面高を丸ごと確保する。
+ * ヘッダー80px分が余裕になるため、
+ * 次のセクションが途中で見えにくくなる。
  */
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
   position:relative;
-  min-height:calc(
-    100dvh - var(--header_height,80px)
-  );
+  width:100%;
+  min-height:100vh!important;
+  min-height:100dvh!important;
   box-sizing:border-box;
 }
 
-/* CMSベース幅領域 */
+/* CMSベース幅領域も画面高を確保 */
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
 .gc_auto_frame_spotitem_basewidth{
-  min-height:calc(
-    100dvh - var(--header_height,80px)
-  );
+  width:100%;
+  min-height:100vh!important;
+  min-height:100dvh!important;
   box-sizing:border-box;
 }
 
-/* 創業セクション内容を縦方向中央に配置 */
+/* 内容領域も画面高を確保 */
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
 .gc_auto_frame_spotitem_body{
   display:flex;
   flex-direction:column;
   justify-content:center;
 
-  min-height:calc(
-    100dvh - var(--header_height,80px)
-  );
+  width:100%;
+  min-height:100vh!important;
+  min-height:100dvh!important;
 
   box-sizing:border-box;
 }
