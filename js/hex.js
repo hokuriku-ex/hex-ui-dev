@@ -5606,7 +5606,11 @@ hexReady(function(){
     lockStep();
     aboutFrame.dataset.foundedStep="0";
     document.documentElement.classList.add("hex-founded-stage-active");
-    window.scrollTo({top:foundedStartY,left:window.scrollX,behavior:"auto"});
+    window.scrollTo({
+      top:Math.ceil(foundedStartY),
+      left:window.scrollX,
+      behavior:"auto"
+    });
     requestAnimationFrame(function(){
       measureFoundedPositions();
       requestAnimationFrame(function(){
@@ -5705,8 +5709,28 @@ hexReady(function(){
     var progress;
     if(!active){return 0;}
     if(!foundedActive&&window.scrollY<startScrollY-1){clearAll();return -1;}
-    progress=clamp((window.scrollY-startScrollY)/scrollDistance,0,1);
-    document.documentElement.style.setProperty("--hex-welcome-exit-progress",progress);
+    progress=clamp(
+      (
+        window.scrollY-
+        startScrollY
+      )/scrollDistance,
+      0,
+      1
+    );
+
+    /*
+    * 創業ステージへ入った後は、
+    * 座標の小数誤差でWELCOME完了状態が
+    * 解除されないようにする。
+    */
+    if(foundedActive&&!returning){
+      progress=1;
+    }
+
+    document.documentElement.style.setProperty(
+      "--hex-welcome-exit-progress",
+      progress
+    );
     document.documentElement.classList.toggle("hex-welcome-exit-complete",progress>=1);
     if(progress>=1){activateFounded();}
     return progress;
