@@ -5543,6 +5543,18 @@ hexReady(function(){
   /* 各カードのカウントアップ時間 */
   var COUNT_DURATION=1500;
 
+  /* 1972表示から「年創業」表示まで */
+  var FOUNDED_TEXT_DELAY=900;
+
+  /* 「年創業」表示からカード開始まで */
+  var FOUNDED_CARDS_DELAY=750;
+
+  /* カード完了から説明文表示まで */
+  var FOUNDED_DESCRIPTION_DELAY=400;
+
+  /* 説明文表示から通常スクロールへ戻すまで */
+  var FOUNDED_COMPLETE_DELAY=900;
+
   var active=false;
   var foundedActive=false;
   var foundedReleased=false;
@@ -5947,10 +5959,34 @@ hexReady(function(){
         });
 
         cardsPlaying=false;
-        stepLocked=false;
-        minimumLockEnded=true;
-        wheelIdle=true;
-        wheelAmount=0;
+
+        /* カード完了後、説明文を自動表示 */
+        cardTimers.push(
+          window.setTimeout(function(){
+            if(
+              !foundedActive||
+              returning||
+              foundedCompleted
+            ){
+              return;
+            }
+
+            aboutFrame.dataset.foundedStep="4";
+
+            /* 説明文のフェード完了後に通常スクロールへ */
+            cardTimers.push(
+              window.setTimeout(function(){
+                if(
+                  foundedActive&&
+                  !returning&&
+                  !foundedCompleted
+                ){
+                  releaseFounded();
+                }
+              },FOUNDED_COMPLETE_DELAY)
+            );
+          },FOUNDED_DESCRIPTION_DELAY)
+        );
       },finishDelay+80)
     );
   }
@@ -5976,11 +6012,8 @@ hexReady(function(){
     wheelIdle=true;
     minimumLockEnded=false;
 
-    /*
-     * 見出しの最初の表示が完了するまで、
-     * 次の段階を受け付けない。
-     */
-    lockStep();
+    /* 自動進行が完了するまで下方向入力を使用しない */
+    stepLocked=true;
 
     aboutFrame.dataset.foundedStep="0";
 
@@ -6005,6 +6038,34 @@ hexReady(function(){
           !returning
         ){
           aboutFrame.dataset.foundedStep="1";
+
+          /* 1972の後に「年創業」を自動表示 */
+          cardTimers.push(
+            window.setTimeout(function(){
+              if(
+                !foundedActive||
+                returning||
+                foundedCompleted
+              ){
+                return;
+              }
+
+              aboutFrame.dataset.foundedStep="2";
+
+              /* 続けてカード演出を自動開始 */
+              cardTimers.push(
+                window.setTimeout(function(){
+                  if(
+                    foundedActive&&
+                    !returning&&
+                    !foundedCompleted
+                  ){
+                    playFoundedCards();
+                  }
+                },FOUNDED_CARDS_DELAY)
+              );
+            },FOUNDED_TEXT_DELAY)
+          );
         }
       });
     });
