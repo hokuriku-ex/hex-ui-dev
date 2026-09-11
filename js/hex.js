@@ -5550,13 +5550,13 @@ hexReady(function(){
   var FOUNDED_CARDS_DELAY=750;
 
   /* カード完了から説明文表示まで */
-  var FOUNDED_DESCRIPTION_DELAY=150;
+  var FOUNDED_DESCRIPTION_DELAY=0;
 
   /* 説明文表示から通常スクロールへ戻すまで */
   var FOUNDED_COMPLETE_DELAY=900;
 
   /* WELCOME完成から創業セクション到達までの自動スクロール時間 */
-  var WELCOME_TO_FOUNDED_DURATION=1600;
+  var WELCOME_TO_FOUNDED_DURATION=800;
 
   var active=false;
   var foundedActive=false;
