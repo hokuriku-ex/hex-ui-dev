@@ -5606,6 +5606,13 @@ hexReady(function(){
     );
   }
 
+  function getProgress(){
+    var value=getComputedStyle(
+      document.documentElement
+    ).getPropertyValue("--hex-welcome-exit-progress");
+    return clamp(parseFloat(value)||0,0,1);
+  }
+
   function animateProgress(from,to,duration,complete){
     var started=performance.now();
     cancelAnimationFrame(animationFrame);
@@ -5915,7 +5922,24 @@ hexReady(function(){
   }
 
   function beginWelcomeRestore(){
-    if(phase!=="return-wait"||!aboutFrame){return;}
+    var fromProgress;
+    var restoreDuration;
+
+    if(
+      (phase!=="return-wait"&&phase!=="welcome-fading")||
+      !aboutFrame
+    ){
+      return;
+    }
+
+    fromProgress=getProgress();
+    restoreDuration=Math.max(
+      WELCOME_RESTORE_TIME*fromProgress,
+      180
+    );
+
+    cancelAnimationFrame(animationFrame);
+    animationFrame=0;
     phase="welcome-restoring";
     suppressHeroReady=true;
     returnWheelAmount=0;
@@ -5924,11 +5948,11 @@ hexReady(function(){
       left:window.scrollX,
       behavior:"auto"
     });
-    setProgress(1);
+    setProgress(fromProgress);
     document.documentElement.classList.remove("hex-welcome-exit-complete");
 
     requestAnimationFrame(function(){
-      animateProgress(1,0,WELCOME_RESTORE_TIME,function(){
+      animateProgress(fromProgress,0,restoreDuration,function(){
         /*
          * WELCOMEの復元が完了したら、切替側の固定・レイヤー・
          * wheel制御をすべて終了してヒーローJSへ制御を返す。
@@ -5987,9 +6011,26 @@ hexReady(function(){
     if(window.innerWidth<=768||!active){return;}
     delta=getWheelDelta(event);
 
+    if(phase==="welcome-fading"){
+      event.preventDefault();
+
+      /*
+       * WELCOMEから創業へ自動移行している途中でも、
+       * 上方向の操作を受け取って現在位置から逆再生する。
+       */
+      if(delta<0){
+        returnWheelAmount+=Math.abs(delta);
+        if(returnWheelAmount>=RETURN_WHEEL_THRESHOLD){
+          beginWelcomeRestore();
+        }
+      }else{
+        returnWheelAmount=0;
+      }
+      return;
+    }
+
     if(
-      phase==="welcome-fading"||phase==="welcome-restoring"||
-      phase==="founded-returning"
+      phase==="welcome-restoring"||phase==="founded-returning"
     ){
       event.preventDefault();
       return;
