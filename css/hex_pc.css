@@ -5348,34 +5348,50 @@ html body
     will-change:opacity,transform;
   }
 
-  /* STEP 1：見出しを画面中央へ表示 */
+  /* STEP 1：見出しを完成位置でフェード表示 */
   .hex-founded-stage[data-founded-step="1"]
-  .hex-center-title{
-    opacity:1!important;
-    visibility:visible!important;
-    transform:translate3d(
-      0,
-      var(--hex-founded-title-center-y,0px),
-      0
-    )!important;
-  }
+  .hex-center-title,
 
-  /* STEP 2：見出しを完成位置へ移動 */
   .hex-founded-stage[data-founded-step="2"]
   .hex-center-title,
 
   .hex-founded-stage[data-founded-step="3"]
+  .hex-center-title,
+
+  .hex-founded-stage[data-founded-step="4"]
   .hex-center-title{
     opacity:1!important;
     visibility:visible!important;
     transform:none!important;
   }
 
-  /* STEP 2：カードの外枠だけ先に有効化 */
+  /* 1972は紺色で表示し、1スクロール後にゴールドへ */
+  .hex-founded-stage-active
+  .hex-founded-stage
+  .hex-founded-year{
+    color:#1f2774!important;
+    transition:color .65s ease!important;
+  }
+
   .hex-founded-stage[data-founded-step="2"]
-  .hex-company-card,
+  .hex-founded-year,
 
   .hex-founded-stage[data-founded-step="3"]
+  .hex-founded-year,
+
+  .hex-founded-stage[data-founded-step="4"]
+  .hex-founded-year,
+
+  .hex-founded-stage.is-founded-released
+  .hex-founded-year{
+    color:#c8a874!important;
+  }
+
+  /* STEP 3：カードの外枠だけ先に有効化 */
+  .hex-founded-stage[data-founded-step="3"]
+  .hex-company-card,
+
+  .hex-founded-stage[data-founded-step="4"]
   .hex-company-card{
     opacity:1!important;
     visibility:visible!important;
@@ -5418,8 +5434,8 @@ html body
     color:#c8a874!important;
   }
 
-  /* STEP 3：最後に説明文を完成位置へ表示 */
-  .hex-founded-stage[data-founded-step="3"]
+  /* STEP 4：最後に説明文を完成位置へ表示 */
+  .hex-founded-stage[data-founded-step="4"]
   .hex-center{
     opacity:1!important;
     visibility:visible!important;
