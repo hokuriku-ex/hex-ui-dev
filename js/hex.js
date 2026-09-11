@@ -5903,7 +5903,7 @@ hexReady(function(){
     minimumLockEnded=false;
     wheelIdle=false;
     wheelAmount=0;
-    aboutFrame.dataset.foundedStep="2";
+    aboutFrame.dataset.foundedStep="3";
 
     cards.forEach(function(card,index){
       var revealDelay=
@@ -6250,9 +6250,14 @@ hexReady(function(){
     );
 
     if(step===1){
-      playFoundedCards();
+      /* 1972を紺色からゴールドへ切り替える */
+      aboutFrame.dataset.foundedStep="2";
+      lockStep();
     }else if(step===2){
-      aboutFrame.dataset.foundedStep="3";
+      playFoundedCards();
+    }else if(step===3){
+      /* カード完了後、最後に説明文を表示する */
+      aboutFrame.dataset.foundedStep="4";
       lockStep();
     }else{
       releaseFounded();
