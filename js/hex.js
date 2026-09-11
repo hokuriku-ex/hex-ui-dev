@@ -5553,7 +5553,7 @@ hexReady(function(){
   var FOUNDED_CARDS_DELAY=600;
 
   /* 最後のカード表示から説明文表示まで */
-  var FOUNDED_DESCRIPTION_DELAY=600;
+  var FOUNDED_DESCRIPTION_DELAY=900;
 
   /* 説明文表示から通常スクロールへ戻すまで */
   var FOUNDED_COMPLETE_DELAY=900;
