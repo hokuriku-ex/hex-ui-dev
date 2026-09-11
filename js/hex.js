@@ -5549,7 +5549,7 @@ hexReady(function(){
   /* 「年創業」表示からカード開始まで */
   var FOUNDED_CARDS_DELAY=750;
 
-  /* カード完了から説明文表示まで */
+  /* 最後のカード表示から説明文表示まで */
   var FOUNDED_DESCRIPTION_DELAY=0;
 
   /* 説明文表示から通常スクロールへ戻すまで */
@@ -5986,6 +5986,9 @@ hexReady(function(){
   function playFoundedCards(){
     var cards;
     var finishDelay;
+    var lastRevealDelay;
+    var descriptionStartDelay;
+    var releaseDelay;
 
     if(cardsPlaying||!aboutFrame){
       return;
@@ -6027,11 +6030,36 @@ hexReady(function(){
       );
     });
 
-    finishDelay=
+    lastRevealDelay=
       Math.max(cards.length-1,0)*
-      CARD_REVEAL_INTERVAL+
+      CARD_REVEAL_INTERVAL;
+
+    finishDelay=
+      lastRevealDelay+
       CARD_COUNT_DELAY+
       COUNT_DURATION;
+
+    /*
+     * 説明文は最後のカードが表示された瞬間を基準にする。
+     * カウントアップ完了は待たない。
+     */
+    descriptionStartDelay=
+      lastRevealDelay+
+      FOUNDED_DESCRIPTION_DELAY;
+
+    cardTimers.push(
+      window.setTimeout(function(){
+        if(
+          !foundedActive||
+          returning||
+          foundedCompleted
+        ){
+          return;
+        }
+
+        aboutFrame.dataset.foundedStep="4";
+      },descriptionStartDelay)
+    );
 
     cardTimers.push(
       window.setTimeout(function(){
@@ -6056,35 +6084,29 @@ hexReady(function(){
         });
 
         cardsPlaying=false;
-
-        /* カード完了後、説明文を自動表示 */
-        cardTimers.push(
-          window.setTimeout(function(){
-            if(
-              !foundedActive||
-              returning||
-              foundedCompleted
-            ){
-              return;
-            }
-
-            aboutFrame.dataset.foundedStep="4";
-
-            /* 説明文のフェード完了後に通常スクロールへ */
-            cardTimers.push(
-              window.setTimeout(function(){
-                if(
-                  foundedActive&&
-                  !returning&&
-                  !foundedCompleted
-                ){
-                  releaseFounded();
-                }
-              },FOUNDED_COMPLETE_DELAY)
-            );
-          },FOUNDED_DESCRIPTION_DELAY)
-        );
       },finishDelay+80)
+    );
+
+    /*
+     * 固定解除は、全カードのカウント完了と
+     * 説明文の表示時間の両方が終わってから行う。
+     */
+    releaseDelay=Math.max(
+      finishDelay+80,
+      descriptionStartDelay+
+      FOUNDED_COMPLETE_DELAY
+    );
+
+    cardTimers.push(
+      window.setTimeout(function(){
+        if(
+          foundedActive&&
+          !returning&&
+          !foundedCompleted
+        ){
+          releaseFounded();
+        }
+      },releaseDelay)
     );
   }
 
