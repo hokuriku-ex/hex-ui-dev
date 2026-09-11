@@ -5564,6 +5564,7 @@ hexReady(function(){
   var foundedCompleted=false;
   var returning=false;
   var welcomeAutoScrolling=false;
+  var welcomeAutoPaused=false;
 
   var stepLocked=false;
   var minimumLockEnded=true;
@@ -6214,6 +6215,7 @@ hexReady(function(){
     }
 
     returning=true;
+    welcomeAutoPaused=true;
     stepLocked=true;
     minimumLockEnded=false;
     wheelIdle=false;
@@ -6328,6 +6330,12 @@ hexReady(function(){
      * 追加のホイール入力で到達位置をずらさない。
      */
     if(welcomeAutoScrolling){
+      if(event.deltaY<0){
+        stopWelcomeAutoScroll();
+        welcomeAutoPaused=true;
+        return;
+      }
+
       event.preventDefault();
       return;
     }
@@ -6517,6 +6525,7 @@ hexReady(function(){
     foundedReleased=false;
     returning=false;
     welcomeAutoScrolling=false;
+    welcomeAutoPaused=false;
 
     stepLocked=false;
     minimumLockEnded=true;
@@ -6564,6 +6573,22 @@ hexReady(function(){
     if(foundedTitle){
       foundedTitleRect=
         foundedTitle.getBoundingClientRect();
+    }
+
+    /*
+     * 逆方向へ戻った直後は自動進行を再開しない。
+     * タイトルがいったん画面下へ抜けたら再び待機状態に戻す。
+     */
+    if(welcomeAutoPaused){
+      if(
+        foundedTitleRect&&
+        foundedTitleRect.top>
+        window.innerHeight+2
+      ){
+        welcomeAutoPaused=false;
+      }
+
+      return 0;
     }
 
     if(
