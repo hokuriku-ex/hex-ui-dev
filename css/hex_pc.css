@@ -5301,31 +5301,23 @@ html body
     pointer-events:none!important;
   }
 
-  /* 創業ステージ表示 */
-  .hex-welcome-exit-complete .hex-founded-stage{
-    z-index:90!important;
-    background:var(--hex-founding-bg)!important;
-    opacity:1!important;
-    visibility:visible!important;
-  }
-  .hex-welcome-exit-complete .hex-founded-stage .background_color,
-  .hex-welcome-exit-complete .hex-founded-stage .gc_auto_frame_spotitem_basewidth{
-    background:var(--hex-founding-bg)!important;
-  }
-  .hex-welcome-exit-complete .hex-founded-stage .gc_auto_frame_spotitem_body{
-    opacity:1!important;
-    visibility:visible!important;
-    pointer-events:auto!important;
+  /* 背景は白 */
+  .hex-founded-stage,
+  .hex-founded-stage
+  > .gc_auto_frame_spotitem:has(.hex-company-card),
+  .hex-founded-stage
+  .background_color,
+  .hex-founded-stage
+  .gc_auto_frame_spotitem_basewidth{
+    background:#fff!important;
   }
 
-  /* 完成位置測定 */
-  .hex-founded-stage.is-founded-measuring .hex-center-title,
-  .hex-founded-stage.is-founded-measuring .hex-center,
-  .hex-founded-stage.is-founded-measuring .hex-company-card{
-    opacity:1!important;
-    visibility:visible!important;
-    transform:none!important;
-    transition:none!important;
+  /* ヘッダー下へ到達するまでは創業内容を透明化 */
+  .hex-founded-stage:not(.is-founded-active)
+  .gc_auto_frame_spotitem_body{
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
   }
 
   /* 演出開始時は3グループを非表示 */
