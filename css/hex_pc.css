@@ -5302,6 +5302,7 @@ html body
   }
 
   /* 背景は白 */
+  /* 今回の切り替え背景は白 */
   .hex-founded-stage,
   .hex-founded-stage
   > .gc_auto_frame_spotitem:has(.hex-company-card),

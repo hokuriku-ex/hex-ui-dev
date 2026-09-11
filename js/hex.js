@@ -5525,6 +5525,9 @@ hexReady(function(){
   /* 1段階と判定するホイール移動量 */
   var WHEEL_THRESHOLD=45;
 
+  /* WELCOME固定中に受け付けるスクロール操作数 */
+  var WELCOME_HOLD_STEPS=3;
+
   /* 次の段階を受け付けるまでの最低待機時間 */
   var STEP_LOCK_TIME=900;
 
@@ -5565,6 +5568,9 @@ hexReady(function(){
   var returning=false;
   var welcomeAutoScrolling=false;
   var welcomeAutoPaused=false;
+  var welcomeHolding=false;
+  var welcomeHoldSteps=0;
+  var welcomeHoldAmount=0;
 
   var stepLocked=false;
   var minimumLockEnded=true;
@@ -5582,6 +5588,7 @@ hexReady(function(){
   var countFrames=[];
   var cardsPlaying=false;
   var welcomeAutoScrollFrame=null;
+  var welcomeHoldTimer=null;
 
   var welcomeWrap=null;
   var welcomePanel=null;
@@ -5732,6 +5739,20 @@ hexReady(function(){
       getHeaderHeight();
 
     active=true;
+    welcomeHolding=true;
+    welcomeHoldSteps=0;
+    welcomeHoldAmount=0;
+
+    setWelcomePosition();
+
+    document.documentElement.style.setProperty(
+      "--hex-welcome-exit-progress",
+      "0"
+    );
+
+    document.documentElement.classList.add(
+      "hex-welcome-exit-active"
+    );
   }
 
 
@@ -5751,6 +5772,68 @@ hexReady(function(){
     }
 
     welcomeAutoScrolling=false;
+  }
+
+
+  function releaseWelcomeHold(){
+    if(!welcomeHolding){
+      return;
+    }
+
+    welcomeHolding=false;
+    welcomeHoldAmount=0;
+
+    window.clearTimeout(
+      welcomeHoldTimer
+    );
+
+    document.documentElement.classList.remove(
+      "hex-welcome-exit-active",
+      "hex-welcome-exit-complete"
+    );
+
+    document.documentElement.style.removeProperty(
+      "--hex-welcome-exit-progress"
+    );
+
+    startWelcomeAutoScroll();
+  }
+
+
+  function countWelcomeHoldStep(delta){
+    if(!welcomeHolding||delta<=0){
+      return;
+    }
+
+    welcomeHoldAmount+=Math.abs(delta);
+
+    window.clearTimeout(
+      welcomeHoldTimer
+    );
+
+    welcomeHoldTimer=window.setTimeout(
+      function(){
+        if(
+          !welcomeHolding||
+          welcomeHoldAmount<
+          WHEEL_THRESHOLD
+        ){
+          welcomeHoldAmount=0;
+          return;
+        }
+
+        welcomeHoldAmount=0;
+        welcomeHoldSteps+=1;
+
+        if(
+          welcomeHoldSteps>=
+          WELCOME_HOLD_STEPS
+        ){
+          releaseWelcomeHold();
+        }
+      },
+      WHEEL_IDLE_TIME
+    );
   }
 
 
@@ -6326,6 +6409,16 @@ hexReady(function(){
     }
 
     /*
+     * WELCOME完成後の3スクロールは画面を固定したまま数える。
+     * 3回目の操作終了後に固定解除と自動移動を開始する。
+     */
+    if(welcomeHolding){
+      event.preventDefault();
+      countWelcomeHoldStep(event.deltaY);
+      return;
+    }
+
+    /*
      * WELCOMEから創業への自動移動中は、
      * 追加のホイール入力で到達位置をずらさない。
      */
@@ -6472,6 +6565,10 @@ hexReady(function(){
     clearCardAnimations();
 
     window.clearTimeout(
+      welcomeHoldTimer
+    );
+
+    window.clearTimeout(
       stepTimer
     );
 
@@ -6526,6 +6623,9 @@ hexReady(function(){
     returning=false;
     welcomeAutoScrolling=false;
     welcomeAutoPaused=false;
+    welcomeHolding=false;
+    welcomeHoldSteps=0;
+    welcomeHoldAmount=0;
 
     stepLocked=false;
     minimumLockEnded=true;
@@ -6554,6 +6654,7 @@ hexReady(function(){
     if(
       foundedActive||
       returning||
+      welcomeHolding||
       welcomeAutoScrolling
     ){
       return 1;
@@ -6623,11 +6724,16 @@ hexReady(function(){
       }
 
       start(event.detail);
-      update();
+
+      if(welcomeHolding){
+        event.preventDefault();
+      }else{
+        update();
+      }
 
       /*
-       * WELCOME完成直後は通常スクロールを維持する。
-       * 自動移動は創業タイトルが画面下へ到達してから開始。
+       * WELCOME完成後は3スクロール分だけ固定を維持する。
+       * 3回目の操作終了後、固定解除と自動移動を開始する。
        */
     }
   );
@@ -6673,6 +6779,10 @@ hexReady(function(){
       }else if(active&&aboutFrame){
         var aboutRect=
           aboutFrame.getBoundingClientRect();
+
+        if(welcomeHolding){
+          setWelcomePosition();
+        }
 
         foundedStartY=
           window.scrollY+
