@@ -5538,28 +5538,28 @@ hexReady(function(){
   var RETURN_FADE_TIME=700;
 
   /* カードを順番に表示する間隔 */
-  var CARD_REVEAL_INTERVAL=520;
+  var CARD_REVEAL_INTERVAL=400;
 
   /* カード表示からカウント開始までの時間 */
   var CARD_COUNT_DELAY=180;
 
   /* 各カードのカウントアップ時間 */
-  var COUNT_DURATION=1500;
+  var COUNT_DURATION=1200;
 
   /* 1972表示から「年創業」表示まで */
-  var FOUNDED_TEXT_DELAY=900;
+  var FOUNDED_TEXT_DELAY=600;
 
   /* 「年創業」表示からカード開始まで */
-  var FOUNDED_CARDS_DELAY=750;
+  var FOUNDED_CARDS_DELAY=600;
 
   /* 最後のカード表示から説明文表示まで */
-  var FOUNDED_DESCRIPTION_DELAY=750;
+  var FOUNDED_DESCRIPTION_DELAY=600;
 
   /* 説明文表示から通常スクロールへ戻すまで */
   var FOUNDED_COMPLETE_DELAY=900;
 
   /* WELCOME完成から創業セクション到達までの自動スクロール時間 */
-  var WELCOME_TO_FOUNDED_DURATION=1200;
+  var WELCOME_TO_FOUNDED_DURATION=900;
 
   var active=false;
   var foundedActive=false;
