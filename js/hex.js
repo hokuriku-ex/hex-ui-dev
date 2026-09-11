@@ -5526,7 +5526,7 @@ hexReady(function(){
   var WHEEL_THRESHOLD=45;
 
   /* WELCOME固定中に受け付けるスクロール操作数 */
-  var WELCOME_HOLD_STEPS=3;
+  var WELCOME_HOLD_STEPS=2;
 
   /* 次の段階を受け付けるまでの最低待機時間 */
   var STEP_LOCK_TIME=900;
