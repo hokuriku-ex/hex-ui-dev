@@ -5365,26 +5365,36 @@ html body
     transform:none!important;
   }
 
-  /* 1972は紺色で表示し、1スクロール後にゴールドへ */
+  /* 1972は最初からゴールドで表示 */
   .hex-founded-stage-active
   .hex-founded-stage
   .hex-founded-year{
-    color:#1f2774!important;
-    transition:color .65s ease!important;
+    color:#c8a874!important;
   }
 
+  /* STEP 1では「年創業」を隠して数字だけ表示 */
+  .hex-founded-stage-active
+  .hex-founded-stage
+  .hex-founded-text{
+    opacity:0!important;
+    visibility:hidden!important;
+    transition:opacity .75s ease!important;
+  }
+
+  /* STEP 2：1スクロール後に「年創業」をフェード表示 */
   .hex-founded-stage[data-founded-step="2"]
-  .hex-founded-year,
+  .hex-founded-text,
 
   .hex-founded-stage[data-founded-step="3"]
-  .hex-founded-year,
+  .hex-founded-text,
 
   .hex-founded-stage[data-founded-step="4"]
-  .hex-founded-year,
+  .hex-founded-text,
 
   .hex-founded-stage.is-founded-released
-  .hex-founded-year{
-    color:#c8a874!important;
+  .hex-founded-text{
+    opacity:1!important;
+    visibility:visible!important;
   }
 
   /* STEP 3：カードの外枠だけ先に有効化 */
