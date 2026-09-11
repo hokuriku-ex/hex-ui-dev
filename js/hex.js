@@ -5703,27 +5703,15 @@ hexReady(function(){
       "hex-founded-stage"
     );
 
-    setWelcomePosition();
-
     aboutRect=
       aboutFrame.getBoundingClientRect();
 
-    startScrollY=window.scrollY;
-
-    scrollDistance=Math.max(
-      aboutRect.top-getHeaderHeight(),
-      1
-    );
-
     foundedStartY=
-      startScrollY+
-      scrollDistance;
+      window.scrollY+
+      aboutRect.top-
+      getHeaderHeight();
 
     active=true;
-
-    document.documentElement.classList.add(
-      "hex-welcome-exit-active"
-    );
   }
 
 
@@ -5978,6 +5966,10 @@ hexReady(function(){
     foundedActive=true;
     foundedReleased=false;
 
+    aboutFrame.classList.add(
+      "is-founded-active"
+    );
+
     wheelAmount=0;
     wheelIdle=true;
     minimumLockEnded=false;
@@ -6066,7 +6058,8 @@ hexReady(function(){
       function(){
         aboutFrame.classList.remove(
           "is-founded-returning",
-          "is-founded-released"
+          "is-founded-released",
+          "is-founded-active"
         );
 
         aboutFrame.dataset.foundedStep="0";
@@ -6297,7 +6290,8 @@ hexReady(function(){
     if(aboutFrame){
       aboutFrame.classList.remove(
         "is-founded-returning",
-        "is-founded-released"
+        "is-founded-released",
+        "is-founded-active"
       );
 
       aboutFrame.removeAttribute(
@@ -6337,74 +6331,47 @@ hexReady(function(){
 
 
   function update(){
-    var progress;
+    var aboutRect;
 
     if(!active){
       return 0;
     }
 
-    if(
-      !foundedActive&&
-      window.scrollY<startScrollY-1
-    ){
-      clearAll();
-      return -1;
+    if(foundedActive||returning){
+      return 1;
     }
 
-    progress=clamp(
-      (
-        window.scrollY-
-        startScrollY
-      )/scrollDistance,
-      0,
-      1
-    );
+    aboutRect=aboutFrame.getBoundingClientRect();
 
     /*
-     * 創業ステージへ入った後は、
-     * 座標の小数誤差でWELCOME完了状態が
-     * 解除されないようにする。
+     * WELCOMEは通常スクロールのまま流し、
+     * 創業セクション上端がヘッダー下へ到達した時だけ
+     * 創業の固定演出を開始する。
      */
-    if(
-      foundedActive&&
-      !returning
-    ){
-      progress=1;
-    }
-
-    document.documentElement.style.setProperty(
-      "--hex-welcome-exit-progress",
-      progress
-    );
-
-    document.documentElement.classList.toggle(
-      "hex-welcome-exit-complete",
-      progress>=1
-    );
-
-    if(progress>=1){
+    if(aboutRect.top<=getHeaderHeight()+1){
       activateFounded();
+      return 1;
     }
 
-    return progress;
+    return 0;
   }
 
 
   document.addEventListener(
     "hex:welcome-exit-ready",
     function(event){
-      var progress;
-
       if(window.innerWidth<=768){
         return;
       }
 
       start(event.detail);
-      progress=update();
+      update();
 
-      if(progress<1){
-        event.preventDefault();
-      }
+      /*
+       * preventDefaultしない。
+       * ヒーローJS側の丸画像固定を解除し、
+       * WELCOMEを通常スクロールへ戻す。
+       */
     }
   );
 
@@ -6430,6 +6397,13 @@ hexReady(function(){
 
 
   window.addEventListener(
+    "scroll",
+    update,
+    {passive:true}
+  );
+
+
+  window.addEventListener(
     "resize",
     function(){
       if(window.innerWidth<=768){
@@ -6439,6 +6413,14 @@ hexReady(function(){
 
       if(foundedActive){
         measureFoundedPositions();
+      }else if(active&&aboutFrame){
+        var aboutRect=
+          aboutFrame.getBoundingClientRect();
+
+        foundedStartY=
+          window.scrollY+
+          aboutRect.top-
+          getHeaderHeight();
       }
     }
   );
