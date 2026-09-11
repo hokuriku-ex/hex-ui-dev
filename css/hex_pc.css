@@ -5328,10 +5328,18 @@ html body
     transition:none!important;
   }
 
-  /* 配置・演出専用。パーツ装飾には触れない */
-  .hex-founded-stage-active .hex-founded-stage .hex-center-title,
-  .hex-founded-stage-active .hex-founded-stage .hex-center,
-  .hex-founded-stage-active .hex-founded-stage .hex-company-card{
+  /* 演出開始時は3グループを非表示 */
+  .hex-founded-stage-active
+  .hex-founded-stage
+  .hex-center-title,
+
+  .hex-founded-stage-active
+  .hex-founded-stage
+  .hex-center,
+
+  .hex-founded-stage-active
+  .hex-founded-stage
+  .hex-company-card{
     opacity:0!important;
     visibility:hidden!important;
     transition:
@@ -5340,47 +5348,109 @@ html body
     will-change:opacity,transform;
   }
 
-  /* STEP 1：見出し中央表示 */
-  .hex-founded-stage[data-founded-step="1"] .hex-center-title{
+  /* STEP 1：見出しを画面中央へ表示 */
+  .hex-founded-stage[data-founded-step="1"]
+  .hex-center-title{
     opacity:1!important;
     visibility:visible!important;
-    transform:translate3d(0,var(--hex-founded-title-center-y,0px),0)!important;
+    transform:translate3d(
+      0,
+      var(--hex-founded-title-center-y,0px),
+      0
+    )!important;
   }
-  /* STEP 2以降：見出しを完成位置へ */
-  .hex-founded-stage[data-founded-step="2"] .hex-center-title,
-  .hex-founded-stage[data-founded-step="3"] .hex-center-title,
-  .hex-founded-stage[data-founded-step="4"] .hex-center-title{
-    opacity:1!important;
-    visibility:visible!important;
-    transform:none!important;
-  }
-  /* STEP 3：説明中央表示 */
-  .hex-founded-stage[data-founded-step="3"] .hex-center{
-    opacity:1!important;
-    visibility:visible!important;
-    transform:translate3d(0,var(--hex-founded-description-center-y,0px),0)!important;
-  }
-  /* STEP 4：説明を見出し下へ。カードは暫定で表示 */
-  .hex-founded-stage[data-founded-step="4"] .hex-center,
-  .hex-founded-stage[data-founded-step="4"] .hex-company-card{
+
+  /* STEP 2：見出しを完成位置へ移動 */
+  .hex-founded-stage[data-founded-step="2"]
+  .hex-center-title,
+
+  .hex-founded-stage[data-founded-step="3"]
+  .hex-center-title{
     opacity:1!important;
     visibility:visible!important;
     transform:none!important;
   }
 
-  /* 逆方向は現在配置のまま全体フェード */
-  .hex-founded-stage.is-founded-returning .gc_auto_frame_spotitem_body{
+  /* STEP 2：カードの外枠だけ先に有効化 */
+  .hex-founded-stage[data-founded-step="2"]
+  .hex-company-card,
+
+  .hex-founded-stage[data-founded-step="3"]
+  .hex-company-card{
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+  }
+
+  /* 各カードはJSから個別に表示する */
+  .hex-founded-stage-active
+  .hex-company-card
+  .hex-card{
+    opacity:0!important;
+    visibility:hidden!important;
+    transform:translate3d(0,18px,0)!important;
+    transition:
+      opacity .65s ease,
+      transform .75s cubic-bezier(.22,.8,.3,1)!important;
+    will-change:opacity,transform;
+  }
+
+  .hex-founded-stage-active
+  .hex-company-card
+  .hex-card.is-card-visible{
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+  }
+
+  /* 数字は紺色で開始し、完了したカードからゴールドへ */
+  .hex-founded-stage-active
+  .hex-company-card
+  .hex-number{
+    color:#1f2774!important;
+    transition:color .5s ease!important;
+  }
+
+  .hex-founded-stage-active
+  .hex-company-card
+  .hex-card.is-count-complete
+  .hex-number{
+    color:#c8a874!important;
+  }
+
+  /* STEP 3：最後に説明文を完成位置へ表示 */
+  .hex-founded-stage[data-founded-step="3"]
+  .hex-center{
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+  }
+
+  /* 完成後は全パーツを通常表示 */
+  .hex-founded-stage.is-founded-released
+  .hex-center-title,
+
+  .hex-founded-stage.is-founded-released
+  .hex-center,
+
+  .hex-founded-stage.is-founded-released
+  .hex-company-card,
+
+  .hex-founded-stage.is-founded-released
+  .hex-company-card
+  .hex-card{
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+  }
+
+  /* 復路は従来どおり中身全体をまとめてフェードアウト */
+  .hex-founded-stage.is-founded-returning
+  .gc_auto_frame_spotitem_body{
     opacity:0!important;
     visibility:visible!important;
     transition:opacity .7s ease!important;
     pointer-events:none!important;
-  }
-  .hex-founded-stage.is-founded-released .hex-center-title,
-  .hex-founded-stage.is-founded-released .hex-center,
-  .hex-founded-stage.is-founded-released .hex-company-card{
-    opacity:1!important;
-    visibility:visible!important;
-    transform:none!important;
   }
 }
 
