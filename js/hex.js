@@ -5546,6 +5546,7 @@ hexReady(function(){
   var active=false;
   var foundedActive=false;
   var foundedReleased=false;
+  var foundedCompleted=false;
   var returning=false;
 
   var stepLocked=false;
@@ -5680,7 +5681,7 @@ hexReady(function(){
   function start(detail){
     var aboutRect;
 
-    if(active){
+    if(active||foundedCompleted){
       return;
     }
 
@@ -6012,6 +6013,7 @@ hexReady(function(){
 
   function releaseFounded(){
     foundedReleased=true;
+    foundedCompleted=true;
 
     aboutFrame.classList.add(
       "is-founded-released"
@@ -6138,6 +6140,14 @@ hexReady(function(){
       window.innerWidth<=768||
       returning
     ){
+      return;
+    }
+
+    /*
+     * 最後まで完了した後は、リロードされるまで
+     * 創業演出へ再介入せず通常スクロールに戻す。
+     */
+    if(foundedCompleted){
       return;
     }
 
@@ -6290,6 +6300,7 @@ hexReady(function(){
 
     if(aboutFrame){
       aboutFrame.classList.remove(
+        "hex-founded-stage",
         "is-founded-returning",
         "is-founded-released",
         "is-founded-active"
