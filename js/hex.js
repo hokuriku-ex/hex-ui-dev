@@ -5532,7 +5532,7 @@ hexReady(function(){
   var STEP_LOCK_TIME=900;
 
   /* ホイール入力終了と判定する無入力時間 */
-  var WHEEL_IDLE_TIME=220;
+  var WHEEL_IDLE_TIME=100;
 
   /* 上方向へ戻るときのフェードアウト時間 */
   var RETURN_FADE_TIME=700;
