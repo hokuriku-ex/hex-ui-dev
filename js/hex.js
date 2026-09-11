@@ -5533,6 +5533,15 @@ hexReady(function(){
   /* 上方向へ戻るときのフェードアウト時間 */
   var RETURN_FADE_TIME=700;
 
+  /* カードを順番に表示する間隔 */
+  var CARD_REVEAL_INTERVAL=520;
+
+  /* カード表示からカウント開始までの時間 */
+  var CARD_COUNT_DELAY=180;
+
+  /* 各カードのカウントアップ時間 */
+  var COUNT_DURATION=1500;
+
   var active=false;
   var foundedActive=false;
   var foundedReleased=false;
@@ -5550,6 +5559,9 @@ hexReady(function(){
   var stepTimer=null;
   var wheelIdleTimer=null;
   var returnTimer=null;
+  var cardTimers=[];
+  var countFrames=[];
+  var cardsPlaying=false;
 
   var welcomeWrap=null;
   var welcomePanel=null;
@@ -5770,6 +5782,190 @@ hexReady(function(){
   }
 
 
+  function clearCardAnimations(){
+    cardTimers.forEach(function(timer){
+      window.clearTimeout(timer);
+    });
+
+    countFrames.forEach(function(frame){
+      cancelAnimationFrame(frame);
+    });
+
+    cardTimers=[];
+    countFrames=[];
+    cardsPlaying=false;
+  }
+
+
+  function prepareFoundedCards(){
+    if(!aboutFrame){
+      return;
+    }
+
+    clearCardAnimations();
+
+    aboutFrame.querySelectorAll(
+      ".hex-company-card .hex-card"
+    ).forEach(function(card){
+      var number=card.querySelector(
+        ".hex-number"
+      );
+
+      card.classList.remove(
+        "is-card-visible",
+        "is-counting",
+        "is-count-complete"
+      );
+
+      if(!number){
+        return;
+      }
+
+      if(!number.dataset.hexCountTarget){
+        number.dataset.hexCountTarget=String(
+          parseInt(number.textContent,10)||0
+        );
+      }
+
+      number.textContent="0";
+    });
+  }
+
+
+  function startCountUp(card){
+    var number=card.querySelector(
+      ".hex-number"
+    );
+    var target;
+    var started;
+
+    if(!number){
+      return;
+    }
+
+    target=parseInt(
+      number.dataset.hexCountTarget,
+      10
+    )||0;
+
+    started=performance.now();
+    card.classList.add("is-counting");
+
+    function frame(now){
+      var progress=clamp(
+        (now-started)/COUNT_DURATION,
+        0,
+        1
+      );
+
+      number.textContent=String(
+        Math.round(
+          target*(1-Math.pow(1-progress,3))
+        )
+      );
+
+      if(progress<1&&cardsPlaying){
+        countFrames.push(
+          requestAnimationFrame(frame)
+        );
+        return;
+      }
+
+      if(progress>=1){
+        number.textContent=String(target);
+        card.classList.remove("is-counting");
+        card.classList.add("is-count-complete");
+      }
+    }
+
+    countFrames.push(
+      requestAnimationFrame(frame)
+    );
+  }
+
+
+  function playFoundedCards(){
+    var cards;
+    var finishDelay;
+
+    if(cardsPlaying||!aboutFrame){
+      return;
+    }
+
+    cards=Array.prototype.slice.call(
+      aboutFrame.querySelectorAll(
+        ".hex-company-card .hex-card"
+      )
+    );
+
+    cardsPlaying=true;
+    stepLocked=true;
+    minimumLockEnded=false;
+    wheelIdle=false;
+    wheelAmount=0;
+    aboutFrame.dataset.foundedStep="2";
+
+    cards.forEach(function(card,index){
+      var revealDelay=
+        index*CARD_REVEAL_INTERVAL;
+
+      cardTimers.push(
+        window.setTimeout(function(){
+          if(cardsPlaying){
+            card.classList.add(
+              "is-card-visible"
+            );
+          }
+        },revealDelay)
+      );
+
+      cardTimers.push(
+        window.setTimeout(function(){
+          if(cardsPlaying){
+            startCountUp(card);
+          }
+        },revealDelay+CARD_COUNT_DELAY)
+      );
+    });
+
+    finishDelay=
+      Math.max(cards.length-1,0)*
+      CARD_REVEAL_INTERVAL+
+      CARD_COUNT_DELAY+
+      COUNT_DURATION;
+
+    cardTimers.push(
+      window.setTimeout(function(){
+        cards.forEach(function(card){
+          var number=card.querySelector(
+            ".hex-number"
+          );
+
+          card.classList.add(
+            "is-card-visible",
+            "is-count-complete"
+          );
+          card.classList.remove("is-counting");
+
+          if(
+            number&&
+            number.dataset.hexCountTarget
+          ){
+            number.textContent=
+              number.dataset.hexCountTarget;
+          }
+        });
+
+        cardsPlaying=false;
+        stepLocked=false;
+        minimumLockEnded=true;
+        wheelIdle=true;
+        wheelAmount=0;
+      },finishDelay+80)
+    );
+  }
+
+
   function activateFounded(){
     if(
       foundedActive||
@@ -5793,6 +5989,8 @@ hexReady(function(){
     lockStep();
 
     aboutFrame.dataset.foundedStep="0";
+
+    prepareFoundedCards();
 
     document.documentElement.classList.add(
       "hex-founded-stage-active"
@@ -5845,6 +6043,8 @@ hexReady(function(){
     minimumLockEnded=false;
     wheelIdle=false;
     wheelAmount=0;
+
+    clearCardAnimations();
 
     window.clearTimeout(
       stepTimer
@@ -6049,10 +6249,10 @@ hexReady(function(){
       10
     );
 
-    if(step<4){
-      aboutFrame.dataset.foundedStep=
-        String(step+1);
-
+    if(step===1){
+      playFoundedCards();
+    }else if(step===2){
+      aboutFrame.dataset.foundedStep="3";
       lockStep();
     }else{
       releaseFounded();
@@ -6062,6 +6262,8 @@ hexReady(function(){
 
 
   function clearAll(){
+    clearCardAnimations();
+
     window.clearTimeout(
       stepTimer
     );
