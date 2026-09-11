@@ -6250,7 +6250,7 @@ hexReady(function(){
     );
 
     if(step===1){
-      /* 1972を紺色からゴールドへ切り替える */
+      /* 「年創業」をフェード表示する */
       aboutFrame.dataset.foundedStep="2";
       lockStep();
     }else if(step===2){
