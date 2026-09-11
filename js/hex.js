@@ -5571,6 +5571,7 @@ hexReady(function(){
   var welcomeHolding=false;
   var welcomeHoldSteps=0;
   var welcomeHoldAmount=0;
+  var welcomeHoldScrollY=0;
 
   var stepLocked=false;
   var minimumLockEnded=true;
@@ -5742,6 +5743,7 @@ hexReady(function(){
     welcomeHolding=true;
     welcomeHoldSteps=0;
     welcomeHoldAmount=0;
+    welcomeHoldScrollY=window.scrollY;
 
     setWelcomePosition();
 
@@ -5795,6 +5797,16 @@ hexReady(function(){
     document.documentElement.style.removeProperty(
       "--hex-welcome-exit-progress"
     );
+
+    /*
+     * 固定待機中の慣性やブラウザ補正を破棄し、
+     * WELCOME完成時の位置から自動移動を開始する。
+     */
+    window.scrollTo({
+      top:welcomeHoldScrollY,
+      left:window.scrollX,
+      behavior:"auto"
+    });
 
     startWelcomeAutoScroll();
   }
@@ -6414,6 +6426,20 @@ hexReady(function(){
      */
     if(welcomeHolding){
       event.preventDefault();
+
+      if(
+        Math.abs(
+          window.scrollY-
+          welcomeHoldScrollY
+        )>1
+      ){
+        window.scrollTo({
+          top:welcomeHoldScrollY,
+          left:window.scrollX,
+          behavior:"auto"
+        });
+      }
+
       countWelcomeHoldStep(event.deltaY);
       return;
     }
@@ -6626,6 +6652,7 @@ hexReady(function(){
     welcomeHolding=false;
     welcomeHoldSteps=0;
     welcomeHoldAmount=0;
+    welcomeHoldScrollY=0;
 
     stepLocked=false;
     minimumLockEnded=true;
@@ -6651,10 +6678,26 @@ hexReady(function(){
       return 0;
     }
 
+    if(welcomeHolding){
+      if(
+        Math.abs(
+          window.scrollY-
+          welcomeHoldScrollY
+        )>1
+      ){
+        window.scrollTo({
+          top:welcomeHoldScrollY,
+          left:window.scrollX,
+          behavior:"auto"
+        });
+      }
+
+      return 1;
+    }
+
     if(
       foundedActive||
       returning||
-      welcomeHolding||
       welcomeAutoScrolling
     ){
       return 1;
