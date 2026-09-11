@@ -5555,11 +5555,15 @@ hexReady(function(){
   /* 説明文表示から通常スクロールへ戻すまで */
   var FOUNDED_COMPLETE_DELAY=900;
 
+  /* WELCOME完成から創業セクション到達までの自動スクロール時間 */
+  var WELCOME_TO_FOUNDED_DURATION=2400;
+
   var active=false;
   var foundedActive=false;
   var foundedReleased=false;
   var foundedCompleted=false;
   var returning=false;
+  var welcomeAutoScrolling=false;
 
   var stepLocked=false;
   var minimumLockEnded=true;
@@ -5576,6 +5580,7 @@ hexReady(function(){
   var cardTimers=[];
   var countFrames=[];
   var cardsPlaying=false;
+  var welcomeAutoScrollFrame=null;
 
   var welcomeWrap=null;
   var welcomePanel=null;
@@ -5726,6 +5731,98 @@ hexReady(function(){
       getHeaderHeight();
 
     active=true;
+  }
+
+
+  function easeInOutCubic(value){
+    return value<.5
+      ?4*value*value*value
+      :1-Math.pow(-2*value+2,3)/2;
+  }
+
+
+  function stopWelcomeAutoScroll(){
+    if(welcomeAutoScrollFrame!==null){
+      cancelAnimationFrame(
+        welcomeAutoScrollFrame
+      );
+      welcomeAutoScrollFrame=null;
+    }
+
+    welcomeAutoScrolling=false;
+  }
+
+
+  function startWelcomeAutoScroll(){
+    var fromY;
+    var distance;
+    var started;
+
+    if(
+      !active||
+      foundedActive||
+      foundedCompleted||
+      returning||
+      welcomeAutoScrolling
+    ){
+      return;
+    }
+
+    fromY=window.scrollY;
+    distance=foundedStartY-fromY;
+
+    if(distance<=1){
+      window.scrollTo({
+        top:Math.ceil(foundedStartY),
+        left:window.scrollX,
+        behavior:"auto"
+      });
+      activateFounded();
+      return;
+    }
+
+    welcomeAutoScrolling=true;
+    started=performance.now();
+
+    function frame(now){
+      var progress=clamp(
+        (now-started)/WELCOME_TO_FOUNDED_DURATION,
+        0,
+        1
+      );
+
+      window.scrollTo({
+        top:fromY+distance*easeInOutCubic(progress),
+        left:window.scrollX,
+        behavior:"auto"
+      });
+
+      if(
+        progress<1&&
+        welcomeAutoScrolling&&
+        active&&
+        !returning
+      ){
+        welcomeAutoScrollFrame=
+          requestAnimationFrame(frame);
+        return;
+      }
+
+      welcomeAutoScrollFrame=null;
+      welcomeAutoScrolling=false;
+
+      if(active&&!returning){
+        window.scrollTo({
+          top:Math.ceil(foundedStartY),
+          left:window.scrollX,
+          behavior:"auto"
+        });
+        activateFounded();
+      }
+    }
+
+    welcomeAutoScrollFrame=
+      requestAnimationFrame(frame);
   }
 
 
@@ -6205,6 +6302,15 @@ hexReady(function(){
     }
 
     /*
+     * WELCOMEから創業への自動移動中は、
+     * 追加のホイール入力で到達位置をずらさない。
+     */
+    if(welcomeAutoScrolling){
+      event.preventDefault();
+      return;
+    }
+
+    /*
      * 最後まで完了した後は、リロードされるまで
      * 創業演出へ再介入せず通常スクロールに戻す。
      */
@@ -6332,6 +6438,7 @@ hexReady(function(){
 
 
   function clearAll(){
+    stopWelcomeAutoScroll();
     clearCardAnimations();
 
     window.clearTimeout(
@@ -6387,6 +6494,7 @@ hexReady(function(){
     foundedActive=false;
     foundedReleased=false;
     returning=false;
+    welcomeAutoScrolling=false;
 
     stepLocked=false;
     minimumLockEnded=true;
@@ -6405,23 +6513,53 @@ hexReady(function(){
 
   function update(){
     var aboutRect;
+    var foundedTitle;
+    var foundedTitleRect;
 
     if(!active){
       return 0;
     }
 
-    if(foundedActive||returning){
+    if(
+      foundedActive||
+      returning||
+      welcomeAutoScrolling
+    ){
       return 1;
     }
 
     aboutRect=aboutFrame.getBoundingClientRect();
 
     /*
-     * WELCOMEは通常スクロールのまま流し、
-     * 創業セクション上端がヘッダー下へ到達した時だけ
-     * 創業の固定演出を開始する。
+     * WELCOME完成後もしばらくは通常スクロール。
+     * 創業タイトルの上端が画面下端へ到達した瞬間から、
+     * 創業セクションの完成位置まで自動で移動する。
      */
-    if(aboutRect.top<=getHeaderHeight()+1){
+    foundedTitle=aboutFrame.querySelector(
+      ".hex-center-title"
+    );
+
+    if(foundedTitle){
+      foundedTitleRect=
+        foundedTitle.getBoundingClientRect();
+    }
+
+    if(
+      foundedTitleRect&&
+      foundedTitleRect.top<=window.innerHeight
+    ){
+      startWelcomeAutoScroll();
+      return 1;
+    }
+
+    /*
+     * タイトルを取得できない場合だけ、
+     * 従来の到達位置で演出を開始する。
+     */
+    if(
+      !foundedTitle&&
+      aboutRect.top<=getHeaderHeight()+1
+    ){
       activateFounded();
       return 1;
     }
@@ -6441,9 +6579,8 @@ hexReady(function(){
       update();
 
       /*
-       * preventDefaultしない。
-       * ヒーローJS側の丸画像固定を解除し、
-       * WELCOMEを通常スクロールへ戻す。
+       * WELCOME完成直後は通常スクロールを維持する。
+       * 自動移動は創業タイトルが画面下へ到達してから開始。
        */
     }
   );
