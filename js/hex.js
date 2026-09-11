@@ -6016,13 +6016,13 @@ hexReady(function(){
 
       /*
        * WELCOMEから創業へ自動移行している途中でも、
-       * 上方向の操作を受け取って現在位置から逆再生する。
+       * 上方向の操作を1回でも受け取った時点で
+       * 現在位置から即座に逆再生する。
+       * 自動フェード時間内に累積しきれない問題を避けるため、
+       * ここではRETURN_WHEEL_THRESHOLDを使用しない。
        */
       if(delta<0){
-        returnWheelAmount+=Math.abs(delta);
-        if(returnWheelAmount>=RETURN_WHEEL_THRESHOLD){
-          beginWelcomeRestore();
-        }
+        beginWelcomeRestore();
       }else{
         returnWheelAmount=0;
       }
