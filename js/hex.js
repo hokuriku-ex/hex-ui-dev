@@ -6850,39 +6850,45 @@ hexReady(function(){
    下層ページタイトル共通
 ======================================= */
 hexReady(function(){
-  var enTitle=document.querySelector('.page-title-en');
-  var heroTitle=document.querySelector('.gc_auto_frame_page_title h1');
-  if(!enTitle||!heroTitle)return;
-  heroTitle.appendChild(enTitle);
-});
 
-/* =======================================
-   下層ページタイトル　文言差し替え
-======================================= */
-hexReady(function(){
-  document.querySelectorAll(
+  var title=document.querySelector(
     '.gc_auto_frame_page_title .title_font_big_headline'
-  ).forEach(function(title){
-    var text=title.textContent.trim();
-    var label='';
+  );
 
-    if(text==='個人のお客様'){
-      /* label='個人のお客様'; */
-      title.textContent='外構工事をご検討中の方';
-    }
+  var enTitle=document.querySelector('.page-title-en');
 
-    if(text==='ビジネスのお客様'){
-      /* label='ビジネスのお客様'; */
-      title.textContent='外構パートナーをお探しの方';
-    }
+  if(!title||!enTitle)return;
 
-    if(label){
-      var target=document.createElement('span');
-      target.className='hex-page-target';
-      target.textContent=label;
-      title.parentNode.insertBefore(target,title);
-    }
-  });
+  /* 日本語タイトルを取得 */
+  var jaText=title.textContent.trim();
+
+  /* 一部ページの日本語タイトルを変更 */
+  if(jaText==='個人のお客様'){
+    jaText='外構工事をご検討中の方';
+  }
+
+  if(jaText==='ビジネスのお客様'){
+    jaText='外構パートナーをお探しの方';
+  }
+
+  /* 英語タイトルを取得 */
+  var enText=enTitle.textContent.trim();
+
+  if(!enText)return;
+
+  /* 元の英語タイトル要素を削除 */
+  enTitle.remove();
+
+  /* メインタイトルを英語に変更 */
+  title.textContent=enText;
+
+  /* 日本語サブタイトルを追加 */
+  var jaTitle=document.createElement('span');
+  jaTitle.className='page-title-ja';
+  jaTitle.textContent=jaText;
+
+  title.appendChild(jaTitle);
+
 });
 
 /* =======================================
