@@ -1176,7 +1176,7 @@ div.NNAttached{
   width:100vw;
   margin:22px calc(50% - 50vw) 36px;
   overflow:visible;
-  color:#fff;
+  color:#1f2774;
   text-align:center;
   background:transparent!important;
   box-shadow:none;
@@ -1237,7 +1237,7 @@ div.NNAttached{
   min-width:0!important;
   min-height:0!important;
   margin:0!important;
-  color:#fff!important;
+  color:#1f2774!important;
   font-size:16px!important;
   font-weight:500!important;
   letter-spacing:normal!important;
@@ -1287,16 +1287,16 @@ div.NNAttached{
   gap:8px;
   min-width:150px!important;
   padding:14px 28px!important;
-  color:#fff!important;
+  color:#1f2774!important;
   line-height:1.4!important;
   /* 各項目の左側の縦線 */
   border:none!important;
-  border-left:1px solid rgba(255,255,255,.55)!important;
+  border-left:1px solid #1f2774!important;
 }
 /* 最後の右側にも縦線 */
 .hex-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-link:last-child{
-  border-right:1px solid rgba(255,255,255,.55)!important;
+  border-right:1px solid #1f2774!important;
 }
 /* SECTION.01から自動採番 */
 .hex-anchor-nav:not(.is-fixed)
@@ -1304,7 +1304,7 @@ div.NNAttached{
   content:"SECTION." counter(hex-anchor-number, decimal-leading-zero);
   position:static;
   display:block;
-  color:rgba(255,255,255,.78);
+  color:#1f2774;
   font-size:10px;
   font-weight:700;
   line-height:1;
@@ -1318,7 +1318,7 @@ div.NNAttached{
   content:"\f107";
   position:static;
   display:block;
-  color:#fff;
+  color:#1f2774;
   font-family:"Font Awesome 6 Free";
   font-size:12px;
   font-weight:900;
@@ -1334,7 +1334,7 @@ a.hex-anchor-nav-link,
 .linktext_color_basecolor2
 .hex-anchor-nav:not(.is-fixed)
 a.hex-anchor-nav-link{
-  color:#fff!important;
+  color:#1f2774!important;
 }
 
 /* cccホバー・アクティブ */
