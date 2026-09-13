@@ -5903,7 +5903,7 @@ html body
 .pagetitle_type.pagetitle_type4{
   position: relative;
   overflow: hidden;
-  background: #1f2774;
+  background: #fff;
 }
 
 /* 元の背景を非表示 */
@@ -5917,29 +5917,7 @@ html body
   position:absolute;
   inset:0;
   z-index:0;
-  background:
-    /* 中央：紺を広め */
-    radial-gradient(circle at 50% 45%,rgba(31,39,116,.35),transparent 42%),
-
-    /* ブルー */
-    radial-gradient(circle at 27% 75%,rgba(42,91,172,.30),transparent 34%),
-    radial-gradient(circle at 73% 20%,rgba(42,91,172,.30),transparent 34%),
-
-    /* グリーン */
-    radial-gradient(circle at 10% 20%,rgba(169,170,149,.38),transparent 27%),
-    radial-gradient(circle at 90% 78%,rgba(169,170,149,.38),transparent 27%),
-
-    /* ゴールド：両端だけ狭め */
-    radial-gradient(circle at 0% 80%,rgba(200,168,116,.32),transparent 18%),
-    radial-gradient(circle at 100% 20%,rgba(200,168,116,.32),transparent 18%),
-
-    linear-gradient(
-      135deg,
-      #f7f6f2 0%,
-      #f3f1eb 38%,
-      #eef0e8 68%,
-      #f6f5f1 100%
-    );
+  background:#fff;
 }
 .gc_auto_frame_page_title .pagetitle_type4 .bg_text{
   padding:36px 0 22px!important;
@@ -5962,14 +5940,14 @@ html body
 
 /* 日本語タイトル共通 */
 .gc_auto_frame_page_title .title_font_big_headline{
-  color:#fff!important;
+  color:#1f2774!important;
   font-weight:900!important;
 }
 
 /* 英語タイトル共通 */
 .pagetitle_type.pagetitle_type4 .bg_text h1::after{
   display: block;
-  color: #fff;
+  color: #1f2774;
   font-size: 16px;
   line-height: 1.4;
   letter-spacing: 0.22em;
@@ -5983,7 +5961,7 @@ html body
 .gc_auto_frame_page_title .hex-page-target{
   display:block;
   margin-bottom:6px;
-  color:#fff;
+  color:#1f2774;
   font-size:14px;
   line-height:1.4;
   letter-spacing:.08em;
