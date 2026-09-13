@@ -1291,12 +1291,12 @@ div.NNAttached{
   line-height:1.4!important;
   /* 各項目の左側の縦線 */
   border:none!important;
-  border-left:1px solid #1f2774!important;
+  border-left:1px solid #203459!important;
 }
 /* 最後の右側にも縦線 */
 .hex-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-link:last-child{
-  border-right:1px solid #1f2774!important;
+  border-right:1px solid #203459!important;
 }
 /* SECTION.01から自動採番 */
 .hex-anchor-nav:not(.is-fixed)
