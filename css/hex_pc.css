@@ -5917,7 +5917,7 @@ html body
   position:absolute;
   inset:0;
   z-index:0;
-  background:#fff;
+  background:#fafafa!important;
 }
 .gc_auto_frame_page_title .pagetitle_type4 .bg_text{
   padding:36px 0 22px!important;
