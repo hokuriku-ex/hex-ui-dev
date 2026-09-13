@@ -5911,7 +5911,7 @@ html body
   display: none !important;
 }
 
-/* 下層ページ：トップ画像の色を抽出した淡色グラデーション */
+/* 下層ページ：背景薄グレー */
 .pagetitle_type.pagetitle_type4::before{
   content:"";
   position:absolute;
