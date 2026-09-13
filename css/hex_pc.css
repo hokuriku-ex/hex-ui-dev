@@ -5938,23 +5938,26 @@ html body
   display: none !important;
 }
 
-/* 日本語タイトル共通 */
+/* 英語メインタイトル */
 .gc_auto_frame_page_title .title_font_big_headline{
   color:#1f2774!important;
-  font-weight:900!important;
+  font-family:var(--hex-font-italic)!important;
+  font-weight:400!important;
+  font-style:italic;
 }
 
-/* 英語タイトル共通 */
-.pagetitle_type.pagetitle_type4 .bg_text h1::after{
-  display: block;
-  color: #1f2774;
-  font-size: 16px;
-  line-height: 1.4;
-  letter-spacing: 0.22em;
-  font-family:var(--hex-font-italic);
-  font-weight:400;
-  font-style:italic;
-  opacity: .6;
+/* 日本語サブタイトル */
+.gc_auto_frame_page_title .page-title-ja{
+  display:block;
+  margin-top:4px;
+  color:#1f2774;
+  font-family:var(--hex-font-pop-ja)!important;
+  font-size:16px;
+  line-height:1.4;
+  letter-spacing:.12em;
+  font-weight:500;
+  font-style:normal;
+  opacity:.6;
 }
 
 /* 日本語タイトル上の小見出し */
