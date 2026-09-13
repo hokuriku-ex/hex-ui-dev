@@ -1304,7 +1304,7 @@ div.NNAttached{
   content:"SECTION." counter(hex-anchor-number, decimal-leading-zero);
   position:static;
   display:block;
-  color:#1f2774;
+  color:#c8a874;
   font-size:10px;
   font-weight:700;
   line-height:1;
@@ -6004,7 +6004,7 @@ html body
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box!important;
   text-align:left;
-  color:#1f2774;
+  color:#203459;
   font-size:16px;
   font-weight:500;
   line-height:1.9;
