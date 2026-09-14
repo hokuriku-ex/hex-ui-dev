@@ -10463,9 +10463,15 @@ hexLoad(function(){
   var root=document.documentElement;
   var refreshTimer=null;
   var classObserver=null;
-  var contentObserver=null;
-  var motionScanTimer=null;
+  var preparationCover=null;
+  var preparationStyle=null;
+  var preparationSafetyTimer=null;
   var lastSpecialState=false;
+
+  /* DOM変更がこの時間止まったらHTML完成とみなす */
+  var DOM_SETTLE_DELAY=500;
+  /* 動的処理が続いても白画面を長時間残さない上限 */
+  var DOM_SETTLE_MAX=3000;
 
   function isEmbeddedStaffPage(){
     var embedded=false;
@@ -10485,6 +10491,125 @@ hexLoad(function(){
       '[id^="gc_auto_frame_staff_"],'+
       '.hex-staff-wrap'
     );
+  }
+
+  function startMotionPreparation(){
+    if(preparationCover||isEmbeddedStaffPage()){
+      return;
+    }
+
+    root.classList.add('hex-motion-preparing');
+
+    if(!document.getElementById('hex-motion-preparation-style')){
+      preparationStyle=document.createElement('style');
+      preparationStyle.id='hex-motion-preparation-style';
+      preparationStyle.textContent=
+        '#hex-motion-preparation-cover{'+
+          'position:fixed;'+
+          'z-index:2147482000;'+
+          'top:var(--header_height,80px);'+
+          'right:0;bottom:0;left:0;'+
+          'background:#fff;'+
+          'opacity:1;'+
+          'pointer-events:auto;'+
+          'transition:opacity .24s ease;'+
+        '}'+
+        '#hex-motion-preparation-cover.is-ready{'+
+          'opacity:0;pointer-events:none;'+
+        '}'+
+        '@media screen and (max-width:768px){'+
+          '#hex-motion-preparation-cover{'+
+            'top:var(--header_height_smartphone,80px);'+
+          '}'+
+        '}';
+      document.head.appendChild(preparationStyle);
+    }
+
+    preparationCover=document.createElement('div');
+    preparationCover.id='hex-motion-preparation-cover';
+    preparationCover.setAttribute('aria-hidden','true');
+    document.body.appendChild(preparationCover);
+
+    /* CDN障害などが起きても白画面を残し続けない */
+    preparationSafetyTimer=window.setTimeout(
+      finishMotionPreparation,
+      8000
+    );
+  }
+
+  function finishMotionPreparation(){
+    window.clearTimeout(preparationSafetyTimer);
+    preparationSafetyTimer=null;
+    root.classList.remove('hex-motion-preparing');
+
+    if(!preparationCover){
+      return;
+    }
+
+    preparationCover.classList.add('is-ready');
+
+    window.setTimeout(function(){
+      if(preparationCover&&preparationCover.parentNode){
+        preparationCover.parentNode.removeChild(preparationCover);
+      }
+      preparationCover=null;
+    },280);
+  }
+
+  function waitForDomCompletion(callback){
+    var observer;
+    var quietTimer=null;
+    var maxTimer=null;
+    var completed=false;
+
+    function complete(){
+      if(completed){
+        return;
+      }
+
+      completed=true;
+      window.clearTimeout(quietTimer);
+      window.clearTimeout(maxTimer);
+
+      if(observer){
+        observer.disconnect();
+      }
+
+      callback();
+    }
+
+    function restartQuietTimer(){
+      window.clearTimeout(quietTimer);
+      quietTimer=window.setTimeout(
+        complete,
+        DOM_SETTLE_DELAY
+      );
+    }
+
+    if(!window.MutationObserver||!document.body){
+      window.setTimeout(complete,0);
+      return;
+    }
+
+    /* 初期構築中だけ監視し、収集開始前に必ず解除する */
+    observer=new MutationObserver(function(records){
+      var structureChanged=records.some(function(record){
+        return record.addedNodes.length||
+          record.removedNodes.length;
+      });
+
+      if(structureChanged){
+        restartQuietTimer();
+      }
+    });
+
+    observer.observe(document.body,{
+      childList:true,
+      subtree:true
+    });
+
+    restartQuietTimer();
+    maxTimer=window.setTimeout(complete,DOM_SETTLE_MAX);
   }
 
   function loadLibrary(url,isReady,callback){
@@ -10517,6 +10642,7 @@ hexLoad(function(){
 
   function handleLoadError(){
     root.classList.add('hex-motion-load-error');
+    finishMotionPreparation();
   }
 
   function isReducedMotion(){
@@ -10652,6 +10778,7 @@ hexLoad(function(){
       !LenisConstructor||
       window.hexMotion
     ){
+      finishMotionPreparation();
       return;
     }
 
@@ -11241,18 +11368,6 @@ hexLoad(function(){
       scheduleRefresh(0);
     }
 
-    function scheduleMotionTargetScan(delay){
-      window.clearTimeout(motionScanTimer);
-
-      motionScanTimer=window.setTimeout(function(){
-        /*
-         * data-hex-motion-initialized済みの要素は除外されるため、
-         * 後から追加・移動された未登録要素だけが新規対象になる。
-         */
-        setupMotionTargets(document);
-      },typeof delay==='number'?delay:90);
-    }
-
     window.hexMotion={
       lenis:lenis,
       gsap:gsap,
@@ -11291,34 +11406,13 @@ hexLoad(function(){
       attributeFilter:['class']
     });
 
-    /*
-     * setTimeout・Ajax・DOM移動など、初期収集後の構造変更に追従する。
-     * GSAPのstyle変更は監視せず、子要素の追加・移動だけを検知する。
-     */
-    contentObserver=new MutationObserver(function(records){
-      var hasAddedElement=records.some(function(record){
-        return Array.prototype.some.call(
-          record.addedNodes,
-          function(node){
-            return node.nodeType===1;
-          }
-        );
-      });
-
-      if(hasAddedElement){
-        scheduleMotionTargetScan(90);
-      }
-    });
-
-    if(document.body){
-      contentObserver.observe(document.body,{
-        childList:true,
-        subtree:true
-      });
-    }
-
     syncScrollState();
     setupMotionTargets(document);
+
+    /* 初回の対象登録と位置計算が終わってから白カバーを外す */
+    window.requestAnimationFrame(function(){
+      window.requestAnimationFrame(finishMotionPreparation);
+    });
 
     if(document.fonts&&document.fonts.ready){
       document.fonts.ready.then(function(){
@@ -11348,6 +11442,7 @@ hexLoad(function(){
      */
     if(isEmbeddedStaffPage()){
       root.classList.add('hex-motion-disabled-staff-iframe');
+      finishMotionPreparation();
       return;
     }
 
@@ -11368,7 +11463,9 @@ hexLoad(function(){
               function(){
                 return !!window.Lenis;
               },
-              initializeMotion
+              function(){
+                waitForDomCompletion(initializeMotion);
+              }
             );
           }
         );
@@ -11376,5 +11473,10 @@ hexLoad(function(){
     );
   }
 
+  if(document.body){
+    startMotionPreparation();
+  }else{
+    hexReady(startMotionPreparation);
+  }
   hexLoad(loadMotionLibraries);
 })();
