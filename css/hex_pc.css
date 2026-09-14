@@ -3149,7 +3149,7 @@ div[hex-sp]{
 /* 見出し */
 .hex-calendar-modal
 .hex-calendar-section
-.hex-center-title-dark{
+.hex-top-title-dark{
   margin:0 0 16px!important;
   color:#1f2774!important;
   text-align:center;
@@ -3158,7 +3158,7 @@ div[hex-sp]{
 /* 英字見出し */
 .hex-calendar-modal
 .hex-calendar-section
-.hex-center-title-dark[data-en]::after{
+.hex-top-title-dark[data-en]::after{
   color:#c8a874!important;
 }
 
