@@ -10562,9 +10562,8 @@ hexLoad(function(){
     var ScrollTrigger=window.ScrollTrigger;
     var LenisConstructor=window.Lenis;
     var lenis;
-    var autoRevealSelector=
-      '.gc_auto_frame_spotitem_box'+
-      ':not([data-hex-motion-initialized])';
+    var autoRevealRootSelector=
+      '.gc_auto_frame_spotitem_box';
     var manualMotionSelector=
       '.hex-motion-up,'+
       '.hex-motion-left,'+
@@ -10574,6 +10573,27 @@ hexLoad(function(){
       '.hex-motion-stagger,'+
       '.hex-motion-image,'+
       '.hex-motion-parallax';
+    var autoAtomicSelector=[
+      '[data-motion-item]',
+      '.hex-card',
+      '.hex-banner',
+      '.hex-image-grid-item',
+      '.hex-company-pair-item',
+      '.hex-staff-card',
+      '.qanda_content',
+      '.kb_qanda_content',
+      '.hex-form-row',
+      '.hex-gallery',
+      '.swiper',
+      '.swiper-container'
+    ].join(',');
+    var autoSemanticSelector=[
+      'h1','h2','h3','h4','h5','h6',
+      'p','blockquote','figure','picture','img',
+      'li','dt','dd','table','video',
+      '.hex-button-wrap',
+      '.hex-link'
+    ].join(',');
     var autoRevealExcludeSelector=[
       '#gc_auto_frame_home_0',
       '#gc_auto_frame_home_1',
@@ -10746,51 +10766,175 @@ hexLoad(function(){
      * サイト全体の標準モーション。
      * 個別指定より弱い、移動を伴わないフェードだけを適用する。
      */
-    function setupAutoRevealTarget(target){
+    function setupAutoRevealTargets(targets){
       var mobile=window.innerWidth<=768;
 
-      target.dataset.hexMotionInitialized='1';
-      target.dataset.hexAutoMotion='1';
+      if(!targets.length){
+        return;
+      }
 
-      gsap.fromTo(
-        target,
-        {
-          autoAlpha:0
-        },
-        {
-          autoAlpha:1,
-          duration:mobile?1.05:1.2,
-          ease:'power1.out',
-          overwrite:'auto',
-          onComplete:function(){
-            clearMotionProperties(target);
-          },
-          scrollTrigger:{
-            trigger:target,
-            start:mobile?'top 96%':'top 95%',
-            once:true
-          }
+      targets.forEach(function(target){
+        target.dataset.hexMotionInitialized='1';
+        target.dataset.hexAutoMotion='1';
+      });
+
+      gsap.set(targets,{autoAlpha:0});
+
+      /* 同時に画面へ入った要素だけをDOM順に短くずらす */
+      ScrollTrigger.batch(targets,{
+        start:mobile?'top 96%':'top 95%',
+        once:true,
+        interval:.1,
+        batchMax:mobile?5:8,
+        onEnter:function(batch){
+          gsap.to(batch,{
+            autoAlpha:1,
+            duration:mobile?1.05:1.2,
+            stagger:mobile?.07:.09,
+            ease:'power1.out',
+            overwrite:'auto',
+            onComplete:function(){
+              clearMotionProperties(batch);
+            }
+          });
         }
-      );
+      });
     }
 
-    function canUseAutoReveal(target){
+    function canUseAutoRevealRoot(target){
       if(
         !target||
         target.hidden||
         target.getAttribute('aria-hidden')==='true'||
-        target.matches(manualMotionSelector)||
         target.closest(autoRevealExcludeSelector)
       ){
         return false;
       }
 
-      /* iframeを含むブロックは高さ更新や操作を妨げない */
-      if(target.querySelector('iframe')){
+      return true;
+    }
+
+    function canUseAutoRevealItem(target){
+      var computedStyle;
+
+      if(
+        !target||
+        target.hidden||
+        target.closest('[hidden]')||
+        target.getAttribute('aria-hidden')==='true'||
+        target.closest(manualMotionSelector)||
+        target.closest(autoRevealExcludeSelector)||
+        target.matches('iframe')||
+        target.querySelector('iframe')||
+        target.dataset.hexMotionInitialized
+      ){
+        return false;
+      }
+
+      computedStyle=window.getComputedStyle(target);
+      if(
+        computedStyle.display==='none'||
+        computedStyle.visibility==='hidden'
+      ){
         return false;
       }
 
       return true;
+    }
+
+    function pushUniqueTarget(targets,target){
+      if(targets.indexOf(target)===-1){
+        targets.push(target);
+      }
+    }
+
+    function collectAutoRevealTargets(scope){
+      var area=scope&&scope.querySelectorAll
+        ?scope
+        :document;
+      var roots=Array.prototype.slice.call(
+        area.querySelectorAll(autoRevealRootSelector)
+      );
+      var targets=[];
+
+      if(area!==document&&area.closest){
+        var closestRoot=area.closest(autoRevealRootSelector);
+
+        if(closestRoot&&roots.indexOf(closestRoot)===-1){
+          roots.unshift(closestRoot);
+        }
+      }
+
+      roots.filter(canUseAutoRevealRoot).forEach(function(contentRoot){
+        var rootTargets=[];
+        var atomics=Array.prototype.slice.call(
+          contentRoot.querySelectorAll(autoAtomicSelector)
+        ).filter(function(target){
+          if(!canUseAutoRevealItem(target)){
+            return false;
+          }
+
+          /* カードなどが入れ子の場合は一番外側だけを採用 */
+          var atomicParent=target.parentElement&&
+            target.parentElement.closest(autoAtomicSelector);
+
+          return !atomicParent||
+            !contentRoot.contains(atomicParent);
+        });
+
+        atomics.forEach(function(target){
+          pushUniqueTarget(rootTargets,target);
+        });
+
+        Array.prototype.slice.call(
+          contentRoot.querySelectorAll(autoSemanticSelector)
+        ).forEach(function(target){
+          var atomicParent;
+          var semanticParent;
+
+          if(!canUseAutoRevealItem(target)){
+            return;
+          }
+
+          /* カード・ギャラリー等の中身は外枠と二重にしない */
+          atomicParent=target.closest(autoAtomicSelector);
+          if(atomicParent&&atomicParent!==target){
+            return;
+          }
+
+          /* figure > picture > img、li > p等は親を1単位にする */
+          semanticParent=target.parentElement&&
+            target.parentElement.closest(autoSemanticSelector);
+          if(
+            semanticParent&&
+            contentRoot.contains(semanticParent)
+          ){
+            return;
+          }
+
+          pushUniqueTarget(rootTargets,target);
+        });
+
+        /* atomic・通常要素をHTML上の表示順へ並べ直す */
+        rootTargets.sort(function(a,b){
+          if(a===b){
+            return 0;
+          }
+
+          return a.compareDocumentPosition(b)&4?-1:1;
+        });
+
+        /* 特殊な独自HTMLで判定できない場合だけ従来の外枠を使う */
+        if(!rootTargets.length&&canUseAutoRevealItem(contentRoot)){
+          rootTargets.push(contentRoot);
+        }
+
+        rootTargets.forEach(function(target){
+          pushUniqueTarget(targets,target);
+        });
+      });
+
+      return targets;
     }
 
     function setupStaggerTarget(group){
@@ -10940,9 +11084,7 @@ hexLoad(function(){
           ':not([data-hex-motion-initialized])'
         )
       );
-      var autoReveals=Array.prototype.slice.call(
-        area.querySelectorAll(autoRevealSelector)
-      ).filter(canUseAutoReveal);
+      var autoReveals=collectAutoRevealTargets(area);
 
       /* 指定されたscope自身がモーション要素の場合も対象に含める */
       if(area!==document&&area.matches){
@@ -10977,12 +11119,6 @@ hexLoad(function(){
           parallax.unshift(area);
         }
 
-        if(
-          area.matches(autoRevealSelector)&&
-          canUseAutoReveal(area)
-        ){
-          autoReveals.unshift(area);
-        }
       }
 
       if(isReducedMotion()){
@@ -10998,7 +11134,7 @@ hexLoad(function(){
         return;
       }
 
-      autoReveals.forEach(setupAutoRevealTarget);
+      setupAutoRevealTargets(autoReveals);
       reveals.forEach(setupRevealTarget);
       staggers.forEach(setupStaggerTarget);
       images.forEach(setupImageTarget);
