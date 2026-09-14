@@ -6963,13 +6963,36 @@ hexReady(function(){
    導入文・アンカーナビをページタイトル内へ移動
 ======================================= */
 hexLoad(function(){
-  var hexIntro=document.querySelector('.hex-intro');
-  var hexAnchorSource=document.querySelector('.hex-anchor-source');
+
+  var hexIntro=document.querySelector(
+    '.hex-intro'
+  );
+
+  var hexAnchorSource=document.querySelector(
+    '.hex-anchor-source'
+  );
+
   var pageTitleContents=document.querySelector(
     '.pagetitle_type.pagetitle_type4 > .contents'
   );
 
+  var introOriginalFrame=null;
+  var anchorOriginalFrame=null;
+
   if(!pageTitleContents)return;
+
+  /* 移動前にCMS側の元枠を取得 */
+  if(hexIntro){
+    introOriginalFrame=hexIntro.closest(
+      '.post_index_contents > .content'
+    );
+  }
+
+  if(hexAnchorSource){
+    anchorOriginalFrame=hexAnchorSource.closest(
+      '.post_index_contents > .content'
+    );
+  }
 
   /* 導入文を移動 */
   if(hexIntro){
@@ -6980,6 +7003,20 @@ hexLoad(function(){
   if(hexAnchorSource){
     pageTitleContents.appendChild(hexAnchorSource);
   }
+
+  /* 空になった導入文の元枠を削除 */
+  if(introOriginalFrame){
+    introOriginalFrame.remove();
+  }
+
+  /* 空になったアンカーナビの元枠を削除 */
+  if(
+    anchorOriginalFrame&&
+    anchorOriginalFrame!==introOriginalFrame
+  ){
+    anchorOriginalFrame.remove();
+  }
+
 });
 
 /* =======================================
