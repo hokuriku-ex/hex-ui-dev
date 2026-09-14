@@ -5938,38 +5938,34 @@ html body
   display: none !important;
 }
 
-/* 英語メインタイトル */
+/* タイトル全体
+   ::afterの英語を上、日本語を下に並かえる */
 .gc_auto_frame_page_title .title_font_big_headline{
+  display:flex!important;
+  flex-direction:column-reverse;
+
+  /* h1本体は日本語サブタイトル */
   color:#1f2774!important;
-  font-family:var(--hex-font-italic)!important;
-  font-weight:400!important;
-  font-style:italic;
-}
-
-/* 日本語サブタイトル */
-.gc_auto_frame_page_title .page-title-ja{
-  display:block;
-  margin-top:4px;
-  color:#1f2774;
   font-family:var(--hex-font-pop-ja)!important;
-  font-size:16px;
-  line-height:1.4;
-  letter-spacing:.12em;
-  font-weight:500;
+  font-size:16px!important;
+  line-height:1.4!important;
+  letter-spacing:.12em!important;
+  font-weight:500!important;
   font-style:normal;
-  opacity:.6;
 }
 
-/* 日本語タイトル上の小見出し */
-.gc_auto_frame_page_title .hex-page-target{
+/* ::afterは英語メインタイトル */
+.pagetitle_type.pagetitle_type4 .bg_text h1::after{
   display:block;
-  margin-bottom:6px;
+  margin-bottom:4px;
   color:#1f2774;
-  font-size:14px;
-  line-height:1.4;
-  letter-spacing:.08em;
-  font-weight:500;
-  opacity:.8;
+  font-family:var(--hex-font-italic)!important;
+  font-size:clamp(32px,3.5vw,56px);
+  line-height:1.2;
+  letter-spacing:.04em;
+  font-weight:400;
+  font-style:italic;
+  opacity:1;
 }
 
 /* ページ別 英語タイトル */
