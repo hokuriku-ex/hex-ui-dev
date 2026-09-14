@@ -10599,8 +10599,9 @@ hexLoad(function(){
       '.hex-form-row',
       '.hex-gallery',
       '.footer-area',
-      '.footer_logo',
-      '.footer_text',
+      '.footer_logo > picture',
+      '.footer_text > .footer-company-name',
+      '.footer_text > div:not(.footer-company-name)',
       '.footer_copyright',
       '.hex-footer-sns',
       '.swiper',
@@ -10811,7 +10812,7 @@ hexLoad(function(){
         start:mobile?'top 96%':'top 95%',
         once:true,
         interval:.1,
-        batchMax:mobile?5:8,
+        batchMax:12,
         onEnter:function(batch){
           gsap.to(batch,{
             autoAlpha:1,
