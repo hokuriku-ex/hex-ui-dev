@@ -8604,8 +8604,8 @@ body.hex-form-dialog-open{
   margin-left:auto!important;
   margin-right:auto!important;
 }
-.hex-contact-section .hex-center-title-dark,
-.hex-contact-section .hex-center-title-dark[data-en]::after{
+.hex-contact-section .hex-top-title-dark,
+.hex-contact-section .hex-top-title-dark[data-en]::after{
   color:#c8a874!important;
 }
 .gc_auto_frame_spotitem_body:has(.hex-contact-section) h4{
