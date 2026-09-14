@@ -5956,7 +5956,7 @@ html body
 /* 英語メインタイトル */
 .pagetitle_type.pagetitle_type4 .bg_text h1::after{
   display:block;
-  margin-bottom:4px;
+  margin:0px;
   color:#1f2774;
   font-family:var(--hex-font-pop-en)!important;
   font-size:clamp(32px,3.5vw,56px);
