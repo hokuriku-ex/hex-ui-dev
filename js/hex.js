@@ -10463,6 +10463,8 @@ hexLoad(function(){
   var root=document.documentElement;
   var refreshTimer=null;
   var classObserver=null;
+  var contentObserver=null;
+  var motionScanTimer=null;
   var lastSpecialState=false;
 
   function isEmbeddedStaffPage(){
@@ -10568,7 +10570,9 @@ hexLoad(function(){
       /* 下層ページ本文 */
       '.content_body',
       /* content_bodyを持たない下層ページの予備ルート */
-      '[id^="gc_auto_body_"]:not(#gc_auto_body_home)'
+      '[id^="gc_auto_body_"]:not(#gc_auto_body_home)',
+      /* 通常フッター */
+      '.gc_auto_frame_footer'
     ].join(',');
     var manualMotionSelector=
       '.hex-motion-up,'+
@@ -10594,6 +10598,11 @@ hexLoad(function(){
       '.kb_qanda_content',
       '.hex-form-row',
       '.hex-gallery',
+      '.footer-area',
+      '.footer_logo',
+      '.footer_text',
+      '.footer_copyright',
+      '.hex-footer-sns',
       '.swiper',
       '.swiper-container'
     ].join(',');
@@ -10605,7 +10614,9 @@ hexLoad(function(){
       'p','blockquote','figure','picture','img',
       'li','dt','dd','table','video',
       '.hex-button-wrap',
-      '.hex-link'
+      '.hex-link-wrap',
+      '.hex-link',
+      'a'
     ].join(',');
     var autoRevealExcludeSelector=[
       '#gc_auto_frame_home_0',
@@ -10613,8 +10624,10 @@ hexLoad(function(){
       '#gc_auto_frame_home_2',
       '#gc_auto_frame_home_3',
       '#gc_auto_frame_home_4',
+      '#gc_auto_frame_home_18',
       '.gc_auto_frame_header',
-      '.gc_auto_frame_footer',
+      '.gc_auto_frame_fixedfooter',
+      '[class*="fixedfooter"]',
       '.hex-opening',
       '.hex-hero-wrap',
       '.hex-welcome-wrap',
@@ -11174,6 +11187,18 @@ hexLoad(function(){
       scheduleRefresh(0);
     }
 
+    function scheduleMotionTargetScan(delay){
+      window.clearTimeout(motionScanTimer);
+
+      motionScanTimer=window.setTimeout(function(){
+        /*
+         * data-hex-motion-initialized済みの要素は除外されるため、
+         * 後から追加・移動された未登録要素だけが新規対象になる。
+         */
+        setupMotionTargets(document);
+      },typeof delay==='number'?delay:90);
+    }
+
     window.hexMotion={
       lenis:lenis,
       gsap:gsap,
@@ -11211,6 +11236,32 @@ hexLoad(function(){
       attributes:true,
       attributeFilter:['class']
     });
+
+    /*
+     * setTimeout・Ajax・DOM移動など、初期収集後の構造変更に追従する。
+     * GSAPのstyle変更は監視せず、子要素の追加・移動だけを検知する。
+     */
+    contentObserver=new MutationObserver(function(records){
+      var hasAddedElement=records.some(function(record){
+        return Array.prototype.some.call(
+          record.addedNodes,
+          function(node){
+            return node.nodeType===1;
+          }
+        );
+      });
+
+      if(hasAddedElement){
+        scheduleMotionTargetScan(90);
+      }
+    });
+
+    if(document.body){
+      contentObserver.observe(document.body,{
+        childList:true,
+        subtree:true
+      });
+    }
 
     syncScrollState();
     setupMotionTargets(document);
