@@ -280,6 +280,160 @@ function hexInitAnchorNav(){
   var currentAnchorTarget=null;
   var hashAnchorTarget=null;
   var hashAnchorStarted=false;
+  var activeAnchorLink=null;
+
+  function getAnchorGsap(){
+    if(window.hexMotion&&window.hexMotion.gsap){
+      return window.hexMotion.gsap;
+    }
+
+    return window.gsap||null;
+  }
+
+  function canAnimateAnchorNav(){
+    return !(
+      window.matchMedia&&
+      window.matchMedia(
+        '(prefers-reduced-motion:reduce)'
+      ).matches
+    );
+  }
+
+  function animateFixedAnchorNav(){
+    var gsap=getAnchorGsap();
+
+    if(!gsap||!canAnimateAnchorNav()){
+      return;
+    }
+
+    if(nav.hexFixedTween){
+      nav.hexFixedTween.kill();
+    }
+
+    nav.hexFixedTween=gsap.timeline({
+      onComplete:function(){
+        gsap.set(nav,{
+          clearProps:'opacity,visibility'
+        });
+        gsap.set(list,{
+          clearProps:'transform'
+        });
+        nav.hexFixedTween=null;
+      }
+    });
+
+    nav.hexFixedTween.fromTo(
+      nav,
+      {autoAlpha:0},
+      {
+        autoAlpha:1,
+        duration:.34,
+        ease:'power2.out'
+      },
+      0
+    ).fromTo(
+      list,
+      {y:-14},
+      {
+        y:0,
+        duration:.48,
+        ease:'power3.out'
+      },
+      0
+    );
+  }
+
+  function clearFixedAnchorAnimation(){
+    var gsap=getAnchorGsap();
+
+    if(!gsap){
+      return;
+    }
+
+    if(nav.hexFixedTween){
+      nav.hexFixedTween.kill();
+      nav.hexFixedTween=null;
+    }
+
+    gsap.set(nav,{
+      clearProps:'opacity,visibility'
+    });
+    gsap.set(list,{
+      clearProps:'transform'
+    });
+  }
+
+  function animateAnchorLinkColor(link,fromColor){
+    var gsap=getAnchorGsap();
+    var toColor;
+    var state;
+    var interpolate;
+    var tween;
+
+    if(!link||!gsap||!canAnimateAnchorNav()){
+      return;
+    }
+
+    toColor=getComputedStyle(link).color;
+
+    if(link.hexColorTween){
+      link.hexColorTween.kill();
+      link.hexColorTween=null;
+    }
+
+    state={progress:0};
+    interpolate=gsap.utils.interpolate(
+      fromColor,
+      toColor
+    );
+
+    link.style.setProperty(
+      'color',
+      fromColor,
+      'important'
+    );
+
+    tween=gsap.to(state,{
+      progress:1,
+      duration:.38,
+      ease:'power2.out',
+      overwrite:true,
+      onUpdate:function(){
+        link.style.setProperty(
+          'color',
+          interpolate(state.progress),
+          'important'
+        );
+      },
+      onComplete:function(){
+        if(link.hexColorTween===tween){
+          link.style.removeProperty('color');
+          link.hexColorTween=null;
+        }
+      }
+    });
+
+    link.hexColorTween=tween;
+  }
+
+  function moveAnchorList(targetLeft){
+    var gsap=getAnchorGsap();
+
+    if(gsap&&canAnimateAnchorNav()){
+      gsap.to(anchorList,{
+        scrollLeft:targetLeft,
+        duration:.55,
+        ease:'power3.out',
+        overwrite:'auto'
+      });
+      return;
+    }
+
+    anchorList.scrollTo({
+      left:targetLeft,
+      behavior:'auto'
+    });
+  }
 
   function hexAnchorEasing(progress){
     return Math.min(
@@ -519,10 +673,12 @@ function hexInitAnchorNav(){
         placeholder.classList.add('is-active');
         document.body.appendChild(nav);
         nav.classList.add('is-fixed');
+        animateFixedAnchorNav();
         fixedChanged=true;
       }
     }else{
       if(nav.classList.contains('is-fixed')){
+        clearFixedAnchorAnimation();
         nav.classList.remove('is-fixed');
         placeholder.classList.remove('is-active');
         placeholder.style.height='0px';
@@ -537,16 +693,53 @@ function hexInitAnchorNav(){
   }
   function updateHexAnchorActive(scrollTop){
     var activePair=null;
+    var nextActiveLink=null;
+    var previousColor=null;
+    var nextColor=null;
+    var activeChanged=false;
     var checkLine=scrollTop+getHexAnchorOffset()+36;
     pairs.forEach(function(pair){
       var targetTop=pair.target.getBoundingClientRect().top+window.pageYOffset;
       if(checkLine>=targetTop)activePair=pair;
     });
-    pairs.forEach(function(pair){
-      pair.link.classList.remove('is-active');
-    });
-    if(activePair){
-      activePair.link.classList.add('is-active');
+
+    nextActiveLink=activePair?activePair.link:null;
+    activeChanged=nextActiveLink!==activeAnchorLink;
+
+    if(activeChanged){
+      if(activeAnchorLink){
+        previousColor=getComputedStyle(
+          activeAnchorLink
+        ).color;
+      }
+
+      if(nextActiveLink){
+        nextColor=getComputedStyle(
+          nextActiveLink
+        ).color;
+      }
+
+      pairs.forEach(function(pair){
+        pair.link.classList.toggle(
+          'is-active',
+          pair.link===nextActiveLink
+        );
+      });
+
+      animateAnchorLinkColor(
+        activeAnchorLink,
+        previousColor
+      );
+
+      animateAnchorLinkColor(
+        nextActiveLink,
+        nextColor
+      );
+
+      activeAnchorLink=nextActiveLink;
+    }
+
+    if(activePair&&activeChanged){
       if(
         window.innerWidth<=1000&&
         nav.classList.contains('is-fixed')&&
@@ -567,10 +760,7 @@ function hexInitAnchorNav(){
           0,
           Math.min(targetLeft,maxScroll)
         );
-        anchorList.scrollTo({
-          left:targetLeft,
-          behavior:'smooth'
-        });
+        moveAnchorList(targetLeft);
       }
     }
   }
@@ -661,8 +851,18 @@ function hexInitAnchorNav(){
     if(window.innerWidth>1000||maxScroll<=1){
       anchorScrollbar.classList.remove('is-visible');
       nav.classList.remove('has-anchor-scrollbar');
-      anchorScrollbarThumb.style.width='100%';
-      anchorScrollbarThumb.style.transform='translateX(0)';
+      var resetGsap=getAnchorGsap();
+
+      if(resetGsap){
+        resetGsap.killTweensOf(anchorScrollbarThumb);
+        resetGsap.set(anchorScrollbarThumb,{
+          width:'100%',
+          x:0
+        });
+      }else{
+        anchorScrollbarThumb.style.width='100%';
+        anchorScrollbarThumb.style.transform='translateX(0)';
+      }
 
       return;
     }
@@ -685,10 +885,22 @@ function hexInitAnchorNav(){
       anchorList.scrollLeft/maxScroll;
     var moveWidth=
       (barWidth-thumbWidth)*scrollProgress;
-    anchorScrollbarThumb.style.width=
-      thumbWidth+'px';
-    anchorScrollbarThumb.style.transform=
-      'translateX('+moveWidth+'px)';
+    var gsap=getAnchorGsap();
+
+    if(gsap&&canAnimateAnchorNav()){
+      gsap.to(anchorScrollbarThumb,{
+        width:thumbWidth,
+        x:moveWidth,
+        duration:.24,
+        ease:'power2.out',
+        overwrite:'auto'
+      });
+    }else{
+      anchorScrollbarThumb.style.width=
+        thumbWidth+'px';
+      anchorScrollbarThumb.style.transform=
+        'translateX('+moveWidth+'px)';
+    }
   }
   function refreshAnchorScrollbar(){
     requestAnimationFrame(function(){
@@ -700,6 +912,18 @@ function hexInitAnchorNav(){
   anchorList.addEventListener(
     'scroll',
     syncAnchorScrollbar,
+    {passive:true}
+  );
+
+  anchorList.addEventListener(
+    'pointerdown',
+    function(){
+      var gsap=getAnchorGsap();
+
+      if(gsap){
+        gsap.killTweensOf(anchorList);
+      }
+    },
     {passive:true}
   );
   setTimeout(function(){
