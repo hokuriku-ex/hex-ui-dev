@@ -10596,6 +10596,10 @@ hexLoad(function(){
       '.hex-staff-card',
       '.qanda_content',
       '.kb_qanda_content',
+      /* お知らせ・ブログ等の一覧は各記事行を1単位にする */
+      '.gc_auto_frame_post_index_box_contents_cell_list',
+      /* 一覧下のページ送りは記事とは別の1単位 */
+      '.bg_page_button',
       '.hex-form-row',
       '.hex-gallery',
       '.footer-area',
