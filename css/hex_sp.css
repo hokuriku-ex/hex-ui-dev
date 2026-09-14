@@ -315,18 +315,6 @@
     isolation:isolate;
     text-align:center;
   }
-  /* 固定時：スクロールバーがある場合だけ白い背景帯を追加 */
-  .hex-anchor-nav.is-fixed.has-anchor-scrollbar::before{
-    content:"";
-    position:absolute;
-    top:100%;
-    right:0;
-    left:0;
-    z-index:0;
-    height:36px;
-    background:#fff;
-    pointer-events:none;
-  }
   /* 横スクロールリスト */
   .hex-anchor-nav-list{
     flex-wrap:nowrap!important;
