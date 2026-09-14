@@ -5057,14 +5057,14 @@ html body
   color:#1f2774;
   text-align:left;
 }
-.welcome .title h2{
+.welcome .title h3{
   position:relative;
   z-index:1;
   margin:0;
   display:block;
   font-size:32px;
   font-family:var(--hex-font-gothic)!important;
-  font-weight:500;
+  font-weight:400!important;
   line-height:1.4;
   letter-spacing:.04em;
 }
@@ -6328,7 +6328,7 @@ html body
     clamp(20px, 3vw, 44px)!important;
   color:#203459!important;
 }
-.content_body:has(.hex-vision-section) .welcome .title h2{
+.content_body:has(.hex-vision-section) .welcome .title h3{
   font-size:24px!important;
 }
 .content_body:has(.hex-vision-section) .welcome .kakko_l,
