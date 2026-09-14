@@ -1388,15 +1388,9 @@ a.hex-anchor-nav-link.is-active{
   color:#4a7fd0!important;
 }
 .hex-anchor-nav:not(.is-fixed)
-a.hex-anchor-nav-link:hover::before,
-.hex-anchor-nav:not(.is-fixed)
 a.hex-anchor-nav-link:hover::after,
 .hex-anchor-nav:not(.is-fixed)
-a.hex-anchor-nav-link:focus::before,
-.hex-anchor-nav:not(.is-fixed)
 a.hex-anchor-nav-link:focus::after,
-.hex-anchor-nav:not(.is-fixed)
-a.hex-anchor-nav-link.is-active::before,
 .hex-anchor-nav:not(.is-fixed)
 a.hex-anchor-nav-link.is-active::after{
   color:#4a7fd0;
