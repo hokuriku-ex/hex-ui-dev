@@ -6851,43 +6851,61 @@ hexReady(function(){
 ======================================= */
 hexReady(function(){
 
-  var title=document.querySelector(
-    '.gc_auto_frame_page_title .title_font_big_headline'
-  );
+  var pageTitles={
+    gc_auto_frame_gccat3_1:'About Us',
+    gc_auto_frame_company_1:'Company',
+    gc_auto_frame_gccat8_1:'Recruit',
+    gc_auto_frame_staff_1:'Staff',
+    gc_auto_frame_gccat2_1:'For Homeowners',
+    gc_auto_frame_gccat1_1:'For Businesses',
+    gc_auto_frame_gccat7_1:'Project Flow',
+    gc_auto_frame_gccat26_1:'Application Flow',
+    gc_auto_frame_gccat9_1:'Work Menu',
+    gc_auto_frame_gccat5_1:'Featured Items',
+    gc_auto_frame_gccat14_1:'Manufacturers & Products',
+    gc_auto_frame_work_1:'Works',
+    gc_auto_frame_gccat27_1:'Plans',
+    gc_auto_frame_information_1:'News',
+    gc_auto_frame_staffblog_1:'Staff Blog',
+    gc_auto_frame_contact_1:'Contact',
+    gc_auto_frame_gccat21_1:'Drawings & Documents',
+    gc_auto_frame_qanda_1:'FAQ'
+  };
 
-  var enTitle=document.querySelector('.page-title-en');
+  Object.keys(pageTitles).some(function(frameId){
 
-  if(!title||!enTitle)return;
+    var frame=document.getElementById(frameId);
+    if(!frame)return false;
 
-  /* 日本語タイトルを取得 */
-  var jaText=title.textContent.trim();
+    var title=frame.querySelector(
+      '.title_font_big_headline'
+    );
 
-  /* 一部ページの日本語タイトルを変更 */
-  if(jaText==='個人のお客様'){
-    jaText='外構工事をご検討中の方';
-  }
+    if(!title)return false;
 
-  if(jaText==='ビジネスのお客様'){
-    jaText='外構パートナーをお探しの方';
-  }
+    /* 現在の大きな日本語タイトルを取得 */
+    var jaText=title.textContent.trim();
 
-  /* 英語タイトルを取得 */
-  var enText=enTitle.textContent.trim();
+    if(jaText==='個人のお客様'){
+      jaText='外構工事をご検討中の方';
+    }
 
-  if(!enText)return;
+    if(jaText==='ビジネスのお客様'){
+      jaText='外構パートナーをお探しの方';
+    }
 
-  /* 元の英語タイトル要素を削除 */
-  enTitle.remove();
+    /* 大きなメインを英語に変更 */
+    title.textContent=pageTitles[frameId];
 
-  /* メインタイトルを英語に変更 */
-  title.textContent=enText;
+    /* 下に日本語サブタイトルを追加 */
+    var jaTitle=document.createElement('span');
+    jaTitle.className='hex-page-ja-title';
+    jaTitle.textContent=jaText;
 
-  /* 日本語サブタイトルを追加 */
-  var jaTitle=document.createElement('span');
-  jaTitle.className='page-title-ja';
-  jaTitle.textContent=jaText;
+    title.appendChild(jaTitle);
 
-  title.appendChild(jaTitle);
+    return true;
+  });
 
 });
 
