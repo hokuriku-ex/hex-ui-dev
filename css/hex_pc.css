@@ -3151,7 +3151,7 @@ div[hex-sp]{
 .hex-calendar-section
 .hex-top-title-dark{
   margin:0 0 16px!important;
-  color:#1f2774!important;
+  color:#c8a874!important;
   text-align:center;
 }
 
@@ -3159,7 +3159,7 @@ div[hex-sp]{
 .hex-calendar-modal
 .hex-calendar-section
 .hex-top-title-dark[data-en]::after{
-  color:#c8a874!important;
+  color:#1f2774!important;
 }
 
 /* カレンダー生成領域 */
