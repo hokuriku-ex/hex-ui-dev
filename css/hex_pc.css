@@ -4790,6 +4790,9 @@ html body
   opacity:1;
   visibility:visible;
 }
+.hex-welcome-copy .hex-opening-sub{
+  margin-top:0!important;
+}
 
 /* =======================================
    ヒーローキャッチ表示アニメーション
