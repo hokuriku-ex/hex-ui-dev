@@ -212,6 +212,9 @@ hexLoad(function(){
 
   if(!hash)return;
 
+  /* 共通アンカーナビがあるページは、ナビ側のLenis処理へ任せる */
+  if(document.querySelector('.hex-anchor-source'))return;
+
   anchor=decodeURIComponent(hash.replace('#',''));
 
   function scrollToAnchor(){
@@ -276,6 +279,7 @@ function hexInitAnchorNav(){
   var pairs=[];
   var currentAnchorTarget=null;
   var hashAnchorTarget=null;
+  var hashAnchorStarted=false;
 
   function hexAnchorEasing(progress){
     return Math.min(
@@ -533,26 +537,69 @@ function hexInitAnchorNav(){
   }
   /* 別ページからのアンカー移動を補正 */
   function correctHashAnchorPosition(){
-    if(!hashAnchorTarget)return;
+    if(!hashAnchorTarget||hashAnchorStarted)return;
+
+    hashAnchorStarted=true;
     currentAnchorTarget=hashAnchorTarget;
-    function correct(){
+
+    var layoutWaitCount=0;
+
+    function waitForDynamicLayout(){
+      var staffIframe=document.querySelector(
+        '.hex-staff-iframe'
+      );
+      var targetAfterStaff=
+        staffIframe&&
+        !!(
+          staffIframe.compareDocumentPosition(
+            hashAnchorTarget
+          )&Node.DOCUMENT_POSITION_FOLLOWING
+        );
+
+      /* iframeより下へ移動する場合は高さ確定を待つ */
+      if(
+        targetAfterStaff&&
+        staffIframe.dataset.hexStaffReady!=='1'&&
+        layoutWaitCount<40
+      ){
+        layoutWaitCount+=1;
+        window.setTimeout(waitForDynamicLayout,100);
+        return;
+      }
+
+      startHashAnchorScroll();
+    }
+
+    function startHashAnchorScroll(){
+      /* ブラウザ標準のアンカー移動を解除してLenisへ一本化 */
+      if(
+        window.hexMotion&&
+        typeof window.hexMotion.scrollTo==='function'
+      ){
+        window.hexMotion.scrollTo(0,{
+          immediate:true,
+          force:true
+        });
+      }else{
+        window.scrollTo({
+          top:0,
+          left:0,
+          behavior:'auto'
+        });
+      }
+
       updateHexAnchorNav();
-      var top=
-        hashAnchorTarget.getBoundingClientRect().top+
-        window.pageYOffset-
-        getHexAnchorOffset();
-      window.scrollTo({
-        top:top,
-        behavior:'auto'
+
+      /* 上端復帰と固定ナビ解除が描画へ反映されてから開始 */
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          updateHexAnchorNav();
+          scrollToAnchorTarget(hashAnchorTarget);
+        });
       });
     }
-    /* 固定ナビとスクロールバーの状態確定後に補正 */
-    requestAnimationFrame(function(){
-      correct();
-      requestAnimationFrame(function(){
-        correct();
-      });
-    });
+
+    waitForDynamicLayout();
   }
   /* ゴールドスクロールインジケーター */
   var anchorList=nav.querySelector('.hex-anchor-nav-list');
@@ -8262,6 +8309,7 @@ function hexResizeStaffIframe(iframe){
 
       if(Math.abs(newHeight-oldHeight)>1){
         iframe.style.height=newHeight+'px';
+        iframe.dataset.hexStaffReady='1';
 
         /*
          * iframeの高さ変更後に親ページのスクロール範囲を更新する。
