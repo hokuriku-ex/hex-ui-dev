@@ -386,6 +386,45 @@ function hexInitAnchorNav(){
       link:link
     });
   });
+
+  /*
+   * 別ページから来た時点では、動的生成された見出しに
+   * まだIDが付いていない場合があるため、ナビ生成後に再解決する。
+   * #hex-anchor-アクセス と #アクセス の両形式に対応。
+   */
+  if(location.hash&&!hashAnchorTarget){
+    var hashValue='';
+    var hashTitle='';
+
+    try{
+      hashValue=decodeURIComponent(
+        location.hash.substring(1)
+      );
+    }catch(error){
+      hashValue=location.hash.substring(1);
+    }
+
+    hashTitle=hashValue.replace(/^hex-anchor-/,'');
+    hashAnchorTarget=document.getElementById(hashValue);
+
+    if(!hashAnchorTarget){
+      pairs.some(function(pair){
+        var pairTitle=(pair.link.textContent||'').trim();
+
+        if(
+          pair.target.id===hashValue||
+          pairTitle===hashValue||
+          pairTitle===hashTitle
+        ){
+          hashAnchorTarget=pair.target;
+          return true;
+        }
+
+        return false;
+      });
+    }
+  }
+
   if(!list.children.length)return;
   nav.appendChild(list);
   source.parentNode.insertBefore(nav,source.nextSibling);
