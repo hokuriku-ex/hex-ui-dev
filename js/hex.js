@@ -10769,6 +10769,10 @@ hexLoad(function(){
       '.bg_page_button',
       '.hex-form-row',
       '.hex-gallery',
+      /* お問い合わせはラベル・電話番号・受付時間を別々の1単位にする */
+      '.hex-contact-phone > .hex-contact-text',
+      '.hex-contact-phone > .hex-contact-tel',
+      '.hex-contact-phone > .hex-contact-hours',
       '.footer-area',
       '.footer_logo > picture',
       '.footer_text > .footer-company-name',
@@ -11055,6 +11059,77 @@ hexLoad(function(){
           });
         }
       });
+    }
+
+    /* お問い合わせは内容の読み順を崩さず、1項目ずつ表示する */
+    function setupContactRevealTargets(targets){
+      var mobile=window.innerWidth<=768;
+
+      if(!targets.length){
+        return;
+      }
+
+      targets.forEach(function(target){
+        target.dataset.hexMotionInitialized='1';
+        target.dataset.hexAutoMotion='1';
+        target.dataset.hexContactMotion='1';
+      });
+
+      gsap.set(targets,{autoAlpha:0});
+
+      ScrollTrigger.batch(targets,{
+        start:mobile?'top 96%':'top 95%',
+        once:true,
+        interval:.12,
+        batchMax:10,
+        onEnter:function(batch){
+          gsap.to(batch,{
+            autoAlpha:1,
+            duration:mobile?.95:1.05,
+            stagger:mobile?.13:.18,
+            ease:'power1.out',
+            overwrite:'auto',
+            onComplete:function(){
+              clearMotionProperties(batch);
+            }
+          });
+        }
+      });
+    }
+
+    function isContactRevealTarget(target){
+      var contactBody=target.closest(
+        '.gc_auto_frame_spotitem_body'
+      );
+
+      if(!contactBody||!contactBody.querySelector('.hex-contact-section')){
+        return false;
+      }
+
+      if(target.matches(
+        '.hex-contact-section .hex-top-title,'+
+        '.hex-contact-phone > .hex-contact-text,'+
+        '.hex-contact-phone > .hex-contact-tel,'+
+        '.hex-contact-phone > .hex-contact-hours,'+
+        '.hex-contact-faq-link'
+      )){
+        return true;
+      }
+
+      /* 電話ブロック直前の案内文 */
+      if(
+        target.matches('h4')&&
+        target.parentElement&&
+        target.parentElement.querySelector(':scope > .hex-contact-phone')
+      ){
+        return true;
+      }
+
+      /* お問い合わせフォームへのメインボタン */
+      return !!(
+        target.matches('.hex-button-wrap')&&
+        target.querySelector('.hex-btn-main')
+      );
     }
 
     function canUseAutoRevealRoot(target){
@@ -11375,9 +11450,15 @@ hexLoad(function(){
       var footerReveals=autoReveals.filter(function(target){
         return !!target.closest('.gc_auto_frame_footer');
       });
+      var contactReveals=autoReveals.filter(function(target){
+        return isContactRevealTarget(target);
+      });
 
       autoReveals=autoReveals.filter(function(target){
-        return !target.closest('.gc_auto_frame_footer');
+        return(
+          !target.closest('.gc_auto_frame_footer')&&
+          !isContactRevealTarget(target)
+        );
       });
 
       /* 指定されたscope自身がモーション要素の場合も対象に含める */
@@ -11422,6 +11503,7 @@ hexLoad(function(){
             images,
             parallax,
             autoReveals,
+            contactReveals,
             footerReveals
           )
         );
@@ -11430,6 +11512,7 @@ hexLoad(function(){
       }
 
       setupAutoRevealTargets(autoReveals);
+      setupContactRevealTargets(contactReveals);
       setupFooterRevealTargets(footerReveals);
       reveals.forEach(setupRevealTarget);
       staggers.forEach(setupStaggerTarget);
