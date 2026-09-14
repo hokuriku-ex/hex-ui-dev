@@ -277,6 +277,54 @@ function hexInitAnchorNav(){
   var currentAnchorTarget=null;
   var hashAnchorTarget=null;
 
+  function hexAnchorEasing(progress){
+    return Math.min(
+      1,
+      1.001-Math.pow(2,-10*progress)
+    );
+  }
+
+  function scrollToAnchorTarget(target){
+    var offset=getHexAnchorOffset();
+    var targetTop=
+      target.getBoundingClientRect().top+
+      window.pageYOffset-
+      offset;
+    var distance=Math.abs(
+      window.pageYOffset-targetTop
+    );
+    var duration=Math.min(
+      1.35,
+      Math.max(.8,.8+distance/4000)
+    );
+    var reducedMotion=
+      window.matchMedia&&
+      window.matchMedia(
+        '(prefers-reduced-motion:reduce)'
+      ).matches;
+
+    if(
+      window.hexMotion&&
+      typeof window.hexMotion.scrollTo==='function'
+    ){
+      window.hexMotion.scrollTo(target,{
+        offset:-offset,
+        duration:duration,
+        easing:hexAnchorEasing,
+        immediate:reducedMotion,
+        lock:false,
+        force:true
+      });
+      return;
+    }
+
+    /* ライブラリ読込み前だけブラウザ標準へフォールバック */
+    window.scrollTo({
+      top:targetTop,
+      behavior:reducedMotion?'auto':'smooth'
+    });
+  }
+
   if(location.hash){
     try{
       hashAnchorTarget=document.getElementById(
@@ -311,34 +359,7 @@ function hexInitAnchorNav(){
       e.preventDefault();
 
       currentAnchorTarget=target;
-
-      var top=
-        target.getBoundingClientRect().top+
-        window.pageYOffset-
-        getHexAnchorOffset();
-
-      window.scrollTo({
-        top:top,
-        behavior:'smooth'
-      });
-
-      var correctScroll=function(){
-        if(!currentAnchorTarget)return;
-
-        var correctedTop=
-          currentAnchorTarget.getBoundingClientRect().top+
-          window.pageYOffset-
-          getHexAnchorOffset();
-
-        if(Math.abs(window.pageYOffset-correctedTop)>2){
-          window.scrollTo({
-            top:correctedTop,
-            behavior:'auto'
-          });
-        }
-      };
-
-      window.addEventListener('scrollend',correctScroll,{once:true});
+      scrollToAnchorTarget(target);
     });
     list.appendChild(link);
     pairs.push({
@@ -353,32 +374,66 @@ function hexInitAnchorNav(){
   placeholder.className='hex-anchor-nav-placeholder';
   nav.parentNode.insertBefore(placeholder,nav.nextSibling);
   var fixedStart=0;
+  var fixedNavHeight=0;
   var originalParent=nav.parentNode;
   var originalNext=nav.nextSibling;
   function getHexAnchorHeaderHeight(){
+    var propertyName=
+      window.innerWidth<=768
+        ?'--header_height_smartphone'
+        :'--header_height';
+    var value=parseFloat(
+      getComputedStyle(
+        document.documentElement
+      ).getPropertyValue(propertyName)
+    );
+
+    if(Number.isFinite(value)&&value>0){
+      return value;
+    }
+
     return 80;
   }
-  function getHexAnchorOffset(){
-    var scrollbarArea=0;
-    var titleSpace=16;
+  function getHexAnchorFixedHeight(){
+    var wasFixed=nav.classList.contains('is-fixed');
+    var height;
 
-    /* ゴールドバーと白い帯がある場合は36px追加 */
-    if(
-      window.innerWidth<=1000&&
-      nav.classList.contains('has-anchor-scrollbar')
-    ){
-      scrollbarArea=scrollbarArea-36;
+    if(wasFixed){
+      height=nav.getBoundingClientRect().height;
+      fixedNavHeight=height||fixedNavHeight||36;
+      return fixedNavHeight;
     }
+
+    if(fixedNavHeight>0){
+      return fixedNavHeight;
+    }
+
+    /*
+     * 初期表示と固定表示ではナビの高さが異なるため、
+     * 移動開始前に固定時の実寸を同期計測する。
+     */
+    nav.classList.add('is-fixed');
+
+    height=nav.getBoundingClientRect().height;
+
+    nav.classList.remove('is-fixed');
+
+    fixedNavHeight=height||36;
+
+    return fixedNavHeight;
+  }
+  function getHexAnchorOffset(){
+    var titleSpace=16;
 
     return(
       getHexAnchorHeaderHeight()+
-      nav.offsetHeight+
-      scrollbarArea+
+      getHexAnchorFixedHeight()+
       titleSpace
     );
   }
   function refreshHexAnchorNav(){
     var mobileAdjust=0;
+    fixedNavHeight=0;
     nav.classList.remove('is-fixed');
     placeholder.classList.remove('is-active');
     placeholder.style.height='0px';
@@ -8067,6 +8122,7 @@ hexLoad(function(){
     iframe.style.border='0';
     iframe.style.overflow='hidden';
     iframe.dataset.hexStaffIframe='1';
+    iframe.setAttribute('data-lenis-prevent','');
     iframe.addEventListener('load',function(){
       hexPrepareStaffIframe(iframe);
     });
@@ -9950,6 +10006,26 @@ hexLoad(function(){
   var classObserver=null;
   var lastSpecialState=false;
 
+  function isEmbeddedStaffPage(){
+    var embedded=false;
+
+    try{
+      embedded=window.self!==window.top;
+    }catch(error){
+      embedded=true;
+    }
+
+    if(!embedded){
+      return false;
+    }
+
+    return !!document.querySelector(
+      '.bg_publicinfo_staff,'+
+      '[id^="gc_auto_frame_staff_"],'+
+      '.hex-staff-wrap'
+    );
+  }
+
   function loadLibrary(url,isReady,callback){
     var script;
     var existing;
@@ -10430,6 +10506,17 @@ hexLoad(function(){
   }
 
   function loadMotionLibraries(){
+    /*
+     * スタッフ紹介の埋め込みiframe内では、
+     * 親ページへのホイール・タッチ移動を妨げないように
+     * Lenis＋共通ScrollTriggerを初期化しない。
+     * スタッフページを単独表示した場合は通常どおり有効。
+     */
+    if(isEmbeddedStaffPage()){
+      root.classList.add('hex-motion-disabled-staff-iframe');
+      return;
+    }
+
     loadLibrary(
       GSAP_URL,
       function(){
