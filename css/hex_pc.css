@@ -92,7 +92,7 @@ html{
   display:block;
   margin:0!important;
   font-family:var(--hex-font-pop-en)!important;
-  font-size:clamp(32px yen, dithunzi3.5vw,56px)!important;
+  font-size:clamp(32px,3.5vw,56px)!important;
   line-height:1.4;
   letter-spacing:.04em;
   font-weight:400;
