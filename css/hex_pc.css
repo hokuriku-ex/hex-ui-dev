@@ -5945,7 +5945,7 @@ html body
   flex-direction:column-reverse;
 
   /* h1本体は日本語サブタイトル */
-  color:#1f2774!important;
+  color:#c8a874!important;
   font-family:var(--hex-font-pop-ja)!important;
   font-size:16px!important;
   line-height:1.4!important;
