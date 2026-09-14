@@ -4597,6 +4597,13 @@ html body
   transform:translateY(-50%);
 }
 
+/* 丸演出中：進行率に合わせてヒーローキャッチを透明化 */
+.hex-hero-catch.is-fixed-handoff.is-circle-fading{
+  opacity:var(--hex-hero-catch-circle-opacity,1);
+  transition:none;
+  will-change:opacity;
+}
+
 /* WELCOMEコピーへ切り替わった後 */
 .hex-hero-catch.is-fixed-handoff.is-copy-handed-off{
   opacity:0;
