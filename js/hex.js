@@ -9912,3 +9912,533 @@ hexLoad(function(){
 
   renderCalendar();
 });
+
+/* =======================================
+   Lenis＋GSAP ScrollTrigger 共通モーション
+======================================= */
+(function(){
+  'use strict';
+
+  if(window.hexMotionBootstrapInitialized){
+    return;
+  }
+
+  window.hexMotionBootstrapInitialized=true;
+
+  /*
+   * CDNはメジャーバージョンを固定する。
+   * 同じライブラリがすでに読み込まれている場合は再読込みしない。
+   */
+  var GSAP_URL=
+    'https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js';
+  var SCROLL_TRIGGER_URL=
+    'https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js';
+  var LENIS_URL=
+    'https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js';
+
+  var root=document.documentElement;
+  var refreshTimer=null;
+  var classObserver=null;
+  var lastSpecialState=false;
+
+  function loadLibrary(url,isReady,callback){
+    var script;
+    var existing;
+
+    if(isReady()){
+      callback();
+      return;
+    }
+
+    existing=document.querySelector(
+      'script[data-hex-library="'+url+'"]'
+    );
+
+    if(existing){
+      existing.addEventListener('load',callback,{once:true});
+      existing.addEventListener('error',handleLoadError,{once:true});
+      return;
+    }
+
+    script=document.createElement('script');
+    script.src=url;
+    script.async=true;
+    script.dataset.hexLibrary=url;
+    script.addEventListener('load',callback,{once:true});
+    script.addEventListener('error',handleLoadError,{once:true});
+    document.head.appendChild(script);
+  }
+
+  function handleLoadError(){
+    root.classList.add('hex-motion-load-error');
+  }
+
+  function isReducedMotion(){
+    return(
+      window.matchMedia&&
+      window.matchMedia(
+        '(prefers-reduced-motion:reduce)'
+      ).matches
+    );
+  }
+
+  function isSpecialScrollState(){
+    return(
+      root.classList.contains('hex-opening-lock')||
+      root.classList.contains('hex-welcome-exit-active')||
+      root.classList.contains('hex-founded-stage-active')
+    );
+  }
+
+  function isPreventTarget(target){
+    if(!target||target.nodeType!==1||!target.closest){
+      return false;
+    }
+
+    return !!target.closest(
+      '.hex-opening,'+
+      '.hex-hero-sticky,'+
+      '.hex-welcome-wrap,'+
+      '.hex-founded-stage,'+
+      '.hex-anchor-nav-list,'+
+      '.hex-calendar-modal-dialog,'+
+      '#gc_auto_frame_lp_form_dialog,'+
+      '[data-lenis-prevent]'
+    );
+  }
+
+  function initializeMotion(){
+    var gsap=window.gsap;
+    var ScrollTrigger=window.ScrollTrigger;
+    var LenisConstructor=window.Lenis;
+    var lenis;
+
+    if(
+      !gsap||
+      !ScrollTrigger||
+      !LenisConstructor||
+      window.hexMotion
+    ){
+      return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    lenis=new LenisConstructor({
+      autoRaf:false,
+      lerp:.105,
+      smoothWheel:true,
+      syncTouch:false,
+      wheelMultiplier:.92,
+      touchMultiplier:1,
+      anchors:false,
+      respectReducedMotion:true,
+
+      /*
+       * ヒーロー・WELCOMEなどの既存wheel制御を優先する。
+       * falseを返した入力はLenisで補間せずブラウザ標準へ渡す。
+       */
+      virtualScroll:function(data){
+        var event=data&&data.event;
+
+        if(isSpecialScrollState()){
+          return false;
+        }
+
+        return !isPreventTarget(
+          event&&event.target
+        );
+      }
+    });
+
+    lenis.on('scroll',ScrollTrigger.update);
+
+    function updateLenis(time){
+      lenis.raf(time*1000);
+    }
+
+    gsap.ticker.add(updateLenis);
+    gsap.ticker.lagSmoothing(0);
+
+    function scheduleRefresh(delay){
+      window.clearTimeout(refreshTimer);
+
+      refreshTimer=window.setTimeout(function(){
+        lenis.resize();
+        ScrollTrigger.refresh();
+      },typeof delay==='number'?delay:120);
+    }
+
+    function syncScrollState(){
+      var openingLocked=root.classList.contains(
+        'hex-opening-lock'
+      );
+      var specialState=isSpecialScrollState();
+
+      if(openingLocked){
+        lenis.stop();
+      }else{
+        lenis.start();
+      }
+
+      /*
+       * Lenisの慣性が残ったまま特殊演出へ入らないように、
+       * 現在位置で補間をいったん確定する。
+       */
+      if(specialState&&!lastSpecialState){
+        lenis.scrollTo(window.scrollY,{
+          immediate:true,
+          force:true
+        });
+      }
+
+      if(lastSpecialState&&!specialState){
+        scheduleRefresh(80);
+      }
+
+      lastSpecialState=specialState;
+    }
+
+    function clearMotionProperties(target){
+      gsap.set(target,{
+        clearProps:
+          'opacity,visibility,transform,filter,willChange'
+      });
+    }
+
+    function getRevealConfig(target){
+      var mobile=window.innerWidth<=768;
+      var from={
+        autoAlpha:0
+      };
+
+      if(target.classList.contains('hex-motion-left')){
+        from.x=mobile?-28:-52;
+      }else if(target.classList.contains('hex-motion-right')){
+        from.x=mobile?28:52;
+      }else if(target.classList.contains('hex-motion-scale')){
+        from.scale=mobile?.97:.94;
+      }else if(!target.classList.contains('hex-motion-fade')){
+        from.y=mobile?28:48;
+      }
+
+      return from;
+    }
+
+    function setupRevealTarget(target){
+      var delay=parseFloat(
+        target.getAttribute('data-motion-delay')||'0'
+      );
+      var duration=parseFloat(
+        target.getAttribute('data-motion-duration')||
+        (window.innerWidth<=768?'.72':'.9')
+      );
+
+      target.dataset.hexMotionInitialized='1';
+
+      gsap.fromTo(
+        target,
+        getRevealConfig(target),
+        {
+          autoAlpha:1,
+          x:0,
+          y:0,
+          scale:1,
+          duration:duration,
+          delay:delay,
+          ease:'power3.out',
+          overwrite:'auto',
+          onComplete:function(){
+            clearMotionProperties(target);
+          },
+          scrollTrigger:{
+            trigger:target,
+            start:window.innerWidth<=768?'top 90%':'top 84%',
+            once:true
+          }
+        }
+      );
+    }
+
+    function setupStaggerTarget(group){
+      var children=Array.prototype.slice.call(
+        group.children
+      );
+      var interval=parseFloat(
+        group.getAttribute('data-motion-stagger')||
+        (window.innerWidth<=768?'.1':'.14')
+      );
+
+      group.dataset.hexMotionInitialized='1';
+
+      if(!children.length){
+        return;
+      }
+
+      gsap.fromTo(
+        children,
+        {
+          autoAlpha:0,
+          y:window.innerWidth<=768?24:42
+        },
+        {
+          autoAlpha:1,
+          y:0,
+          duration:window.innerWidth<=768?.7:.85,
+          stagger:interval,
+          ease:'power3.out',
+          overwrite:'auto',
+          onComplete:function(){
+            clearMotionProperties(children);
+          },
+          scrollTrigger:{
+            trigger:group,
+            start:window.innerWidth<=768?'top 90%':'top 84%',
+            once:true
+          }
+        }
+      );
+    }
+
+    function setupImageTarget(container){
+      var image=container.matches('img')
+        ?container
+        :container.querySelector('img');
+
+      container.dataset.hexMotionInitialized='1';
+
+      if(!image){
+        return;
+      }
+
+      gsap.fromTo(
+        image,
+        {
+          scale:window.innerWidth<=768?1.045:1.075
+        },
+        {
+          scale:1,
+          duration:window.innerWidth<=768?1:1.25,
+          ease:'power2.out',
+          overwrite:'auto',
+          onComplete:function(){
+            clearMotionProperties(image);
+          },
+          scrollTrigger:{
+            trigger:container,
+            start:window.innerWidth<=768?'top 92%':'top 88%',
+            once:true
+          }
+        }
+      );
+    }
+
+    function setupParallaxTarget(target){
+      target.dataset.hexMotionInitialized='1';
+
+      /* SPは画面負荷と読みやすさを優先して停止する */
+      if(window.innerWidth<=768){
+        return;
+      }
+
+      gsap.fromTo(
+        target,
+        {yPercent:6},
+        {
+          yPercent:-6,
+          ease:'none',
+          scrollTrigger:{
+            trigger:target,
+            start:'top bottom',
+            end:'bottom top',
+            scrub:1.1
+          }
+        }
+      );
+    }
+
+    function revealWithoutMotion(targets){
+      if(!targets.length){
+        return;
+      }
+
+      gsap.set(targets,{
+        clearProps:
+          'opacity,visibility,transform,filter,willChange'
+      });
+
+      targets.forEach(function(target){
+        target.dataset.hexMotionInitialized='1';
+      });
+    }
+
+    function setupMotionTargets(scope){
+      var area=scope&&scope.querySelectorAll
+        ?scope
+        :document;
+      var revealSelector=[
+        '.hex-motion-up',
+        '.hex-motion-left',
+        '.hex-motion-right',
+        '.hex-motion-scale',
+        '.hex-motion-fade'
+      ].map(function(selector){
+        return selector+
+          ':not([data-hex-motion-initialized])';
+      }).join(',');
+      var reveals=Array.prototype.slice.call(
+        area.querySelectorAll(revealSelector)
+      );
+      var staggers=Array.prototype.slice.call(
+        area.querySelectorAll(
+          '.hex-motion-stagger'+
+          ':not([data-hex-motion-initialized])'
+        )
+      );
+      var images=Array.prototype.slice.call(
+        area.querySelectorAll(
+          '.hex-motion-image'+
+          ':not([data-hex-motion-initialized])'
+        )
+      );
+      var parallax=Array.prototype.slice.call(
+        area.querySelectorAll(
+          '.hex-motion-parallax'+
+          ':not([data-hex-motion-initialized])'
+        )
+      );
+
+      /* 指定されたscope自身がモーション要素の場合も対象に含める */
+      if(area!==document&&area.matches){
+        if(area.matches(revealSelector)){
+          reveals.unshift(area);
+        }
+
+        if(
+          area.matches(
+            '.hex-motion-stagger'+
+            ':not([data-hex-motion-initialized])'
+          )
+        ){
+          staggers.unshift(area);
+        }
+
+        if(
+          area.matches(
+            '.hex-motion-image'+
+            ':not([data-hex-motion-initialized])'
+          )
+        ){
+          images.unshift(area);
+        }
+
+        if(
+          area.matches(
+            '.hex-motion-parallax'+
+            ':not([data-hex-motion-initialized])'
+          )
+        ){
+          parallax.unshift(area);
+        }
+      }
+
+      if(isReducedMotion()){
+        revealWithoutMotion(
+          reveals.concat(staggers,images,parallax)
+        );
+        scheduleRefresh(0);
+        return;
+      }
+
+      reveals.forEach(setupRevealTarget);
+      staggers.forEach(setupStaggerTarget);
+      images.forEach(setupImageTarget);
+      parallax.forEach(setupParallaxTarget);
+
+      scheduleRefresh(0);
+    }
+
+    window.hexMotion={
+      lenis:lenis,
+      gsap:gsap,
+      ScrollTrigger:ScrollTrigger,
+      refresh:function(scope){
+        setupMotionTargets(scope||document);
+      },
+      scrollTo:function(target,options){
+        lenis.scrollTo(target,options||{});
+      }
+    };
+
+    window.hexRefreshMotion=window.hexMotion.refresh;
+
+    document.addEventListener(
+      'hex:motion-refresh',
+      function(event){
+        setupMotionTargets(
+          event.detail&&event.detail.scope
+            ?event.detail.scope
+            :document
+        );
+      }
+    );
+
+    classObserver=new MutationObserver(function(){
+      syncScrollState();
+    });
+
+    classObserver.observe(root,{
+      attributes:true,
+      attributeFilter:['class']
+    });
+
+    syncScrollState();
+    setupMotionTargets(document);
+
+    if(document.fonts&&document.fonts.ready){
+      document.fonts.ready.then(function(){
+        scheduleRefresh(0);
+      });
+    }
+
+    if(document.readyState==='complete'){
+      scheduleRefresh(0);
+    }else{
+      window.addEventListener('load',function(){
+        scheduleRefresh(0);
+      },{once:true});
+    }
+
+    window.addEventListener('resize',function(){
+      scheduleRefresh(160);
+    },{passive:true});
+  }
+
+  function loadMotionLibraries(){
+    loadLibrary(
+      GSAP_URL,
+      function(){
+        return !!window.gsap;
+      },
+      function(){
+        loadLibrary(
+          SCROLL_TRIGGER_URL,
+          function(){
+            return !!window.ScrollTrigger;
+          },
+          function(){
+            loadLibrary(
+              LENIS_URL,
+              function(){
+                return !!window.Lenis;
+              },
+              initializeMotion
+            );
+          }
+        );
+      }
+    );
+  }
+
+  hexLoad(loadMotionLibraries);
+})();
