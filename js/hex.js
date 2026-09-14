@@ -10562,8 +10562,14 @@ hexLoad(function(){
     var ScrollTrigger=window.ScrollTrigger;
     var LenisConstructor=window.Lenis;
     var lenis;
-    var autoRevealRootSelector=
-      '.gc_auto_frame_spotitem_box';
+    var autoRevealRootSelector=[
+      /* トップページ・共通スポット項目 */
+      '.gc_auto_frame_spotitem_box',
+      /* 下層ページ本文 */
+      '.content_body',
+      /* content_bodyを持たない下層ページの予備ルート */
+      '[id^="gc_auto_body_"]:not(#gc_auto_body_home)'
+    ].join(',');
     var manualMotionSelector=
       '.hex-motion-up,'+
       '.hex-motion-left,'+
@@ -10573,7 +10579,11 @@ hexLoad(function(){
       '.hex-motion-stagger,'+
       '.hex-motion-image,'+
       '.hex-motion-parallax';
-    var autoAtomicSelector=[
+    var autoCmsItemSelector=[
+      '.content',
+      '.staff_content'
+    ].join(',');
+    var autoSpecificAtomicSelector=[
       '[data-motion-item]',
       '.hex-card',
       '.hex-banner',
@@ -10587,6 +10597,9 @@ hexLoad(function(){
       '.swiper',
       '.swiper-container'
     ].join(',');
+    var autoAtomicSelector=
+      autoCmsItemSelector+','+
+      autoSpecificAtomicSelector;
     var autoSemanticSelector=[
       'h1','h2','h3','h4','h5','h6',
       'p','blockquote','figure','picture','img',
@@ -10874,9 +10887,25 @@ hexLoad(function(){
             return false;
           }
 
+          /*
+           * 汎用.contentの中に意味のある要素がある場合は、
+           * .content全体ではなく中の細かい要素を優先する。
+           */
+          if(
+            target.matches(autoCmsItemSelector)&&
+            target.querySelector(
+              autoSpecificAtomicSelector+','+
+              autoSemanticSelector
+            )
+          ){
+            return false;
+          }
+
           /* カードなどが入れ子の場合は一番外側だけを採用 */
           var atomicParent=target.parentElement&&
-            target.parentElement.closest(autoAtomicSelector);
+            target.parentElement.closest(
+              autoSpecificAtomicSelector
+            );
 
           return !atomicParent||
             !contentRoot.contains(atomicParent);
@@ -10897,7 +10926,9 @@ hexLoad(function(){
           }
 
           /* カード・ギャラリー等の中身は外枠と二重にしない */
-          atomicParent=target.closest(autoAtomicSelector);
+          atomicParent=target.closest(
+            autoSpecificAtomicSelector
+          );
           if(atomicParent&&atomicParent!==target){
             return;
           }
