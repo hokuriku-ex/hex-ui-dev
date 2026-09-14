@@ -417,7 +417,9 @@
   /* 固定時のスクロールインジケーター */
   .hex-anchor-nav.is-fixed.has-anchor-scrollbar
   .hex-anchor-scrollbar{
-    bottom:-19px;
+    right:0;
+    bottom:0;
+    left:0;
     z-index:2;
     background:rgba(200,168,116,.3);
   }
