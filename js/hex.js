@@ -310,6 +310,11 @@ function hexInitAnchorNav(){
       nav.hexFixedTween.kill();
     }
 
+    if(nav.hexUnfixTween){
+      nav.hexUnfixTween.kill();
+      nav.hexUnfixTween=null;
+    }
+
     nav.hexFixedTween=gsap.timeline({
       onComplete:function(){
         gsap.set(nav,{
@@ -355,12 +360,107 @@ function hexInitAnchorNav(){
       nav.hexFixedTween=null;
     }
 
+    if(nav.hexUnfixTween){
+      nav.hexUnfixTween.kill();
+      nav.hexUnfixTween=null;
+    }
+
     gsap.set(nav,{
       clearProps:'opacity,visibility'
     });
     gsap.set(list,{
       clearProps:'transform'
     });
+  }
+
+  function animateAnchorNavUnfix(onComplete){
+    var gsap=getAnchorGsap();
+
+    if(!gsap||!canAnimateAnchorNav()){
+      onComplete();
+      return;
+    }
+
+    if(nav.hexFixedTween){
+      nav.hexFixedTween.kill();
+      nav.hexFixedTween=null;
+    }
+
+    if(nav.hexUnfixTween){
+      return;
+    }
+
+    nav.hexUnfixTween=gsap.timeline({
+      onComplete:function(){
+        nav.hexUnfixTween=null;
+        onComplete();
+      }
+    });
+
+    nav.hexUnfixTween.to(
+      nav,
+      {
+        autoAlpha:0,
+        duration:.28,
+        ease:'power2.in'
+      },
+      0
+    ).to(
+      list,
+      {
+        y:-12,
+        duration:.32,
+        ease:'power2.in'
+      },
+      0
+    );
+  }
+
+  function restoreFixedAnchorNav(){
+    var gsap=getAnchorGsap();
+
+    if(!gsap){
+      return;
+    }
+
+    if(nav.hexUnfixTween){
+      nav.hexUnfixTween.kill();
+      nav.hexUnfixTween=null;
+    }
+
+    if(nav.hexFixedTween){
+      nav.hexFixedTween.kill();
+    }
+
+    nav.hexFixedTween=gsap.timeline({
+      onComplete:function(){
+        gsap.set(nav,{
+          clearProps:'opacity,visibility'
+        });
+        gsap.set(list,{
+          clearProps:'transform'
+        });
+        nav.hexFixedTween=null;
+      }
+    });
+
+    nav.hexFixedTween.to(
+      nav,
+      {
+        autoAlpha:1,
+        duration:.22,
+        ease:'power2.out'
+      },
+      0
+    ).to(
+      list,
+      {
+        y:0,
+        duration:.28,
+        ease:'power2.out'
+      },
+      0
+    );
   }
 
   function animateAnchorLinkColor(link,fromColor){
@@ -668,6 +768,10 @@ function hexInitAnchorNav(){
 
     var fixedChanged=false;
     if(scrollTop>=fixedStart){
+      if(nav.hexUnfixTween){
+        restoreFixedAnchorNav();
+      }
+
       if(!nav.classList.contains('is-fixed')){
         placeholder.style.height=nav.offsetHeight+'px';
         placeholder.classList.add('is-active');
@@ -677,13 +781,28 @@ function hexInitAnchorNav(){
         fixedChanged=true;
       }
     }else{
-      if(nav.classList.contains('is-fixed')){
-        clearFixedAnchorAnimation();
-        nav.classList.remove('is-fixed');
-        placeholder.classList.remove('is-active');
-        placeholder.style.height='0px';
-        originalParent.insertBefore(nav,originalNext);
-        fixedChanged=true;
+      if(
+        nav.classList.contains('is-fixed')&&
+        !nav.hexUnfixTween
+      ){
+        animateAnchorNavUnfix(function(){
+          var currentScrollTop=
+            window.pageYOffset||
+            document.documentElement.scrollTop;
+
+          /* フェード中に再び固定範囲へ戻った場合 */
+          if(currentScrollTop>=fixedStart){
+            restoreFixedAnchorNav();
+            return;
+          }
+
+          clearFixedAnchorAnimation();
+          nav.classList.remove('is-fixed');
+          placeholder.classList.remove('is-active');
+          placeholder.style.height='0px';
+          originalParent.insertBefore(nav,originalNext);
+          refreshAnchorScrollbar();
+        });
       }
     }
     updateHexAnchorActive(scrollTop);
