@@ -4599,6 +4599,15 @@ hexReady(function(){
           ?scrolled>=scrollDistance
           :scrolled>0;
 
+      /*
+       * ヒーロー画像の下端到達を、Lenisへ切り替える境界にする。
+       * 戻りスクロールで境界より上へ戻った場合は既存制御へ戻す。
+       */
+      document.documentElement.classList.toggle(
+        "hex-hero-circle-started",
+        reachedImageBottom
+      );
+
       isHandedOff=hero.classList.contains(
         "is-copy-handed-off"
       );
@@ -9986,9 +9995,14 @@ hexLoad(function(){
     var foundedRunning=
       root.classList.contains('hex-founded-stage-active')&&
       !root.classList.contains('hex-founded-stage-complete');
+    var topBeforeCircle=
+      !!document.querySelector('.hex-hero-wrap')&&
+      window.matchMedia('(min-width:769px)').matches&&
+      !root.classList.contains('hex-hero-circle-started');
 
     return(
       root.classList.contains('hex-opening-lock')||
+      topBeforeCircle||
       root.classList.contains('hex-welcome-exit-active')||
       foundedRunning
     );
@@ -10001,9 +10015,6 @@ hexLoad(function(){
 
     return !!target.closest(
       '.hex-opening,'+
-      '.hex-hero-sticky,'+
-      '.hex-welcome-wrap,'+
-      '.hex-founded-stage,'+
       '.hex-anchor-nav-list,'+
       '.hex-calendar-modal-dialog,'+
       '#gc_auto_frame_lp_form_dialog,'+
