@@ -9983,10 +9983,14 @@ hexLoad(function(){
   }
 
   function isSpecialScrollState(){
+    var foundedRunning=
+      root.classList.contains('hex-founded-stage-active')&&
+      !root.classList.contains('hex-founded-stage-complete');
+
     return(
       root.classList.contains('hex-opening-lock')||
       root.classList.contains('hex-welcome-exit-active')||
-      root.classList.contains('hex-founded-stage-active')
+      foundedRunning
     );
   }
 
