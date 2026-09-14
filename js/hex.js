@@ -10800,6 +10800,8 @@ hexLoad(function(){
       '.gc_auto_frame_header',
       '.gc_auto_frame_fixedfooter',
       '[class*="fixedfooter"]',
+      /* 下層ページのタイトル・パンくず・導入・アンカーナビ */
+      '.pagetitle_type',
       '.hex-opening',
       '.hex-hero-wrap',
       '.hex-welcome-wrap',
