@@ -10743,7 +10743,7 @@ hexLoad(function(){
     var autoSemanticSelector=[
       'h1','h2','h3','h4','h5','h6',
       'p','blockquote','figure','picture','img',
-      'li','dt','dd','table','video',
+      'li','dt','dd','table','video','iframe','lite-youtube',
       '.hex-button-wrap',
       '.hex-link-wrap',
       '.hex-link',
@@ -10768,6 +10768,8 @@ hexLoad(function(){
       '.hex-anchor-nav-placeholder',
       '.hex-calendar-modal-dialog',
       '#gc_auto_frame_lp_form_dialog',
+      '.hex-staff-iframe',
+      '[data-hex-staff-iframe]',
       '.hex-motion-auto-off',
       '[data-hex-motion-auto="off"]'
     ].join(',');
@@ -11022,9 +11024,17 @@ hexLoad(function(){
         target.getAttribute('aria-hidden')==='true'||
         target.closest(manualMotionSelector)||
         target.closest(autoRevealExcludeSelector)||
-        target.matches('iframe')||
-        target.querySelector('iframe')||
         target.dataset.hexMotionInitialized
+      ){
+        return false;
+      }
+
+      /* スタッフ紹介iframeを含む外枠は代替対象にも含めない */
+      if(
+        target.querySelector(
+          '.hex-staff-iframe,'+
+          '[data-hex-staff-iframe]'
+        )
       ){
         return false;
       }
