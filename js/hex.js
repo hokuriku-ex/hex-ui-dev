@@ -4316,6 +4316,21 @@ hexReady(function(){
     }
 
     function hideImageHandoff(){
+      var fixedCopy=document.querySelector(
+        ".hex-hero-catch.is-fixed-handoff"
+      );
+
+      /* 丸演出開始前へ戻ったときはキャッチを完全表示へ戻す */
+      if(fixedCopy){
+        fixedCopy.classList.remove(
+          "is-circle-fading"
+        );
+
+        fixedCopy.style.removeProperty(
+          "--hex-hero-catch-circle-opacity"
+        );
+      }
+
       if(imageHandoffState==="hidden"){
         return;
       }
@@ -4493,6 +4508,16 @@ hexReady(function(){
       eased=
         progress*progress*
         (3-2*progress);
+
+      /* 丸演出の開始100%から、固定完了0%までキャッチを透明化 */
+      fixedCopy.classList.add(
+        "is-circle-fading"
+      );
+
+      fixedCopy.style.setProperty(
+        "--hex-hero-catch-circle-opacity",
+        String(1-eased)
+      );
 
       startRadius=Math.hypot(
         window.innerWidth,
