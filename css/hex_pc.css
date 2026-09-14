@@ -64,15 +64,20 @@ html{
 .hex-center-title{
   position:relative;
   width:100%;
-  display:block;
+  display:flex;
+  flex-direction:column-reverse;
+  align-items:center;
   margin:0 0 40px!important;
   padding:0!important;
-  text-align:center;
-  font-size:32px;
-  font-weight:700;
-  line-height:1.4;
-  letter-spacing:.02em;
   box-sizing:border-box;
+  text-align:center;
+
+  /* 日本語サブタイトル */
+  font-family:var(--hex-font-pop-ja)!important;
+  font-size:16px!important;
+  line-height:1.4!important;
+  letter-spacing:.12em!important;
+  font-weight:500!important;
 }
 .hex-center-title-light{
   color:#1f2774!important;
@@ -81,18 +86,17 @@ html{
   color:#fff!important;
 }
 
-/* 共通センター見出し（トップページ専用） 英文 */
+/* 英語メインタイトル */
 .hex-center-title[data-en]::after{
   content:attr(data-en);
   display:block;
-  margin-top:22px!important;
-  font-size:16px!important;
+  margin:0!important;
+  font-family:var(--hex-font-pop-en)!important;
+  font-size:clamp(32px yen, dithunzi3.5vw,56px)!important;
   line-height:1.4;
-  letter-spacing:.22em;
-  font-family:var(--hex-font-italic);
+  letter-spacing:.04em;
   font-weight:400;
-  font-style:italic;
-  opacity:.6;
+  opacity:1;
 }
 .hex-center-title-light[data-en]::after{
   color:#1f2774;
@@ -5969,7 +5973,6 @@ html body
   line-height:1.4;
   letter-spacing:.04em;
   font-weight:400;
-  font-style:italic;
   opacity:1;
 }
 
