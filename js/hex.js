@@ -2038,6 +2038,18 @@ hexReady(function(){
           'true'
         );
 
+        /*
+         * 閉じている間はフェード対象にしない。
+         * 展開後の寸法が確定してから、このグリッドだけを収集する。
+         */
+        requestAnimationFrame(function(){
+          requestAnimationFrame(function(){
+            if(typeof window.hexRefreshMotion==='function'){
+              window.hexRefreshMotion(grid);
+            }
+          });
+        });
+
       }
 
     });
@@ -11157,6 +11169,11 @@ hexLoad(function(){
         target.closest(autoRevealExcludeSelector)||
         target.dataset.hexMotionInitialized
       ){
+        return false;
+      }
+
+      /* アコーディオン内部は開いた瞬間に専用で再収集する */
+      if(target.closest('.hex-action-grid:not(.is-open)')){
         return false;
       }
 
