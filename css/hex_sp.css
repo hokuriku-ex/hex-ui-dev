@@ -387,7 +387,7 @@
   .pagetitle_type4 .hex-anchor-nav{
     position:static;
     margin-bottom:0!important;
-    padding-bottom:18px;
+    padding-bottom:18px!important;
   }
   .hex-anchor-scrollbar{
     position:absolute;
