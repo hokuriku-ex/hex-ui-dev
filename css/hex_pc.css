@@ -5518,6 +5518,12 @@ html body
 /* =======================================
    トップページ：私たちについて
 ======================================= */
+.hex-center-title:has(.hex-founded-year){
+  flex-direction:row;
+  justify-content:center;
+  align-items:baseline;
+  gap:6px;
+}
 .hex-founded-year{
   color:#c8a874;
   font-family:var(--hex-font-italic);
