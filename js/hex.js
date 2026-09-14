@@ -318,6 +318,10 @@ function hexInitAnchorNav(){
       window.hexMotion&&
       typeof window.hexMotion.scrollTo==='function'
     ){
+      if(typeof window.hexMotion.refreshLayout==='function'){
+        window.hexMotion.refreshLayout();
+      }
+
       window.hexMotion.scrollTo(target,{
         offset:-offset,
         duration:duration,
@@ -8255,8 +8259,22 @@ function hexResizeStaffIframe(iframe){
     if(height>0){
       var newHeight=height+4;
       var oldHeight=parseFloat(iframe.style.height)||0;
-      if(height>0){
-        iframe.style.height=(height+4)+'px';
+
+      if(Math.abs(newHeight-oldHeight)>1){
+        iframe.style.height=newHeight+'px';
+
+        /*
+         * iframeの高さ変更後に親ページのスクロール範囲を更新する。
+         * これによりiframeより下のアンカーも移動可能になる。
+         */
+        window.requestAnimationFrame(function(){
+          if(
+            window.hexMotion&&
+            typeof window.hexMotion.refreshLayout==='function'
+          ){
+            window.hexMotion.refreshLayout();
+          }
+        });
       }
     }
   }catch(e){}
@@ -10466,6 +10484,10 @@ hexLoad(function(){
       ScrollTrigger:ScrollTrigger,
       refresh:function(scope){
         setupMotionTargets(scope||document);
+      },
+      refreshLayout:function(){
+        lenis.resize();
+        ScrollTrigger.refresh();
       },
       scrollTo:function(target,options){
         lenis.scrollTo(target,options||{});
