@@ -6062,6 +6062,9 @@ html body
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box!important;
 }
+.post_index_type3 .content{
+  margin-bottom:0!important;
+}
 
 /* 会社情報ページ */
 .gc_auto_frame_publicinfo_company .publicinfo_company_type1 .bg_contents{
