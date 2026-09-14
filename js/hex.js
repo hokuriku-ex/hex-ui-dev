@@ -5523,6 +5523,13 @@ hexReady(function(){
 hexReady(function(){
   "use strict";
 
+  /*
+   * WELCOME後の創設演出
+   * true  : 現在の演出を再生する
+   * false : 演出を飛ばし、完成状態で通常スクロールへ戻す
+   */
+  var ENABLE_FOUNDED_EFFECT=false;
+
   /* 1段階と判定するホイール移動量 */
   var WHEEL_THRESHOLD=45;
 
@@ -5809,7 +5816,11 @@ hexReady(function(){
       behavior:"auto"
     });
 
-    startWelcomeAutoScroll();
+    if(ENABLE_FOUNDED_EFFECT){
+      startWelcomeAutoScroll();
+    }else{
+      completeFoundedImmediately();
+    }
   }
 
 
@@ -5990,6 +6001,68 @@ hexReady(function(){
     cardTimers=[];
     countFrames=[];
     cardsPlaying=false;
+  }
+
+
+  /*
+   * 創設演出を再生せず、通常再生後と同じ完成状態にする。
+   * WELCOMEから創設位置への強制スクロールも行わない。
+   */
+  function completeFoundedImmediately(){
+    if(!aboutFrame){
+      return;
+    }
+
+    stopWelcomeAutoScroll();
+    clearCardAnimations();
+
+    foundedActive=true;
+    foundedReleased=false;
+
+    aboutFrame.classList.add(
+      "is-founded-active"
+    );
+
+    aboutFrame.dataset.foundedStep="4";
+
+    aboutFrame.querySelectorAll(
+      ".hex-company-card .hex-card"
+    ).forEach(function(card){
+      var number=card.querySelector(
+        ".hex-number"
+      );
+
+      card.classList.add(
+        "is-card-visible",
+        "is-count-complete"
+      );
+
+      card.classList.remove(
+        "is-counting"
+      );
+
+      if(number){
+        if(!number.dataset.hexCountTarget){
+          number.dataset.hexCountTarget=String(
+            parseInt(number.textContent,10)||0
+          );
+        }
+
+        number.textContent=
+          number.dataset.hexCountTarget;
+      }
+    });
+
+    document.documentElement.classList.add(
+      "hex-founded-stage-active"
+    );
+
+    releaseFounded();
+
+    stepLocked=false;
+    minimumLockEnded=true;
+    wheelIdle=true;
+    wheelAmount=0;
   }
 
 
