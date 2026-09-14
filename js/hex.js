@@ -2840,6 +2840,10 @@ hexLoad(function(){
     blog.classList.add('hex-home-news-panel');
     blog.style.display='none';
 
+    /* HOPWEB標準フェードを外し、GSAPの項目別フェードへ統一 */
+    hexDisableHomeNewsLegacyMotion(news);
+    hexDisableHomeNewsLegacyMotion(blog);
+
     hexHomeNewsUpdateButton(buttonArea,'information','information');
 
     tabNews.addEventListener('click',function(){
@@ -2876,6 +2880,40 @@ function hexHomeNewsSwitch(showPanel,hidePanel,activeTab,inactiveTab,buttonArea,
   activeTab.classList.add('is-active');
   inactiveTab.classList.remove('is-active');
   hexHomeNewsUpdateButton(buttonArea,shortname,pagetype);
+
+  /* 非表示だったパネルは、表示後にそのパネルだけ1回登録する */
+  window.requestAnimationFrame(function(){
+    if(typeof window.hexRefreshMotion==='function'){
+      window.hexRefreshMotion(showPanel);
+    }else if(
+      window.hexMotion&&
+      typeof window.hexMotion.refreshLayout==='function'
+    ){
+      window.hexMotion.refreshLayout();
+    }
+  });
+}
+
+function hexDisableHomeNewsLegacyMotion(panel){
+  if(!panel)return;
+
+  panel.querySelectorAll(
+    '.bg_animation_pc,'+
+    '.bg_animation_smp,'+
+    '.add_animation_fadein_fadein_pc,'+
+    '.animation_fadein_fadein_pc,'+
+    '.add_animation_fadein_fadein_smp,'+
+    '.animation_fadein_fadein_smp'
+  ).forEach(function(target){
+    target.classList.remove(
+      'bg_animation_pc',
+      'bg_animation_smp',
+      'add_animation_fadein_fadein_pc',
+      'animation_fadein_fadein_pc',
+      'add_animation_fadein_fadein_smp',
+      'animation_fadein_fadein_smp'
+    );
+  });
 }
 
 function hexHomeNewsUpdateButton(buttonArea,shortname,pagetype){
@@ -10724,6 +10762,9 @@ hexLoad(function(){
       '.kb_qanda_content',
       /* お知らせ・ブログ等の一覧は各記事行を1単位にする */
       '.gc_auto_frame_post_index_box_contents_cell_list',
+      '.gc_auto_frame_post_index_home_box_contents_cell_list',
+      /* トップのお知らせ切替タブ */
+      '.hex-home-news-tabs',
       /* 一覧下のページ送りは記事とは別の1単位 */
       '.bg_page_button',
       '.hex-form-row',
@@ -10747,7 +10788,7 @@ hexLoad(function(){
       '.hex-button-wrap',
       '.hex-link-wrap',
       '.hex-link',
-      'a'
+      'a[href]'
     ].join(',');
     var autoRevealExcludeSelector=[
       '#gc_auto_frame_home_0',
@@ -11036,6 +11077,11 @@ hexLoad(function(){
           '[data-hex-staff-iframe]'
         )
       ){
+        return false;
+      }
+
+      /* 親がdisplay:noneのタブパネル等は表示されてから登録する */
+      if(!target.getClientRects().length){
         return false;
       }
 
