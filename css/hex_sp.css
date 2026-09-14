@@ -380,6 +380,15 @@
     font-size:11px;
   }
   /* ゴールドスクロールインジケーター */
+  .pagetitle_type4 > .contents{
+    position:relative;
+    padding-bottom:0!important;
+  }
+  .pagetitle_type4 .hex-anchor-nav{
+    position:static;
+    margin-bottom:0!important;
+    padding-bottom:18px;
+  }
   .hex-anchor-scrollbar{
     position:absolute;
     right:0;
