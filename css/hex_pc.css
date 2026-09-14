@@ -61,7 +61,7 @@ html{
    共通パーツ（既存調整）
 ======================================= */
 /* 共通センター見出し（トップページ専用） */
-.hex-center-title{
+.hex-top-title{
   position:relative;
   width:100%;
   display:flex;
@@ -79,15 +79,15 @@ html{
   letter-spacing:.12em!important;
   font-weight:500!important;
 }
-.hex-center-title-light{
+.hex-top-title-light{
   color:#1f2774!important;
 }
-.hex-center-title-dark{
+.hex-top-title-dark{
   color:#fff!important;
 }
 
 /* 英語メインタイトル */
-.hex-center-title[data-en]::after{
+.hex-top-title[data-en]::after{
   content:attr(data-en);
   display:block;
   margin:0!important;
@@ -98,11 +98,32 @@ html{
   font-weight:400;
   opacity:1;
 }
-.hex-center-title-light[data-en]::after{
+.hex-top-title-light[data-en]::after{
   color:#1f2774;
 }
-.hex-center-title-dark[data-en]::after{
+.hex-top-title-dark[data-en]::after{
   color:#fff;
+}
+
+/* 共通センター見出し（下層ページ専用） */
+.hex-center-title{
+  position:relative;
+  width:100%;
+  display:block;
+  margin:0 0 40px!important;
+  padding:0!important;
+  text-align:center;
+  font-size:32px;
+  font-weight:700;
+  line-height:1.4;
+  letter-spacing:.02em;
+  box-sizing:border-box;
+}
+.hex-center-title-light{
+  color:#1f2774!important;
+}
+.hex-center-title-dark{
+  color:#fff!important;
 }
 
 /* 共通セクション見出し（h2専用） */
