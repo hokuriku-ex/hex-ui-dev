@@ -10828,6 +10828,46 @@ hexLoad(function(){
       });
     }
 
+    /* フッターは項目の順番が目で分かる専用テンポにする */
+    function setupFooterRevealTargets(targets){
+      var mobile=window.innerWidth<=768;
+
+      if(!targets.length){
+        return;
+      }
+
+      targets.forEach(function(target){
+        target.dataset.hexMotionInitialized='1';
+        target.dataset.hexAutoMotion='1';
+        target.dataset.hexFooterMotion='1';
+      });
+
+      gsap.set(targets,{autoAlpha:0});
+
+      /*
+       * 画面に入った項目だけをまとめ、通常コンテンツより
+       * 明確な間隔でDOM順に表示する。
+       */
+      ScrollTrigger.batch(targets,{
+        start:mobile?'top 96%':'top 95%',
+        once:true,
+        interval:.12,
+        batchMax:20,
+        onEnter:function(batch){
+          gsap.to(batch,{
+            autoAlpha:1,
+            duration:mobile?.9:1,
+            stagger:mobile?.18:.28,
+            ease:'power1.out',
+            overwrite:'auto',
+            onComplete:function(){
+              clearMotionProperties(batch);
+            }
+          });
+        }
+      });
+    }
+
     function canUseAutoRevealRoot(target){
       if(
         !target||
@@ -11130,6 +11170,13 @@ hexLoad(function(){
         )
       );
       var autoReveals=collectAutoRevealTargets(area);
+      var footerReveals=autoReveals.filter(function(target){
+        return !!target.closest('.gc_auto_frame_footer');
+      });
+
+      autoReveals=autoReveals.filter(function(target){
+        return !target.closest('.gc_auto_frame_footer');
+      });
 
       /* 指定されたscope自身がモーション要素の場合も対象に含める */
       if(area!==document&&area.matches){
@@ -11172,7 +11219,8 @@ hexLoad(function(){
             staggers,
             images,
             parallax,
-            autoReveals
+            autoReveals,
+            footerReveals
           )
         );
         scheduleRefresh(0);
@@ -11180,6 +11228,7 @@ hexLoad(function(){
       }
 
       setupAutoRevealTargets(autoReveals);
+      setupFooterRevealTargets(footerReveals);
       reveals.forEach(setupRevealTarget);
       staggers.forEach(setupStaggerTarget);
       images.forEach(setupImageTarget);
