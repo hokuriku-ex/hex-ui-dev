@@ -5522,7 +5522,7 @@ html body
   flex-direction:row;
   justify-content:center;
   align-items:baseline;
-  gap:6px;
+  gap:0;
 }
 .hex-founded-year{
   color:#c8a874;
