@@ -8676,3 +8676,62 @@ body.hex-form-dialog-open{
   transform:translateX(3px);
   text-decoration:none!important;
 }
+
+/* =======================================
+   Lenis＋GSAP ScrollTrigger 共通モーション
+======================================= */
+html.lenis,
+html.lenis body{
+  height:auto;
+}
+
+html.lenis.lenis-smooth{
+  scroll-behavior:auto!important;
+}
+
+html.lenis.lenis-stopped{
+  overflow:hidden!important;
+}
+
+html.lenis.lenis-smooth [data-lenis-prevent]{
+  overscroll-behavior:contain;
+}
+
+.hex-motion-up,
+.hex-motion-left,
+.hex-motion-right,
+.hex-motion-scale,
+.hex-motion-fade,
+.hex-motion-stagger > *{
+  backface-visibility:hidden;
+}
+
+.hex-motion-image{
+  overflow:hidden;
+}
+
+.hex-motion-image img,
+.hex-motion-parallax{
+  backface-visibility:hidden;
+  transform:translateZ(0);
+  will-change:transform;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .hex-motion-up,
+  .hex-motion-left,
+  .hex-motion-right,
+  .hex-motion-scale,
+  .hex-motion-fade,
+  .hex-motion-stagger,
+  .hex-motion-stagger > *,
+  .hex-motion-image,
+  .hex-motion-image img,
+  .hex-motion-parallax{
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+    animation:none!important;
+    transition:none!important;
+  }
+}
