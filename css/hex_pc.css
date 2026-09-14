@@ -1305,8 +1305,10 @@ div.NNAttached{
   position:static;
   display:block;
   color:#c8a874;
+  font-family:var(--hex-font-italic)!important;
   font-size:10px;
-  font-weight:700;
+  font-weight:400;
+  font-style:italic;
   line-height:1;
   letter-spacing:.12em;
   transform:none;
@@ -1414,8 +1416,10 @@ a.hex-anchor-nav-link{
   display:inline-block;
   margin-right:8px;
   color:#c8a874;
+  font-family:var(--hex-font-italic)!important;
   font-size:12px;
-  font-weight:700;
+  font-weight:400;
+  font-style:italic;
   line-height:1;
   letter-spacing:.06em;
   transform:none;
