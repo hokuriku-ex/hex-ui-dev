@@ -10744,7 +10744,7 @@ hexLoad(function(){
 
     /*
      * サイト全体の標準モーション。
-     * 個別指定より弱い「少し下から＋フェード」だけを適用する。
+     * 個別指定より弱い、移動を伴わないフェードだけを適用する。
      */
     function setupAutoRevealTarget(target){
       var mobile=window.innerWidth<=768;
@@ -10755,21 +10755,19 @@ hexLoad(function(){
       gsap.fromTo(
         target,
         {
-          autoAlpha:0,
-          y:mobile?10:14
+          autoAlpha:0
         },
         {
           autoAlpha:1,
-          y:0,
-          duration:mobile?.62:.72,
-          ease:'power2.out',
+          duration:mobile?1.05:1.2,
+          ease:'power1.out',
           overwrite:'auto',
           onComplete:function(){
             clearMotionProperties(target);
           },
           scrollTrigger:{
             trigger:target,
-            start:mobile?'top 92%':'top 88%',
+            start:mobile?'top 96%':'top 95%',
             once:true
           }
         }
