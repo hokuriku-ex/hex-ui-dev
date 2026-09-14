@@ -10562,6 +10562,38 @@ hexLoad(function(){
     var ScrollTrigger=window.ScrollTrigger;
     var LenisConstructor=window.Lenis;
     var lenis;
+    var autoRevealSelector=
+      '.gc_auto_frame_spotitem_box'+
+      ':not([data-hex-motion-initialized])';
+    var manualMotionSelector=
+      '.hex-motion-up,'+
+      '.hex-motion-left,'+
+      '.hex-motion-right,'+
+      '.hex-motion-scale,'+
+      '.hex-motion-fade,'+
+      '.hex-motion-stagger,'+
+      '.hex-motion-image,'+
+      '.hex-motion-parallax';
+    var autoRevealExcludeSelector=[
+      '#gc_auto_frame_home_0',
+      '#gc_auto_frame_home_1',
+      '#gc_auto_frame_home_2',
+      '#gc_auto_frame_home_3',
+      '#gc_auto_frame_home_4',
+      '.gc_auto_frame_header',
+      '.gc_auto_frame_footer',
+      '.hex-opening',
+      '.hex-hero-wrap',
+      '.hex-welcome-wrap',
+      '.hex-founded-stage',
+      '.hex-anchor-source',
+      '.hex-anchor-nav',
+      '.hex-anchor-nav-placeholder',
+      '.hex-calendar-modal-dialog',
+      '#gc_auto_frame_lp_form_dialog',
+      '.hex-motion-auto-off',
+      '[data-hex-motion-auto="off"]'
+    ].join(',');
 
     if(
       !gsap||
@@ -10708,6 +10740,59 @@ hexLoad(function(){
           }
         }
       );
+    }
+
+    /*
+     * サイト全体の標準モーション。
+     * 個別指定より弱い「少し下から＋フェード」だけを適用する。
+     */
+    function setupAutoRevealTarget(target){
+      var mobile=window.innerWidth<=768;
+
+      target.dataset.hexMotionInitialized='1';
+      target.dataset.hexAutoMotion='1';
+
+      gsap.fromTo(
+        target,
+        {
+          autoAlpha:0,
+          y:mobile?10:14
+        },
+        {
+          autoAlpha:1,
+          y:0,
+          duration:mobile?.62:.72,
+          ease:'power2.out',
+          overwrite:'auto',
+          onComplete:function(){
+            clearMotionProperties(target);
+          },
+          scrollTrigger:{
+            trigger:target,
+            start:mobile?'top 92%':'top 88%',
+            once:true
+          }
+        }
+      );
+    }
+
+    function canUseAutoReveal(target){
+      if(
+        !target||
+        target.hidden||
+        target.getAttribute('aria-hidden')==='true'||
+        target.matches(manualMotionSelector)||
+        target.closest(autoRevealExcludeSelector)
+      ){
+        return false;
+      }
+
+      /* iframeを含むブロックは高さ更新や操作を妨げない */
+      if(target.querySelector('iframe')){
+        return false;
+      }
+
+      return true;
     }
 
     function setupStaggerTarget(group){
@@ -10857,6 +10942,9 @@ hexLoad(function(){
           ':not([data-hex-motion-initialized])'
         )
       );
+      var autoReveals=Array.prototype.slice.call(
+        area.querySelectorAll(autoRevealSelector)
+      ).filter(canUseAutoReveal);
 
       /* 指定されたscope自身がモーション要素の場合も対象に含める */
       if(area!==document&&area.matches){
@@ -10890,16 +10978,29 @@ hexLoad(function(){
         ){
           parallax.unshift(area);
         }
+
+        if(
+          area.matches(autoRevealSelector)&&
+          canUseAutoReveal(area)
+        ){
+          autoReveals.unshift(area);
+        }
       }
 
       if(isReducedMotion()){
         revealWithoutMotion(
-          reveals.concat(staggers,images,parallax)
+          reveals.concat(
+            staggers,
+            images,
+            parallax,
+            autoReveals
+          )
         );
         scheduleRefresh(0);
         return;
       }
 
+      autoReveals.forEach(setupAutoRevealTarget);
       reveals.forEach(setupRevealTarget);
       staggers.forEach(setupStaggerTarget);
       images.forEach(setupImageTarget);
