@@ -286,6 +286,17 @@ function hexInitAnchorNav(){
 
   function scrollToAnchorTarget(target){
     var offset=getHexAnchorOffset();
+    var startsBeforeFixed=
+      !nav.classList.contains('is-fixed');
+
+    /*
+     * 初回は移動途中でナビが通常配置から固定配置へ変わる。
+     * その切り替えによる基準位置の変化を、開始前に相殺する。
+     */
+    if(startsBeforeFixed){
+      offset+=getHexAnchorHeaderHeight();
+    }
+
     var targetTop=
       target.getBoundingClientRect().top+
       window.pageYOffset-
