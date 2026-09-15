@@ -9724,6 +9724,64 @@ hexLoad(function(){
       }
     }
 
+    function wrapFormMotionButton(button,type){
+      var parent;
+      var motionWrap;
+
+      if(!button)return null;
+
+      parent=button.parentElement;
+      if(
+        parent&&
+        parent.classList.contains('hex-form-button-motion-wrap')
+      ){
+        return parent;
+      }
+
+      motionWrap=document.createElement('div');
+      motionWrap.className=
+        'hex-form-button-motion-wrap '+
+        'is-'+type;
+
+      button.parentNode.insertBefore(motionWrap,button);
+      motionWrap.appendChild(button);
+
+      return motionWrap;
+    }
+
+    function setupInputButtonMotion(){
+      wrapFormMotionButton(
+        document.getElementById('form_lp_form_button'),
+        'input'
+      );
+    }
+
+    function setupDialogButtonMotion(box){
+      if(!box)return;
+
+      var buttons=box.querySelectorAll(
+        '.gc_auto_frame_lp_form_box_button_round'
+      );
+
+      buttons.forEach(function(button,index){
+        var motionWrap=wrapFormMotionButton(
+          button,
+          'dialog'
+        );
+
+        if(!motionWrap)return;
+
+        motionWrap.classList.toggle(
+          'is-dialog-back',
+          index===0
+        );
+        motionWrap.classList.toggle(
+          'is-dialog-submit',
+          index===buttons.length-1
+        );
+      });
+    }
+
     function customizeDialog(){
       if(dialogUnlocking)return;
       var box=document.getElementById('gc_auto_frame_lp_form_dialog_box');
@@ -9733,6 +9791,7 @@ hexLoad(function(){
       if(existingWrap){
         normalizeDialogLines(existingWrap);
         ensureDialogHead(existingWrap);
+        setupDialogButtonMotion(box);
         box.classList.add('hex-dialog-ready');
         var dialog=document.getElementById('gc_auto_frame_lp_form_dialog');
         if(dialog){
@@ -9755,6 +9814,7 @@ hexLoad(function(){
 
       ensureDialogHead(wrap);
       box.appendChild(wrap);
+      setupDialogButtonMotion(box);
       box.classList.add('hex-dialog-ready');
       var dialog=document.getElementById('gc_auto_frame_lp_form_dialog');
       if(dialog){
@@ -9924,6 +9984,7 @@ hexLoad(function(){
     setupFileInputClickArea();
     setupRequiredEmptyState();
     setupRequiredMessage();
+    setupInputButtonMotion();
     form.classList.add('hex-form-ready');
   },300);
 });
