@@ -8358,12 +8358,18 @@ body.hex-form-dialog-open{
   display:none!important;
 }
 #gc_auto_frame_lp_form_dialog
+.gc_auto_frame_lp_form_dialog_buttons
+> .gc_auto_frame_lp_form_box_button_round:first-child,
+#gc_auto_frame_lp_form_dialog
 .hex-form-button-motion-wrap.is-dialog-back
 > .gc_auto_frame_lp_form_box_button_round{
   background:#fff!important;
   border:2px solid #1f2774!important;
   color:#1f2774!important;
 }
+#gc_auto_frame_lp_form_dialog
+.gc_auto_frame_lp_form_dialog_buttons
+> .gc_auto_frame_lp_form_box_button_round:first-child::before,
 #gc_auto_frame_lp_form_dialog
 .hex-form-button-motion-wrap.is-dialog-back
 > .gc_auto_frame_lp_form_box_button_round::before{
@@ -8376,6 +8382,9 @@ body.hex-form-dialog-open{
   transform:translateX(0);
   transition:transform .3s ease;
 }
+#gc_auto_frame_lp_form_dialog
+.gc_auto_frame_lp_form_dialog_buttons
+> .gc_auto_frame_lp_form_box_button_round:last-child,
 #gc_auto_frame_lp_form_dialog
 .hex-form-button-motion-wrap.is-dialog-submit
 > .gc_auto_frame_lp_form_box_button_round{
@@ -8419,15 +8428,24 @@ body.hex-form-dialog-open{
   color:#c8a874!important;
 }
 #gc_auto_frame_lp_form_dialog
+.gc_auto_frame_lp_form_dialog_buttons
+> .gc_auto_frame_lp_form_box_button_round:first-child:hover,
+#gc_auto_frame_lp_form_dialog
 .hex-form-button-motion-wrap.is-dialog-back
 > .gc_auto_frame_lp_form_box_button_round:hover{
   background:#fff!important;
 }
 #gc_auto_frame_lp_form_dialog
+.gc_auto_frame_lp_form_dialog_buttons
+> .gc_auto_frame_lp_form_box_button_round:last-child:hover,
+#gc_auto_frame_lp_form_dialog
 .hex-form-button-motion-wrap.is-dialog-submit
 > .gc_auto_frame_lp_form_box_button_round:hover{
   background:#1f2774!important;
 }
+#gc_auto_frame_lp_form_dialog
+.gc_auto_frame_lp_form_dialog_buttons
+> .gc_auto_frame_lp_form_box_button_round:first-child:hover::before,
 #gc_auto_frame_lp_form_dialog
 .hex-form-button-motion-wrap.is-dialog-back
 > .gc_auto_frame_lp_form_box_button_round:hover::before{
