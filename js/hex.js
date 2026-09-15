@@ -11546,20 +11546,9 @@ hexLoad(function(){
       ScrollTrigger.create({
         trigger:target,
         start:window.innerWidth<=768?'top 94%':'top 88%',
-        end:'bottom 6%',
+        once:true,
         onEnter:function(){
           tween.restart();
-        },
-        onEnterBack:function(){
-          tween.restart();
-        },
-        onLeave:function(){
-          tween.pause(0);
-          resetChars();
-        },
-        onLeaveBack:function(){
-          tween.pause(0);
-          resetChars();
         }
       });
     }
@@ -11697,39 +11686,23 @@ hexLoad(function(){
         ScrollTrigger.create({
           trigger:welcomeCopy,
           start:'top 90%',
-          end:'bottom 8%',
+          once:true,
           onEnter:function(){
             welcomeRoll.play();
-          },
-          onEnterBack:function(){
-            welcomeRoll.play();
-          },
-          onLeave:function(){
-            welcomeRoll.reset();
-          },
-          onLeaveBack:function(){
-            welcomeRoll.reset();
           }
         });
         return;
       }
 
       /* PCはヒーローからWELCOMEへコピーが渡った瞬間に開始する */
-      var welcomeWasActive=null;
+      var welcomePlayed=false;
 
       function syncWelcomeCatch(){
         var isActive=welcomeCopy.classList.contains('is-copy-active');
 
-        if(isActive===welcomeWasActive){
-          return;
-        }
-
-        welcomeWasActive=isActive;
-
-        if(isActive){
+        if(isActive&&!welcomePlayed){
+          welcomePlayed=true;
           welcomeRoll.play();
-        }else{
-          welcomeRoll.reset();
         }
       }
 
