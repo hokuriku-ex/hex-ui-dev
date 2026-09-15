@@ -10704,6 +10704,18 @@ hexLoad(function(){
     );
   }
 
+  function shouldUseLenis(){
+    var desktopWidth=window.matchMedia(
+      '(min-width:769px)'
+    ).matches;
+    var touchDevice=
+      window.matchMedia('(pointer:coarse)').matches&&
+      window.matchMedia('(hover:none)').matches;
+
+    /* 横向きスマホでもLenisを有効にしない */
+    return desktopWidth&&!touchDevice;
+  }
+
   function isSpecialScrollState(){
     var foundedRunning=
       root.classList.contains('hex-founded-stage-active')&&
@@ -10739,7 +10751,8 @@ hexLoad(function(){
     var gsap=window.gsap;
     var ScrollTrigger=window.ScrollTrigger;
     var LenisConstructor=window.Lenis;
-    var lenis;
+    var useLenis=shouldUseLenis();
+    var lenis=null;
     var autoRevealRootSelector=[
       /* トップページ・共通スポット項目 */
       '.gc_auto_frame_spotitem_box',
@@ -10849,7 +10862,7 @@ hexLoad(function(){
     if(
       !gsap||
       !ScrollTrigger||
-      !LenisConstructor||
+      (useLenis&&!LenisConstructor)||
       window.hexMotion
     ){
       finishMotionPreparation();
@@ -10858,47 +10871,63 @@ hexLoad(function(){
 
     gsap.registerPlugin(ScrollTrigger);
 
-    lenis=new LenisConstructor({
-      autoRaf:false,
-      lerp:.105,
-      smoothWheel:true,
-      syncTouch:false,
-      wheelMultiplier:.92,
-      touchMultiplier:1,
-      anchors:false,
-      respectReducedMotion:true,
+    /*
+     * PCだけLenisを初期化する。
+     * SPはブラウザ標準のタッチスクロールをそのまま使用する。
+     */
+    if(useLenis){
+      lenis=new LenisConstructor({
+        autoRaf:false,
+        lerp:.105,
+        smoothWheel:true,
+        syncTouch:false,
+        wheelMultiplier:.92,
+        touchMultiplier:1,
+        anchors:false,
+        respectReducedMotion:true,
 
-      /*
-       * ヒーロー・WELCOMEなどの既存wheel制御を優先する。
-       * falseを返した入力はLenisで補間せずブラウザ標準へ渡す。
-       */
-      virtualScroll:function(data){
-        var event=data&&data.event;
+        /*
+         * ヒーロー・WELCOMEなどの既存wheel制御を優先する。
+         * falseを返した入力はLenisで補間せずブラウザ標準へ渡す。
+         */
+        virtualScroll:function(data){
+          var event=data&&data.event;
 
-        if(isSpecialScrollState()){
-          return false;
+          if(isSpecialScrollState()){
+            return false;
+          }
+
+          return !isPreventTarget(
+            event&&event.target
+          );
         }
+      });
 
-        return !isPreventTarget(
-          event&&event.target
-        );
-      }
-    });
+      lenis.on('scroll',ScrollTrigger.update);
 
-    lenis.on('scroll',ScrollTrigger.update);
-
-    function updateLenis(time){
-      lenis.raf(time*1000);
+      gsap.ticker.add(function(time){
+        lenis.raf(time*1000);
+      });
+      gsap.ticker.lagSmoothing(0);
+    }else{
+      /* 再読込み等で残ったLenisの停止状態もSPでは解除する */
+      [
+        'lenis',
+        'lenis-smooth',
+        'lenis-scrolling',
+        'lenis-stopped'
+      ].forEach(function(className){
+        root.classList.remove(className);
+      });
     }
-
-    gsap.ticker.add(updateLenis);
-    gsap.ticker.lagSmoothing(0);
 
     function scheduleRefresh(delay){
       window.clearTimeout(refreshTimer);
 
       refreshTimer=window.setTimeout(function(){
-        lenis.resize();
+        if(lenis){
+          lenis.resize();
+        }
         ScrollTrigger.refresh();
       },typeof delay==='number'?delay:120);
     }
@@ -10908,6 +10937,12 @@ hexLoad(function(){
         'hex-opening-lock'
       );
       var specialState=isSpecialScrollState();
+
+      if(!lenis){
+        root.classList.remove('lenis-stopped');
+        lastSpecialState=specialState;
+        return;
+      }
 
       if(openingLocked){
         lenis.stop();
@@ -11541,17 +11576,44 @@ hexLoad(function(){
 
     window.hexMotion={
       lenis:lenis,
+      usesLenis:!!lenis,
       gsap:gsap,
       ScrollTrigger:ScrollTrigger,
       refresh:function(scope){
         setupMotionTargets(scope||document);
       },
       refreshLayout:function(){
-        lenis.resize();
+        if(lenis){
+          lenis.resize();
+        }
         ScrollTrigger.refresh();
       },
       scrollTo:function(target,options){
-        lenis.scrollTo(target,options||{});
+        var settings=options||{};
+        var targetTop;
+
+        if(lenis){
+          lenis.scrollTo(target,settings);
+          return;
+        }
+
+        /* SPのアンカー移動はネイティブスクロールで上書き可能にする */
+        if(typeof target==='number'){
+          targetTop=target;
+        }else if(target&&target.getBoundingClientRect){
+          targetTop=
+            target.getBoundingClientRect().top+
+            window.pageYOffset+
+            (Number(settings.offset)||0);
+        }else{
+          return;
+        }
+
+        window.scrollTo({
+          top:Math.max(0,targetTop),
+          left:0,
+          behavior:settings.immediate?'auto':'smooth'
+        });
       }
     };
 
@@ -11568,14 +11630,16 @@ hexLoad(function(){
       }
     );
 
-    classObserver=new MutationObserver(function(){
-      syncScrollState();
-    });
+    if(lenis){
+      classObserver=new MutationObserver(function(){
+        syncScrollState();
+      });
 
-    classObserver.observe(root,{
-      attributes:true,
-      attributeFilter:['class']
-    });
+      classObserver.observe(root,{
+        attributes:true,
+        attributeFilter:['class']
+      });
+    }
 
     syncScrollState();
     setupMotionTargets(document);
@@ -11629,6 +11693,12 @@ hexLoad(function(){
             return !!window.ScrollTrigger;
           },
           function(){
+            /* SP・タッチ端末ではLenis本体も読み込まない */
+            if(!shouldUseLenis()){
+              waitForDomCompletion(initializeMotion);
+              return;
+            }
+
             loadLibrary(
               LENIS_URL,
               function(){
