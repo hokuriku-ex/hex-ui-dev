@@ -127,6 +127,16 @@ html{
   will-change:transform,opacity;
 }
 
+/* ヒーロー・WELCOMEキャッチ：英字1文字ずつのロールアップ */
+.hex-opening-main.has-hex-catch-roll{
+  white-space:nowrap;
+}
+.hex-catch-roll-char{
+  display:inline-block;
+  backface-visibility:hidden;
+  will-change:transform,opacity;
+}
+
 /* 共通センター見出し（下層ページ専用） */
 .hex-center-title{
   position:relative;
