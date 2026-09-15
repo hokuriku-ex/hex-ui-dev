@@ -105,6 +105,28 @@ html{
   color:#fff;
 }
 
+/* トップ見出し：英字1文字ずつのロールアップ */
+.hex-top-title.has-hex-title-roll[data-en]::after{
+  content:none!important;
+  display:none!important;
+}
+.hex-top-title-en{
+  display:block;
+  margin:0!important;
+  overflow:hidden;
+  font-family:var(--hex-font-pop-en)!important;
+  font-size:clamp(32px,3.5vw,56px)!important;
+  line-height:1.4;
+  letter-spacing:.04em;
+  font-weight:400;
+  color:inherit;
+}
+.hex-top-title-char{
+  display:inline-block;
+  backface-visibility:hidden;
+  will-change:transform,opacity;
+}
+
 /* 共通センター見出し（下層ページ専用） */
 .hex-center-title{
   position:relative;
