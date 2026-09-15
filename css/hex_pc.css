@@ -1658,12 +1658,12 @@ div[hex-sp]{
   border-radius:6px;
   pointer-events:none;
   clip-path:polygon(
-    calc(100% - 9px) 0,
+    calc(100% - 10px) 0,
     100% 0,
     100% 100%,
     0 100%,
-    0 calc(100% - 9px),
-    calc(100% - 9px) calc(100% - 9px)
+    0 calc(100% - 10px),
+    calc(100% - 10px) calc(100% - 10px)
   );
 }
 .hex-button-wrap:has(> .hex-btn-main.light)::before{
@@ -1686,7 +1686,10 @@ div[hex-sp]{
     transparent 5px
   );
 }
-.hex-company-buttons .hex-button-wrap::before{
+.hex-company-buttons
+.hex-button-wrap:has(> .hex-btn-main.light)::before,
+.hex-company-buttons
+.hex-button-wrap:has(> .hex-btn-main.dark)::before{
   border-color:#1f2774;
   background:repeating-linear-gradient(
     45deg,
@@ -1745,12 +1748,12 @@ div[hex-sp]{
   border-radius:6px;
   pointer-events:none;
   clip-path:polygon(
-    calc(100% - 9px) 0,
+    calc(100% - 10px) 0,
     100% 0,
     100% 100%,
     0 100%,
-    0 calc(100% - 9px),
-    calc(100% - 9px) calc(100% - 9px)
+    0 calc(100% - 10px),
+    calc(100% - 10px) calc(100% - 10px)
   );
 }
 .hex-banner-button:has(> .hex-btn-main.light)::before{
@@ -5818,7 +5821,7 @@ html body
 }
 .hex-company-buttons .hex-btn-main{
   width:100%;
-  height:100%;
+  height:auto;
   box-sizing:border-box;
 }
 .hex-company-buttons .hex-btn-main-title{
@@ -5859,32 +5862,12 @@ html body
     transform .38s cubic-bezier(.22,.8,.3,1),
     border-color .25s ease!important;
 }
-.hex-company-buttons .hex-btn-main.dark::before{
-  border-color:#1f2774;
-  background:repeating-linear-gradient(
-    45deg,
-    #1f2774 0,
-    #1f2774 2px,
-    transparent 2px,
-    transparent 5px
-  )!important;
-}
 .hex-company-buttons .hex-btn-main.dark > *{
   position:relative;
   z-index:1;
 }
 .hex-company-buttons .hex-btn-main.dark:hover{
   border-color:#c8a874!important;
-}
-.hex-company-buttons .hex-btn-main.dark:hover::before{
-  border-color:#c8a874!important;
-  background:repeating-linear-gradient(
-    45deg,
-    #c8a874 0,
-    #c8a874 2px,
-    transparent 2px,
-    transparent 5px
-  )!important;
 }
 .hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon,
 .hex-company-buttons .hex-btn-main.dark:hover .hex-btn-main-icon i,
@@ -8919,4 +8902,3 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     opacity:1!important;
   }
 }
-
