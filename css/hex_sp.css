@@ -2315,6 +2315,13 @@
   }
 }
 
+/* 長い英字キャッチも1行のまま文字単位で動かす */
+@media screen and (max-width:768px){
+  .hex-opening-main.has-hex-catch-roll{
+    white-space:nowrap;
+  }
+}
+
 /* =======================================
    Lenis＋GSAP ScrollTrigger 共通モーション
 ======================================= */
