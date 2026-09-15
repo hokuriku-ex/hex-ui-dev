@@ -8056,6 +8056,7 @@ html body
 #form_lp_form_button{
   position:relative;
   z-index:1;
+  isolation:isolate;
   width:100%;
   max-width:330px;
   margin:48px auto 10px!important;
@@ -8065,11 +8066,13 @@ html body
   gap:24px;
   padding:18px 24px!important;
   border:2px solid #1f2774!important;
-  background:transparent!important;
+  background:#fff!important;
   border-radius:6px!important;
   cursor:pointer;
   box-sizing:border-box;
-  transition:none;
+  transition:
+    transform .38s cubic-bezier(.22,.8,.3,1),
+    border-color .25s ease;
 }
 #form_lp_form_button::before{
   content:"";
@@ -8083,13 +8086,15 @@ html body
   border:2px solid #1f2774;
   border-radius:6px;
   pointer-events:none;
+  transform:translate3d(0,0,0);
+  transition:transform .38s cubic-bezier(.22,.8,.3,1);
   clip-path:polygon(
-    calc(100% - 8px) 0,
+    calc(100% - 10px) 0,
     100% 0,
     100% 100%,
     0 100%,
-    0 calc(100% - 8px),
-    calc(100% - 8px) calc(100% - 8px)
+    0 calc(100% - 10px),
+    calc(100% - 10px) calc(100% - 10px)
   );
   background:repeating-linear-gradient(
     45deg,
@@ -8120,17 +8125,7 @@ html body
 }
 #form_lp_form_button:hover{
   border-color:#c8a874!important;
-  background:transparent!important;
-}
-#form_lp_form_button:hover::before{
-  border-color:#c8a874;
-  background:repeating-linear-gradient(
-    45deg,
-    #c8a874 0,
-    #c8a874 2px,
-    transparent 2px,
-    transparent 5px
-  );
+  background:#fff!important;
 }
 #form_lp_form_button:hover .gc_auto_frame_lp_form_box_button_text{
   color:#c8a874!important;
@@ -8327,6 +8322,7 @@ body.hex-form-dialog-open{
 #gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round{
   position:relative;
   z-index:1;
+  isolation:isolate;
   width:100%!important;
   min-width:0!important;
   height:auto!important;
@@ -8339,7 +8335,10 @@ body.hex-form-dialog-open{
   border-radius:6px!important;
   box-sizing:border-box;
   cursor:pointer;
-  transition:none!important;
+  transition:
+    transform .38s cubic-bezier(.22,.8,.3,1),
+    border-color .25s ease,
+    color .25s ease!important;
 }
 #gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round::after{
   content:"";
@@ -8353,13 +8352,15 @@ body.hex-form-dialog-open{
   border:2px solid #1f2774;
   border-radius:6px;
   pointer-events:none;
+  transform:translate3d(0,0,0);
+  transition:transform .38s cubic-bezier(.22,.8,.3,1);
   clip-path:polygon(
-    calc(100% - 8px) 0,
+    calc(100% - 10px) 0,
     100% 0,
     100% 100%,
     0 100%,
-    0 calc(100% - 8px),
-    calc(100% - 8px) calc(100% - 8px)
+    0 calc(100% - 10px),
+    calc(100% - 10px) calc(100% - 10px)
   );
   background:repeating-linear-gradient(
     45deg,
@@ -8371,7 +8372,7 @@ body.hex-form-dialog-open{
 }
 #gc_auto_frame_lp_form_dialog
 .gc_auto_frame_lp_form_box_button_round:first-child{
-  background:transparent!important;
+  background:#fff!important;
   border:2px solid #1f2774!important;
   color:#1f2774!important;
 }
@@ -8429,22 +8430,11 @@ body.hex-form-dialog-open{
 }
 #gc_auto_frame_lp_form_dialog
 .gc_auto_frame_lp_form_box_button_round:first-child:hover{
-  background:transparent!important;
+  background:#fff!important;
 }
 #gc_auto_frame_lp_form_dialog
 .gc_auto_frame_lp_form_box_button_round:last-child:hover{
   background:#1f2774!important;
-}
-#gc_auto_frame_lp_form_dialog
-.gc_auto_frame_lp_form_box_button_round:hover::after{
-  border-color:#c8a874;
-  background:repeating-linear-gradient(
-    45deg,
-    #c8a874 0,
-    #c8a874 2px,
-    transparent 2px,
-    transparent 5px
-  );
 }
 #gc_auto_frame_lp_form_dialog
 .gc_auto_frame_lp_form_box_button_round:first-child:hover::before{
@@ -8454,6 +8444,39 @@ body.hex-form-dialog-open{
 .gc_auto_frame_lp_form_box_button_round:hover
 .gc_auto_frame_lp_form_box_button_svg{
   transform:translateX(3px);
+}
+
+/* フォームボタン：本体だけを斜線位置へ移動 */
+@media (hover:hover) and (pointer:fine){
+  #form_lp_form_button:hover,
+  #gc_auto_frame_lp_form_dialog
+  .gc_auto_frame_lp_form_box_button_round:hover{
+    transform:translate3d(9px,9px,0);
+  }
+  #form_lp_form_button:hover::before,
+  #gc_auto_frame_lp_form_dialog
+  .gc_auto_frame_lp_form_box_button_round:hover::after{
+    transform:translate3d(-9px,-9px,0);
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  #form_lp_form_button,
+  #form_lp_form_button::before,
+  #gc_auto_frame_lp_form_dialog
+  .gc_auto_frame_lp_form_box_button_round,
+  #gc_auto_frame_lp_form_dialog
+  .gc_auto_frame_lp_form_box_button_round::after{
+    transition:none!important;
+  }
+  #form_lp_form_button:hover,
+  #form_lp_form_button:hover::before,
+  #gc_auto_frame_lp_form_dialog
+  .gc_auto_frame_lp_form_box_button_round:hover,
+  #gc_auto_frame_lp_form_dialog
+  .gc_auto_frame_lp_form_box_button_round:hover::after{
+    transform:none!important;
+  }
 }
 
 /* PC */
