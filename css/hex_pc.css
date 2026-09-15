@@ -8059,12 +8059,16 @@ html body
   display:flex;
   width:100%;
   min-width:0;
-  padding:0 10px 10px 0;
+  padding:0;
   box-sizing:border-box;
 }
 .hex-form-button-motion-wrap.is-input{
   max-width:330px;
-  margin:48px auto 0;
+  margin:48px auto 10px;
+}
+.hex-form-button-motion-wrap.is-dialog{
+  max-width:300px;
+  justify-self:center;
 }
 .hex-form-button-motion-wrap::before{
   content:"";
@@ -8072,8 +8076,8 @@ html body
   z-index:0;
   top:9px;
   left:9px;
-  width:calc(100% - 10px);
-  height:calc(100% - 10px);
+  width:100%;
+  height:100%;
   box-sizing:border-box;
   border:2px solid #1f2774;
   border-radius:6px;
@@ -8278,20 +8282,46 @@ body.hex-form-dialog-open{
   color:#203459;
 }
 #gc_auto_frame_lp_form_dialog_box .hex-dialog-confirm-title{
-  margin:0 0 32px;
-  padding-bottom:14px;
-  border-bottom:3px solid #e5e8f0;
-  color:#1f2774;
-  font-size:30px;
+  position:relative;
+  width:fit-content;
+  display:block;
+  margin:0 auto 24px!important;
+  padding:0 0 8px!important;
+  border:none!important;
+  text-align:center;
+  font-size:32px!important;
   font-weight:700;
-  line-height:1.5;
-  letter-spacing:.04em;
+  line-height:1.4;
+  letter-spacing:.02em;
+  color:#1f2774!important;
+  box-sizing:border-box;
+  isolation:isolate;
+}
+#gc_auto_frame_lp_form_dialog_box
+.hex-dialog-confirm-title::after{
+  content:"";
+  position:absolute;
+  bottom:8px;
+  left:50%;
+  z-index:-1;
+  width:calc(100% + 48px);
+  height:12px;
+  box-sizing:border-box;
+  transform:translateX(-50%);
+  background:repeating-linear-gradient(
+    45deg,
+    #c8a874 0,
+    #c8a874 2px,
+    transparent 2px,
+    transparent 5px
+  )!important;
 }
 #gc_auto_frame_lp_form_dialog_box .hex-dialog-confirm-lead{
-  margin:0 0 36px;
+  margin:0 auto 36px;
   color:#203459;
   font-size:16px;
   line-height:1.8;
+  text-align:center;
 }
 #gc_auto_frame_lp_form_dialog_box .gc_dialog_lp_form_line{
   display:grid;
@@ -8337,6 +8367,7 @@ body.hex-form-dialog-open{
   position:relative;
   z-index:1;
   width:100%!important;
+  max-width:none!important;
   min-width:0!important;
   height:auto!important;
   margin:0!important;
