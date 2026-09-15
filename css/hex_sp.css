@@ -2181,9 +2181,13 @@
   #form_lp_form textarea{
     min-height:150px;
   }
-  #form_lp_form_button{
+  .hex-form-button-motion-wrap.is-input{
     max-width:280px;
     margin-top:40px!important;
+  }
+  #form_lp_form_button{
+    max-width:none;
+    margin:0!important;
   }
   .hex-form-row[data-label*="〒"] input,
   .hex-form-row[data-label*="都道府県"] select{
