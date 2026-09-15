@@ -8053,41 +8053,31 @@ html body
 }
 
 /* 確認ボタン */
-#form_lp_form_button{
+.hex-form-button-motion-wrap{
   position:relative;
-  z-index:1;
   isolation:isolate;
+  display:flex;
   width:100%;
-  max-width:330px;
-  margin:48px auto 10px!important;
-  display:flex!important;
-  align-items:center;
-  justify-content:space-between;
-  gap:24px;
-  padding:18px 24px!important;
-  border:2px solid #1f2774!important;
-  background:#fff!important;
-  border-radius:6px!important;
-  cursor:pointer;
+  min-width:0;
+  padding:0 10px 10px 0;
   box-sizing:border-box;
-  transition:
-    transform .38s cubic-bezier(.22,.8,.3,1),
-    border-color .25s ease;
 }
-#form_lp_form_button::before{
+.hex-form-button-motion-wrap.is-input{
+  max-width:330px;
+  margin:48px auto 0;
+}
+.hex-form-button-motion-wrap::before{
   content:"";
   position:absolute;
-  z-index:-1;
+  z-index:0;
   top:9px;
   left:9px;
-  width:100%;
-  height:100%;
+  width:calc(100% - 10px);
+  height:calc(100% - 10px);
   box-sizing:border-box;
   border:2px solid #1f2774;
   border-radius:6px;
   pointer-events:none;
-  transform:translate3d(0,0,0);
-  transition:transform .38s cubic-bezier(.22,.8,.3,1);
   clip-path:polygon(
     calc(100% - 10px) 0,
     100% 0,
@@ -8103,6 +8093,30 @@ html body
     transparent 2px,
     transparent 5px
   );
+}
+#form_lp_form_button{
+  position:relative;
+  z-index:1;
+  width:100%;
+  max-width:none;
+  margin:0!important;
+  display:flex!important;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  padding:18px 24px!important;
+  border:2px solid #1f2774!important;
+  background:#fff!important;
+  border-radius:6px!important;
+  cursor:pointer;
+  box-sizing:border-box;
+  transition:
+    transform .38s cubic-bezier(.22,.8,.3,1),
+    border-color .25s ease;
+}
+#form_lp_form_button::before{
+  content:none!important;
+  display:none!important;
 }
 #form_lp_form_button .gc_auto_frame_lp_form_box_button_text{
   color:#1f2774!important;
@@ -8322,7 +8336,6 @@ body.hex-form-dialog-open{
 #gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round{
   position:relative;
   z-index:1;
-  isolation:isolate;
   width:100%!important;
   min-width:0!important;
   height:auto!important;
@@ -8341,43 +8354,19 @@ body.hex-form-dialog-open{
     color .25s ease!important;
 }
 #gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round::after{
-  content:"";
-  position:absolute;
-  z-index:-1;
-  top:9px;
-  left:9px;
-  width:100%;
-  height:100%;
-  box-sizing:border-box;
-  border:2px solid #1f2774;
-  border-radius:6px;
-  pointer-events:none;
-  transform:translate3d(0,0,0);
-  transition:transform .38s cubic-bezier(.22,.8,.3,1);
-  clip-path:polygon(
-    calc(100% - 10px) 0,
-    100% 0,
-    100% 100%,
-    0 100%,
-    0 calc(100% - 10px),
-    calc(100% - 10px) calc(100% - 10px)
-  );
-  background:repeating-linear-gradient(
-    45deg,
-    #1f2774 0,
-    #1f2774 2px,
-    transparent 2px,
-    transparent 5px
-  );
+  content:none!important;
+  display:none!important;
 }
 #gc_auto_frame_lp_form_dialog
-.gc_auto_frame_lp_form_box_button_round:first-child{
+.hex-form-button-motion-wrap.is-dialog-back
+> .gc_auto_frame_lp_form_box_button_round{
   background:#fff!important;
   border:2px solid #1f2774!important;
   color:#1f2774!important;
 }
 #gc_auto_frame_lp_form_dialog
-.gc_auto_frame_lp_form_box_button_round:first-child::before{
+.hex-form-button-motion-wrap.is-dialog-back
+> .gc_auto_frame_lp_form_box_button_round::before{
   content:"\f060";
   font-family:"Font Awesome 6 Free";
   font-weight:900;
@@ -8388,7 +8377,8 @@ body.hex-form-dialog-open{
   transition:transform .3s ease;
 }
 #gc_auto_frame_lp_form_dialog
-.gc_auto_frame_lp_form_box_button_round:last-child{
+.hex-form-button-motion-wrap.is-dialog-submit
+> .gc_auto_frame_lp_form_box_button_round{
   background:#1f2774!important;
   border:2px solid #1f2774!important;
   color:#fff!important;
@@ -8429,15 +8419,18 @@ body.hex-form-dialog-open{
   color:#c8a874!important;
 }
 #gc_auto_frame_lp_form_dialog
-.gc_auto_frame_lp_form_box_button_round:first-child:hover{
+.hex-form-button-motion-wrap.is-dialog-back
+> .gc_auto_frame_lp_form_box_button_round:hover{
   background:#fff!important;
 }
 #gc_auto_frame_lp_form_dialog
-.gc_auto_frame_lp_form_box_button_round:last-child:hover{
+.hex-form-button-motion-wrap.is-dialog-submit
+> .gc_auto_frame_lp_form_box_button_round:hover{
   background:#1f2774!important;
 }
 #gc_auto_frame_lp_form_dialog
-.gc_auto_frame_lp_form_box_button_round:first-child:hover::before{
+.hex-form-button-motion-wrap.is-dialog-back
+> .gc_auto_frame_lp_form_box_button_round:hover::before{
   transform:translateX(-3px);
 }
 #gc_auto_frame_lp_form_dialog
@@ -8453,28 +8446,17 @@ body.hex-form-dialog-open{
   .gc_auto_frame_lp_form_box_button_round:hover{
     transform:translate3d(9px,9px,0);
   }
-  #form_lp_form_button:hover::before,
-  #gc_auto_frame_lp_form_dialog
-  .gc_auto_frame_lp_form_box_button_round:hover::after{
-    transform:translate3d(-9px,-9px,0);
-  }
 }
 
 @media (prefers-reduced-motion:reduce){
   #form_lp_form_button,
-  #form_lp_form_button::before,
   #gc_auto_frame_lp_form_dialog
-  .gc_auto_frame_lp_form_box_button_round,
-  #gc_auto_frame_lp_form_dialog
-  .gc_auto_frame_lp_form_box_button_round::after{
+  .gc_auto_frame_lp_form_box_button_round{
     transition:none!important;
   }
   #form_lp_form_button:hover,
-  #form_lp_form_button:hover::before,
   #gc_auto_frame_lp_form_dialog
-  .gc_auto_frame_lp_form_box_button_round:hover,
-  #gc_auto_frame_lp_form_dialog
-  .gc_auto_frame_lp_form_box_button_round:hover::after{
+  .gc_auto_frame_lp_form_box_button_round:hover{
     transform:none!important;
   }
 }
