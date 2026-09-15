@@ -11564,6 +11564,186 @@ hexLoad(function(){
       });
     }
 
+    /* ヒーロー・WELCOMEキャッチ用の1文字ロールアップ */
+    function createCatchRoll(main){
+      var textValue;
+      var chars=[];
+      var tween=null;
+
+      if(!main||main.dataset.hexCatchRollReady==='1'){
+        return null;
+      }
+
+      textValue=(main.textContent||'').trim();
+
+      if(!textValue){
+        return null;
+      }
+
+      main.textContent='';
+      main.dataset.hexCatchRollReady='1';
+      main.classList.add('has-hex-catch-roll');
+
+      Array.from(textValue).forEach(function(character){
+        var span=document.createElement('span');
+
+        span.className='hex-catch-roll-char';
+        span.textContent=character===' '?'\u00a0':character;
+        main.appendChild(span);
+        chars.push(span);
+      });
+
+      function reset(){
+        if(tween){
+          tween.kill();
+          tween=null;
+        }
+
+        gsap.set(chars,{
+          autoAlpha:0,
+          yPercent:100,
+          rotation:45,
+          transformOrigin:'50% 100%'
+        });
+      }
+
+      function play(){
+        reset();
+
+        tween=gsap.to(chars,{
+          autoAlpha:1,
+          yPercent:0,
+          rotation:0,
+          duration:.6,
+          stagger:.07,
+          ease:'power3.out',
+          overwrite:'auto',
+          onComplete:function(){
+            tween=null;
+            gsap.set(chars,{
+              clearProps:'transform,opacity,visibility,willChange'
+            });
+          }
+        });
+      }
+
+      if(isReducedMotion()){
+        gsap.set(chars,{
+          autoAlpha:1,
+          yPercent:0,
+          rotation:0
+        });
+      }else{
+        reset();
+      }
+
+      return{
+        play:play,
+        reset:reset
+      };
+    }
+
+    function setupHeroAndWelcomeCatchRolls(){
+      var heroCatch=document.querySelector('.hex-hero-catch');
+      var heroMain=heroCatch
+        ?heroCatch.querySelector(
+          '.hex-handoff-copy .hex-opening-main'
+        )
+        :null;
+      var heroRoll=createCatchRoll(heroMain);
+      var welcomeCopy=document.querySelector(
+        '.hex-opening-copy-source.hex-welcome-copy,'+
+        '.hex-welcome-wrap .hex-opening-copy-source'
+      );
+      var welcomeMain=welcomeCopy
+        ?welcomeCopy.querySelector('.hex-opening-main')
+        :null;
+      var welcomeRoll=createCatchRoll(welcomeMain);
+
+      if(isReducedMotion()){
+        return;
+      }
+
+      if(heroCatch&&heroRoll){
+        var heroPlayed=false;
+
+        function syncHeroCatch(){
+          if(
+            !heroPlayed&&
+            heroCatch.classList.contains('is-catch-visible')
+          ){
+            heroPlayed=true;
+            heroRoll.play();
+          }
+        }
+
+        new MutationObserver(syncHeroCatch).observe(
+          heroCatch,
+          {
+            attributes:true,
+            attributeFilter:['class']
+          }
+        );
+
+        syncHeroCatch();
+      }
+
+      if(!welcomeCopy||!welcomeRoll){
+        return;
+      }
+
+      if(window.innerWidth<=768){
+        /* SPは固定受け渡しがないため、画面進入を開始条件にする */
+        ScrollTrigger.create({
+          trigger:welcomeCopy,
+          start:'top 90%',
+          end:'bottom 8%',
+          onEnter:function(){
+            welcomeRoll.play();
+          },
+          onEnterBack:function(){
+            welcomeRoll.play();
+          },
+          onLeave:function(){
+            welcomeRoll.reset();
+          },
+          onLeaveBack:function(){
+            welcomeRoll.reset();
+          }
+        });
+        return;
+      }
+
+      /* PCはヒーローからWELCOMEへコピーが渡った瞬間に開始する */
+      var welcomeWasActive=null;
+
+      function syncWelcomeCatch(){
+        var isActive=welcomeCopy.classList.contains('is-copy-active');
+
+        if(isActive===welcomeWasActive){
+          return;
+        }
+
+        welcomeWasActive=isActive;
+
+        if(isActive){
+          welcomeRoll.play();
+        }else{
+          welcomeRoll.reset();
+        }
+      }
+
+      new MutationObserver(syncWelcomeCatch).observe(
+        welcomeCopy,
+        {
+          attributes:true,
+          attributeFilter:['class']
+        }
+      );
+
+      syncWelcomeCatch();
+    }
+
     function revealWithoutMotion(targets){
       if(!targets.length){
         return;
@@ -11764,6 +11944,7 @@ hexLoad(function(){
 
     syncScrollState();
     setupMotionTargets(document);
+    setupHeroAndWelcomeCatchRolls();
 
     /* 初回の対象登録と位置計算が終わってから白カバーを外す */
     window.requestAnimationFrame(function(){
