@@ -1658,12 +1658,12 @@ div[hex-sp]{
   border-radius:6px;
   pointer-events:none;
   clip-path:polygon(
-    calc(100% - 8px) 0,
+    calc(100% - 9px) 0,
     100% 0,
     100% 100%,
     0 100%,
-    0 calc(100% - 8px),
-    calc(100% - 8px) calc(100% - 8px)
+    0 calc(100% - 9px),
+    calc(100% - 9px) calc(100% - 9px)
   );
 }
 .hex-button-wrap:has(> .hex-btn-main.light)::before{
@@ -1719,6 +1719,66 @@ div[hex-sp]{
   background-color:var(--hex-button-surface,transparent)!important;
 }
 .hex-button-wrap > .hex-btn-main::before{
+  content:none!important;
+  display:none!important;
+}
+
+/* バナー内ボタンも、本体と斜線を別レイヤーにする */
+.hex-banner-button{
+  position:relative;
+  isolation:isolate;
+  display:inline-flex;
+  max-width:100%;
+  padding:0 10px 10px 0;
+  box-sizing:border-box;
+}
+.hex-banner-button::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  top:9px;
+  left:9px;
+  width:calc(100% - 10px);
+  height:calc(100% - 10px);
+  box-sizing:border-box;
+  border:2px solid;
+  border-radius:6px;
+  pointer-events:none;
+  clip-path:polygon(
+    calc(100% - 9px) 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 calc(100% - 9px),
+    calc(100% - 9px) calc(100% - 9px)
+  );
+}
+.hex-banner-button:has(> .hex-btn-main.light)::before{
+  border-color:#1f2774;
+  background:repeating-linear-gradient(
+    45deg,
+    #1f2774 0,
+    #1f2774 2px,
+    transparent 2px,
+    transparent 5px
+  );
+}
+.hex-banner-button:has(> .hex-btn-main.dark)::before{
+  border-color:#fff;
+  background:repeating-linear-gradient(
+    45deg,
+    #fff 0,
+    #fff 2px,
+    transparent 2px,
+    transparent 5px
+  );
+}
+.hex-banner-button > .hex-btn-main{
+  position:relative;
+  z-index:1;
+  margin:0!important;
+}
+.hex-banner-button > .hex-btn-main::before{
   content:none!important;
   display:none!important;
 }
@@ -6991,7 +7051,7 @@ html body
 .hex-solution-copy{
   margin:24px 0 0;
   color:#1f2774;
-  font-family:var(--hex-font-pop-ja);
+  font-family:var(--hex-font-serif);
   font-size:32px;
   font-weight:700;
   line-height:1.6;
