@@ -1912,6 +1912,92 @@ hexReady(function(){
 });
 
 /* =======================================
+   共通ボタンの背景色を周囲の実背景色へ同期
+======================================= */
+(function(){
+  'use strict';
+
+  function hasVisibleBackground(color){
+    var alphaMatch;
+
+    if(!color||color==='transparent'){
+      return false;
+    }
+
+    alphaMatch=color.match(
+      /^rgba\([^,]+,[^,]+,[^,]+,\s*([\d.]+)\)$/
+    );
+
+    return !alphaMatch||parseFloat(alphaMatch[1])>.01;
+  }
+
+  function findButtonSurface(button){
+    var ownColor=window.getComputedStyle(button).backgroundColor;
+    var current;
+    var backgroundLayer;
+    var color;
+
+    /* バナーなど、すでに背景を持つボタンはその色を維持する */
+    if(hasVisibleBackground(ownColor)){
+      return ownColor;
+    }
+
+    current=button.parentElement;
+
+    while(current){
+      backgroundLayer=current.querySelector(
+        ':scope > .background_color,'+
+        ':scope > .backgroundcolor_auto'
+      );
+
+      if(backgroundLayer){
+        color=window.getComputedStyle(
+          backgroundLayer
+        ).backgroundColor;
+
+        if(hasVisibleBackground(color)){
+          return color;
+        }
+      }
+
+      color=window.getComputedStyle(current).backgroundColor;
+
+      if(hasVisibleBackground(color)){
+        return color;
+      }
+
+      current=current.parentElement;
+    }
+
+    return '#fff';
+  }
+
+  function syncButtonSurfaces(scope){
+    var area=scope&&scope.querySelectorAll
+      ?scope
+      :document;
+
+    area.querySelectorAll(
+      '.hex-button-wrap > .hex-btn-main,'+
+      '.hex-banner-button > .hex-btn-main'
+    ).forEach(function(button){
+      button.style.setProperty(
+        '--hex-button-surface',
+        findButtonSurface(button)
+      );
+    });
+  }
+
+  window.hexSyncButtonSurfaces=syncButtonSurfaces;
+
+  hexLoad(function(){
+    window.setTimeout(function(){
+      syncButtonSurfaces(document);
+    },0);
+  });
+})();
+
+/* =======================================
    アクション見出しアコーディオン
 ======================================= */
 (function(){
