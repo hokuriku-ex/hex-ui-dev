@@ -9756,10 +9756,15 @@ hexLoad(function(){
       );
     }
 
-    function setupDialogButtonMotion(box){
-      if(!box)return;
+    function setupDialogButtonMotion(scope){
+      var dialog=document.getElementById(
+        'gc_auto_frame_lp_form_dialog'
+      );
+      var area=dialog||scope;
 
-      var buttons=box.querySelectorAll(
+      if(!area)return;
+
+      var buttons=area.querySelectorAll(
         '.gc_auto_frame_lp_form_box_button_round'
       );
 
