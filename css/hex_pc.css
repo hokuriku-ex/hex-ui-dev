@@ -1636,12 +1636,65 @@ div[hex-sp]{
 
 /* ボタン */
 .hex-button-wrap{
+  position:relative;
+  isolation:isolate;
   display:flex;
   justify-content:center;
   width:100%;
   max-width:100%;
   min-width:0;
   box-sizing:border-box;
+}
+.hex-button-wrap::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  top:9px;
+  left:9px;
+  width:calc(100% - 10px);
+  height:calc(100% - 10px);
+  box-sizing:border-box;
+  border:2px solid;
+  border-radius:6px;
+  pointer-events:none;
+  clip-path:polygon(
+    calc(100% - 8px) 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 calc(100% - 8px),
+    calc(100% - 8px) calc(100% - 8px)
+  );
+}
+.hex-button-wrap:has(> .hex-btn-main.light)::before{
+  border-color:#1f2774;
+  background:repeating-linear-gradient(
+    45deg,
+    #1f2774 0,
+    #1f2774 2px,
+    transparent 2px,
+    transparent 5px
+  );
+}
+.hex-button-wrap:has(> .hex-btn-main.dark)::before{
+  border-color:#fff;
+  background:repeating-linear-gradient(
+    45deg,
+    #fff 0,
+    #fff 2px,
+    transparent 2px,
+    transparent 5px
+  );
+}
+.hex-company-buttons .hex-button-wrap::before{
+  border-color:#1f2774;
+  background:repeating-linear-gradient(
+    45deg,
+    #1f2774 0,
+    #1f2774 2px,
+    transparent 2px,
+    transparent 5px
+  );
 }
 .hex-btn-main{
   position:relative;
@@ -1657,8 +1710,17 @@ div[hex-sp]{
   margin:0 10px 10px 0;
   text-decoration:none;
   border-radius:6px;
-  transition:none;
+  transition:
+    transform .38s cubic-bezier(.22,.8,.3,1),
+    border-color .25s ease;
   background:transparent;
+}
+.hex-button-wrap > .hex-btn-main{
+  background-color:var(--hex-button-surface,transparent)!important;
+}
+.hex-button-wrap > .hex-btn-main::before{
+  content:none!important;
+  display:none!important;
 }
 .hex-btn-main::before{
   content:"";
@@ -1672,6 +1734,13 @@ div[hex-sp]{
   border:2px solid;
   border-radius:6px;
   pointer-events:none;
+  opacity:1;
+  transform:translate3d(0,0,0);
+  transition:
+    transform .38s cubic-bezier(.22,.8,.3,1),
+    opacity .28s ease,
+    border-color .25s ease,
+    background .25s ease;
   clip-path:polygon(
     calc(100% - 8px) 0,
     100% 0,
@@ -1758,6 +1827,14 @@ div[hex-sp]{
 .hex-btn-main:hover,
 .hex-btn-main:hover *{
   text-decoration:none!important;
+}
+
+/* 共通ボタン：本体を斜線位置へ移動して重ねる */
+@media (hover:hover) and (pointer:fine){
+  .hex-button-wrap > .hex-btn-main:hover,
+  .hex-banner-button > .hex-btn-main:hover{
+    transform:translate3d(9px,9px,0);
+  }
 }
 
 /* リンク */
@@ -5718,7 +5795,9 @@ html body
   color:#1f2774!important;
   background:#1f2774!important;
   border:2px solid #1f2774!important;
-  transition:none!important;
+  transition:
+    transform .38s cubic-bezier(.22,.8,.3,1),
+    border-color .25s ease!important;
 }
 .hex-company-buttons .hex-btn-main.dark::before{
   border-color:#1f2774;
@@ -8765,5 +8844,18 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     transform:none!important;
     animation:none!important;
     transition:none!important;
+  }
+  .hex-button-wrap > .hex-btn-main,
+  .hex-button-wrap > .hex-btn-main::before,
+  .hex-banner-button > .hex-btn-main{
+    transition:none!important;
+  }
+  .hex-button-wrap > .hex-btn-main:hover,
+  .hex-button-wrap > .hex-btn-main:hover::before,
+  .hex-banner-button > .hex-btn-main:hover{
+    transform:none!important;
+  }
+  .hex-button-wrap > .hex-btn-main:hover::before{
+    opacity:1!important;
   }
 }
