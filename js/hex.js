@@ -6434,29 +6434,9 @@ hexReady(function(){
   }
 
   function measure(){
-    var aboutRect;
-
     if(!active||!aboutFrame){
       return;
     }
-
-    foundedDistance=Math.max(
-      window.innerHeight*3.2,
-      2400
-    );
-
-    aboutFrame.style.setProperty(
-      "--hex-founded-scroll-distance",
-      Math.ceil(foundedDistance)+"px"
-    );
-
-    aboutRect=aboutFrame.getBoundingClientRect();
-    foundedStartY=
-      window.scrollY+
-      aboutRect.top-
-      getHeaderHeight();
-
-    setWelcomePosition();
   }
 
   function start(detail){
@@ -6483,23 +6463,17 @@ hexReady(function(){
     startScrollY=window.scrollY;
 
     aboutFrame.classList.add(
-      "hex-founded-stage",
-      "hex-founded-scroll-stage"
+      "hex-founded-normal-motion"
     );
-    aboutFrame.dataset.foundedStep="manual";
 
     prepareCards();
     measure();
-
-    document.documentElement.classList.add(
-      "hex-welcome-exit-active",
-      "hex-founded-manual"
-    );
   }
 
   function update(){
     var foundedProgress;
-    var welcomeDistance;
+    var aboutRect;
+    var revealDistance;
 
     frameRequested=false;
 
@@ -6507,38 +6481,20 @@ hexReady(function(){
       return;
     }
 
-    welcomeDistance=Math.max(
-      foundedStartY-startScrollY,
-      1
-    );
-    welcomeProgress=clamp(
-      (window.scrollY-startScrollY)/welcomeDistance,
-      0,
+    aboutRect=aboutFrame.getBoundingClientRect();
+    revealDistance=Math.max(
+      window.innerHeight-getHeaderHeight(),
       1
     );
 
-    document.documentElement.style.setProperty(
-      "--hex-welcome-exit-progress",
-      String(welcomeProgress)
-    );
-    document.documentElement.classList.toggle(
-      "hex-welcome-exit-complete",
-      welcomeProgress>=1
-    );
-
+    /*
+     * 創業セクションの上端が画面下へ入ってから、
+     * ヘッダー下へ到達するまでの通常スクロール量を使う。
+     */
     foundedProgress=clamp(
-      (window.scrollY-foundedStartY)/foundedDistance,
+      (window.innerHeight-aboutRect.top)/revealDistance,
       0,
       1
-    );
-
-    aboutFrame.classList.toggle(
-      "is-founded-active",
-      window.scrollY>=foundedStartY-1
-    );
-    document.documentElement.classList.toggle(
-      "hex-founded-stage-active",
-      window.scrollY>=foundedStartY-1
     );
 
     updateFounded(foundedProgress);
@@ -6571,6 +6527,7 @@ hexReady(function(){
       aboutFrame.classList.remove(
         "hex-founded-stage",
         "hex-founded-scroll-stage",
+        "hex-founded-normal-motion",
         "is-founded-active",
         "is-founded-released"
       );
@@ -6609,32 +6566,17 @@ hexReady(function(){
       update();
 
       /*
-       * 戻り方向でWELCOMEフェードが0まで戻ったら、
-       * WELCOME本文の固定だけをこのフレームで解除する。
-       * イベント自体はpreventDefaultして丸画像を固定状態へ戻し、
-       * 次のスクロールからヒーローへの円拡大を逆再生させる。
+       * preventDefaultしない。
+       * 丸画像とWELCOME文章が揃った時点で固定を解除し、
+       * ここから先は通常のページスクロールへ戻す。
        */
-      if(
-        active&&
-        welcomeProgress<=.001&&
-        window.scrollY<=startScrollY+1
-      ){
-        clearAll();
-        event.preventDefault();
-        return;
-      }
-
-      /* WELCOMEが薄くなる間だけ丸画像を現在位置に保持する */
-      if(active&&welcomeProgress<1){
-        event.preventDefault();
-      }
     }
   );
 
   document.addEventListener(
     "hex:welcome-exit-cancel",
     function(){
-      if(active&&window.scrollY<=startScrollY+1){
+      if(active&&window.scrollY<startScrollY-1){
         clearAll();
       }
     }
