@@ -6566,7 +6566,7 @@ html body
 
 /* ロゴに込めた想い */
 .content_body:has(.hex-logo-section) .bg_before_after1{
-  width:min(100%, 800px);
+  width:min(100%, 400px);
   aspect-ratio:407 / 312;
   margin:0 auto!important;
 }
