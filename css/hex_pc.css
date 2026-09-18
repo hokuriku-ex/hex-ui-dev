@@ -6566,7 +6566,16 @@ html body
 
 /* ロゴに込めた想い */
 .content_body:has(.hex-logo-section) .bg_before_after1{
-  margin-inline:auto!important;
+  width:min(100%, 800px);
+  aspect-ratio:407 / 312;
+  margin:0 auto!important;
+}
+.content_body:has(.hex-logo-section) .bg_before_after1 img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
 }
 
 /* 体制・スタッフ紹介 */
