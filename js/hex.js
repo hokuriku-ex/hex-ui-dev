@@ -8731,9 +8731,20 @@ function hexPrepareStaffIframe(iframe){
           doc.documentElement.style.margin='0';
           doc.documentElement.style.padding='0';
           doc.documentElement.style.overflow='hidden';
+          doc.documentElement.style.setProperty(
+            'background-color',
+            '#f3f0eb',
+            'important'
+          );
+
           doc.body.style.margin='0';
           doc.body.style.padding='0';
           doc.body.style.overflow='hidden';
+          doc.body.style.setProperty(
+            'background-color',
+            '#f3f0eb',
+            'important'
+          );
           hexResizeStaffIframe(iframe);
           setTimeout(function(){ hexResizeStaffIframe(iframe); },150);
           setTimeout(function(){ hexResizeStaffIframe(iframe); },400);
