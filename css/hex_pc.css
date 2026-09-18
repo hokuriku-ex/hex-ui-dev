@@ -6248,7 +6248,7 @@ html body
 }
 
 /* 施工事例・お知らせページ */
-.gc_auto_frame_post_index{
+.gc_auto_frame_post_index .bg_post_index.post_index_type2{
   padding-top:64px!important;
 }
 .gc_auto_frame_post_item .post_item_contents{
