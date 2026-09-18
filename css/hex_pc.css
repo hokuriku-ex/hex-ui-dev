@@ -1040,6 +1040,7 @@ a.hex-text-link[target="_blank"]::after{
   inset:0 auto 0 50%;
   z-index:-1;
   width:100vw;
+  background-color:var(--hex-top-spacer-bg, transparent);
   transform:translateX(-50%);
 }
 .bg_post_index:has(.hex-top-spacer),
