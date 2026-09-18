@@ -6029,7 +6029,7 @@ html body
 ======================================= */
 .hex-banner.hex-top-banner{
   width:100%;
-  max-width:1100px!important;
+  max-width:calc(var(--hex_small_width) - 200px);
   margin:0 auto;
 }
 
@@ -6038,7 +6038,7 @@ html body
 ======================================= */
 .gc_auto_frame_spotitem_body:has(.hex-recruit-section){
   width:auto!important;
-  max-width:var(--hex_medium_width);
+  max-width:var(--hex_small_width);
   margin-left:auto!important;
   margin-right:auto!important;
   text-align:left!important;
