@@ -6217,6 +6217,7 @@ html body
   padding-bottom:min(10%, 120px)!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box!important;
+  background-color:#f3f0eb!important;
 }
 .gc_auto_frame_spotitem_box{
   width:100%!important;
