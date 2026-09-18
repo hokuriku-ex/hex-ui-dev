@@ -2480,7 +2480,7 @@ div[hex-sp]{
 .hex-banner{
   position:relative;
   width:calc(100% - 20px);
-  max-width:var(--hex_medium_width)!important;
+  max-width:var(--hex_small_width)!important;
   margin:0 auto;
   box-sizing:border-box;
   border-radius:6px!important;
