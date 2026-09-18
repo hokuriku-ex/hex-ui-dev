@@ -6564,6 +6564,11 @@ html body
   color:#203459;
 }
 
+/* ロゴに込めた想い */
+.content_body:has(.hex-logo-section) .bg_before_after1{
+  margin-inline:auto!important;
+}
+
 /* 体制・スタッフ紹介 */
 .hex-staff-source-stage{
   position:fixed!important;
