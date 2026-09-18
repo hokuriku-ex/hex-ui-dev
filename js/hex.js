@@ -4515,6 +4515,7 @@ hexReady(function(){
       );
     }
 
+    document.dispatchEvent(new Event("hex:opening-finished"));
     window.dispatchEvent(new Event("scroll"));
   }
 
@@ -5549,6 +5550,7 @@ hexReady(function(){
     var initialPositionSet=false;
     var imageHandoffState="hidden";
     var stageReady=false;
+    var openingJustFinished=false;
 
     var initialCenterOffsetY=0;
     var openingObserver=null;
@@ -6224,7 +6226,15 @@ hexReady(function(){
       var root=document.documentElement;
       var heroTop;
 
-      if(initialPositionSet){
+      if(initialPositionSet||!stageReady){
+        return;
+      }
+
+      /*
+       * REPLAYで画像がキャッシュ済みの場合も、開幕の縦スクロール領域を
+       * ヒーローの初期位置合わせで飛ばさない。
+       */
+      if(document.querySelector(".hex-opening")){
         return;
       }
 
@@ -6268,7 +6278,7 @@ hexReady(function(){
       initialPositionSet=true;
 
       if(
-        window.scrollY>1||
+        (window.scrollY>1&&!openingJustFinished)||
         initialCenterOffsetY<=0
       ){
         return;
@@ -6287,6 +6297,15 @@ hexReady(function(){
         requestScrollUpdate();
       });
     }
+
+    document.addEventListener(
+      "hex:opening-finished",
+      function(){
+        openingJustFinished=true;
+        applyInitialCenterPosition();
+      },
+      {once:true}
+    );
 
     function updateHeroStage(){
       var activeHero;
