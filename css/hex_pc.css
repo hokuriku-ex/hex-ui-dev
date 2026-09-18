@@ -6028,6 +6028,7 @@ html body
    トップページ：採用情報
 ======================================= */
 .gc_auto_frame_spotitem_body:has(.hex-recruit-section){
+  max-width:var(--hex_medium_width);
   text-align:center;
 }
 .gc_auto_frame_spotitem_body:has(.hex-recruit-section) .hex-button-wrap{
