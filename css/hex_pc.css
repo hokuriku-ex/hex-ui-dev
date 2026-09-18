@@ -6671,10 +6671,11 @@ html body
   max-width:var(--base_width);
   margin:0 auto;
   padding-top:0!important;
-  padding-bottom:10%!important;
+  padding-bottom:min(10%, 120px)!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box;
   color:#203459;
+  background-color:#f3f0eb!important;
 }
 .hex-staff-section{
   margin:0 0 64px;
