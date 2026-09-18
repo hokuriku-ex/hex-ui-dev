@@ -4950,7 +4950,6 @@ hexReady(function(){
   ){
     var host=opening._hexOpeningHost;
     var scenes=[];
-    var slideSceneIndices=[];
     var slideElements=slideStage
       ?Array.prototype.slice.call(
         slideStage.querySelectorAll(".hex-opening-slide")
@@ -4979,7 +4978,6 @@ hexReady(function(){
     }
 
     slideElements.forEach(function(slide){
-      slideSceneIndices.push(scenes.length);
       scenes.push(slide);
     });
 
@@ -5076,8 +5074,11 @@ hexReady(function(){
     function renderCurtain(){
       var from=Math.floor(position);
       var local=position-from;
-      var fromSlide=slideSceneIndices.indexOf(from)!==-1;
-      var toSlide=slideSceneIndices.indexOf(from+1)!==-1;
+      var isSceneTransition=
+        from>=0&&
+        from<brandIndex&&
+        !!scenes[from]&&
+        !!scenes[from+1];
 
       if(!curtain){
         return;
@@ -5085,7 +5086,7 @@ hexReady(function(){
 
       curtain.classList.toggle(
         "is-active",
-        fromSlide&&toSlide&&local>0&&local<1
+        isSceneTransition&&local>0&&local<1
       );
 
       curtainBands.forEach(function(band,index){
@@ -5094,7 +5095,7 @@ hexReady(function(){
           ?progress/.2
           :1-(progress-.2)/.8;
 
-        if(!fromSlide||!toSlide){
+        if(!isSceneTransition){
           progress=0;
           widthProgress=0;
         }

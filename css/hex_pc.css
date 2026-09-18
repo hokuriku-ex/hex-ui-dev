@@ -4218,7 +4218,7 @@ body,
   animation:none!important;
 }
 
-/* CMS画像4枚の間だけを横切りする紺系4色カーテン */
+/* 開幕の各場面切替を横切りする紺系4色カーテン */
 .hex-opening-curtain{
   position:absolute;
   inset:0;
