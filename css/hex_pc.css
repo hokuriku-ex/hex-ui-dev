@@ -6223,6 +6223,7 @@ html body
   width:100%!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box!important;
+  background-color:#f3f0eb!important;
 }
 .post_index_type3 .content{
   margin-bottom:0!important;
