@@ -1994,6 +1994,131 @@ hexReady(function(){
 })();
 
 /* =======================================
+   スマホ共通ボタン：タップ後の遷移待ち演出
+======================================= */
+(function(){
+  'use strict';
+
+  var activeButton=null;
+  var resetTimer=0;
+
+  function isSmartphone(){
+    return window.matchMedia(
+      '(max-width:768px)'
+    ).matches;
+  }
+
+  function getButton(target){
+    if(!target||!target.closest){
+      return null;
+    }
+
+    return target.closest(
+      '.hex-button-wrap > .hex-btn-main,'+
+      '.hex-banner-button > .hex-btn-main,'+
+      '#form_lp_form_button,'+
+      '#gc_auto_frame_lp_form_dialog '+
+      '.gc_auto_frame_lp_form_box_button_round'
+    );
+  }
+
+  function clearTapState(){
+    window.clearTimeout(resetTimer);
+    resetTimer=0;
+
+    if(activeButton){
+      activeButton.classList.remove('is-tap-active');
+      activeButton=null;
+    }
+  }
+
+  function activate(button,resetDelay){
+    if(activeButton&&activeButton!==button){
+      activeButton.classList.remove('is-tap-active');
+    }
+
+    window.clearTimeout(resetTimer);
+    activeButton=button;
+    button.classList.add('is-tap-active');
+
+    if(resetDelay){
+      resetTimer=window.setTimeout(
+        clearTapState,
+        resetDelay
+      );
+    }
+  }
+
+  document.addEventListener(
+    'pointerdown',
+    function(event){
+      var button;
+
+      if(!isSmartphone()){
+        return;
+      }
+
+      button=getButton(event.target);
+
+      if(button){
+        /* スクロール開始時はpointercancelで解除される */
+        activate(button,1800);
+      }
+    },
+    {passive:true}
+  );
+
+  document.addEventListener(
+    'pointercancel',
+    clearTapState,
+    {passive:true}
+  );
+
+  document.addEventListener('click',function(event){
+    var button;
+    var href;
+    var target;
+    var isTemporary;
+    var isDialogSubmit;
+
+    if(!isSmartphone()){
+      return;
+    }
+
+    button=getButton(event.target);
+
+    if(!button){
+      return;
+    }
+
+    href=(button.getAttribute('href')||'').trim();
+    target=(button.getAttribute('target')||'').toLowerCase();
+    isDialogSubmit=!!button.closest(
+      '.hex-form-button-motion-wrap.is-dialog-submit'
+    );
+    isTemporary=
+      !href||
+      href==='#'||
+      href.indexOf('#')===0||
+      href.indexOf('javascript:')===0||
+      href.indexOf('mailto:')===0||
+      href.indexOf('tel:')===0||
+      target==='_blank'||
+      button.hasAttribute('download');
+
+    /* 確認画面の送信だけはページ遷移まで状態を維持する。 */
+    if(isDialogSubmit){
+      isTemporary=false;
+    }
+
+    /* 通常遷移は表示を維持。遷移しない操作だけ短時間で戻す。 */
+    activate(button,isTemporary?700:10000);
+  });
+
+  window.addEventListener('pageshow',clearTapState);
+})();
+
+/* =======================================
    アクション見出しアコーディオン
 ======================================= */
 (function(){
@@ -4146,6 +4271,7 @@ hexReady(function(){
 
   function createOpeningElement(){
     var opening=document.createElement("div");
+    var curtain=document.createElement("div");
 
     opening.className="hex-opening is-scroll-driven";
     opening.setAttribute("aria-label","開幕コンテンツ");
@@ -4233,6 +4359,11 @@ hexReady(function(){
           '</g>'+
         '</svg>'+ 
       '</div>';
+
+    curtain.className="hex-opening-curtain";
+    curtain.setAttribute("aria-hidden","true");
+    curtain.innerHTML="<i></i><i></i><i></i><i></i>";
+    opening.appendChild(curtain);
 
     return opening;
   }
@@ -4348,6 +4479,13 @@ hexReady(function(){
   }
 
   function finishOpening(opening){
+    var host=opening&&opening._hexOpeningHost;
+    var hero=document.querySelector(".hex-hero-wrap");
+    var headerHeight=parseFloat(
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--header_height")
+    )||80;
+
     document.documentElement.classList.remove(
       "hex-opening-lock"
     );
@@ -4360,8 +4498,21 @@ hexReady(function(){
       opening._hexOpeningCleanup=null;
     }
 
-    if(opening&&opening.parentNode){
+    if(host&&host.parentNode){
+      host.parentNode.removeChild(host);
+    }else if(opening&&opening.parentNode){
       opening.parentNode.removeChild(opening);
+    }
+
+    if(hero){
+      window.scrollTo(
+        0,
+        Math.max(
+          0,
+          hero.getBoundingClientRect().top+
+            window.pageYOffset-headerHeight
+        )
+      );
     }
 
     window.dispatchEvent(new Event("scroll"));
@@ -4414,7 +4565,7 @@ hexReady(function(){
     return cue;
   }
 
-  function startOpeningScroller(
+  function startOpeningScrollerLegacy(
     opening,
     introStage,
     slideStage,
@@ -4786,8 +4937,299 @@ hexReady(function(){
     render();
   }
 
+  /*
+   * ブラウザ標準の縦スクロールを進行値として使う。
+   * シーン自体は右から左へ移動するため、入力感だけが通常スクロールになる。
+   */
+  function startOpeningScroller(
+    opening,
+    introStage,
+    slideStage,
+    messageStage
+  ){
+    var host=opening._hexOpeningHost;
+    var scenes=[];
+    var slideSceneIndices=[];
+    var slideElements=slideStage
+      ?Array.prototype.slice.call(
+        slideStage.querySelectorAll(".hex-opening-slide")
+      )
+      :[];
+    var brandStage=opening.querySelector(".hex-opening-brand-stage");
+    var logoStage=opening.querySelector(".hex-opening-logo-stage");
+    var curtain=opening.querySelector(".hex-opening-curtain");
+    var curtainBands=curtain
+      ?Array.prototype.slice.call(curtain.children)
+      :[];
+    var nav;
+    var cue;
+    var position=0;
+    var hostTop=0;
+    var scrollDistance=1;
+    var hasInteracted=false;
+    var isComplete=false;
+    var revealOriginReady=false;
+    var brandIndex;
+    var heroIndex;
+    var initialScrollY=window.pageYOffset;
+
+    if(introStage){
+      scenes.push(introStage);
+    }
+
+    slideElements.forEach(function(slide){
+      slideSceneIndices.push(scenes.length);
+      scenes.push(slide);
+    });
+
+    if(messageStage&&messageStage.children.length){
+      scenes.push(messageStage);
+    }
+
+    if(!brandStage&&logoStage){
+      brandStage=document.createElement("div");
+      brandStage.className="hex-opening-brand-stage";
+      brandStage.appendChild(logoStage);
+      opening.insertBefore(brandStage,opening.firstChild);
+    }
+
+    if(brandStage){
+      scenes.push(brandStage);
+    }
+
+    brandIndex=Math.max(0,scenes.length-1);
+    scenes.push(null);
+    heroIndex=scenes.length-1;
+
+    nav=createOpeningProgressNav(opening,scenes.length);
+    cue=createOpeningScrollCue(opening);
+
+    function setSceneStyle(scene,x,isVisible){
+      if(!scene){
+        return;
+      }
+      scene.style.setProperty(
+        "transform",
+        "translate3d("+x+"%,0,0)",
+        "important"
+      );
+      scene.style.setProperty(
+        "opacity",
+        isVisible?"1":"0",
+        "important"
+      );
+      scene.style.setProperty(
+        "visibility",
+        isVisible?"visible":"hidden",
+        "important"
+      );
+    }
+
+    function renderLogo(progress){
+      var left=opening.querySelector(".hex-logo-front-left-mask-path");
+      var center=opening.querySelector(".hex-logo-front-center-mask-path");
+      var right=opening.querySelector(".hex-logo-front-right-clip-rect");
+      var backArm=opening.querySelector(".hex-logo-back-arm-mask-path");
+      var backHand=opening.querySelector(".hex-logo-back-hand");
+      var company=opening.querySelector(".hex-logo-company-name");
+      var finalCopy=opening.querySelector(".hex-opening-message-final");
+      var withCopy=opening.querySelector(".hex-opening-message-with");
+      var pLeft=phase(progress,.03,.23);
+      var pCenter=phase(progress,.16,.36);
+      var pRight=phase(progress,.29,.49);
+      var pBack=phase(progress,.43,.66);
+      var pFinal=phase(progress,.66,.9);
+      var copyMove=phase(progress,.08,.48);
+
+      if(left){left.style.strokeDashoffset=String(1-pLeft);}
+      if(center){center.style.strokeDashoffset=String(1-pCenter);}
+      if(right){right.style.transform="translateX(140px) scaleX("+pRight+")";}
+      if(backArm){
+        backArm.style.opacity=pBack>0?"1":"0";
+        backArm.style.strokeDashoffset=String(90*(1-pBack));
+      }
+      [backHand,company].forEach(function(item){
+        if(!item){return;}
+        item.style.opacity=String(pFinal);
+        item.style.transform="translateY("+(-15*(1-pFinal))+"px)";
+      });
+      if(finalCopy){
+        finalCopy.style.opacity="1";
+        finalCopy.style.top=(50-43*copyMove)+"%";
+        finalCopy.style.transform=
+          "translate(-50%,"+(-50*(1-copyMove))+"%)";
+      }
+      if(withCopy){
+        var withProgress=phase(progress,.18,.46);
+        withCopy.style.maxHeight=(1.5*withProgress)+"em";
+        withCopy.style.marginTop=(4*withProgress)+"px";
+        withCopy.style.opacity=String(withProgress);
+        withCopy.style.transform=
+          "translateY("+(12*(1-withProgress))+"px)";
+      }
+      if(logoStage){
+        logoStage.style.opacity=progress>0?"1":"0";
+      }
+    }
+
+    function renderCurtain(){
+      var from=Math.floor(position);
+      var local=position-from;
+      var fromSlide=slideSceneIndices.indexOf(from)!==-1;
+      var toSlide=slideSceneIndices.indexOf(from+1)!==-1;
+
+      if(!curtain){
+        return;
+      }
+
+      curtain.classList.toggle(
+        "is-active",
+        fromSlide&&toSlide&&local>0&&local<1
+      );
+
+      curtainBands.forEach(function(band,index){
+        var progress=phase(local,index*.055,.72+index*.055);
+        var widthProgress=progress<=.2
+          ?progress/.2
+          :1-(progress-.2)/.8;
+
+        if(!fromSlide||!toSlide){
+          progress=0;
+          widthProgress=0;
+        }
+
+        band.style.width=
+          (15*Math.max(0,widthProgress))+"vw";
+        band.style.transform=
+          "translate3d("+((1-progress)*100)+"vw,0,0)";
+      });
+    }
+
+    function updateDots(){
+      var current=Math.min(heroIndex,Math.round(position));
+      Array.prototype.forEach.call(
+        nav.querySelectorAll(".hex-progress-dot"),
+        function(dot,index){
+          dot.classList.toggle("is-current",index===current);
+          dot.classList.toggle("is-passed",index<current);
+          if(index===current){
+            dot.setAttribute("aria-current","step");
+          }else{
+            dot.removeAttribute("aria-current");
+          }
+        }
+      );
+    }
+
+    function render(){
+      var brandProgress=phase(position,brandIndex,brandIndex+.68);
+      var revealProgress=phase(position,brandIndex+.68,heroIndex);
+
+      scenes.forEach(function(scene,index){
+        var x;
+        if(!scene){return;}
+        x=index===brandIndex&&position>=brandIndex
+          ?0
+          :(index-position)*100;
+        setSceneStyle(scene,x,Math.abs(x)<125);
+      });
+
+      renderLogo(brandProgress);
+      renderCurtain();
+      updateDots();
+
+      if(revealProgress>0){
+        if(!revealOriginReady){
+          syncHeroRevealOrigin(opening);
+          revealOriginReady=true;
+        }
+        opening.classList.add("is-hero-reveal");
+        opening.style.setProperty(
+          "--hex-opening-hole",
+          (150*revealProgress)+"vmax"
+        );
+      }else{
+        opening.classList.remove("is-hero-reveal");
+        opening.style.setProperty("--hex-opening-hole","1px");
+      }
+
+      if(position>=heroIndex&&!isComplete){
+        isComplete=true;
+        showHeroCatch(0);
+        finishOpening(opening);
+      }
+    }
+
+    function measure(){
+      var headerHeight=parseFloat(
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--header_height")
+      )||80;
+      var viewportHeight=Math.max(window.innerHeight-headerHeight,1);
+      var sceneDistance=window.innerWidth<=768
+        ?540
+        :SCENE_SCROLL_DISTANCE;
+
+      hostTop=host.getBoundingClientRect().top+window.pageYOffset;
+      scrollDistance=Math.max(heroIndex*sceneDistance,1);
+      host.style.height=(viewportHeight+scrollDistance)+"px";
+    }
+
+    function updateFromScroll(){
+      var local=clamp(
+        window.pageYOffset-hostTop,
+        0,
+        scrollDistance
+      );
+
+      if(!hasInteracted&&Math.abs(window.pageYOffset-initialScrollY)>1){
+        hasInteracted=true;
+        cue.classList.add("is-hidden");
+      }
+
+      position=local/scrollDistance*heroIndex;
+      render();
+    }
+
+    function onResize(){
+      measure();
+      updateFromScroll();
+    }
+
+    nav.addEventListener("click",function(event){
+      var button=event.target.closest(".hex-progress-dot");
+      var target;
+
+      if(!button){
+        return;
+      }
+
+      hasInteracted=true;
+      cue.classList.add("is-hidden");
+      target=Number(button.getAttribute("data-scene-index"));
+      window.scrollTo({
+        top:hostTop+(target/heroIndex)*scrollDistance,
+        behavior:"smooth"
+      });
+    });
+
+    window.addEventListener("scroll",updateFromScroll,{passive:true});
+    window.addEventListener("resize",onResize);
+    window.addEventListener("orientationchange",onResize);
+
+    opening._hexOpeningCleanup=function(){
+      window.removeEventListener("scroll",updateFromScroll);
+      window.removeEventListener("resize",onResize);
+      window.removeEventListener("orientationchange",onResize);
+    };
+
+    measure();
+    updateFromScroll();
+  }
+
   function initOpening(){
     var opening;
+    var openingHost;
     var introData;
     var introStage=null;
     var slides;
@@ -4839,8 +5281,11 @@ hexReady(function(){
     if(messageData){
       messageStage=createOpeningMessage(opening,messageData);
     }
-    document.documentElement.classList.add("hex-opening-lock");
-    document.body.insertBefore(opening,document.body.firstChild);
+    openingHost=document.createElement("div");
+    openingHost.className="hex-opening-scroll-host";
+    openingHost.appendChild(opening);
+    opening._hexOpeningHost=openingHost;
+    document.body.insertBefore(openingHost,document.body.firstChild);
 
     /* 開幕中の背面もHero先頭へ揃える */
     window.scrollTo(0,0);
@@ -6514,6 +6959,8 @@ hexReady(function(){
   var foundedStartY=0;
   var foundedDistance=1;
   var welcomeProgress=0;
+  var foundedMaxProgress=0;
+  var foundedCompleted=false;
   var welcomeWrap=null;
   var welcomePanel=null;
   var aboutFrame=null;
@@ -6887,7 +7334,7 @@ hexReady(function(){
 
     frameRequested=false;
 
-    if(!active||!aboutFrame){
+    if(!active||!aboutFrame||foundedCompleted){
       return;
     }
 
@@ -6907,7 +7354,15 @@ hexReady(function(){
       1
     );
 
-    updateFounded(foundedProgress);
+    foundedMaxProgress=Math.max(
+      foundedMaxProgress,
+      foundedProgress
+    );
+    updateFounded(foundedMaxProgress);
+
+    if(foundedMaxProgress>=1){
+      foundedCompleted=true;
+    }
   }
 
   function requestUpdate(){
@@ -6960,6 +7415,8 @@ hexReady(function(){
 
     active=false;
     welcomeProgress=0;
+    foundedMaxProgress=0;
+    foundedCompleted=false;
     welcomeWrap=null;
     welcomePanel=null;
     aboutFrame=null;
@@ -6968,10 +7425,6 @@ hexReady(function(){
   document.addEventListener(
     "hex:welcome-exit-ready",
     function(event){
-      if(window.innerWidth<=768){
-        return;
-      }
-
       start(event.detail);
       update();
 
@@ -6986,7 +7439,11 @@ hexReady(function(){
   document.addEventListener(
     "hex:welcome-exit-cancel",
     function(){
-      if(active&&window.scrollY<startScrollY-1){
+      if(
+        active&&
+        foundedMaxProgress<=0&&
+        window.scrollY<startScrollY-1
+      ){
         clearAll();
       }
     }
@@ -7001,11 +7458,6 @@ hexReady(function(){
   window.addEventListener(
     "resize",
     function(){
-      if(window.innerWidth<=768){
-        clearAll();
-        return;
-      }
-
       if(active){
         measure();
         requestUpdate();
@@ -10468,6 +10920,19 @@ hexLoad(function(){
          */
         virtualScroll:function(data){
           var event=data&&data.event;
+
+          /*
+           * 開幕はPCだけLenisの慣性を使う。
+           * SPではLenis自体を初期化しないため、ブラウザ標準の
+           * タッチスクロールがそのまま使われる。
+           */
+          if(
+            document.querySelector(
+              '.hex-opening.is-scroll-driven'
+            )
+          ){
+            return true;
+          }
 
           if(isSpecialScrollState()){
             return false;

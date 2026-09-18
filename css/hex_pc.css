@@ -4111,9 +4111,26 @@ body,
 /* =======================================
    開幕：手動スクロール進行
 ======================================= */
+.hex-opening-scroll-host{
+  position:relative;
+  z-index:10;
+  width:100%;
+  min-height:100dvh;
+  background:var(--hex-opening-white);
+}
+
+.hex-opening-scroll-host > .hex-opening{
+  position:sticky;
+  top:var(--header_height);
+  right:auto;
+  bottom:auto;
+  left:auto;
+  height:calc(100dvh - var(--header_height));
+}
+
 .hex-opening.is-scroll-driven{
-  touch-action:none;
-  overscroll-behavior:none;
+  touch-action:auto;
+  overscroll-behavior:auto;
 }
 
 .hex-opening.is-scroll-driven.is-hero-reveal{
@@ -4199,6 +4216,47 @@ body,
 .hex-opening.is-scroll-driven
 .hex-logo-company-name{
   animation:none!important;
+}
+
+/* CMS画像4枚の間だけを横切りする紺系4色カーテン */
+.hex-opening-curtain{
+  position:absolute;
+  inset:0;
+  z-index:80;
+  overflow:hidden;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.hex-opening-curtain.is-active{
+  visibility:visible;
+}
+
+.hex-opening-curtain > i{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  display:block;
+  width:0;
+  transform:translate3d(100vw,0,0);
+  will-change:width,transform;
+}
+
+.hex-opening-curtain > i:nth-child(1){
+  background:#1f2774;
+}
+
+.hex-opening-curtain > i:nth-child(2){
+  background:#3a4389;
+}
+
+.hex-opening-curtain > i:nth-child(3){
+  background:#5e67a2;
+}
+
+.hex-opening-curtain > i:nth-child(4){
+  background:#8991bc;
 }
 
 /* 開幕下部・Hero以降右側で共通利用するドット */
@@ -4306,7 +4364,8 @@ body,
 
 .hex-section-progress-nav{
   position:fixed;
-  z-index:2147481000;
+  /* ヘッダー／ハンバーガーメニュー（10001以上）より下に置く */
+  z-index:9000;
   top:50%;
   right:max(20px,calc(env(safe-area-inset-right) + 14px));
   display:flex;
@@ -4327,6 +4386,16 @@ body,
   visibility:visible;
   transform:translateY(-50%) translateX(0);
   pointer-events:auto;
+}
+
+/* メニュー展開中は開幕・Hero側のドットナビを確実に隠す */
+body:has(.bg_contactbutton.hex-menu-open)
+.hex-opening-progress-nav,
+body:has(.bg_contactbutton.hex-menu-open)
+.hex-section-progress-nav{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
 }
 
 /* 開幕中スクロールロック */

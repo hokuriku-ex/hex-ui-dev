@@ -533,6 +533,21 @@
   .hex-btn-main-icon{
     font-size:18px!important;
   }
+
+  /* タップ後、画面遷移までPCホバーと同じ位置へ重ねる */
+  .hex-button-wrap > .hex-btn-main.is-tap-active,
+  .hex-banner-button > .hex-btn-main.is-tap-active{
+    transform:translate3d(9px,9px,0);
+    border-color:#c8a874!important;
+  }
+  .hex-btn-main.is-tap-active .hex-btn-main-title,
+  .hex-btn-main.is-tap-active .hex-btn-main-icon,
+  .hex-btn-main.is-tap-active .hex-btn-main-icon i{
+    color:#c8a874!important;
+  }
+  .hex-btn-main.is-tap-active .hex-btn-main-icon{
+    transform:translateX(3px);
+  }
   .hex-link{
     padding:0 0 8px;
   }
@@ -2203,6 +2218,33 @@
   #form_lp_form_button{
     max-width:none;
     margin:0!important;
+  }
+
+  /* お問い合わせフォームもPCホバーと同じタップ演出 */
+  #form_lp_form_button.is-tap-active,
+  #gc_auto_frame_lp_form_dialog
+  .gc_auto_frame_lp_form_box_button_round.is-tap-active{
+    transform:translate3d(9px,9px,0);
+    border-color:#c8a874!important;
+    color:#c8a874!important;
+  }
+  #form_lp_form_button.is-tap-active
+  .gc_auto_frame_lp_form_box_button_text{
+    color:#c8a874!important;
+  }
+  #form_lp_form_button.is-tap-active::after{
+    color:#c8a874;
+    transform:translateX(3px);
+  }
+  #gc_auto_frame_lp_form_dialog
+  .hex-form-button-motion-wrap.is-dialog-back
+  > .gc_auto_frame_lp_form_box_button_round.is-tap-active::before{
+    transform:translateX(-3px);
+  }
+  #gc_auto_frame_lp_form_dialog
+  .gc_auto_frame_lp_form_box_button_round.is-tap-active
+  .gc_auto_frame_lp_form_box_button_svg{
+    transform:translateX(3px);
   }
   .hex-form-row[data-label*="〒"] input,
   .hex-form-row[data-label*="都道府県"] select{
