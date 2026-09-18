@@ -6567,7 +6567,7 @@ html body
 /* 体制・スタッフ紹介 */
 .hex-staff-area,
 .hex-staff-area iframe{
-  background-color:#f3f0eb!important;
+  background-color:transparent!important;
 }
 .hex-staff-iframe-mode .gc_auto_frame_footer_fixed{
   display:none!important;
