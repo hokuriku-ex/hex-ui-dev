@@ -4429,7 +4429,9 @@ hexReady(function(){
     var brandStage=opening.querySelector(".hex-opening-brand-stage");
     var logoStage=opening.querySelector(".hex-opening-logo-stage");
     var position=0;
+    var targetPosition=0;
     var animationFrame=0;
+    var lastFrameTime=0;
     var nav;
     var cue;
     var touchY=null;
@@ -4621,16 +4623,57 @@ hexReady(function(){
       cue.classList.add("is-hidden");
     }
 
+    function renderSmooth(now){
+      var frameDuration;
+      var baseEase=window.innerWidth<=768 ? .2 : .135;
+      var ease;
+
+      animationFrame=0;
+
+      if(isComplete){
+        return;
+      }
+
+      frameDuration=lastFrameTime
+        ? Math.min(40,Math.max(8,now-lastFrameTime))
+        : 16.67;
+      lastFrameTime=now;
+      ease=1-Math.pow(1-baseEase,frameDuration/16.67);
+
+      if(Math.abs(targetPosition-position)<.0005){
+        position=targetPosition;
+      }else{
+        position+=(targetPosition-position)*ease;
+      }
+
+      render();
+
+      if(
+        !isComplete&&
+        Math.abs(targetPosition-position)>=.0005
+      ){
+        animationFrame=requestAnimationFrame(renderSmooth);
+      }else{
+        lastFrameTime=0;
+      }
+    }
+
+    function requestSmoothRender(){
+      if(animationFrame||isComplete){
+        return;
+      }
+      animationFrame=requestAnimationFrame(renderSmooth);
+    }
+
     function setPosition(nextPosition,isUserInput){
       if(isComplete){
         return;
       }
       if(isUserInput){
-        cancelAnimationFrame(animationFrame);
         hideCue();
       }
-      position=clamp(nextPosition,0,heroIndex);
-      render();
+      targetPosition=clamp(nextPosition,0,heroIndex);
+      requestSmoothRender();
     }
 
     function onWheel(event){
@@ -4642,7 +4685,7 @@ hexReady(function(){
       }
       event.preventDefault();
       setPosition(
-        position+delta/
+        targetPosition+delta/
           (window.innerWidth<=768 ? 540 : SCENE_SCROLL_DISTANCE),
         true
       );
@@ -4661,7 +4704,7 @@ hexReady(function(){
       }
       nextY=event.touches[0].clientY;
       event.preventDefault();
-      setPosition(position+(touchY-nextY)/520,true);
+      setPosition(targetPosition+(touchY-nextY)/520,true);
       touchY=nextY;
     }
 
@@ -4693,27 +4736,8 @@ hexReady(function(){
       }
       if(direction){
         event.preventDefault();
-        setPosition(position+direction*.34,true);
+        setPosition(targetPosition+direction*.34,true);
       }
-    }
-
-    function animateTo(target){
-      var start=position;
-      var startTime=performance.now();
-      var duration=Math.min(900,380+Math.abs(target-start)*90);
-
-      cancelAnimationFrame(animationFrame);
-
-      function tick(now){
-        var elapsed=clamp((now-startTime)/duration,0,1);
-        var eased=1-Math.pow(1-elapsed,3);
-        setPosition(start+(target-start)*eased,false);
-        if(elapsed<1&&!isComplete){
-          animationFrame=requestAnimationFrame(tick);
-        }
-      }
-
-      animationFrame=requestAnimationFrame(tick);
     }
 
     nav.addEventListener("click",function(event){
@@ -4722,7 +4746,10 @@ hexReady(function(){
         return;
       }
       hideCue();
-      animateTo(Number(button.getAttribute("data-scene-index")));
+      setPosition(
+        Number(button.getAttribute("data-scene-index")),
+        false
+      );
     });
 
     opening.addEventListener("wheel",onWheel,{passive:false});
@@ -6574,6 +6601,116 @@ hexReady(function(){
     });
   }
 
+  function prepareFoundedTitle(){
+    var title=aboutFrame.querySelector(".hex-center-title");
+
+    if(!title||title.dataset.hexFoundedTitleReady==="1"){
+      return;
+    }
+
+    title.dataset.hexFoundedTitleReady="1";
+
+    title.querySelectorAll(
+      ".hex-founded-year,.hex-founded-text"
+    ).forEach(function(part){
+      var text=(part.textContent||"").trim();
+
+      if(!text){
+        return;
+      }
+
+      part.textContent="";
+      part.setAttribute("aria-label",text);
+
+      Array.from(text).forEach(function(character){
+        var span=document.createElement("span");
+        span.className="hex-founded-title-char";
+        span.setAttribute("aria-hidden","true");
+        span.textContent=character===" "?"\u00a0":character;
+        part.appendChild(span);
+      });
+    });
+  }
+
+  function setFadeOnly(element,progress){
+    if(!element){
+      return;
+    }
+
+    element.style.setProperty(
+      "opacity",
+      String(progress),
+      "important"
+    );
+    element.style.setProperty(
+      "visibility",
+      progress>0?"visible":"hidden",
+      "important"
+    );
+    element.style.setProperty(
+      "transform",
+      "none",
+      "important"
+    );
+    element.style.setProperty(
+      "transition",
+      "none",
+      "important"
+    );
+  }
+
+  function updateFoundedTitle(title,progress){
+    var chars;
+
+    if(!title){
+      return;
+    }
+
+    title.style.setProperty("opacity","1","important");
+    title.style.setProperty("visibility","visible","important");
+    title.style.setProperty("transform","none","important");
+
+    title.querySelectorAll(
+      ".hex-founded-year,.hex-founded-text"
+    ).forEach(function(part){
+      part.style.setProperty("opacity","1","important");
+      part.style.setProperty("visibility","visible","important");
+    });
+
+    chars=Array.prototype.slice.call(
+      title.querySelectorAll(".hex-founded-title-char")
+    );
+
+    if(!chars.length){
+      setFadeOnly(title,phase(progress,.02,.18));
+      return;
+    }
+
+    chars.forEach(function(character,index){
+      var start=.02+index*.025;
+      var charProgress=phase(progress,start,start+.15);
+      var easedProgress=easeOut(charProgress);
+
+      character.style.setProperty(
+        "opacity",
+        String(charProgress),
+        "important"
+      );
+      character.style.setProperty(
+        "visibility",
+        charProgress>0?"visible":"hidden",
+        "important"
+      );
+      character.style.setProperty(
+        "transform",
+        "translate3d(0,"+
+          ((1-easedProgress)*100)+"%,0) rotate("+
+          ((1-easedProgress)*45)+"deg)",
+        "important"
+      );
+    });
+  }
+
   function clearManualStyles(){
     if(!aboutFrame){
       return;
@@ -6582,6 +6719,7 @@ hexReady(function(){
     aboutFrame.querySelectorAll(
       ".hex-center-title,"+
       ".hex-founded-text,"+
+      ".hex-founded-title-char,"+
       ".hex-center,"+
       ".hex-company-card,"+
       ".hex-company-card .hex-card"
@@ -6621,7 +6759,6 @@ hexReady(function(){
 
   function updateFounded(progress){
     var title=aboutFrame.querySelector(".hex-center-title");
-    var foundedText=aboutFrame.querySelector(".hex-founded-text");
     var description=aboutFrame.querySelector(".hex-center");
     var cardWrap=aboutFrame.querySelector(".hex-company-card");
     var cards=Array.prototype.slice.call(
@@ -6629,42 +6766,23 @@ hexReady(function(){
         ".hex-company-card .hex-card"
       )
     );
-    var titleProgress=phase(progress,.02,.14);
-    var textProgress=phase(progress,.15,.27);
-    var descriptionProgress=phase(progress,.82,.94);
+    var descriptionProgress=phase(progress,.08,.26);
 
-    setReveal(title,titleProgress,16);
-
-    if(foundedText){
-      foundedText.style.setProperty(
-        "opacity",
-        String(textProgress),
-        "important"
-      );
-      foundedText.style.setProperty(
-        "visibility",
-        textProgress>0?"visible":"hidden",
-        "important"
-      );
-      foundedText.style.setProperty(
-        "transition",
-        "none",
-        "important"
-      );
-    }
+    updateFoundedTitle(title,progress);
+    setFadeOnly(description,descriptionProgress);
 
     setReveal(
       cardWrap,
-      phase(progress,.27,.34),
+      phase(progress,.45,.52),
       12
     );
 
     cards.forEach(function(card,index){
-      var start=.31+index*.1;
+      var start=.52+index*.08;
       var cardProgress=phase(
         progress,
         start,
-        start+.13
+        start+.15
       );
       var number=card.querySelector(".hex-number");
       var target=number
@@ -6697,8 +6815,6 @@ hexReady(function(){
         );
       }
     });
-
-    setReveal(description,descriptionProgress,16);
 
     aboutFrame.classList.toggle(
       "is-founded-released",
@@ -6743,6 +6859,7 @@ hexReady(function(){
       "hex-founded-normal-motion"
     );
 
+    prepareFoundedTitle();
     prepareCards();
     measure();
   }

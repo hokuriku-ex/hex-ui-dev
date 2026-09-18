@@ -5713,6 +5713,16 @@ html body
   color:#1f2774;
   margin-left:6px;
 }
+.hex-founded-year,
+.hex-founded-text{
+  overflow:hidden;
+}
+.hex-founded-title-char{
+  display:inline-block;
+  backface-visibility:hidden;
+  transform-origin:50% 100%;
+  will-change:transform,opacity;
+}
 .hex-company-card{
   column-gap:0;
 }
