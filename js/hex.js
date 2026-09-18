@@ -6608,6 +6608,22 @@ hexReady(function(){
       start(event.detail);
       update();
 
+      /*
+       * 戻り方向でWELCOMEフェードが0まで戻ったら、
+       * WELCOME本文の固定だけをこのフレームで解除する。
+       * イベント自体はpreventDefaultして丸画像を固定状態へ戻し、
+       * 次のスクロールからヒーローへの円拡大を逆再生させる。
+       */
+      if(
+        active&&
+        welcomeProgress<=.001&&
+        window.scrollY<=startScrollY+1
+      ){
+        clearAll();
+        event.preventDefault();
+        return;
+      }
+
       /* WELCOMEが薄くなる間だけ丸画像を現在位置に保持する */
       if(active&&welcomeProgress<1){
         event.preventDefault();
