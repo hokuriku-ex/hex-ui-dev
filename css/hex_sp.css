@@ -1576,6 +1576,11 @@
     padding-inline:16px!important;
   }
 
+  /* スタッフ紹介ページ */
+  .gc_auto_frame_publicinfo_staff{
+    padding-inline:16px!important;
+  }
+
   /* 施工事例・お知らせページ */
   .gc_auto_frame_post_item .post_item_contents{
     padding-inline:16px!important;
