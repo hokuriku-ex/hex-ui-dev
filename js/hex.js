@@ -4665,7 +4665,7 @@ hexReady(function(){
       animationFrame=requestAnimationFrame(renderSmooth);
     }
 
-    function setPosition(nextPosition,isUserInput){
+    function setPosition(nextPosition,isUserInput,isImmediate){
       if(isComplete){
         return;
       }
@@ -4673,6 +4673,17 @@ hexReady(function(){
         hideCue();
       }
       targetPosition=clamp(nextPosition,0,heroIndex);
+
+      /* SPは指の移動量へ直接追従し、独自の慣性を加えない */
+      if(isImmediate){
+        cancelAnimationFrame(animationFrame);
+        animationFrame=0;
+        lastFrameTime=0;
+        position=targetPosition;
+        render();
+        return;
+      }
+
       requestSmoothRender();
     }
 
@@ -4687,7 +4698,8 @@ hexReady(function(){
       setPosition(
         targetPosition+delta/
           (window.innerWidth<=768 ? 540 : SCENE_SCROLL_DISTANCE),
-        true
+        true,
+        window.innerWidth<=768
       );
     }
 
@@ -4704,7 +4716,11 @@ hexReady(function(){
       }
       nextY=event.touches[0].clientY;
       event.preventDefault();
-      setPosition(targetPosition+(touchY-nextY)/520,true);
+      setPosition(
+        targetPosition+(touchY-nextY)/520,
+        true,
+        true
+      );
       touchY=nextY;
     }
 
