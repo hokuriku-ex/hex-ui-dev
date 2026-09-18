@@ -1661,14 +1661,14 @@
 
 /* 体制・スタッフ紹介 */
 @media screen and (max-width:768px){
-  .hex-staff-iframe-mode .hex-staff-leader-grid,
-  .hex-staff-iframe-mode .hex-staff-member-grid{
+  .hex-staff-embedded-mode .hex-staff-leader-grid,
+  .hex-staff-embedded-mode .hex-staff-member-grid{
     display:none!important;
   }
-  .hex-staff-iframe-mode .hex-staff-sp-button-wrap{
+  .hex-staff-embedded-mode .hex-staff-sp-button-wrap{
     display:none!important;
   }
-  .hex-staff-iframe-mode .hex-staff-section{
+  .hex-staff-embedded-mode .hex-staff-section{
     margin:0 auto 26px!important;
   }
 }

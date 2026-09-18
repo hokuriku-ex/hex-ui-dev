@@ -255,8 +255,6 @@ hexLoad(function(){
   },200);
 });
 function hexInitAnchorNav(){
-  if(document.body.classList.contains('hex-staff-iframe-mode'))return;
-
   var source=document.querySelector('.hex-anchor-source');
   if(!source)return;
   var text=source.textContent||'';
@@ -893,21 +891,19 @@ function hexInitAnchorNav(){
     var layoutWaitCount=0;
 
     function waitForDynamicLayout(){
-      var staffIframe=document.querySelector(
-        '.hex-staff-iframe'
-      );
+      var staffArea=document.getElementById('hex-staff-area');
       var targetAfterStaff=
-        staffIframe&&
+        staffArea&&
         !!(
-          staffIframe.compareDocumentPosition(
+          staffArea.compareDocumentPosition(
             hashAnchorTarget
           )&Node.DOCUMENT_POSITION_FOLLOWING
         );
 
-      /* iframeより下へ移動する場合は高さ確定を待つ */
+      /* スタッフ情報より下へ移動する場合は読込み完了を待つ */
       if(
         targetAfterStaff&&
-        staffIframe.dataset.hexStaffReady!=='1'&&
+        staffArea.dataset.hexStaffReady!=='1'&&
         layoutWaitCount<40
       ){
         layoutWaitCount+=1;
@@ -8237,16 +8233,28 @@ hexLoad(function(){
     if(!original)return;
     var frame=original.closest('[id^="gc_auto_frame_staff_"]')||original.parentNode;
     if(!frame)return;
-    var staffNodes=Array.prototype.slice.call(original.querySelectorAll('.staff_content'));
-    if(staffNodes.length<2)return;
     if(frame.querySelector('.hex-staff-wrap'))return;
-    var anchorParam=new URLSearchParams(location.search).get('anchor')||'';
-    var sample=staffNodes[0];
-    var noImage=getStaffImage(sample);
-    if(!noImage)noImage='';
-    var groups=[];
-    var groupMap={};
-    staffNodes.slice(1).forEach(function(staff){
+    var wrap=hexCreateStaffWrap(original);
+    if(!wrap)return;
+    original.insertAdjacentElement('afterend',wrap);
+    hexInitStaffCards(wrap);
+    hexScrollToStaffAnchor(wrap);
+    hexStaffPostResize();
+    setTimeout(hexStaffPostResize,150);
+    setTimeout(hexStaffPostResize,400);
+  },100);
+});
+function hexCreateStaffWrap(original){
+  var staffNodes=Array.prototype.slice.call(
+    original.querySelectorAll('.staff_content')
+  );
+  if(staffNodes.length<2)return null;
+  var sample=staffNodes[0];
+  var noImage=getStaffImage(sample);
+  if(!noImage)noImage='';
+  var groups=[];
+  var groupMap={};
+  staffNodes.slice(1).forEach(function(staff){
       var data=getStaffData(staff,noImage);
       if(!data.name)return;
       if(!data.department)return;
@@ -8258,11 +8266,11 @@ hexLoad(function(){
         groupMap[data.department].description=data.departmentDescription;
       }
       groupMap[data.department].members.push(data);
-    });
-    if(!groups.length)return;
-    var wrap=document.createElement('div');
-    wrap.className='hex-staff-wrap';
-    groups.forEach(function(group){
+  });
+  if(!groups.length)return null;
+  var wrap=document.createElement('div');
+  wrap.className='hex-staff-wrap';
+  groups.forEach(function(group){
       var section=document.createElement('section');
       section.className='hex-staff-section';
       var heading=document.createElement('div');
@@ -8303,60 +8311,58 @@ hexLoad(function(){
       }
       if(memberGrid.children.length){
         section.appendChild(memberGrid);
-      }
-      wrap.appendChild(section);
-    });
-    original.insertAdjacentElement('afterend',wrap);
-    hexInitStaffCards(wrap);
-    hexStaffPostResize();
-    if(anchorParam){
-      setTimeout(function(){
-        var sections=wrap.getElementsByClassName('hex-staff-section');
-
-        for(var i=0;i<sections.length;i++){
-          var title=sections[i].querySelector('.hex-anchor-target');
-          if(!title)continue;
-          if(title.textContent.trim()!==anchorParam)continue;
-
-          var target=sections[i];
-
-          function getOffset(){
-            var nav=document.querySelector('.hex-anchor-nav');
-            return 80+(nav?nav.offsetHeight:0);
-          }
-
-          var top=
-            target.getBoundingClientRect().top+
-            window.pageYOffset-
-            getOffset();
-
-          window.scrollTo({
-            top:top,
-            behavior:'smooth'
-          });
-
-          window.addEventListener('scrollend',function(){
-            var correctedTop=
-              target.getBoundingClientRect().top+
-              window.pageYOffset-
-              getOffset();
-
-            if(Math.abs(window.pageYOffset-correctedTop)>2){
-              window.scrollTo({
-                top:correctedTop,
-                behavior:'auto'
-              });
-            }
-          },{once:true});
-
-          break;
-        }
-      },500);
     }
-    setTimeout(hexStaffPostResize,150);
-    setTimeout(hexStaffPostResize,400);
-  },100);
-});
+    wrap.appendChild(section);
+  });
+  return wrap;
+}
+function hexScrollToStaffAnchor(wrap){
+  var anchorParam=new URLSearchParams(location.search).get('anchor')||'';
+  if(!anchorParam)return;
+
+  setTimeout(function(){
+    var sections=wrap.getElementsByClassName('hex-staff-section');
+
+    for(var i=0;i<sections.length;i++){
+      var title=sections[i].querySelector('.hex-anchor-target');
+      if(!title)continue;
+      if(title.textContent.trim()!==anchorParam)continue;
+
+      var target=sections[i];
+
+      function getOffset(){
+        var nav=document.querySelector('.hex-anchor-nav');
+        return 80+(nav?nav.offsetHeight:0);
+      }
+
+      var top=
+        target.getBoundingClientRect().top+
+        window.pageYOffset-
+        getOffset();
+
+      window.scrollTo({
+        top:top,
+        behavior:'smooth'
+      });
+
+      window.addEventListener('scrollend',function(){
+        var correctedTop=
+          target.getBoundingClientRect().top+
+          window.pageYOffset-
+          getOffset();
+
+        if(Math.abs(window.pageYOffset-correctedTop)>2){
+          window.scrollTo({
+            top:correctedTop,
+            behavior:'auto'
+          });
+        }
+      },{once:true});
+
+      break;
+    }
+  },500);
+}
 function createStaffLinkButton(group){
   var wrap=document.createElement('div');
   wrap.className='hex-staff-sp-button-wrap';
@@ -8652,14 +8658,14 @@ function hexInitStaffToggle(scope){
   }
 }
 function hexStaffPostResize(){
-  try{
-    var wrap=document.getElementsByClassName('hex-staff-wrap')[0];
-    if(!wrap)return;
-    var height=Math.max(wrap.scrollHeight,wrap.offsetHeight,document.body.scrollHeight,document.documentElement.scrollHeight);
-    if(window.parent&&window.parent!==window){
-      window.parent.postMessage({ type:'hexStaffResize', height:height },'*');
+  window.requestAnimationFrame(function(){
+    if(
+      window.hexMotion&&
+      typeof window.hexMotion.refreshLayout==='function'
+    ){
+      window.hexMotion.refreshLayout();
     }
-  }catch(e){}
+  });
 }
 function hexClosestByClass(el,className){
   while(el&&el.nodeType===1){
@@ -8689,79 +8695,108 @@ hexLoad(function(){
     var staffPageType='staff';
     var staffUrl=hexBuildStaffPageUrl(staffShortname,staffPageType);
     if(!staffUrl)return;
-    while(target.firstChild){
-      target.removeChild(target.firstChild);
-    }
-    var iframe=document.createElement('iframe');
-    iframe.className='hex-staff-iframe';
-    iframe.src=staffUrl;
-    iframe.setAttribute('loading','eager');
-    iframe.setAttribute('scrolling','no');
-    iframe.style.width='100%';
-    iframe.style.height='1px';
-    iframe.style.border='0';
-    iframe.style.overflow='hidden';
-    iframe.dataset.hexStaffIframe='1';
-    iframe.setAttribute('data-lenis-prevent','');
-    iframe.addEventListener('load',function(){
-      hexPrepareStaffIframe(iframe);
-    });
-    target.appendChild(iframe);
+    hexLoadEmbeddedStaff(target,staffUrl);
   },100);
 });
-function hexPrepareStaffIframe(iframe){
-  var count=0;
-  var max=50;
-  var timer=setInterval(function(){
-    count++;
-    try{
-      var doc=iframe.contentDocument||iframe.contentWindow.document;
-      if(!doc)return;
-      var staff=doc.querySelector('.hex-staff-wrap');
-      if(staff){
-        doc.body.classList.add('hex-staff-iframe-mode');
-        
-        clearInterval(timer);
-        setTimeout(function(){
-          while(doc.body.firstChild){
-            doc.body.removeChild(doc.body.firstChild);
-          }
-          doc.body.appendChild(staff);
-          hexAdjustStaffIframeView(doc);
-          doc.documentElement.style.margin='0';
-          doc.documentElement.style.padding='0';
-          doc.documentElement.style.overflow='hidden';
-          doc.documentElement.style.setProperty(
-            'background-color',
-            '#f3f0eb',
-            'important'
-          );
+function hexLoadEmbeddedStaff(target,staffUrl){
+  target.classList.add(
+    'hex-staff-embedded-mode',
+    'is-loading'
+  );
+  target.classList.remove('is-ready','is-load-error');
+  target.setAttribute('aria-busy','true');
+  target.dataset.hexStaffReady='0';
 
-          doc.body.style.margin='0';
-          doc.body.style.padding='0';
-          doc.body.style.overflow='hidden';
-          doc.body.style.setProperty(
-            'background-color',
-            '#f3f0eb',
-            'important'
-          );
-          hexResizeStaffIframe(iframe);
-          setTimeout(function(){ hexResizeStaffIframe(iframe); },150);
-          setTimeout(function(){ hexResizeStaffIframe(iframe); },400);
-          hexBindStaffIframeResize(iframe);
-        },100);
-        return;
-      }
-      if(count>=max){
-        clearInterval(timer);
-      }
-    }catch(e){
-      clearInterval(timer);
+  fetch(staffUrl,{
+    method:'GET',
+    credentials:'same-origin'
+  })
+  .then(function(response){
+    if(!response.ok){
+      throw new Error(
+        'スタッフページを取得できませんでした: '+
+        response.status
+      );
     }
-  },100);
+    return response.text();
+  })
+  .then(function(html){
+    var parser=new DOMParser();
+    var loadedDoc=parser.parseFromString(html,'text/html');
+    var loadedOriginal=loadedDoc.querySelector(
+      '.bg_publicinfo_staff'
+    );
+
+    if(!loadedOriginal){
+      throw new Error(
+        'スタッフ情報が見つかりませんでした。'
+      );
+    }
+
+    return hexCreateEmbeddedStaffSource(loadedOriginal);
+  })
+  .then(function(source){
+    var wrap;
+
+    try{
+      wrap=hexCreateStaffWrap(source.original);
+    }finally{
+      if(source.stage.parentNode){
+        source.stage.parentNode.removeChild(source.stage);
+      }
+    }
+
+    if(!wrap){
+      throw new Error(
+        'スタッフ表示を生成できませんでした。'
+      );
+    }
+
+    hexAdjustEmbeddedStaffView(wrap);
+    target.replaceChildren(wrap);
+    hexInitStaffCards(wrap);
+
+    target.classList.remove('is-loading');
+    target.classList.add('is-ready');
+    target.removeAttribute('aria-busy');
+    target.dataset.hexStaffReady='1';
+
+    hexRefreshEmbeddedStaff(target,0);
+  })
+  .catch(function(error){
+    target.classList.remove('is-loading');
+    target.classList.add('is-load-error');
+    target.removeAttribute('aria-busy');
+    target.dataset.hexStaffReady='1';
+
+    console.warn(
+      'スタッフ紹介の読込みに失敗しました。',
+      error
+    );
+
+    hexStaffPostResize();
+  });
 }
-function hexAdjustStaffIframeView(doc){
-  var sections=doc.getElementsByClassName('hex-staff-section');
+function hexCreateEmbeddedStaffSource(loadedOriginal){
+  return new Promise(function(resolve){
+    var stage=document.createElement('div');
+    var original=document.importNode(loadedOriginal,true);
+
+    stage.className='hex-staff-source-stage';
+    stage.setAttribute('aria-hidden','true');
+    stage.appendChild(original);
+    document.body.appendChild(stage);
+
+    window.requestAnimationFrame(function(){
+      resolve({
+        stage:stage,
+        original:original
+      });
+    });
+  });
+}
+function hexAdjustEmbeddedStaffView(scope){
+  var sections=scope.getElementsByClassName('hex-staff-section');
   for(var i=0;i<sections.length;i++){
     var section=sections[i];
     var button=section.getElementsByClassName('hex-staff-sp-button-wrap')[0];
@@ -8790,71 +8825,28 @@ function hexAdjustStaffIframeView(doc){
     }
   }
 }
-function hexBindStaffIframeResize(iframe){
-  try{
-    var doc=iframe.contentDocument||iframe.contentWindow.document;
-    if(!doc)return;
-    if(iframe.hexStaffResizeBound)return;
-    iframe.hexStaffResizeBound=true;
-    doc.addEventListener('click',function(){
-      setTimeout(function(){ hexResizeStaffIframe(iframe); },50);
-      setTimeout(function(){ hexResizeStaffIframe(iframe); },200);
-      setTimeout(function(){ hexResizeStaffIframe(iframe); },400);
-    },true);
-    if(window.ResizeObserver){
-      var staff=doc.querySelector('.hex-staff-wrap');
-      var observer=new ResizeObserver(function(){
-        hexResizeStaffIframe(iframe);
-      });
-      if(staff)observer.observe(staff);
-      observer.observe(doc.body);
-      iframe.hexStaffResizeObserver=observer;
-    }else{
-      iframe.hexStaffResizeTimer=setInterval(function(){
-        hexResizeStaffIframe(iframe);
-      },500);
-    }
-  }catch(e){}
-}
-function hexResizeStaffIframe(iframe){
-  try{
-    var doc=iframe.contentDocument||iframe.contentWindow.document;
-    if(!doc)return;
-    var staff=doc.querySelector('.hex-staff-wrap');
-    var height=0;
-    if(staff){
-      height=Math.max(staff.scrollHeight,staff.offsetHeight);
-    }else{
-      height=Math.max(
-        doc.body.scrollHeight,
-        doc.documentElement.scrollHeight,
-        doc.body.offsetHeight,
-        doc.documentElement.offsetHeight
-      );
-    }
-    if(height>0){
-      var newHeight=height+4;
-      var oldHeight=parseFloat(iframe.style.height)||0;
-
-      if(Math.abs(newHeight-oldHeight)>1){
-        iframe.style.height=newHeight+'px';
-        iframe.dataset.hexStaffReady='1';
-
-        /*
-         * iframeの高さ変更後に親ページのスクロール範囲を更新する。
-         * これによりiframeより下のアンカーも移動可能になる。
-         */
-        window.requestAnimationFrame(function(){
-          if(
-            window.hexMotion&&
-            typeof window.hexMotion.refreshLayout==='function'
-          ){
-            window.hexMotion.refreshLayout();
-          }
-        });
+function hexRefreshEmbeddedStaff(target,count){
+  if(
+    window.hexMotion&&
+    typeof window.hexMotion.refresh==='function'
+  ){
+    window.hexMotion.refresh(target);
+    window.requestAnimationFrame(function(){
+      if(
+        window.hexMotion&&
+        typeof window.hexMotion.refreshLayout==='function'
+      ){
+        window.hexMotion.refreshLayout();
       }
-    }
-  }catch(e){}
+    });
+    return;
+  }
+
+  if(count>=40)return;
+
+  window.setTimeout(function(){
+    hexRefreshEmbeddedStaff(target,count+1);
+  },100);
 }
 function hexBuildStaffPageUrl(shortname,pageType){
   var host=location.hostname;
@@ -10686,28 +10678,8 @@ hexLoad(function(){
   /* 動的処理が続いても白画面を長時間残さない上限 */
   var DOM_SETTLE_MAX=3000;
 
-  function isEmbeddedStaffPage(){
-    var embedded=false;
-
-    try{
-      embedded=window.self!==window.top;
-    }catch(error){
-      embedded=true;
-    }
-
-    if(!embedded){
-      return false;
-    }
-
-    return !!document.querySelector(
-      '.bg_publicinfo_staff,'+
-      '[id^="gc_auto_frame_staff_"],'+
-      '.hex-staff-wrap'
-    );
-  }
-
   function startMotionPreparation(){
-    if(preparationCover||isEmbeddedStaffPage()){
+    if(preparationCover){
       return;
     }
 
@@ -11016,8 +10988,7 @@ hexLoad(function(){
       '.hex-anchor-nav-placeholder',
       '.hex-calendar-modal-dialog',
       '#gc_auto_frame_lp_form_dialog',
-      '.hex-staff-iframe',
-      '[data-hex-staff-iframe]',
+      '.hex-staff-source-stage',
       '.hex-motion-auto-off',
       '[data-hex-motion-auto="off"]'
     ].join(',');
@@ -11375,11 +11346,10 @@ hexLoad(function(){
         return false;
       }
 
-      /* スタッフ紹介iframeを含む外枠は代替対象にも含めない */
+      /* 読込み処理中のスタッフ元データは対象に含めない */
       if(
         target.querySelector(
-          '.hex-staff-iframe,'+
-          '[data-hex-staff-iframe]'
+          '.hex-staff-source-stage'
         )
       ){
         return false;
@@ -12107,18 +12077,6 @@ hexLoad(function(){
   }
 
   function loadMotionLibraries(){
-    /*
-     * スタッフ紹介の埋め込みiframe内では、
-     * 親ページへのホイール・タッチ移動を妨げないように
-     * Lenis＋共通ScrollTriggerを初期化しない。
-     * スタッフページを単独表示した場合は通常どおり有効。
-     */
-    if(isEmbeddedStaffPage()){
-      root.classList.add('hex-motion-disabled-staff-iframe');
-      finishMotionPreparation();
-      return;
-    }
-
     loadLibrary(
       GSAP_URL,
       function(){
