@@ -5448,6 +5448,16 @@ html body
     overflow:visible!important;
     box-sizing:border-box;
   }
+
+  /*
+   * 創業演出を時間ではなくスクロール量で進めるための移動領域。
+   * 中の表示面は既存のsticky指定で固定され、末尾で自然に解除される。
+   */
+  .hex-founded-stage.hex-founded-scroll-stage{
+    min-height:calc(
+      100dvh + var(--hex-founded-scroll-distance,2400px)
+    )!important;
+  }
   .hex-founded-stage
   > .gc_auto_frame_spotitem:has(.hex-company-card){
     position:sticky!important;

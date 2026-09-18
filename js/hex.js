@@ -6183,210 +6183,289 @@ hexReady(function(){
 });
 
 /* =======================================
-   ウェルカム→私たちについて切り替え
+   WELCOME→1972年創業：完全スクロール連動
 ======================================= */
 hexReady(function(){
   "use strict";
 
-  /*
-   * WELCOME後の創設演出
-   * true  : 現在の演出を再生する
-   * false : 演出を飛ばし、完成状態で通常スクロールへ戻す
-   */
-  var ENABLE_FOUNDED_EFFECT=false;
-
-  /* 1段階と判定するホイール移動量 */
-  var WHEEL_THRESHOLD=45;
-
-  /* WELCOME固定中に受け付けるスクロール操作数 */
-  var WELCOME_HOLD_STEPS=2;
-
-  /* 次の段階を受け付けるまでの最低待機時間 */
-  var STEP_LOCK_TIME=900;
-
-  /* ホイール入力終了と判定する無入力時間 */
-  var WHEEL_IDLE_TIME=100;
-
-  /* 上方向へ戻るときのフェードアウト時間 */
-  var RETURN_FADE_TIME=700;
-
-  /* カードを順番に表示する間隔 */
-  var CARD_REVEAL_INTERVAL=400;
-
-  /* カード表示からカウント開始までの時間 */
-  var CARD_COUNT_DELAY=180;
-
-  /* 各カードのカウントアップ時間 */
-  var COUNT_DURATION=1200;
-
-  /* 1972表示から「年創業」表示まで */
-  var FOUNDED_TEXT_DELAY=600;
-
-  /* 「年創業」表示からカード開始まで */
-  var FOUNDED_CARDS_DELAY=600;
-
-  /* 最後のカード表示から説明文表示まで */
-  var FOUNDED_DESCRIPTION_DELAY=900;
-
-  /* 説明文表示から通常スクロールへ戻すまで */
-  var FOUNDED_COMPLETE_DELAY=900;
-
-  /* WELCOME完成から創業セクション到達までの自動スクロール時間 */
-  var WELCOME_TO_FOUNDED_DURATION=900;
-
   var active=false;
-  var foundedActive=false;
-  var foundedReleased=false;
-  var foundedCompleted=false;
-  var returning=false;
-  var welcomeAutoScrolling=false;
-  var welcomeAutoPaused=false;
-  var welcomeHolding=false;
-  var welcomeHoldSteps=0;
-  var welcomeHoldAmount=0;
-  var welcomeHoldScrollY=0;
-
-  var stepLocked=false;
-  var minimumLockEnded=true;
-  var wheelIdle=true;
-  var wheelAmount=0;
-
+  var frameRequested=false;
   var startScrollY=0;
-  var scrollDistance=1;
   var foundedStartY=0;
-
-  var stepTimer=null;
-  var wheelIdleTimer=null;
-  var returnTimer=null;
-  var cardTimers=[];
-  var countFrames=[];
-  var cardsPlaying=false;
-  var welcomeAutoScrollFrame=null;
-  var welcomeHoldTimer=null;
-
+  var foundedDistance=1;
+  var welcomeProgress=0;
   var welcomeWrap=null;
   var welcomePanel=null;
   var aboutFrame=null;
 
-
   function clamp(value,min,max){
-    return Math.min(
-      Math.max(value,min),
-      max
+    return Math.min(Math.max(value,min),max);
+  }
+
+  function phase(progress,start,end){
+    return clamp(
+      (progress-start)/Math.max(end-start,.001),
+      0,
+      1
     );
   }
 
+  function easeOut(value){
+    return 1-Math.pow(1-value,3);
+  }
 
   function getHeaderHeight(){
     var value=getComputedStyle(
       document.documentElement
-    ).getPropertyValue(
-      "--header_height"
-    );
+    ).getPropertyValue("--header_height");
 
     return parseFloat(value)||80;
   }
 
-
   function setWelcomePosition(){
-    var rect=
-      welcomePanel.getBoundingClientRect();
+    var rect;
+
+    if(!welcomeWrap||!welcomePanel){
+      return;
+    }
+
+    rect=welcomePanel.getBoundingClientRect();
 
     welcomeWrap.style.setProperty(
       "--hex-welcome-fixed-top",
       rect.top+"px"
     );
-
     welcomeWrap.style.setProperty(
       "--hex-welcome-fixed-left",
       rect.left+"px"
     );
-
     welcomeWrap.style.setProperty(
       "--hex-welcome-fixed-width",
       rect.width+"px"
     );
-
     welcomeWrap.style.setProperty(
       "--hex-welcome-fixed-height",
       rect.height+"px"
     );
   }
 
-
-  function measureFoundedPositions(){
-    var title=aboutFrame.querySelector(
-      ".hex-center-title"
-    );
-
-    var description=aboutFrame.querySelector(
-      ".hex-center"
-    );
-
-    var headerHeight=getHeaderHeight();
-
-    var center=
-      headerHeight+
-      (
-        window.innerHeight-
-        headerHeight
-      )/2;
-
-    var titleRect;
-    var descriptionRect;
-
-    if(!title||!description){
+  function setReveal(element,progress,distance){
+    if(!element){
       return;
     }
 
-    aboutFrame.classList.add(
-      "is-founded-measuring"
+    element.style.setProperty(
+      "opacity",
+      String(progress),
+      "important"
     );
-
-    titleRect=
-      title.getBoundingClientRect();
-
-    descriptionRect=
-      description.getBoundingClientRect();
-
-    aboutFrame.style.setProperty(
-      "--hex-founded-title-center-y",
-      (
-        center-
-        (
-          titleRect.top+
-          titleRect.height/2
-        )
-      )+"px"
+    element.style.setProperty(
+      "visibility",
+      progress>0?"visible":"hidden",
+      "important"
     );
-
-    aboutFrame.style.setProperty(
-      "--hex-founded-description-center-y",
-      (
-        center-
-        (
-          descriptionRect.top+
-          descriptionRect.height/2
-        )
-      )+"px"
+    element.style.setProperty(
+      "transform",
+      "translate3d(0,"+
+        ((1-progress)*(distance||18))+"px,0)",
+      "important"
     );
-
-    aboutFrame.classList.remove(
-      "is-founded-measuring"
+    element.style.setProperty(
+      "transition",
+      "none",
+      "important"
     );
   }
 
+  function prepareCards(){
+    aboutFrame.querySelectorAll(
+      ".hex-company-card .hex-card"
+    ).forEach(function(card){
+      var number=card.querySelector(".hex-number");
 
-  function start(detail){
+      card.classList.remove(
+        "is-card-visible",
+        "is-counting",
+        "is-count-complete"
+      );
+
+      if(number&&!number.dataset.hexCountTarget){
+        number.dataset.hexCountTarget=String(
+          parseInt(number.textContent,10)||0
+        );
+      }
+    });
+  }
+
+  function clearManualStyles(){
+    if(!aboutFrame){
+      return;
+    }
+
+    aboutFrame.querySelectorAll(
+      ".hex-center-title,"+
+      ".hex-founded-text,"+
+      ".hex-center,"+
+      ".hex-company-card,"+
+      ".hex-company-card .hex-card"
+    ).forEach(function(element){
+      [
+        "opacity",
+        "visibility",
+        "transform",
+        "transition"
+      ].forEach(function(name){
+        element.style.removeProperty(name);
+      });
+    });
+
+    aboutFrame.querySelectorAll(
+      ".hex-company-card .hex-number"
+    ).forEach(function(number){
+      if(number.dataset.hexCountTarget){
+        number.textContent=
+          number.dataset.hexCountTarget;
+      }
+
+      number.style.removeProperty("color");
+      number.style.removeProperty("transition");
+    });
+
+    aboutFrame.querySelectorAll(
+      ".hex-company-card .hex-card"
+    ).forEach(function(card){
+      card.classList.remove(
+        "is-card-visible",
+        "is-counting",
+        "is-count-complete"
+      );
+    });
+  }
+
+  function updateFounded(progress){
+    var title=aboutFrame.querySelector(".hex-center-title");
+    var foundedText=aboutFrame.querySelector(".hex-founded-text");
+    var description=aboutFrame.querySelector(".hex-center");
+    var cardWrap=aboutFrame.querySelector(".hex-company-card");
+    var cards=Array.prototype.slice.call(
+      aboutFrame.querySelectorAll(
+        ".hex-company-card .hex-card"
+      )
+    );
+    var titleProgress=phase(progress,.02,.14);
+    var textProgress=phase(progress,.15,.27);
+    var descriptionProgress=phase(progress,.82,.94);
+
+    setReveal(title,titleProgress,16);
+
+    if(foundedText){
+      foundedText.style.setProperty(
+        "opacity",
+        String(textProgress),
+        "important"
+      );
+      foundedText.style.setProperty(
+        "visibility",
+        textProgress>0?"visible":"hidden",
+        "important"
+      );
+      foundedText.style.setProperty(
+        "transition",
+        "none",
+        "important"
+      );
+    }
+
+    setReveal(
+      cardWrap,
+      phase(progress,.27,.34),
+      12
+    );
+
+    cards.forEach(function(card,index){
+      var start=.31+index*.1;
+      var cardProgress=phase(
+        progress,
+        start,
+        start+.13
+      );
+      var number=card.querySelector(".hex-number");
+      var target=number
+        ?parseInt(number.dataset.hexCountTarget,10)||0
+        :0;
+
+      setReveal(card,cardProgress,18);
+      card.classList.toggle(
+        "is-card-visible",
+        cardProgress>0
+      );
+      card.classList.toggle(
+        "is-count-complete",
+        cardProgress>=1
+      );
+
+      if(number){
+        number.textContent=String(
+          Math.round(target*easeOut(cardProgress))
+        );
+        number.style.setProperty(
+          "color",
+          cardProgress>=1?"#c8a874":"#1f2774",
+          "important"
+        );
+        number.style.setProperty(
+          "transition",
+          "none",
+          "important"
+        );
+      }
+    });
+
+    setReveal(description,descriptionProgress,16);
+
+    aboutFrame.classList.toggle(
+      "is-founded-released",
+      progress>=1
+    );
+    document.documentElement.classList.toggle(
+      "hex-founded-stage-complete",
+      progress>=1
+    );
+  }
+
+  function measure(){
     var aboutRect;
 
-    if(active||foundedCompleted){
+    if(!active||!aboutFrame){
+      return;
+    }
+
+    foundedDistance=Math.max(
+      window.innerHeight*3.2,
+      2400
+    );
+
+    aboutFrame.style.setProperty(
+      "--hex-founded-scroll-distance",
+      Math.ceil(foundedDistance)+"px"
+    );
+
+    aboutRect=aboutFrame.getBoundingClientRect();
+    foundedStartY=
+      window.scrollY+
+      aboutRect.top-
+      getHeaderHeight();
+
+    setWelcomePosition();
+  }
+
+  function start(detail){
+    if(active){
       return;
     }
 
     welcomeWrap=detail.welcomeWrap;
     welcomePanel=detail.welcomePanel;
-
     aboutFrame=document.getElementById(
       HOME_SECTIONS.ABOUT
     );
@@ -6400,951 +6479,81 @@ hexReady(function(){
       return;
     }
 
-    aboutFrame.classList.add(
-      "hex-founded-stage"
-    );
-
-    aboutRect=
-      aboutFrame.getBoundingClientRect();
-
-    foundedStartY=
-      window.scrollY+
-      aboutRect.top-
-      getHeaderHeight();
-
     active=true;
-    welcomeHolding=true;
-    welcomeHoldSteps=0;
-    welcomeHoldAmount=0;
-    welcomeHoldScrollY=window.scrollY;
+    startScrollY=window.scrollY;
 
-    setWelcomePosition();
+    aboutFrame.classList.add(
+      "hex-founded-stage",
+      "hex-founded-scroll-stage"
+    );
+    aboutFrame.dataset.foundedStep="manual";
+
+    prepareCards();
+    measure();
+
+    document.documentElement.classList.add(
+      "hex-welcome-exit-active",
+      "hex-founded-manual"
+    );
+  }
+
+  function update(){
+    var foundedProgress;
+    var welcomeDistance;
+
+    frameRequested=false;
+
+    if(!active||!aboutFrame){
+      return;
+    }
+
+    welcomeDistance=Math.max(
+      foundedStartY-startScrollY,
+      1
+    );
+    welcomeProgress=clamp(
+      (window.scrollY-startScrollY)/welcomeDistance,
+      0,
+      1
+    );
 
     document.documentElement.style.setProperty(
       "--hex-welcome-exit-progress",
-      "0"
+      String(welcomeProgress)
+    );
+    document.documentElement.classList.toggle(
+      "hex-welcome-exit-complete",
+      welcomeProgress>=1
     );
 
-    document.documentElement.classList.add(
-      "hex-welcome-exit-active"
+    foundedProgress=clamp(
+      (window.scrollY-foundedStartY)/foundedDistance,
+      0,
+      1
     );
+
+    aboutFrame.classList.toggle(
+      "is-founded-active",
+      window.scrollY>=foundedStartY-1
+    );
+    document.documentElement.classList.toggle(
+      "hex-founded-stage-active",
+      window.scrollY>=foundedStartY-1
+    );
+
+    updateFounded(foundedProgress);
   }
 
-
-  function easeInOutCubic(value){
-    return value<.5
-      ?4*value*value*value
-      :1-Math.pow(-2*value+2,3)/2;
-  }
-
-
-  function stopWelcomeAutoScroll(){
-    if(welcomeAutoScrollFrame!==null){
-      cancelAnimationFrame(
-        welcomeAutoScrollFrame
-      );
-      welcomeAutoScrollFrame=null;
-    }
-
-    welcomeAutoScrolling=false;
-  }
-
-
-  function releaseWelcomeHold(){
-    if(!welcomeHolding){
+  function requestUpdate(){
+    if(frameRequested){
       return;
     }
 
-    welcomeHolding=false;
-    welcomeHoldAmount=0;
-
-    window.clearTimeout(
-      welcomeHoldTimer
-    );
-
-    document.documentElement.classList.remove(
-      "hex-welcome-exit-active",
-      "hex-welcome-exit-complete"
-    );
-
-    document.documentElement.style.removeProperty(
-      "--hex-welcome-exit-progress"
-    );
-
-    /*
-     * 固定待機中の慣性やブラウザ補正を破棄し、
-     * WELCOME完成時の位置から自動移動を開始する。
-     */
-    window.scrollTo({
-      top:welcomeHoldScrollY,
-      left:window.scrollX,
-      behavior:"auto"
-    });
-
-    if(ENABLE_FOUNDED_EFFECT){
-      startWelcomeAutoScroll();
-    }else{
-      completeFoundedImmediately();
-    }
+    frameRequested=true;
+    window.requestAnimationFrame(update);
   }
-
-
-  function countWelcomeHoldStep(delta){
-    if(!welcomeHolding||delta<=0){
-      return;
-    }
-
-    welcomeHoldAmount+=Math.abs(delta);
-
-    window.clearTimeout(
-      welcomeHoldTimer
-    );
-
-    welcomeHoldTimer=window.setTimeout(
-      function(){
-        if(
-          !welcomeHolding||
-          welcomeHoldAmount<
-          WHEEL_THRESHOLD
-        ){
-          welcomeHoldAmount=0;
-          return;
-        }
-
-        welcomeHoldAmount=0;
-        welcomeHoldSteps+=1;
-
-        if(
-          welcomeHoldSteps>=
-          WELCOME_HOLD_STEPS
-        ){
-          releaseWelcomeHold();
-        }
-      },
-      WHEEL_IDLE_TIME
-    );
-  }
-
-
-  function startWelcomeAutoScroll(){
-    var fromY;
-    var distance;
-    var started;
-
-    if(
-      !active||
-      foundedActive||
-      foundedCompleted||
-      returning||
-      welcomeAutoScrolling
-    ){
-      return;
-    }
-
-    fromY=window.scrollY;
-    distance=foundedStartY-fromY;
-
-    if(distance<=1){
-      window.scrollTo({
-        top:Math.ceil(foundedStartY),
-        left:window.scrollX,
-        behavior:"auto"
-      });
-      activateFounded();
-      return;
-    }
-
-    welcomeAutoScrolling=true;
-    started=performance.now();
-
-    function frame(now){
-      var progress=clamp(
-        (now-started)/WELCOME_TO_FOUNDED_DURATION,
-        0,
-        1
-      );
-
-      window.scrollTo({
-        top:fromY+distance*easeInOutCubic(progress),
-        left:window.scrollX,
-        behavior:"auto"
-      });
-
-      if(
-        progress<1&&
-        welcomeAutoScrolling&&
-        active&&
-        !returning
-      ){
-        welcomeAutoScrollFrame=
-          requestAnimationFrame(frame);
-        return;
-      }
-
-      welcomeAutoScrollFrame=null;
-      welcomeAutoScrolling=false;
-
-      if(active&&!returning){
-        window.scrollTo({
-          top:Math.ceil(foundedStartY),
-          left:window.scrollX,
-          behavior:"auto"
-        });
-        activateFounded();
-      }
-    }
-
-    welcomeAutoScrollFrame=
-      requestAnimationFrame(frame);
-  }
-
-
-  function tryUnlockStep(){
-    /*
-     * 最低待機時間が終了し、
-     * ホイール入力も止まった場合だけ解除する。
-     */
-    if(
-      minimumLockEnded&&
-      wheelIdle
-    ){
-      stepLocked=false;
-      wheelAmount=0;
-    }
-  }
-
-
-  function markWheelActivity(){
-    wheelIdle=false;
-
-    window.clearTimeout(
-      wheelIdleTimer
-    );
-
-    /*
-     * 指定時間ホイール入力が来なければ、
-     * 1回のスクロール操作が終了したと判断する。
-     */
-    wheelIdleTimer=window.setTimeout(
-      function(){
-        wheelIdle=true;
-        tryUnlockStep();
-      },
-      WHEEL_IDLE_TIME
-    );
-  }
-
-
-  function lockStep(){
-    stepLocked=true;
-    minimumLockEnded=false;
-    wheelAmount=0;
-
-    window.clearTimeout(
-      stepTimer
-    );
-
-    stepTimer=window.setTimeout(
-      function(){
-        minimumLockEnded=true;
-        tryUnlockStep();
-      },
-      STEP_LOCK_TIME
-    );
-  }
-
-
-  function clearCardAnimations(){
-    cardTimers.forEach(function(timer){
-      window.clearTimeout(timer);
-    });
-
-    countFrames.forEach(function(frame){
-      cancelAnimationFrame(frame);
-    });
-
-    cardTimers=[];
-    countFrames=[];
-    cardsPlaying=false;
-  }
-
-
-  /*
-   * 創設演出を再生せず、通常再生後と同じ完成状態にする。
-   * WELCOMEから創設位置への強制スクロールも行わない。
-   */
-  function completeFoundedImmediately(){
-    if(!aboutFrame){
-      return;
-    }
-
-    stopWelcomeAutoScroll();
-    clearCardAnimations();
-
-    foundedActive=true;
-    foundedReleased=false;
-
-    aboutFrame.classList.add(
-      "is-founded-active"
-    );
-
-    aboutFrame.dataset.foundedStep="4";
-
-    aboutFrame.querySelectorAll(
-      ".hex-company-card .hex-card"
-    ).forEach(function(card){
-      var number=card.querySelector(
-        ".hex-number"
-      );
-
-      card.classList.add(
-        "is-card-visible",
-        "is-count-complete"
-      );
-
-      card.classList.remove(
-        "is-counting"
-      );
-
-      if(number){
-        if(!number.dataset.hexCountTarget){
-          number.dataset.hexCountTarget=String(
-            parseInt(number.textContent,10)||0
-          );
-        }
-
-        number.textContent=
-          number.dataset.hexCountTarget;
-      }
-    });
-
-    document.documentElement.classList.add(
-      "hex-founded-stage-active"
-    );
-
-    releaseFounded();
-
-    stepLocked=false;
-    minimumLockEnded=true;
-    wheelIdle=true;
-    wheelAmount=0;
-  }
-
-
-  function prepareFoundedCards(){
-    if(!aboutFrame){
-      return;
-    }
-
-    clearCardAnimations();
-
-    aboutFrame.querySelectorAll(
-      ".hex-company-card .hex-card"
-    ).forEach(function(card){
-      var number=card.querySelector(
-        ".hex-number"
-      );
-
-      card.classList.remove(
-        "is-card-visible",
-        "is-counting",
-        "is-count-complete"
-      );
-
-      if(!number){
-        return;
-      }
-
-      if(!number.dataset.hexCountTarget){
-        number.dataset.hexCountTarget=String(
-          parseInt(number.textContent,10)||0
-        );
-      }
-
-      number.textContent="0";
-    });
-  }
-
-
-  function startCountUp(card){
-    var number=card.querySelector(
-      ".hex-number"
-    );
-    var target;
-    var started;
-
-    if(!number){
-      return;
-    }
-
-    target=parseInt(
-      number.dataset.hexCountTarget,
-      10
-    )||0;
-
-    started=performance.now();
-    card.classList.add("is-counting");
-
-    function frame(now){
-      var progress=clamp(
-        (now-started)/COUNT_DURATION,
-        0,
-        1
-      );
-
-      number.textContent=String(
-        Math.round(
-          target*(1-Math.pow(1-progress,3))
-        )
-      );
-
-      if(progress<1&&cardsPlaying){
-        countFrames.push(
-          requestAnimationFrame(frame)
-        );
-        return;
-      }
-
-      if(progress>=1){
-        number.textContent=String(target);
-        card.classList.remove("is-counting");
-        card.classList.add("is-count-complete");
-      }
-    }
-
-    countFrames.push(
-      requestAnimationFrame(frame)
-    );
-  }
-
-
-  function playFoundedCards(){
-    var cards;
-    var finishDelay;
-    var lastRevealDelay;
-    var descriptionStartDelay;
-    var releaseDelay;
-
-    if(cardsPlaying||!aboutFrame){
-      return;
-    }
-
-    cards=Array.prototype.slice.call(
-      aboutFrame.querySelectorAll(
-        ".hex-company-card .hex-card"
-      )
-    );
-
-    cardsPlaying=true;
-    stepLocked=true;
-    minimumLockEnded=false;
-    wheelIdle=false;
-    wheelAmount=0;
-    aboutFrame.dataset.foundedStep="3";
-
-    cards.forEach(function(card,index){
-      var revealDelay=
-        index*CARD_REVEAL_INTERVAL;
-
-      cardTimers.push(
-        window.setTimeout(function(){
-          if(cardsPlaying){
-            card.classList.add(
-              "is-card-visible"
-            );
-          }
-        },revealDelay)
-      );
-
-      cardTimers.push(
-        window.setTimeout(function(){
-          if(cardsPlaying){
-            startCountUp(card);
-          }
-        },revealDelay+CARD_COUNT_DELAY)
-      );
-    });
-
-    lastRevealDelay=
-      Math.max(cards.length-1,0)*
-      CARD_REVEAL_INTERVAL;
-
-    finishDelay=
-      lastRevealDelay+
-      CARD_COUNT_DELAY+
-      COUNT_DURATION;
-
-    /*
-     * 説明文は最後のカードが表示された瞬間を基準にする。
-     * カウントアップ完了は待たない。
-     */
-    descriptionStartDelay=
-      lastRevealDelay+
-      FOUNDED_DESCRIPTION_DELAY;
-
-    cardTimers.push(
-      window.setTimeout(function(){
-        if(
-          !foundedActive||
-          returning||
-          foundedCompleted
-        ){
-          return;
-        }
-
-        aboutFrame.dataset.foundedStep="4";
-      },descriptionStartDelay)
-    );
-
-    cardTimers.push(
-      window.setTimeout(function(){
-        cards.forEach(function(card){
-          var number=card.querySelector(
-            ".hex-number"
-          );
-
-          card.classList.add(
-            "is-card-visible",
-            "is-count-complete"
-          );
-          card.classList.remove("is-counting");
-
-          if(
-            number&&
-            number.dataset.hexCountTarget
-          ){
-            number.textContent=
-              number.dataset.hexCountTarget;
-          }
-        });
-
-        cardsPlaying=false;
-      },finishDelay+80)
-    );
-
-    /*
-     * 固定解除は、全カードのカウント完了と
-     * 説明文の表示時間の両方が終わってから行う。
-     */
-    releaseDelay=Math.max(
-      finishDelay+80,
-      descriptionStartDelay+
-      FOUNDED_COMPLETE_DELAY
-    );
-
-    cardTimers.push(
-      window.setTimeout(function(){
-        if(
-          foundedActive&&
-          !returning&&
-          !foundedCompleted
-        ){
-          releaseFounded();
-        }
-      },releaseDelay)
-    );
-  }
-
-
-  function activateFounded(){
-    if(
-      foundedActive||
-      returning||
-      !aboutFrame
-    ){
-      return;
-    }
-
-    foundedActive=true;
-    foundedReleased=false;
-
-    aboutFrame.classList.add(
-      "is-founded-active"
-    );
-
-    wheelAmount=0;
-    wheelIdle=true;
-    minimumLockEnded=false;
-
-    /* 自動進行が完了するまで下方向入力を使用しない */
-    stepLocked=true;
-
-    aboutFrame.dataset.foundedStep="0";
-
-    prepareFoundedCards();
-
-    document.documentElement.classList.add(
-      "hex-founded-stage-active"
-    );
-
-    window.scrollTo({
-      top:Math.ceil(foundedStartY),
-      left:window.scrollX,
-      behavior:"auto"
-    });
-
-    requestAnimationFrame(function(){
-      measureFoundedPositions();
-
-      requestAnimationFrame(function(){
-        if(
-          foundedActive&&
-          !returning
-        ){
-          aboutFrame.dataset.foundedStep="1";
-
-          /* 1972の後に「年創業」を自動表示 */
-          cardTimers.push(
-            window.setTimeout(function(){
-              if(
-                !foundedActive||
-                returning||
-                foundedCompleted
-              ){
-                return;
-              }
-
-              aboutFrame.dataset.foundedStep="2";
-
-              /* 続けてカード演出を自動開始 */
-              cardTimers.push(
-                window.setTimeout(function(){
-                  if(
-                    foundedActive&&
-                    !returning&&
-                    !foundedCompleted
-                  ){
-                    playFoundedCards();
-                  }
-                },FOUNDED_CARDS_DELAY)
-              );
-            },FOUNDED_TEXT_DELAY)
-          );
-        }
-      });
-    });
-  }
-
-
-  function releaseFounded(){
-    foundedReleased=true;
-    foundedCompleted=true;
-
-    aboutFrame.classList.add(
-      "is-founded-released"
-    );
-
-    document.documentElement.classList.add(
-      "hex-founded-stage-complete"
-    );
-  }
-
-
-  function returnToWelcome(){
-    if(
-      returning||
-      !aboutFrame
-    ){
-      return;
-    }
-
-    returning=true;
-    welcomeAutoPaused=true;
-    stepLocked=true;
-    minimumLockEnded=false;
-    wheelIdle=false;
-    wheelAmount=0;
-
-    clearCardAnimations();
-
-    window.clearTimeout(
-      stepTimer
-    );
-
-    window.clearTimeout(
-      wheelIdleTimer
-    );
-
-    aboutFrame.classList.add(
-      "is-founded-returning"
-    );
-
-    window.clearTimeout(
-      returnTimer
-    );
-
-    returnTimer=window.setTimeout(
-      function(){
-        aboutFrame.classList.remove(
-          "is-founded-returning",
-          "is-founded-released",
-          "is-founded-active"
-        );
-
-        aboutFrame.dataset.foundedStep="0";
-
-        document.documentElement.classList.remove(
-          "hex-founded-stage-active",
-          "hex-founded-stage-complete"
-        );
-
-        foundedActive=false;
-        foundedReleased=false;
-        returning=false;
-
-        stepLocked=false;
-        minimumLockEnded=true;
-        wheelIdle=true;
-        wheelAmount=0;
-
-        window.scrollTo({
-          top:Math.max(
-            foundedStartY-2,
-            0
-          ),
-          left:window.scrollX,
-          behavior:"auto"
-        });
-
-        window.dispatchEvent(
-          new Event("scroll")
-        );
-      },
-      RETURN_FADE_TIME
-    );
-  }
-
-
-  function isFoundedFullyVisible(){
-    var surface;
-    var rect;
-    var headerHeight;
-
-    if(!aboutFrame){
-      return false;
-    }
-
-    surface=aboutFrame.querySelector(
-      ":scope > "+
-      ".gc_auto_frame_spotitem"+
-      ":has(.hex-company-card)"
-    );
-
-    if(!surface){
-      return false;
-    }
-
-    rect=surface.getBoundingClientRect();
-    headerHeight=getHeaderHeight();
-
-    /*
-     * 創業セクションの固定面が、
-     * ヘッダー下から画面下まで表示されているか。
-     */
-    return(
-      rect.top<=headerHeight+2&&
-      rect.bottom>=window.innerHeight-2
-    );
-  }
-
-
-  function handleWheel(event){
-    var step;
-    var remainingDistance;
-
-    if(
-      window.innerWidth<=768||
-      returning
-    ){
-      return;
-    }
-
-    /*
-     * WELCOME完成後の3スクロールは画面を固定したまま数える。
-     * 3回目の操作終了後に固定解除と自動移動を開始する。
-     */
-    if(welcomeHolding){
-      event.preventDefault();
-
-      if(
-        Math.abs(
-          window.scrollY-
-          welcomeHoldScrollY
-        )>1
-      ){
-        window.scrollTo({
-          top:welcomeHoldScrollY,
-          left:window.scrollX,
-          behavior:"auto"
-        });
-      }
-
-      countWelcomeHoldStep(event.deltaY);
-      return;
-    }
-
-    /*
-     * WELCOMEから創業への自動移動中は、
-     * 追加のホイール入力で到達位置をずらさない。
-     */
-    if(welcomeAutoScrolling){
-      if(event.deltaY<0){
-        stopWelcomeAutoScroll();
-        welcomeAutoPaused=true;
-        return;
-      }
-
-      event.preventDefault();
-      return;
-    }
-
-    /*
-     * 最後まで完了した後は、リロードされるまで
-     * 創業演出へ再介入せず通常スクロールに戻す。
-     */
-    if(foundedCompleted){
-      return;
-    }
-
-    /*
-    * WELCOMEフェード中に、今回のホイール入力で
-    * 創業セクションの開始位置を越えそうな場合。
-    */
-    if(
-      active&&
-      !foundedActive&&
-      event.deltaY>0
-    ){
-      remainingDistance=
-        foundedStartY-
-        window.scrollY;
-
-      if(
-        remainingDistance<=
-        Math.abs(event.deltaY)+2
-      ){
-        /*
-        * 境界を越えるホイール入力を無効化し、
-        * 創業セクション開始位置へ正確に合わせる。
-        */
-        event.preventDefault();
-
-        window.scrollTo({
-          top:Math.ceil(foundedStartY),
-          left:window.scrollX,
-          behavior:"auto"
-        });
-
-        return;
-      }
-    }
-
-    /*
-    * 創業セクション開始前は、
-    * 上記の境界処理以外は通常スクロール。
-    */
-    if(!foundedActive){
-      return;
-    }
-
-    /*
-     * 上方向は各段階を逆再生せず、
-     * 創業内容全体をまとめて消す。
-     */
-    if(event.deltaY<0){
-
-      /*
-       * 次のセクションまで進んだ後は、
-       * 創業セクションが全画面に戻るまで
-       * 通常の逆スクロールを許可する。
-       */
-      if(
-        foundedReleased&&
-        !isFoundedFullyVisible()
-      ){
-        return;
-      }
-
-      event.preventDefault();
-      returnToWelcome();
-      return;
-    }
-
-    /*
-     * 創業演出完成後は、
-     * 下方向の通常スクロールを許可する。
-     */
-    if(foundedReleased){
-      return;
-    }
-
-    event.preventDefault();
-
-    /*
-     * 継続中のホイール・慣性入力を記録する。
-     */
-    markWheelActivity();
-
-    /*
-     * アニメーション中の入力は、
-     * 次の段階には使用しない。
-     */
-    if(stepLocked){
-      return;
-    }
-
-    wheelAmount+=Math.abs(
-      event.deltaY
-    );
-
-    if(wheelAmount<WHEEL_THRESHOLD){
-      return;
-    }
-
-    wheelAmount=0;
-
-    step=parseInt(
-      aboutFrame.dataset.foundedStep||"1",
-      10
-    );
-
-    if(step===1){
-      /* 「年創業」をフェード表示する */
-      aboutFrame.dataset.foundedStep="2";
-      lockStep();
-    }else if(step===2){
-      playFoundedCards();
-    }else if(step===3){
-      /* カード完了後、最後に説明文を表示する */
-      aboutFrame.dataset.foundedStep="4";
-      lockStep();
-    }else{
-      releaseFounded();
-      lockStep();
-    }
-  }
-
 
   function clearAll(){
-    stopWelcomeAutoScroll();
-    clearCardAnimations();
-
-    window.clearTimeout(
-      welcomeHoldTimer
-    );
-
-    window.clearTimeout(
-      stepTimer
-    );
-
-    window.clearTimeout(
-      wheelIdleTimer
-    );
-
-    window.clearTimeout(
-      returnTimer
-    );
-
     if(welcomeWrap){
       [
         "--hex-welcome-fixed-top",
@@ -7352,22 +6561,22 @@ hexReady(function(){
         "--hex-welcome-fixed-width",
         "--hex-welcome-fixed-height"
       ].forEach(function(name){
-        welcomeWrap.style.removeProperty(
-          name
-        );
+        welcomeWrap.style.removeProperty(name);
       });
     }
 
     if(aboutFrame){
+      clearManualStyles();
+
       aboutFrame.classList.remove(
         "hex-founded-stage",
-        "is-founded-returning",
-        "is-founded-released",
-        "is-founded-active"
+        "hex-founded-scroll-stage",
+        "is-founded-active",
+        "is-founded-released"
       );
-
-      aboutFrame.removeAttribute(
-        "data-founded-step"
+      aboutFrame.removeAttribute("data-founded-step");
+      aboutFrame.style.removeProperty(
+        "--hex-founded-scroll-distance"
       );
     }
 
@@ -7375,128 +6584,19 @@ hexReady(function(){
       "hex-welcome-exit-active",
       "hex-welcome-exit-complete",
       "hex-founded-stage-active",
-      "hex-founded-stage-complete"
+      "hex-founded-stage-complete",
+      "hex-founded-manual"
     );
-
     document.documentElement.style.removeProperty(
       "--hex-welcome-exit-progress"
     );
 
     active=false;
-    foundedActive=false;
-    foundedReleased=false;
-    returning=false;
-    welcomeAutoScrolling=false;
-    welcomeAutoPaused=false;
-    welcomeHolding=false;
-    welcomeHoldSteps=0;
-    welcomeHoldAmount=0;
-    welcomeHoldScrollY=0;
-
-    stepLocked=false;
-    minimumLockEnded=true;
-    wheelIdle=true;
-    wheelAmount=0;
-
-    startScrollY=0;
-    foundedStartY=0;
-    scrollDistance=1;
-
+    welcomeProgress=0;
     welcomeWrap=null;
     welcomePanel=null;
     aboutFrame=null;
   }
-
-
-  function update(){
-    var aboutRect;
-    var foundedTitle;
-    var foundedTitleRect;
-
-    if(!active){
-      return 0;
-    }
-
-    if(welcomeHolding){
-      if(
-        Math.abs(
-          window.scrollY-
-          welcomeHoldScrollY
-        )>1
-      ){
-        window.scrollTo({
-          top:welcomeHoldScrollY,
-          left:window.scrollX,
-          behavior:"auto"
-        });
-      }
-
-      return 1;
-    }
-
-    if(
-      foundedActive||
-      returning||
-      welcomeAutoScrolling
-    ){
-      return 1;
-    }
-
-    aboutRect=aboutFrame.getBoundingClientRect();
-
-    /*
-     * WELCOME完成後もしばらくは通常スクロール。
-     * 創業タイトルの上端が画面下端へ到達した瞬間から、
-     * 創業セクションの完成位置まで自動で移動する。
-     */
-    foundedTitle=aboutFrame.querySelector(
-      ".hex-center-title"
-    );
-
-    if(foundedTitle){
-      foundedTitleRect=
-        foundedTitle.getBoundingClientRect();
-    }
-
-    /*
-     * 逆方向へ戻った直後は自動進行を再開しない。
-     * タイトルがいったん画面下へ抜けたら再び待機状態に戻す。
-     */
-    if(welcomeAutoPaused){
-      if(
-        foundedTitleRect&&
-        foundedTitleRect.top>
-        window.innerHeight+2
-      ){
-        welcomeAutoPaused=false;
-      }
-
-      return 0;
-    }
-
-    if(
-      foundedTitleRect&&
-      foundedTitleRect.top<=window.innerHeight
-    ){
-      startWelcomeAutoScroll();
-      return 1;
-    }
-
-    /*
-     * タイトルを取得できない場合だけ、
-     * 従来の到達位置で演出を開始する。
-     */
-    if(
-      !foundedTitle&&
-      aboutRect.top<=getHeaderHeight()+1
-    ){
-      activateFounded();
-      return 1;
-    }
-
-    return 0;
-  }
-
 
   document.addEventListener(
     "hex:welcome-exit-ready",
@@ -7506,47 +6606,29 @@ hexReady(function(){
       }
 
       start(event.detail);
+      update();
 
-      if(welcomeHolding){
+      /* WELCOMEが薄くなる間だけ丸画像を現在位置に保持する */
+      if(active&&welcomeProgress<1){
         event.preventDefault();
-      }else{
-        update();
       }
-
-      /*
-       * WELCOME完成後は3スクロール分だけ固定を維持する。
-       * 3回目の操作終了後、固定解除と自動移動を開始する。
-       */
     }
   );
-
 
   document.addEventListener(
     "hex:welcome-exit-cancel",
     function(){
-      if(
-        !foundedActive&&
-        !returning
-      ){
+      if(active&&window.scrollY<=startScrollY+1){
         clearAll();
       }
     }
   );
 
-
-  window.addEventListener(
-    "wheel",
-    handleWheel,
-    {passive:false}
-  );
-
-
   window.addEventListener(
     "scroll",
-    update,
+    requestUpdate,
     {passive:true}
   );
-
 
   window.addEventListener(
     "resize",
@@ -7556,20 +6638,9 @@ hexReady(function(){
         return;
       }
 
-      if(foundedActive){
-        measureFoundedPositions();
-      }else if(active&&aboutFrame){
-        var aboutRect=
-          aboutFrame.getBoundingClientRect();
-
-        if(welcomeHolding){
-          setWelcomePosition();
-        }
-
-        foundedStartY=
-          window.scrollY+
-          aboutRect.top-
-          getHeaderHeight();
+      if(active){
+        measure();
+        requestUpdate();
       }
     }
   );
@@ -10863,7 +9934,10 @@ hexLoad(function(){
     return(
       root.classList.contains('hex-opening-lock')||
       topBeforeCircle||
-      root.classList.contains('hex-welcome-exit-active')||
+      (
+        root.classList.contains('hex-welcome-exit-active')&&
+        !root.classList.contains('hex-welcome-exit-complete')
+      )||
       foundedRunning
     );
   }
