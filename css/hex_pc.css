@@ -6027,7 +6027,7 @@ html body
 /* =======================================
    トップページ：バナー
 ======================================= */
-.hex-banner.hex-top-banner{
+.gc_auto_frame_spotitem_body:has(.hex-banner-section){
   width:100%;
   max-width:calc(var(--hex_small_width) - 200px);
   margin:0 auto;
