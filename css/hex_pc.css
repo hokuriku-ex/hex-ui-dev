@@ -6240,6 +6240,13 @@ html body
   box-sizing:border-box!important;
 }
 
+/* スタッフ紹介ページ */
+.gc_auto_frame_publicinfo_staff{
+  padding-top:0!important;
+  padding-bottom:min(10%, 120px)!important;
+  padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
+}
+
 /* 施工事例・お知らせページ */
 .gc_auto_frame_post_item .post_item_contents{
   width:100%!important;
@@ -6671,9 +6678,6 @@ html body
   width:100%;
   max-width:var(--base_width);
   margin:0 auto;
-  padding-top:0!important;
-  padding-bottom:min(10%, 120px)!important;
-  padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box;
   color:#203459;
   background-color:#f3f0eb!important;
