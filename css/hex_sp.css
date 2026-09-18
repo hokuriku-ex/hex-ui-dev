@@ -1207,14 +1207,6 @@
     );
   }
 
-  /* 左官アニメーション */
-  .hex-opening-path{
-    stroke-width:160;
-  }
-  .hex-opening-path.is-trowel{
-    filter:none;
-  }
-
   /* 開幕キャッチコピー */
   .hex-opening-intro-photo{
     object-position:
@@ -1274,19 +1266,37 @@
   .hex-opening-message-with{
     font-size:clamp(25px,7vw,36px)!important;
   }
-  .hex-opening.is-logo-start
-  .hex-opening-message-final{
-    top:max(
-      28px,
-      calc(env(safe-area-inset-top) + 16px)
-    );
-  }
-
   /* ロゴアニメーション */
   .hex-logo-story{
     width:160vw;
     max-width:none;
     height:100dvh;
+  }
+
+  .hex-opening-progress-nav{
+    bottom:max(
+      14px,
+      calc(env(safe-area-inset-bottom) + 10px)
+    );
+  }
+
+  .hex-opening-scroll-cue{
+    bottom:max(
+      52px,
+      calc(env(safe-area-inset-bottom) + 48px)
+    );
+  }
+
+  .hex-section-progress-nav{
+    right:max(
+      8px,
+      calc(env(safe-area-inset-right) + 4px)
+    );
+  }
+
+  .hex-progress-dot{
+    width:26px;
+    height:26px;
   }
 }
 
