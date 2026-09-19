@@ -5973,6 +5973,7 @@ hexReady(function(){
     var imageHandoffState="hidden";
     var stageReady=false;
     var openingJustFinished=false;
+    var welcomeExitAccepted=false;
 
     var initialCenterOffsetY=0;
     var openingObserver=null;
@@ -6490,37 +6491,38 @@ hexReady(function(){
           );
 
           if(welcomeCenterReached){
-            /*
-             * WELCOME完成を別JSへ通知する。
-             * 切替JSがpreventDefault()した間は、
-             * 丸画像の固定を解除しない。
-             */
-            var welcomeExitEvent=
-              new CustomEvent(
-                "hex:welcome-exit-ready",
-                {
-                  cancelable:true,
-                  detail:{
-                    welcomeWrap:welcomeWrap,
-                    welcomePanel:
-                      welcomePanel||welcomeWrap,
-                    imageHandoff:imageHandoff
+            if(!welcomeExitAccepted){
+              /*
+               * WELCOME完成通知は初回だけ発行する。
+               * 以降のスクロールで同じイベントと再計算を
+               * 繰り返さない。
+               */
+              var welcomeExitEvent=
+                new CustomEvent(
+                  "hex:welcome-exit-ready",
+                  {
+                    cancelable:true,
+                    detail:{
+                      welcomeWrap:welcomeWrap,
+                      welcomePanel:
+                        welcomePanel||welcomeWrap,
+                      imageHandoff:imageHandoff
+                    }
                   }
-                }
+                );
+
+              document.dispatchEvent(
+                welcomeExitEvent
               );
 
-            document.dispatchEvent(
-              welcomeExitEvent
-            );
+              welcomeExitAccepted=
+                !welcomeExitEvent.defaultPrevented;
+            }
 
-            if(welcomeExitEvent.defaultPrevented){
-              refixImageHandoff(
-                welcomeWrap
-              );
+            if(welcomeExitAccepted){
+              releaseImageHandoff(welcomeWrap);
             }else{
-              releaseImageHandoff(
-                welcomeWrap
-              );
+              refixImageHandoff(welcomeWrap);
             }
           }else{
             document.dispatchEvent(
@@ -12456,14 +12458,19 @@ hexLoad(function(){
 
     [
       'hex:hero-layout-updated',
-      'hex:opening-finished',
-      'hex:welcome-exit-ready'
+      'hex:opening-finished'
     ].forEach(function(eventName){
       document.addEventListener(
         eventName,
         refreshAfterTopLayoutChange
       );
     });
+
+    document.addEventListener(
+      'hex:welcome-exit-ready',
+      refreshAfterTopLayoutChange,
+      {once:true}
+    );
 
     if(lenis){
       classObserver=new MutationObserver(function(){
