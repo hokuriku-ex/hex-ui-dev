@@ -4523,6 +4523,21 @@ hexReady(function(){
     var previousOverflowAnchor=root.style.overflowAnchor;
     var finished=false;
 
+    function syncSmoothScroll(targetTop){
+      var motion=window.hexMotion;
+
+      if(
+        motion&&
+        motion.lenis&&
+        typeof motion.lenis.scrollTo==="function"
+      ){
+        motion.lenis.scrollTo(targetTop,{
+          immediate:true,
+          force:true
+        });
+      }
+    }
+
     /*
      * 長い開幕スクロール領域を削除すると、削除前のscrollYが
      * 通常ページへ一瞬引き継がれる。ヒーロー複製を残して画面を覆い、
@@ -4570,6 +4585,9 @@ hexReady(function(){
         left:0,
         behavior:"auto"
       });
+
+      /* 開幕下端を保持しているLenis側の座標も同時に戻す */
+      syncSmoothScroll(targetTop);
     }
 
     function completeHandoff(){
@@ -4577,6 +4595,9 @@ hexReady(function(){
         return;
       }
       finished=true;
+
+      /* 慣性を再開する直前にも現在の最終位置を確定する */
+      syncSmoothScroll(window.scrollY);
 
       root.style.scrollBehavior=previousScrollBehavior;
       root.style.overflowAnchor=previousOverflowAnchor;
@@ -6649,6 +6670,7 @@ hexReady(function(){
     function applyInitialCenterPosition(){
       var root=document.documentElement;
       var heroTop;
+      var targetTop;
 
       if(initialPositionSet||!stageReady){
         return;
@@ -6712,11 +6734,26 @@ hexReady(function(){
         window.scrollY+
         hero.getBoundingClientRect().top;
 
+      targetTop=heroTop+initialCenterOffsetY;
+
       window.requestAnimationFrame(function(){
         window.scrollTo(
           0,
-          heroTop+initialCenterOffsetY
+          targetTop
         );
+
+        if(
+          window.hexMotion&&
+          window.hexMotion.lenis
+        ){
+          window.hexMotion.lenis.scrollTo(
+            targetTop,
+            {
+              immediate:true,
+              force:true
+            }
+          );
+        }
 
         requestScrollUpdate();
       });
@@ -11465,6 +11502,9 @@ hexLoad(function(){
       var openingLocked=root.classList.contains(
         'hex-opening-lock'
       );
+      var openingFinishing=root.classList.contains(
+        'hex-opening-finishing'
+      );
       var specialState=isSpecialScrollState();
 
       if(!lenis){
@@ -11473,7 +11513,7 @@ hexLoad(function(){
         return;
       }
 
-      if(openingLocked){
+      if(openingLocked||openingFinishing){
         lenis.stop();
       }else{
         lenis.start();
@@ -12465,12 +12505,6 @@ hexLoad(function(){
         refreshAfterTopLayoutChange
       );
     });
-
-    document.addEventListener(
-      'hex:welcome-exit-ready',
-      refreshAfterTopLayoutChange,
-      {once:true}
-    );
 
     if(lenis){
       classObserver=new MutationObserver(function(){
