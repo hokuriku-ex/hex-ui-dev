@@ -3911,7 +3911,7 @@ hexReady(function(){
       document.querySelector(".hex-hero-wrap");
     var button;
 
-    if(!hero||hero.querySelector(".hex-opening-replay")){
+    if(!hero||document.querySelector(".hex-opening-replay")){
       return;
     }
 
@@ -3937,25 +3937,26 @@ hexReady(function(){
       );
     });
 
-  button.addEventListener("click",function(event){
-    event.preventDefault();
-    event.stopPropagation();
+    button.addEventListener("click",function(event){
+      event.preventDefault();
+      event.stopPropagation();
 
-    /* 次の読み込みで開幕を強制再生 */
-    try{
-      sessionStorage.setItem(REPLAY_KEY,"1");
-    }catch(error){}
+      /* 次の読み込みで開幕を強制再生 */
+      try{
+        sessionStorage.setItem(REPLAY_KEY,"1");
+      }catch(error){}
 
-    /* REPLAY後はページ先頭から開始 */
-    if("scrollRestoration" in window.history){
-      window.history.scrollRestoration="manual";
-    }
+      /* REPLAY後はページ先頭から開始 */
+      if("scrollRestoration" in window.history){
+        window.history.scrollRestoration="manual";
+      }
 
-    window.location.reload();
-  });
+      window.location.reload();
+    });
 
-  hero.appendChild(button);
-}
+    /* 横スクロールするヒーロー内のクリップを避ける */
+    document.body.appendChild(button);
+  }
 
   /* CMSに登録されたPC/SP画像URLを記述順で取得する */
   function collectOpeningSlides(){
@@ -5628,6 +5629,7 @@ hexReady(function(){
     var scrollDistance=0;
     var initialPositionSet=false;
     var imageHandoffState="hidden";
+    var imageHandoffSource=null;
     var stageReady=false;
     var openingJustFinished=false;
     var welcomeExitAccepted=false;
@@ -5740,22 +5742,26 @@ hexReady(function(){
       });
     }
 
-    function showImageHandoff(){
+    function prepareImageHandoff(){
       var activeHero;
       var clonedHero;
       var removableItems;
 
-      if(
-        imageHandoffState!=="hidden"||
-        !heroSticky
-      ){
-        return;
+      if(!heroSticky){
+        return null;
       }
 
       activeHero=getActiveHero();
 
       if(!activeHero){
-        return;
+        return null;
+      }
+
+      if(
+        imageHandoffSource===activeHero&&
+        imageHandoff.firstElementChild
+      ){
+        return imageHandoff.firstElementChild;
       }
 
       clonedHero=activeHero.cloneNode(true);
@@ -5785,6 +5791,30 @@ hexReady(function(){
         activeHero,
         clonedHero
       );
+
+      imageHandoffSource=activeHero;
+
+      return clonedHero;
+    }
+
+    function showImageHandoff(){
+      var clonedHero;
+
+      if(
+        imageHandoffState!=="hidden"||
+        !heroSticky
+      ){
+        return;
+      }
+
+      clonedHero=prepareImageHandoff();
+
+      if(!clonedHero){
+        return;
+      }
+
+      clonedHero.style.marginLeft=
+        (-heroSticky.scrollLeft)+"px";
 
       imageHandoff.classList.add(
         "is-active"
@@ -5832,8 +5862,6 @@ hexReady(function(){
       imageHandoff.classList.remove(
         "is-active"
       );
-
-      imageHandoff.replaceChildren();
 
       imageHandoffState="hidden";
     }
@@ -6526,6 +6554,14 @@ hexReady(function(){
       );
 
       stageReady=true;
+
+      /*
+       * 下端到達時の初回だけ複製画像・動画の準備が遅れないよう、
+       * 非表示の引き継ぎレイヤーをここで先に構築しておく。
+       */
+      if(!isSpHeroView()){
+        prepareImageHandoff();
+      }
       
       /* 横方向の中央開始位置 */
       horizontalScroller=hero.querySelector(
@@ -7930,6 +7966,22 @@ function hexCreatePageTopButton(){
   button.appendChild(icon);
   button.addEventListener('click',function(e){
     e.preventDefault();
+
+    /*
+     * PCでは進行中のLenis慣性をその場で上書きし、
+     * 停止を待たずに上方向への移動を開始する。
+     */
+    if(
+      window.hexMotion&&
+      typeof window.hexMotion.scrollTo==='function'
+    ){
+      window.hexMotion.scrollTo(0,{
+        duration:1.05,
+        force:true
+      });
+      return;
+    }
+
     window.scrollTo({
       top:0,
       behavior:'smooth'
