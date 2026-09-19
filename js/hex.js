@@ -7437,6 +7437,8 @@ hexReady(function(){
 
   var active=false;
   var frameRequested=false;
+  /* 創業演出を完了させるスクロール量（表示領域に対する割合） */
+  var FOUNDED_REVEAL_SCROLL_RATIO=.65;
   var startScrollY=0;
   var foundedStartY=0;
   var foundedDistance=1;
@@ -7822,13 +7824,15 @@ hexReady(function(){
 
     aboutRect=aboutFrame.getBoundingClientRect();
     revealDistance=Math.max(
-      window.innerHeight-getHeaderHeight(),
+      (
+        window.innerHeight-getHeaderHeight()
+      )*FOUNDED_REVEAL_SCROLL_RATIO,
       1
     );
 
     /*
      * 創業セクションの上端が画面下へ入ってから、
-     * ヘッダー下へ到達するまでの通常スクロール量を使う。
+     * 画面高の約65％を進む間に各パーツの演出を完了する。
      */
     foundedProgress=clamp(
       (window.innerHeight-aboutRect.top)/revealDistance,
