@@ -9047,3 +9047,31 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     opacity:1!important;
   }
 }
+
+/* 開幕ロゴ完成後の円内に、実際のヒーローを先行表示する */
+.hex-opening-scroll-host{
+  background:transparent;
+}
+
+.hex-opening-hero-preview{
+  z-index:9!important;
+  display:block!important;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none!important;
+}
+
+.hex-opening-hero-preview.is-active{
+  opacity:1;
+  visibility:visible;
+}
+
+.hex-opening-hero-preview::after{
+  content:none!important;
+}
+
+.hex-opening.is-scroll-driven
+.hex-opening-message-build{
+  transition:none!important;
+  will-change:transform;
+}

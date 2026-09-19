@@ -2457,3 +2457,12 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     transition:none!important;
   }
 }
+
+/* SPでも開幕の円内へヒーローを先行表示 */
+@media screen and (max-width:768px){
+  .hex-opening-hero-preview{
+    display:block!important;
+    width:100vw!important;
+    max-width:100vw!important;
+  }
+}
