@@ -4607,17 +4607,7 @@ hexReady(function(){
         opening._hexKeepHeroPreview=false;
       }
 
-      /*
-       * 複製レイヤー撤去後の最終レイアウトでヒーロー位置を揃える。
-       * 通常コンテンツのフェード初期化は、この確定後にだけ通知する。
-       */
-      requestAnimationFrame(function(){
-        alignHero();
-        window.dispatchEvent(new Event("scroll"));
-        document.dispatchEvent(
-          new Event("hex:opening-finished")
-        );
-      });
+      window.dispatchEvent(new Event("scroll"));
     }
 
     alignHero();
@@ -4626,6 +4616,9 @@ hexReady(function(){
       alignHero();
       requestAnimationFrame(function(){
         alignHero();
+        document.dispatchEvent(
+          new Event("hex:opening-finished")
+        );
         requestAnimationFrame(completeHandoff);
       });
     });
@@ -4676,378 +4669,6 @@ hexReady(function(){
     cue.innerHTML="<span>SCROLL</span><i></i>";
     opening.appendChild(cue);
     return cue;
-  }
-
-  function startOpeningScrollerLegacy(
-    opening,
-    introStage,
-    slideStage,
-    messageStage
-  ){
-    var scenes=[];
-    var slideElements=slideStage
-      ? Array.prototype.slice.call(
-        slideStage.querySelectorAll(".hex-opening-slide")
-      )
-      : [];
-    var brandStage=opening.querySelector(".hex-opening-brand-stage");
-    var logoStage=opening.querySelector(".hex-opening-logo-stage");
-    var position=0;
-    var targetPosition=0;
-    var animationFrame=0;
-    var lastFrameTime=0;
-    var nav;
-    var cue;
-    var touchY=null;
-    var hasInteracted=false;
-    var isComplete=false;
-    var revealOriginReady=false;
-    var brandIndex;
-    var heroIndex;
-
-    if(introStage){
-      scenes.push(introStage);
-    }
-
-    slideElements.forEach(function(slide){
-      scenes.push(slide);
-    });
-
-    if(messageStage&&messageStage.children.length){
-      scenes.push(messageStage);
-    }
-
-    if(!brandStage&&logoStage){
-      brandStage=document.createElement("div");
-      brandStage.className="hex-opening-brand-stage";
-      brandStage.appendChild(logoStage);
-      opening.insertBefore(brandStage,opening.firstChild);
-    }
-
-    if(brandStage){
-      scenes.push(brandStage);
-    }
-
-    /* 最後のドットは実DOMを持たないヒーロー到達点 */
-    brandIndex=Math.max(0,scenes.length-1);
-    scenes.push(null);
-    heroIndex=scenes.length-1;
-
-    nav=createOpeningProgressNav(opening,scenes.length,heroIndex);
-    cue=createOpeningScrollCue(opening);
-
-    function setSceneStyle(scene,x,isVisible){
-      if(!scene){
-        return;
-      }
-
-      scene.style.setProperty(
-        "transform",
-        "translate3d("+x+"%,0,0)",
-        "important"
-      );
-      scene.style.setProperty(
-        "opacity",
-        isVisible ? "1" : "0",
-        "important"
-      );
-      scene.style.setProperty(
-        "visibility",
-        isVisible ? "visible" : "hidden",
-        "important"
-      );
-    }
-
-    function renderLogo(progress){
-      var left=opening.querySelector(".hex-logo-front-left-mask-path");
-      var center=opening.querySelector(".hex-logo-front-center-mask-path");
-      var right=opening.querySelector(".hex-logo-front-right-clip-rect");
-      var backArm=opening.querySelector(".hex-logo-back-arm-mask-path");
-      var backHand=opening.querySelector(".hex-logo-back-hand");
-      var company=opening.querySelector(".hex-logo-company-name");
-      var finalCopy=opening.querySelector(".hex-opening-message-final");
-      var withCopy=opening.querySelector(".hex-opening-message-with");
-      var pLeft=phase(progress,.03,.23);
-      var pCenter=phase(progress,.16,.36);
-      var pRight=phase(progress,.29,.49);
-      var pBack=phase(progress,.43,.66);
-      var pFinal=phase(progress,.66,.9);
-      var copyMove=phase(progress,.08,.48);
-
-      if(left){
-        left.style.strokeDashoffset=String(1-pLeft);
-      }
-      if(center){
-        center.style.strokeDashoffset=String(1-pCenter);
-      }
-      if(right){
-        right.style.transform="translateX(140px) scaleX("+pRight+")";
-      }
-      if(backArm){
-        backArm.style.opacity=pBack>0 ? "1" : "0";
-        backArm.style.strokeDashoffset=String(90*(1-pBack));
-      }
-      [backHand,company].forEach(function(item){
-        if(!item){
-          return;
-        }
-        item.style.opacity=String(pFinal);
-        item.style.transform="translateY("+(-15*(1-pFinal))+"px)";
-      });
-      if(finalCopy){
-        finalCopy.style.opacity="1";
-        finalCopy.style.top=
-          (50-43*copyMove)+"%";
-        finalCopy.style.transform=
-          "translate(-50%,"+(-50*(1-copyMove))+"%)";
-      }
-      if(withCopy){
-        var withProgress=phase(progress,.18,.46);
-        withCopy.style.maxHeight=(1.5*withProgress)+"em";
-        withCopy.style.marginTop=(4*withProgress)+"px";
-        withCopy.style.opacity=String(withProgress);
-        withCopy.style.transform=
-          "translateY("+(12*(1-withProgress))+"px)";
-      }
-      if(logoStage){
-        logoStage.style.opacity=progress>0 ? "1" : "0";
-      }
-    }
-
-    function updateDots(){
-      var current=Math.min(heroIndex,Math.round(position));
-      Array.prototype.forEach.call(
-        nav.querySelectorAll(".hex-progress-dot"),
-        function(dot,index){
-          dot.classList.toggle("is-current",index===current);
-          dot.classList.toggle("is-passed",index<current);
-          if(index===current){
-            dot.setAttribute("aria-current","step");
-          }else{
-            dot.removeAttribute("aria-current");
-          }
-        }
-      );
-    }
-
-    function render(){
-      var brandProgress=phase(position,brandIndex,brandIndex+.68);
-      var revealProgress=phase(
-        position,
-        brandIndex+.68,
-        heroIndex
-      );
-
-      scenes.forEach(function(scene,index){
-        var x;
-
-        if(!scene){
-          return;
-        }
-
-        if(index===brandIndex&&position>=brandIndex){
-          x=0;
-        }else{
-          x=(index-position)*100;
-        }
-
-        setSceneStyle(scene,x,Math.abs(x)<125);
-      });
-
-      renderLogo(brandProgress);
-      updateDots();
-
-      if(revealProgress>0){
-        if(!revealOriginReady){
-          syncHeroRevealOrigin(opening);
-          revealOriginReady=true;
-        }
-        opening.classList.add("is-hero-reveal");
-        opening.style.setProperty(
-          "--hex-opening-hole",
-          (150*revealProgress)+"vmax"
-        );
-      }else{
-        opening.classList.remove("is-hero-reveal");
-        opening.style.setProperty("--hex-opening-hole","1px");
-      }
-
-      if(position>=heroIndex&&!isComplete){
-        isComplete=true;
-        showHeroCatch(0);
-        finishOpening(opening);
-      }
-    }
-
-    function hideCue(){
-      if(hasInteracted){
-        return;
-      }
-      hasInteracted=true;
-      cue.classList.add("is-hidden");
-    }
-
-    function renderSmooth(now){
-      var frameDuration;
-      var baseEase=window.innerWidth<=768 ? .2 : .135;
-      var ease;
-
-      animationFrame=0;
-
-      if(isComplete){
-        return;
-      }
-
-      frameDuration=lastFrameTime
-        ? Math.min(40,Math.max(8,now-lastFrameTime))
-        : 16.67;
-      lastFrameTime=now;
-      ease=1-Math.pow(1-baseEase,frameDuration/16.67);
-
-      if(Math.abs(targetPosition-position)<.0005){
-        position=targetPosition;
-      }else{
-        position+=(targetPosition-position)*ease;
-      }
-
-      render();
-
-      if(
-        !isComplete&&
-        Math.abs(targetPosition-position)>=.0005
-      ){
-        animationFrame=requestAnimationFrame(renderSmooth);
-      }else{
-        lastFrameTime=0;
-      }
-    }
-
-    function requestSmoothRender(){
-      if(animationFrame||isComplete){
-        return;
-      }
-      animationFrame=requestAnimationFrame(renderSmooth);
-    }
-
-    function setPosition(nextPosition,isUserInput,isImmediate){
-      if(isComplete){
-        return;
-      }
-      if(isUserInput){
-        hideCue();
-      }
-      targetPosition=clamp(nextPosition,0,heroIndex);
-
-      /* SPは指の移動量へ直接追従し、独自の慣性を加えない */
-      if(isImmediate){
-        cancelAnimationFrame(animationFrame);
-        animationFrame=0;
-        lastFrameTime=0;
-        position=targetPosition;
-        render();
-        return;
-      }
-
-      requestSmoothRender();
-    }
-
-    function onWheel(event){
-      var delta=event.deltaY;
-      if(event.deltaMode===1){
-        delta*=40;
-      }else if(event.deltaMode===2){
-        delta*=window.innerHeight;
-      }
-      event.preventDefault();
-      setPosition(
-        targetPosition+delta/
-          (window.innerWidth<=768 ? 540 : SCENE_SCROLL_DISTANCE),
-        true,
-        window.innerWidth<=768
-      );
-    }
-
-    function onTouchStart(event){
-      if(event.touches.length){
-        touchY=event.touches[0].clientY;
-      }
-    }
-
-    function onTouchMove(event){
-      var nextY;
-      if(touchY===null||!event.touches.length){
-        return;
-      }
-      nextY=event.touches[0].clientY;
-      event.preventDefault();
-      setPosition(
-        targetPosition+(touchY-nextY)/520,
-        true,
-        true
-      );
-      touchY=nextY;
-    }
-
-    function onTouchEnd(){
-      touchY=null;
-    }
-
-    function onKeyDown(event){
-      var direction=0;
-      if(
-        event.key==="ArrowDown"||
-        event.key==="PageDown"||
-        event.key===" "
-      ){
-        direction=1;
-      }else if(
-        event.key==="ArrowUp"||
-        event.key==="PageUp"
-      ){
-        direction=-1;
-      }else if(event.key==="Home"){
-        event.preventDefault();
-        setPosition(0,true);
-        return;
-      }else if(event.key==="End"){
-        event.preventDefault();
-        setPosition(heroIndex,true);
-        return;
-      }
-      if(direction){
-        event.preventDefault();
-        setPosition(targetPosition+direction*.34,true);
-      }
-    }
-
-    nav.addEventListener("click",function(event){
-      var button=event.target.closest(".hex-progress-dot");
-      if(!button){
-        return;
-      }
-      hideCue();
-      setPosition(
-        Number(button.getAttribute("data-scene-index")),
-        false
-      );
-    });
-
-    opening.addEventListener("wheel",onWheel,{passive:false});
-    opening.addEventListener("touchstart",onTouchStart,{passive:true});
-    opening.addEventListener("touchmove",onTouchMove,{passive:false});
-    opening.addEventListener("touchend",onTouchEnd,{passive:true});
-    window.addEventListener("keydown",onKeyDown);
-
-    opening._hexOpeningCleanup=function(){
-      cancelAnimationFrame(animationFrame);
-      opening.removeEventListener("wheel",onWheel);
-      opening.removeEventListener("touchstart",onTouchStart);
-      opening.removeEventListener("touchmove",onTouchMove);
-      opening.removeEventListener("touchend",onTouchEnd);
-      window.removeEventListener("keydown",onKeyDown);
-    };
-
-    render();
   }
 
   /*
@@ -12244,35 +11865,6 @@ hexLoad(function(){
       });
     }
 
-    function prepareMotionTargetsDuringOpening(scope){
-      var area=scope&&scope.querySelectorAll
-        ?scope
-        :document;
-      var reveals=Array.prototype.slice.call(
-        area.querySelectorAll(
-          '.hex-motion-up:not([data-hex-motion-initialized]),'+
-          '.hex-motion-left:not([data-hex-motion-initialized]),'+
-          '.hex-motion-right:not([data-hex-motion-initialized]),'+
-          '.hex-motion-scale:not([data-hex-motion-initialized]),'+
-          '.hex-motion-fade:not([data-hex-motion-initialized])'
-        )
-      );
-      var autoReveals=collectAutoRevealTargets(area);
-
-      if(isReducedMotion()){
-        return;
-      }
-
-      /*
-       * 開幕終了後に非表示を後付けするとフェードが消えて見えるため、
-       * 通常表示と同じ初期状態だけを開幕中に先に確定しておく。
-       * initialized は付けず、確定座標でScrollTriggerを登録する。
-       */
-      gsap.set(reveals.concat(autoReveals),{
-        opacity:0
-      });
-    }
-
     function setupMotionTargets(scope){
       var area=scope&&scope.querySelectorAll
         ?scope
@@ -12446,10 +12038,19 @@ hexLoad(function(){
       }
     );
 
-    function refreshAfterTopLayoutChange(){
+    function refreshAfterTopLayoutChange(event){
+      var syncAfterOpening=
+        event&&event.type==='hex:opening-finished';
+
       /* DOM移動とCSS変数の反映後の座標で再計算する */
       window.requestAnimationFrame(function(){
         window.requestAnimationFrame(function(){
+          if(syncAfterOpening&&lenis){
+            lenis.scrollTo(window.scrollY,{
+              immediate:true,
+              force:true
+            });
+          }
           scheduleRefresh(0);
         });
       });
@@ -12465,26 +12066,14 @@ hexLoad(function(){
       );
     });
 
-    if(
-      document.querySelector('.hex-opening.is-scroll-driven')||
-      root.classList.contains('hex-opening-finishing')
-    ){
-      /*
-       * 開幕中から通常フェードの初期透明状態を作る。
-       * トリガー座標だけは、開幕レイヤー撤去後の確定位置で登録する。
-       */
-      prepareMotionTargetsDuringOpening(document);
-      document.addEventListener(
-        'hex:opening-finished',
-        function(){
-          setupMotionTargets(document);
-          scheduleRefresh(0);
-        },
-        {once:true}
-      );
-    }else{
-      setupMotionTargets(document);
-    }
+    document.addEventListener(
+      'hex:welcome-exit-ready',
+      refreshAfterTopLayoutChange,
+      {once:true}
+    );
+
+    /* フェードと見出しは下層ページと同じ初期化経路を使う */
+    setupMotionTargets(document);
     setupHeroAndWelcomeCatchRolls();
 
     /* 初回の対象登録と位置計算が終わってから白カバーを外す */
