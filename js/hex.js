@@ -12434,6 +12434,27 @@ hexLoad(function(){
       );
     });
 
+    function setupMotionAfterOpening(){
+      if(
+        document.querySelector('.hex-opening.is-scroll-driven')||
+        root.classList.contains('hex-opening-finishing')
+      ){
+        window.requestAnimationFrame(setupMotionAfterOpening);
+        return;
+      }
+
+      /*
+       * 開幕レイヤー撤去とヒーロー初期位置の反映後、
+       * さらに2フレーム待って確定座標からフェードを登録する。
+       */
+      window.requestAnimationFrame(function(){
+        window.requestAnimationFrame(function(){
+          setupMotionTargets(document);
+          scheduleRefresh(0);
+        });
+      });
+    }
+
     if(document.querySelector('.hex-opening.is-scroll-driven')){
       /*
        * 開幕用の長いスクロール領域では通常コンテンツの
@@ -12442,10 +12463,12 @@ hexLoad(function(){
       document.addEventListener(
         'hex:opening-finished',
         function(){
-          setupMotionTargets(document);
+          setupMotionAfterOpening();
         },
         {once:true}
       );
+    }else if(root.classList.contains('hex-opening-finishing')){
+      setupMotionAfterOpening();
     }else{
       setupMotionTargets(document);
     }
