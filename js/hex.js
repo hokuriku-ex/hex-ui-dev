@@ -5778,6 +5778,16 @@ hexReady(function(){
       clonedHero.style.marginLeft=
         (-heroSticky.scrollLeft)+"px";
 
+      /*
+       * 固定コピーはヒーロー画像の下端位置で静止させる。
+       * ルート側のスクロール進行値を継承すると、初回だけ
+       * Lenisの更新フレームとの差で元画像と縦位置がずれる。
+       */
+      clonedHero.style.setProperty(
+        "--hex-hero-pan-y",
+        (-scrollDistance)+"px"
+      );
+
       imageHandoff.replaceChildren(
         clonedHero
       );
@@ -5791,6 +5801,9 @@ hexReady(function(){
         "is-active"
       );
 
+      /* 同一フレームで元画像との二重表示を防ぐ */
+      heroSticky.style.visibility="hidden";
+
       imageHandoffState="fixed";
     }
 
@@ -5798,6 +5811,13 @@ hexReady(function(){
       var fixedCopy=document.querySelector(
         ".hex-hero-catch.is-fixed-handoff"
       );
+
+      /* 境界より上へ戻ったときは元のstickyを必ず復帰させる */
+      if(heroSticky){
+        heroSticky.style.removeProperty(
+          "visibility"
+        );
+      }
 
       /* 丸演出開始前へ戻ったときはキャッチを完全表示へ戻す */
       if(fixedCopy){
@@ -6055,7 +6075,6 @@ hexReady(function(){
       var welcomeStageFinished=false;
       var welcomeCenterReached=false;
       var welcomeEntered=false;
-      var handoffLead;
 
       if(!heroSticky){
         return;
@@ -6074,19 +6093,9 @@ hexReady(function(){
         return;
       }
 
-      /*
-       * sticky解除と固定レイヤー表示が同一フレームになると、
-       * 初回の速いスクロール時だけ下端に隙間が出る。
-       * 見た目が同じ固定複製を最大64px手前から重ねておく。
-       */
-      handoffLead=Math.min(
-        64,
-        scrollDistance*.5
-      );
-
       reachedImageBottom=
         scrollDistance>0
-          ?scrolled>=scrollDistance-handoffLead
+          ?scrolled>=scrollDistance
           :scrolled>0;
 
       /*
