@@ -7437,8 +7437,6 @@ hexReady(function(){
 
   var active=false;
   var frameRequested=false;
-  /* 創業演出を完了させるスクロール量（表示領域に対する割合） */
-  var FOUNDED_REVEAL_SCROLL_RATIO=.65;
   var startScrollY=0;
   var foundedStartY=0;
   var foundedDistance=1;
@@ -7824,15 +7822,13 @@ hexReady(function(){
 
     aboutRect=aboutFrame.getBoundingClientRect();
     revealDistance=Math.max(
-      (
-        window.innerHeight-getHeaderHeight()
-      )*FOUNDED_REVEAL_SCROLL_RATIO,
+      window.innerHeight-getHeaderHeight(),
       1
     );
 
     /*
      * 創業セクションの上端が画面下へ入ってから、
-     * 画面高の約65％を進む間に各パーツの演出を完了する。
+     * ヘッダー下へ到達するまでの通常スクロール量を使う。
      */
     foundedProgress=clamp(
       (window.innerHeight-aboutRect.top)/revealDistance,
@@ -11481,10 +11477,7 @@ hexLoad(function(){
         lenis.start();
       }
 
-      /*
-       * Lenisの慣性が残ったまま特殊演出へ入らないように、
-       * 現在位置で補間をいったん確定する。
-       */
+      /* 特殊演出へ入る直前の現在位置で補間を確定する */
       if(specialState&&!lastSpecialState){
         lenis.scrollTo(window.scrollY,{
           immediate:true,
@@ -11493,6 +11486,14 @@ hexLoad(function(){
       }
 
       if(lastSpecialState&&!specialState){
+        /*
+         * ネイティブ／専用スクロール中に進んだ現在位置を、
+         * Lenisの内部位置へ同期してから通常スクロールへ戻す。
+         */
+        lenis.scrollTo(window.scrollY,{
+          immediate:true,
+          force:true
+        });
         scheduleRefresh(80);
       }
 
@@ -12435,10 +12436,19 @@ hexLoad(function(){
       }
     );
 
-    function refreshAfterTopLayoutChange(){
+    function refreshAfterTopLayoutChange(event){
+      var syncAfterOpening=
+        event&&event.type==='hex:opening-finished';
+
       /* DOM移動とCSS変数の反映後の座標で再計算する */
       window.requestAnimationFrame(function(){
         window.requestAnimationFrame(function(){
+          if(syncAfterOpening&&lenis){
+            lenis.scrollTo(window.scrollY,{
+              immediate:true,
+              force:true
+            });
+          }
           scheduleRefresh(0);
         });
       });
