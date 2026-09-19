@@ -5098,6 +5098,10 @@ hexReady(function(){
       var buildHeight=0;
       var withHeight=0;
       var gap=4;
+      var headerOffset=parseFloat(
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--header_height")
+      )||80;
       var baseCopyTop;
       var finalCopyTop;
       var logoShift;
@@ -5185,20 +5189,13 @@ hexReady(function(){
         logoShift=
           opening.clientHeight/2-
           (baseCopyTop+logoBottom)/2;
-        finalCopyTop=baseCopyTop+logoShift;
-
-        if(finalCopyTop<12){
-          finalCopyTop=12;
-          logoShift=
-            finalCopyTop+
-            buildHeight+
-            withHeight+
-            gap*2-
-            logoTop;
-        }
+        finalCopyTop=
+          baseCopyTop+logoShift-headerOffset-20;
+        logoShift-=headerOffset;
       }else{
-        finalCopyTop=Math.max(12,opening.clientHeight*.08);
-        logoShift=0;
+        finalCopyTop=
+          opening.clientHeight*.08-headerOffset-20;
+        logoShift=-headerOffset;
       }
 
       brandLayoutMetrics={
@@ -5226,7 +5223,7 @@ hexReady(function(){
       var withCopy=opening.querySelector(".hex-opening-message-with");
       var layout=measureBrandLayout();
       var drawShow=phase(progress,.12,.24);
-      var copyMove=phase(progress,.27,.43);
+      var copyMove=phase(progress,.12,.38);
       var withProgress=phase(progress,.46,.6);
       var logoEnter=phase(progress,.62,.76);
       var logoProgress=phase(progress,.78,1);

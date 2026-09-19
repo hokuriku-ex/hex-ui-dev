@@ -9075,3 +9075,13 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   transition:none!important;
   will-change:transform;
 }
+
+
+/* 開幕中はページ上部へ戻るボタンを表示しない */
+html:has(.hex-opening)
+.hex-page-top{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  transform:translateY(10px)!important;
+}
