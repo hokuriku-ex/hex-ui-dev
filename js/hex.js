@@ -7173,6 +7173,20 @@ hexReady(function(){
 
       frameRequested=false;
 
+      /*
+       * 開幕用スクロール領域が存在する間にWELCOME位置を測ると、
+       * その高さを含んだ古い座標が残るため、終了後まで計測を保留する。
+       */
+      if(
+        document.querySelector(".hex-opening")||
+        document.documentElement.classList.contains(
+          "hex-opening-finishing"
+        )
+      ){
+        handoffScrollY=null;
+        return;
+      }
+
       if(handoffScrollY===null){
         measureHandoffScrollY();
       }
@@ -7273,6 +7287,25 @@ hexReady(function(){
     window.addEventListener(
       "orientationchange",
       requestMeasureAndUpdate
+    );
+
+    /*
+     * 開幕領域削除とヒーロー初期位置補正が完了してから、
+     * WELCOMEの丸演出・文字切替位置を新しい文書座標で測り直す。
+     * REPLAY後にも必要なため、onceにはしない。
+     */
+    document.addEventListener(
+      "hex:opening-finished",
+      function(){
+        handoffScrollY=null;
+
+        window.requestAnimationFrame(function(){
+          window.requestAnimationFrame(function(){
+            requestMeasureAndUpdate();
+            window.dispatchEvent(new Event("scroll"));
+          });
+        });
+      }
     );
 
     requestUpdate();
