@@ -533,21 +533,6 @@
   .hex-btn-main-icon{
     font-size:18px!important;
   }
-
-  /* タップ後、画面遷移までPCホバーと同じ位置へ重ねる */
-  .hex-button-wrap > .hex-btn-main.is-tap-active,
-  .hex-banner-button > .hex-btn-main.is-tap-active{
-    transform:translate3d(9px,9px,0);
-    border-color:#c8a874!important;
-  }
-  .hex-btn-main.is-tap-active .hex-btn-main-title,
-  .hex-btn-main.is-tap-active .hex-btn-main-icon,
-  .hex-btn-main.is-tap-active .hex-btn-main-icon i{
-    color:#c8a874!important;
-  }
-  .hex-btn-main.is-tap-active .hex-btn-main-icon{
-    transform:translateX(3px);
-  }
   .hex-link{
     padding:0 0 8px;
   }
@@ -1222,6 +1207,14 @@
     );
   }
 
+  /* 左官アニメーション */
+  .hex-opening-path{
+    stroke-width:160;
+  }
+  .hex-opening-path.is-trowel{
+    filter:none;
+  }
+
   /* 開幕キャッチコピー */
   .hex-opening-intro-photo{
     object-position:
@@ -1281,37 +1274,19 @@
   .hex-opening-message-with{
     font-size:clamp(25px,7vw,36px)!important;
   }
+  .hex-opening.is-logo-start
+  .hex-opening-message-final{
+    top:max(
+      28px,
+      calc(env(safe-area-inset-top) + 16px)
+    );
+  }
+
   /* ロゴアニメーション */
   .hex-logo-story{
     width:160vw;
     max-width:none;
     height:100dvh;
-  }
-
-  .hex-opening-progress-nav{
-    bottom:max(
-      14px,
-      calc(env(safe-area-inset-bottom) + 10px)
-    );
-  }
-
-  .hex-opening-scroll-cue{
-    bottom:max(
-      52px,
-      calc(env(safe-area-inset-bottom) + 48px)
-    );
-  }
-
-  .hex-section-progress-nav{
-    right:max(
-      8px,
-      calc(env(safe-area-inset-right) + 4px)
-    );
-  }
-
-  .hex-progress-dot{
-    width:26px;
-    height:26px;
   }
 }
 
@@ -2219,33 +2194,6 @@
     max-width:none;
     margin:0!important;
   }
-
-  /* お問い合わせフォームもPCホバーと同じタップ演出 */
-  #form_lp_form_button.is-tap-active,
-  #gc_auto_frame_lp_form_dialog
-  .gc_auto_frame_lp_form_box_button_round.is-tap-active{
-    transform:translate3d(9px,9px,0);
-    border-color:#c8a874!important;
-    color:#c8a874!important;
-  }
-  #form_lp_form_button.is-tap-active
-  .gc_auto_frame_lp_form_box_button_text{
-    color:#c8a874!important;
-  }
-  #form_lp_form_button.is-tap-active::after{
-    color:#c8a874;
-    transform:translateX(3px);
-  }
-  #gc_auto_frame_lp_form_dialog
-  .hex-form-button-motion-wrap.is-dialog-back
-  > .gc_auto_frame_lp_form_box_button_round.is-tap-active::before{
-    transform:translateX(-3px);
-  }
-  #gc_auto_frame_lp_form_dialog
-  .gc_auto_frame_lp_form_box_button_round.is-tap-active
-  .gc_auto_frame_lp_form_box_button_svg{
-    transform:translateX(3px);
-  }
   .hex-form-row[data-label*="〒"] input,
   .hex-form-row[data-label*="都道府県"] select{
     width:auto!important;
@@ -2455,14 +2403,5 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     transform:none!important;
     animation:none!important;
     transition:none!important;
-  }
-}
-
-/* SPでも開幕の円内へヒーローを先行表示 */
-@media screen and (max-width:768px){
-  .hex-opening-hero-preview{
-    display:block!important;
-    width:100vw!important;
-    max-width:100vw!important;
   }
 }

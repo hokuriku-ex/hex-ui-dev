@@ -1994,131 +1994,6 @@ hexReady(function(){
 })();
 
 /* =======================================
-   スマホ共通ボタン：タップ後の遷移待ち演出
-======================================= */
-(function(){
-  'use strict';
-
-  var activeButton=null;
-  var resetTimer=0;
-
-  function isSmartphone(){
-    return window.matchMedia(
-      '(max-width:768px)'
-    ).matches;
-  }
-
-  function getButton(target){
-    if(!target||!target.closest){
-      return null;
-    }
-
-    return target.closest(
-      '.hex-button-wrap > .hex-btn-main,'+
-      '.hex-banner-button > .hex-btn-main,'+
-      '#form_lp_form_button,'+
-      '#gc_auto_frame_lp_form_dialog '+
-      '.gc_auto_frame_lp_form_box_button_round'
-    );
-  }
-
-  function clearTapState(){
-    window.clearTimeout(resetTimer);
-    resetTimer=0;
-
-    if(activeButton){
-      activeButton.classList.remove('is-tap-active');
-      activeButton=null;
-    }
-  }
-
-  function activate(button,resetDelay){
-    if(activeButton&&activeButton!==button){
-      activeButton.classList.remove('is-tap-active');
-    }
-
-    window.clearTimeout(resetTimer);
-    activeButton=button;
-    button.classList.add('is-tap-active');
-
-    if(resetDelay){
-      resetTimer=window.setTimeout(
-        clearTapState,
-        resetDelay
-      );
-    }
-  }
-
-  document.addEventListener(
-    'pointerdown',
-    function(event){
-      var button;
-
-      if(!isSmartphone()){
-        return;
-      }
-
-      button=getButton(event.target);
-
-      if(button){
-        /* スクロール開始時はpointercancelで解除される */
-        activate(button,1800);
-      }
-    },
-    {passive:true}
-  );
-
-  document.addEventListener(
-    'pointercancel',
-    clearTapState,
-    {passive:true}
-  );
-
-  document.addEventListener('click',function(event){
-    var button;
-    var href;
-    var target;
-    var isTemporary;
-    var isDialogSubmit;
-
-    if(!isSmartphone()){
-      return;
-    }
-
-    button=getButton(event.target);
-
-    if(!button){
-      return;
-    }
-
-    href=(button.getAttribute('href')||'').trim();
-    target=(button.getAttribute('target')||'').toLowerCase();
-    isDialogSubmit=!!button.closest(
-      '.hex-form-button-motion-wrap.is-dialog-submit'
-    );
-    isTemporary=
-      !href||
-      href==='#'||
-      href.indexOf('#')===0||
-      href.indexOf('javascript:')===0||
-      href.indexOf('mailto:')===0||
-      href.indexOf('tel:')===0||
-      target==='_blank'||
-      button.hasAttribute('download');
-
-    /* 確認画面の送信だけはページ遷移まで状態を維持する。 */
-    if(isDialogSubmit){
-      isTemporary=false;
-    }
-
-    /* 通常遷移は表示を維持。遷移しない操作だけ短時間で戻す。 */
-    activate(button,isTemporary?700:10000);
-  });
-
-  window.addEventListener('pageshow',clearTapState);
-})();
-
-/* =======================================
    アクション見出しアコーディオン
 ======================================= */
 (function(){
@@ -3872,14 +3747,61 @@ hexReady(function(){
   /* 常に表示true　本番公開時false */
   var FORCE_PLAY=false;
 
+  /* アニメーションごとの表示切替 */
+  var ENABLE_PLASTER_ANIMATION=false;
+  var ENABLE_SLIDE_ANIMATION=true;
+  var ENABLE_LOGO_ANIMATION=true;
+
+  /* 開幕アニメーション開始までの待機時間 */
+  var OPENING_START_DELAY=200;
+
+  /* 左官アニメーションの再生時間 */
+  var PLASTER_DURATION=2500;
+
+  /* 各演出をつなぐ間の待機時間 */
+  var PHASE_CONNECT_DELAY=500;
+
+  /* 更地画像・導入キャッチの表示時間 */
+  var DREAM_COPY_DURATION=2500;
+
+  /* 更地画像・導入キャッチが消える時間 */
+  var DREAM_COPY_FADE_DURATION=800;
+
+  /* 通常スライド1枚あたりの表示時間 */
+  var SLIDE_DURATION=2000;
+
+  /* スライド終了時のフェード時間 */
+  var SLIDE_FADE_DURATION=800;
+
+  /* 最後のスライドの表示時間 */
+  var LAST_SLIDE_DURATION=2000;
+
+  /* 最初のメッセージの表示時間 */
+  var MESSAGE_FIRST_DURATION=2000;
+
+  /* 最初から最後のメッセージへ切り替える時間 */
+  var MESSAGE_SWITCH_DURATION=800;
+
+  /* 最終メッセージからロゴ開始までの待機時間 */
+  var MESSAGE_LOGO_LEAD=800;
+
+  /* ロゴアニメーションの再生時間 */
+  var LOGO_DURATION=2350;
+
+  /* ヒーロー表示位置を準備する待機時間 */
+  var HERO_POSITION_PREPARE_DELAY=80;
+
+  /* ロゴからヒーローへ切り替わる時間 */
+  var HERO_REVEAL_DURATION=1000;
+
   /* SKIP時に開幕画面が消える時間 */
   var SKIP_FADE_DURATION=500;
 
   /* 開幕を再生せず直接ヒーローを表示する際のフェード時間 */
   var DIRECT_HERO_FADE_DURATION=1000;
 
-  /* 開幕1シーンを進めるためのスクロール量 */
-  var SCENE_SCROLL_DISTANCE=760;
+  /* エラー時に開幕画面を強制終了するまでの予備時間 */
+  var SAFETY_EXTRA_TIME=2600;
 
   function isReducedMotion(){
     return(
@@ -4140,37 +4062,6 @@ hexReady(function(){
     return data;
   }
 
-  function prepareOpeningIntroCharRoll(main){
-    var textValue;
-
-    if(!main||main.dataset.hexOpeningCharRollReady==="1"){
-      return;
-    }
-
-    textValue=(main.textContent||"").trim();
-    if(!textValue){
-      return;
-    }
-
-    main.textContent="";
-    main.dataset.hexOpeningCharRollReady="1";
-    main.classList.add("has-hex-opening-char-roll");
-    main.setAttribute("aria-label",textValue);
-
-    Array.from(textValue).forEach(function(character,index){
-      var span=document.createElement("span");
-
-      span.className="hex-opening-intro-char";
-      span.setAttribute("aria-hidden","true");
-      span.style.setProperty(
-        "--hex-opening-char-index",
-        String(index)
-      );
-      span.textContent=character===" "?"\u00a0":character;
-      main.appendChild(span);
-    });
-  }
-
   function createOpeningIntro(opening,data){
     var stage=document.createElement("div");
     var picture=document.createElement("picture");
@@ -4204,7 +4095,6 @@ hexReady(function(){
     if(data.main){
       main.className="hex-opening-intro-main";
       main.innerHTML=data.main;
-      prepareOpeningIntroCharRoll(main);
       catchBox.appendChild(main);
     }
 
@@ -4221,6 +4111,53 @@ hexReady(function(){
     opening.insertBefore(stage,opening.firstChild);
 
     return stage;
+  }
+
+  function startOpeningIntro(opening,startTime){
+    window.setTimeout(function(){
+      opening.classList.add("is-intro-start");
+    },startTime);
+
+    startTime+=DREAM_COPY_DURATION;
+
+    window.setTimeout(function(){
+      opening.classList.add("is-intro-complete");
+    },startTime);
+
+    return startTime+DREAM_COPY_FADE_DURATION;
+  }
+
+  function startOpeningSlides(opening,stage,slides,startTime){
+    var slideElements=stage.querySelectorAll(".hex-opening-slide");
+    var elapsed=startTime;
+
+    window.setTimeout(function(){
+      opening.classList.add("is-slides-start");
+    },startTime);
+
+    Array.prototype.forEach.call(slideElements,function(slide,index){
+      window.setTimeout(function(){
+        Array.prototype.forEach.call(slideElements,function(item){
+          item.classList.remove("is-active","is-previous");
+        });
+
+        if(index>0){
+          slideElements[index-1].classList.add("is-previous");
+        }
+
+        slide.classList.add("is-active");
+      },elapsed);
+
+      elapsed+=index===slides.length-1
+        ? LAST_SLIDE_DURATION
+        : SLIDE_DURATION;
+    });
+
+    window.setTimeout(function(){
+      opening.classList.add("is-slides-complete");
+    },elapsed);
+
+    return elapsed+SLIDE_FADE_DURATION;
   }
 
   function collectOpeningMessage(){
@@ -4263,11 +4200,8 @@ hexReady(function(){
     var stage=document.createElement("div");
     var first=document.createElement("div");
     var finalCopy=document.createElement("div");
-    var brandStage=document.createElement("div");
-    var logoStage=opening.querySelector(".hex-opening-logo-stage");
 
     stage.className="hex-opening-message-stage";
-    brandStage.className="hex-opening-brand-stage";
 
     if(data.first){
       first.className="hex-opening-message-first";
@@ -4278,16 +4212,25 @@ hexReady(function(){
     if(data.finalCopy){
       finalCopy.className="hex-opening-message-final";
       finalCopy.innerHTML=data.finalCopy;
-      brandStage.appendChild(finalCopy);
-    }
-
-    if(logoStage){
-      brandStage.appendChild(logoStage);
+      stage.appendChild(finalCopy);
     }
 
     opening.insertBefore(stage,opening.firstChild);
-    opening.insertBefore(brandStage,opening.firstChild);
     return stage;
+  }
+
+  function startOpeningMessage(opening,startTime){
+    window.setTimeout(function(){
+      opening.classList.add("is-message-start");
+    },startTime);
+
+    startTime+=MESSAGE_FIRST_DURATION;
+
+    window.setTimeout(function(){
+      opening.classList.add("is-message-switch");
+    },startTime);
+
+    return startTime+MESSAGE_SWITCH_DURATION+MESSAGE_LOGO_LEAD;
   }
 
   /*
@@ -4303,10 +4246,9 @@ hexReady(function(){
 
   function createOpeningElement(){
     var opening=document.createElement("div");
-    var curtain=document.createElement("div");
 
-    opening.className="hex-opening is-scroll-driven";
-    opening.setAttribute("aria-label","開幕コンテンツ");
+    opening.className="hex-opening";
+    opening.setAttribute("aria-hidden","true");
 
     opening.innerHTML=
       '<button class="hex-opening-skip" type="button" '+
@@ -4314,6 +4256,42 @@ hexReady(function(){
         '<span>SKIP</span>'+
         '<i class="fa-solid fa-forward-step" aria-hidden="true"></i>'+
       '</button>'+
+      '<div class="hex-opening-plaster">'+
+        '<svg xmlns="http://www.w3.org/2000/svg" '+
+          'viewBox="0 0 1600 900" '+
+          'preserveAspectRatio="none" '+
+          'aria-hidden="true">'+
+          '<defs>'+ 
+            '<filter id="hex-opening-trowel-roughness" '+
+              'filterUnits="userSpaceOnUse" '+
+              'x="-500" y="-400" width="2600" height="1800">'+
+              '<feTurbulence type="fractalNoise" '+
+                'baseFrequency="0.008 0.025" '+
+                'numOctaves="2" seed="8" result="noise" />'+
+              '<feDisplacementMap in="SourceGraphic" in2="noise" '+
+                'scale="4" xChannelSelector="R" yChannelSelector="G" />'+
+            '</filter>'+
+            '<mask id="hex-opening-plaster-mask" '+
+              'maskUnits="userSpaceOnUse" '+
+              'x="-500" y="-400" width="2600" height="1800">'+
+              '<rect x="-500" y="-400" width="2600" height="1800" fill="#000" />'+
+              '<path class="hex-opening-path is-trowel is-line1" pathLength="1" '+
+                'd="M260 150 C520 125 1010 125 1290 155" />'+
+              '<path class="hex-opening-path is-trowel is-line2" pathLength="1" '+
+                'd="M1320 270 C1040 275 590 275 310 300" />'+
+              '<path class="hex-opening-path is-trowel is-line3" pathLength="1" '+
+                'd="M280 415 C570 415 1010 415 1290 445" />'+
+              '<path class="hex-opening-path is-trowel is-line4" pathLength="1" '+
+                'd="M1320 560 C1040 560 590 560 310 590" />'+
+              '<path class="hex-opening-path is-trowel is-line5" pathLength="1" '+
+                'd="M280 705 C570 705 1060 705 1340 750" />'+
+            '</mask>'+ 
+          '</defs>'+ 
+          '<rect class="hex-opening-white-cover" '+
+            'x="-500" y="-400" width="2600" height="1800" '+
+            'mask="url(#hex-opening-plaster-mask)" />'+
+        '</svg>'+ 
+      '</div>'+ 
       '<div class="hex-opening-logo-stage">'+
         '<svg class="hex-logo-story" xmlns="http://www.w3.org/2000/svg" '+
           'viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" '+
@@ -4391,11 +4369,6 @@ hexReady(function(){
           '</g>'+
         '</svg>'+ 
       '</div>';
-
-    curtain.className="hex-opening-curtain";
-    curtain.setAttribute("aria-hidden","true");
-    curtain.innerHTML="<i></i><i></i><i></i><i></i>";
-    opening.appendChild(curtain);
 
     return opening;
   }
@@ -4511,100 +4484,13 @@ hexReady(function(){
   }
 
   function finishOpening(opening){
-    var root=document.documentElement;
-    var host=opening&&opening._hexOpeningHost;
-    var hero=document.querySelector(".hex-hero-wrap");
-    var heroPreview=opening&&opening._hexOpeningHeroPreview;
-    var headerHeight=parseFloat(
-      getComputedStyle(root)
-        .getPropertyValue("--header_height")
-    )||80;
-    var previousScrollBehavior=root.style.scrollBehavior;
-    var previousOverflowAnchor=root.style.overflowAnchor;
-    var finished=false;
+    document.documentElement.classList.remove(
+      "hex-opening-lock"
+    );
 
-    /*
-     * 長い開幕スクロール領域を削除すると、削除前のscrollYが
-     * 通常ページへ一瞬引き継がれる。ヒーロー複製を残して画面を覆い、
-     * レイアウト確定後に複数回ヒーロー先頭へ揃える。
-     */
-    root.classList.add("hex-opening-finishing");
-    root.style.scrollBehavior="auto";
-    root.style.overflowAnchor="none";
-
-    if(opening&&heroPreview){
-      opening._hexKeepHeroPreview=true;
-    }
-
-    root.classList.remove("hex-opening-lock");
-
-    if(
-      opening&&
-      typeof opening._hexOpeningCleanup==="function"
-    ){
-      opening._hexOpeningCleanup();
-      opening._hexOpeningCleanup=null;
-    }
-
-    if(host&&host.parentNode){
-      host.parentNode.removeChild(host);
-    }else if(opening&&opening.parentNode){
+    if(opening&&opening.parentNode){
       opening.parentNode.removeChild(opening);
     }
-
-    function alignHero(){
-      var targetTop;
-
-      if(!hero){
-        window.scrollTo({top:0,left:0,behavior:"auto"});
-        return;
-      }
-
-      targetTop=Math.max(
-        0,
-        hero.getBoundingClientRect().top+
-          window.pageYOffset-headerHeight
-      );
-      window.scrollTo({
-        top:targetTop,
-        left:0,
-        behavior:"auto"
-      });
-    }
-
-    function completeHandoff(){
-      if(finished){
-        return;
-      }
-      finished=true;
-
-      root.style.scrollBehavior=previousScrollBehavior;
-      root.style.overflowAnchor=previousOverflowAnchor;
-      root.classList.remove("hex-opening-finishing");
-
-      if(heroPreview&&heroPreview.parentNode){
-        heroPreview.parentNode.removeChild(heroPreview);
-      }
-      if(opening){
-        opening._hexOpeningHeroPreview=null;
-        opening._hexKeepHeroPreview=false;
-      }
-
-      window.dispatchEvent(new Event("scroll"));
-    }
-
-    alignHero();
-
-    requestAnimationFrame(function(){
-      alignHero();
-      requestAnimationFrame(function(){
-        alignHero();
-        document.dispatchEvent(
-          new Event("hex:opening-finished")
-        );
-        requestAnimationFrame(completeHandoff);
-      });
-    });
   }
 
   function showPendingPage(){
@@ -4613,1046 +4499,98 @@ hexReady(function(){
     );
   }
 
-  function clamp(value,min,max){
-    return Math.min(max,Math.max(min,value));
-  }
-
-  function phase(value,start,end){
-    return clamp((value-start)/(end-start),0,1);
-  }
-
-  function createOpeningProgressNav(opening,sceneCount,heroDotIndex){
-    var nav=document.createElement("nav");
-
-    nav.className="hex-opening-progress-nav";
-    nav.setAttribute("aria-label","開幕シーン");
-
-    for(var index=0;index<sceneCount;index+=1){
-      var button=document.createElement("button");
-      button.type="button";
-      button.className="hex-progress-dot";
-      button.setAttribute(
-        "aria-label",
-        index===heroDotIndex
-          ? "ヒーローへ移動"
-          : "開幕シーン"+(index+1)+"へ移動"
-      );
-      button.setAttribute("data-scene-index",String(index));
-      nav.appendChild(button);
-    }
-
-    opening.appendChild(nav);
-    return nav;
-  }
-
-  function createOpeningScrollCue(opening){
-    var cue=document.createElement("div");
-    cue.className="hex-opening-scroll-cue";
-    cue.setAttribute("aria-hidden","true");
-    cue.innerHTML="<span>SCROLL</span><i></i>";
-    opening.appendChild(cue);
-    return cue;
-  }
-
-  function startOpeningScrollerLegacy(
+  function startOpeningTimeline(
     opening,
     introStage,
     slideStage,
+    slides,
     messageStage
   ){
-    var scenes=[];
-    var slideElements=slideStage
-      ? Array.prototype.slice.call(
-        slideStage.querySelectorAll(".hex-opening-slide")
-      )
-      : [];
-    var brandStage=opening.querySelector(".hex-opening-brand-stage");
-    var logoStage=opening.querySelector(".hex-opening-logo-stage");
-    var position=0;
-    var targetPosition=0;
-    var animationFrame=0;
-    var lastFrameTime=0;
-    var nav;
-    var cue;
-    var touchY=null;
-    var hasInteracted=false;
-    var isComplete=false;
-    var revealOriginReady=false;
-    var brandIndex;
-    var heroIndex;
+    var timeline=OPENING_START_DELAY;
 
-    if(introStage){
-      scenes.push(introStage);
+    if(ENABLE_PLASTER_ANIMATION){
+      window.setTimeout(function(){
+        opening.classList.add("is-plaster-start");
+      },timeline);
+
+      timeline+=PLASTER_DURATION;
+
+      window.setTimeout(function(){
+        opening.classList.add("is-plaster-complete");
+      },timeline);
+
+      if(ENABLE_LOGO_ANIMATION){
+        timeline+=PHASE_CONNECT_DELAY;
+      }
+    }else{
+      /* 左官を省略する場合は最初から白いロゴ舞台にする */
+      opening.classList.add("is-plaster-complete");
     }
 
-    slideElements.forEach(function(slide){
-      scenes.push(slide);
-    });
-
-    if(messageStage&&messageStage.children.length){
-      scenes.push(messageStage);
+    if(ENABLE_SLIDE_ANIMATION&&introStage){
+      timeline=startOpeningIntro(opening,timeline);
     }
 
-    if(!brandStage&&logoStage){
-      brandStage=document.createElement("div");
-      brandStage.className="hex-opening-brand-stage";
-      brandStage.appendChild(logoStage);
-      opening.insertBefore(brandStage,opening.firstChild);
-    }
+    if(ENABLE_SLIDE_ANIMATION&&slideStage&&slides.length){
 
-    if(brandStage){
-      scenes.push(brandStage);
-    }
-
-    /* 最後のドットは実DOMを持たないヒーロー到達点 */
-    brandIndex=Math.max(0,scenes.length-1);
-    scenes.push(null);
-    heroIndex=scenes.length-1;
-
-    nav=createOpeningProgressNav(opening,scenes.length,heroIndex);
-    cue=createOpeningScrollCue(opening);
-
-    function setSceneStyle(scene,x,isVisible){
-      if(!scene){
-        return;
-      }
-
-      scene.style.setProperty(
-        "transform",
-        "translate3d("+x+"%,0,0)",
-        "important"
-      );
-      scene.style.setProperty(
-        "opacity",
-        isVisible ? "1" : "0",
-        "important"
-      );
-      scene.style.setProperty(
-        "visibility",
-        isVisible ? "visible" : "hidden",
-        "important"
-      );
-    }
-
-    function renderLogo(progress){
-      var left=opening.querySelector(".hex-logo-front-left-mask-path");
-      var center=opening.querySelector(".hex-logo-front-center-mask-path");
-      var right=opening.querySelector(".hex-logo-front-right-clip-rect");
-      var backArm=opening.querySelector(".hex-logo-back-arm-mask-path");
-      var backHand=opening.querySelector(".hex-logo-back-hand");
-      var company=opening.querySelector(".hex-logo-company-name");
-      var finalCopy=opening.querySelector(".hex-opening-message-final");
-      var withCopy=opening.querySelector(".hex-opening-message-with");
-      var pLeft=phase(progress,.03,.23);
-      var pCenter=phase(progress,.16,.36);
-      var pRight=phase(progress,.29,.49);
-      var pBack=phase(progress,.43,.66);
-      var pFinal=phase(progress,.66,.9);
-      var copyMove=phase(progress,.08,.48);
-
-      if(left){
-        left.style.strokeDashoffset=String(1-pLeft);
-      }
-      if(center){
-        center.style.strokeDashoffset=String(1-pCenter);
-      }
-      if(right){
-        right.style.transform="translateX(140px) scaleX("+pRight+")";
-      }
-      if(backArm){
-        backArm.style.opacity=pBack>0 ? "1" : "0";
-        backArm.style.strokeDashoffset=String(90*(1-pBack));
-      }
-      [backHand,company].forEach(function(item){
-        if(!item){
-          return;
-        }
-        item.style.opacity=String(pFinal);
-        item.style.transform="translateY("+(-15*(1-pFinal))+"px)";
-      });
-      if(finalCopy){
-        finalCopy.style.opacity="1";
-        finalCopy.style.top=
-          (50-43*copyMove)+"%";
-        finalCopy.style.transform=
-          "translate(-50%,"+(-50*(1-copyMove))+"%)";
-      }
-      if(withCopy){
-        var withProgress=phase(progress,.18,.46);
-        withCopy.style.maxHeight=(1.5*withProgress)+"em";
-        withCopy.style.marginTop=(4*withProgress)+"px";
-        withCopy.style.opacity=String(withProgress);
-        withCopy.style.transform=
-          "translateY("+(12*(1-withProgress))+"px)";
-      }
-      if(logoStage){
-        logoStage.style.opacity=progress>0 ? "1" : "0";
-      }
-    }
-
-    function updateDots(){
-      var current=Math.min(heroIndex,Math.round(position));
-      Array.prototype.forEach.call(
-        nav.querySelectorAll(".hex-progress-dot"),
-        function(dot,index){
-          dot.classList.toggle("is-current",index===current);
-          dot.classList.toggle("is-passed",index<current);
-          if(index===current){
-            dot.setAttribute("aria-current","step");
-          }else{
-            dot.removeAttribute("aria-current");
-          }
-        }
-      );
-    }
-
-    function render(){
-      var brandProgress=phase(position,brandIndex,brandIndex+.68);
-      var revealProgress=phase(
-        position,
-        brandIndex+.68,
-        heroIndex
+      timeline=startOpeningSlides(
+        opening,
+        slideStage,
+        slides,
+        timeline
       );
 
-      scenes.forEach(function(scene,index){
-        var x;
-
-        if(!scene){
-          return;
-        }
-
-        if(index===brandIndex&&position>=brandIndex){
-          x=0;
-        }else{
-          x=(index-position)*100;
-        }
-
-        setSceneStyle(scene,x,Math.abs(x)<125);
-      });
-
-      renderLogo(brandProgress);
-      updateDots();
-
-      if(revealProgress>0){
-        if(!revealOriginReady){
-          syncHeroRevealOrigin(opening);
-          revealOriginReady=true;
-        }
-        opening.classList.add("is-hero-reveal");
-        opening.style.setProperty(
-          "--hex-opening-hole",
-          (150*revealProgress)+"vmax"
-        );
-      }else{
-        opening.classList.remove("is-hero-reveal");
-        opening.style.setProperty("--hex-opening-hole","1px");
-      }
-
-      if(position>=heroIndex&&!isComplete){
-        isComplete=true;
-        showHeroCatch(0);
-        finishOpening(opening);
+      if(ENABLE_LOGO_ANIMATION){
+        timeline+=PHASE_CONNECT_DELAY;
       }
     }
 
-    function hideCue(){
-      if(hasInteracted){
-        return;
-      }
-      hasInteracted=true;
-      cue.classList.add("is-hidden");
+    if(messageStage){
+      timeline=startOpeningMessage(opening,timeline);
     }
 
-    function renderSmooth(now){
-      var frameDuration;
-      var baseEase=window.innerWidth<=768 ? .2 : .135;
-      var ease;
+    if(ENABLE_LOGO_ANIMATION){
+      window.setTimeout(function(){
+        opening.classList.add("is-logo-start");
+      },timeline);
 
-      animationFrame=0;
-
-      if(isComplete){
-        return;
-      }
-
-      frameDuration=lastFrameTime
-        ? Math.min(40,Math.max(8,now-lastFrameTime))
-        : 16.67;
-      lastFrameTime=now;
-      ease=1-Math.pow(1-baseEase,frameDuration/16.67);
-
-      if(Math.abs(targetPosition-position)<.0005){
-        position=targetPosition;
-      }else{
-        position+=(targetPosition-position)*ease;
-      }
-
-      render();
-
-      if(
-        !isComplete&&
-        Math.abs(targetPosition-position)>=.0005
-      ){
-        animationFrame=requestAnimationFrame(renderSmooth);
-      }else{
-        lastFrameTime=0;
-      }
+      timeline+=LOGO_DURATION;
     }
 
-    function requestSmoothRender(){
-      if(animationFrame||isComplete){
-        return;
-      }
-      animationFrame=requestAnimationFrame(renderSmooth);
-    }
-
-    function setPosition(nextPosition,isUserInput,isImmediate){
-      if(isComplete){
-        return;
-      }
-      if(isUserInput){
-        hideCue();
-      }
-      targetPosition=clamp(nextPosition,0,heroIndex);
-
-      /* SPは指の移動量へ直接追従し、独自の慣性を加えない */
-      if(isImmediate){
-        cancelAnimationFrame(animationFrame);
-        animationFrame=0;
-        lastFrameTime=0;
-        position=targetPosition;
-        render();
-        return;
-      }
-
-      requestSmoothRender();
-    }
-
-    function onWheel(event){
-      var delta=event.deltaY;
-      if(event.deltaMode===1){
-        delta*=40;
-      }else if(event.deltaMode===2){
-        delta*=window.innerHeight;
-      }
-      event.preventDefault();
-      setPosition(
-        targetPosition+delta/
-          (window.innerWidth<=768 ? 540 : SCENE_SCROLL_DISTANCE),
-        true,
-        window.innerWidth<=768
+    window.setTimeout(function(){
+      document.documentElement.classList.remove(
+        "hex-opening-lock"
       );
-    }
+    },timeline);
 
-    function onTouchStart(event){
-      if(event.touches.length){
-        touchY=event.touches[0].clientY;
-      }
-    }
+    timeline+=HERO_POSITION_PREPARE_DELAY;
 
-    function onTouchMove(event){
-      var nextY;
-      if(touchY===null||!event.touches.length){
-        return;
-      }
-      nextY=event.touches[0].clientY;
-      event.preventDefault();
-      setPosition(
-        targetPosition+(touchY-nextY)/520,
-        true,
-        true
-      );
-      touchY=nextY;
-    }
+    window.setTimeout(function(){
+      syncHeroRevealOrigin(opening);
 
-    function onTouchEnd(){
-      touchY=null;
-    }
+      opening.offsetWidth;
 
-    function onKeyDown(event){
-      var direction=0;
-      if(
-        event.key==="ArrowDown"||
-        event.key==="PageDown"||
-        event.key===" "
-      ){
-        direction=1;
-      }else if(
-        event.key==="ArrowUp"||
-        event.key==="PageUp"
-      ){
-        direction=-1;
-      }else if(event.key==="Home"){
-        event.preventDefault();
-        setPosition(0,true);
-        return;
-      }else if(event.key==="End"){
-        event.preventDefault();
-        setPosition(heroIndex,true);
-        return;
-      }
-      if(direction){
-        event.preventDefault();
-        setPosition(targetPosition+direction*.34,true);
-      }
-    }
-
-    nav.addEventListener("click",function(event){
-      var button=event.target.closest(".hex-progress-dot");
-      if(!button){
-        return;
-      }
-      hideCue();
-      setPosition(
-        Number(button.getAttribute("data-scene-index")),
-        false
-      );
-    });
-
-    opening.addEventListener("wheel",onWheel,{passive:false});
-    opening.addEventListener("touchstart",onTouchStart,{passive:true});
-    opening.addEventListener("touchmove",onTouchMove,{passive:false});
-    opening.addEventListener("touchend",onTouchEnd,{passive:true});
-    window.addEventListener("keydown",onKeyDown);
-
-    opening._hexOpeningCleanup=function(){
-      cancelAnimationFrame(animationFrame);
-      opening.removeEventListener("wheel",onWheel);
-      opening.removeEventListener("touchstart",onTouchStart);
-      opening.removeEventListener("touchmove",onTouchMove);
-      opening.removeEventListener("touchend",onTouchEnd);
-      window.removeEventListener("keydown",onKeyDown);
-    };
-
-    render();
-  }
-
-  /*
-   * ブラウザ標準の縦スクロールを進行値として使う。
-   * シーン自体は右から左へ移動するため、入力感だけが通常スクロールになる。
-   */
-  function startOpeningScroller(
-    opening,
-    introStage,
-    slideStage,
-    messageStage
-  ){
-    var host=opening._hexOpeningHost;
-    var scenes=[];
-    var slideElements=slideStage
-      ?Array.prototype.slice.call(
-        slideStage.querySelectorAll(".hex-opening-slide")
-      )
-      :[];
-    var brandStage=opening.querySelector(".hex-opening-brand-stage");
-    var logoStage=opening.querySelector(".hex-opening-logo-stage");
-    var curtain=opening.querySelector(".hex-opening-curtain");
-    var curtainBands=curtain
-      ?Array.prototype.slice.call(curtain.children)
-      :[];
-    var nav;
-    var cue;
-    var position=0;
-    var hostTop=0;
-    var scrollDistance=1;
-    var sceneDistance=1;
-    var preStoryDistance=1;
-    var storyDistance=1;
-    var circleDistance=1;
-    var hasInteracted=false;
-    var introCatchPlayed=false;
-    var isComplete=false;
-    var revealOriginReady=false;
-    var brandLayoutMetrics=null;
-    var heroPreview=null;
-    var messageIndex=-1;
-    var brandIndex;
-    var heroIndex;
-    var initialScrollY=window.pageYOffset;
-
-    if(introStage){
-      scenes.push(introStage);
-    }
-
-    slideElements.forEach(function(slide){
-      scenes.push(slide);
-    });
-
-    if(messageStage&&messageStage.children.length){
-      messageIndex=scenes.length;
-      scenes.push(messageStage);
-    }
-
-    if(!brandStage&&logoStage){
-      brandStage=document.createElement("div");
-      brandStage.className="hex-opening-brand-stage";
-      brandStage.appendChild(logoStage);
-      opening.insertBefore(brandStage,opening.firstChild);
-    }
-
-    if(brandStage){
-      scenes.push(brandStage);
-    }
-
-    brandIndex=Math.max(0,scenes.length-1);
-    if(messageIndex<0){
-      messageIndex=Math.max(0,brandIndex-1);
-    }
-    scenes.push(null);
-    heroIndex=scenes.length-1;
-
-    /* ヒーローはドットに含めず、7番目をロゴ完成位置にする。 */
-    nav=createOpeningProgressNav(opening,heroIndex);
-    cue=createOpeningScrollCue(opening);
-
-    function setSceneStyle(scene,x,y,isVisible){
-      if(!scene){
-        return;
-      }
-      scene.style.setProperty(
-        "transform",
-        "translate3d("+x+"%,"+y+"%,0)",
-        "important"
-      );
-      scene.style.setProperty(
-        "opacity",
-        isVisible?"1":"0",
-        "important"
-      );
-      scene.style.setProperty(
-        "visibility",
-        isVisible?"visible":"hidden",
-        "important"
-      );
-    }
-
-    function createHeroPreview(){
-      var activeHero;
-      var heroSticky;
-      var clone;
-      var removableItems;
-
-      if(heroPreview){
-        return heroPreview;
-      }
-
-      activeHero=window.hexHero&&
-        typeof window.hexHero.getActive==="function"
-          ?window.hexHero.getActive()
-          :null;
-      heroSticky=document.querySelector(".hex-hero-sticky");
-
-      if(!activeHero){
-        return null;
-      }
-
-      heroPreview=document.createElement("div");
-      heroPreview.className=
-        "hex-hero-image-handoff hex-opening-hero-preview";
-      heroPreview.setAttribute("aria-hidden","true");
-
-      clone=activeHero.cloneNode(true);
-      clone.classList.add("hex-hero-handoff-clone");
-      clone.removeAttribute("id");
-      removableItems=clone.querySelectorAll(
-        ".hex-hero-catch,.hex-scroll-indicator,.hex-opening-replay"
-      );
-      removableItems.forEach(function(item){
-        item.remove();
-      });
-      clone.style.marginLeft=heroSticky
-        ?(-heroSticky.scrollLeft)+"px"
-        :"0px";
-      heroPreview.appendChild(clone);
-      document.body.appendChild(heroPreview);
-      opening._hexOpeningHeroPreview=heroPreview;
-
-      clone.querySelectorAll("video").forEach(function(video){
-        video.muted=true;
-        video.autoplay=true;
-        video.loop=true;
-        video.playsInline=true;
-        var playPromise=video.play();
-        if(playPromise&&typeof playPromise.catch==="function"){
-          playPromise.catch(function(){});
-        }
-      });
-
-      return heroPreview;
-    }
-
-    function measureBrandLayout(){
-      var openingRect;
-      var logoRects=[];
-      var logoTop;
-      var logoBottom;
-      var buildHeight=0;
-      var withHeight=0;
-      var gap=4;
-      var headerOffset=parseFloat(
-        getComputedStyle(document.documentElement)
-          .getPropertyValue("--header_height")
-      )||80;
-      var baseCopyTop;
-      var finalCopyTop;
-      var logoShift;
-      var savedLogoTransform;
-      var savedLogoPriority;
-      var savedWithMaxHeight;
-      var savedWithMarginTop;
-      var savedWithTransform;
-      var finalCopy=opening.querySelector(".hex-opening-message-final");
-      var buildCopy=opening.querySelector(".hex-opening-message-build");
-      var withCopy=opening.querySelector(".hex-opening-message-with");
-      var logoParts=opening.querySelectorAll(
-        ".hex-logo-build,.hex-logo-company-name"
+      opening.classList.add(
+        "is-hero-reveal"
       );
 
-      if(brandLayoutMetrics){
-        return brandLayoutMetrics;
-      }
+      showHeroCatch(320);
+    },timeline);
 
-      openingRect=opening.getBoundingClientRect();
+    timeline+=HERO_REVEAL_DURATION;
 
-      if(logoStage){
-        savedLogoTransform=logoStage.style.getPropertyValue("transform");
-        savedLogoPriority=logoStage.style.getPropertyPriority("transform");
-        logoStage.style.setProperty(
-          "transform",
-          "translate3d(0,0,0)",
-          "important"
-        );
-      }
+    window.setTimeout(function(){
+      finishOpening(opening);
+    },timeline);
 
-      if(withCopy){
-        savedWithMaxHeight=withCopy.style.maxHeight;
-        savedWithMarginTop=withCopy.style.marginTop;
-        savedWithTransform=withCopy.style.transform;
-        withCopy.style.maxHeight="none";
-        withCopy.style.marginTop=gap+"px";
-        withCopy.style.transform="none";
-      }
-
-      logoParts.forEach(function(part){
-        var rect=part.getBoundingClientRect();
-        if(rect.width>0&&rect.height>0){
-          logoRects.push(rect);
-        }
-      });
-
-      if(buildCopy){
-        buildHeight=buildCopy.getBoundingClientRect().height;
-      }else if(finalCopy){
-        buildHeight=finalCopy.getBoundingClientRect().height;
-      }
-      if(withCopy){
-        withHeight=withCopy.getBoundingClientRect().height;
-      }
-
-      if(withCopy){
-        withCopy.style.maxHeight=savedWithMaxHeight;
-        withCopy.style.marginTop=savedWithMarginTop;
-        withCopy.style.transform=savedWithTransform;
-      }
-      if(logoStage){
-        if(savedLogoTransform){
-          logoStage.style.setProperty(
-            "transform",
-            savedLogoTransform,
-            savedLogoPriority
-          );
-        }else{
-          logoStage.style.removeProperty("transform");
-        }
-      }
-
-      if(logoRects.length){
-        logoTop=Math.min.apply(
-          null,
-          logoRects.map(function(rect){return rect.top;})
-        )-openingRect.top;
-        logoBottom=Math.max.apply(
-          null,
-          logoRects.map(function(rect){return rect.bottom;})
-        )-openingRect.top;
-        baseCopyTop=
-          logoTop-buildHeight-withHeight-gap*2;
-        logoShift=
-          opening.clientHeight/2-
-          (baseCopyTop+logoBottom)/2;
-        finalCopyTop=
-          baseCopyTop+logoShift-headerOffset-20;
-        logoShift-=headerOffset;
-      }else{
-        finalCopyTop=
-          opening.clientHeight*.08-headerOffset-20;
-        logoShift=-headerOffset;
-      }
-
-      brandLayoutMetrics={
-        copyTop:finalCopyTop,
-        centeredCopyTop:
-          (opening.clientHeight-buildHeight)/2,
-        buildHeight:buildHeight,
-        withHeight:withHeight,
-        gap:gap,
-        logoShift:logoShift
-      };
-
-      return brandLayoutMetrics;
-    }
-
-    function renderOpeningCopies(){
-      var introMain=introStage
-        ?introStage.querySelector(
-          ".hex-opening-intro-main.has-hex-opening-char-roll"
-        )
-        :null;
-      var messageFirst=messageStage
-        ?messageStage.querySelector(".hex-opening-message-first")
-        :null;
-      var messageFade;
-
-      /* 初回に一度だけ再生し、戻りスクロールでは状態を維持する。 */
-      if(!introCatchPlayed&&introMain&&position<1){
-        introCatchPlayed=true;
-        introMain.classList.add("is-char-roll-played");
-      }
-
-      /* 右からの場面移動は維持し、コピー自体だけをフェード表示する。 */
-      if(messageFirst){
-        messageFade=phase(
-          position,
-          Math.max(messageIndex-.48,0),
-          Math.max(messageIndex-.08,.01)
-        );
-        messageFirst.style.opacity=String(messageFade);
-      }
-    }
-
-    function renderLogo(progress){
-      var left=opening.querySelector(".hex-logo-front-left-mask-path");
-      var center=opening.querySelector(".hex-logo-front-center-mask-path");
-      var right=opening.querySelector(".hex-logo-front-right-clip-rect");
-      var backArm=opening.querySelector(".hex-logo-back-arm-mask-path");
-      var backHand=opening.querySelector(".hex-logo-back-hand");
-      var company=opening.querySelector(".hex-logo-company-name");
-      var finalCopy=opening.querySelector(".hex-opening-message-final");
-      var buildCopy=opening.querySelector(".hex-opening-message-build");
-      var withCopy=opening.querySelector(".hex-opening-message-with");
-      var layout=measureBrandLayout();
-      var drawShow=phase(progress,.12,.24);
-      var copyMove=phase(progress,.12,.38);
-      var withProgress=phase(progress,.46,.6);
-      var logoEnter=phase(progress,.62,.76);
-      var logoProgress=phase(progress,.78,1);
-      var pLeft=phase(logoProgress,.03,.23);
-      var pCenter=phase(logoProgress,.16,.36);
-      var pRight=phase(logoProgress,.29,.49);
-      var pBack=phase(logoProgress,.43,.66);
-      var pFinal=phase(logoProgress,.66,.9);
-      var openingHeight=Math.max(opening.clientHeight,1);
-      var targetWithTop;
-      var withTravel;
-
-      if(left){left.style.strokeDashoffset=String(1-pLeft);}
-      if(center){center.style.strokeDashoffset=String(1-pCenter);}
-      if(right){right.style.transform="translateX(140px) scaleX("+pRight+")";}
-      if(backArm){
-        backArm.style.opacity=pBack>0?"1":"0";
-        backArm.style.strokeDashoffset=String(90*(1-pBack));
-      }
-      [backHand,company].forEach(function(item){
-        if(!item){return;}
-        item.style.opacity=String(pFinal);
-        item.style.transform="translateY("+(-15*(1-pFinal))+"px)";
-      });
-      if(finalCopy){
-        var copyTop=layout.centeredCopyTop+
-          (layout.copyTop-layout.centeredCopyTop)*copyMove;
-
-        finalCopy.style.setProperty(
-          "top",
-          copyTop+"px",
-          "important"
-        );
-        finalCopy.style.setProperty(
-          "transform",
-          "translateX(-50%)",
-          "important"
-        );
-        finalCopy.style.opacity=String(drawShow);
-      }
-      if(buildCopy){
-        buildCopy.style.transform=
-          "translateY("+(18*(1-drawShow))+"px)";
-      }
-      if(withCopy){
-        targetWithTop=
-          layout.copyTop+layout.buildHeight+layout.gap;
-        withTravel=Math.max(
-          openingHeight-targetWithTop+layout.withHeight,
-          0
-        );
-        withCopy.style.maxHeight=(1.5*withProgress)+"em";
-        withCopy.style.marginTop=(layout.gap*withProgress)+"px";
-        withCopy.style.opacity=String(withProgress);
-        withCopy.style.transform=
-          "translateY("+(withTravel*(1-withProgress))+"px)";
-      }
-      if(logoStage){
-        var logoTranslateY=
-          openingHeight*(1-logoEnter)+
-          layout.logoShift*logoEnter;
-
-        logoStage.style.opacity=String(logoEnter);
-        logoStage.style.transform=
-          "translate3d(0,"+logoTranslateY+"px,0)";
-      }
-    }
-
-    function renderCurtain(){
-      var from=Math.floor(position);
-      var local=position-from;
-      var isSceneTransition=
-        from>=0&&
-        from<messageIndex&&
-        !!scenes[from]&&
-        !!scenes[from+1];
-
-      if(!curtain){
-        return;
-      }
-
-      curtain.classList.toggle(
-        "is-active",
-        isSceneTransition&&local>0&&local<1
-      );
-
-      curtainBands.forEach(function(band,index){
-        var progress=phase(local,index*.055,.72+index*.055);
-        var widthProgress=progress<=.2
-          ?progress/.2
-          :1-(progress-.2)/.8;
-
-        if(!isSceneTransition){
-          progress=0;
-          widthProgress=0;
-        }
-
-        band.style.width=
-          (15*Math.max(0,widthProgress))+"vw";
-        band.style.transform=
-          "translate3d("+((1-progress)*100)+"vw,0,0)";
-      });
-    }
-
-    function updateDots(){
-      var current;
-
-      if(position>=brandIndex-.001){
-        current=brandIndex;
-      }else if(position>=messageIndex){
-        current=messageIndex;
-      }else{
-        current=Math.round(position);
-      }
-
-      Array.prototype.forEach.call(
-        nav.querySelectorAll(".hex-progress-dot"),
-        function(dot,index){
-          dot.classList.toggle("is-current",index===current);
-          dot.classList.toggle("is-passed",index<current);
-          if(index===current){
-            dot.setAttribute("aria-current","step");
-          }else{
-            dot.removeAttribute("aria-current");
-          }
-        }
-      );
-    }
-
-    function render(){
-      var storyProgress=phase(position,messageIndex,brandIndex);
-      var verticalProgress=phase(storyProgress,0,.22);
-      var revealProgress=phase(position,brandIndex,heroIndex);
-
-      scenes.forEach(function(scene,index){
-        var x;
-        var y=0;
-        var isVisible;
-
-        if(!scene){return;}
-
-        if(position>=messageIndex&&index===messageIndex){
-          x=0;
-          y=-100*verticalProgress;
-          isVisible=verticalProgress<1;
-        }else if(position>=messageIndex&&index===brandIndex){
-          x=0;
-          y=100*(1-verticalProgress);
-          isVisible=true;
-        }else{
-          x=(index-position)*100;
-          isVisible=Math.abs(x)<125;
-        }
-
-        setSceneStyle(scene,x,y,isVisible);
-      });
-
-      renderOpeningCopies();
-      renderLogo(storyProgress);
-      renderCurtain();
-      updateDots();
-
-      if(revealProgress>0){
-        if(!revealOriginReady){
-          syncHeroRevealOrigin(opening);
-          revealOriginReady=true;
-        }
-        var preview=createHeroPreview();
-        if(preview){
-          preview.classList.add("is-active");
-        }
-        opening.classList.add("is-hero-reveal");
-        opening.style.setProperty(
-          "--hex-opening-hole",
-          (150*revealProgress)+"vmax"
-        );
-      }else{
-        if(heroPreview){
-          heroPreview.classList.remove("is-active");
-        }
-        opening.classList.remove("is-hero-reveal");
-        opening.style.setProperty("--hex-opening-hole","1px");
-      }
-
-      if(position>=heroIndex&&!isComplete){
-        isComplete=true;
-        showHeroCatch(0);
-        finishOpening(opening);
-      }
-    }
-
-    function positionToLocal(target){
-      if(target<=messageIndex){
-        return target*sceneDistance;
-      }
-      if(target<=brandIndex){
-        return preStoryDistance+
-          (target-messageIndex)*storyDistance;
-      }
-      return preStoryDistance+storyDistance+
-        (target-brandIndex)*circleDistance;
-    }
-
-    function localToPosition(local){
-      if(local<=preStoryDistance){
-        return local/sceneDistance;
-      }
-      if(local<=preStoryDistance+storyDistance){
-        return messageIndex+
-          (local-preStoryDistance)/storyDistance;
-      }
-      return brandIndex+
-        (local-preStoryDistance-storyDistance)/circleDistance;
-    }
-
-    function measure(){
-      var headerHeight=parseFloat(
-        getComputedStyle(document.documentElement)
-          .getPropertyValue("--header_height")
-      )||80;
-      var viewportHeight=Math.max(window.innerHeight-headerHeight,1);
-
-      brandLayoutMetrics=null;
-      sceneDistance=window.innerWidth<=768
-        ?Math.max(window.innerHeight*.82,560)
-        :SCENE_SCROLL_DISTANCE;
-      preStoryDistance=Math.max(messageIndex*sceneDistance,1);
-      storyDistance=sceneDistance*4;
-      circleDistance=sceneDistance;
-
-      hostTop=host.getBoundingClientRect().top+window.pageYOffset;
-      scrollDistance=Math.max(
-        preStoryDistance+storyDistance+circleDistance,
-        1
-      );
-      host.style.height=(viewportHeight+scrollDistance)+"px";
-    }
-
-    function updateFromScroll(){
-      var local=clamp(
-        window.pageYOffset-hostTop,
-        0,
-        scrollDistance
-      );
-
-      if(!hasInteracted&&Math.abs(window.pageYOffset-initialScrollY)>1){
-        hasInteracted=true;
-        cue.classList.add("is-hidden");
-      }
-
-      position=localToPosition(local);
-      render();
-    }
-
-    function onResize(){
-      measure();
-      updateFromScroll();
-    }
-
-    nav.addEventListener("click",function(event){
-      var button=event.target.closest(".hex-progress-dot");
-      var target;
-
-      if(!button){
-        return;
-      }
-
-      hasInteracted=true;
-      cue.classList.add("is-hidden");
-      target=Number(button.getAttribute("data-scene-index"));
-      window.scrollTo({
-        top:hostTop+positionToLocal(target),
-        behavior:"smooth"
-      });
-    });
-
-    window.addEventListener("scroll",updateFromScroll,{passive:true});
-    window.addEventListener("resize",onResize);
-    window.addEventListener("orientationchange",onResize);
-
-    opening._hexOpeningCleanup=function(){
-      window.removeEventListener("scroll",updateFromScroll);
-      window.removeEventListener("resize",onResize);
-      window.removeEventListener("orientationchange",onResize);
-      if(
-        !opening._hexKeepHeroPreview&&
-        heroPreview&&
-        heroPreview.parentNode
-      ){
-        heroPreview.parentNode.removeChild(heroPreview);
-        opening._hexOpeningHeroPreview=null;
-      }
-      heroPreview=null;
-    };
-
-    measure();
-    updateFromScroll();
-
-    if(document.fonts&&document.fonts.ready){
-      document.fonts.ready.then(function(){
-        if(!isComplete&&opening.isConnected){
-          brandLayoutMetrics=null;
-          updateFromScroll();
-        }
-      });
-    }
+    /* 万一途中でエラーが起きても画面を塞ぎ続けない */
+    window.setTimeout(function(){
+      finishOpening(opening);
+    },timeline+SAFETY_EXTRA_TIME);
   }
 
   function initOpening(){
     var opening;
-    var openingHost;
     var introData;
     var introStage=null;
     var slides;
@@ -5676,13 +4614,23 @@ hexReady(function(){
       (!FORCE_PLAY&&!replayRequested&&sessionStorage.getItem(STORAGE_KEY))
     ){
       removeOpeningSourceBlocks();
-      window.scrollTo(0,0);
       showHeroWithFade();
       return;
     }
 
     if(!FORCE_PLAY){
       sessionStorage.setItem(STORAGE_KEY,"1");
+    }
+
+    /* 両方OFFなら開幕レイヤーを作らずヒーローを即時表示 */
+    if(
+      !ENABLE_PLASTER_ANIMATION&&
+      !ENABLE_SLIDE_ANIMATION&&
+      !ENABLE_LOGO_ANIMATION
+    ){
+      removeOpeningSourceBlocks();
+      showHeroWithFade();
+      return;
     }
 
     ensureHeroReady();
@@ -5693,39 +4641,42 @@ hexReady(function(){
     slides=collectOpeningSlides();
     messageData=collectOpeningMessage();
 
-    if(introData){
+    if(ENABLE_SLIDE_ANIMATION&&introData){
       introStage=createOpeningIntro(opening,introData);
     }
 
-    if(slides.length){
+    if(ENABLE_SLIDE_ANIMATION&&slides.length){
       slideStage=createOpeningSlides(opening,slides);
     }
 
     if(messageData){
       messageStage=createOpeningMessage(opening,messageData);
     }
-    openingHost=document.createElement("div");
-    openingHost.className="hex-opening-scroll-host";
-    openingHost.appendChild(opening);
-    opening._hexOpeningHost=openingHost;
-    document.body.insertBefore(openingHost,document.body.firstChild);
+    document.documentElement.classList.add("hex-opening-lock");
+    document.body.insertBefore(opening,document.body.firstChild);
 
-    /* 開幕中の背面もHero先頭へ揃える */
-    window.scrollTo(0,0);
+    /*
+     * リプレイ時は開幕レイヤーを設置してから、
+     * その裏側でページを先頭へ戻す。
+     */
+    if(replayRequested){
+      window.scrollTo(0,0);
+    }
 
     /*
      * 開幕レイヤーを先に設置してからページを表示する。
-     * 2フレーム待ち、初期状態が描画されてからスクロール制御を開始する。
+     * 2フレーム待ち、初期状態が描画されてからタイムラインを開始する。
      */
     showPendingPage();
 
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
         document.documentElement.classList.add("hex-opening-ready");
-        startOpeningScroller(
+        startOpeningTimeline(
           opening,
           introStage,
           slideStage,
+          slides,
           messageStage
         );
       });
@@ -5733,145 +4684,6 @@ hexReady(function(){
   }
 
   initOpening();
-});
-
-/* =======================================
-   トップページ：セクション進行ドット
-======================================= */
-hexReady(function(){
-  "use strict";
-
-  /* 今後セクションを追加する場合は、この配列へ追記する */
-  var sectionDefinitions=[
-    {name:"Hero",selector:".hex-hero-wrap"},
-    {
-      name:"Welcome",
-      selector:".hex-welcome-wrap,#gc_auto_frame_home_3"
-    },
-    {
-      name:"Founded",
-      selector:".hex-founded-stage,#gc_auto_frame_home_4"
-    }
-  ];
-  var sections=sectionDefinitions.map(function(definition){
-    return{
-      name:definition.name,
-      element:document.querySelector(definition.selector)
-    };
-  }).filter(function(section){
-    return !!section.element;
-  });
-  var nav;
-  var frameRequested=false;
-
-  if(sections.length<2){
-    return;
-  }
-
-  nav=document.createElement("nav");
-  nav.className="hex-section-progress-nav";
-  nav.setAttribute("aria-label","ページ内セクション");
-
-  sections.forEach(function(section,index){
-    var button=document.createElement("button");
-    button.type="button";
-    button.className="hex-progress-dot";
-    button.setAttribute("aria-label",section.name+"へ移動");
-    button.setAttribute("data-section-index",String(index));
-    nav.appendChild(button);
-  });
-
-  document.body.appendChild(nav);
-
-  function getHeaderHeight(){
-    return parseFloat(
-      getComputedStyle(document.documentElement)
-        .getPropertyValue("--header_height")
-    )||80;
-  }
-
-  function getDocumentTop(element){
-    return element.getBoundingClientRect().top+window.pageYOffset;
-  }
-
-  function update(){
-    var headerHeight=getHeaderHeight();
-    var anchorY=window.pageYOffset+headerHeight+
-      Math.max(80,(window.innerHeight-headerHeight)*.38);
-    var current=0;
-    var heroTop=getDocumentTop(sections[0].element);
-    var last=sections[sections.length-1].element;
-    var lastTop=getDocumentTop(last);
-    var lastBottom=lastTop+Math.max(last.offsetHeight,window.innerHeight*.45);
-    var openingVisible=!!document.querySelector(".hex-opening");
-
-    sections.forEach(function(section,index){
-      if(getDocumentTop(section.element)<=anchorY){
-        current=index;
-      }
-    });
-
-    nav.classList.toggle(
-      "is-visible",
-      !openingVisible&&
-      anchorY>=heroTop&&
-      window.pageYOffset<=lastBottom
-    );
-
-    Array.prototype.forEach.call(
-      nav.querySelectorAll(".hex-progress-dot"),
-      function(dot,index){
-        dot.classList.toggle("is-current",index===current);
-        dot.classList.toggle("is-passed",index<current);
-        if(index===current){
-          dot.setAttribute("aria-current","location");
-        }else{
-          dot.removeAttribute("aria-current");
-        }
-      }
-    );
-  }
-
-  function requestUpdate(){
-    if(frameRequested){
-      return;
-    }
-    frameRequested=true;
-    requestAnimationFrame(function(){
-      frameRequested=false;
-      update();
-    });
-  }
-
-  nav.addEventListener("click",function(event){
-    var button=event.target.closest(".hex-progress-dot");
-    var section;
-    var offset;
-
-    if(!button){
-      return;
-    }
-
-    section=sections[Number(button.getAttribute("data-section-index"))];
-    if(!section){
-      return;
-    }
-
-    offset=-getHeaderHeight();
-    if(window.hexMotion&&typeof window.hexMotion.scrollTo==="function"){
-      window.hexMotion.scrollTo(section.element,{offset:offset});
-    }else{
-      window.scrollTo({
-        top:Math.max(0,getDocumentTop(section.element)+offset),
-        behavior:"smooth"
-      });
-    }
-  });
-
-  window.addEventListener("scroll",requestUpdate,{passive:true});
-  window.addEventListener("resize",requestUpdate);
-  window.addEventListener("orientationchange",requestUpdate);
-  requestUpdate();
 });
 
 /* =======================================
@@ -5972,8 +4784,6 @@ hexReady(function(){
     var initialPositionSet=false;
     var imageHandoffState="hidden";
     var stageReady=false;
-    var openingJustFinished=false;
-    var welcomeExitAccepted=false;
 
     var initialCenterOffsetY=0;
     var openingObserver=null;
@@ -6491,38 +5301,37 @@ hexReady(function(){
           );
 
           if(welcomeCenterReached){
-            if(!welcomeExitAccepted){
-              /*
-               * WELCOME完成通知は初回だけ発行する。
-               * 以降のスクロールで同じイベントと再計算を
-               * 繰り返さない。
-               */
-              var welcomeExitEvent=
-                new CustomEvent(
-                  "hex:welcome-exit-ready",
-                  {
-                    cancelable:true,
-                    detail:{
-                      welcomeWrap:welcomeWrap,
-                      welcomePanel:
-                        welcomePanel||welcomeWrap,
-                      imageHandoff:imageHandoff
-                    }
+            /*
+             * WELCOME完成を別JSへ通知する。
+             * 切替JSがpreventDefault()した間は、
+             * 丸画像の固定を解除しない。
+             */
+            var welcomeExitEvent=
+              new CustomEvent(
+                "hex:welcome-exit-ready",
+                {
+                  cancelable:true,
+                  detail:{
+                    welcomeWrap:welcomeWrap,
+                    welcomePanel:
+                      welcomePanel||welcomeWrap,
+                    imageHandoff:imageHandoff
                   }
-                );
-
-              document.dispatchEvent(
-                welcomeExitEvent
+                }
               );
 
-              welcomeExitAccepted=
-                !welcomeExitEvent.defaultPrevented;
-            }
+            document.dispatchEvent(
+              welcomeExitEvent
+            );
 
-            if(welcomeExitAccepted){
-              releaseImageHandoff(welcomeWrap);
+            if(welcomeExitEvent.defaultPrevented){
+              refixImageHandoff(
+                welcomeWrap
+              );
             }else{
-              refixImageHandoff(welcomeWrap);
+              releaseImageHandoff(
+                welcomeWrap
+              );
             }
           }else{
             document.dispatchEvent(
@@ -6650,15 +5459,7 @@ hexReady(function(){
       var root=document.documentElement;
       var heroTop;
 
-      if(initialPositionSet||!stageReady){
-        return;
-      }
-
-      /*
-       * REPLAYで画像がキャッシュ済みの場合も、開幕の縦スクロール領域を
-       * ヒーローの初期位置合わせで飛ばさない。
-       */
-      if(document.querySelector(".hex-opening")){
+      if(initialPositionSet){
         return;
       }
 
@@ -6702,7 +5503,7 @@ hexReady(function(){
       initialPositionSet=true;
 
       if(
-        (window.scrollY>1&&!openingJustFinished)||
+        window.scrollY>1||
         initialCenterOffsetY<=0
       ){
         return;
@@ -6721,15 +5522,6 @@ hexReady(function(){
         requestScrollUpdate();
       });
     }
-
-    document.addEventListener(
-      "hex:opening-finished",
-      function(){
-        openingJustFinished=true;
-        applyInitialCenterPosition();
-      },
-      {once:true}
-    );
 
     function updateHeroStage(){
       var activeHero;
@@ -6845,14 +5637,6 @@ hexReady(function(){
       document.documentElement.style.setProperty(
         "--hex-hero-scroll-distance",
         Math.ceil(scrollDistance)+"px"
-      );
-
-      /*
-       * 画像読込み後にヒーローの高さが変わるため、
-       * 後続コンテンツのScrollTrigger座標を再計算させる。
-       */
-      document.dispatchEvent(
-        new Event("hex:hero-layout-updated")
       );
 
       stageReady=true;
@@ -7245,20 +6029,6 @@ hexReady(function(){
 
       frameRequested=false;
 
-      /*
-       * 開幕用スクロール領域が存在する間にWELCOME位置を測ると、
-       * その高さを含んだ古い座標が残るため、終了後まで計測を保留する。
-       */
-      if(
-        document.querySelector(".hex-opening")||
-        document.documentElement.classList.contains(
-          "hex-opening-finishing"
-        )
-      ){
-        handoffScrollY=null;
-        return;
-      }
-
       if(handoffScrollY===null){
         measureHandoffScrollY();
       }
@@ -7361,25 +6131,6 @@ hexReady(function(){
       requestMeasureAndUpdate
     );
 
-    /*
-     * 開幕領域削除とヒーロー初期位置補正が完了してから、
-     * WELCOMEの丸演出・文字切替位置を新しい文書座標で測り直す。
-     * REPLAY後にも必要なため、onceにはしない。
-     */
-    document.addEventListener(
-      "hex:opening-finished",
-      function(){
-        handoffScrollY=null;
-
-        window.requestAnimationFrame(function(){
-          window.requestAnimationFrame(function(){
-            requestMeasureAndUpdate();
-            window.dispatchEvent(new Event("scroll"));
-          });
-        });
-      }
-    );
-
     requestUpdate();
   }
 
@@ -7432,360 +6183,210 @@ hexReady(function(){
 });
 
 /* =======================================
-   WELCOME→1972年創業：完全スクロール連動
+   ウェルカム→私たちについて切り替え
 ======================================= */
 hexReady(function(){
   "use strict";
 
+  /*
+   * WELCOME後の創設演出
+   * true  : 現在の演出を再生する
+   * false : 演出を飛ばし、完成状態で通常スクロールへ戻す
+   */
+  var ENABLE_FOUNDED_EFFECT=false;
+
+  /* 1段階と判定するホイール移動量 */
+  var WHEEL_THRESHOLD=45;
+
+  /* WELCOME固定中に受け付けるスクロール操作数 */
+  var WELCOME_HOLD_STEPS=2;
+
+  /* 次の段階を受け付けるまでの最低待機時間 */
+  var STEP_LOCK_TIME=900;
+
+  /* ホイール入力終了と判定する無入力時間 */
+  var WHEEL_IDLE_TIME=100;
+
+  /* 上方向へ戻るときのフェードアウト時間 */
+  var RETURN_FADE_TIME=700;
+
+  /* カードを順番に表示する間隔 */
+  var CARD_REVEAL_INTERVAL=400;
+
+  /* カード表示からカウント開始までの時間 */
+  var CARD_COUNT_DELAY=180;
+
+  /* 各カードのカウントアップ時間 */
+  var COUNT_DURATION=1200;
+
+  /* 1972表示から「年創業」表示まで */
+  var FOUNDED_TEXT_DELAY=600;
+
+  /* 「年創業」表示からカード開始まで */
+  var FOUNDED_CARDS_DELAY=600;
+
+  /* 最後のカード表示から説明文表示まで */
+  var FOUNDED_DESCRIPTION_DELAY=900;
+
+  /* 説明文表示から通常スクロールへ戻すまで */
+  var FOUNDED_COMPLETE_DELAY=900;
+
+  /* WELCOME完成から創業セクション到達までの自動スクロール時間 */
+  var WELCOME_TO_FOUNDED_DURATION=900;
+
   var active=false;
-  var frameRequested=false;
-  var startScrollY=0;
-  var foundedStartY=0;
-  var foundedDistance=1;
-  var welcomeProgress=0;
-  var foundedMaxProgress=0;
+  var foundedActive=false;
+  var foundedReleased=false;
   var foundedCompleted=false;
+  var returning=false;
+  var welcomeAutoScrolling=false;
+  var welcomeAutoPaused=false;
+  var welcomeHolding=false;
+  var welcomeHoldSteps=0;
+  var welcomeHoldAmount=0;
+  var welcomeHoldScrollY=0;
+
+  var stepLocked=false;
+  var minimumLockEnded=true;
+  var wheelIdle=true;
+  var wheelAmount=0;
+
+  var startScrollY=0;
+  var scrollDistance=1;
+  var foundedStartY=0;
+
+  var stepTimer=null;
+  var wheelIdleTimer=null;
+  var returnTimer=null;
+  var cardTimers=[];
+  var countFrames=[];
+  var cardsPlaying=false;
+  var welcomeAutoScrollFrame=null;
+  var welcomeHoldTimer=null;
+
   var welcomeWrap=null;
   var welcomePanel=null;
   var aboutFrame=null;
 
-  function clamp(value,min,max){
-    return Math.min(Math.max(value,min),max);
-  }
 
-  function phase(progress,start,end){
-    return clamp(
-      (progress-start)/Math.max(end-start,.001),
-      0,
-      1
+  function clamp(value,min,max){
+    return Math.min(
+      Math.max(value,min),
+      max
     );
   }
 
-  function easeOut(value){
-    return 1-Math.pow(1-value,3);
-  }
 
   function getHeaderHeight(){
     var value=getComputedStyle(
       document.documentElement
-    ).getPropertyValue("--header_height");
+    ).getPropertyValue(
+      "--header_height"
+    );
 
     return parseFloat(value)||80;
   }
 
+
   function setWelcomePosition(){
-    var rect;
-
-    if(!welcomeWrap||!welcomePanel){
-      return;
-    }
-
-    rect=welcomePanel.getBoundingClientRect();
+    var rect=
+      welcomePanel.getBoundingClientRect();
 
     welcomeWrap.style.setProperty(
       "--hex-welcome-fixed-top",
       rect.top+"px"
     );
+
     welcomeWrap.style.setProperty(
       "--hex-welcome-fixed-left",
       rect.left+"px"
     );
+
     welcomeWrap.style.setProperty(
       "--hex-welcome-fixed-width",
       rect.width+"px"
     );
+
     welcomeWrap.style.setProperty(
       "--hex-welcome-fixed-height",
       rect.height+"px"
     );
   }
 
-  function setReveal(element,progress,distance){
-    if(!element){
+
+  function measureFoundedPositions(){
+    var title=aboutFrame.querySelector(
+      ".hex-center-title"
+    );
+
+    var description=aboutFrame.querySelector(
+      ".hex-center"
+    );
+
+    var headerHeight=getHeaderHeight();
+
+    var center=
+      headerHeight+
+      (
+        window.innerHeight-
+        headerHeight
+      )/2;
+
+    var titleRect;
+    var descriptionRect;
+
+    if(!title||!description){
       return;
     }
 
-    element.style.setProperty(
-      "opacity",
-      String(progress),
-      "important"
+    aboutFrame.classList.add(
+      "is-founded-measuring"
     );
-    element.style.setProperty(
-      "visibility",
-      progress>0?"visible":"hidden",
-      "important"
+
+    titleRect=
+      title.getBoundingClientRect();
+
+    descriptionRect=
+      description.getBoundingClientRect();
+
+    aboutFrame.style.setProperty(
+      "--hex-founded-title-center-y",
+      (
+        center-
+        (
+          titleRect.top+
+          titleRect.height/2
+        )
+      )+"px"
     );
-    element.style.setProperty(
-      "transform",
-      "translate3d(0,"+
-        ((1-progress)*(distance||18))+"px,0)",
-      "important"
+
+    aboutFrame.style.setProperty(
+      "--hex-founded-description-center-y",
+      (
+        center-
+        (
+          descriptionRect.top+
+          descriptionRect.height/2
+        )
+      )+"px"
     );
-    element.style.setProperty(
-      "transition",
-      "none",
-      "important"
-    );
-  }
 
-  function prepareCards(){
-    aboutFrame.querySelectorAll(
-      ".hex-company-card .hex-card"
-    ).forEach(function(card){
-      var number=card.querySelector(".hex-number");
-
-      card.classList.remove(
-        "is-card-visible",
-        "is-counting",
-        "is-count-complete"
-      );
-
-      if(number&&!number.dataset.hexCountTarget){
-        number.dataset.hexCountTarget=String(
-          parseInt(number.textContent,10)||0
-        );
-      }
-    });
-  }
-
-  function prepareFoundedTitle(){
-    var title=aboutFrame.querySelector(".hex-center-title");
-
-    if(!title||title.dataset.hexFoundedTitleReady==="1"){
-      return;
-    }
-
-    title.dataset.hexFoundedTitleReady="1";
-
-    title.querySelectorAll(
-      ".hex-founded-year,.hex-founded-text"
-    ).forEach(function(part){
-      var text=(part.textContent||"").trim();
-
-      if(!text){
-        return;
-      }
-
-      part.textContent="";
-      part.setAttribute("aria-label",text);
-
-      Array.from(text).forEach(function(character){
-        var span=document.createElement("span");
-        span.className="hex-founded-title-char";
-        span.setAttribute("aria-hidden","true");
-        span.textContent=character===" "?"\u00a0":character;
-        part.appendChild(span);
-      });
-    });
-  }
-
-  function setFadeOnly(element,progress){
-    if(!element){
-      return;
-    }
-
-    element.style.setProperty(
-      "opacity",
-      String(progress),
-      "important"
-    );
-    element.style.setProperty(
-      "visibility",
-      progress>0?"visible":"hidden",
-      "important"
-    );
-    element.style.setProperty(
-      "transform",
-      "none",
-      "important"
-    );
-    element.style.setProperty(
-      "transition",
-      "none",
-      "important"
+    aboutFrame.classList.remove(
+      "is-founded-measuring"
     );
   }
 
-  function updateFoundedTitle(title,progress){
-    var chars;
-
-    if(!title){
-      return;
-    }
-
-    title.style.setProperty("opacity","1","important");
-    title.style.setProperty("visibility","visible","important");
-    title.style.setProperty("transform","none","important");
-
-    title.querySelectorAll(
-      ".hex-founded-year,.hex-founded-text"
-    ).forEach(function(part){
-      part.style.setProperty("opacity","1","important");
-      part.style.setProperty("visibility","visible","important");
-    });
-
-    chars=Array.prototype.slice.call(
-      title.querySelectorAll(".hex-founded-title-char")
-    );
-
-    if(!chars.length){
-      setFadeOnly(title,phase(progress,.02,.18));
-      return;
-    }
-
-    chars.forEach(function(character,index){
-      var start=.02+index*.025;
-      var charProgress=phase(progress,start,start+.15);
-      var easedProgress=easeOut(charProgress);
-
-      character.style.setProperty(
-        "opacity",
-        String(charProgress),
-        "important"
-      );
-      character.style.setProperty(
-        "visibility",
-        charProgress>0?"visible":"hidden",
-        "important"
-      );
-      character.style.setProperty(
-        "transform",
-        "translate3d(0,"+
-          ((1-easedProgress)*100)+"%,0) rotate("+
-          ((1-easedProgress)*45)+"deg)",
-        "important"
-      );
-    });
-  }
-
-  function clearManualStyles(){
-    if(!aboutFrame){
-      return;
-    }
-
-    aboutFrame.querySelectorAll(
-      ".hex-center-title,"+
-      ".hex-founded-text,"+
-      ".hex-founded-title-char,"+
-      ".hex-center,"+
-      ".hex-company-card,"+
-      ".hex-company-card .hex-card"
-    ).forEach(function(element){
-      [
-        "opacity",
-        "visibility",
-        "transform",
-        "transition"
-      ].forEach(function(name){
-        element.style.removeProperty(name);
-      });
-    });
-
-    aboutFrame.querySelectorAll(
-      ".hex-company-card .hex-number"
-    ).forEach(function(number){
-      if(number.dataset.hexCountTarget){
-        number.textContent=
-          number.dataset.hexCountTarget;
-      }
-
-      number.style.removeProperty("color");
-      number.style.removeProperty("transition");
-    });
-
-    aboutFrame.querySelectorAll(
-      ".hex-company-card .hex-card"
-    ).forEach(function(card){
-      card.classList.remove(
-        "is-card-visible",
-        "is-counting",
-        "is-count-complete"
-      );
-    });
-  }
-
-  function updateFounded(progress){
-    var title=aboutFrame.querySelector(".hex-center-title");
-    var description=aboutFrame.querySelector(".hex-center");
-    var cardWrap=aboutFrame.querySelector(".hex-company-card");
-    var cards=Array.prototype.slice.call(
-      aboutFrame.querySelectorAll(
-        ".hex-company-card .hex-card"
-      )
-    );
-    var descriptionProgress=phase(progress,.08,.26);
-
-    updateFoundedTitle(title,progress);
-    setFadeOnly(description,descriptionProgress);
-
-    setReveal(
-      cardWrap,
-      phase(progress,.45,.52),
-      12
-    );
-
-    cards.forEach(function(card,index){
-      var start=.52+index*.08;
-      var cardProgress=phase(
-        progress,
-        start,
-        start+.15
-      );
-      var number=card.querySelector(".hex-number");
-      var target=number
-        ?parseInt(number.dataset.hexCountTarget,10)||0
-        :0;
-
-      setReveal(card,cardProgress,18);
-      card.classList.toggle(
-        "is-card-visible",
-        cardProgress>0
-      );
-      card.classList.toggle(
-        "is-count-complete",
-        cardProgress>=1
-      );
-
-      if(number){
-        number.textContent=String(
-          Math.round(target*easeOut(cardProgress))
-        );
-        number.style.setProperty(
-          "color",
-          cardProgress>=1?"#c8a874":"#1f2774",
-          "important"
-        );
-        number.style.setProperty(
-          "transition",
-          "none",
-          "important"
-        );
-      }
-    });
-
-    aboutFrame.classList.toggle(
-      "is-founded-released",
-      progress>=1
-    );
-    document.documentElement.classList.toggle(
-      "hex-founded-stage-complete",
-      progress>=1
-    );
-  }
-
-  function measure(){
-    if(!active||!aboutFrame){
-      return;
-    }
-  }
 
   function start(detail){
-    if(active){
+    var aboutRect;
+
+    if(active||foundedCompleted){
       return;
     }
 
     welcomeWrap=detail.welcomeWrap;
     welcomePanel=detail.welcomePanel;
+
     aboutFrame=document.getElementById(
       HOME_SECTIONS.ABOUT
     );
@@ -7799,66 +6400,951 @@ hexReady(function(){
       return;
     }
 
-    active=true;
-    startScrollY=window.scrollY;
-
     aboutFrame.classList.add(
-      "hex-founded-normal-motion"
+      "hex-founded-stage"
     );
 
-    prepareFoundedTitle();
-    prepareCards();
-    measure();
+    aboutRect=
+      aboutFrame.getBoundingClientRect();
+
+    foundedStartY=
+      window.scrollY+
+      aboutRect.top-
+      getHeaderHeight();
+
+    active=true;
+    welcomeHolding=true;
+    welcomeHoldSteps=0;
+    welcomeHoldAmount=0;
+    welcomeHoldScrollY=window.scrollY;
+
+    setWelcomePosition();
+
+    document.documentElement.style.setProperty(
+      "--hex-welcome-exit-progress",
+      "0"
+    );
+
+    document.documentElement.classList.add(
+      "hex-welcome-exit-active"
+    );
   }
 
-  function update(){
-    var foundedProgress;
-    var aboutRect;
-    var revealDistance;
 
-    frameRequested=false;
+  function easeInOutCubic(value){
+    return value<.5
+      ?4*value*value*value
+      :1-Math.pow(-2*value+2,3)/2;
+  }
 
-    if(!active||!aboutFrame||foundedCompleted){
+
+  function stopWelcomeAutoScroll(){
+    if(welcomeAutoScrollFrame!==null){
+      cancelAnimationFrame(
+        welcomeAutoScrollFrame
+      );
+      welcomeAutoScrollFrame=null;
+    }
+
+    welcomeAutoScrolling=false;
+  }
+
+
+  function releaseWelcomeHold(){
+    if(!welcomeHolding){
       return;
     }
 
-    aboutRect=aboutFrame.getBoundingClientRect();
-    revealDistance=Math.max(
-      window.innerHeight-getHeaderHeight(),
-      1
+    welcomeHolding=false;
+    welcomeHoldAmount=0;
+
+    window.clearTimeout(
+      welcomeHoldTimer
+    );
+
+    document.documentElement.classList.remove(
+      "hex-welcome-exit-active",
+      "hex-welcome-exit-complete"
+    );
+
+    document.documentElement.style.removeProperty(
+      "--hex-welcome-exit-progress"
     );
 
     /*
-     * 創業セクションの上端が画面下へ入ってから、
-     * ヘッダー下へ到達するまでの通常スクロール量を使う。
+     * 固定待機中の慣性やブラウザ補正を破棄し、
+     * WELCOME完成時の位置から自動移動を開始する。
      */
-    foundedProgress=clamp(
-      (window.innerHeight-aboutRect.top)/revealDistance,
-      0,
-      1
-    );
+    window.scrollTo({
+      top:welcomeHoldScrollY,
+      left:window.scrollX,
+      behavior:"auto"
+    });
 
-    foundedMaxProgress=Math.max(
-      foundedMaxProgress,
-      foundedProgress
-    );
-    updateFounded(foundedMaxProgress);
-
-    if(foundedMaxProgress>=1){
-      foundedCompleted=true;
+    if(ENABLE_FOUNDED_EFFECT){
+      startWelcomeAutoScroll();
+    }else{
+      completeFoundedImmediately();
     }
   }
 
-  function requestUpdate(){
-    if(frameRequested){
+
+  function countWelcomeHoldStep(delta){
+    if(!welcomeHolding||delta<=0){
       return;
     }
 
-    frameRequested=true;
-    window.requestAnimationFrame(update);
+    welcomeHoldAmount+=Math.abs(delta);
+
+    window.clearTimeout(
+      welcomeHoldTimer
+    );
+
+    welcomeHoldTimer=window.setTimeout(
+      function(){
+        if(
+          !welcomeHolding||
+          welcomeHoldAmount<
+          WHEEL_THRESHOLD
+        ){
+          welcomeHoldAmount=0;
+          return;
+        }
+
+        welcomeHoldAmount=0;
+        welcomeHoldSteps+=1;
+
+        if(
+          welcomeHoldSteps>=
+          WELCOME_HOLD_STEPS
+        ){
+          releaseWelcomeHold();
+        }
+      },
+      WHEEL_IDLE_TIME
+    );
   }
 
+
+  function startWelcomeAutoScroll(){
+    var fromY;
+    var distance;
+    var started;
+
+    if(
+      !active||
+      foundedActive||
+      foundedCompleted||
+      returning||
+      welcomeAutoScrolling
+    ){
+      return;
+    }
+
+    fromY=window.scrollY;
+    distance=foundedStartY-fromY;
+
+    if(distance<=1){
+      window.scrollTo({
+        top:Math.ceil(foundedStartY),
+        left:window.scrollX,
+        behavior:"auto"
+      });
+      activateFounded();
+      return;
+    }
+
+    welcomeAutoScrolling=true;
+    started=performance.now();
+
+    function frame(now){
+      var progress=clamp(
+        (now-started)/WELCOME_TO_FOUNDED_DURATION,
+        0,
+        1
+      );
+
+      window.scrollTo({
+        top:fromY+distance*easeInOutCubic(progress),
+        left:window.scrollX,
+        behavior:"auto"
+      });
+
+      if(
+        progress<1&&
+        welcomeAutoScrolling&&
+        active&&
+        !returning
+      ){
+        welcomeAutoScrollFrame=
+          requestAnimationFrame(frame);
+        return;
+      }
+
+      welcomeAutoScrollFrame=null;
+      welcomeAutoScrolling=false;
+
+      if(active&&!returning){
+        window.scrollTo({
+          top:Math.ceil(foundedStartY),
+          left:window.scrollX,
+          behavior:"auto"
+        });
+        activateFounded();
+      }
+    }
+
+    welcomeAutoScrollFrame=
+      requestAnimationFrame(frame);
+  }
+
+
+  function tryUnlockStep(){
+    /*
+     * 最低待機時間が終了し、
+     * ホイール入力も止まった場合だけ解除する。
+     */
+    if(
+      minimumLockEnded&&
+      wheelIdle
+    ){
+      stepLocked=false;
+      wheelAmount=0;
+    }
+  }
+
+
+  function markWheelActivity(){
+    wheelIdle=false;
+
+    window.clearTimeout(
+      wheelIdleTimer
+    );
+
+    /*
+     * 指定時間ホイール入力が来なければ、
+     * 1回のスクロール操作が終了したと判断する。
+     */
+    wheelIdleTimer=window.setTimeout(
+      function(){
+        wheelIdle=true;
+        tryUnlockStep();
+      },
+      WHEEL_IDLE_TIME
+    );
+  }
+
+
+  function lockStep(){
+    stepLocked=true;
+    minimumLockEnded=false;
+    wheelAmount=0;
+
+    window.clearTimeout(
+      stepTimer
+    );
+
+    stepTimer=window.setTimeout(
+      function(){
+        minimumLockEnded=true;
+        tryUnlockStep();
+      },
+      STEP_LOCK_TIME
+    );
+  }
+
+
+  function clearCardAnimations(){
+    cardTimers.forEach(function(timer){
+      window.clearTimeout(timer);
+    });
+
+    countFrames.forEach(function(frame){
+      cancelAnimationFrame(frame);
+    });
+
+    cardTimers=[];
+    countFrames=[];
+    cardsPlaying=false;
+  }
+
+
+  /*
+   * 創設演出を再生せず、通常再生後と同じ完成状態にする。
+   * WELCOMEから創設位置への強制スクロールも行わない。
+   */
+  function completeFoundedImmediately(){
+    if(!aboutFrame){
+      return;
+    }
+
+    stopWelcomeAutoScroll();
+    clearCardAnimations();
+
+    foundedActive=true;
+    foundedReleased=false;
+
+    aboutFrame.classList.add(
+      "is-founded-active"
+    );
+
+    aboutFrame.dataset.foundedStep="4";
+
+    aboutFrame.querySelectorAll(
+      ".hex-company-card .hex-card"
+    ).forEach(function(card){
+      var number=card.querySelector(
+        ".hex-number"
+      );
+
+      card.classList.add(
+        "is-card-visible",
+        "is-count-complete"
+      );
+
+      card.classList.remove(
+        "is-counting"
+      );
+
+      if(number){
+        if(!number.dataset.hexCountTarget){
+          number.dataset.hexCountTarget=String(
+            parseInt(number.textContent,10)||0
+          );
+        }
+
+        number.textContent=
+          number.dataset.hexCountTarget;
+      }
+    });
+
+    document.documentElement.classList.add(
+      "hex-founded-stage-active"
+    );
+
+    releaseFounded();
+
+    stepLocked=false;
+    minimumLockEnded=true;
+    wheelIdle=true;
+    wheelAmount=0;
+  }
+
+
+  function prepareFoundedCards(){
+    if(!aboutFrame){
+      return;
+    }
+
+    clearCardAnimations();
+
+    aboutFrame.querySelectorAll(
+      ".hex-company-card .hex-card"
+    ).forEach(function(card){
+      var number=card.querySelector(
+        ".hex-number"
+      );
+
+      card.classList.remove(
+        "is-card-visible",
+        "is-counting",
+        "is-count-complete"
+      );
+
+      if(!number){
+        return;
+      }
+
+      if(!number.dataset.hexCountTarget){
+        number.dataset.hexCountTarget=String(
+          parseInt(number.textContent,10)||0
+        );
+      }
+
+      number.textContent="0";
+    });
+  }
+
+
+  function startCountUp(card){
+    var number=card.querySelector(
+      ".hex-number"
+    );
+    var target;
+    var started;
+
+    if(!number){
+      return;
+    }
+
+    target=parseInt(
+      number.dataset.hexCountTarget,
+      10
+    )||0;
+
+    started=performance.now();
+    card.classList.add("is-counting");
+
+    function frame(now){
+      var progress=clamp(
+        (now-started)/COUNT_DURATION,
+        0,
+        1
+      );
+
+      number.textContent=String(
+        Math.round(
+          target*(1-Math.pow(1-progress,3))
+        )
+      );
+
+      if(progress<1&&cardsPlaying){
+        countFrames.push(
+          requestAnimationFrame(frame)
+        );
+        return;
+      }
+
+      if(progress>=1){
+        number.textContent=String(target);
+        card.classList.remove("is-counting");
+        card.classList.add("is-count-complete");
+      }
+    }
+
+    countFrames.push(
+      requestAnimationFrame(frame)
+    );
+  }
+
+
+  function playFoundedCards(){
+    var cards;
+    var finishDelay;
+    var lastRevealDelay;
+    var descriptionStartDelay;
+    var releaseDelay;
+
+    if(cardsPlaying||!aboutFrame){
+      return;
+    }
+
+    cards=Array.prototype.slice.call(
+      aboutFrame.querySelectorAll(
+        ".hex-company-card .hex-card"
+      )
+    );
+
+    cardsPlaying=true;
+    stepLocked=true;
+    minimumLockEnded=false;
+    wheelIdle=false;
+    wheelAmount=0;
+    aboutFrame.dataset.foundedStep="3";
+
+    cards.forEach(function(card,index){
+      var revealDelay=
+        index*CARD_REVEAL_INTERVAL;
+
+      cardTimers.push(
+        window.setTimeout(function(){
+          if(cardsPlaying){
+            card.classList.add(
+              "is-card-visible"
+            );
+          }
+        },revealDelay)
+      );
+
+      cardTimers.push(
+        window.setTimeout(function(){
+          if(cardsPlaying){
+            startCountUp(card);
+          }
+        },revealDelay+CARD_COUNT_DELAY)
+      );
+    });
+
+    lastRevealDelay=
+      Math.max(cards.length-1,0)*
+      CARD_REVEAL_INTERVAL;
+
+    finishDelay=
+      lastRevealDelay+
+      CARD_COUNT_DELAY+
+      COUNT_DURATION;
+
+    /*
+     * 説明文は最後のカードが表示された瞬間を基準にする。
+     * カウントアップ完了は待たない。
+     */
+    descriptionStartDelay=
+      lastRevealDelay+
+      FOUNDED_DESCRIPTION_DELAY;
+
+    cardTimers.push(
+      window.setTimeout(function(){
+        if(
+          !foundedActive||
+          returning||
+          foundedCompleted
+        ){
+          return;
+        }
+
+        aboutFrame.dataset.foundedStep="4";
+      },descriptionStartDelay)
+    );
+
+    cardTimers.push(
+      window.setTimeout(function(){
+        cards.forEach(function(card){
+          var number=card.querySelector(
+            ".hex-number"
+          );
+
+          card.classList.add(
+            "is-card-visible",
+            "is-count-complete"
+          );
+          card.classList.remove("is-counting");
+
+          if(
+            number&&
+            number.dataset.hexCountTarget
+          ){
+            number.textContent=
+              number.dataset.hexCountTarget;
+          }
+        });
+
+        cardsPlaying=false;
+      },finishDelay+80)
+    );
+
+    /*
+     * 固定解除は、全カードのカウント完了と
+     * 説明文の表示時間の両方が終わってから行う。
+     */
+    releaseDelay=Math.max(
+      finishDelay+80,
+      descriptionStartDelay+
+      FOUNDED_COMPLETE_DELAY
+    );
+
+    cardTimers.push(
+      window.setTimeout(function(){
+        if(
+          foundedActive&&
+          !returning&&
+          !foundedCompleted
+        ){
+          releaseFounded();
+        }
+      },releaseDelay)
+    );
+  }
+
+
+  function activateFounded(){
+    if(
+      foundedActive||
+      returning||
+      !aboutFrame
+    ){
+      return;
+    }
+
+    foundedActive=true;
+    foundedReleased=false;
+
+    aboutFrame.classList.add(
+      "is-founded-active"
+    );
+
+    wheelAmount=0;
+    wheelIdle=true;
+    minimumLockEnded=false;
+
+    /* 自動進行が完了するまで下方向入力を使用しない */
+    stepLocked=true;
+
+    aboutFrame.dataset.foundedStep="0";
+
+    prepareFoundedCards();
+
+    document.documentElement.classList.add(
+      "hex-founded-stage-active"
+    );
+
+    window.scrollTo({
+      top:Math.ceil(foundedStartY),
+      left:window.scrollX,
+      behavior:"auto"
+    });
+
+    requestAnimationFrame(function(){
+      measureFoundedPositions();
+
+      requestAnimationFrame(function(){
+        if(
+          foundedActive&&
+          !returning
+        ){
+          aboutFrame.dataset.foundedStep="1";
+
+          /* 1972の後に「年創業」を自動表示 */
+          cardTimers.push(
+            window.setTimeout(function(){
+              if(
+                !foundedActive||
+                returning||
+                foundedCompleted
+              ){
+                return;
+              }
+
+              aboutFrame.dataset.foundedStep="2";
+
+              /* 続けてカード演出を自動開始 */
+              cardTimers.push(
+                window.setTimeout(function(){
+                  if(
+                    foundedActive&&
+                    !returning&&
+                    !foundedCompleted
+                  ){
+                    playFoundedCards();
+                  }
+                },FOUNDED_CARDS_DELAY)
+              );
+            },FOUNDED_TEXT_DELAY)
+          );
+        }
+      });
+    });
+  }
+
+
+  function releaseFounded(){
+    foundedReleased=true;
+    foundedCompleted=true;
+
+    aboutFrame.classList.add(
+      "is-founded-released"
+    );
+
+    document.documentElement.classList.add(
+      "hex-founded-stage-complete"
+    );
+  }
+
+
+  function returnToWelcome(){
+    if(
+      returning||
+      !aboutFrame
+    ){
+      return;
+    }
+
+    returning=true;
+    welcomeAutoPaused=true;
+    stepLocked=true;
+    minimumLockEnded=false;
+    wheelIdle=false;
+    wheelAmount=0;
+
+    clearCardAnimations();
+
+    window.clearTimeout(
+      stepTimer
+    );
+
+    window.clearTimeout(
+      wheelIdleTimer
+    );
+
+    aboutFrame.classList.add(
+      "is-founded-returning"
+    );
+
+    window.clearTimeout(
+      returnTimer
+    );
+
+    returnTimer=window.setTimeout(
+      function(){
+        aboutFrame.classList.remove(
+          "is-founded-returning",
+          "is-founded-released",
+          "is-founded-active"
+        );
+
+        aboutFrame.dataset.foundedStep="0";
+
+        document.documentElement.classList.remove(
+          "hex-founded-stage-active",
+          "hex-founded-stage-complete"
+        );
+
+        foundedActive=false;
+        foundedReleased=false;
+        returning=false;
+
+        stepLocked=false;
+        minimumLockEnded=true;
+        wheelIdle=true;
+        wheelAmount=0;
+
+        window.scrollTo({
+          top:Math.max(
+            foundedStartY-2,
+            0
+          ),
+          left:window.scrollX,
+          behavior:"auto"
+        });
+
+        window.dispatchEvent(
+          new Event("scroll")
+        );
+      },
+      RETURN_FADE_TIME
+    );
+  }
+
+
+  function isFoundedFullyVisible(){
+    var surface;
+    var rect;
+    var headerHeight;
+
+    if(!aboutFrame){
+      return false;
+    }
+
+    surface=aboutFrame.querySelector(
+      ":scope > "+
+      ".gc_auto_frame_spotitem"+
+      ":has(.hex-company-card)"
+    );
+
+    if(!surface){
+      return false;
+    }
+
+    rect=surface.getBoundingClientRect();
+    headerHeight=getHeaderHeight();
+
+    /*
+     * 創業セクションの固定面が、
+     * ヘッダー下から画面下まで表示されているか。
+     */
+    return(
+      rect.top<=headerHeight+2&&
+      rect.bottom>=window.innerHeight-2
+    );
+  }
+
+
+  function handleWheel(event){
+    var step;
+    var remainingDistance;
+
+    if(
+      window.innerWidth<=768||
+      returning
+    ){
+      return;
+    }
+
+    /*
+     * WELCOME完成後の3スクロールは画面を固定したまま数える。
+     * 3回目の操作終了後に固定解除と自動移動を開始する。
+     */
+    if(welcomeHolding){
+      event.preventDefault();
+
+      if(
+        Math.abs(
+          window.scrollY-
+          welcomeHoldScrollY
+        )>1
+      ){
+        window.scrollTo({
+          top:welcomeHoldScrollY,
+          left:window.scrollX,
+          behavior:"auto"
+        });
+      }
+
+      countWelcomeHoldStep(event.deltaY);
+      return;
+    }
+
+    /*
+     * WELCOMEから創業への自動移動中は、
+     * 追加のホイール入力で到達位置をずらさない。
+     */
+    if(welcomeAutoScrolling){
+      if(event.deltaY<0){
+        stopWelcomeAutoScroll();
+        welcomeAutoPaused=true;
+        return;
+      }
+
+      event.preventDefault();
+      return;
+    }
+
+    /*
+     * 最後まで完了した後は、リロードされるまで
+     * 創業演出へ再介入せず通常スクロールに戻す。
+     */
+    if(foundedCompleted){
+      return;
+    }
+
+    /*
+    * WELCOMEフェード中に、今回のホイール入力で
+    * 創業セクションの開始位置を越えそうな場合。
+    */
+    if(
+      active&&
+      !foundedActive&&
+      event.deltaY>0
+    ){
+      remainingDistance=
+        foundedStartY-
+        window.scrollY;
+
+      if(
+        remainingDistance<=
+        Math.abs(event.deltaY)+2
+      ){
+        /*
+        * 境界を越えるホイール入力を無効化し、
+        * 創業セクション開始位置へ正確に合わせる。
+        */
+        event.preventDefault();
+
+        window.scrollTo({
+          top:Math.ceil(foundedStartY),
+          left:window.scrollX,
+          behavior:"auto"
+        });
+
+        return;
+      }
+    }
+
+    /*
+    * 創業セクション開始前は、
+    * 上記の境界処理以外は通常スクロール。
+    */
+    if(!foundedActive){
+      return;
+    }
+
+    /*
+     * 上方向は各段階を逆再生せず、
+     * 創業内容全体をまとめて消す。
+     */
+    if(event.deltaY<0){
+
+      /*
+       * 次のセクションまで進んだ後は、
+       * 創業セクションが全画面に戻るまで
+       * 通常の逆スクロールを許可する。
+       */
+      if(
+        foundedReleased&&
+        !isFoundedFullyVisible()
+      ){
+        return;
+      }
+
+      event.preventDefault();
+      returnToWelcome();
+      return;
+    }
+
+    /*
+     * 創業演出完成後は、
+     * 下方向の通常スクロールを許可する。
+     */
+    if(foundedReleased){
+      return;
+    }
+
+    event.preventDefault();
+
+    /*
+     * 継続中のホイール・慣性入力を記録する。
+     */
+    markWheelActivity();
+
+    /*
+     * アニメーション中の入力は、
+     * 次の段階には使用しない。
+     */
+    if(stepLocked){
+      return;
+    }
+
+    wheelAmount+=Math.abs(
+      event.deltaY
+    );
+
+    if(wheelAmount<WHEEL_THRESHOLD){
+      return;
+    }
+
+    wheelAmount=0;
+
+    step=parseInt(
+      aboutFrame.dataset.foundedStep||"1",
+      10
+    );
+
+    if(step===1){
+      /* 「年創業」をフェード表示する */
+      aboutFrame.dataset.foundedStep="2";
+      lockStep();
+    }else if(step===2){
+      playFoundedCards();
+    }else if(step===3){
+      /* カード完了後、最後に説明文を表示する */
+      aboutFrame.dataset.foundedStep="4";
+      lockStep();
+    }else{
+      releaseFounded();
+      lockStep();
+    }
+  }
+
+
   function clearAll(){
+    stopWelcomeAutoScroll();
+    clearCardAnimations();
+
+    window.clearTimeout(
+      welcomeHoldTimer
+    );
+
+    window.clearTimeout(
+      stepTimer
+    );
+
+    window.clearTimeout(
+      wheelIdleTimer
+    );
+
+    window.clearTimeout(
+      returnTimer
+    );
+
     if(welcomeWrap){
       [
         "--hex-welcome-fixed-top",
@@ -7866,23 +7352,22 @@ hexReady(function(){
         "--hex-welcome-fixed-width",
         "--hex-welcome-fixed-height"
       ].forEach(function(name){
-        welcomeWrap.style.removeProperty(name);
+        welcomeWrap.style.removeProperty(
+          name
+        );
       });
     }
 
     if(aboutFrame){
-      clearManualStyles();
-
       aboutFrame.classList.remove(
         "hex-founded-stage",
-        "hex-founded-scroll-stage",
-        "hex-founded-normal-motion",
-        "is-founded-active",
-        "is-founded-released"
+        "is-founded-returning",
+        "is-founded-released",
+        "is-founded-active"
       );
-      aboutFrame.removeAttribute("data-founded-step");
-      aboutFrame.style.removeProperty(
-        "--hex-founded-scroll-distance"
+
+      aboutFrame.removeAttribute(
+        "data-founded-step"
       );
     }
 
@@ -7890,61 +7375,201 @@ hexReady(function(){
       "hex-welcome-exit-active",
       "hex-welcome-exit-complete",
       "hex-founded-stage-active",
-      "hex-founded-stage-complete",
-      "hex-founded-manual"
+      "hex-founded-stage-complete"
     );
+
     document.documentElement.style.removeProperty(
       "--hex-welcome-exit-progress"
     );
 
     active=false;
-    welcomeProgress=0;
-    foundedMaxProgress=0;
-    foundedCompleted=false;
+    foundedActive=false;
+    foundedReleased=false;
+    returning=false;
+    welcomeAutoScrolling=false;
+    welcomeAutoPaused=false;
+    welcomeHolding=false;
+    welcomeHoldSteps=0;
+    welcomeHoldAmount=0;
+    welcomeHoldScrollY=0;
+
+    stepLocked=false;
+    minimumLockEnded=true;
+    wheelIdle=true;
+    wheelAmount=0;
+
+    startScrollY=0;
+    foundedStartY=0;
+    scrollDistance=1;
+
     welcomeWrap=null;
     welcomePanel=null;
     aboutFrame=null;
   }
 
+
+  function update(){
+    var aboutRect;
+    var foundedTitle;
+    var foundedTitleRect;
+
+    if(!active){
+      return 0;
+    }
+
+    if(welcomeHolding){
+      if(
+        Math.abs(
+          window.scrollY-
+          welcomeHoldScrollY
+        )>1
+      ){
+        window.scrollTo({
+          top:welcomeHoldScrollY,
+          left:window.scrollX,
+          behavior:"auto"
+        });
+      }
+
+      return 1;
+    }
+
+    if(
+      foundedActive||
+      returning||
+      welcomeAutoScrolling
+    ){
+      return 1;
+    }
+
+    aboutRect=aboutFrame.getBoundingClientRect();
+
+    /*
+     * WELCOME完成後もしばらくは通常スクロール。
+     * 創業タイトルの上端が画面下端へ到達した瞬間から、
+     * 創業セクションの完成位置まで自動で移動する。
+     */
+    foundedTitle=aboutFrame.querySelector(
+      ".hex-center-title"
+    );
+
+    if(foundedTitle){
+      foundedTitleRect=
+        foundedTitle.getBoundingClientRect();
+    }
+
+    /*
+     * 逆方向へ戻った直後は自動進行を再開しない。
+     * タイトルがいったん画面下へ抜けたら再び待機状態に戻す。
+     */
+    if(welcomeAutoPaused){
+      if(
+        foundedTitleRect&&
+        foundedTitleRect.top>
+        window.innerHeight+2
+      ){
+        welcomeAutoPaused=false;
+      }
+
+      return 0;
+    }
+
+    if(
+      foundedTitleRect&&
+      foundedTitleRect.top<=window.innerHeight
+    ){
+      startWelcomeAutoScroll();
+      return 1;
+    }
+
+    /*
+     * タイトルを取得できない場合だけ、
+     * 従来の到達位置で演出を開始する。
+     */
+    if(
+      !foundedTitle&&
+      aboutRect.top<=getHeaderHeight()+1
+    ){
+      activateFounded();
+      return 1;
+    }
+
+    return 0;
+  }
+
+
   document.addEventListener(
     "hex:welcome-exit-ready",
     function(event){
+      if(window.innerWidth<=768){
+        return;
+      }
+
       start(event.detail);
-      update();
+
+      if(welcomeHolding){
+        event.preventDefault();
+      }else{
+        update();
+      }
 
       /*
-       * preventDefaultしない。
-       * 丸画像とWELCOME文章が揃った時点で固定を解除し、
-       * ここから先は通常のページスクロールへ戻す。
+       * WELCOME完成後は3スクロール分だけ固定を維持する。
+       * 3回目の操作終了後、固定解除と自動移動を開始する。
        */
     }
   );
+
 
   document.addEventListener(
     "hex:welcome-exit-cancel",
     function(){
       if(
-        active&&
-        foundedMaxProgress<=0&&
-        window.scrollY<startScrollY-1
+        !foundedActive&&
+        !returning
       ){
         clearAll();
       }
     }
   );
 
+
+  window.addEventListener(
+    "wheel",
+    handleWheel,
+    {passive:false}
+  );
+
+
   window.addEventListener(
     "scroll",
-    requestUpdate,
+    update,
     {passive:true}
   );
+
 
   window.addEventListener(
     "resize",
     function(){
-      if(active){
-        measure();
-        requestUpdate();
+      if(window.innerWidth<=768){
+        clearAll();
+        return;
+      }
+
+      if(foundedActive){
+        measureFoundedPositions();
+      }else if(active&&aboutFrame){
+        var aboutRect=
+          aboutFrame.getBoundingClientRect();
+
+        if(welcomeHolding){
+          setWelcomePosition();
+        }
+
+        foundedStartY=
+          window.scrollY+
+          aboutRect.top-
+          getHeaderHeight();
       }
     }
   );
@@ -11238,10 +10863,7 @@ hexLoad(function(){
     return(
       root.classList.contains('hex-opening-lock')||
       topBeforeCircle||
-      (
-        root.classList.contains('hex-welcome-exit-active')&&
-        !root.classList.contains('hex-welcome-exit-complete')
-      )||
+      root.classList.contains('hex-welcome-exit-active')||
       foundedRunning
     );
   }
@@ -11336,6 +10958,8 @@ hexLoad(function(){
       '#gc_auto_frame_home_0',
       '#gc_auto_frame_home_1',
       '#gc_auto_frame_home_2',
+      '#gc_auto_frame_home_3',
+      '#gc_auto_frame_home_4',
       '#gc_auto_frame_home_18',
       'header',
       '#header',
@@ -11357,14 +10981,8 @@ hexLoad(function(){
       '.pagetitle_type',
       '.hex-opening',
       '.hex-hero-wrap',
-      /* WELCOMEの丸画像・コピーは既存の受け渡し演出を優先 */
-      '.hex-hero-image-handoff',
-      '.hex-welcome-wrap .hex-opening-copy-source',
-      '.hex-welcome-wrap .hex-handoff-copy',
-      /* 創業の見出し・説明・実績カードは既存の個別演出を優先 */
-      '#gc_auto_frame_home_4 .hex-center-title',
-      '#gc_auto_frame_home_4 .hex-center',
-      '#gc_auto_frame_home_4 .hex-company-card',
+      '.hex-welcome-wrap',
+      '.hex-founded-stage',
       '.hex-anchor-source',
       '.hex-anchor-nav',
       '.hex-anchor-nav-placeholder',
@@ -11408,19 +11026,6 @@ hexLoad(function(){
          */
         virtualScroll:function(data){
           var event=data&&data.event;
-
-          /*
-           * 開幕はPCだけLenisの慣性を使う。
-           * SPではLenis自体を初期化しないため、ブラウザ標準の
-           * タッチスクロールがそのまま使われる。
-           */
-          if(
-            document.querySelector(
-              '.hex-opening.is-scroll-driven'
-            )
-          ){
-            return true;
-          }
 
           if(isSpecialScrollState()){
             return false;
@@ -11479,7 +11084,10 @@ hexLoad(function(){
         lenis.start();
       }
 
-      /* 特殊演出へ入る直前の現在位置で補間を確定する */
+      /*
+       * Lenisの慣性が残ったまま特殊演出へ入らないように、
+       * 現在位置で補間をいったん確定する。
+       */
       if(specialState&&!lastSpecialState){
         lenis.scrollTo(window.scrollY,{
           immediate:true,
@@ -11489,14 +11097,20 @@ hexLoad(function(){
 
       if(lastSpecialState&&!specialState){
         /*
-         * ネイティブ／専用スクロール中に進んだ現在位置を、
-         * Lenisの内部位置へ同期してから通常スクロールへ戻す。
+         * 開幕～ヒーロー下端まではブラウザ側の座標で進むため、
+         * 初回だけLenis内部の座標が開始位置のまま残ることがある。
+         * 通常スクロールへ戻す直前に現在位置へ即時同期し、
+         * ヒーロー固定時の縦ずれと下側の隙間を防ぐ。
          */
+        lastSpecialState=specialState;
+
         lenis.scrollTo(window.scrollY,{
           immediate:true,
           force:true
         });
+
         scheduleRefresh(80);
+        return;
       }
 
       lastSpecialState=specialState;
@@ -12078,8 +11692,7 @@ hexLoad(function(){
 
       ScrollTrigger.create({
         trigger:target,
-        /* 通常フェードと同じ進入位置から見出し演出を始める */
-        start:window.innerWidth<=768?'top 96%':'top 95%',
+        start:window.innerWidth<=768?'top 94%':'top 88%',
         once:true,
         onEnter:function(){
           tween.restart();
@@ -12436,40 +12049,6 @@ hexLoad(function(){
             :document
         );
       }
-    );
-
-    function refreshAfterTopLayoutChange(event){
-      var syncAfterOpening=
-        event&&event.type==='hex:opening-finished';
-
-      /* DOM移動とCSS変数の反映後の座標で再計算する */
-      window.requestAnimationFrame(function(){
-        window.requestAnimationFrame(function(){
-          if(syncAfterOpening&&lenis){
-            lenis.scrollTo(window.scrollY,{
-              immediate:true,
-              force:true
-            });
-          }
-          scheduleRefresh(0);
-        });
-      });
-    }
-
-    [
-      'hex:hero-layout-updated',
-      'hex:opening-finished'
-    ].forEach(function(eventName){
-      document.addEventListener(
-        eventName,
-        refreshAfterTopLayoutChange
-      );
-    });
-
-    document.addEventListener(
-      'hex:welcome-exit-ready',
-      refreshAfterTopLayoutChange,
-      {once:true}
     );
 
     if(lenis){
