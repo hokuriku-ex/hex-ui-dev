@@ -4523,19 +4523,25 @@ hexReady(function(){
     var previousOverflowAnchor=root.style.overflowAnchor;
     var finished=false;
 
-    function syncSmoothScroll(targetTop){
+    function setPageScroll(targetTop){
       var motion=window.hexMotion;
 
       if(
         motion&&
-        motion.lenis&&
-        typeof motion.lenis.scrollTo==="function"
+        typeof motion.scrollTo==="function"
       ){
-        motion.lenis.scrollTo(targetTop,{
+        motion.scrollTo(targetTop,{
           immediate:true,
           force:true
         });
+        return;
       }
+
+      window.scrollTo({
+        top:targetTop,
+        left:0,
+        behavior:"auto"
+      });
     }
 
     /*
@@ -4571,7 +4577,7 @@ hexReady(function(){
       var targetTop;
 
       if(!hero){
-        window.scrollTo({top:0,left:0,behavior:"auto"});
+        setPageScroll(0);
         return;
       }
 
@@ -4580,14 +4586,7 @@ hexReady(function(){
         hero.getBoundingClientRect().top+
           window.pageYOffset-headerHeight
       );
-      window.scrollTo({
-        top:targetTop,
-        left:0,
-        behavior:"auto"
-      });
-
-      /* 開幕下端を保持しているLenis側の座標も同時に戻す */
-      syncSmoothScroll(targetTop);
+      setPageScroll(targetTop);
     }
 
     function completeHandoff(){
@@ -4595,9 +4594,6 @@ hexReady(function(){
         return;
       }
       finished=true;
-
-      /* 慣性を再開する直前にも現在の最終位置を確定する */
-      syncSmoothScroll(window.scrollY);
 
       root.style.scrollBehavior=previousScrollBehavior;
       root.style.overflowAnchor=previousOverflowAnchor;
@@ -5633,10 +5629,22 @@ hexReady(function(){
       hasInteracted=true;
       cue.classList.add("is-hidden");
       target=Number(button.getAttribute("data-scene-index"));
-      window.scrollTo({
-        top:hostTop+positionToLocal(target),
-        behavior:"smooth"
-      });
+      target=hostTop+positionToLocal(target);
+
+      if(
+        window.hexMotion&&
+        typeof window.hexMotion.scrollTo==="function"
+      ){
+        window.hexMotion.scrollTo(target,{
+          duration:.8,
+          force:true
+        });
+      }else{
+        window.scrollTo({
+          top:target,
+          behavior:"smooth"
+        });
+      }
     });
 
     window.addEventListener("scroll",updateFromScroll,{passive:true});
@@ -6737,22 +6745,19 @@ hexReady(function(){
       targetTop=heroTop+initialCenterOffsetY;
 
       window.requestAnimationFrame(function(){
-        window.scrollTo(
-          0,
-          targetTop
-        );
-
         if(
           window.hexMotion&&
-          window.hexMotion.lenis
+          typeof window.hexMotion.scrollTo==="function"
         ){
-          window.hexMotion.lenis.scrollTo(
+          window.hexMotion.scrollTo(
             targetTop,
             {
               immediate:true,
               force:true
             }
           );
+        }else{
+          window.scrollTo(0,targetTop);
         }
 
         requestScrollUpdate();
@@ -6974,10 +6979,23 @@ hexReady(function(){
         /*
         * 上下ドラッグ
         */
-        window.scrollTo(
-          0,
-          startScrollTop-moveY
-        );
+        if(
+          window.hexMotion&&
+          typeof window.hexMotion.scrollTo==="function"
+        ){
+          window.hexMotion.scrollTo(
+            startScrollTop-moveY,
+            {
+              immediate:true,
+              force:true
+            }
+          );
+        }else{
+          window.scrollTo(
+            0,
+            startScrollTop-moveY
+          );
+        }
       }
 
       function requestDragUpdate(){
@@ -11079,11 +11097,9 @@ hexLoad(function(){
 
   var root=document.documentElement;
   var refreshTimer=null;
-  var classObserver=null;
   var preparationCover=null;
   var preparationStyle=null;
   var preparationSafetyTimer=null;
-  var lastSpecialState=false;
 
   /* DOM変更がこの時間止まったらHTML完成とみなす */
   var DOM_SETTLE_DELAY=500;
@@ -11263,33 +11279,12 @@ hexLoad(function(){
     return desktopWidth&&!touchDevice;
   }
 
-  function isSpecialScrollState(){
-    var foundedRunning=
-      root.classList.contains('hex-founded-stage-active')&&
-      !root.classList.contains('hex-founded-stage-complete');
-    var topBeforeCircle=
-      !!document.querySelector('.hex-hero-wrap')&&
-      window.matchMedia('(min-width:769px)').matches&&
-      !root.classList.contains('hex-hero-circle-started');
-
-    return(
-      root.classList.contains('hex-opening-lock')||
-      topBeforeCircle||
-      (
-        root.classList.contains('hex-welcome-exit-active')&&
-        !root.classList.contains('hex-welcome-exit-complete')
-      )||
-      foundedRunning
-    );
-  }
-
   function isPreventTarget(target){
     if(!target||target.nodeType!==1||!target.closest){
       return false;
     }
 
     return !!target.closest(
-      '.hex-opening,'+
       '.hex-anchor-nav-list,'+
       '.hex-calendar-modal-dialog,'+
       '#gc_auto_frame_lp_form_dialog,'+
@@ -11439,29 +11434,9 @@ hexLoad(function(){
         anchors:false,
         respectReducedMotion:true,
 
-        /*
-         * ヒーロー・WELCOMEなどの既存wheel制御を優先する。
-         * falseを返した入力はLenisで補間せずブラウザ標準へ渡す。
-         */
+        /* PCは開幕から通常コンテンツまで同じLenisで処理する。 */
         virtualScroll:function(data){
           var event=data&&data.event;
-
-          /*
-           * 開幕はPCだけLenisの慣性を使う。
-           * SPではLenis自体を初期化しないため、ブラウザ標準の
-           * タッチスクロールがそのまま使われる。
-           */
-          if(
-            document.querySelector(
-              '.hex-opening.is-scroll-driven'
-            )
-          ){
-            return true;
-          }
-
-          if(isSpecialScrollState()){
-            return false;
-          }
 
           return !isPreventTarget(
             event&&event.target
@@ -11496,50 +11471,6 @@ hexLoad(function(){
         }
         ScrollTrigger.refresh();
       },typeof delay==='number'?delay:120);
-    }
-
-    function syncScrollState(){
-      var openingLocked=root.classList.contains(
-        'hex-opening-lock'
-      );
-      var openingFinishing=root.classList.contains(
-        'hex-opening-finishing'
-      );
-      var specialState=isSpecialScrollState();
-
-      if(!lenis){
-        root.classList.remove('lenis-stopped');
-        lastSpecialState=specialState;
-        return;
-      }
-
-      if(openingLocked||openingFinishing){
-        lenis.stop();
-      }else{
-        lenis.start();
-      }
-
-      /* 特殊演出へ入る直前の現在位置で補間を確定する */
-      if(specialState&&!lastSpecialState){
-        lenis.scrollTo(window.scrollY,{
-          immediate:true,
-          force:true
-        });
-      }
-
-      if(lastSpecialState&&!specialState){
-        /*
-         * ネイティブ／専用スクロール中に進んだ現在位置を、
-         * Lenisの内部位置へ同期してから通常スクロールへ戻す。
-         */
-        lenis.scrollTo(window.scrollY,{
-          immediate:true,
-          force:true
-        });
-        scheduleRefresh(80);
-      }
-
-      lastSpecialState=specialState;
     }
 
     function clearMotionProperties(target){
@@ -12310,6 +12241,12 @@ hexLoad(function(){
       var area=scope&&scope.querySelectorAll
         ?scope
         :document;
+
+      /* 開幕スクロール中の仮座標では通常コンテンツを判定しない */
+      if(document.querySelector('.hex-opening.is-scroll-driven')){
+        return;
+      }
+
       var revealSelector=[
         '.hex-motion-up',
         '.hex-motion-left',
@@ -12478,19 +12415,10 @@ hexLoad(function(){
       }
     );
 
-    function refreshAfterTopLayoutChange(event){
-      var syncAfterOpening=
-        event&&event.type==='hex:opening-finished';
-
+    function refreshAfterTopLayoutChange(){
       /* DOM移動とCSS変数の反映後の座標で再計算する */
       window.requestAnimationFrame(function(){
         window.requestAnimationFrame(function(){
-          if(syncAfterOpening&&lenis){
-            lenis.scrollTo(window.scrollY,{
-              immediate:true,
-              force:true
-            });
-          }
           scheduleRefresh(0);
         });
       });
@@ -12506,19 +12434,21 @@ hexLoad(function(){
       );
     });
 
-    if(lenis){
-      classObserver=new MutationObserver(function(){
-        syncScrollState();
-      });
-
-      classObserver.observe(root,{
-        attributes:true,
-        attributeFilter:['class']
-      });
+    if(document.querySelector('.hex-opening.is-scroll-driven')){
+      /*
+       * 開幕用の長いスクロール領域では通常コンテンツの
+       * ScrollTriggerを作らず、ヒーロー位置確定後に一度だけ登録する。
+       */
+      document.addEventListener(
+        'hex:opening-finished',
+        function(){
+          setupMotionTargets(document);
+        },
+        {once:true}
+      );
+    }else{
+      setupMotionTargets(document);
     }
-
-    syncScrollState();
-    setupMotionTargets(document);
     setupHeroAndWelcomeCatchRolls();
 
     /* 初回の対象登録と位置計算が終わってから白カバーを外す */
