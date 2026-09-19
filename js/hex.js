@@ -4607,7 +4607,17 @@ hexReady(function(){
         opening._hexKeepHeroPreview=false;
       }
 
-      window.dispatchEvent(new Event("scroll"));
+      /*
+       * 複製レイヤー撤去後の最終レイアウトでヒーロー位置を揃える。
+       * 通常コンテンツのフェード初期化は、この確定後にだけ通知する。
+       */
+      requestAnimationFrame(function(){
+        alignHero();
+        window.dispatchEvent(new Event("scroll"));
+        document.dispatchEvent(
+          new Event("hex:opening-finished")
+        );
+      });
     }
 
     alignHero();
@@ -4616,9 +4626,6 @@ hexReady(function(){
       alignHero();
       requestAnimationFrame(function(){
         alignHero();
-        document.dispatchEvent(
-          new Event("hex:opening-finished")
-        );
         requestAnimationFrame(completeHandoff);
       });
     });
@@ -12237,15 +12244,39 @@ hexLoad(function(){
       });
     }
 
+    function prepareMotionTargetsDuringOpening(scope){
+      var area=scope&&scope.querySelectorAll
+        ?scope
+        :document;
+      var reveals=Array.prototype.slice.call(
+        area.querySelectorAll(
+          '.hex-motion-up:not([data-hex-motion-initialized]),'+
+          '.hex-motion-left:not([data-hex-motion-initialized]),'+
+          '.hex-motion-right:not([data-hex-motion-initialized]),'+
+          '.hex-motion-scale:not([data-hex-motion-initialized]),'+
+          '.hex-motion-fade:not([data-hex-motion-initialized])'
+        )
+      );
+      var autoReveals=collectAutoRevealTargets(area);
+
+      if(isReducedMotion()){
+        return;
+      }
+
+      /*
+       * 開幕終了後に非表示を後付けするとフェードが消えて見えるため、
+       * 通常表示と同じ初期状態だけを開幕中に先に確定しておく。
+       * initialized は付けず、確定座標でScrollTriggerを登録する。
+       */
+      gsap.set(reveals.concat(autoReveals),{
+        opacity:0
+      });
+    }
+
     function setupMotionTargets(scope){
       var area=scope&&scope.querySelectorAll
         ?scope
         :document;
-
-      /* 開幕スクロール中の仮座標では通常コンテンツを判定しない */
-      if(document.querySelector('.hex-opening.is-scroll-driven')){
-        return;
-      }
 
       var revealSelector=[
         '.hex-motion-up',
@@ -12434,41 +12465,23 @@ hexLoad(function(){
       );
     });
 
-    function setupMotionAfterOpening(){
-      if(
-        document.querySelector('.hex-opening.is-scroll-driven')||
-        root.classList.contains('hex-opening-finishing')
-      ){
-        window.requestAnimationFrame(setupMotionAfterOpening);
-        return;
-      }
-
+    if(
+      document.querySelector('.hex-opening.is-scroll-driven')||
+      root.classList.contains('hex-opening-finishing')
+    ){
       /*
-       * 開幕レイヤー撤去とヒーロー初期位置の反映後、
-       * さらに2フレーム待って確定座標からフェードを登録する。
+       * 開幕中から通常フェードの初期透明状態を作る。
+       * トリガー座標だけは、開幕レイヤー撤去後の確定位置で登録する。
        */
-      window.requestAnimationFrame(function(){
-        window.requestAnimationFrame(function(){
-          setupMotionTargets(document);
-          scheduleRefresh(0);
-        });
-      });
-    }
-
-    if(document.querySelector('.hex-opening.is-scroll-driven')){
-      /*
-       * 開幕用の長いスクロール領域では通常コンテンツの
-       * ScrollTriggerを作らず、ヒーロー位置確定後に一度だけ登録する。
-       */
+      prepareMotionTargetsDuringOpening(document);
       document.addEventListener(
         'hex:opening-finished',
         function(){
-          setupMotionAfterOpening();
+          setupMotionTargets(document);
+          scheduleRefresh(0);
         },
         {once:true}
       );
-    }else if(root.classList.contains('hex-opening-finishing')){
-      setupMotionAfterOpening();
     }else{
       setupMotionTargets(document);
     }
