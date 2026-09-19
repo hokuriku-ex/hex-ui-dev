@@ -6845,6 +6845,14 @@ hexReady(function(){
         Math.ceil(scrollDistance)+"px"
       );
 
+      /*
+       * 画像読込み後にヒーローの高さが変わるため、
+       * 後続コンテンツのScrollTrigger座標を再計算させる。
+       */
+      document.dispatchEvent(
+        new Event("hex:hero-layout-updated")
+      );
+
       stageReady=true;
       
       /* 横方向の中央開始位置 */
@@ -11257,8 +11265,6 @@ hexLoad(function(){
     var useLenis=shouldUseLenis();
     var lenis=null;
     var autoRevealRootSelector=[
-      /* トップページ本文全体（専用演出部分は除外指定で外す） */
-      '#gc_auto_body_home',
       /* トップページ・共通スポット項目 */
       '.gc_auto_frame_spotitem_box',
       /* 下層ページ本文 */
@@ -12424,6 +12430,26 @@ hexLoad(function(){
         );
       }
     );
+
+    function refreshAfterTopLayoutChange(){
+      /* DOM移動とCSS変数の反映後の座標で再計算する */
+      window.requestAnimationFrame(function(){
+        window.requestAnimationFrame(function(){
+          scheduleRefresh(0);
+        });
+      });
+    }
+
+    [
+      'hex:hero-layout-updated',
+      'hex:opening-finished',
+      'hex:welcome-exit-ready'
+    ].forEach(function(eventName){
+      document.addEventListener(
+        eventName,
+        refreshAfterTopLayoutChange
+      );
+    });
 
     if(lenis){
       classObserver=new MutationObserver(function(){
