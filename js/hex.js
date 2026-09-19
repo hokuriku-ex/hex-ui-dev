@@ -4593,6 +4593,23 @@ hexReady(function(){
       window.dispatchEvent(new Event("scroll"));
     }
 
+    function reloadFromHero(){
+      /*
+       * 開幕用の長いスクロール領域を通常ページへ持ち越さず、
+       * 見出し・フェード・ScrollTriggerを通常表示と同じ条件で
+       * 最初から構築し直す。再読込み中もヒーロー複製を残す。
+       */
+      root.classList.add("hex-opening-reloading");
+
+      if("scrollRestoration" in window.history){
+        window.history.scrollRestoration="manual";
+      }
+
+      /* 万一再読込みが始まらない環境では通常の受け渡しへ戻す */
+      window.setTimeout(completeHandoff,1500);
+      window.location.reload();
+    }
+
     alignHero();
 
     requestAnimationFrame(function(){
@@ -4602,7 +4619,7 @@ hexReady(function(){
         document.dispatchEvent(
           new Event("hex:opening-finished")
         );
-        requestAnimationFrame(completeHandoff);
+        requestAnimationFrame(reloadFromHero);
       });
     });
   }
@@ -5709,7 +5726,6 @@ hexReady(function(){
     openingHost.appendChild(opening);
     opening._hexOpeningHost=openingHost;
     document.body.insertBefore(openingHost,document.body.firstChild);
-    document.dispatchEvent(new Event("hex:opening-started"));
 
     /* 開幕中の背面もHero先頭へ揃える */
     window.scrollTo(0,0);
@@ -11257,8 +11273,6 @@ hexLoad(function(){
     var LenisConstructor=window.Lenis;
     var useLenis=shouldUseLenis();
     var lenis=null;
-    var initialMotionTargetsReady=false;
-    var pausedOpeningTriggers=[];
     var autoRevealRootSelector=[
       /* トップページ・共通スポット項目 */
       '.gc_auto_frame_spotitem_box',
@@ -12365,59 +12379,12 @@ hexLoad(function(){
       scheduleRefresh(0);
     }
 
-    function isOpeningMotionBlocked(){
-      return(
-        !!document.querySelector(".hex-opening")||
-        root.classList.contains("hex-opening-finishing")
-      );
-    }
-
-    function setupInitialMotionTargets(){
-      if(initialMotionTargetsReady||isOpeningMotionBlocked()){
-        return;
-      }
-
-      initialMotionTargetsReady=true;
-      setupMotionTargets(document);
-      setupHeroAndWelcomeCatchRolls();
-      scheduleRefresh(0);
-    }
-
-    function pauseMotionForOpening(){
-      if(!initialMotionTargetsReady){
-        return;
-      }
-
-      pausedOpeningTriggers=ScrollTrigger.getAll().filter(
-        function(trigger){
-          return trigger.enabled;
-        }
-      );
-
-      pausedOpeningTriggers.forEach(function(trigger){
-        trigger.disable(false,true);
-      });
-    }
-
-    function resumeMotionAfterOpening(){
-      pausedOpeningTriggers.forEach(function(trigger){
-        trigger.enable(false,false);
-      });
-      pausedOpeningTriggers=[];
-
-      setupInitialMotionTargets();
-      scheduleRefresh(0);
-    }
-
     window.hexMotion={
       lenis:lenis,
       usesLenis:!!lenis,
       gsap:gsap,
       ScrollTrigger:ScrollTrigger,
       refresh:function(scope){
-        if(isOpeningMotionBlocked()){
-          return;
-        }
         setupMotionTargets(scope||document);
       },
       refreshLayout:function(){
@@ -12460,34 +12427,11 @@ hexLoad(function(){
     document.addEventListener(
       'hex:motion-refresh',
       function(event){
-        if(isOpeningMotionBlocked()){
-          return;
-        }
         setupMotionTargets(
           event.detail&&event.detail.scope
             ?event.detail.scope
             :document
         );
-      }
-    );
-
-    document.addEventListener(
-      "hex:opening-started",
-      pauseMotionForOpening
-    );
-
-    document.addEventListener(
-      "hex:opening-finished",
-      function(){
-        /*
-         * ヒーロー着地・WELCOME座標更新の後に登録／再開する。
-         * 開幕の長い高さを使った早期発火を防ぐため2フレーム待つ。
-         */
-        window.requestAnimationFrame(function(){
-          window.requestAnimationFrame(
-            resumeMotionAfterOpening
-          );
-        });
       }
     );
 
@@ -12503,9 +12447,10 @@ hexLoad(function(){
     }
 
     syncScrollState();
-    setupInitialMotionTargets();
+    setupMotionTargets(document);
+    setupHeroAndWelcomeCatchRolls();
 
-    /* 開幕中は演出登録を待つが、開幕自体を白カバーで隠さない */
+    /* 初期状態を確定後、白い準備カバーを外す */
     window.requestAnimationFrame(function(){
       window.requestAnimationFrame(finishMotionPreparation);
     });
