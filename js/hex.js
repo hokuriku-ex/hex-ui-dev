@@ -4973,6 +4973,7 @@ hexReady(function(){
     var hasInteracted=false;
     var isComplete=false;
     var revealOriginReady=false;
+    var brandLayoutMetrics=null;
     var heroPreview=null;
     var messageIndex=-1;
     var brandIndex;
@@ -5089,6 +5090,130 @@ hexReady(function(){
       return heroPreview;
     }
 
+    function measureBrandLayout(){
+      var openingRect;
+      var logoRects=[];
+      var logoTop;
+      var logoBottom;
+      var buildHeight=0;
+      var withHeight=0;
+      var gap=4;
+      var baseCopyTop;
+      var finalCopyTop;
+      var logoShift;
+      var savedLogoTransform;
+      var savedLogoPriority;
+      var savedWithMaxHeight;
+      var savedWithMarginTop;
+      var savedWithTransform;
+      var finalCopy=opening.querySelector(".hex-opening-message-final");
+      var buildCopy=opening.querySelector(".hex-opening-message-build");
+      var withCopy=opening.querySelector(".hex-opening-message-with");
+      var logoParts=opening.querySelectorAll(
+        ".hex-logo-build,.hex-logo-company-name"
+      );
+
+      if(brandLayoutMetrics){
+        return brandLayoutMetrics;
+      }
+
+      openingRect=opening.getBoundingClientRect();
+
+      if(logoStage){
+        savedLogoTransform=logoStage.style.getPropertyValue("transform");
+        savedLogoPriority=logoStage.style.getPropertyPriority("transform");
+        logoStage.style.setProperty(
+          "transform",
+          "translate3d(0,0,0)",
+          "important"
+        );
+      }
+
+      if(withCopy){
+        savedWithMaxHeight=withCopy.style.maxHeight;
+        savedWithMarginTop=withCopy.style.marginTop;
+        savedWithTransform=withCopy.style.transform;
+        withCopy.style.maxHeight="none";
+        withCopy.style.marginTop=gap+"px";
+        withCopy.style.transform="none";
+      }
+
+      logoParts.forEach(function(part){
+        var rect=part.getBoundingClientRect();
+        if(rect.width>0&&rect.height>0){
+          logoRects.push(rect);
+        }
+      });
+
+      if(buildCopy){
+        buildHeight=buildCopy.getBoundingClientRect().height;
+      }else if(finalCopy){
+        buildHeight=finalCopy.getBoundingClientRect().height;
+      }
+      if(withCopy){
+        withHeight=withCopy.getBoundingClientRect().height;
+      }
+
+      if(withCopy){
+        withCopy.style.maxHeight=savedWithMaxHeight;
+        withCopy.style.marginTop=savedWithMarginTop;
+        withCopy.style.transform=savedWithTransform;
+      }
+      if(logoStage){
+        if(savedLogoTransform){
+          logoStage.style.setProperty(
+            "transform",
+            savedLogoTransform,
+            savedLogoPriority
+          );
+        }else{
+          logoStage.style.removeProperty("transform");
+        }
+      }
+
+      if(logoRects.length){
+        logoTop=Math.min.apply(
+          null,
+          logoRects.map(function(rect){return rect.top;})
+        )-openingRect.top;
+        logoBottom=Math.max.apply(
+          null,
+          logoRects.map(function(rect){return rect.bottom;})
+        )-openingRect.top;
+        baseCopyTop=
+          logoTop-buildHeight-withHeight-gap*2;
+        logoShift=
+          opening.clientHeight/2-
+          (baseCopyTop+logoBottom)/2;
+        finalCopyTop=baseCopyTop+logoShift;
+
+        if(finalCopyTop<12){
+          finalCopyTop=12;
+          logoShift=
+            finalCopyTop+
+            buildHeight+
+            withHeight+
+            gap*2-
+            logoTop;
+        }
+      }else{
+        finalCopyTop=Math.max(12,opening.clientHeight*.08);
+        logoShift=0;
+      }
+
+      brandLayoutMetrics={
+        copyTop:finalCopyTop,
+        centeredCopyTop:
+          (opening.clientHeight-buildHeight)/2,
+        buildHeight:buildHeight,
+        withHeight:withHeight,
+        gap:gap,
+        logoShift:logoShift
+      };
+
+      return brandLayoutMetrics;
+    }
+
     function renderLogo(progress){
       var left=opening.querySelector(".hex-logo-front-left-mask-path");
       var center=opening.querySelector(".hex-logo-front-center-mask-path");
@@ -5099,7 +5224,7 @@ hexReady(function(){
       var finalCopy=opening.querySelector(".hex-opening-message-final");
       var buildCopy=opening.querySelector(".hex-opening-message-build");
       var withCopy=opening.querySelector(".hex-opening-message-with");
-      var logoStory=opening.querySelector(".hex-logo-story");
+      var layout=measureBrandLayout();
       var drawShow=phase(progress,.12,.24);
       var copyMove=phase(progress,.27,.43);
       var withProgress=phase(progress,.46,.6);
@@ -5111,42 +5236,8 @@ hexReady(function(){
       var pBack=phase(logoProgress,.43,.66);
       var pFinal=phase(logoProgress,.66,.9);
       var openingHeight=Math.max(opening.clientHeight,1);
-      var buildHeight=buildCopy?buildCopy.offsetHeight:0;
-      var withHeight=withCopy?withCopy.scrollHeight:0;
-      var copyGap=4;
-      var completedCopyTop=openingHeight*.18;
-      var centeredCopyTop=(openingHeight-buildHeight)/2;
-      var logoFinalShift=0;
       var targetWithTop;
       var withTravel;
-
-      /*
-       * SVG内で実際に描画されるロゴ上端を求める。
-       * Draw・With・ロゴの上下間隔を揃えることで、
-       * 完成形全体が画面中央へ収まる。
-       */
-      if(logoStory){
-        var svgWidth=logoStory.clientWidth;
-        var svgHeight=logoStory.clientHeight;
-        var svgScale=Math.min(svgWidth/1000,svgHeight/560);
-        var svgContentTop=
-          logoStory.offsetTop+(svgHeight-560*svgScale)/2;
-        var logoVisualTop=svgContentTop+225*svgScale;
-        var logoVisualBottom=svgContentTop+484.2*svgScale;
-        var baseCopyTop=
-          logoVisualTop-
-          buildHeight-
-          withHeight-
-          copyGap*2;
-
-        logoFinalShift=
-          openingHeight/2-
-          (baseCopyTop+logoVisualBottom)/2;
-        completedCopyTop=Math.max(
-          12,
-          baseCopyTop+logoFinalShift
-        );
-      }
 
       if(left){left.style.strokeDashoffset=String(1-pLeft);}
       if(center){center.style.strokeDashoffset=String(1-pCenter);}
@@ -5161,25 +5252,34 @@ hexReady(function(){
         item.style.transform="translateY("+(-15*(1-pFinal))+"px)";
       });
       if(finalCopy){
-        var copyTop=centeredCopyTop+
-          (completedCopyTop-centeredCopyTop)*copyMove;
+        var copyTop=layout.centeredCopyTop+
+          (layout.copyTop-layout.centeredCopyTop)*copyMove;
 
+        finalCopy.style.setProperty(
+          "top",
+          copyTop+"px",
+          "important"
+        );
+        finalCopy.style.setProperty(
+          "transform",
+          "translateX(-50%)",
+          "important"
+        );
         finalCopy.style.opacity=String(drawShow);
-        finalCopy.style.top=copyTop+"px";
-        finalCopy.style.transform="translateX(-50%)";
       }
       if(buildCopy){
         buildCopy.style.transform=
           "translateY("+(18*(1-drawShow))+"px)";
       }
       if(withCopy){
-        targetWithTop=completedCopyTop+buildHeight+copyGap;
+        targetWithTop=
+          layout.copyTop+layout.buildHeight+layout.gap;
         withTravel=Math.max(
-          openingHeight-targetWithTop+withHeight,
+          openingHeight-targetWithTop+layout.withHeight,
           0
         );
         withCopy.style.maxHeight=(1.5*withProgress)+"em";
-        withCopy.style.marginTop=(copyGap*withProgress)+"px";
+        withCopy.style.marginTop=(layout.gap*withProgress)+"px";
         withCopy.style.opacity=String(withProgress);
         withCopy.style.transform=
           "translateY("+(withTravel*(1-withProgress))+"px)";
@@ -5187,7 +5287,7 @@ hexReady(function(){
       if(logoStage){
         var logoTranslateY=
           openingHeight*(1-logoEnter)+
-          logoFinalShift*logoEnter;
+          layout.logoShift*logoEnter;
 
         logoStage.style.opacity=String(logoEnter);
         logoStage.style.transform=
@@ -5348,6 +5448,7 @@ hexReady(function(){
       )||80;
       var viewportHeight=Math.max(window.innerHeight-headerHeight,1);
 
+      brandLayoutMetrics=null;
       sceneDistance=window.innerWidth<=768
         ?Math.max(window.innerHeight*.82,560)
         :SCENE_SCROLL_DISTANCE;
@@ -5417,6 +5518,15 @@ hexReady(function(){
 
     measure();
     updateFromScroll();
+
+    if(document.fonts&&document.fonts.ready){
+      document.fonts.ready.then(function(){
+        if(!isComplete&&opening.isConnected){
+          brandLayoutMetrics=null;
+          updateFromScroll();
+        }
+      });
+    }
   }
 
   function initOpening(){
