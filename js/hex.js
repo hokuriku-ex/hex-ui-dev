@@ -5099,16 +5099,54 @@ hexReady(function(){
       var finalCopy=opening.querySelector(".hex-opening-message-final");
       var buildCopy=opening.querySelector(".hex-opening-message-build");
       var withCopy=opening.querySelector(".hex-opening-message-with");
+      var logoStory=opening.querySelector(".hex-logo-story");
       var drawShow=phase(progress,.12,.24);
       var copyMove=phase(progress,.27,.43);
-      var withProgress=phase(progress,.4,.55);
-      var logoEnter=phase(progress,.54,.68);
-      var logoProgress=phase(progress,.7,1);
+      var withProgress=phase(progress,.46,.6);
+      var logoEnter=phase(progress,.62,.76);
+      var logoProgress=phase(progress,.78,1);
       var pLeft=phase(logoProgress,.03,.23);
       var pCenter=phase(logoProgress,.16,.36);
       var pRight=phase(logoProgress,.29,.49);
       var pBack=phase(logoProgress,.43,.66);
       var pFinal=phase(logoProgress,.66,.9);
+      var openingHeight=Math.max(opening.clientHeight,1);
+      var buildHeight=buildCopy?buildCopy.offsetHeight:0;
+      var withHeight=withCopy?withCopy.scrollHeight:0;
+      var copyGap=4;
+      var completedCopyTop=openingHeight*.18;
+      var centeredCopyTop=(openingHeight-buildHeight)/2;
+      var logoFinalShift=0;
+      var targetWithTop;
+      var withTravel;
+
+      /*
+       * SVG内で実際に描画されるロゴ上端を求める。
+       * Draw・With・ロゴの上下間隔を揃えることで、
+       * 完成形全体が画面中央へ収まる。
+       */
+      if(logoStory){
+        var svgWidth=logoStory.clientWidth;
+        var svgHeight=logoStory.clientHeight;
+        var svgScale=Math.min(svgWidth/1000,svgHeight/560);
+        var svgContentTop=
+          logoStory.offsetTop+(svgHeight-560*svgScale)/2;
+        var logoVisualTop=svgContentTop+225*svgScale;
+        var logoVisualBottom=svgContentTop+484.2*svgScale;
+        var baseCopyTop=
+          logoVisualTop-
+          buildHeight-
+          withHeight-
+          copyGap*2;
+
+        logoFinalShift=
+          openingHeight/2-
+          (baseCopyTop+logoVisualBottom)/2;
+        completedCopyTop=Math.max(
+          12,
+          baseCopyTop+logoFinalShift
+        );
+      }
 
       if(left){left.style.strokeDashoffset=String(1-pLeft);}
       if(center){center.style.strokeDashoffset=String(1-pCenter);}
@@ -5123,27 +5161,37 @@ hexReady(function(){
         item.style.transform="translateY("+(-15*(1-pFinal))+"px)";
       });
       if(finalCopy){
+        var copyTop=centeredCopyTop+
+          (completedCopyTop-centeredCopyTop)*copyMove;
+
         finalCopy.style.opacity=String(drawShow);
-        finalCopy.style.top=(50-43*copyMove)+"%";
-        finalCopy.style.transform=
-          "translate(-50%,calc(-50% + "+
-          (24*(1-drawShow))+"px))";
+        finalCopy.style.top=copyTop+"px";
+        finalCopy.style.transform="translateX(-50%)";
       }
       if(buildCopy){
         buildCopy.style.transform=
           "translateY("+(18*(1-drawShow))+"px)";
       }
       if(withCopy){
+        targetWithTop=completedCopyTop+buildHeight+copyGap;
+        withTravel=Math.max(
+          openingHeight-targetWithTop+withHeight,
+          0
+        );
         withCopy.style.maxHeight=(1.5*withProgress)+"em";
-        withCopy.style.marginTop=(4*withProgress)+"px";
+        withCopy.style.marginTop=(copyGap*withProgress)+"px";
         withCopy.style.opacity=String(withProgress);
         withCopy.style.transform=
-          "translateY("+(28*(1-withProgress))+"px)";
+          "translateY("+(withTravel*(1-withProgress))+"px)";
       }
       if(logoStage){
+        var logoTranslateY=
+          openingHeight*(1-logoEnter)+
+          logoFinalShift*logoEnter;
+
         logoStage.style.opacity=String(logoEnter);
         logoStage.style.transform=
-          "translate3d(0,"+(100*(1-logoEnter))+"%,0)";
+          "translate3d(0,"+logoTranslateY+"px,0)";
       }
     }
 
