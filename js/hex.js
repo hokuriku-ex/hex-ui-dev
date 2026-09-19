@@ -4479,16 +4479,32 @@ hexReady(function(){
   }
 
   function finishOpening(opening){
+    var root=document.documentElement;
     var host=opening&&opening._hexOpeningHost;
     var hero=document.querySelector(".hex-hero-wrap");
+    var heroPreview=opening&&opening._hexOpeningHeroPreview;
     var headerHeight=parseFloat(
-      getComputedStyle(document.documentElement)
+      getComputedStyle(root)
         .getPropertyValue("--header_height")
     )||80;
+    var previousScrollBehavior=root.style.scrollBehavior;
+    var previousOverflowAnchor=root.style.overflowAnchor;
+    var finished=false;
 
-    document.documentElement.classList.remove(
-      "hex-opening-lock"
-    );
+    /*
+     * 長い開幕スクロール領域を削除すると、削除前のscrollYが
+     * 通常ページへ一瞬引き継がれる。ヒーロー複製を残して画面を覆い、
+     * レイアウト確定後に複数回ヒーロー先頭へ揃える。
+     */
+    root.classList.add("hex-opening-finishing");
+    root.style.scrollBehavior="auto";
+    root.style.overflowAnchor="none";
+
+    if(opening&&heroPreview){
+      opening._hexKeepHeroPreview=true;
+    }
+
+    root.classList.remove("hex-opening-lock");
 
     if(
       opening&&
@@ -4504,19 +4520,59 @@ hexReady(function(){
       opening.parentNode.removeChild(opening);
     }
 
-    if(hero){
-      window.scrollTo(
+    function alignHero(){
+      var targetTop;
+
+      if(!hero){
+        window.scrollTo({top:0,left:0,behavior:"auto"});
+        return;
+      }
+
+      targetTop=Math.max(
         0,
-        Math.max(
-          0,
-          hero.getBoundingClientRect().top+
-            window.pageYOffset-headerHeight
-        )
+        hero.getBoundingClientRect().top+
+          window.pageYOffset-headerHeight
       );
+      window.scrollTo({
+        top:targetTop,
+        left:0,
+        behavior:"auto"
+      });
     }
 
-    document.dispatchEvent(new Event("hex:opening-finished"));
-    window.dispatchEvent(new Event("scroll"));
+    function completeHandoff(){
+      if(finished){
+        return;
+      }
+      finished=true;
+
+      root.style.scrollBehavior=previousScrollBehavior;
+      root.style.overflowAnchor=previousOverflowAnchor;
+      root.classList.remove("hex-opening-finishing");
+
+      if(heroPreview&&heroPreview.parentNode){
+        heroPreview.parentNode.removeChild(heroPreview);
+      }
+      if(opening){
+        opening._hexOpeningHeroPreview=null;
+        opening._hexKeepHeroPreview=false;
+      }
+
+      window.dispatchEvent(new Event("scroll"));
+    }
+
+    alignHero();
+
+    requestAnimationFrame(function(){
+      alignHero();
+      requestAnimationFrame(function(){
+        alignHero();
+        document.dispatchEvent(
+          new Event("hex:opening-finished")
+        );
+        requestAnimationFrame(completeHandoff);
+      });
+    });
   }
 
   function showPendingPage(){
@@ -5075,6 +5131,7 @@ hexReady(function(){
         :"0px";
       heroPreview.appendChild(clone);
       document.body.appendChild(heroPreview);
+      opening._hexOpeningHeroPreview=heroPreview;
 
       clone.querySelectorAll("video").forEach(function(video){
         video.muted=true;
@@ -5507,8 +5564,13 @@ hexReady(function(){
       window.removeEventListener("scroll",updateFromScroll);
       window.removeEventListener("resize",onResize);
       window.removeEventListener("orientationchange",onResize);
-      if(heroPreview&&heroPreview.parentNode){
+      if(
+        !opening._hexKeepHeroPreview&&
+        heroPreview&&
+        heroPreview.parentNode
+      ){
         heroPreview.parentNode.removeChild(heroPreview);
+        opening._hexOpeningHeroPreview=null;
       }
       heroPreview=null;
     };

@@ -9079,6 +9079,8 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
 
 /* 開幕中はページ上部へ戻るボタンを表示しない */
 html:has(.hex-opening)
+.hex-page-top,
+html.hex-opening-finishing
 .hex-page-top{
   opacity:0!important;
   visibility:hidden!important;
