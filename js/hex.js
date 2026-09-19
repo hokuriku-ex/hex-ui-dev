@@ -5629,7 +5629,6 @@ hexReady(function(){
     var scrollDistance=0;
     var initialPositionSet=false;
     var imageHandoffState="hidden";
-    var imageHandoffSource=null;
     var stageReady=false;
     var openingJustFinished=false;
     var welcomeExitAccepted=false;
@@ -5742,26 +5741,22 @@ hexReady(function(){
       });
     }
 
-    function prepareImageHandoff(){
+    function showImageHandoff(){
       var activeHero;
       var clonedHero;
       var removableItems;
 
-      if(!heroSticky){
-        return null;
+      if(
+        imageHandoffState!=="hidden"||
+        !heroSticky
+      ){
+        return;
       }
 
       activeHero=getActiveHero();
 
       if(!activeHero){
-        return null;
-      }
-
-      if(
-        imageHandoffSource===activeHero&&
-        imageHandoff.firstElementChild
-      ){
-        return imageHandoff.firstElementChild;
+        return;
       }
 
       clonedHero=activeHero.cloneNode(true);
@@ -5791,30 +5786,6 @@ hexReady(function(){
         activeHero,
         clonedHero
       );
-
-      imageHandoffSource=activeHero;
-
-      return clonedHero;
-    }
-
-    function showImageHandoff(){
-      var clonedHero;
-
-      if(
-        imageHandoffState!=="hidden"||
-        !heroSticky
-      ){
-        return;
-      }
-
-      clonedHero=prepareImageHandoff();
-
-      if(!clonedHero){
-        return;
-      }
-
-      clonedHero.style.marginLeft=
-        (-heroSticky.scrollLeft)+"px";
 
       imageHandoff.classList.add(
         "is-active"
@@ -5862,6 +5833,8 @@ hexReady(function(){
       imageHandoff.classList.remove(
         "is-active"
       );
+
+      imageHandoff.replaceChildren();
 
       imageHandoffState="hidden";
     }
@@ -6082,6 +6055,7 @@ hexReady(function(){
       var welcomeStageFinished=false;
       var welcomeCenterReached=false;
       var welcomeEntered=false;
+      var handoffLead;
 
       if(!heroSticky){
         return;
@@ -6100,9 +6074,19 @@ hexReady(function(){
         return;
       }
 
+      /*
+       * sticky解除と固定レイヤー表示が同一フレームになると、
+       * 初回の速いスクロール時だけ下端に隙間が出る。
+       * 見た目が同じ固定複製を最大64px手前から重ねておく。
+       */
+      handoffLead=Math.min(
+        64,
+        scrollDistance*.5
+      );
+
       reachedImageBottom=
         scrollDistance>0
-          ?scrolled>=scrollDistance
+          ?scrolled>=scrollDistance-handoffLead
           :scrolled>0;
 
       /*
@@ -6282,8 +6266,7 @@ hexReady(function(){
       if(replayButton){
         reachedHeroBottom=
           hero.getBoundingClientRect().bottom<=
-          window.innerHeight+
-          replayButton.offsetHeight+16;
+          replayButton.getBoundingClientRect().top-16;
 
         replayButton.classList.toggle(
           "is-outside-hero",
@@ -6554,14 +6537,6 @@ hexReady(function(){
       );
 
       stageReady=true;
-
-      /*
-       * 下端到達時の初回だけ複製画像・動画の準備が遅れないよう、
-       * 非表示の引き継ぎレイヤーをここで先に構築しておく。
-       */
-      if(!isSpHeroView()){
-        prepareImageHandoff();
-      }
       
       /* 横方向の中央開始位置 */
       horizontalScroller=hero.querySelector(
