@@ -9087,3 +9087,39 @@ html.hex-opening-finishing
   pointer-events:none!important;
   transform:translateY(10px)!important;
 }
+
+
+/* 開幕最初のキャッチ：トップ見出しと同じ1文字ロール表示 */
+.hex-opening-intro-main.has-hex-opening-char-roll{
+  white-space:nowrap;
+}
+
+.hex-opening-intro-char{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(100%) rotate(45deg);
+  transform-origin:50% 100%;
+  backface-visibility:hidden;
+  will-change:transform,opacity;
+  transition:
+    opacity .6s cubic-bezier(.215,.61,.355,1),
+    transform .6s cubic-bezier(.215,.61,.355,1);
+  transition-delay:
+    calc(var(--hex-opening-char-index,0) * .07s);
+}
+
+.hex-opening-intro-main.is-char-roll-played
+.hex-opening-intro-char{
+  opacity:1;
+  transform:translateY(0) rotate(0deg);
+  transition-delay:
+    calc(var(--hex-opening-char-index,0) * .07s);
+}
+
+@media (prefers-reduced-motion:reduce){
+  .hex-opening-intro-char{
+    opacity:1;
+    transform:none;
+    transition:none;
+  }
+}

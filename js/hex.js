@@ -4140,6 +4140,37 @@ hexReady(function(){
     return data;
   }
 
+  function prepareOpeningIntroCharRoll(main){
+    var textValue;
+
+    if(!main||main.dataset.hexOpeningCharRollReady==="1"){
+      return;
+    }
+
+    textValue=(main.textContent||"").trim();
+    if(!textValue){
+      return;
+    }
+
+    main.textContent="";
+    main.dataset.hexOpeningCharRollReady="1";
+    main.classList.add("has-hex-opening-char-roll");
+    main.setAttribute("aria-label",textValue);
+
+    Array.from(textValue).forEach(function(character,index){
+      var span=document.createElement("span");
+
+      span.className="hex-opening-intro-char";
+      span.setAttribute("aria-hidden","true");
+      span.style.setProperty(
+        "--hex-opening-char-index",
+        String(index)
+      );
+      span.textContent=character===" "?"\u00a0":character;
+      main.appendChild(span);
+    });
+  }
+
   function createOpeningIntro(opening,data){
     var stage=document.createElement("div");
     var picture=document.createElement("picture");
@@ -4173,6 +4204,7 @@ hexReady(function(){
     if(data.main){
       main.className="hex-opening-intro-main";
       main.innerHTML=data.main;
+      prepareOpeningIntroCharRoll(main);
       catchBox.appendChild(main);
     }
 
@@ -5027,6 +5059,7 @@ hexReady(function(){
     var storyDistance=1;
     var circleDistance=1;
     var hasInteracted=false;
+    var introCatchPlayed=false;
     var isComplete=false;
     var revealOriginReady=false;
     var brandLayoutMetrics=null;
@@ -5268,6 +5301,34 @@ hexReady(function(){
       return brandLayoutMetrics;
     }
 
+    function renderOpeningCopies(){
+      var introMain=introStage
+        ?introStage.querySelector(
+          ".hex-opening-intro-main.has-hex-opening-char-roll"
+        )
+        :null;
+      var messageFirst=messageStage
+        ?messageStage.querySelector(".hex-opening-message-first")
+        :null;
+      var messageFade;
+
+      /* 初回に一度だけ再生し、戻りスクロールでは状態を維持する。 */
+      if(!introCatchPlayed&&introMain&&position<1){
+        introCatchPlayed=true;
+        introMain.classList.add("is-char-roll-played");
+      }
+
+      /* 右からの場面移動は維持し、コピー自体だけをフェード表示する。 */
+      if(messageFirst){
+        messageFade=phase(
+          position,
+          Math.max(messageIndex-.48,0),
+          Math.max(messageIndex-.08,.01)
+        );
+        messageFirst.style.opacity=String(messageFade);
+      }
+    }
+
     function renderLogo(progress){
       var left=opening.querySelector(".hex-logo-front-left-mask-path");
       var center=opening.querySelector(".hex-logo-front-center-mask-path");
@@ -5438,6 +5499,7 @@ hexReady(function(){
         setSceneStyle(scene,x,y,isVisible);
       });
 
+      renderOpeningCopies();
       renderLogo(storyProgress);
       renderCurtain();
       updateDots();
