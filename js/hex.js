@@ -5097,7 +5097,10 @@ hexReady(function(){
 
     curtain.className="hex-opening-curtain";
     curtain.setAttribute("aria-hidden","true");
-    curtain.innerHTML="<i></i><i></i><i></i><i></i>";
+    curtain.innerHTML=
+      '<span class="hex-opening-curtain-track">'+
+        '<i></i><i></i><i></i><i></i>'+
+      '</span>';
     opening.appendChild(curtain);
 
     return opening;
@@ -6037,8 +6040,9 @@ hexReady(function(){
     var cancelled=false;
     var timers=[];
     var curtain=opening.querySelector(".hex-opening-curtain");
-    var bands=curtain
-      ?Array.prototype.slice.call(curtain.children)
+    var track=curtain&&curtain.querySelector(".hex-opening-curtain-track");
+    var bands=track
+      ?Array.prototype.slice.call(track.children)
       :[];
     var firstVisit=!replayRequested;
     var reduced=isReducedMotion();
@@ -6079,6 +6083,9 @@ hexReady(function(){
           band.getAnimations().forEach(function(animation){animation.cancel();});
         }
       });
+      if(track&&track.getAnimations){
+        track.getAnimations().forEach(function(animation){animation.cancel();});
+      }
       var loader=document.querySelector(".hex-simple-loader");
       if(loader){loader.remove();}
 
@@ -6148,10 +6155,10 @@ hexReady(function(){
 
       var vertical=window.matchMedia("(max-width:768px)").matches;
       var duration=800;
-      var stagger=45;
-      var totalDuration=duration+stagger*(bands.length-1);
+      var totalDuration=duration;
       var incomingAnimation=null;
       var outgoingAnimation=null;
+      var trackAnimation=null;
 
       if(nextScene){
         nextScene.classList.add("is-v2-incoming");
@@ -6196,33 +6203,31 @@ hexReady(function(){
         );
       }
 
-      bands.forEach(function(band,bandIndex){
-        var delay=bandIndex*stagger;
-        var keyframes=vertical
+      trackAnimation=track.animate(
+        vertical
           ?[
-            {height:"10px",transform:"translate3d(0,101vh,0)"},
-            {height:"15vh",transform:"translate3d(0,76vh,0)",offset:.16},
-            {height:"15vh",transform:"translate3d(0,-45vh,0)",offset:.84},
-            {height:"10px",transform:"translate3d(0,-61vh,0)"}
+            {transform:"translate3d(0,101vh,0) scaleY(.015)"},
+            {transform:"translate3d(0,76vh,0) scaleY(1)",offset:.16},
+            {transform:"translate3d(0,-45vh,0) scaleY(1)",offset:.84},
+            {transform:"translate3d(0,-61vh,0) scaleY(.015)"}
           ]
           :[
-            {width:"10px",transform:"translate3d(101vw,0,0)"},
-            {width:"15vw",transform:"translate3d(76vw,0,0)",offset:.16},
-            {width:"15vw",transform:"translate3d(-45vw,0,0)",offset:.84},
-            {width:"10px",transform:"translate3d(-61vw,0,0)"}
-          ];
-
-        band.animate(keyframes,{
+            {transform:"translate3d(101vw,0,0) scaleX(.015)"},
+            {transform:"translate3d(76vw,0,0) scaleX(1)",offset:.16},
+            {transform:"translate3d(-45vw,0,0) scaleX(1)",offset:.84},
+            {transform:"translate3d(-61vw,0,0) scaleX(.015)"}
+          ],
+        {
           duration:duration,
-          delay:delay,
           easing:"cubic-bezier(0,.6,.25,1)",
           fill:"both"
-        });
-      });
+        }
+      );
 
       return wait(totalDuration+40).then(function(){
         if(incomingAnimation){incomingAnimation.cancel();}
         if(outgoingAnimation){outgoingAnimation.cancel();}
+        if(trackAnimation){trackAnimation.cancel();}
         curtain.classList.remove("is-active","is-v2-running");
 
         if(nextScene){
