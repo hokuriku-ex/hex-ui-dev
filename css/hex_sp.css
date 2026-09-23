@@ -2466,3 +2466,100 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     max-width:100vw!important;
   }
 }
+
+/* =======================================
+   2026 opening / WebGL hero rebuild (SP)
+======================================= */
+@media screen and (max-width:768px){
+  .hex-opening.is-curtain-sequence
+  :is(.hex-opening-intro-catch,.hex-opening-slide-title,.hex-opening-message-first,.hex-opening-message-final,.hex-opening-logo-stage){
+    opacity:0;
+    transform:translate3d(0,44px,0)!important;
+  }
+
+  .hex-opening.is-curtain-sequence .is-v2-entered
+  :is(.hex-opening-intro-catch,.hex-opening-slide-title,.hex-opening-message-first,.hex-opening-message-final,.hex-opening-logo-stage){
+    opacity:1;
+    transform:translate3d(0,0,0)!important;
+  }
+  .hex-opening.is-curtain-sequence
+  :is(.hex-opening-message-first,.hex-opening-message-final){
+    transform:translate(-50%,calc(-50% + 44px))!important;
+  }
+  .hex-opening.is-curtain-sequence .is-v2-entered
+  :is(.hex-opening-message-first,.hex-opening-message-final){
+    transform:translate(-50%,-50%)!important;
+  }
+
+  /* SPの4色カーテンは下から上へ通過 */
+  .hex-opening.is-curtain-sequence .hex-opening-curtain>i{
+    top:0;
+    right:-2%;
+    bottom:auto;
+    left:-2%!important;
+    width:104%!important;
+    min-width:0;
+    height:28vh;
+    min-height:180px;
+    transform:translate3d(0,112vh,0);
+  }
+  .hex-opening.is-curtain-sequence .hex-opening-curtain>i:nth-child(1){top:-7vh}
+  .hex-opening.is-curtain-sequence .hex-opening-curtain>i:nth-child(2){top:18vh}
+  .hex-opening.is-curtain-sequence .hex-opening-curtain>i:nth-child(3){top:43vh}
+  .hex-opening.is-curtain-sequence .hex-opening-curtain>i:nth-child(4){top:68vh}
+
+  .hex-simple-loader-logo{font-size:34px}
+  .hex-simple-loader-label{top:calc(50% + 44px)}
+  .hex-simple-loader-bar{top:calc(50% + 68px);width:150px}
+
+  .hex-hero-wrap,
+  .hex-hero-sticky{height:100svh!important;min-height:100svh!important}
+  .hex-hero{height:calc(100svh - var(--header_height,80px))!important}
+  .hex-webgl-stage{cursor:grab}
+  .hex-v2-handoff{height:calc(100svh - var(--header_height,80px))}
+  .hex-v2-handoff.is-released{height:calc(100svh - var(--header_height,80px))}
+
+  .hex-v2-welcome .welcome.has-padding{
+    min-height:100svh!important;
+    height:100svh!important;
+  }
+  .hex-v2-welcome-copy-stage{
+    right:16px;
+    left:16px;
+    width:auto;
+    max-width:none;
+  }
+  .hex-v2-welcome-copy-stage .hex-welcome-copy{
+    width:100%!important;
+    margin-bottom:28px!important;
+    text-align:center!important;
+  }
+  .hex-v2-welcome-copy-stage .welcome_contents{
+    width:100%!important;
+    padding-inline:8px!important;
+  }
+
+  /* 丸画像と重なるSPだけ、各文字へ個別の生成り縁取り */
+  .hex-v2-welcome-copy-stage .hex-welcome-copy .hex-opening-main{
+    -webkit-text-stroke:3.5px #faf7ef!important;
+    paint-order:stroke fill!important;
+    text-shadow:none!important;
+  }
+  .hex-v2-welcome-copy-stage .hex-welcome-copy .hex-opening-sub,
+  .hex-v2-welcome-copy-stage .welcome .title :is(h2,h3,h4){
+    -webkit-text-stroke:2.5px #faf7ef!important;
+    paint-order:stroke fill!important;
+    text-shadow:none!important;
+  }
+  .hex-v2-welcome-copy-stage .welcome .text,
+  .hex-v2-welcome-copy-stage .welcome .text *{
+    -webkit-text-stroke:1.75px #faf7ef!important;
+    paint-order:stroke fill!important;
+    text-shadow:none!important;
+  }
+  .hex-v2-welcome-copy-stage :is(small,.hex-signature-title,.hex-signature-name){
+    -webkit-text-stroke:1.1px #faf7ef!important;
+    paint-order:stroke fill!important;
+    text-shadow:none!important;
+  }
+}
