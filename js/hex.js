@@ -6531,6 +6531,7 @@ hexReady(function(){
     ensureHeroReady();
 
     opening=createOpeningElement();
+    document.documentElement.classList.add("hex-opening-lock");
     setupOpeningSkip(opening);
     introData=collectOpeningIntro();
     slides=collectOpeningSlides();
