@@ -2057,6 +2057,8 @@ hexReady(function(){
     var camera=null;
     var plane=null;
     var texture=null;
+    var textureCanvas=null;
+    var renderFrameId=0;
     var snapshot=null;
     var snapshotCanvas=null;
     var state={x:0,y:0,vx:0,vy:0};
@@ -2179,10 +2181,7 @@ hexReady(function(){
         nextImage=activeHero.querySelector(".hex-hero-bg img");
         if(nextImage){
           sourceImage=nextImage;
-          if(texture){
-            texture.image=sourceImage;
-            texture.needsUpdate=true;
-          }
+          updateTextureSource(sourceImage);
           if(plane&&window.THREE&&sourceImage.naturalWidth){
             if(plane.geometry){plane.geometry.dispose();}
             plane.geometry=new window.THREE.PlaneGeometry(
@@ -2229,7 +2228,12 @@ hexReady(function(){
       renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
       renderer.setSize(width,height,false);
       setCamera();
-      renderer.render(scene,camera);
+      try{
+        renderer.render(scene,camera);
+      }catch(error){
+        createFallback();
+        return;
+      }
       measureWelcome();
     }
 
@@ -2500,12 +2504,96 @@ hexReady(function(){
           if(Math.abs(state.vy)<.002){state.vy=0;}
           setCamera();
         }
-        renderer.render(scene,camera);
+        try{
+          renderer.render(scene,camera);
+        }catch(error){
+          createFallback();
+          return;
+        }
       }
-      window.requestAnimationFrame(renderLoop);
+      renderFrameId=window.requestAnimationFrame(renderLoop);
+    }
+
+    function updateTextureSource(image){
+      var naturalWidth=image&&image.naturalWidth;
+      var naturalHeight=image&&image.naturalHeight;
+      var maxTextureSize=4096;
+      var scale;
+      var context;
+
+      if(!naturalWidth||!naturalHeight||!window.THREE){return false;}
+
+      scale=Math.min(1,maxTextureSize/Math.max(naturalWidth,naturalHeight));
+      if(!textureCanvas){textureCanvas=document.createElement("canvas");}
+      textureCanvas.width=Math.max(1,Math.round(naturalWidth*scale));
+      textureCanvas.height=Math.max(1,Math.round(naturalHeight*scale));
+      context=textureCanvas.getContext("2d",{alpha:false});
+      if(!context){return false;}
+      context.drawImage(image,0,0,textureCanvas.width,textureCanvas.height);
+
+      if(texture){
+        texture.image=textureCanvas;
+        texture.needsUpdate=true;
+      }
+      return true;
+    }
+
+    function hasVisibleRender(){
+      var gl;
+      var canvas;
+      var pixel=new Uint8Array(4);
+      var points=[.12,.3,.5,.7,.88];
+      var x;
+      var y;
+      var xi;
+      var yi;
+
+      if(!renderer){return false;}
+      try{
+        gl=renderer.getContext();
+        canvas=renderer.domElement;
+        if(gl.isContextLost()){return false;}
+        for(yi=0;yi<points.length;yi+=1){
+          for(xi=0;xi<points.length;xi+=1){
+            x=Math.min(canvas.width-1,Math.max(0,Math.round(canvas.width*points[xi])));
+            y=Math.min(canvas.height-1,Math.max(0,Math.round(canvas.height*points[yi])));
+            gl.readPixels(x,y,1,1,gl.RGBA,gl.UNSIGNED_BYTE,pixel);
+            if(pixel[0]>8||pixel[1]>8||pixel[2]>8){return true;}
+          }
+        }
+      }catch(error){
+        return false;
+      }
+      return false;
+    }
+
+    function destroyThree(){
+      window.cancelAnimationFrame(renderFrameId);
+      renderFrameId=0;
+      if(webglStage){
+        webglStage.removeEventListener("wheel",onWheel);
+        webglStage.removeEventListener("pointerdown",onPointerDown);
+        webglStage.removeEventListener("pointermove",onPointerMove);
+        webglStage.removeEventListener("pointerup",endPointer);
+        webglStage.removeEventListener("pointercancel",endPointer);
+      }
+      if(activeHero){activeHero.classList.remove("is-v2-active");}
+      if(plane&&plane.geometry){plane.geometry.dispose();}
+      if(plane&&plane.material){plane.material.dispose();}
+      if(texture){texture.dispose();}
+      if(renderer){renderer.dispose();}
+      if(webglStage&&webglStage.parentNode){webglStage.remove();}
+      webglStage=null;
+      renderer=null;
+      scene=null;
+      camera=null;
+      plane=null;
+      texture=null;
+      textureCanvas=null;
     }
 
     function createFallback(){
+      destroyThree();
       activeHero=getActiveHero();
       if(activeHero){activeHero.classList.add("is-v2-fallback");}
       hero.classList.add("is-v2-ready","is-v2-fallback");
@@ -2524,45 +2612,59 @@ hexReady(function(){
       if(!activeHero||!sourceImage){createFallback();return;}
 
       function complete(){
-        imageWidth=sourceImage.naturalWidth||1920;
-        imageHeight=sourceImage.naturalHeight||1080;
-        webglStage=document.createElement("div");
-        webglStage.className="hex-webgl-stage";
-        renderer=new THREE.WebGLRenderer({
-          alpha:false,
-          antialias:true,
-          preserveDrawingBuffer:true,
-          powerPreference:"high-performance"
-        });
-        renderer.setClearColor(0xffffff,1);
-        renderer.outputColorSpace=THREE.SRGBColorSpace;
-        renderer.domElement.setAttribute("aria-label","全方位に探索できるヒーロー画像");
-        webglStage.appendChild(renderer.domElement);
-        activeHero.insertBefore(webglStage,activeHero.firstChild);
+        try{
+          imageWidth=sourceImage.naturalWidth||1920;
+          imageHeight=sourceImage.naturalHeight||1080;
+          webglStage=document.createElement("div");
+          webglStage.className="hex-webgl-stage";
+          renderer=new THREE.WebGLRenderer({
+            alpha:true,
+            antialias:true,
+            preserveDrawingBuffer:true,
+            powerPreference:"high-performance"
+          });
+          if(renderer.getContext().isContextLost()){
+            throw new Error("WebGL context unavailable");
+          }
+          renderer.setClearColor(0xffffff,0);
+          renderer.outputColorSpace=THREE.SRGBColorSpace;
+          renderer.domElement.setAttribute("aria-label","全方位に探索できるヒーロー画像");
+          webglStage.appendChild(renderer.domElement);
+          activeHero.insertBefore(webglStage,activeHero.firstChild);
 
-        scene=new THREE.Scene();
-        camera=new THREE.OrthographicCamera(-1,1,1,-1,.1,10);
-        camera.position.z=1;
-        texture=new THREE.Texture(sourceImage);
-        texture.colorSpace=THREE.SRGBColorSpace;
-        texture.needsUpdate=true;
-        geometry=new THREE.PlaneGeometry(imageWidth,imageHeight);
-        material=new THREE.MeshBasicMaterial({map:texture});
-        plane=new THREE.Mesh(geometry,material);
-        scene.add(plane);
+          scene=new THREE.Scene();
+          camera=new THREE.OrthographicCamera(-1,1,1,-1,.1,10);
+          camera.position.z=1;
+          if(!updateTextureSource(sourceImage)){
+            throw new Error("Hero texture could not be prepared");
+          }
+          texture=new THREE.CanvasTexture(textureCanvas);
+          texture.colorSpace=THREE.SRGBColorSpace;
+          texture.needsUpdate=true;
+          geometry=new THREE.PlaneGeometry(imageWidth,imageHeight);
+          material=new THREE.MeshBasicMaterial({map:texture});
+          plane=new THREE.Mesh(geometry,material);
+          scene.add(plane);
 
-        activeHero.classList.add("is-v2-active");
-        webglStage.addEventListener("wheel",onWheel,{passive:false});
-        webglStage.addEventListener("pointerdown",onPointerDown);
-        webglStage.addEventListener("pointermove",onPointerMove);
-        webglStage.addEventListener("pointerup",endPointer);
-        webglStage.addEventListener("pointercancel",endPointer);
-        resizeRenderer();
-        ready=true;
-        hero.classList.add("is-v2-ready");
-        document.dispatchEvent(new Event("hex:hero-layout-updated"));
-        revealCatch(false);
-        renderLoop();
+          webglStage.addEventListener("wheel",onWheel,{passive:false});
+          webglStage.addEventListener("pointerdown",onPointerDown);
+          webglStage.addEventListener("pointermove",onPointerMove);
+          webglStage.addEventListener("pointerup",endPointer);
+          webglStage.addEventListener("pointercancel",endPointer);
+          resizeRenderer();
+          if(!renderer){return;}
+          if(!hasVisibleRender()){
+            throw new Error("Hero texture rendered as an empty frame");
+          }
+          activeHero.classList.add("is-v2-active");
+          ready=true;
+          hero.classList.add("is-v2-ready");
+          document.dispatchEvent(new Event("hex:hero-layout-updated"));
+          revealCatch(false);
+          renderLoop();
+        }catch(error){
+          createFallback();
+        }
       }
 
       if(sourceImage.complete&&sourceImage.naturalWidth){complete();}
@@ -5940,6 +6042,14 @@ hexReady(function(){
       :[];
     var firstVisit=!replayRequested;
     var reduced=isReducedMotion();
+    var nav=null;
+    var cue=null;
+    var transitionLocked=false;
+    var wheelAmount=0;
+    var wheelTimer=null;
+    var touchStartY=null;
+    var WHEEL_THRESHOLD=45;
+    var SWIPE_THRESHOLD=42;
 
     if(introStage){scenes.push(introStage);}
     slides.forEach(function(slide){scenes.push(slide);});
@@ -5963,6 +6073,7 @@ hexReady(function(){
       cancelled=true;
       timers.forEach(window.clearTimeout);
       timers=[];
+      window.clearTimeout(wheelTimer);
       bands.forEach(function(band){
         if(band.getAnimations){
           band.getAnimations().forEach(function(animation){animation.cancel();});
@@ -5970,9 +6081,15 @@ hexReady(function(){
       });
       var loader=document.querySelector(".hex-simple-loader");
       if(loader){loader.remove();}
+
+      opening.removeEventListener("wheel",onWheel);
+      opening.removeEventListener("touchstart",onTouchStart);
+      opening.removeEventListener("touchend",onTouchEnd);
+      document.removeEventListener("keydown",onKeyDown);
     }
 
     opening._hexV2Cancel=cancel;
+    opening._hexOpeningCleanup=cancel;
     opening.classList.add("is-curtain-sequence");
 
     scenes.forEach(function(scene,sceneIndex){
@@ -6002,9 +6119,28 @@ hexReady(function(){
       animateIncoming(scenes[nextIndex]);
     }
 
-    function runCurtain(switchScene){
+    function updateDots(heroSelected){
+      if(!nav){return;}
+      Array.prototype.forEach.call(
+        nav.querySelectorAll(".hex-progress-dot"),
+        function(dot,dotIndex){
+          var current=heroSelected
+            ?dotIndex===scenes.length
+            :dotIndex===index;
+          dot.classList.toggle("is-current",current);
+          dot.classList.toggle(
+            "is-passed",
+            heroSelected||dotIndex<index
+          );
+          if(current){dot.setAttribute("aria-current","step");}
+          else{dot.removeAttribute("aria-current");}
+        }
+      );
+    }
+
+    function runCurtain(currentScene,nextScene,isHero){
       if(reduced||!bands.length){
-        switchScene();
+        if(nextScene){activate(scenes.indexOf(nextScene));}
         return Promise.resolve();
       }
 
@@ -6013,20 +6149,67 @@ hexReady(function(){
       var vertical=window.matchMedia("(max-width:768px)").matches;
       var duration=800;
       var stagger=45;
-      var switchDelay=390;
+      var totalDuration=duration+stagger*(bands.length-1);
+      var incomingAnimation=null;
+      var outgoingAnimation=null;
+
+      if(nextScene){
+        nextScene.classList.add("is-v2-incoming");
+        nextScene.setAttribute("aria-hidden","false");
+        nextScene.style.zIndex="3";
+        animateIncoming(nextScene);
+
+        incomingAnimation=nextScene.animate(
+          vertical
+            ?[
+              {clipPath:"inset(100% 0 0 0)"},
+              {clipPath:"inset(0 0 0 0)"}
+            ]
+            :[
+              {clipPath:"inset(0 0 0 100%)"},
+              {clipPath:"inset(0 0 0 0)"}
+            ],
+          {
+            duration:duration,
+            delay:70,
+            easing:"cubic-bezier(0,.6,.25,1)",
+            fill:"both"
+          }
+        );
+      }else if(isHero&&currentScene){
+        outgoingAnimation=currentScene.animate(
+          vertical
+            ?[
+              {clipPath:"inset(0 0 0 0)"},
+              {clipPath:"inset(0 0 100% 0)"}
+            ]
+            :[
+              {clipPath:"inset(0 0 0 0)"},
+              {clipPath:"inset(0 100% 0 0)"}
+            ],
+          {
+            duration:duration,
+            delay:70,
+            easing:"cubic-bezier(0,.6,.25,1)",
+            fill:"both"
+          }
+        );
+      }
 
       bands.forEach(function(band,bandIndex){
         var delay=bandIndex*stagger;
         var keyframes=vertical
           ?[
-            {transform:"translate3d(0,112vh,0)"},
-            {transform:"translate3d(0,0,0)",offset:.48},
-            {transform:"translate3d(0,-112vh,0)"}
+            {height:"10px",transform:"translate3d(0,101vh,0)"},
+            {height:"15vh",transform:"translate3d(0,76vh,0)",offset:.16},
+            {height:"15vh",transform:"translate3d(0,-45vh,0)",offset:.84},
+            {height:"10px",transform:"translate3d(0,-61vh,0)"}
           ]
           :[
-            {transform:"translate3d(112vw,0,0)"},
-            {transform:"translate3d(0,0,0)",offset:.48},
-            {transform:"translate3d(-112vw,0,0)"}
+            {width:"10px",transform:"translate3d(101vw,0,0)"},
+            {width:"15vw",transform:"translate3d(76vw,0,0)",offset:.16},
+            {width:"15vw",transform:"translate3d(-45vw,0,0)",offset:.84},
+            {width:"10px",transform:"translate3d(-61vw,0,0)"}
           ];
 
         band.animate(keyframes,{
@@ -6037,49 +6220,140 @@ hexReady(function(){
         });
       });
 
-      later(switchScene,switchDelay);
-
-      return wait(duration+stagger*(bands.length-1)+40).then(function(){
+      return wait(totalDuration+40).then(function(){
+        if(incomingAnimation){incomingAnimation.cancel();}
+        if(outgoingAnimation){outgoingAnimation.cancel();}
         curtain.classList.remove("is-active","is-v2-running");
+
+        if(nextScene){
+          scenes.forEach(function(scene){
+            var active=scene===nextScene;
+            scene.classList.toggle("is-v2-current",active);
+            scene.classList.remove("is-v2-incoming");
+            scene.setAttribute("aria-hidden",active?"false":"true");
+            scene.style.removeProperty("z-index");
+            scene.style.removeProperty("clip-path");
+          });
+        }
       });
     }
 
-    function sceneHold(scene){
-      if(scene===introStage){return 1900;}
-      if(scene===messageStage){return 1750;}
-      if(scene===brandStage){return 2500;}
-      return 1650;
-    }
-
-    function playNext(){
-      if(cancelled||!opening.isConnected){return;}
-
-      if(index>=scenes.length-1){
-        later(finishToHero,sceneHold(scenes[index]));
-        return;
-      }
-
-      later(function(){
-        runCurtain(function(){
-          index+=1;
-          activate(index);
-        }).then(playNext);
-      },sceneHold(scenes[index]));
-    }
-
     function finishToHero(){
-      runCurtain(function(){
-        opening.classList.add("is-v2-hero-stage");
+      if(transitionLocked){return;}
+      transitionLocked=true;
+      ensureHeroReady();
+      showHeroCatch(0);
+      createOpeningHeroPreview();
+      opening.classList.add("is-v2-hero-stage");
+      updateDots(true);
+
+      runCurtain(scenes[index],null,true).then(function(){
         scenes.forEach(function(scene){
           scene.classList.remove("is-v2-current");
           scene.setAttribute("aria-hidden","true");
         });
-        ensureHeroReady();
-        showHeroCatch(0);
-      }).then(function(){
         if(cancelled){return;}
         finishOpening(opening);
       });
+    }
+
+    function goTo(nextIndex){
+      var nextScene;
+
+      if(cancelled||transitionLocked||!opening.isConnected){return;}
+      if(nextIndex>=scenes.length){finishToHero();return;}
+      nextIndex=Math.max(0,nextIndex);
+      if(nextIndex===index){return;}
+
+      transitionLocked=true;
+      nextScene=scenes[nextIndex];
+      cue.classList.add("is-hidden");
+
+      runCurtain(scenes[index],nextScene,false).then(function(){
+        index=nextIndex;
+        updateDots(false);
+        transitionLocked=false;
+      });
+    }
+
+    function step(direction){
+      if(direction>0){goTo(index+1);}
+      else if(direction<0){goTo(index-1);}
+    }
+
+    function createOpeningHeroPreview(){
+      var hero=document.querySelector(".hex-hero-wrap");
+      var activeHero;
+      var preview;
+      var clone;
+
+      if(!hero||opening._hexOpeningHeroPreview){
+        return opening._hexOpeningHeroPreview||null;
+      }
+
+      activeHero=hero.querySelector(
+        window.matchMedia("(max-width:768px)").matches
+          ?".hex-hero-sp"
+          :".hex-hero-pc"
+      )||hero.querySelector(".hex-hero");
+
+      if(!activeHero){return null;}
+
+      preview=document.createElement("div");
+      preview.className=
+        "hex-opening-hero-preview hex-v2-opening-preview is-active";
+      preview.setAttribute("aria-hidden","true");
+      clone=activeHero.cloneNode(true);
+      clone.classList.remove("is-v2-active","is-v2-fallback");
+      clone.querySelectorAll(
+        ".hex-webgl-stage,.hex-hero-catch,.hex-scroll-indicator"
+      ).forEach(function(element){element.remove();});
+      preview.appendChild(clone);
+      document.body.appendChild(preview);
+      opening._hexOpeningHeroPreview=preview;
+      return preview;
+    }
+
+    function onWheel(event){
+      if(cancelled){return;}
+      event.preventDefault();
+      if(transitionLocked){return;}
+
+      wheelAmount+=event.deltaY;
+      window.clearTimeout(wheelTimer);
+      wheelTimer=window.setTimeout(function(){wheelAmount=0;},120);
+
+      if(Math.abs(wheelAmount)>=WHEEL_THRESHOLD){
+        step(wheelAmount>0?1:-1);
+        wheelAmount=0;
+      }
+    }
+
+    function onTouchStart(event){
+      if(event.touches&&event.touches.length===1){
+        touchStartY=event.touches[0].clientY;
+      }
+    }
+
+    function onTouchEnd(event){
+      var endY;
+      if(touchStartY===null||!event.changedTouches||!event.changedTouches.length){return;}
+      endY=event.changedTouches[0].clientY;
+      if(Math.abs(endY-touchStartY)>=SWIPE_THRESHOLD){
+        step(endY<touchStartY?1:-1);
+      }
+      touchStartY=null;
+    }
+
+    function onKeyDown(event){
+      if(!opening.isConnected||transitionLocked){return;}
+      if(["ArrowDown","PageDown"," ","Enter"].indexOf(event.key)>=0){
+        event.preventDefault();
+        step(1);
+      }else if(["ArrowUp","PageUp"].indexOf(event.key)>=0){
+        event.preventDefault();
+        step(-1);
+      }
     }
 
     function collectPreloadUrls(){
@@ -6116,7 +6390,6 @@ hexReady(function(){
     function showLoader(){
       var loader=document.createElement("div");
       var progress=loader.appendChild(document.createElement("div"));
-      var logo=loader.appendChild(document.createElement("strong"));
       var label=loader.appendChild(document.createElement("span"));
       var bar=loader.appendChild(document.createElement("i"));
       var urls=collectPreloadUrls();
@@ -6127,10 +6400,8 @@ hexReady(function(){
 
       loader.className="hex-simple-loader";
       progress.className="hex-simple-loader-inner";
-      logo.className="hex-simple-loader-logo";
       label.className="hex-simple-loader-label";
       bar.className="hex-simple-loader-bar";
-      logo.textContent="HEX";
       label.textContent="LOADING";
       document.body.appendChild(loader);
 
@@ -6187,8 +6458,27 @@ hexReady(function(){
         finishToHero();
         return;
       }
+
+      nav=createOpeningProgressNav(
+        opening,
+        scenes.length+1,
+        scenes.length
+      );
+      cue=createOpeningScrollCue(opening);
+
+      nav.addEventListener("click",function(event){
+        var button=event.target.closest(".hex-progress-dot");
+        if(!button){return;}
+        goTo(Number(button.getAttribute("data-scene-index")));
+      });
+
+      opening.addEventListener("wheel",onWheel,{passive:false});
+      opening.addEventListener("touchstart",onTouchStart,{passive:true});
+      opening.addEventListener("touchend",onTouchEnd,{passive:true});
+      document.addEventListener("keydown",onKeyDown);
+
       activate(0);
-      playNext();
+      updateDots(false);
     }
 
     if(firstVisit&&!isReducedMotion()){

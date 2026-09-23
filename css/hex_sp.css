@@ -2492,25 +2492,26 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
 
   /* SPの4色カーテンは下から上へ通過 */
-  .hex-opening.is-curtain-sequence .hex-opening-curtain>i{
-    top:0;
-    right:-2%;
-    bottom:auto;
-    left:-2%!important;
-    width:104%!important;
-    min-width:0;
-    height:28vh;
-    min-height:180px;
-    transform:translate3d(0,112vh,0);
+  .hex-opening.is-curtain-sequence .hex-opening-curtain{
+    flex-direction:column;
+    align-items:stretch;
   }
-  .hex-opening.is-curtain-sequence .hex-opening-curtain>i:nth-child(1){top:-7vh}
-  .hex-opening.is-curtain-sequence .hex-opening-curtain>i:nth-child(2){top:18vh}
-  .hex-opening.is-curtain-sequence .hex-opening-curtain>i:nth-child(3){top:43vh}
-  .hex-opening.is-curtain-sequence .hex-opening-curtain>i:nth-child(4){top:68vh}
+  .hex-opening.is-curtain-sequence .hex-opening-curtain>i{
+    top:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    left:auto!important;
+    width:100%;
+    min-width:0;
+    height:10px;
+    min-height:0;
+    transform:translate3d(0,101vh,0);
+    transform-origin:center top;
+    will-change:height,transform;
+  }
 
-  .hex-simple-loader-logo{font-size:34px}
-  .hex-simple-loader-label{top:calc(50% + 44px)}
-  .hex-simple-loader-bar{top:calc(50% + 68px);width:150px}
+  .hex-simple-loader-label{top:calc(50% - 12px)}
+  .hex-simple-loader-bar{top:calc(50% + 14px);width:150px}
 
   .hex-hero-wrap,
   .hex-hero-sticky{height:100svh!important;min-height:100svh!important}
