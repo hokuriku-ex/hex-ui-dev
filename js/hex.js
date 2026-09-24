@@ -6145,7 +6145,7 @@ hexReady(function(){
       );
     }
 
-    function runCurtain(currentScene,nextScene,isHero){
+    function runCurtain(currentScene,nextScene,isHero,direction){
       if(reduced||!bands.length){
         if(nextScene){activate(scenes.indexOf(nextScene));}
         return Promise.resolve();
@@ -6155,6 +6155,8 @@ hexReady(function(){
 
       var vertical=window.matchMedia("(max-width:768px)").matches;
       var duration=800;
+      var revealDuration=680;
+      var backwards=direction<0;
       var totalDuration=duration;
       var incomingAnimation=null;
       var outgoingAnimation=null;
@@ -6168,17 +6170,27 @@ hexReady(function(){
 
         incomingAnimation=nextScene.animate(
           vertical
-            ?[
-              {clipPath:"inset(100% 0 0 0)"},
-              {clipPath:"inset(0 0 0 0)"}
-            ]
-            :[
-              {clipPath:"inset(0 0 0 100%)"},
-              {clipPath:"inset(0 0 0 0)"}
-            ],
+            ?(backwards
+              ?[
+                {clipPath:"inset(0 0 100% 0)"},
+                {clipPath:"inset(0 0 0 0)"}
+              ]
+              :[
+                {clipPath:"inset(100% 0 0 0)"},
+                {clipPath:"inset(0 0 0 0)"}
+              ])
+            :(backwards
+              ?[
+                {clipPath:"inset(0 100% 0 0)"},
+                {clipPath:"inset(0 0 0 0)"}
+              ]
+              :[
+                {clipPath:"inset(0 0 0 100%)"},
+                {clipPath:"inset(0 0 0 0)"}
+              ]),
           {
-            duration:duration,
-            delay:70,
+            duration:revealDuration,
+            delay:40,
             easing:"cubic-bezier(0,.6,.25,1)",
             fill:"both"
           }
@@ -6205,18 +6217,32 @@ hexReady(function(){
 
       trackAnimation=track.animate(
         vertical
-          ?[
-            {transform:"translate3d(0,101vh,0) scaleY(.015)"},
-            {transform:"translate3d(0,76vh,0) scaleY(1)",offset:.16},
-            {transform:"translate3d(0,-45vh,0) scaleY(1)",offset:.84},
-            {transform:"translate3d(0,-61vh,0) scaleY(.015)"}
-          ]
-          :[
-            {transform:"translate3d(101vw,0,0) scaleX(.015)"},
-            {transform:"translate3d(76vw,0,0) scaleX(1)",offset:.16},
-            {transform:"translate3d(-45vw,0,0) scaleX(1)",offset:.84},
-            {transform:"translate3d(-61vw,0,0) scaleX(.015)"}
-          ],
+          ?(backwards
+            ?[
+              {transform:"translate3d(0,-61vh,0)"},
+              {transform:"translate3d(0,-45vh,0)",offset:.16},
+              {transform:"translate3d(0,76vh,0)",offset:.84},
+              {transform:"translate3d(0,101vh,0)"}
+            ]
+            :[
+              {transform:"translate3d(0,101vh,0)"},
+              {transform:"translate3d(0,76vh,0)",offset:.16},
+              {transform:"translate3d(0,-45vh,0)",offset:.84},
+              {transform:"translate3d(0,-61vh,0)"}
+            ])
+          :(backwards
+            ?[
+              {transform:"translate3d(-61vw,0,0)"},
+              {transform:"translate3d(-45vw,0,0)",offset:.16},
+              {transform:"translate3d(76vw,0,0)",offset:.84},
+              {transform:"translate3d(101vw,0,0)"}
+            ]
+            :[
+              {transform:"translate3d(101vw,0,0)"},
+              {transform:"translate3d(76vw,0,0)",offset:.16},
+              {transform:"translate3d(-45vw,0,0)",offset:.84},
+              {transform:"translate3d(-61vw,0,0)"}
+            ]),
         {
           duration:duration,
           easing:"cubic-bezier(0,.6,.25,1)",
@@ -6252,7 +6278,7 @@ hexReady(function(){
       opening.classList.add("is-v2-hero-stage");
       updateDots(true);
 
-      runCurtain(scenes[index],null,true).then(function(){
+      runCurtain(scenes[index],null,true,1).then(function(){
         scenes.forEach(function(scene){
           scene.classList.remove("is-v2-current");
           scene.setAttribute("aria-hidden","true");
@@ -6274,7 +6300,12 @@ hexReady(function(){
       nextScene=scenes[nextIndex];
       cue.classList.add("is-hidden");
 
-      runCurtain(scenes[index],nextScene,false).then(function(){
+      runCurtain(
+        scenes[index],
+        nextScene,
+        false,
+        nextIndex<index?-1:1
+      ).then(function(){
         index=nextIndex;
         updateDots(false);
         transitionLocked=false;
