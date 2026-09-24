@@ -2465,7 +2465,14 @@ hexReady(function(){
       var deltaX=event.deltaX;
       var deltaY=event.deltaY;
 
-      if(!ready||welcomeActive){return;}
+      if(
+        !ready||
+        welcomeActive||
+        !document.documentElement.classList.contains("hex-hero-manual-lock")||
+        document.documentElement.classList.contains("hex-opening-lock")
+      ){
+        return;
+      }
       if(Math.abs(deltaX)+Math.abs(deltaY)<2){return;}
 
       beginExplore();
@@ -2613,7 +2620,6 @@ hexReady(function(){
       window.cancelAnimationFrame(renderFrameId);
       renderFrameId=0;
       if(webglStage){
-        webglStage.removeEventListener("wheel",onWheel);
         webglStage.removeEventListener("pointerdown",onPointerDown);
         webglStage.removeEventListener("pointermove",onPointerMove);
         webglStage.removeEventListener("pointerup",endPointer);
@@ -2690,7 +2696,6 @@ hexReady(function(){
           plane=new THREE.Mesh(geometry,material);
           scene.add(plane);
 
-          webglStage.addEventListener("wheel",onWheel,{passive:false});
           webglStage.addEventListener("pointerdown",onPointerDown);
           webglStage.addEventListener("pointermove",onPointerMove);
           webglStage.addEventListener("pointerup",endPointer);
@@ -2733,6 +2738,7 @@ hexReady(function(){
     };
 
     window.addEventListener("scroll",queueScrollEffects,{passive:true});
+    window.addEventListener("wheel",onWheel,{passive:false,capture:true});
     window.addEventListener("resize",queueResize);
     window.addEventListener("orientationchange",queueResize);
     document.addEventListener("hex:opening-finished",function(){
