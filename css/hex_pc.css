@@ -9156,6 +9156,7 @@ html.hex-opening-finishing
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track{position:absolute;top:0;left:0;z-index:1;display:flex;gap:0;width:max-content;height:100%;opacity:1!important;transform:translate3d(101vw,0,0);transform-origin:left center;will-change:transform}
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i,
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(n){position:relative!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;display:block;flex:0 0 auto;width:10px;height:100%;margin-right:-1px;opacity:1!important;visibility:visible!important;background-image:none!important;background-blend-mode:normal!important;mix-blend-mode:normal!important;filter:none!important;transform:none!important;backface-visibility:hidden;will-change:width,height}
+.hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(4)::after{content:"";position:absolute;z-index:1;inset:-1px;display:block;opacity:1!important;background-color:inherit!important;mix-blend-mode:normal!important;filter:none!important;transform:translateZ(0);backface-visibility:hidden;pointer-events:none}
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(1){background-color:#334e91!important}
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(2){background-color:#5a74b6!important}
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(3){background-color:#7789b9!important}

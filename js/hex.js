@@ -6284,6 +6284,10 @@ hexReady(function(){
         var order=backwards
           ?bands.length-1-bandIndex
           :bandIndex;
+        var bandDelay=order*45;
+        // 最後尾の帯だけ30ms早め、先行する3本へ自然に追いつかせる。
+        // 1〜3本目の開始時刻と変形カーブは変更しない。
+        if(order===bands.length-1){bandDelay-=30;}
         var bandDuration=duration-45*(bands.length-1);
         var sizeFrames=vertical
           ?[
@@ -6303,7 +6307,7 @@ hexReady(function(){
 
         bandAnimations.push(band.animate(sizeFrames,{
           duration:bandDuration,
-          delay:order*45,
+          delay:bandDelay,
           easing:"cubic-bezier(0,.6,.25,1)",
           fill:"both"
         }));
