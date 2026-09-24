@@ -6853,7 +6853,7 @@ hexReady(function(){
             restoreLogo();
             startResourceLoading();
           },320);
-        },1500);
+        },1750);
       });
     }
 
