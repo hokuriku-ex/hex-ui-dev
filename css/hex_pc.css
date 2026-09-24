@@ -9134,7 +9134,7 @@ html.hex-opening-finishing
 .hex-simple-loader.is-complete{opacity:0;visibility:hidden}
 .hex-simple-loader-inner{position:absolute;inset:0;pointer-events:none}
 .hex-simple-loader-label{position:absolute;top:calc(50% - 12px);left:50%;font-size:10px;font-weight:700;letter-spacing:.28em;transform:translateX(-50%)}
-.hex-simple-loader-bar{position:absolute;top:calc(50% + 14px);left:50%;width:min(180px,48vw);height:1px;overflow:hidden;background:rgba(255,255,255,.2);transform:translateX(-50%)}
+.hex-simple-loader-bar{position:absolute;top:calc(50% + 14px);left:50%;width:clamp(120px,30vw,480px);height:1px;overflow:hidden;background:rgba(255,255,255,.2);transform:translateX(-50%)}
 .hex-simple-loader-bar::after{content:"";display:block;width:100%;height:100%;background:#c8a874;transform:scaleX(var(--hex-loader-progress));transform-origin:left center;transition:transform .18s ease-out}
 
 .hex-opening-scroll-host:has(.is-curtain-sequence){height:100dvh!important;min-height:100dvh!important;background:#fff}
