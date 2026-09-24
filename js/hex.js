@@ -2003,6 +2003,14 @@ hexReady(function(){
   "use strict";
 
   var THREE_URL="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js";
+  var HERO_ZOOM_MIN=1;
+  var HERO_ZOOM_AUTO=1.35;
+  var HERO_ZOOM_MAX=2;
+  var HERO_AUTO_ZOOM_WAIT=500;
+  var HERO_AUTO_ZOOM_DURATION=1500;
+  var HERO_BOTTOM_SHOW_PX=8;
+  var HERO_BOTTOM_HIDE_PX=32;
+  var HERO_MOUSE_FOLLOW_EASE=.075;
   var threePromise=null;
 
   function loadThree(){
@@ -2062,10 +2070,58 @@ hexReady(function(){
     var renderFrameId=0;
     var snapshot=null;
     var snapshotCanvas=null;
-    var state={x:0,y:0,vx:0,vy:0};
-    var metrics={width:1,height:1,scale:1,maxX:0,maxY:0};
+    var state={x:0,y:0,vx:0,vy:0,zoom:HERO_ZOOM_MIN};
+    var metrics={
+      width:1,
+      height:1,
+      imageWidth:1,
+      imageHeight:1,
+      baseScale:1,
+      baseVisibleWidth:1,
+      baseVisibleHeight:1,
+      scale:1,
+      maxX:0,
+      maxY:0
+    };
     var dragging=false;
-    var dragStart={x:0,y:0,cameraX:0,cameraY:0,lastX:0,lastY:0,lastTime:0};
+    var dragStart={
+      pointerId:null,
+      x:0,
+      y:0,
+      cameraX:0,
+      cameraY:0,
+      lastX:0,
+      lastY:0,
+      lastTime:0
+    };
+    var activePointers=new Map();
+    var pinch={
+      active:false,
+      startDistance:1,
+      startZoom:HERO_ZOOM_MIN,
+      anchorX:0,
+      anchorY:0,
+      rect:null
+    };
+    var mouseFollow={
+      active:false,
+      armed:false,
+      startX:0,
+      startY:0,
+      nx:0,
+      ny:0
+    };
+    var interactionLocked=true;
+    var autoZooming=false;
+    var autoZoomPending=false;
+    var autoZoomPendingDelay=0;
+    var autoZoomTimer=0;
+    var autoZoomFrame=0;
+    var autoZoomRun=0;
+    var wheelZoomTimer=0;
+    var wheelZooming=false;
+    var bottomReached=false;
+    var welcomeButtonVisible=false;
     var explored=false;
     var welcomeActive=false;
     var released=false;
@@ -2144,23 +2200,169 @@ hexReady(function(){
       sticky.appendChild(welcomeButton);
     }
 
-    function isAtImageBottom(){
-      return state.y<=-metrics.maxY+3/Math.max(metrics.scale,.001);
+    function imageBottomDistancePx(){
+      return Math.max(
+        0,
+        (state.y+metrics.maxY)*Math.max(metrics.scale,.001)
+      );
+    }
+
+    function isAtImageBottom(threshold){
+      return imageBottomDistancePx()<=(threshold||HERO_BOTTOM_SHOW_PX);
     }
 
     function updateWelcomeButton(){
       var fallback=hero.classList.contains("is-v2-fallback");
-      var visible=!!(
-        welcomeButton&&
-        ready&&
-        !welcomeActive&&
-        (fallback||(explored&&isAtImageBottom()))
-      );
+      var zoomBusy=autoZooming||pinch.active||wheelZooming;
+      var wasAtBottom=bottomReached;
+      var visible;
 
       if(!welcomeButton){return;}
+
+      if(!explored||welcomeActive){
+        bottomReached=false;
+      }else if(!zoomBusy){
+        if(bottomReached){
+          bottomReached=isAtImageBottom(HERO_BOTTOM_HIDE_PX);
+        }else{
+          bottomReached=isAtImageBottom(HERO_BOTTOM_SHOW_PX);
+        }
+      }
+
+      /* PC追従で下端へ到達したらカメラを止め、ボタンへ移動できるようにする。 */
+      if(!wasAtBottom&&bottomReached){
+        mouseFollow.active=false;
+        state.vx=0;
+        state.vy=0;
+      }
+
+      visible=!!(
+        ready&&
+        !welcomeActive&&
+        (fallback||(explored&&!zoomBusy&&bottomReached))
+      );
+
+      /* 下端付近でも、実際に状態が変わった時だけDOMを更新する。 */
+      if(visible===welcomeButtonVisible){return;}
+      welcomeButtonVisible=visible;
       welcomeButton.classList.toggle("is-visible",visible);
       welcomeButton.setAttribute("aria-hidden",visible?"false":"true");
       welcomeButton.tabIndex=visible?0:-1;
+    }
+
+    function updateZoomMetrics(){
+      var zoom=clamp(state.zoom,HERO_ZOOM_MIN,HERO_ZOOM_MAX);
+      var visibleWidth;
+      var visibleHeight;
+
+      state.zoom=zoom;
+      metrics.scale=metrics.baseScale*zoom;
+      visibleWidth=metrics.baseVisibleWidth/zoom;
+      visibleHeight=metrics.baseVisibleHeight/zoom;
+      metrics.maxX=Math.max((metrics.imageWidth-visibleWidth)/2,0);
+      metrics.maxY=Math.max((metrics.imageHeight-visibleHeight)/2,0);
+
+      if(camera){
+        camera.zoom=zoom;
+        camera.updateProjectionMatrix();
+      }
+    }
+
+    function applyZoomAt(nextZoom,clientX,clientY,rect){
+      var oldScale=Math.max(metrics.scale,.001);
+      var focusRect=rect||webglStage.getBoundingClientRect();
+      var dx=clientX-(focusRect.left+focusRect.width/2);
+      var dy=clientY-(focusRect.top+focusRect.height/2);
+      var anchorX=state.x+dx/oldScale;
+      var anchorY=state.y-dy/oldScale;
+      var clampedZoom=clamp(nextZoom,HERO_ZOOM_MIN,HERO_ZOOM_MAX);
+
+      if(Math.abs(clampedZoom-state.zoom)<.0001){return false;}
+      state.zoom=clampedZoom;
+      updateZoomMetrics();
+      state.x=anchorX-dx/Math.max(metrics.scale,.001);
+      state.y=anchorY+dy/Math.max(metrics.scale,.001);
+      state.vx=0;
+      state.vy=0;
+      setCamera();
+      return true;
+    }
+
+    function cancelAutoZoom(unlock){
+      autoZoomRun+=1;
+      window.clearTimeout(autoZoomTimer);
+      window.cancelAnimationFrame(autoZoomFrame);
+      autoZoomTimer=0;
+      autoZoomFrame=0;
+      autoZooming=false;
+      hero.classList.remove("is-auto-zooming");
+      if(unlock){interactionLocked=false;}
+    }
+
+    function startAutoZoom(){
+      var run;
+      var started=0;
+
+      autoZoomPending=false;
+      cancelAutoZoom(false);
+      state.x=0;
+      state.y=0;
+      state.vx=0;
+      state.vy=0;
+      state.zoom=HERO_ZOOM_MIN;
+      bottomReached=false;
+      mouseFollow.active=false;
+      mouseFollow.armed=false;
+      updateZoomMetrics();
+      setCamera();
+
+      if(reduced||!renderer||!camera){
+        interactionLocked=false;
+        return;
+      }
+
+      interactionLocked=true;
+      autoZooming=true;
+      hero.classList.add("is-auto-zooming");
+      run=autoZoomRun;
+
+      autoZoomTimer=window.setTimeout(function(){
+        function frame(now){
+          var progress;
+          var eased;
+          if(run!==autoZoomRun||welcomeActive){return;}
+          if(!started){started=now;}
+          progress=clamp((now-started)/HERO_AUTO_ZOOM_DURATION,0,1);
+          eased=progress<.5
+            ?4*progress*progress*progress
+            :1-Math.pow(-2*progress+2,3)/2;
+          state.zoom=HERO_ZOOM_MIN+
+            (HERO_ZOOM_AUTO-HERO_ZOOM_MIN)*eased;
+          updateZoomMetrics();
+          setCamera();
+
+          if(progress<1){
+            autoZoomFrame=window.requestAnimationFrame(frame);
+          }else{
+            autoZoomFrame=0;
+            autoZooming=false;
+            interactionLocked=false;
+            hero.classList.remove("is-auto-zooming");
+            updateWelcomeButton();
+          }
+        }
+        autoZoomFrame=window.requestAnimationFrame(frame);
+      },HERO_AUTO_ZOOM_WAIT);
+    }
+
+    function scheduleAutoZoom(delay){
+      autoZoomPending=true;
+      autoZoomPendingDelay=Math.max(0,delay||0);
+      interactionLocked=true;
+      window.clearTimeout(autoZoomTimer);
+      if(!ready||!renderer||!camera){return;}
+      autoZoomPending=false;
+      autoZoomTimer=window.setTimeout(startAutoZoom,autoZoomPendingDelay);
     }
 
     function createWelcomeStage(){
@@ -2273,9 +2475,11 @@ hexReady(function(){
 
       metrics.width=width;
       metrics.height=height;
-      metrics.scale=coverScale;
-      metrics.maxX=Math.max((imageWidth-visibleWidth)/2,0);
-      metrics.maxY=Math.max((imageHeight-visibleHeight)/2,0);
+      metrics.imageWidth=imageWidth;
+      metrics.imageHeight=imageHeight;
+      metrics.baseScale=coverScale;
+      metrics.baseVisibleWidth=visibleWidth;
+      metrics.baseVisibleHeight=visibleHeight;
 
       camera.left=-visibleWidth/2;
       camera.right=visibleWidth/2;
@@ -2283,7 +2487,7 @@ hexReady(function(){
       camera.bottom=-visibleHeight/2;
       camera.near=.1;
       camera.far=10;
-      camera.updateProjectionMatrix();
+      updateZoomMetrics();
 
       renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
       renderer.setSize(width,height,false);
@@ -2304,17 +2508,30 @@ hexReady(function(){
     }
 
     function resetHero(withFade){
+      cancelAutoZoom(false);
       welcomeActive=false;
       released=false;
       explored=false;
+      interactionLocked=true;
+      bottomReached=false;
+      wheelZooming=false;
+      window.clearTimeout(wheelZoomTimer);
+      activePointers.clear();
+      pinch.active=false;
+      dragging=false;
+      mouseFollow.active=false;
+      mouseFollow.armed=false;
       state.x=0;
       state.y=0;
       state.vx=0;
       state.vy=0;
+      state.zoom=HERO_ZOOM_MIN;
       hero.classList.remove("is-exploring","is-welcome-transition");
+      if(webglStage){webglStage.classList.remove("is-dragging","is-pinching");}
       if(snapshot){snapshot.remove();snapshot=null;snapshotCanvas=null;}
       if(welcomeWrap){welcomeWrap.classList.remove("is-v2-active","is-v2-complete");}
       if(welcomeStage){welcomeStage.style.removeProperty("transform");}
+      updateZoomMetrics();
       setCamera();
       revealCatch(withFade);
       setHeroPageLock(true);
@@ -2328,6 +2545,8 @@ hexReady(function(){
           if(webglStage){webglStage.classList.remove("is-resetting");}
         },720);
       }
+
+      scheduleAutoZoom(withFade?760:0);
     }
 
     function captureCurrentFrame(){
@@ -2476,8 +2695,8 @@ hexReady(function(){
     }
 
     function onWheel(event){
-      var deltaX=event.deltaX;
-      var deltaY=event.deltaY;
+      var zoomDelta;
+      var nextZoom;
 
       if(
         !ready||
@@ -2489,41 +2708,180 @@ hexReady(function(){
       }
       if(handledWheelEvents&&handledWheelEvents.has(event)){return;}
       if(handledWheelEvents){handledWheelEvents.add(event);}
-      if(Math.abs(deltaX)+Math.abs(deltaY)<2){return;}
-
-      beginExplore();
-      if(deltaY>0&&isAtImageBottom()){
-        event.preventDefault();
-        state.vy=0;
-        updateWelcomeButton();
-        return;
-      }
+      if(Math.abs(event.deltaX)+Math.abs(event.deltaY)<2){return;}
 
       event.preventDefault();
-      if(event.shiftKey&&Math.abs(deltaX)<Math.abs(deltaY)){
-        deltaX=deltaY;
-        deltaY=0;
-      }
-      state.vx+=deltaX/Math.max(metrics.scale,1)*.16;
-      state.vy-=deltaY/Math.max(metrics.scale,1)*.16;
+      if(interactionLocked){return;}
+
+      beginExplore();
+      zoomDelta=Math.abs(event.deltaY)>=Math.abs(event.deltaX)
+        ?event.deltaY
+        :event.deltaX;
+      nextZoom=state.zoom*Math.exp(-zoomDelta*.0012);
+      wheelZooming=true;
+      bottomReached=false;
+      updateWelcomeButton();
+      applyZoomAt(nextZoom,event.clientX,event.clientY);
+
+      window.clearTimeout(wheelZoomTimer);
+      wheelZoomTimer=window.setTimeout(function(){
+        wheelZooming=false;
+        updateWelcomeButton();
+      },180);
     }
 
-    function onPointerDown(event){
-      if(!ready||welcomeActive||event.button>0){return;}
-      beginExplore();
+    function startDrag(pointerId,x,y){
       dragging=true;
-      dragStart.x=event.clientX;
-      dragStart.y=event.clientY;
-      dragStart.lastX=event.clientX;
-      dragStart.lastY=event.clientY;
+      dragStart.pointerId=pointerId;
+      dragStart.x=x;
+      dragStart.y=y;
+      dragStart.lastX=x;
+      dragStart.lastY=y;
       dragStart.lastTime=performance.now();
       dragStart.cameraX=state.x;
       dragStart.cameraY=state.y;
       state.vx=0;
       state.vy=0;
       webglStage.classList.add("is-dragging");
-      webglStage.setPointerCapture(event.pointerId);
+    }
+
+    function getPinchPoints(){
+      return Array.from(activePointers.values()).slice(0,2);
+    }
+
+    function beginPinch(){
+      var points=getPinchPoints();
+      var first;
+      var second;
+      var midpointX;
+      var midpointY;
+      var dx;
+      var dy;
+
+      if(points.length<2){return;}
+      first=points[0];
+      second=points[1];
+      midpointX=(first.x+second.x)/2;
+      midpointY=(first.y+second.y)/2;
+      pinch.rect=webglStage.getBoundingClientRect();
+      dx=midpointX-(pinch.rect.left+pinch.rect.width/2);
+      dy=midpointY-(pinch.rect.top+pinch.rect.height/2);
+      pinch.active=true;
+      pinch.startDistance=Math.max(
+        Math.hypot(second.x-first.x,second.y-first.y),
+        1
+      );
+      pinch.startZoom=state.zoom;
+      pinch.anchorX=state.x+dx/Math.max(metrics.scale,.001);
+      pinch.anchorY=state.y-dy/Math.max(metrics.scale,.001);
+      dragging=false;
+      bottomReached=false;
+      state.vx=0;
+      state.vy=0;
+      webglStage.classList.remove("is-dragging");
+      webglStage.classList.add("is-pinching");
+      updateWelcomeButton();
+    }
+
+    function updatePinch(){
+      var points=getPinchPoints();
+      var first;
+      var second;
+      var midpointX;
+      var midpointY;
+      var distance;
+      var nextZoom;
+      var dx;
+      var dy;
+
+      if(!pinch.active||points.length<2){return;}
+      first=points[0];
+      second=points[1];
+      midpointX=(first.x+second.x)/2;
+      midpointY=(first.y+second.y)/2;
+      distance=Math.max(Math.hypot(second.x-first.x,second.y-first.y),1);
+      nextZoom=clamp(
+        pinch.startZoom*(distance/pinch.startDistance),
+        HERO_ZOOM_MIN,
+        HERO_ZOOM_MAX
+      );
+      state.zoom=nextZoom;
+      updateZoomMetrics();
+      dx=midpointX-(pinch.rect.left+pinch.rect.width/2);
+      dy=midpointY-(pinch.rect.top+pinch.rect.height/2);
+      state.x=pinch.anchorX-dx/Math.max(metrics.scale,.001);
+      state.y=pinch.anchorY+dy/Math.max(metrics.scale,.001);
+      setCamera();
+    }
+
+    function updateMouseFollow(event){
+      var rect;
+      var travel;
+
+      if(
+        event.pointerType!=="mouse"||
+        isSp()||
+        interactionLocked||
+        welcomeActive||
+        pinch.active||
+        welcomeButtonVisible
+      ){
+        return;
+      }
+
+      if(!mouseFollow.armed){
+        mouseFollow.armed=true;
+        mouseFollow.startX=event.clientX;
+        mouseFollow.startY=event.clientY;
+        return;
+      }
+
+      travel=Math.hypot(
+        event.clientX-mouseFollow.startX,
+        event.clientY-mouseFollow.startY
+      );
+      if(!explored&&travel<6){return;}
+
+      beginExplore();
+      rect=webglStage.getBoundingClientRect();
+      mouseFollow.nx=clamp(
+        (event.clientX-(rect.left+rect.width/2))/Math.max(rect.width/2,1),
+        -1,1
+      );
+      mouseFollow.ny=clamp(
+        (event.clientY-(rect.top+rect.height/2))/Math.max(rect.height/2,1),
+        -1,1
+      );
+      mouseFollow.active=true;
+      state.vx=0;
+      state.vy=0;
+    }
+
+    function onPointerDown(event){
+      if(!ready||welcomeActive||event.button>0){return;}
       event.preventDefault();
+      if(interactionLocked){return;}
+
+      beginExplore();
+      mouseFollow.active=false;
+      mouseFollow.armed=false;
+
+      if(event.pointerType==="touch"){
+        activePointers.set(event.pointerId,{
+          id:event.pointerId,
+          x:event.clientX,
+          y:event.clientY
+        });
+      }
+
+      try{webglStage.setPointerCapture(event.pointerId);}catch(error){}
+
+      if(event.pointerType==="touch"&&activePointers.size>=2){
+        beginPinch();
+        return;
+      }
+
+      startDrag(event.pointerId,event.clientX,event.clientY);
     }
 
     function onPointerMove(event){
@@ -2531,7 +2889,26 @@ hexReady(function(){
       var dy;
       var now;
       var elapsed;
-      if(!dragging){return;}
+
+      if(event.pointerType==="touch"&&activePointers.has(event.pointerId)){
+        activePointers.set(event.pointerId,{
+          id:event.pointerId,
+          x:event.clientX,
+          y:event.clientY
+        });
+      }
+
+      if(pinch.active){
+        updatePinch();
+        event.preventDefault();
+        return;
+      }
+
+      if(!dragging){
+        updateMouseFollow(event);
+        return;
+      }
+      if(event.pointerId!==dragStart.pointerId){return;}
       dx=event.clientX-dragStart.x;
       dy=event.clientY-dragStart.y;
       state.x=dragStart.cameraX-dx/Math.max(metrics.scale,.001);
@@ -2550,23 +2927,65 @@ hexReady(function(){
     }
 
     function endPointer(event){
-      if(!dragging){return;}
-      dragging=false;
-      webglStage.classList.remove("is-dragging");
-      if(webglStage.hasPointerCapture(event.pointerId)){
-        webglStage.releasePointerCapture(event.pointerId);
+      var remaining;
+
+      if(event.pointerType==="touch"){
+        activePointers.delete(event.pointerId);
+      }
+
+      if(pinch.active){
+        if(activePointers.size>=2){
+          beginPinch();
+        }else{
+          pinch.active=false;
+          webglStage.classList.remove("is-pinching");
+          remaining=activePointers.values().next().value;
+          if(remaining){
+            startDrag(remaining.id,remaining.x,remaining.y);
+          }else{
+            dragging=false;
+            webglStage.classList.remove("is-dragging");
+          }
+          updateWelcomeButton();
+        }
+      }else if(dragging&&event.pointerId===dragStart.pointerId){
+        dragging=false;
+        dragStart.pointerId=null;
+        webglStage.classList.remove("is-dragging");
+      }
+
+      if(event.pointerType==="mouse"){
+        mouseFollow.active=false;
+        mouseFollow.armed=false;
+      }
+
+      try{
+        if(webglStage.hasPointerCapture(event.pointerId)){
+          webglStage.releasePointerCapture(event.pointerId);
+        }
+      }catch(error){
+        /* pointercancel後など、capture解除済みの場合は何もしない */
       }
     }
 
     function renderLoop(){
       if(renderer&&camera&&scene){
-        if(!dragging&&!welcomeActive){
-          state.x+=state.vx;
-          state.y+=state.vy;
-          state.vx*=.91;
-          state.vy*=.91;
-          if(Math.abs(state.vx)<.002){state.vx=0;}
-          if(Math.abs(state.vy)<.002){state.vy=0;}
+        if(!dragging&&!pinch.active&&!autoZooming&&!welcomeActive){
+          if(mouseFollow.active&&!isSp()){
+            state.x+=(metrics.maxX*mouseFollow.nx-state.x)*
+              HERO_MOUSE_FOLLOW_EASE;
+            state.y+=(-metrics.maxY*mouseFollow.ny-state.y)*
+              HERO_MOUSE_FOLLOW_EASE;
+            state.vx=0;
+            state.vy=0;
+          }else{
+            state.x+=state.vx;
+            state.y+=state.vy;
+            state.vx*=.91;
+            state.vy*=.91;
+            if(Math.abs(state.vx)<.002){state.vx=0;}
+            if(Math.abs(state.vy)<.002){state.vy=0;}
+          }
           setCamera();
         }
         try{
@@ -2640,6 +3059,7 @@ hexReady(function(){
         webglStage.removeEventListener("pointermove",onPointerMove);
         webglStage.removeEventListener("pointerup",endPointer);
         webglStage.removeEventListener("pointercancel",endPointer);
+        webglStage.removeEventListener("lostpointercapture",endPointer);
       }
       if(activeHero){activeHero.classList.remove("is-v2-active");}
       if(plane&&plane.geometry){plane.geometry.dispose();}
@@ -2662,6 +3082,7 @@ hexReady(function(){
       if(activeHero){activeHero.classList.add("is-v2-fallback");}
       hero.classList.add("is-v2-ready","is-v2-fallback");
       ready=true;
+      interactionLocked=false;
       revealCatch(false);
       setHeroPageLock(true);
       updateWelcomeButton();
@@ -2716,6 +3137,7 @@ hexReady(function(){
           webglStage.addEventListener("pointermove",onPointerMove);
           webglStage.addEventListener("pointerup",endPointer);
           webglStage.addEventListener("pointercancel",endPointer);
+          webglStage.addEventListener("lostpointercapture",endPointer);
           resizeRenderer();
           if(!renderer){return;}
           if(!hasVisibleRender()){
@@ -2729,6 +3151,7 @@ hexReady(function(){
           document.dispatchEvent(new Event("hex:hero-layout-updated"));
           revealCatch(false);
           renderLoop();
+          if(autoZoomPending){scheduleAutoZoom(autoZoomPendingDelay);}
         }catch(error){
           createFallback();
         }
@@ -2749,6 +3172,14 @@ hexReady(function(){
       show:function(){
         hero.classList.add("is-ready");
         setHeroPageLock(true);
+        window.setTimeout(function(){
+          if(
+            !document.documentElement.classList.contains("hex-opening-lock")&&
+            !document.querySelector(".hex-opening.is-curtain-sequence")
+          ){
+            scheduleAutoZoom(0);
+          }
+        },600);
       },
       handleWheel:onWheel,
       reset:function(){resetHero(true);}
@@ -2763,6 +3194,7 @@ hexReady(function(){
       setHeroPageLock(true);
       revealCatch(false);
       queueResize();
+      scheduleAutoZoom(0);
     });
 
     loadThree().then(buildThree).catch(createFallback);
