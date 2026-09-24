@@ -2353,16 +2353,22 @@ hexReady(function(){
 
     function beginWelcome(){
       var target;
+      var handoff;
       if(welcomeActive||!welcomeWrap){return;}
       welcomeActive=true;
       state.vx=0;
       state.vy=0;
       setHeroPageLock(false);
       updateWelcomeButton();
-      hero.classList.add("is-welcome-transition");
       createWelcomeStage();
       measureWelcome();
-      captureCurrentFrame();
+      handoff=captureCurrentFrame();
+      /*
+       * 丸演出は現在フレームの複製だけを見せる。
+       * 複製に成功した場合に限り元ヒーローを隠すことで、
+       * WELCOMEへの移動中に同じ画像が背面を上へ流れるのを防ぐ。
+       */
+      if(handoff){hero.classList.add("is-welcome-transition");}
       welcomeWrap.classList.add("is-v2-active");
       updateScrollEffects();
 

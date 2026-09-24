@@ -2562,6 +2562,8 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   .hex-hero-wrap,
   .hex-hero-sticky{height:100svh!important;min-height:100svh!important}
   .hex-hero{height:calc(100svh - var(--header_height,80px))!important}
+  /* WELCOME移行中は固定した丸スナップショットだけを表示する */
+  .hex-hero-wrap.is-welcome-transition .hex-hero{opacity:0!important;visibility:hidden!important;transition:none!important}
   .hex-webgl-stage{cursor:grab}
   .hex-v2-handoff{height:calc(100svh - var(--header_height,80px))}
   .hex-v2-handoff.is-released{height:calc(100svh - var(--header_height,80px))}
