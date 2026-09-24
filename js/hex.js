@@ -6257,13 +6257,31 @@ hexReady(function(){
     }
 
     function runCurtain(currentScene,nextScene,isHero,direction){
+      var outgoingTextOnly=!!(
+        currentScene&&
+        (
+          currentScene===messageStage||
+          currentScene===drawStage||
+          currentScene===withStage
+        )
+      );
+
+      if(outgoingTextOnly){
+        currentScene.classList.add("is-v2-text-exiting");
+      }
+
       if(reduced){
         if(nextScene){activate(scenes.indexOf(nextScene));}
+        if(currentScene){currentScene.classList.remove("is-v2-text-exiting");}
         return Promise.resolve();
       }
 
       if(useFadeTransitions){
-        return runFadeTransition(currentScene,nextScene);
+        return runFadeTransition(currentScene,nextScene).then(function(){
+          if(currentScene){
+            currentScene.classList.remove("is-v2-text-exiting");
+          }
+        });
       }
 
       curtain.classList.add("is-active","is-v2-running");
@@ -6470,6 +6488,7 @@ hexReady(function(){
             var active=scene===nextScene;
             scene.classList.toggle("is-v2-current",active);
             scene.classList.remove("is-v2-incoming");
+            scene.classList.remove("is-v2-text-exiting");
             scene.setAttribute("aria-hidden",active?"false":"true");
             scene.style.removeProperty("z-index");
             scene.style.removeProperty("clip-path");
