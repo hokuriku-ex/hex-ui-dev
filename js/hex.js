@@ -4965,11 +4965,18 @@ hexReady(function(){
   function createOpeningMessage(opening,data){
     var stage=document.createElement("div");
     var first=document.createElement("div");
-    var finalCopy=document.createElement("div");
+    var drawStage=document.createElement("div");
+    var drawCopy=document.createElement("div");
+    var withStage=document.createElement("div");
+    var withCopy=document.createElement("div");
     var brandStage=document.createElement("div");
     var logoStage=opening.querySelector(".hex-opening-logo-stage");
 
     stage.className="hex-opening-message-stage";
+    drawStage.className="hex-opening-draw-stage";
+    drawCopy.className="hex-opening-draw-copy";
+    withStage.className="hex-opening-with-stage";
+    withCopy.className="hex-opening-with-copy";
     brandStage.className="hex-opening-brand-stage";
 
     if(data.first){
@@ -4978,17 +4985,24 @@ hexReady(function(){
       stage.appendChild(first);
     }
 
-    if(data.finalCopy){
-      finalCopy.className="hex-opening-message-final";
-      finalCopy.innerHTML=data.finalCopy;
-      brandStage.appendChild(finalCopy);
-    }
+    drawCopy.textContent="Draw Your Everyday";
+    withCopy.textContent="With";
+    drawStage.appendChild(drawCopy);
+    withStage.appendChild(withCopy);
 
     if(logoStage){
+      var wordmarkSvg=logoStage.querySelector(".hex-logo-story");
+      logoStage.classList.add("hex-opening-wordmark-stage");
+      if(wordmarkSvg){
+        wordmarkSvg.setAttribute("viewBox","250 410 500 110");
+        wordmarkSvg.setAttribute("aria-label","Hokuriku-EX.");
+      }
       brandStage.appendChild(logoStage);
     }
 
     opening.insertBefore(stage,opening.firstChild);
+    opening.insertBefore(drawStage,opening.firstChild);
+    opening.insertBefore(withStage,opening.firstChild);
     opening.insertBefore(brandStage,opening.firstChild);
     return stage;
   }
@@ -6030,6 +6044,8 @@ hexReady(function(){
     replayRequested
   ){
     var brandStage=opening.querySelector(".hex-opening-brand-stage");
+    var drawStage=opening.querySelector(".hex-opening-draw-stage");
+    var withStage=opening.querySelector(".hex-opening-with-stage");
     var slides=slideStage
       ?Array.prototype.slice.call(
         slideStage.querySelectorAll(".hex-opening-slide")
@@ -6053,11 +6069,30 @@ hexReady(function(){
     var touchStartY=null;
     var WHEEL_THRESHOLD=45;
     var SWIPE_THRESHOLD=42;
+    var screenShort=Math.min(window.screen.width,window.screen.height);
+    var screenLong=Math.max(window.screen.width,window.screen.height);
+    var compactIphone=
+      /iPhone/i.test(window.navigator.userAgent)&&
+      screenShort<=375&&screenLong<=667;
+    var curtainApiReady=!!(
+      track&&
+      bands.length===4&&
+      typeof track.animate==="function"&&
+      window.CSS&&
+      typeof window.CSS.supports==="function"&&
+      window.CSS.supports("clip-path","inset(0 0 0 0)")
+    );
+    var useFadeTransitions=compactIphone||!curtainApiReady;
 
     if(introStage){scenes.push(introStage);}
     slides.forEach(function(slide){scenes.push(slide);});
     if(messageStage&&messageStage.children.length){scenes.push(messageStage);}
+    if(drawStage){scenes.push(drawStage);}
+    if(withStage){scenes.push(withStage);}
     if(brandStage){scenes.push(brandStage);}
+
+    var dotSixSceneIndex=messageStage?scenes.indexOf(messageStage):5;
+    var dotSevenSceneIndex=brandStage?scenes.indexOf(brandStage):scenes.length-1;
 
     function later(callback,delay){
       var timer=window.setTimeout(function(){
@@ -6127,11 +6162,6 @@ hexReady(function(){
         }
       }
 
-      if(scene===brandStage){
-        later(function(){
-          scene.classList.add("is-v2-logo-playing");
-        },140);
-      }
     }
 
     function activate(nextIndex){
@@ -6144,17 +6174,23 @@ hexReady(function(){
     }
 
     function updateDots(heroSelected){
+      var activeDotIndex;
       if(!nav){return;}
+      if(heroSelected||index>=dotSevenSceneIndex){
+        activeDotIndex=6;
+      }else if(index>=dotSixSceneIndex){
+        activeDotIndex=5;
+      }else{
+        activeDotIndex=index;
+      }
       Array.prototype.forEach.call(
         nav.querySelectorAll(".hex-progress-dot"),
         function(dot,dotIndex){
-          var current=heroSelected
-            ?dotIndex===scenes.length
-            :dotIndex===index;
+          var current=dotIndex===activeDotIndex;
           dot.classList.toggle("is-current",current);
           dot.classList.toggle(
             "is-passed",
-            heroSelected||dotIndex<index
+            dotIndex<activeDotIndex
           );
           if(current){dot.setAttribute("aria-current","step");}
           else{dot.removeAttribute("aria-current");}
@@ -6162,10 +6198,72 @@ hexReady(function(){
       );
     }
 
+    function runFadeTransition(currentScene,nextScene){
+      var duration=930;
+      var incomingContainer=null;
+      var started=null;
+
+      if(!nextScene){return Promise.resolve();}
+
+      nextScene.classList.add("is-v2-incoming");
+      nextScene.setAttribute("aria-hidden","false");
+      nextScene.style.setProperty("z-index","4","important");
+      nextScene.style.setProperty("opacity","0","important");
+      incomingContainer=nextScene.parentElement;
+      if(
+        incomingContainer&&
+        incomingContainer.classList.contains("hex-opening-slides")
+      ){
+        incomingContainer.style.setProperty("z-index","3","important");
+      }
+      animateIncoming(nextScene);
+
+      return new Promise(function(resolve){
+        function frame(now){
+          var progress;
+          var eased;
+
+          if(cancelled){resolve();return;}
+          if(started===null){started=now;}
+          progress=Math.min(1,(now-started)/duration);
+          eased=1-Math.pow(1-progress,3);
+          nextScene.style.setProperty(
+            "opacity",
+            String(eased),
+            "important"
+          );
+
+          if(progress<1){
+            window.requestAnimationFrame(frame);
+            return;
+          }
+
+          scenes.forEach(function(scene){
+            var active=scene===nextScene;
+            scene.classList.toggle("is-v2-current",active);
+            scene.classList.remove("is-v2-incoming");
+            scene.setAttribute("aria-hidden",active?"false":"true");
+            scene.style.removeProperty("z-index");
+            scene.style.removeProperty("opacity");
+          });
+          if(incomingContainer){
+            incomingContainer.style.removeProperty("z-index");
+          }
+          resolve();
+        }
+
+        window.requestAnimationFrame(frame);
+      });
+    }
+
     function runCurtain(currentScene,nextScene,isHero,direction){
-      if(reduced||!bands.length){
+      if(reduced){
         if(nextScene){activate(scenes.indexOf(nextScene));}
         return Promise.resolve();
+      }
+
+      if(useFadeTransitions){
+        return runFadeTransition(currentScene,nextScene);
       }
 
       curtain.classList.add("is-active","is-v2-running");
@@ -6384,16 +6482,83 @@ hexReady(function(){
       });
     }
 
+    function runHeroCircleReveal(){
+      var preview=createOpeningHeroPreview();
+      var wordmark=opening.querySelector(".hex-logo-company-name");
+      var previewRect;
+      var wordmarkRect;
+      var originX;
+      var originY;
+      var radius;
+      var started;
+
+      if(!preview){return Promise.resolve();}
+
+      opening.classList.add("is-v2-hero-stage");
+      preview.classList.add("is-v2-circle-reveal");
+      previewRect=preview.getBoundingClientRect();
+      wordmarkRect=wordmark&&wordmark.getBoundingClientRect();
+      originX=wordmarkRect&&wordmarkRect.width
+        ?wordmarkRect.left+wordmarkRect.width/2-previewRect.left
+        :previewRect.width/2;
+      originY=wordmarkRect&&wordmarkRect.height
+        ?wordmarkRect.top+wordmarkRect.height/2-previewRect.top
+        :previewRect.height/2;
+      radius=Math.hypot(
+        Math.max(originX,previewRect.width-originX),
+        Math.max(originY,previewRect.height-originY)
+      )+4;
+
+      preview.style.setProperty(
+        "clip-path",
+        "circle(1px at "+originX+"px "+originY+"px)"
+      );
+      preview.style.setProperty(
+        "-webkit-clip-path",
+        "circle(1px at "+originX+"px "+originY+"px)"
+      );
+
+      return new Promise(function(resolve){
+        function frame(now){
+          var progress;
+          var eased;
+          var currentRadius;
+
+          if(cancelled){resolve();return;}
+          if(!started){started=now;}
+          progress=Math.min(1,(now-started)/1100);
+          eased=progress<.5
+            ?4*progress*progress*progress
+            :1-Math.pow(-2*progress+2,3)/2;
+          currentRadius=1+(radius-1)*eased;
+          preview.style.setProperty(
+            "clip-path",
+            "circle("+currentRadius+"px at "+originX+"px "+originY+"px)"
+          );
+          preview.style.setProperty(
+            "-webkit-clip-path",
+            "circle("+currentRadius+"px at "+originX+"px "+originY+"px)"
+          );
+
+          if(progress<1){
+            window.requestAnimationFrame(frame);
+          }else{
+            resolve();
+          }
+        }
+
+        window.requestAnimationFrame(frame);
+      });
+    }
+
     function finishToHero(){
       if(transitionLocked){return;}
       transitionLocked=true;
       ensureHeroReady();
       showHeroCatch(0);
-      createOpeningHeroPreview();
-      opening.classList.add("is-v2-hero-stage");
       updateDots(true);
 
-      runCurtain(scenes[index],null,true,1).then(function(){
+      runHeroCircleReveal().then(function(){
         scenes.forEach(function(scene){
           scene.classList.remove("is-v2-current");
           scene.setAttribute("aria-hidden","true");
@@ -6557,6 +6722,9 @@ hexReady(function(){
       var progress=loader.appendChild(document.createElement("div"));
       var label=loader.appendChild(document.createElement("span"));
       var bar=loader.appendChild(document.createElement("i"));
+      var logoStory=opening.querySelector(".hex-logo-story");
+      var logoHome=logoStory&&logoStory.parentNode;
+      var logoViewBox=logoStory&&logoStory.getAttribute("viewBox");
       var urls=collectPreloadUrls();
       var completed=0;
       var started=Date.now();
@@ -6568,7 +6736,22 @@ hexReady(function(){
       label.className="hex-simple-loader-label";
       bar.className="hex-simple-loader-bar";
       label.textContent="LOADING";
+
+      if(logoStory){
+        loader.classList.add("has-logo-animation");
+        logoStory.classList.add("hex-simple-loader-logo");
+        logoStory.setAttribute("viewBox","0 0 1000 560");
+        loader.insertBefore(logoStory,progress);
+      }
       document.body.appendChild(loader);
+
+      if(logoStory){
+        window.requestAnimationFrame(function(){
+          window.requestAnimationFrame(function(){
+            logoStory.classList.add("is-playing");
+          });
+        });
+      }
 
       function setProgress(value){
         loader.style.setProperty("--hex-loader-progress",String(value));
@@ -6582,6 +6765,16 @@ hexReady(function(){
         later(function(){
           loader.classList.add("is-complete");
           later(function(){
+            if(logoStory&&logoHome){
+              logoStory.classList.remove(
+                "hex-simple-loader-logo",
+                "is-playing"
+              );
+              if(logoViewBox){
+                logoStory.setAttribute("viewBox",logoViewBox);
+              }
+              logoHome.appendChild(logoStory);
+            }
             if(loader.parentNode){loader.remove();}
             resolve();
           },460);
@@ -6591,8 +6784,6 @@ hexReady(function(){
       setProgress(.04);
 
       return new Promise(function(resolve){
-        maximumTimer=window.setTimeout(function(){finish(resolve);},6000);
-
         var tasks=urls.map(function(url){
           return preload(url).then(function(){
             completed+=1;
@@ -6610,8 +6801,23 @@ hexReady(function(){
           tasks.push(document.fonts.ready.catch(function(){}));
         }
 
-        Promise.all(tasks).then(function(){
-          setProgress(1);
+        var resourcesReady=new Promise(function(resourcesResolve){
+          maximumTimer=window.setTimeout(function(){
+            setProgress(1);
+            resourcesResolve();
+          },6000);
+
+          Promise.all(tasks).then(function(){
+            window.clearTimeout(maximumTimer);
+            setProgress(1);
+            resourcesResolve();
+          });
+        });
+        var logoReady=logoStory
+          ?new Promise(function(logoResolve){later(logoResolve,1500);})
+          :Promise.resolve();
+
+        Promise.all([resourcesReady,logoReady]).then(function(){
           finish(resolve);
         });
       });
@@ -6624,10 +6830,23 @@ hexReady(function(){
         return;
       }
 
-      nav=createOpeningProgressNav(
-        opening,
-        scenes.length+1,
-        scenes.length
+      /*
+       * ドットは7個。Draw / With はドット6の内部段階、
+       * 文字ロゴ完成位置だけをドット7として扱う。
+       */
+      nav=createOpeningProgressNav(opening,7);
+      Array.prototype.forEach.call(
+        nav.querySelectorAll(".hex-progress-dot"),
+        function(dot,dotIndex){
+          dot.setAttribute(
+            "data-scene-index",
+            String(
+              dotIndex===5
+                ?dotSixSceneIndex
+                :(dotIndex===6?dotSevenSceneIndex:dotIndex)
+            )
+          );
+        }
       );
       cue=createOpeningScrollCue(opening);
 

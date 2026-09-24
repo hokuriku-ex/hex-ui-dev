@@ -9178,6 +9178,36 @@ html.hex-opening-finishing
 @keyframes hex-v2-logo-draw{to{stroke-dashoffset:0;opacity:1}}
 @keyframes hex-v2-logo-fade{to{opacity:1;transform:translateY(0)}}
 
+/* 開幕後半：ドット6内のDraw / Withと、ドット7の文字ロゴ */
+.hex-opening.is-curtain-sequence :is(.hex-opening-draw-stage,.hex-opening-with-stage){position:absolute!important;inset:0!important;z-index:2!important;display:grid!important;place-items:center!important;width:100%!important;height:100%!important;opacity:0!important;visibility:hidden!important;transition:none!important;pointer-events:none!important}
+.hex-opening.is-curtain-sequence :is(.hex-opening-draw-stage,.hex-opening-with-stage):is(.is-v2-current,.is-v2-incoming){opacity:1!important;visibility:visible!important}
+.hex-opening.is-curtain-sequence :is(.hex-opening-draw-stage,.hex-opening-with-stage).is-v2-incoming{z-index:3!important}
+.hex-opening-draw-copy,.hex-opening-with-copy{color:var(--hex-opening-navy)!important;font-family:var(--hex-font-pop-en)!important;font-weight:700!important;line-height:1.25!important;letter-spacing:.04em!important;text-align:center;opacity:0;transform:translate3d(52px,0,0)}
+.hex-opening-draw-copy{font-size:clamp(42px,5.5vw,86px)!important;white-space:nowrap}
+.hex-opening-with-copy{font-size:clamp(34px,4vw,62px)!important}
+.is-v2-entered>.hex-opening-draw-copy,.is-v2-entered>.hex-opening-with-copy{opacity:1;transform:translate3d(0,0,0);transition:opacity .72s ease .56s,transform .82s cubic-bezier(.22,.8,.3,1) .56s}
+.hex-opening.is-curtain-sequence .hex-opening-brand-stage .hex-opening-wordmark-stage{position:absolute!important;inset:0!important;display:flex!important;align-items:center!important;justify-content:center!important;opacity:0!important;transform:translate3d(52px,0,0)!important}
+.hex-opening.is-curtain-sequence .hex-opening-brand-stage.is-v2-entered>.hex-opening-wordmark-stage{opacity:1!important;transform:translate3d(0,0,0)!important;transition:opacity .72s ease .56s,transform .82s cubic-bezier(.22,.8,.3,1) .56s!important}
+.hex-opening-wordmark-stage .hex-logo-story{width:min(620px,72vw)!important;height:auto!important;overflow:visible!important}
+.hex-opening-wordmark-stage .hex-logo-build{display:none!important}
+.hex-opening-wordmark-stage .hex-logo-company-name{opacity:1!important;transform:none!important;animation:none!important}
+
+/* 文字ロゴ中心からヒーローを展開する円形プレビュー */
+.hex-opening-hero-preview.hex-v2-opening-preview.is-v2-circle-reveal{z-index:11!important;opacity:1!important;visibility:visible!important;will-change:clip-path,-webkit-clip-path}
+
+/* ローディング内で1回だけ再生するロゴアニメーション */
+.hex-simple-loader-logo{position:absolute;top:50%;left:50%;z-index:2;width:min(520px,72vw);height:auto;color:#fff;overflow:visible;transform:translate(-50%,-56%)}
+.hex-simple-loader-logo .hex-logo-build,.hex-simple-loader-logo .hex-logo-company-name{fill:#fff!important}
+.hex-simple-loader-logo .hex-logo-company-name{opacity:0!important}
+.hex-simple-loader-logo.is-playing :is(.hex-logo-front-left-mask-path,.hex-logo-front-center-mask-path,.hex-logo-back-arm-mask-path){animation:hex-loader-logo-draw .9s cubic-bezier(.22,.8,.3,1) forwards!important}
+.hex-simple-loader-logo.is-playing .hex-logo-front-right-clip-rect{animation:hex-loader-logo-right .72s cubic-bezier(.22,.8,.3,1) .32s forwards!important}
+.hex-simple-loader-logo.is-playing :is(.hex-logo-back-hand,.hex-logo-company-name){animation:hex-loader-logo-fade .62s ease .78s forwards!important}
+.hex-simple-loader.has-logo-animation .hex-simple-loader-label{top:calc(50% + 118px)}
+.hex-simple-loader.has-logo-animation .hex-simple-loader-bar{top:calc(50% + 144px)}
+@keyframes hex-loader-logo-draw{to{stroke-dashoffset:0;opacity:1}}
+@keyframes hex-loader-logo-right{to{transform:translateX(0) scaleX(1)}}
+@keyframes hex-loader-logo-fade{to{opacity:1}}
+
 .hex-hero-wrap{height:100dvh!important;min-height:100dvh!important}
 .hex-hero-sticky{position:relative!important;top:auto!important;height:100dvh!important;overflow:hidden!important;touch-action:auto}
 .hex-hero{width:100vw!important;max-width:100vw!important;height:calc(100dvh - var(--header_height,80px))!important;margin-top:var(--header_height,80px)!important}

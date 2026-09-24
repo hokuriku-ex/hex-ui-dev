@@ -2528,8 +2528,38 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     transform:translate3d(0,10svh,0)!important;
   }
 
-  .hex-simple-loader-label{top:calc(50% - 12px)}
-  .hex-simple-loader-bar{top:calc(50% + 14px);width:150px}
+  .hex-opening-draw-copy,
+  .hex-opening-with-copy{
+    width:calc(100% - 32px);
+    white-space:normal!important;
+    transform:translate3d(0,44px,0);
+  }
+  .hex-opening-draw-copy{
+    font-size:clamp(34px,10vw,48px)!important;
+  }
+  .hex-opening-with-copy{
+    font-size:clamp(30px,8vw,40px)!important;
+  }
+  .is-v2-entered>.hex-opening-draw-copy,
+  .is-v2-entered>.hex-opening-with-copy{
+    transform:translate3d(0,0,0);
+  }
+  .hex-opening.is-curtain-sequence .hex-opening-brand-stage .hex-opening-wordmark-stage{
+    transform:translate3d(0,44px,0)!important;
+  }
+  .hex-opening.is-curtain-sequence .hex-opening-brand-stage.is-v2-entered>.hex-opening-wordmark-stage{
+    transform:translate3d(0,0,0)!important;
+  }
+  .hex-opening-wordmark-stage .hex-logo-story{
+    width:min(330px,78vw)!important;
+  }
+  .hex-simple-loader-logo{
+    width:min(360px,88vw);
+    transform:translate(-50%,-62%);
+  }
+
+  .hex-simple-loader.has-logo-animation .hex-simple-loader-label{top:calc(50% + 96px)}
+  .hex-simple-loader.has-logo-animation .hex-simple-loader-bar{top:calc(50% + 122px);width:150px}
 
   .hex-hero-wrap,
   .hex-hero-sticky{height:100svh!important;min-height:100svh!important}
