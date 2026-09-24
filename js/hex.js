@@ -6164,7 +6164,10 @@ hexReady(function(){
 
       var vertical=window.matchMedia("(max-width:768px)").matches;
       var duration=800;
-      var revealDuration=680;
+      // 次画像のクリップ解除は帯より先に完了させない。
+      // 帯と同じ800msに同期し、終盤で次画像が帯を追い越す見え方を防ぐ。
+      var revealDuration=duration;
+      var revealDelay=0;
       // 参考映像の間を800ms内に配分する。
       // 入り約170ms / 横断約310ms / 4本を細く見せる約160ms / 抜け約160ms。
       var entryEnd=.21;
@@ -6213,7 +6216,7 @@ hexReady(function(){
               ]),
           {
             duration:revealDuration,
-            delay:40,
+            delay:revealDelay,
             easing:"cubic-bezier(0,.6,.25,1)",
             fill:"both"
           }
