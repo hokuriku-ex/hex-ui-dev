@@ -6125,6 +6125,7 @@ hexReady(function(){
 
       opening.removeEventListener("wheel",onWheel);
       opening.removeEventListener("touchstart",onTouchStart);
+      opening.removeEventListener("touchmove",onTouchMove);
       opening.removeEventListener("touchend",onTouchEnd);
       document.removeEventListener("keydown",onKeyDown);
     }
@@ -6670,6 +6671,11 @@ hexReady(function(){
       }
     }
 
+    function onTouchMove(event){
+      if(cancelled){return;}
+      event.preventDefault();
+    }
+
     function onTouchEnd(event){
       var endY;
       if(touchStartY===null||!event.changedTouches||!event.changedTouches.length){return;}
@@ -6744,6 +6750,12 @@ hexReady(function(){
       var logoStory=opening.querySelector(".hex-logo-story");
       var logoHome=logoStory&&logoStory.parentNode;
       var logoViewBox=logoStory&&logoStory.getAttribute("viewBox");
+      var logoCompanyImage=logoStory&&logoStory.querySelector(
+        ".hex-logo-company-name image"
+      );
+      var logoCompanyHref=logoCompanyImage&&
+        logoCompanyImage.getAttribute("href");
+      var logoCompanyWhiteHref=logoCompanyHref;
       var urls=collectPreloadUrls();
       var completed=0;
       var started=0;
@@ -6760,6 +6772,25 @@ hexReady(function(){
         loader.classList.add("has-logo-animation","is-logo-phase");
         logoStory.classList.add("hex-simple-loader-logo");
         logoStory.setAttribute("viewBox","0 0 1000 560");
+        if(
+          logoCompanyHref&&
+          logoCompanyHref.indexOf("data:image/svg+xml;base64,")===0
+        ){
+          try{
+            logoCompanyWhiteHref=
+              "data:image/svg+xml;base64,"+
+              window.btoa(
+                window.atob(
+                  logoCompanyHref.slice("data:image/svg+xml;base64,".length)
+                ).replace(/#1f2774/gi,"#ffffff")
+              );
+          }catch(error){
+            logoCompanyWhiteHref=logoCompanyHref;
+          }
+        }
+        if(logoCompanyImage&&logoCompanyWhiteHref){
+          logoCompanyImage.setAttribute("href",logoCompanyWhiteHref);
+        }
         loader.insertBefore(logoStory,progress);
       }else{
         loader.classList.add("is-loading-phase");
@@ -6786,6 +6817,9 @@ hexReady(function(){
         );
         if(logoViewBox){
           logoStory.setAttribute("viewBox",logoViewBox);
+        }
+        if(logoCompanyImage&&logoCompanyHref){
+          logoCompanyImage.setAttribute("href",logoCompanyHref);
         }
         logoHome.appendChild(logoStory);
       }
@@ -6892,6 +6926,7 @@ hexReady(function(){
 
       opening.addEventListener("wheel",onWheel,{passive:false});
       opening.addEventListener("touchstart",onTouchStart,{passive:true});
+      opening.addEventListener("touchmove",onTouchMove,{passive:false});
       opening.addEventListener("touchend",onTouchEnd,{passive:true});
       document.addEventListener("keydown",onKeyDown);
 
