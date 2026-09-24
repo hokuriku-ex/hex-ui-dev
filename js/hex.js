@@ -2008,8 +2008,6 @@ hexReady(function(){
   var HERO_ZOOM_MAX=2;
   var HERO_AUTO_ZOOM_WAIT=500;
   var HERO_AUTO_ZOOM_DURATION=1500;
-  var HERO_BOTTOM_SHOW_PX=48;
-  var HERO_BOTTOM_HIDE_PX=96;
   var HERO_MOUSE_FOLLOW_EASE=.075;
   var threePromise=null;
 
@@ -2118,9 +2116,6 @@ hexReady(function(){
     var autoZoomTimer=0;
     var autoZoomFrame=0;
     var autoZoomRun=0;
-    var wheelZoomTimer=0;
-    var wheelZooming=false;
-    var bottomReached=false;
     var welcomeButtonVisible=false;
     var explored=false;
     var welcomeActive=false;
@@ -2200,49 +2195,17 @@ hexReady(function(){
       sticky.appendChild(welcomeButton);
     }
 
-    function imageBottomDistancePx(){
-      return Math.max(
-        0,
-        (state.y+metrics.maxY)*Math.max(metrics.scale,.001)
-      );
-    }
-
-    function isAtImageBottom(threshold){
-      return imageBottomDistancePx()<=(threshold||HERO_BOTTOM_SHOW_PX);
-    }
-
     function updateWelcomeButton(){
-      var fallback=hero.classList.contains("is-v2-fallback");
-      var zoomBusy=autoZooming||pinch.active||wheelZooming;
-      var wasAtBottom=bottomReached;
-      var visible;
+      var visible=!!(
+        welcomeButton&&
+        ready&&
+        !welcomeActive&&
+        !document.documentElement.classList.contains("hex-opening-lock")
+      );
 
       if(!welcomeButton){return;}
 
-      if(!explored||welcomeActive){
-        bottomReached=false;
-      }else if(!zoomBusy){
-        if(bottomReached){
-          bottomReached=isAtImageBottom(HERO_BOTTOM_HIDE_PX);
-        }else{
-          bottomReached=isAtImageBottom(HERO_BOTTOM_SHOW_PX);
-        }
-      }
-
-      /* PC追従で下端へ到達したらカメラを止め、ボタンへ移動できるようにする。 */
-      if(!wasAtBottom&&bottomReached){
-        mouseFollow.active=false;
-        state.vx=0;
-        state.vy=0;
-      }
-
-      visible=!!(
-        ready&&
-        !welcomeActive&&
-        (fallback||(explored&&!zoomBusy&&bottomReached))
-      );
-
-      /* 下端付近でも、実際に状態が変わった時だけDOMを更新する。 */
+      /* ヒーロー表示中は常時表示し、丸演出開始時だけ非表示にする。 */
       if(visible===welcomeButtonVisible){return;}
       welcomeButtonVisible=visible;
       welcomeButton.classList.toggle("is-visible",visible);
@@ -2310,7 +2273,6 @@ hexReady(function(){
       state.vx=0;
       state.vy=0;
       state.zoom=HERO_ZOOM_MIN;
-      bottomReached=false;
       mouseFollow.active=false;
       mouseFollow.armed=false;
       updateZoomMetrics();
@@ -2513,9 +2475,6 @@ hexReady(function(){
       released=false;
       explored=false;
       interactionLocked=true;
-      bottomReached=false;
-      wheelZooming=false;
-      window.clearTimeout(wheelZoomTimer);
       activePointers.clear();
       pinch.active=false;
       dragging=false;
@@ -2574,6 +2533,7 @@ hexReady(function(){
       var target;
       var handoff;
       if(welcomeActive||!welcomeWrap){return;}
+      cancelAutoZoom(false);
       welcomeActive=true;
       state.vx=0;
       state.vy=0;
@@ -2718,16 +2678,7 @@ hexReady(function(){
         ?event.deltaY
         :event.deltaX;
       nextZoom=state.zoom*Math.exp(-zoomDelta*.0012);
-      wheelZooming=true;
-      bottomReached=false;
-      updateWelcomeButton();
       applyZoomAt(nextZoom,event.clientX,event.clientY);
-
-      window.clearTimeout(wheelZoomTimer);
-      wheelZoomTimer=window.setTimeout(function(){
-        wheelZooming=false;
-        updateWelcomeButton();
-      },180);
     }
 
     function startDrag(pointerId,x,y){
@@ -2775,7 +2726,6 @@ hexReady(function(){
       pinch.anchorX=state.x+dx/Math.max(metrics.scale,.001);
       pinch.anchorY=state.y-dy/Math.max(metrics.scale,.001);
       dragging=false;
-      bottomReached=false;
       state.vx=0;
       state.vy=0;
       webglStage.classList.remove("is-dragging");
@@ -2823,8 +2773,7 @@ hexReady(function(){
         isSp()||
         interactionLocked||
         welcomeActive||
-        pinch.active||
-        welcomeButtonVisible
+        pinch.active
       ){
         return;
       }
@@ -3194,6 +3143,7 @@ hexReady(function(){
       setHeroPageLock(true);
       revealCatch(false);
       queueResize();
+      updateWelcomeButton();
       scheduleAutoZoom(0);
     });
 
