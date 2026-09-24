@@ -6165,6 +6165,11 @@ hexReady(function(){
       var vertical=window.matchMedia("(max-width:768px)").matches;
       var duration=800;
       var revealDuration=680;
+      // 参考映像の間を800ms内に配分する。
+      // 入り約170ms / 横断約310ms / 4本を細く見せる約160ms / 抜け約160ms。
+      var entryEnd=.21;
+      var sweepEnd=.60;
+      var thinExitStart=.80;
       var backwards=direction<0;
       var totalDuration=duration;
       var incomingAnimation=null;
@@ -6238,28 +6243,32 @@ hexReady(function(){
           ?(backwards
             ?[
               {transform:"translate3d(0,-61vh,0)"},
-              {transform:"translate3d(0,-45vh,0)",offset:.16},
-              {transform:"translate3d(0,76vh,0)",offset:.84},
+              {transform:"translate3d(0,-45vh,0)",offset:entryEnd},
+              {transform:"translate3d(0,40vh,0)",offset:sweepEnd},
+              {transform:"translate3d(0,calc(100vh - 40px),0)",offset:thinExitStart},
               {transform:"translate3d(0,101vh,0)"}
             ]
             :[
               {transform:"translate3d(0,101vh,0)"},
-              {transform:"translate3d(0,76vh,0)",offset:.16},
-              {transform:"translate3d(0,-45vh,0)",offset:.84},
-              {transform:"translate3d(0,-61vh,0)"}
+              {transform:"translate3d(0,76vh,0)",offset:entryEnd},
+              {transform:"translate3d(0,0,0)",offset:sweepEnd},
+              {transform:"translate3d(0,0,0)",offset:thinExitStart},
+              {transform:"translate3d(0,-41px,0)"}
             ])
           :(backwards
             ?[
               {transform:"translate3d(-61vw,0,0)"},
-              {transform:"translate3d(-45vw,0,0)",offset:.16},
-              {transform:"translate3d(76vw,0,0)",offset:.84},
+              {transform:"translate3d(-45vw,0,0)",offset:entryEnd},
+              {transform:"translate3d(40vw,0,0)",offset:sweepEnd},
+              {transform:"translate3d(calc(100vw - 40px),0,0)",offset:thinExitStart},
               {transform:"translate3d(101vw,0,0)"}
             ]
             :[
               {transform:"translate3d(101vw,0,0)"},
-              {transform:"translate3d(76vw,0,0)",offset:.16},
-              {transform:"translate3d(-45vw,0,0)",offset:.84},
-              {transform:"translate3d(-61vw,0,0)"}
+              {transform:"translate3d(76vw,0,0)",offset:entryEnd},
+              {transform:"translate3d(0,0,0)",offset:sweepEnd},
+              {transform:"translate3d(0,0,0)",offset:thinExitStart},
+              {transform:"translate3d(-41px,0,0)"}
             ]),
         {
           duration:duration,
@@ -6277,13 +6286,15 @@ hexReady(function(){
           ?[
             {height:"10px"},
             {height:"15vh",offset:.22},
-            {height:"15vh",offset:.62},
+            {height:"15vh",offset:.45},
+            {height:"10px",offset:.76},
             {height:"10px"}
           ]
           :[
             {width:"10px"},
             {width:"15vw",offset:.22},
-            {width:"15vw",offset:.62},
+            {width:"15vw",offset:.45},
+            {width:"10px",offset:.76},
             {width:"10px"}
           ];
 
