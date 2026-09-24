@@ -6105,10 +6105,18 @@ hexReady(function(){
 
     function animateIncoming(scene){
       var introMain;
+      var sceneIndex;
       if(!scene){return;}
+      sceneIndex=scenes.indexOf(scene);
       scene.classList.remove("is-v2-entered");
+      if(sceneIndex>=0&&sceneIndex<5){
+        scene.classList.remove("is-v2-image-entered");
+      }
       void scene.offsetWidth;
       scene.classList.add("is-v2-entered");
+      if(sceneIndex>=0&&sceneIndex<5){
+        scene.classList.add("is-v2-image-entered");
+      }
 
       if(scene===introStage){
         introMain=scene.querySelector(
@@ -6231,11 +6239,11 @@ hexReady(function(){
               {transform:"translate3d(0,101vh,0)"}
             ]
             :[
-              {transform:"translate3d(0,101vh,0)"},
-              {transform:"translate3d(0,76vh,0)",offset:entryEnd},
-              {transform:"translate3d(0,0,0)",offset:sweepEnd},
-              {transform:"translate3d(0,0,0)",offset:thinExitStart},
-              {transform:"translate3d(0,-41px,0)"}
+              {transform:"translate3d(0,calc(161vh - 100%),0)"},
+              {transform:"translate3d(0,calc(145vh - 100%),0)",offset:entryEnd},
+              {transform:"translate3d(0,calc(60vh - 100%),0)",offset:sweepEnd},
+              {transform:"translate3d(0,calc(40px - 100%),0)",offset:thinExitStart},
+              {transform:"translate3d(0,calc(-1vh - 100%),0)"}
             ])
           :(backwards
             ?[
@@ -6246,11 +6254,11 @@ hexReady(function(){
               {transform:"translate3d(101vw,0,0)"}
             ]
             :[
-              {transform:"translate3d(101vw,0,0)"},
-              {transform:"translate3d(76vw,0,0)",offset:entryEnd},
-              {transform:"translate3d(0,0,0)",offset:sweepEnd},
-              {transform:"translate3d(0,0,0)",offset:thinExitStart},
-              {transform:"translate3d(-41px,0,0)"}
+              {transform:"translate3d(calc(161vw - 100%),0,0)"},
+              {transform:"translate3d(calc(145vw - 100%),0,0)",offset:entryEnd},
+              {transform:"translate3d(calc(60vw - 100%),0,0)",offset:sweepEnd},
+              {transform:"translate3d(calc(40px - 100%),0,0)",offset:thinExitStart},
+              {transform:"translate3d(calc(-1vw - 100%),0,0)"}
             ]),
         {
           duration:duration,

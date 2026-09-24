@@ -9146,7 +9146,8 @@ html.hex-opening-finishing
 .hex-opening.is-curtain-sequence .hex-opening-message-stage{background:var(--hex-opening-white)!important}
 .hex-opening.is-curtain-sequence :is(.hex-opening-intro-stage,.hex-opening-slide,.hex-opening-message-stage,.hex-opening-brand-stage):is(.is-v2-current,.is-v2-incoming){opacity:1!important;visibility:visible!important}
 .hex-opening.is-curtain-sequence :is(.hex-opening-intro-stage,.hex-opening-slide,.hex-opening-message-stage,.hex-opening-brand-stage).is-v2-incoming{z-index:3!important}
-.hex-opening.is-curtain-sequence :is(.hex-opening-intro-photo,.hex-opening-slide-image){transform:none!important;animation:none!important}
+.hex-opening.is-curtain-sequence :is(.hex-opening-intro-photo,.hex-opening-slide-image){opacity:.88!important;transform:scale(1.02)!important;animation:none!important;transition:none!important;will-change:opacity,transform}
+.hex-opening.is-curtain-sequence .is-v2-image-entered :is(.hex-opening-intro-photo,.hex-opening-slide-image){opacity:1!important;transform:scale(1)!important;transition:opacity .9s ease .08s,transform 1.2s cubic-bezier(.22,.8,.3,1) .08s!important}
 .hex-opening.is-curtain-sequence :is(.hex-opening-intro-catch,.hex-opening-slide-title,.hex-opening-message-first,.hex-opening-message-final,.hex-opening-logo-stage){opacity:0;transform:translate3d(52px,0,0)!important}
 .hex-opening.is-curtain-sequence .is-v2-entered :is(.hex-opening-intro-catch,.hex-opening-slide-title,.hex-opening-message-first,.hex-opening-message-final,.hex-opening-logo-stage){opacity:1;transform:translate3d(0,0,0)!important;transition:opacity .72s ease .56s,transform .82s cubic-bezier(.22,.8,.3,1) .56s!important}
 .hex-opening.is-curtain-sequence :is(.hex-opening-message-first,.hex-opening-message-final){transform:translate(calc(-50% + 52px),-50%)!important}
