@@ -2055,6 +2055,8 @@ hexReady(function(){
     );
     var welcomeContents=welcomeWrap&&welcomeWrap.querySelector(".welcome_contents");
     var welcomeStage=null;
+    var welcomeBodyChars=[];
+    var welcomeBodyCompleted=false;
     var welcomeButton=null;
     var activeHero=null;
     var sourceImage=null;
@@ -2348,11 +2350,64 @@ hexReady(function(){
       }
 
       welcomePanel.appendChild(welcomeStage);
+      prepareWelcomeBody();
       welcomeWrap.classList.add(
         "hex-v2-welcome",
         "is-welcome-active",
         "is-welcome-copy-ready"
       );
+    }
+
+    function prepareWelcomeBody(){
+      var body=welcomeContents&&welcomeContents.querySelector(".text");
+      var walker;
+      var nodes=[];
+      var node;
+      var segments;
+      var fragment;
+      var span;
+      if(!body||welcomeBodyChars.length){return;}
+      walker=document.createTreeWalker(body,NodeFilter.SHOW_TEXT);
+      while((node=walker.nextNode())){nodes.push(node);}
+      nodes.forEach(function(textNode){
+        var value=textNode.nodeValue;
+        if(!value||!value.trim()){return;}
+        segments=(window.Intl&&Intl.Segmenter)
+          ?Array.from(new Intl.Segmenter("ja",{granularity:"grapheme"}).segment(value),function(part){return part.segment;})
+          :Array.from(value);
+        fragment=document.createDocumentFragment();
+        segments.forEach(function(character){
+          if(/^\s+$/.test(character)){
+            fragment.appendChild(document.createTextNode(character));
+            return;
+          }
+          span=document.createElement("span");
+          span.className="hex-v2-body-char";
+          span.textContent=character;
+          fragment.appendChild(span);
+          welcomeBodyChars.push(span);
+        });
+        textNode.parentNode.replaceChild(fragment,textNode);
+      });
+    }
+
+    function updateWelcomeBody(circleDone){
+      var viewport=Math.max(window.innerHeight,1);
+      var body=welcomeContents&&welcomeContents.querySelector(".text");
+      var rect=body&&body.getBoundingClientRect();
+      var totalDuration=.8+Math.max(0,welcomeBodyChars.length-1)*.02;
+      var progress=rect&&circleDone
+        ?clamp((viewport*.75-rect.top)/(rect.height+viewport*.25),0,1)
+        :0;
+      var time=progress*totalDuration;
+      if(progress>=1){welcomeBodyCompleted=true;}
+      welcomeBodyChars.forEach(function(character,index){
+        var local=(reduced||welcomeBodyCompleted)?1
+          :clamp((time-index*.02)/.8,0,1);
+        var eased=Math.sqrt(1-Math.pow(1-local,2));
+        character.style.opacity=eased;
+        character.style.transform="translate3d(0,"+((1-eased)*10)+"px,0)";
+      });
     }
 
     function measureWelcome(){
@@ -2488,8 +2543,12 @@ hexReady(function(){
       hero.classList.remove("is-exploring","is-welcome-transition");
       if(webglStage){webglStage.classList.remove("is-dragging","is-pinching");}
       if(snapshot){snapshot.remove();snapshot=null;snapshotCanvas=null;}
-      if(welcomeWrap){welcomeWrap.classList.remove("is-v2-active","is-v2-complete");}
+      if(welcomeWrap){welcomeWrap.classList.remove("is-v2-active","is-v2-complete","is-v2-circle-complete");}
       if(welcomeStage){welcomeStage.style.removeProperty("transform");}
+      welcomeBodyChars.forEach(function(character){
+        character.style.removeProperty("opacity");
+        character.style.removeProperty("transform");
+      });
       updateZoomMetrics();
       setCamera();
       revealCatch(withFade);
@@ -2635,11 +2694,17 @@ hexReady(function(){
       );
 
       if(welcomeStage){
-        var translateY=
-          travelMetrics.viewport*.82-
-          welcomeProgress*(travelMetrics.viewport*.82+travelMetrics.stageHeight);
+        var headingHeight=welcomeCopy
+          ?welcomeCopy.getBoundingClientRect().height
+          :0;
+        var imageCenter=snapshot.getBoundingClientRect().top+metrics.height*.5;
+        var startingY=imageCenter-headingHeight*.5;
+        var translateY=startingY-
+          welcomeProgress*(startingY+travelMetrics.stageHeight);
         welcomeStage.style.transform="translate3d(0,"+translateY+"px,0)";
       }
+      welcomeWrap.classList.toggle("is-v2-circle-complete",circleProgress>=.999);
+      updateWelcomeBody(circleProgress>=.999 && welcomeProgress>0);
 
       if(welcomeProgress>=.999){
         releaseSnapshot();
@@ -13162,6 +13227,7 @@ hexLoad(function(){
       '.hex-hero-image-handoff',
       '.hex-welcome-wrap .hex-opening-copy-source',
       '.hex-welcome-wrap .hex-handoff-copy',
+      '.hex-welcome-wrap .welcome_contents',
       /* 創業の見出し・説明・実績カードは既存の個別演出を優先 */
       '#gc_auto_frame_home_4 .hex-center-title',
       '#gc_auto_frame_home_4 .hex-center',
@@ -13966,24 +14032,13 @@ hexLoad(function(){
         return;
       }
 
-      if(window.innerWidth<=768){
-        /* SPは固定受け渡しがないため、画面進入を開始条件にする */
-        ScrollTrigger.create({
-          trigger:welcomeCopy,
-          start:'top 90%',
-          once:true,
-          onEnter:function(){
-            welcomeRoll.play();
-          }
-        });
-        return;
-      }
-
-      /* PCはヒーローからWELCOMEへコピーが渡った瞬間に開始する */
+      /* PC/SPとも丸画像の完成と同時に見出しをロール表示する */
       var welcomePlayed=false;
+      var welcomeSection=welcomeCopy.closest('.hex-welcome-wrap');
 
       function syncWelcomeCatch(){
-        var isActive=welcomeCopy.classList.contains('is-copy-active');
+        var isActive=welcomeSection&&
+          welcomeSection.classList.contains('is-v2-circle-complete');
 
         if(isActive&&!welcomePlayed){
           welcomePlayed=true;
@@ -13992,7 +14047,7 @@ hexLoad(function(){
       }
 
       new MutationObserver(syncWelcomeCatch).observe(
-        welcomeCopy,
+        welcomeSection||welcomeCopy,
         {
           attributes:true,
           attributeFilter:['class']

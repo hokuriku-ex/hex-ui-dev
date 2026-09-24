@@ -2600,13 +2600,13 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     text-shadow:none!important;
   }
   .hex-v2-welcome-copy-stage .hex-welcome-copy .hex-opening-sub,
-  .hex-v2-welcome-copy-stage .welcome .title :is(h2,h3,h4){
+  .hex-v2-welcome-copy-stage .welcome_contents .title :is(h2,h3,h4){
     -webkit-text-stroke:2.5px #faf7ef!important;
     paint-order:stroke fill!important;
     text-shadow:none!important;
   }
-  .hex-v2-welcome-copy-stage .welcome .text,
-  .hex-v2-welcome-copy-stage .welcome .text *{
+  .hex-v2-welcome-copy-stage .welcome_contents .text,
+  .hex-v2-welcome-copy-stage .welcome_contents .text *{
     -webkit-text-stroke:1.75px #faf7ef!important;
     paint-order:stroke fill!important;
     text-shadow:none!important;

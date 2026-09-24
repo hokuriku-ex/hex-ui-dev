@@ -9270,9 +9270,12 @@ html.hex-opening-finishing
 .hex-welcome-wrap.hex-v2-welcome .welcome{background:transparent!important}
 .hex-v2-welcome .welcome.has-padding{position:sticky!important;top:0!important;z-index:3!important;display:block!important;width:100%!important;min-height:100dvh!important;height:100dvh!important;margin:0!important;padding:0!important;overflow:hidden!important;transform:none!important}
 .hex-v2-welcome-copy-stage{position:absolute;top:0;right:3vw;z-index:20;width:46%;max-width:720px;will-change:transform}
+.hex-welcome-wrap.is-v2-active:not(.is-v2-circle-complete) .hex-v2-welcome-copy-stage{opacity:0;visibility:hidden}
 .hex-v2-welcome-copy-stage :is(.hex-welcome-copy,.welcome_contents){width:100%!important;max-width:none!important;margin-right:0!important;margin-left:0!important;opacity:1!important;visibility:visible!important;transform:none!important}
 .hex-v2-welcome-copy-stage .hex-welcome-copy{margin-bottom:clamp(26px,4vh,52px)!important;text-align:left!important}
 .hex-v2-welcome-copy-stage .welcome_contents{padding-inline:clamp(24px,3vw,48px)!important}
+.hex-v2-welcome-copy-stage .welcome_contents .text .hex-v2-body-char{display:inline-block}
+.hex-welcome-wrap.is-v2-active .hex-v2-welcome-copy-stage .welcome_contents .text .hex-v2-body-char{opacity:0;transform:translate3d(0,10px,0)}
 .hex-v2-welcome-copy-stage .hex-welcome-final-copy,
 .hex-v2-welcome-copy-stage .hex-welcome-final-copy *{color:#1f2774!important;text-shadow:none!important;-webkit-text-stroke:0!important}
 
