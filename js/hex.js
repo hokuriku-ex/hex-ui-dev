@@ -6166,13 +6166,13 @@ hexReady(function(){
       if(nextScene){
         nextScene.classList.add("is-v2-incoming");
         nextScene.setAttribute("aria-hidden","false");
-        nextScene.style.zIndex="3";
+        nextScene.style.setProperty("z-index","4","important");
         incomingContainer=nextScene.parentElement;
         if(
           incomingContainer&&
           incomingContainer.classList.contains("hex-opening-slides")
         ){
-          incomingContainer.style.zIndex="3";
+          incomingContainer.style.setProperty("z-index","3","important");
         }
         animateIncoming(nextScene);
 
