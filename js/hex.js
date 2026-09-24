@@ -6044,7 +6044,6 @@ hexReady(function(){
     var bands=track
       ?Array.prototype.slice.call(track.children)
       :[];
-    var firstVisit=!replayRequested;
     var reduced=isReducedMotion();
     var nav=null;
     var cue=null;
@@ -6105,10 +6104,20 @@ hexReady(function(){
     });
 
     function animateIncoming(scene){
+      var introMain;
       if(!scene){return;}
       scene.classList.remove("is-v2-entered");
       void scene.offsetWidth;
       scene.classList.add("is-v2-entered");
+
+      if(scene===introStage){
+        introMain=scene.querySelector(
+          ".hex-opening-intro-main.has-hex-opening-char-roll"
+        );
+        if(introMain){
+          introMain.classList.add("is-char-roll-played");
+        }
+      }
 
       if(scene===brandStage){
         later(function(){
@@ -6542,7 +6551,7 @@ hexReady(function(){
       updateDots(false);
     }
 
-    if(firstVisit&&!isReducedMotion()){
+    if(!isReducedMotion()){
       showLoader().then(begin);
     }else{
       begin();
