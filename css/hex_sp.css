@@ -2558,8 +2558,8 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     transform:translate(-50%,-62%);
   }
 
-  .hex-simple-loader.has-logo-animation .hex-simple-loader-label{top:calc(50% + 96px)}
-  .hex-simple-loader.has-logo-animation .hex-simple-loader-bar{top:calc(50% + 122px);width:150px}
+  .hex-simple-loader.has-logo-animation.is-loading-phase .hex-simple-loader-label{top:calc(50% - 12px)}
+  .hex-simple-loader.has-logo-animation.is-loading-phase .hex-simple-loader-bar{top:calc(50% + 14px);width:150px}
 
   .hex-hero-wrap,
   .hex-hero-sticky{height:100svh!important;min-height:100svh!important}

@@ -9198,17 +9198,20 @@ html.hex-opening-finishing
 .hex-opening-hero-preview.hex-v2-opening-preview.is-v2-circle-reveal{z-index:11!important;opacity:1!important;visibility:visible!important;will-change:clip-path,-webkit-clip-path}
 
 /* ローディング内で1回だけ再生するロゴアニメーション */
-.hex-simple-loader-logo{position:absolute;top:50%;left:50%;z-index:2;width:min(520px,72vw);height:auto;color:#fff;overflow:visible;transform:translate(-50%,-56%)}
+.hex-simple-loader-logo{position:absolute;top:50%;left:50%;z-index:2;width:min(520px,72vw);height:auto;color:#fff;overflow:visible;opacity:1;transform:translate(-50%,-56%);transition:opacity .32s ease}
 .hex-simple-loader-logo .hex-logo-build,.hex-simple-loader-logo .hex-logo-company-name{fill:#fff!important}
 .hex-simple-loader-logo .hex-logo-front-right-layer,
 .hex-simple-loader-logo .hex-logo-front-right-layer use,
 .hex-simple-loader-logo use[href="#hex-logo-front-right-path"]{fill:#fff!important;color:#fff!important;opacity:1!important}
-.hex-simple-loader-logo .hex-logo-company-name{opacity:0!important}
+.hex-simple-loader-logo .hex-logo-company-name{opacity:0}
+.hex-simple-loader-logo .hex-logo-company-name image{filter:brightness(0) invert(1)}
 .hex-simple-loader-logo.is-playing :is(.hex-logo-front-left-mask-path,.hex-logo-front-center-mask-path,.hex-logo-back-arm-mask-path){animation:hex-loader-logo-draw .9s cubic-bezier(.22,.8,.3,1) forwards!important}
 .hex-simple-loader-logo.is-playing .hex-logo-front-right-clip-rect{animation:hex-loader-logo-right .72s cubic-bezier(.22,.8,.3,1) .32s forwards!important}
 .hex-simple-loader-logo.is-playing :is(.hex-logo-back-hand,.hex-logo-company-name){animation:hex-loader-logo-fade .62s ease .78s forwards!important}
-.hex-simple-loader.has-logo-animation .hex-simple-loader-label{top:calc(50% + 118px)}
-.hex-simple-loader.has-logo-animation .hex-simple-loader-bar{top:calc(50% + 144px)}
+.hex-simple-loader.is-logo-hiding .hex-simple-loader-logo{opacity:0}
+.hex-simple-loader.has-logo-animation:not(.is-loading-phase) :is(.hex-simple-loader-label,.hex-simple-loader-bar){opacity:0;visibility:hidden}
+.hex-simple-loader.has-logo-animation.is-loading-phase .hex-simple-loader-label{top:calc(50% - 12px);opacity:1;visibility:visible}
+.hex-simple-loader.has-logo-animation.is-loading-phase .hex-simple-loader-bar{top:calc(50% + 14px);opacity:1;visibility:visible}
 @keyframes hex-loader-logo-draw{to{stroke-dashoffset:0;opacity:1}}
 @keyframes hex-loader-logo-right{
   from{transform:translateX(140px) scaleX(0)}

@@ -6746,7 +6746,7 @@ hexReady(function(){
       var logoViewBox=logoStory&&logoStory.getAttribute("viewBox");
       var urls=collectPreloadUrls();
       var completed=0;
-      var started=Date.now();
+      var started=0;
       var maximumTimer;
       var loaderFinished=false;
 
@@ -6757,10 +6757,12 @@ hexReady(function(){
       label.textContent="LOADING";
 
       if(logoStory){
-        loader.classList.add("has-logo-animation");
+        loader.classList.add("has-logo-animation","is-logo-phase");
         logoStory.classList.add("hex-simple-loader-logo");
         logoStory.setAttribute("viewBox","0 0 1000 560");
         loader.insertBefore(logoStory,progress);
+      }else{
+        loader.classList.add("is-loading-phase");
       }
       document.body.appendChild(loader);
 
@@ -6776,6 +6778,18 @@ hexReady(function(){
         loader.style.setProperty("--hex-loader-progress",String(value));
       }
 
+      function restoreLogo(){
+        if(!logoStory||!logoHome){return;}
+        logoStory.classList.remove(
+          "hex-simple-loader-logo",
+          "is-playing"
+        );
+        if(logoViewBox){
+          logoStory.setAttribute("viewBox",logoViewBox);
+        }
+        logoHome.appendChild(logoStory);
+      }
+
       function finish(resolve){
         if(loaderFinished){return;}
         loaderFinished=true;
@@ -6784,61 +6798,62 @@ hexReady(function(){
         later(function(){
           loader.classList.add("is-complete");
           later(function(){
-            if(logoStory&&logoHome){
-              logoStory.classList.remove(
-                "hex-simple-loader-logo",
-                "is-playing"
-              );
-              if(logoViewBox){
-                logoStory.setAttribute("viewBox",logoViewBox);
-              }
-              logoHome.appendChild(logoStory);
-            }
             if(loader.parentNode){loader.remove();}
             resolve();
           },460);
         },remaining);
       }
 
-      setProgress(.04);
-
       return new Promise(function(resolve){
-        var tasks=urls.map(function(url){
-          return preload(url).then(function(){
-            completed+=1;
-            setProgress(.08+.92*(completed/urls.length));
+        function startResourceLoading(){
+          var tasks;
+
+          started=Date.now();
+          loader.classList.remove("is-logo-phase","is-logo-hiding");
+          loader.classList.add("is-loading-phase");
+          setProgress(.04);
+
+          tasks=urls.map(function(url){
+            return preload(url).then(function(){
+              completed+=1;
+              setProgress(.08+.92*(completed/urls.length));
+            });
           });
-        });
 
-        if(!urls.length){setProgress(.82);}
+          if(!urls.length){setProgress(.82);}
 
-        if(typeof window.hexPreloadThree==="function"){
-          tasks.push(window.hexPreloadThree().catch(function(){}));
-        }
+          if(typeof window.hexPreloadThree==="function"){
+            tasks.push(window.hexPreloadThree().catch(function(){}));
+          }
 
-        if(document.fonts&&document.fonts.ready){
-          tasks.push(document.fonts.ready.catch(function(){}));
-        }
+          if(document.fonts&&document.fonts.ready){
+            tasks.push(document.fonts.ready.catch(function(){}));
+          }
 
-        var resourcesReady=new Promise(function(resourcesResolve){
           maximumTimer=window.setTimeout(function(){
             setProgress(1);
-            resourcesResolve();
+            finish(resolve);
           },6000);
 
           Promise.all(tasks).then(function(){
-            window.clearTimeout(maximumTimer);
             setProgress(1);
-            resourcesResolve();
+            finish(resolve);
           });
-        });
-        var logoReady=logoStory
-          ?new Promise(function(logoResolve){later(logoResolve,1500);})
-          :Promise.resolve();
+        }
 
-        Promise.all([resourcesReady,logoReady]).then(function(){
-          finish(resolve);
-        });
+        if(!logoStory){
+          startResourceLoading();
+          return;
+        }
+
+        /* ロゴ完成後に消してから、初めて通常ローディングを開始する。 */
+        later(function(){
+          loader.classList.add("is-logo-hiding");
+          later(function(){
+            restoreLogo();
+            startResourceLoading();
+          },320);
+        },1500);
       });
     }
 
