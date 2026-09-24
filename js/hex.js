@@ -6170,6 +6170,7 @@ hexReady(function(){
       var incomingAnimation=null;
       var outgoingAnimation=null;
       var trackAnimation=null;
+      var bandAnimations=[];
       var incomingContainer=null;
 
       if(nextScene){
@@ -6236,29 +6237,29 @@ hexReady(function(){
         vertical
           ?(backwards
             ?[
-              {height:"40px",transform:"translate3d(0,-41px,0)"},
-              {height:"60vh",transform:"translate3d(0,-45vh,0)",offset:.16},
-              {height:"60vh",transform:"translate3d(0,76vh,0)",offset:.84},
-              {height:"40px",transform:"translate3d(0,101vh,0)"}
+              {transform:"translate3d(0,-61vh,0)"},
+              {transform:"translate3d(0,-45vh,0)",offset:.16},
+              {transform:"translate3d(0,76vh,0)",offset:.84},
+              {transform:"translate3d(0,101vh,0)"}
             ]
             :[
-              {height:"40px",transform:"translate3d(0,101vh,0)"},
-              {height:"60vh",transform:"translate3d(0,76vh,0)",offset:.16},
-              {height:"60vh",transform:"translate3d(0,-45vh,0)",offset:.84},
-              {height:"40px",transform:"translate3d(0,-41px,0)"}
+              {transform:"translate3d(0,101vh,0)"},
+              {transform:"translate3d(0,76vh,0)",offset:.16},
+              {transform:"translate3d(0,-45vh,0)",offset:.84},
+              {transform:"translate3d(0,-61vh,0)"}
             ])
           :(backwards
             ?[
-              {width:"40px",transform:"translate3d(-41px,0,0)"},
-              {width:"60vw",transform:"translate3d(-45vw,0,0)",offset:.16},
-              {width:"60vw",transform:"translate3d(76vw,0,0)",offset:.84},
-              {width:"40px",transform:"translate3d(101vw,0,0)"}
+              {transform:"translate3d(-61vw,0,0)"},
+              {transform:"translate3d(-45vw,0,0)",offset:.16},
+              {transform:"translate3d(76vw,0,0)",offset:.84},
+              {transform:"translate3d(101vw,0,0)"}
             ]
             :[
-              {width:"40px",transform:"translate3d(101vw,0,0)"},
-              {width:"60vw",transform:"translate3d(76vw,0,0)",offset:.16},
-              {width:"60vw",transform:"translate3d(-45vw,0,0)",offset:.84},
-              {width:"40px",transform:"translate3d(-41px,0,0)"}
+              {transform:"translate3d(101vw,0,0)"},
+              {transform:"translate3d(76vw,0,0)",offset:.16},
+              {transform:"translate3d(-45vw,0,0)",offset:.84},
+              {transform:"translate3d(-61vw,0,0)"}
             ]),
         {
           duration:duration,
@@ -6267,10 +6268,38 @@ hexReady(function(){
         }
       );
 
+      bands.forEach(function(band,bandIndex){
+        var order=backwards
+          ?bands.length-1-bandIndex
+          :bandIndex;
+        var bandDuration=duration-45*(bands.length-1);
+        var sizeFrames=vertical
+          ?[
+            {height:"10px"},
+            {height:"15vh",offset:.22},
+            {height:"15vh",offset:.62},
+            {height:"10px"}
+          ]
+          :[
+            {width:"10px"},
+            {width:"15vw",offset:.22},
+            {width:"15vw",offset:.62},
+            {width:"10px"}
+          ];
+
+        bandAnimations.push(band.animate(sizeFrames,{
+          duration:bandDuration,
+          delay:order*45,
+          easing:"cubic-bezier(0,.6,.25,1)",
+          fill:"both"
+        }));
+      });
+
       return wait(totalDuration+40).then(function(){
         if(incomingAnimation){incomingAnimation.cancel();}
         if(outgoingAnimation){outgoingAnimation.cancel();}
         if(trackAnimation){trackAnimation.cancel();}
+        bandAnimations.forEach(function(animation){animation.cancel();});
         curtain.classList.remove("is-active","is-v2-running");
 
         if(nextScene){

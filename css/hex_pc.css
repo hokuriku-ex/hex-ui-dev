@@ -9153,13 +9153,9 @@ html.hex-opening-finishing
 .hex-opening.is-curtain-sequence .is-v2-entered :is(.hex-opening-message-first,.hex-opening-message-final){transform:translate(-50%,-50%)!important}
 .hex-opening.is-curtain-sequence .is-v2-entered .hex-opening-logo-stage{transition-delay:.7s!important}
 .hex-opening.is-curtain-sequence .hex-opening-curtain{position:absolute;inset:0;z-index:90;overflow:hidden}
-.hex-opening.is-curtain-sequence .hex-opening-curtain-track{position:absolute;top:0;left:0;display:flex;width:40px;height:100%;transform:translate3d(101vw,0,0);transform-origin:left center;will-change:width,height,transform}
+.hex-opening.is-curtain-sequence .hex-opening-curtain-track{position:absolute;top:0;left:0;display:flex;gap:0;width:max-content;height:100%;transform:translate3d(101vw,0,0);transform-origin:left center;will-change:transform}
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i,
-.hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(n){position:relative!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;display:block;width:auto;height:100%;margin-right:-1px;background-image:none;transform:none!important}
-.hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(1),
-.hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(4){flex:1 0 calc(10% + 1px)}
-.hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(2),
-.hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(3){flex:4 0 calc(40% + 1px)}
+.hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(n){position:relative!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;display:block;flex:0 0 auto;width:10px;height:100%;margin-right:-1px;background-image:none;transform:none!important;will-change:width,height}
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(1){background:#334e91}
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(2){background:#5a74b6}
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(3){background:#7789b9}
