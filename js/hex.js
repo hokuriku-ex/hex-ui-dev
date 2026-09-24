@@ -6164,10 +6164,6 @@ hexReady(function(){
 
       var vertical=window.matchMedia("(max-width:768px)").matches;
       var duration=800;
-      // 次画像のクリップ解除は帯より先に完了させない。
-      // 帯と同じ800msに同期し、終盤で次画像が帯を追い越す見え方を防ぐ。
-      var revealDuration=duration;
-      var revealDelay=0;
       // 参考映像の間を800ms内に配分する。
       // 入り約170ms / 横断約310ms / 4本を細く見せる約160ms / 抜け約160ms。
       var entryEnd=.21;
@@ -6175,7 +6171,7 @@ hexReady(function(){
       var thinExitStart=.80;
       var backwards=direction<0;
       var totalDuration=duration;
-      var incomingAnimation=null;
+      var incomingClipFrame=null;
       var outgoingAnimation=null;
       var trackAnimation=null;
       var bandAnimations=[];
@@ -6193,33 +6189,16 @@ hexReady(function(){
           incomingContainer.style.setProperty("z-index","3","important");
         }
         animateIncoming(nextScene);
-
-        incomingAnimation=nextScene.animate(
+        nextScene.style.setProperty(
+          "clip-path",
           vertical
             ?(backwards
-              ?[
-                {clipPath:"inset(0 0 100% 0)"},
-                {clipPath:"inset(0 0 0 0)"}
-              ]
-              :[
-                {clipPath:"inset(100% 0 0 0)"},
-                {clipPath:"inset(0 0 0 0)"}
-              ])
+              ?"inset(0 0 100% 0)"
+              :"inset(100% 0 0 0)")
             :(backwards
-              ?[
-                {clipPath:"inset(0 100% 0 0)"},
-                {clipPath:"inset(0 0 0 0)"}
-              ]
-              :[
-                {clipPath:"inset(0 0 0 100%)"},
-                {clipPath:"inset(0 0 0 0)"}
-              ]),
-          {
-            duration:revealDuration,
-            delay:revealDelay,
-            easing:"cubic-bezier(0,.6,.25,1)",
-            fill:"both"
-          }
+              ?"inset(0 100% 0 0)"
+              :"inset(0 0 0 100%)"),
+          "important"
         );
       }else if(isHero&&currentScene){
         outgoingAnimation=currentScene.animate(
@@ -6313,8 +6292,67 @@ hexReady(function(){
         }));
       });
 
+      /*
+       * 次画像の境界を独立した時間アニメーションで動かすと、
+       * 4本目との間が「透明な5本目」のように見える。
+       * 実際の末尾帯の座標へ毎フレーム直結して隙間をなくす。
+       */
+      if(nextScene){
+        (function syncIncomingClip(){
+          var curtainRect;
+          var edgeBandRect;
+          var clipValue;
+          var edge;
+          var limit;
+
+          if(cancelled||!nextScene.isConnected){return;}
+
+          curtainRect=curtain.getBoundingClientRect();
+          edgeBandRect=(backwards?bands[0]:bands[bands.length-1])
+            .getBoundingClientRect();
+
+          if(vertical){
+            limit=curtainRect.height;
+            if(backwards){
+              edge=Math.max(
+                0,
+                Math.min(limit,curtainRect.bottom-edgeBandRect.top)
+              );
+              clipValue="inset(0 0 "+edge+"px 0)";
+            }else{
+              edge=Math.max(
+                0,
+                Math.min(limit,edgeBandRect.bottom-curtainRect.top)
+              );
+              clipValue="inset("+edge+"px 0 0 0)";
+            }
+          }else{
+            limit=curtainRect.width;
+            if(backwards){
+              edge=Math.max(
+                0,
+                Math.min(limit,curtainRect.right-edgeBandRect.left)
+              );
+              clipValue="inset(0 "+edge+"px 0 0)";
+            }else{
+              edge=Math.max(
+                0,
+                Math.min(limit,edgeBandRect.right-curtainRect.left)
+              );
+              clipValue="inset(0 0 0 "+edge+"px)";
+            }
+          }
+
+          nextScene.style.setProperty("clip-path",clipValue,"important");
+          incomingClipFrame=window.requestAnimationFrame(syncIncomingClip);
+        })();
+      }
+
       return wait(totalDuration+40).then(function(){
-        if(incomingAnimation){incomingAnimation.cancel();}
+        if(incomingClipFrame){
+          window.cancelAnimationFrame(incomingClipFrame);
+          incomingClipFrame=null;
+        }
         if(outgoingAnimation){outgoingAnimation.cancel();}
         if(trackAnimation){trackAnimation.cancel();}
         bandAnimations.forEach(function(animation){animation.cancel();});
@@ -6328,6 +6366,7 @@ hexReady(function(){
             scene.setAttribute("aria-hidden",active?"false":"true");
             scene.style.removeProperty("z-index");
             scene.style.removeProperty("clip-path");
+            scene.style.removeProperty("-webkit-clip-path");
           });
           if(incomingContainer){
             incomingContainer.style.removeProperty("z-index");
@@ -13484,4 +13523,3 @@ hexLoad(function(){
   }
   hexLoad(loadMotionLibraries);
 })();
-
