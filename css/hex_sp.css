@@ -2463,6 +2463,9 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     width:100vw!important;
     max-width:100vw!important;
   }
+  .hex-opening-hero-preview.hex-v2-opening-preview .hex-opening-hero-preview-image{
+    transform:scale(1.16);
+  }
 }
 
 /* =======================================
@@ -2559,15 +2562,16 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   .hex-simple-loader.has-logo-animation.is-loading-phase .hex-simple-loader-label{top:calc(50% - 12px)}
   .hex-simple-loader.has-logo-animation.is-loading-phase .hex-simple-loader-bar{top:calc(50% + 14px);width:150px}
 
+  /* 開幕側と同じ動的ビューポート高に揃え、切替時の下端余白をなくす */
   .hex-hero-wrap,
-  .hex-hero-sticky{height:100svh!important;min-height:100svh!important}
-  .hex-hero{height:calc(100svh - var(--header_height,80px))!important}
+  .hex-hero-sticky{height:100dvh!important;min-height:100dvh!important}
+  .hex-hero{height:calc(100dvh - var(--header_height,80px))!important}
   /* WELCOME移行中は固定した丸スナップショットだけを表示する */
   .hex-hero-wrap.is-welcome-transition .hex-hero{opacity:0!important;visibility:hidden!important;transition:none!important}
   .hex-hero-wrap.is-welcome-transition .hex-hero-welcome-button{opacity:0!important;visibility:hidden!important;transform:translate3d(-50%,14px,0)!important;transition:none!important;pointer-events:none!important}
   .hex-webgl-stage{cursor:grab}
-  .hex-v2-handoff{height:calc(100svh - var(--header_height,80px))}
-  .hex-v2-handoff.is-released{height:calc(100svh - var(--header_height,80px))}
+  .hex-v2-handoff{height:calc(100dvh - var(--header_height,80px))}
+  .hex-v2-handoff.is-released{height:calc(100dvh - var(--header_height,80px))}
 
   .hex-v2-welcome .welcome.has-padding{
     min-height:100svh!important;

@@ -2008,8 +2008,8 @@ hexReady(function(){
   var HERO_ZOOM_MAX=2;
   var HERO_AUTO_ZOOM_WAIT=500;
   var HERO_AUTO_ZOOM_DURATION=1500;
-  var HERO_BOTTOM_SHOW_PX=8;
-  var HERO_BOTTOM_HIDE_PX=32;
+  var HERO_BOTTOM_SHOW_PX=48;
+  var HERO_BOTTOM_HIDE_PX=96;
   var HERO_MOUSE_FOLLOW_EASE=.075;
   var threePromise=null;
 
@@ -7126,8 +7126,9 @@ hexReady(function(){
     function createOpeningHeroPreview(){
       var hero=document.querySelector(".hex-hero-wrap");
       var activeHero;
+      var sourceImage;
       var preview;
-      var clone;
+      var previewImage;
 
       if(!hero||opening._hexOpeningHeroPreview){
         return opening._hexOpeningHeroPreview||null;
@@ -7140,17 +7141,22 @@ hexReady(function(){
       )||hero.querySelector(".hex-hero");
 
       if(!activeHero){return null;}
+      sourceImage=activeHero.querySelector(".hex-hero-bg img");
+      if(!sourceImage){return null;}
 
       preview=document.createElement("div");
       preview.className=
         "hex-opening-hero-preview hex-v2-opening-preview is-active";
       preview.setAttribute("aria-hidden","true");
-      clone=activeHero.cloneNode(true);
-      clone.classList.remove("is-v2-active","is-v2-fallback");
-      clone.querySelectorAll(
-        ".hex-webgl-stage,.hex-hero-catch,.hex-scroll-indicator"
-      ).forEach(function(element){element.remove();});
-      preview.appendChild(clone);
+      /*
+       * 旧ヒーローの高さ変数を引き継がないよう、WebGLと同じ元画像から
+       * 開幕専用プレビューを作る。固定枠の下端に白帯が出るのを防ぐ。
+       */
+      previewImage=sourceImage.cloneNode(true);
+      previewImage.removeAttribute("id");
+      previewImage.className="hex-opening-hero-preview-image";
+      previewImage.alt="";
+      preview.appendChild(previewImage);
       document.body.appendChild(preview);
       opening._hexOpeningHeroPreview=preview;
       return preview;
