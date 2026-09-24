@@ -2497,8 +2497,8 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     left:0;
     flex-direction:column;
     width:100%;
-    height:calc(60vh + 3px);
-    transform:translate3d(0,101vh,0) scaleY(.015);
+    height:40px;
+    transform:translate3d(0,101vh,0);
     transform-origin:center top;
   }
   .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i{
@@ -2506,13 +2506,27 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     right:auto!important;
     bottom:auto!important;
     left:auto!important;
-    flex:0 0 calc(15vh + 1px);
+    flex:1 0 calc(25% + 1px);
     width:100%;
     min-width:0;
-    height:calc(15vh + 1px);
+    height:auto;
     min-height:0;
     margin-right:0;
     margin-bottom:-1px;
+  }
+
+  .hex-opening.is-curtain-sequence .hex-opening-brand-stage .hex-opening-message-final{
+    top:clamp(28px,6svh,58px)!important;
+    transform:translate(-50%,44px)!important;
+  }
+  .hex-opening.is-curtain-sequence .hex-opening-brand-stage.is-v2-entered .hex-opening-message-final{
+    transform:translate(-50%,0)!important;
+  }
+  .hex-opening.is-curtain-sequence .hex-opening-brand-stage .hex-opening-logo-stage{
+    transform:translate3d(0,calc(10svh + 44px),0)!important;
+  }
+  .hex-opening.is-curtain-sequence .hex-opening-brand-stage.is-v2-entered .hex-opening-logo-stage{
+    transform:translate3d(0,10svh,0)!important;
   }
 
   .hex-simple-loader-label{top:calc(50% - 12px)}
