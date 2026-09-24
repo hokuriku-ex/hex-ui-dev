@@ -4419,6 +4419,13 @@ html.hex-opening-lock body{
   touch-action:none;
 }
 
+/* 探索中はHeroをヘッダー下の全画面位置に固定し、通常ページを送らない */
+html.hex-hero-manual-lock,
+html.hex-hero-manual-lock body{
+  overflow:hidden!important;
+  overscroll-behavior:none;
+}
+
 /* =======================================
    開幕中のヒーロー表示制御
 ======================================= */
@@ -9248,6 +9255,11 @@ html.hex-opening-finishing
 .hex-hero-catch.is-exploring{opacity:0!important;visibility:hidden!important;transition:opacity .45s ease,visibility 0s linear .45s!important}
 .hex-hero-wrap.is-exploring .hex-scroll-indicator{opacity:0!important;transition:opacity .35s ease!important}
 .hex-hero.is-v2-fallback>.hex-hero-scene{opacity:1!important;visibility:visible!important}
+.hex-hero-welcome-button{position:absolute;right:auto;bottom:max(24px,calc(env(safe-area-inset-bottom,0px) + 16px));left:50%;z-index:12;display:inline-flex;align-items:center;justify-content:center;gap:12px;min-width:164px;min-height:48px;padding:10px 24px;border:1px solid rgba(255,255,255,.9);border-radius:999px;background:rgba(31,39,116,.88);box-shadow:0 8px 28px rgba(15,24,72,.24);color:#fff;font-family:var(--hex-font-pop-en);font-size:14px;font-weight:700;line-height:1;letter-spacing:.12em;opacity:0;visibility:hidden;transform:translate3d(-50%,14px,0);transition:opacity .38s ease,transform .45s cubic-bezier(.22,.8,.3,1),visibility 0s linear .45s;pointer-events:none;cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.hex-hero-welcome-button i{position:relative;display:block;width:9px;height:9px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+.hex-hero-welcome-button.is-visible{opacity:1;visibility:visible;transform:translate3d(-50%,0,0);transition-delay:0s;pointer-events:auto}
+.hex-hero-welcome-button:focus-visible{outline:2px solid #c8a874;outline-offset:4px}
+@media (hover:hover){.hex-hero-welcome-button:hover{background:#fff;color:#1f2774}}
 
 .hex-v2-handoff{position:fixed;top:var(--header_height,80px);right:0;bottom:0;left:0;z-index:92;overflow:hidden;pointer-events:none;clip-path:circle(150vmax at 50% 50%);will-change:clip-path}
 .hex-v2-handoff canvas{display:block;width:100%;height:100%}
