@@ -1211,15 +1211,12 @@
     font-size:11px;
   }
   .hex-opening-skip{
-    top:auto;
+    top:max(14px,calc(env(safe-area-inset-top) + 10px));
     right:max(
       14px,
       calc(env(safe-area-inset-right) + 12px)
     );
-    bottom:max(
-      16px,
-      calc(env(safe-area-inset-bottom) + 12px)
-    );
+    bottom:auto;
   }
 
   /* 開幕キャッチコピー */
@@ -1330,8 +1327,9 @@
 ======================================= */
 @media screen and (max-width:768px){
   .hex-opening-replay{
+    top:calc(var(--header_height_smartphone,80px) + 14px)!important;
     right:max(16px,env(safe-area-inset-right))!important;
-    bottom:max(16px,env(safe-area-inset-bottom))!important;
+    bottom:auto!important;
     min-width:92px;
     height:36px;
     padding:0 14px;

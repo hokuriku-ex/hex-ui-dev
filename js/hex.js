@@ -2081,6 +2081,11 @@ hexReady(function(){
 
     if(!hero||!sticky){return;}
 
+    /* 探索方式では従来の縦スクロール案内を使用しない。 */
+    hero.querySelectorAll(".hex-scroll-indicator").forEach(function(indicator){
+      indicator.remove();
+    });
+
     function isSp(){return window.matchMedia("(max-width:768px)").matches;}
     function clamp(value,min,max){return Math.min(max,Math.max(min,value));}
     function documentTop(element){
@@ -6186,10 +6191,10 @@ hexReady(function(){
       var loader=document.querySelector(".hex-simple-loader");
       if(loader){loader.remove();}
 
-      opening.removeEventListener("wheel",onWheel);
-      opening.removeEventListener("touchstart",onTouchStart);
-      opening.removeEventListener("touchmove",onTouchMove);
-      opening.removeEventListener("touchend",onTouchEnd);
+      window.removeEventListener("wheel",onWheel,true);
+      window.removeEventListener("touchstart",onTouchStart,true);
+      window.removeEventListener("touchmove",onTouchMove,true);
+      window.removeEventListener("touchend",onTouchEnd,true);
       document.removeEventListener("keydown",onKeyDown);
     }
 
@@ -6987,10 +6992,10 @@ hexReady(function(){
         goTo(Number(button.getAttribute("data-scene-index")));
       });
 
-      opening.addEventListener("wheel",onWheel,{passive:false});
-      opening.addEventListener("touchstart",onTouchStart,{passive:true});
-      opening.addEventListener("touchmove",onTouchMove,{passive:false});
-      opening.addEventListener("touchend",onTouchEnd,{passive:true});
+      window.addEventListener("wheel",onWheel,{passive:false,capture:true});
+      window.addEventListener("touchstart",onTouchStart,{passive:true,capture:true});
+      window.addEventListener("touchmove",onTouchMove,{passive:false,capture:true});
+      window.addEventListener("touchend",onTouchEnd,{passive:true,capture:true});
       document.addEventListener("keydown",onKeyDown);
 
       activate(0);
