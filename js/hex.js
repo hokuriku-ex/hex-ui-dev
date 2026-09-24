@@ -2073,6 +2073,9 @@ hexReady(function(){
     var resizeQueued=false;
     var scrollQueued=false;
     var lastScrollY=window.pageYOffset;
+    var handledWheelEvents=typeof WeakSet!=="undefined"
+      ?new WeakSet()
+      :null;
     var reduced=window.matchMedia&&
       window.matchMedia("(prefers-reduced-motion:reduce)").matches;
 
@@ -2473,6 +2476,8 @@ hexReady(function(){
       ){
         return;
       }
+      if(handledWheelEvents&&handledWheelEvents.has(event)){return;}
+      if(handledWheelEvents){handledWheelEvents.add(event);}
       if(Math.abs(deltaX)+Math.abs(deltaY)<2){return;}
 
       beginExplore();
@@ -2734,6 +2739,7 @@ hexReady(function(){
         hero.classList.add("is-ready");
         setHeroPageLock(true);
       },
+      handleWheel:onWheel,
       reset:function(){resetHero(true);}
     };
 
@@ -12801,6 +12807,17 @@ hexLoad(function(){
         /* PCは開幕から通常コンテンツまで同じLenisで処理する。 */
         virtualScroll:function(data){
           var event=data&&data.event;
+
+          if(root.classList.contains('hex-hero-manual-lock')){
+            if(
+              window.hexHero&&
+              typeof window.hexHero.handleWheel==='function'&&
+              event
+            ){
+              window.hexHero.handleWheel(event);
+            }
+            return false;
+          }
 
           return !isPreventTarget(
             event&&event.target
