@@ -6163,9 +6163,9 @@ hexReady(function(){
       curtain.classList.add("is-active","is-v2-running");
 
       var vertical=window.matchMedia("(max-width:768px)").matches;
-      var duration=800;
-      // 参考映像の間を800ms内に配分する。
-      // 入り約170ms / 横断約310ms / 4本を細く見せる約160ms / 抜け約160ms。
+      var duration=930;
+      // 参考映像の約935ms（800msの帯変形＋段差）に合わせる。
+      // 入り約195ms / 横断約363ms / 4本を細く見せる約186ms / 抜け約186ms。
       var entryEnd=.21;
       var sweepEnd=.60;
       var thinExitStart=.80;
@@ -6267,7 +6267,8 @@ hexReady(function(){
         // 最後尾の帯だけ30ms早め、先行する3本へ自然に追いつかせる。
         // 1〜3本目の開始時刻と変形カーブは変更しない。
         if(order===bands.length-1){bandDelay-=30;}
-        var bandDuration=duration-45*(bands.length-1);
+        // 参考サイトと同じく、各帯には短縮しない800msを与える。
+        var bandDuration=800;
         var sizeFrames=vertical
           ?[
             {height:"10px"},
