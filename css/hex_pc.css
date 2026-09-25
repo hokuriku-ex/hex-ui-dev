@@ -83,7 +83,7 @@ html{
   font-weight:500!important;
 }
 .hex-top-title-light{
-  color:#c8a874!important;
+  color:#1f2774!important;
 }
 .hex-top-title-dark{
   color:#fff!important;
@@ -128,6 +128,21 @@ html{
   display:inline-block;
   backface-visibility:hidden;
   will-change:transform,opacity;
+}
+
+/* 日本語サブ見出しの色 */
+.hex-top-title.hex-top-title-light,
+.hex-top-title.hex-top-title-dark{
+  color:#c8a874!important;
+}
+
+/* 英語メイン見出しの色を維持 */
+.hex-top-title-light .hex-top-title-en{
+  color:#1f2774;
+}
+
+.hex-top-title-dark .hex-top-title-en{
+  color:#fff;
 }
 
 /* ヒーロー・WELCOMEキャッチ：英字1文字ずつのロールアップ */
