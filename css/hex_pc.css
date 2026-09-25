@@ -142,7 +142,7 @@ html{
 }
 
 .hex-top-title-dark .hex-top-title-en{
-  color:#fff;
+  color:#c8a874;
 }
 
 /* ヒーロー・WELCOMEキャッチ：英字1文字ずつのロールアップ */
@@ -4898,6 +4898,8 @@ html body
 }
 .hex-welcome-copy .hex-opening-sub{
   margin-top:0!important;
+}
+.hex-v2-welcome-copy-stage .hex-welcome-final-copy .hex-opening-sub{
   color:#c8a874!important;
 }
 
