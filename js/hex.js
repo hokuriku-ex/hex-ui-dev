@@ -9566,529 +9566,6 @@ hexReady(function(){
 });
 
 /* =======================================
-   WELCOME→1972年創業：完全スクロール連動
-======================================= */
-hexReady(function(){
-  "use strict";
-
-  if(window.hexExperienceV2){
-    return;
-  }
-
-  var active=false;
-  var frameRequested=false;
-  var startScrollY=0;
-  var foundedStartY=0;
-  var foundedDistance=1;
-  var welcomeProgress=0;
-  var foundedMaxProgress=0;
-  var foundedCompleted=false;
-  var welcomeWrap=null;
-  var welcomePanel=null;
-  var aboutFrame=null;
-
-  function clamp(value,min,max){
-    return Math.min(Math.max(value,min),max);
-  }
-
-  function phase(progress,start,end){
-    return clamp(
-      (progress-start)/Math.max(end-start,.001),
-      0,
-      1
-    );
-  }
-
-  function easeOut(value){
-    return 1-Math.pow(1-value,3);
-  }
-
-  function getHeaderHeight(){
-    var value=getComputedStyle(
-      document.documentElement
-    ).getPropertyValue("--header_height");
-
-    return parseFloat(value)||80;
-  }
-
-  function setWelcomePosition(){
-    var rect;
-
-    if(!welcomeWrap||!welcomePanel){
-      return;
-    }
-
-    rect=welcomePanel.getBoundingClientRect();
-
-    welcomeWrap.style.setProperty(
-      "--hex-welcome-fixed-top",
-      rect.top+"px"
-    );
-    welcomeWrap.style.setProperty(
-      "--hex-welcome-fixed-left",
-      rect.left+"px"
-    );
-    welcomeWrap.style.setProperty(
-      "--hex-welcome-fixed-width",
-      rect.width+"px"
-    );
-    welcomeWrap.style.setProperty(
-      "--hex-welcome-fixed-height",
-      rect.height+"px"
-    );
-  }
-
-  function setReveal(element,progress,distance){
-    if(!element){
-      return;
-    }
-
-    element.style.setProperty(
-      "opacity",
-      String(progress),
-      "important"
-    );
-    element.style.setProperty(
-      "visibility",
-      progress>0?"visible":"hidden",
-      "important"
-    );
-    element.style.setProperty(
-      "transform",
-      "translate3d(0,"+
-        ((1-progress)*(distance||18))+"px,0)",
-      "important"
-    );
-    element.style.setProperty(
-      "transition",
-      "none",
-      "important"
-    );
-  }
-
-  function prepareCards(){
-    aboutFrame.querySelectorAll(
-      ".hex-company-card .hex-card"
-    ).forEach(function(card){
-      var number=card.querySelector(".hex-number");
-
-      card.classList.remove(
-        "is-card-visible",
-        "is-counting",
-        "is-count-complete"
-      );
-
-      if(number&&!number.dataset.hexCountTarget){
-        number.dataset.hexCountTarget=String(
-          parseInt(number.textContent,10)||0
-        );
-      }
-    });
-  }
-
-  function prepareFoundedTitle(){
-    var title=aboutFrame.querySelector(".hex-center-title");
-
-    if(!title||title.dataset.hexFoundedTitleReady==="1"){
-      return;
-    }
-
-    title.dataset.hexFoundedTitleReady="1";
-
-    title.querySelectorAll(
-      ".hex-founded-year,.hex-founded-text"
-    ).forEach(function(part){
-      var text=(part.textContent||"").trim();
-
-      if(!text){
-        return;
-      }
-
-      part.textContent="";
-      part.setAttribute("aria-label",text);
-
-      Array.from(text).forEach(function(character){
-        var span=document.createElement("span");
-        span.className="hex-founded-title-char";
-        span.setAttribute("aria-hidden","true");
-        span.textContent=character===" "?"\u00a0":character;
-        part.appendChild(span);
-      });
-    });
-  }
-
-  function setFadeOnly(element,progress){
-    if(!element){
-      return;
-    }
-
-    element.style.setProperty(
-      "opacity",
-      String(progress),
-      "important"
-    );
-    element.style.setProperty(
-      "visibility",
-      progress>0?"visible":"hidden",
-      "important"
-    );
-    element.style.setProperty(
-      "transform",
-      "none",
-      "important"
-    );
-    element.style.setProperty(
-      "transition",
-      "none",
-      "important"
-    );
-  }
-
-  function updateFoundedTitle(title,progress){
-    var chars;
-
-    if(!title){
-      return;
-    }
-
-    title.style.setProperty("opacity","1","important");
-    title.style.setProperty("visibility","visible","important");
-    title.style.setProperty("transform","none","important");
-
-    title.querySelectorAll(
-      ".hex-founded-year,.hex-founded-text"
-    ).forEach(function(part){
-      part.style.setProperty("opacity","1","important");
-      part.style.setProperty("visibility","visible","important");
-    });
-
-    chars=Array.prototype.slice.call(
-      title.querySelectorAll(".hex-founded-title-char")
-    );
-
-    if(!chars.length){
-      setFadeOnly(title,phase(progress,.02,.18));
-      return;
-    }
-
-    chars.forEach(function(character,index){
-      var start=.02+index*.025;
-      var charProgress=phase(progress,start,start+.15);
-      var easedProgress=easeOut(charProgress);
-
-      character.style.setProperty(
-        "opacity",
-        String(charProgress),
-        "important"
-      );
-      character.style.setProperty(
-        "visibility",
-        charProgress>0?"visible":"hidden",
-        "important"
-      );
-      character.style.setProperty(
-        "transform",
-        "translate3d(0,"+
-          ((1-easedProgress)*100)+"%,0) rotate("+
-          ((1-easedProgress)*45)+"deg)",
-        "important"
-      );
-    });
-  }
-
-  function clearManualStyles(){
-    if(!aboutFrame){
-      return;
-    }
-
-    aboutFrame.querySelectorAll(
-      ".hex-center-title,"+
-      ".hex-founded-text,"+
-      ".hex-founded-title-char,"+
-      ".hex-center,"+
-      ".hex-company-card,"+
-      ".hex-company-card .hex-card"
-    ).forEach(function(element){
-      [
-        "opacity",
-        "visibility",
-        "transform",
-        "transition"
-      ].forEach(function(name){
-        element.style.removeProperty(name);
-      });
-    });
-
-    aboutFrame.querySelectorAll(
-      ".hex-company-card .hex-number"
-    ).forEach(function(number){
-      if(number.dataset.hexCountTarget){
-        number.textContent=
-          number.dataset.hexCountTarget;
-      }
-
-      number.style.removeProperty("color");
-      number.style.removeProperty("transition");
-    });
-
-    aboutFrame.querySelectorAll(
-      ".hex-company-card .hex-card"
-    ).forEach(function(card){
-      card.classList.remove(
-        "is-card-visible",
-        "is-counting",
-        "is-count-complete"
-      );
-    });
-  }
-
-  function updateFounded(progress){
-    var title=aboutFrame.querySelector(".hex-center-title");
-    var description=aboutFrame.querySelector(".hex-center");
-    var cardWrap=aboutFrame.querySelector(".hex-company-card");
-    var cards=Array.prototype.slice.call(
-      aboutFrame.querySelectorAll(
-        ".hex-company-card .hex-card"
-      )
-    );
-    var descriptionProgress=phase(progress,.08,.26);
-
-    updateFoundedTitle(title,progress);
-    setFadeOnly(description,descriptionProgress);
-
-    setReveal(
-      cardWrap,
-      phase(progress,.45,.52),
-      12
-    );
-
-    cards.forEach(function(card,index){
-      var start=.52+index*.08;
-      var cardProgress=phase(
-        progress,
-        start,
-        start+.15
-      );
-      var number=card.querySelector(".hex-number");
-      var target=number
-        ?parseInt(number.dataset.hexCountTarget,10)||0
-        :0;
-
-      setReveal(card,cardProgress,18);
-      card.classList.toggle(
-        "is-card-visible",
-        cardProgress>0
-      );
-      card.classList.toggle(
-        "is-count-complete",
-        cardProgress>=1
-      );
-
-      if(number){
-        number.textContent=String(
-          Math.round(target*easeOut(cardProgress))
-        );
-        number.style.setProperty(
-          "color",
-          cardProgress>=1?"#c8a874":"#1f2774",
-          "important"
-        );
-        number.style.setProperty(
-          "transition",
-          "none",
-          "important"
-        );
-      }
-    });
-
-    aboutFrame.classList.toggle(
-      "is-founded-released",
-      progress>=1
-    );
-    document.documentElement.classList.toggle(
-      "hex-founded-stage-complete",
-      progress>=1
-    );
-  }
-
-  function measure(){
-    if(!active||!aboutFrame){
-      return;
-    }
-  }
-
-  function start(detail){
-    if(active){
-      return;
-    }
-
-    welcomeWrap=detail.welcomeWrap;
-    welcomePanel=detail.welcomePanel;
-    aboutFrame=document.getElementById(
-      HOME_SECTIONS.ABOUT
-    );
-
-    if(
-      !welcomeWrap||
-      !welcomePanel||
-      !detail.imageHandoff||
-      !aboutFrame
-    ){
-      return;
-    }
-
-    active=true;
-    startScrollY=window.scrollY;
-
-    aboutFrame.classList.add(
-      "hex-founded-normal-motion"
-    );
-
-    prepareFoundedTitle();
-    prepareCards();
-    measure();
-  }
-
-  function update(){
-    var foundedProgress;
-    var aboutRect;
-    var revealDistance;
-
-    frameRequested=false;
-
-    if(!active||!aboutFrame||foundedCompleted){
-      return;
-    }
-
-    aboutRect=aboutFrame.getBoundingClientRect();
-    revealDistance=Math.max(
-      window.innerHeight-getHeaderHeight(),
-      1
-    );
-
-    /*
-     * 創業セクションの上端が画面下へ入ってから、
-     * ヘッダー下へ到達するまでの通常スクロール量を使う。
-     */
-    foundedProgress=clamp(
-      (window.innerHeight-aboutRect.top)/revealDistance,
-      0,
-      1
-    );
-
-    foundedMaxProgress=Math.max(
-      foundedMaxProgress,
-      foundedProgress
-    );
-    updateFounded(foundedMaxProgress);
-
-    if(foundedMaxProgress>=1){
-      foundedCompleted=true;
-    }
-  }
-
-  function requestUpdate(){
-    if(frameRequested){
-      return;
-    }
-
-    frameRequested=true;
-    window.requestAnimationFrame(update);
-  }
-
-  function clearAll(){
-    if(welcomeWrap){
-      [
-        "--hex-welcome-fixed-top",
-        "--hex-welcome-fixed-left",
-        "--hex-welcome-fixed-width",
-        "--hex-welcome-fixed-height"
-      ].forEach(function(name){
-        welcomeWrap.style.removeProperty(name);
-      });
-    }
-
-    if(aboutFrame){
-      clearManualStyles();
-
-      aboutFrame.classList.remove(
-        "hex-founded-stage",
-        "hex-founded-scroll-stage",
-        "hex-founded-normal-motion",
-        "is-founded-active",
-        "is-founded-released"
-      );
-      aboutFrame.removeAttribute("data-founded-step");
-      aboutFrame.style.removeProperty(
-        "--hex-founded-scroll-distance"
-      );
-    }
-
-    document.documentElement.classList.remove(
-      "hex-welcome-exit-active",
-      "hex-welcome-exit-complete",
-      "hex-founded-stage-active",
-      "hex-founded-stage-complete",
-      "hex-founded-manual"
-    );
-    document.documentElement.style.removeProperty(
-      "--hex-welcome-exit-progress"
-    );
-
-    active=false;
-    welcomeProgress=0;
-    foundedMaxProgress=0;
-    foundedCompleted=false;
-    welcomeWrap=null;
-    welcomePanel=null;
-    aboutFrame=null;
-  }
-
-  document.addEventListener(
-    "hex:welcome-exit-ready",
-    function(event){
-      start(event.detail);
-      update();
-
-      /*
-       * preventDefaultしない。
-       * 丸画像とWELCOME文章が揃った時点で固定を解除し、
-       * ここから先は通常のページスクロールへ戻す。
-       */
-    }
-  );
-
-  document.addEventListener(
-    "hex:welcome-exit-cancel",
-    function(){
-      if(
-        active&&
-        foundedMaxProgress<=0&&
-        window.scrollY<startScrollY-1
-      ){
-        clearAll();
-      }
-    }
-  );
-
-  window.addEventListener(
-    "scroll",
-    requestUpdate,
-    {passive:true}
-  );
-
-  window.addEventListener(
-    "resize",
-    function(){
-      if(active){
-        measure();
-        requestUpdate();
-      }
-    }
-  );
-});
-
-/* =======================================
    トップ サービス案内
 ======================================= */
 hexReady(function(){
@@ -13422,6 +12899,7 @@ hexLoad(function(){
     ].join(',');
     var autoSpecificAtomicSelector=[
       '[data-motion-item]',
+      '#gc_auto_frame_home_4 .hex-center',
       '.hex-card',
       '.hex-banner',
       '.hex-image-grid-item',
@@ -13493,9 +12971,8 @@ hexLoad(function(){
       '.hex-welcome-wrap .hex-opening-copy-source',
       '.hex-welcome-wrap .hex-handoff-copy',
       '.hex-welcome-wrap .welcome_contents',
-      /* 創業の見出し・説明・実績カードは既存の個別演出を優先 */
+      /* 創業の見出しとカウンターは専用の一回限りの演出 */
       '#gc_auto_frame_home_4 .hex-center-title',
-      '#gc_auto_frame_home_4 .hex-center',
       '#gc_auto_frame_home_4 .hex-company-card',
       '.hex-anchor-source',
       '.hex-anchor-nav',
@@ -13825,6 +13302,15 @@ hexLoad(function(){
 
       /* アコーディオン内部は開いた瞬間に専用で再収集する */
       if(target.closest('.hex-action-grid:not(.is-open)')){
+        return false;
+      }
+
+      /* 創業の親コンテナで見出しとカウンターをまとめて隠さない。 */
+      if(
+        target.closest('#gc_auto_frame_home_4')&&
+        !target.matches('.hex-center')&&
+        target.querySelector('.hex-center-title,.hex-company-card')
+      ){
         return false;
       }
 
@@ -14248,6 +13734,127 @@ hexLoad(function(){
       };
     }
 
+    function setupFoundedMotion(){
+      var section=document.getElementById(HOME_SECTIONS.ABOUT);
+      var title=section&&section.querySelector('.hex-center-title');
+      var cardWrap=section&&section.querySelector('.hex-company-card');
+      var cards=cardWrap
+        ?Array.prototype.slice.call(cardWrap.querySelectorAll('.hex-card'))
+        :[];
+      var chars=[];
+      var mobile=window.innerWidth<=768;
+
+      if(title&&title.querySelector('.hex-founded-year,.hex-founded-text')){
+        title.dataset.hexMotionInitialized='1';
+        title.querySelectorAll('.hex-founded-year,.hex-founded-text')
+          .forEach(function(part){
+            var value=(part.textContent||'').trim();
+            if(!value){return;}
+            part.textContent='';
+            part.setAttribute('aria-label',value);
+            Array.from(value).forEach(function(character){
+              var span=document.createElement('span');
+              span.className='hex-founded-title-char';
+              span.setAttribute('aria-hidden','true');
+              span.textContent=character===' '?'\u00a0':character;
+              part.appendChild(span);
+              chars.push(span);
+            });
+          });
+
+        if(chars.length&&!isReducedMotion()){
+          gsap.set(chars,{
+            autoAlpha:0,
+            yPercent:100,
+            rotation:45,
+            transformOrigin:'50% 100%'
+          });
+          ScrollTrigger.create({
+            trigger:title,
+            start:mobile?'top 96%':'top 95%',
+            once:true,
+            onEnter:function(){
+              gsap.to(chars,{
+                autoAlpha:1,
+                yPercent:0,
+                rotation:0,
+                duration:.6,
+                stagger:.07,
+                ease:'power3.out',
+                overwrite:'auto',
+                onComplete:function(){
+                  gsap.set(chars,{
+                    clearProps:'transform,opacity,visibility,willChange'
+                  });
+                }
+              });
+            }
+          });
+        }
+      }
+
+      if(!cards.length){return;}
+      if(isReducedMotion()){
+        cards.forEach(function(card){
+          card.classList.add('is-card-visible','is-count-complete');
+        });
+        return;
+      }
+
+      gsap.set(cards,{autoAlpha:0,y:18});
+      cards.forEach(function(card){
+        var number=card.querySelector('.hex-number');
+        if(number){
+          number.dataset.hexCountTarget=String(
+            parseInt(number.textContent,10)||0
+          );
+          number.textContent='0';
+          gsap.set(number,{color:'#1f2774'});
+        }
+      });
+
+      ScrollTrigger.create({
+        trigger:cardWrap,
+        start:mobile?'top 96%':'top 95%',
+        once:true,
+        onEnter:function(){
+          cards.forEach(function(card,index){
+            var number=card.querySelector('.hex-number');
+            var target=number
+              ?parseInt(number.dataset.hexCountTarget,10)||0
+              :0;
+            var state={value:0};
+            window.setTimeout(function(){
+              card.classList.add('is-card-visible');
+              gsap.to(card,{
+                autoAlpha:1,
+                y:0,
+                duration:.65,
+                ease:'power3.out',
+                onComplete:function(){clearMotionProperties(card);}
+              });
+              if(number){
+                gsap.to(state,{
+                  value:target,
+                  duration:1.2,
+                  delay:.18,
+                  ease:'power3.out',
+                  onUpdate:function(){
+                    number.textContent=String(Math.round(state.value));
+                  },
+                  onComplete:function(){
+                    number.textContent=String(target);
+                    card.classList.add('is-count-complete');
+                    gsap.to(number,{color:'#c8a874',duration:.5});
+                  }
+                });
+              }
+            },index*400);
+          });
+        }
+      });
+    }
+
     function setupHeroAndWelcomeCatchRolls(){
       var heroCatch=document.querySelector('.hex-hero-catch');
       var heroMain=heroCatch
@@ -14545,6 +14152,7 @@ hexLoad(function(){
     );
 
     /* フェードと見出しは下層ページと同じ初期化経路を使う */
+    setupFoundedMotion();
     setupMotionTargets(document);
     setupHeroAndWelcomeCatchRolls();
 
