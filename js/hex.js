@@ -2063,6 +2063,7 @@ hexReady(function(){
     var welcomeStageTop=null;
     var welcomeStageScreenTop=null;
     var welcomeStageExitTop=null;
+    var welcomeStageFixedHorizontal=null;
     var welcomeDotPending=false;
     var welcomeDotTimer=0;
     var welcomeBodyChars=[];
@@ -2073,122 +2074,6 @@ hexReady(function(){
     var welcomeBodyStartedAt=0;
     var welcomeBodyFrame=0;
     var welcomeMeasuredHeight=0;
-    /* 診断版だけの表示計測。通常版の動作やスクロール計算は変更しない。 */
-    var debugWelcomeSamples=[];
-    var debugWelcomeHud=null;
-    var debugWelcomeFixedTop=null;
-    var debugWelcomeCircleLogged=false;
-    var debugStageReleaseReference=null;
-    var debugCircleReleaseReference=null;
-    function debugWelcomeSnapshot(phase){
-      if(!welcomeStage||!welcomePanel){return;}
-      var stageRect=welcomeStage.getBoundingClientRect();
-      var panelRect=welcomePanel.getBoundingClientRect();
-      var imageRect=snapshot&&snapshot.getBoundingClientRect();
-      var headRect=welcomeCopy&&welcomeCopy.getBoundingClientRect();
-      var body=welcomeContents&&welcomeContents.querySelector('.text');
-      var bodyRect=body&&body.getBoundingClientRect();
-      var css=window.getComputedStyle(welcomeStage);
-      var transformed=[];
-      var parent=welcomeStage.parentElement;
-      var sample;
-      var round=function(value){return value==null?null:Math.round(value*100)/100;};
-      while(parent&&parent!==document.documentElement){
-        var style=window.getComputedStyle(parent);
-        if(style.transform!=='none'||style.filter!=='none'||
-          style.perspective!=='none'||style.contain!=='none'||
-          style.willChange!=='auto'){
-          transformed.push({
-            element:parent.id||parent.className||parent.tagName,
-            transform:style.transform,filter:style.filter,
-            contain:style.contain,willChange:style.willChange
-          });
-        }
-        parent=parent.parentElement;
-      }
-      if(css.position==='fixed'){
-        debugWelcomeFixedTop=stageRect.top;
-      }
-      sample={
-        phase:phase,time:Math.round(performance.now()),
-        scrollY:round(window.pageYOffset),
-        stage:{top:round(stageRect.top),bottom:round(stageRect.bottom),
-          height:round(stageRect.height),cssPosition:css.position,
-          inlineTop:welcomeStage.style.top,
-          offsetParent:welcomeStage.offsetParent&&(
-            welcomeStage.offsetParent.id||welcomeStage.offsetParent.className)},
-        panelTop:round(panelRect.top),
-        headingTop:headRect&&round(headRect.top),
-        bodyTop:bodyRect&&round(bodyRect.top),
-        circle:imageRect&&{top:round(imageRect.top),
-          center:round(imageRect.top+imageRect.height*.5),
-          height:round(imageRect.height),released:released},
-        stageTopVariable:round(welcomeStageTop),
-        screenTopVariable:round(welcomeStageScreenTop),
-        exitTopVariable:round(welcomeStageExitTop),
-        fixedTopReference:round(debugWelcomeFixedTop),
-        differenceFromFixed:debugWelcomeFixedTop==null?null:
-          round(stageRect.top-debugWelcomeFixedTop),
-        ancestors:transformed
-      };
-      if(phase==='文字固定解除・直前'){
-        debugStageReleaseReference={top:stageRect.top,scrollY:window.pageYOffset};
-      }
-      if(phase==='丸固定解除・直前'&&imageRect){
-        debugCircleReleaseReference={top:imageRect.top,
-          scrollY:window.pageYOffset};
-      }
-      if(debugStageReleaseReference&&phase.indexOf('文字固定解除・')===0){
-        sample.stageTransitionShift=round(stageRect.top-
-          debugStageReleaseReference.top+
-          window.pageYOffset-debugStageReleaseReference.scrollY);
-      }
-      if(debugCircleReleaseReference&&imageRect&&
-        phase.indexOf('丸固定解除・')===0){
-        sample.circleTransitionShift=round(imageRect.top-
-          debugCircleReleaseReference.top+
-          window.pageYOffset-debugCircleReleaseReference.scrollY);
-      }
-      debugWelcomeSamples.push(sample);
-      if(debugWelcomeSamples.length>90){debugWelcomeSamples.shift();}
-      if(!debugWelcomeHud){
-        debugWelcomeHud=document.createElement('div');
-        debugWelcomeHud.style.cssText=
-          'position:fixed;left:12px;bottom:12px;z-index:8500;'+
-          'max-width:min(480px,90vw);padding:12px;background:#12213de8;'+
-          'color:white;font:13px/1.55 monospace;white-space:pre-wrap;'+
-          'box-shadow:0 4px 24px #0005;pointer-events:auto';
-        var copyButton=document.createElement('button');
-        copyButton.type='button';
-        copyButton.textContent='WELCOME 診断ログをコピー';
-        copyButton.style.cssText='display:block;margin:0 0 8px;padding:5px 10px;'+
-          'font:13px sans-serif;cursor:pointer';
-        copyButton.addEventListener('click',function(){
-          var log=JSON.stringify(debugWelcomeSamples,null,2);
-          if(navigator.clipboard&&navigator.clipboard.writeText){
-            navigator.clipboard.writeText(log).then(function(){
-              copyButton.textContent='コピーしました';
-            }).catch(function(){window.prompt('ログをコピー',log);});
-          }else{window.prompt('ログをコピー',log);}
-        });
-        debugWelcomeHud.appendChild(copyButton);
-        var display=document.createElement('div');
-        display.className='hex-welcome-debug-readout';
-        debugWelcomeHud.appendChild(display);
-        document.body.appendChild(debugWelcomeHud);
-      }
-      debugWelcomeHud.querySelector('.hex-welcome-debug-readout').textContent=
-        phase+'\nscrollY '+sample.scrollY+' / '+css.position+
-        '\n見出し '+sample.headingTop+'px  本文 '+sample.bodyTop+'px'+
-        '\n全体 '+sample.stage.top+'px  文字切替差 '+
-          sample.stageTransitionShift+'px'+
-        '\n丸 '+(sample.circle?sample.circle.center:'なし')+'px'+
-        '  丸切替差 '+sample.circleTransitionShift+'px'+
-        '\n親 '+sample.panelTop+'px  top '+sample.stage.inlineTop;
-      if(window.console&&console.debug){console.debug('[WELCOME診断]',sample);}
-    }
-    window.hexWelcomeDebug={samples:debugWelcomeSamples,
-      dump:function(){return JSON.stringify(debugWelcomeSamples,null,2);}};
     var welcomeButton=null;
     var activeHero=null;
     var sourceImage=null;
@@ -2488,6 +2373,44 @@ hexReady(function(){
         "is-welcome-active",
         "is-welcome-copy-ready"
       );
+      positionWelcomeStageInPanel();
+    }
+
+    function measureWelcomeStageFixedHorizontal(){
+      var wasFixed=welcomeStage.classList.contains("is-screen-fixed");
+      var oldLeft=welcomeStage.style.left;
+      var oldRight=welcomeStage.style.right;
+      var oldWidth=welcomeStage.style.width;
+      if(!wasFixed){welcomeStage.classList.add("is-screen-fixed");}
+      welcomeStage.style.removeProperty("left");
+      welcomeStage.style.removeProperty("right");
+      welcomeStage.style.removeProperty("width");
+      var rect=welcomeStage.getBoundingClientRect();
+      if(!wasFixed){welcomeStage.classList.remove("is-screen-fixed");}
+      if(oldLeft){welcomeStage.style.left=oldLeft;}
+      if(oldRight){welcomeStage.style.right=oldRight;}
+      if(oldWidth){welcomeStage.style.width=oldWidth;}
+      return{left:rect.left,width:rect.width};
+    }
+
+    function positionWelcomeStageInPanel(rect){
+      if(!welcomeStage||!welcomePanel){return;}
+      var horizontal=rect
+        ?{left:rect.left,width:rect.width}
+        :(welcomeStageFixedHorizontal||measureWelcomeStageFixedHorizontal());
+      welcomeStageFixedHorizontal=horizontal;
+      var width=horizontal.width;
+      var left=horizontal.left;
+      var relativeLeft=(left-welcomePanel.getBoundingClientRect().left)+"px";
+      if(welcomeStage.style.left!==relativeLeft){
+        welcomeStage.style.left=relativeLeft;
+      }
+      if(welcomeStage.style.right!=="auto"){
+        welcomeStage.style.right="auto";
+      }
+      if(welcomeStage.style.width!==width+"px"){
+        welcomeStage.style.width=width+"px";
+      }
     }
 
     function prepareWelcomeBody(){
@@ -2546,7 +2469,6 @@ hexReady(function(){
         if(welcomeBodyProgress>=.999){
           welcomeBodyCompleted=true;
           renderWelcomeBody(1);
-          debugWelcomeSnapshot('本文表示完了');
           queueScrollEffects();
         }
       }
@@ -2579,9 +2501,11 @@ hexReady(function(){
       var stageHeight=welcomeStage
         ?Math.max(welcomeStage.scrollHeight,welcomeStage.offsetHeight,1)
         :viewport*.7;
-      var travel=welcomeStageTop===null
+      var bodyTravel=welcomeStageTop===null
         ?viewport+stageHeight
         :Math.max(welcomeStageTop+stageHeight-viewport*.5,viewport*.5);
+      /* 本文が出そろった後もしばらく配置を固定して見せる。 */
+      var travel=bodyTravel+Math.max(220,Math.round(viewport*.45));
 
       var totalHeight=Math.ceil(viewport+travel);
       if(totalHeight!==welcomeMeasuredHeight){
@@ -2597,7 +2521,8 @@ hexReady(function(){
         }
         document.dispatchEvent(new Event("hex:hero-layout-updated"));
       }
-      return{viewport:viewport,stageHeight:stageHeight,travel:travel};
+      return{viewport:viewport,stageHeight:stageHeight,
+        bodyTravel:bodyTravel,travel:travel};
     }
 
     function setCamera(){
@@ -2691,6 +2616,10 @@ hexReady(function(){
         createFallback();
         return;
       }
+      if(welcomeStage&&!welcomeStage.classList.contains("is-screen-fixed")){
+        welcomeStageFixedHorizontal=null;
+        positionWelcomeStageInPanel();
+      }
       measureWelcome();
     }
 
@@ -2724,6 +2653,8 @@ hexReady(function(){
         welcomeStage.classList.remove("is-screen-fixed");
         welcomeStage.style.removeProperty("transform");
         welcomeStage.style.removeProperty("top");
+        welcomeStageFixedHorizontal=null;
+        positionWelcomeStageInPanel();
       }
       welcomeStageTop=null;
       welcomeStageScreenTop=null;
@@ -2795,7 +2726,8 @@ hexReady(function(){
         var panelOffset=documentTop(welcomePanel)-documentTop(welcomeWrap);
         stageTop=Math.round(imageCenter-stageHeight*.5)-panelOffset;
       }
-      var travel=Math.max(stageTop+stageHeight-viewport*.5,viewport*.5);
+      var bodyTravel=Math.max(stageTop+stageHeight-viewport*.5,viewport*.5);
+      var travel=bodyTravel+Math.max(220,Math.round(viewport*.45));
       return Math.max(0,documentTop(welcomeWrap)+travel-1);
     }
 
@@ -2833,7 +2765,6 @@ hexReady(function(){
       var rect;
       var wrapRect;
       if(!snapshot||released||!welcomeWrap){return;}
-      debugWelcomeSnapshot('丸固定解除・直前');
       rect=snapshot.getBoundingClientRect();
       wrapRect=welcomeWrap.getBoundingClientRect();
       snapshot.style.setProperty("--hex-v2-release-top",(rect.top-wrapRect.top)+"px");
@@ -2842,7 +2773,6 @@ hexReady(function(){
       snapshot.classList.add("is-released");
       released=true;
       welcomeWrap.classList.add("is-v2-complete");
-      debugWelcomeSnapshot('丸固定解除・直後');
     }
 
     function refixSnapshot(){
@@ -2928,10 +2858,11 @@ hexReady(function(){
         var keepFixed=circleProgress>=.999&&
           scrollThroughWelcome<travelMetrics.travel;
         var wasFixed=welcomeStage.classList.contains("is-screen-fixed");
+        var fixedRect=wasFixed&&!keepFixed
+          ?welcomeStage.getBoundingClientRect():null;
         if(wasFixed&&!keepFixed){
-          debugWelcomeSnapshot('文字固定解除・直前');
           /* 固定中の実際の表示位置を、そのまま通常配置へ渡す。 */
-          welcomeStageExitTop=welcomeStage.getBoundingClientRect().top-
+          welcomeStageExitTop=fixedRect.top-
             welcomePanel.getBoundingClientRect().top;
         }
         var stageTop=keepFixed
@@ -2939,22 +2870,17 @@ hexReady(function(){
           :(welcomeStageExitTop===null
             ?welcomeStageTop+clamp(scrollThroughWelcome,0,travelMetrics.travel)
             :welcomeStageExitTop);
-        welcomeStage.classList.toggle("is-screen-fixed",keepFixed);
+        if(keepFixed){
+          welcomeStage.style.removeProperty("left");
+          welcomeStage.style.removeProperty("right");
+          welcomeStage.style.removeProperty("width");
+          welcomeStage.classList.add("is-screen-fixed");
+        }else{
+          welcomeStage.classList.remove("is-screen-fixed");
+          positionWelcomeStageInPanel(fixedRect);
+        }
         if(welcomeStage.style.top!==stageTop+"px"){
           welcomeStage.style.top=stageTop+"px";
-        }
-        if(wasFixed&&!keepFixed){
-          debugWelcomeSnapshot('文字固定解除・直後');
-          window.requestAnimationFrame(function(){
-            debugWelcomeSnapshot('文字固定解除・次フレーム');
-          });
-          window.setTimeout(function(){
-            debugWelcomeSnapshot('文字固定解除・0.5秒後');
-          },500);
-        }
-        if(keepFixed&&!debugWelcomeCircleLogged){
-          debugWelcomeCircleLogged=true;
-          debugWelcomeSnapshot('丸完成・文字固定開始');
         }
       }
       if(welcomeDotPending&&circleProgress>=.999&&
@@ -2971,7 +2897,7 @@ hexReady(function(){
       syncSnapshotLayer(circleProgress>=.999);
       welcomeWrap.classList.toggle("is-v2-circle-complete",circleProgress>=.999);
       updateWelcomeBody(circleProgress>=.999,clamp(
-        (scrollY-welcomeTop)/Math.max(travelMetrics.travel-1,1),0,1
+        (scrollY-welcomeTop)/Math.max(travelMetrics.bodyTravel-1,1),0,1
       ));
 
       if(scrollY-welcomeTop>=travelMetrics.travel){
@@ -2980,7 +2906,6 @@ hexReady(function(){
           welcomeBodyFrame=0;
           welcomeBodyCompleted=true;
           renderWelcomeBody(1);
-          debugWelcomeSnapshot('終点で本文表示完了');
         }
         releaseSnapshot();
       }else if(released){
