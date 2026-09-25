@@ -2607,7 +2607,11 @@ hexReady(function(){
       welcomeBodyProgress=0;
       welcomeBodyTarget=0;
       welcomeBodyChars.forEach(function(character){
-        character.style.removeProperty("opacity");
+        if(welcomeBodyCompleted){
+          character.style.opacity="1";
+        }else{
+          character.style.removeProperty("opacity");
+        }
         character.style.removeProperty("transform");
       });
       updateZoomMetrics();
