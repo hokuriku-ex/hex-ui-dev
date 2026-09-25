@@ -2593,7 +2593,7 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     padding-inline:8px!important;
   }
 
-  /* 丸画像と重なるSPだけ、各文字へ個別の生成り縁取り */
+  /* 丸画像と重なるSPだけ、文字に細い生成り縁取り */
   .hex-v2-welcome-copy-stage .hex-welcome-copy .hex-opening-main{
     -webkit-text-stroke:3.5px #faf7ef!important;
     paint-order:stroke fill!important;
@@ -2607,7 +2607,7 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
   .hex-v2-welcome-copy-stage .welcome_contents .text,
   .hex-v2-welcome-copy-stage .welcome_contents .text *{
-    -webkit-text-stroke:1.75px #faf7ef!important;
+    -webkit-text-stroke:.75px #faf7ef!important;
     paint-order:stroke fill!important;
     text-shadow:none!important;
   }

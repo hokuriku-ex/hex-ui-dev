@@ -2068,6 +2068,7 @@ hexReady(function(){
     var welcomeBodyStart=0;
     var welcomeBodyStartedAt=0;
     var welcomeBodyFrame=0;
+    var welcomeMeasuredHeight=0;
     var welcomeButton=null;
     var activeHero=null;
     var sourceImage=null;
@@ -2409,8 +2410,8 @@ hexReady(function(){
         var local=(reduced||welcomeBodyCompleted)?1
           :clamp((time-index*.02)/.8,0,1);
         var eased=Math.sqrt(1-Math.pow(1-local,2));
-        character.style.opacity=eased;
-        character.style.transform="translate3d(0,"+((1-eased)*10)+"px,0)";
+        character.style.opacity=Math.min(1,local*3);
+        character.style.transform="translate3d(0,"+Math.round((1-eased)*10)+"px,0)";
       });
     }
 
@@ -2466,14 +2467,19 @@ hexReady(function(){
         ?viewport+stageHeight
         :Math.max(welcomeStageTop+stageHeight-viewport*.5,viewport*.5);
 
-      if(welcomeWrap){
-        welcomeWrap.style.setProperty("--hex-v2-welcome-travel",travel+"px");
-        welcomeWrap.style.minHeight=(viewport+travel)+"px";
-      }
-      if(welcomeFrame){
-        welcomeFrame.style.setProperty(
-          "--hex-v2-welcome-total-height",(viewport+travel)+"px"
-        );
+      var totalHeight=Math.ceil(viewport+travel);
+      if(totalHeight!==welcomeMeasuredHeight){
+        welcomeMeasuredHeight=totalHeight;
+        if(welcomeWrap){
+          welcomeWrap.style.setProperty("--hex-v2-welcome-travel",travel+"px");
+          welcomeWrap.style.minHeight=totalHeight+"px";
+        }
+        if(welcomeFrame){
+          welcomeFrame.style.setProperty(
+            "--hex-v2-welcome-total-height",totalHeight+"px"
+          );
+        }
+        document.dispatchEvent(new Event("hex:hero-layout-updated"));
       }
       return{viewport:viewport,stageHeight:stageHeight,travel:travel};
     }
@@ -2783,7 +2789,13 @@ hexReady(function(){
       welcomeWrap.classList.toggle("is-v2-circle-complete",circleProgress>=.999);
       updateWelcomeBody(circleProgress>=.999 && welcomeProgress>0);
 
-      if(welcomeProgress>=.999&&(!welcomeBodyChars.length||welcomeBodyCompleted)){
+      if(welcomeProgress>=.999){
+        if(!welcomeBodyCompleted){
+          window.cancelAnimationFrame(welcomeBodyFrame);
+          welcomeBodyFrame=0;
+          welcomeBodyCompleted=true;
+          renderWelcomeBody(1);
+        }
         releaseSnapshot();
       }else if(released){
         refixSnapshot();
