@@ -7816,7 +7816,7 @@ hexReady(function(){
 hexReady(function(){
   "use strict";
 
-  /* 今後セクションを追加する場合は、この配列へ追記する */
+  /* ニュースとブログは同じタブ領域なので一つのドットにまとめる。 */
   var sectionDefinitions=[
     {name:"Hero",selector:".hex-hero-wrap"},
     {
@@ -7826,7 +7826,18 @@ hexReady(function(){
     {
       name:"Founded",
       selector:".hex-founded-stage,#gc_auto_frame_home_4"
-    }
+    },
+    {name:"初めての方へ",selector:"#"+HOME_SECTIONS.FIRST},
+    {name:"サービス案内",selector:"#"+HOME_SECTIONS.SERVICE},
+    {name:"注目アイテム",selector:"#"+HOME_SECTIONS.PICKUP},
+    {name:"お知らせ",selector:"#"+HOME_SECTIONS.NEWS_SECTION},
+    {name:"バナー",selector:"#"+HOME_SECTIONS.BANNER},
+    {name:"動画",selector:"#"+HOME_SECTIONS.MOVIE},
+    {name:"採用情報",selector:"#"+HOME_SECTIONS.RECRUIT},
+    {name:"お問い合わせ",selector:"#"+HOME_SECTIONS.CONTACT},
+    {name:"営業日カレンダー",selector:"#"+HOME_SECTIONS.CALENDAR},
+    {name:"施工エリア",selector:"#"+HOME_SECTIONS.AREA},
+    {name:"フッター",selector:"#"+HOME_SECTIONS.FOOTER}
   ];
   var sections=sectionDefinitions.map(function(definition){
     return{
@@ -7838,6 +7849,7 @@ hexReady(function(){
   });
   var nav;
   var frameRequested=false;
+  var previousSectionIndex=-1;
 
   if(sections.length<2){
     return;
@@ -7905,6 +7917,20 @@ hexReady(function(){
         }
       }
     );
+
+    if(current!==previousSectionIndex){
+      previousSectionIndex=current;
+      var activeDot=nav.querySelectorAll(".hex-progress-dot")[current];
+      if(activeDot&&nav.scrollHeight>nav.clientHeight){
+        var navRect=nav.getBoundingClientRect();
+        var dotRect=activeDot.getBoundingClientRect();
+        nav.scrollTo({
+          top:nav.scrollTop+dotRect.top-navRect.top-
+            (nav.clientHeight-dotRect.height)/2,
+          behavior:"smooth"
+        });
+      }
+    }
   }
 
   function requestUpdate(){
