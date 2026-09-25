@@ -2409,9 +2409,8 @@ hexReady(function(){
       welcomeBodyChars.forEach(function(character,index){
         var local=(reduced||welcomeBodyCompleted)?1
           :clamp((time-index*.02)/.8,0,1);
-        var eased=Math.sqrt(1-Math.pow(1-local,2));
-        character.style.opacity=Math.min(1,local*3);
-        character.style.transform="translate3d(0,"+Math.round((1-eased)*10)+"px,0)";
+        /* 本文の移動は親要素の自然なスクロールだけに任せる。 */
+        character.style.opacity=Math.min(1,local*8);
       });
     }
 
