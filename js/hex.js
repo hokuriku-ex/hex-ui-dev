@@ -2165,6 +2165,14 @@ hexReady(function(){
     function getSpCircleRadius(){
       return clamp(Math.min(window.innerWidth,window.innerHeight)*.34,128,250);
     }
+    function getPcCircleRadius(){
+      /* 左27%の中心を保ち、画面の左端とヒーローの上下端に16px残す。 */
+      return Math.min(
+        clamp(Math.min(window.innerWidth,window.innerHeight)*.42,180,480),
+        Math.max(1,window.innerWidth*.27-16),
+        Math.max(1,metrics.height*.5-16)
+      );
+    }
     function getSpStageTop(trackCircle){
       var headerTop=activeHero
         ?parseFloat(getComputedStyle(activeHero).marginTop)
@@ -2931,9 +2939,7 @@ hexReady(function(){
         circleProgress=Math.pow(circleProgress,1.18);
       }
       startRadius=Math.hypot(window.innerWidth,window.innerHeight);
-      targetRadius=isSp()?getSpCircleRadius():clamp(
-        Math.min(window.innerWidth,window.innerHeight)*.28,180,390
-      );
+      targetRadius=isSp()?getSpCircleRadius():getPcCircleRadius();
       radius=startRadius+(targetRadius-startRadius)*circleProgress;
       startX=window.innerWidth*.5;
       targetX=window.innerWidth*(isSp()?.5:.27);
