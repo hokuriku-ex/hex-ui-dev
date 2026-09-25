@@ -3331,6 +3331,29 @@ div[hex-sp]{
   color:#1f2774!important;
 }
 
+/* モーダルの英字見出しは開くたびに1文字ずつロールアップする。 */
+.hex-calendar-modal .hex-top-title-dark .hex-top-title-en{
+  color:#1f2774!important;
+}
+.hex-calendar-modal .hex-top-title-char{
+  opacity:0;
+  transform:translateY(100%) rotate(45deg);
+}
+.hex-calendar-modal.is-open .hex-top-title-char{
+  animation:hex-calendar-title-roll .6s cubic-bezier(.22,.8,.3,1) both;
+}
+@keyframes hex-calendar-title-roll{
+  from{opacity:0;transform:translateY(100%) rotate(45deg)}
+  to{opacity:1;transform:translateY(0) rotate(0)}
+}
+@media (prefers-reduced-motion:reduce){
+  .hex-calendar-modal .hex-top-title-char{
+    opacity:1;
+    transform:none;
+    animation:none!important;
+  }
+}
+
 /* カレンダー生成領域 */
 .hex-calendar-modal
 #hex-calendar-area{

@@ -4888,6 +4888,31 @@ hexLoad(function(){
   var modalBody=document.createElement('div');
   var closeButton=document.createElement('button');
   var lastFocusedElement=null;
+  var calendarTitlePrepared=false;
+
+  function prepareCalendarModalTitle(){
+    var title=calendarSection.querySelector('.hex-top-title[data-en]');
+    var english;
+    var wrap;
+
+    if(calendarTitlePrepared||!title){return;}
+    english=(title.getAttribute('data-en')||'').trim();
+    if(!english){return;}
+
+    wrap=document.createElement('span');
+    wrap.className='hex-top-title-en';
+    wrap.setAttribute('aria-hidden','true');
+    Array.from(english).forEach(function(character,index){
+      var span=document.createElement('span');
+      span.className='hex-top-title-char';
+      span.textContent=character===' '?'\u00a0':character;
+      span.style.animationDelay=(index*.07)+'s';
+      wrap.appendChild(span);
+    });
+    title.classList.add('has-hex-title-roll');
+    title.appendChild(wrap);
+    calendarTitlePrepared=true;
+  }
 
   /* モーダル背景 */
   modal.className='hex-calendar-modal';
@@ -4993,6 +5018,8 @@ hexLoad(function(){
     if(!modalBody.contains(calendarSection)){
       modalBody.appendChild(calendarSection);
     }
+
+    prepareCalendarModalTitle();
 
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden','false');
@@ -11550,7 +11577,8 @@ hexLoad(function(){
             '.hex-opening,'+
             '.hex-hero-wrap,'+
             '.hex-welcome-wrap,'+
-            '.hex-founded-stage'
+            '.hex-founded-stage,'+
+            '.hex-calendar-section'
           )
         );
       });
