@@ -4347,6 +4347,29 @@ body,
   background:var(--hex-opening-gold);
 }
 
+/* 開幕中のドットだけ、現在の場面の残り時間を円周で示す。 */
+.hex-opening-progress-nav .hex-progress-dot.is-current.is-timing::after{
+  content:"";
+  position:absolute;
+  inset:2px;
+  border-radius:50%;
+  background:conic-gradient(var(--hex-opening-gold) var(--hex-opening-ring-progress), transparent 0);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 1.5px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 1.5px));
+  pointer-events:none;
+  animation:hex-opening-ring-fill var(--hex-opening-auto-duration,3000ms) linear forwards;
+}
+
+@property --hex-opening-ring-progress{
+  syntax:"<angle>";
+  inherits:false;
+  initial-value:0deg;
+}
+
+@keyframes hex-opening-ring-fill{
+  to{--hex-opening-ring-progress:360deg;}
+}
+
 .hex-progress-dot:focus-visible{
   outline:2px solid var(--hex-opening-gold);
   outline-offset:1px;
