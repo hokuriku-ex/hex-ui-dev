@@ -4733,15 +4733,6 @@ html body
   overflow:visible!important;
 }
 
-/* PC・スマホ切替 */
-.hex-hero-pc{
-  display:block;
-}
-
-.hex-hero-sp{
-  display:none;
-}
-
 /* 背景・職人・前景をまとめて縦移動 */
 .hex-hero-scene{
   position:absolute!important;

@@ -2199,8 +2199,7 @@ hexReady(function(){
     }
 
     function getActiveHero(){
-      return hero.querySelector(isSp()?".hex-hero-sp":".hex-hero-pc")||
-        hero.querySelector(".hex-hero");
+      return hero.querySelector(".hex-hero");
     }
 
     function revealCatch(withFade){
@@ -2587,8 +2586,6 @@ hexReady(function(){
     }
 
     function resizeRenderer(){
-      var nextHero;
-      var nextImage;
       var width;
       var height;
       var imageWidth;
@@ -2599,27 +2596,6 @@ hexReady(function(){
       var visibleHeight;
 
       resizeQueued=false;
-      nextHero=getActiveHero();
-      if(nextHero&&nextHero!==activeHero&&webglStage){
-        if(activeHero){activeHero.classList.remove("is-v2-active");}
-        activeHero=nextHero;
-        nextImage=activeHero.querySelector(".hex-hero-bg img");
-        if(nextImage){
-          sourceImage=nextImage;
-          updateTextureSource(sourceImage);
-          if(plane&&window.THREE&&sourceImage.naturalWidth){
-            if(plane.geometry){plane.geometry.dispose();}
-            plane.geometry=new window.THREE.PlaneGeometry(
-              sourceImage.naturalWidth,
-              sourceImage.naturalHeight
-            );
-          }
-        }
-        activeHero.insertBefore(webglStage,activeHero.firstChild);
-        activeHero.classList.add("is-v2-active");
-      }else{
-        activeHero=nextHero||activeHero;
-      }
       if(!activeHero||!renderer||!camera||!sourceImage){return;}
 
       if(!sourceImage.naturalWidth){
@@ -7030,11 +7006,7 @@ hexReady(function(){
         return opening._hexOpeningHeroPreview||null;
       }
 
-      activeHero=hero.querySelector(
-        window.matchMedia("(max-width:768px)").matches
-          ?".hex-hero-sp"
-          :".hex-hero-pc"
-      )||hero.querySelector(".hex-hero");
+      activeHero=hero.querySelector(".hex-hero");
 
       if(!activeHero){return null;}
       sourceImage=activeHero.querySelector(".hex-hero-bg img");
