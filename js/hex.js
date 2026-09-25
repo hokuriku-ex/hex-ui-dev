@@ -2757,8 +2757,10 @@ hexReady(function(){
           :0;
         var imageCenter=snapshot.getBoundingClientRect().top+metrics.height*.5;
         var startingY=imageCenter-headingHeight*.5;
-        var translateY=startingY-
+        /* 親の通常スクロール分を相殺し、文字の画面上の速度を一定にする。 */
+        var desiredY=startingY-
           welcomeProgress*(startingY+travelMetrics.stageHeight);
+        var translateY=desiredY-welcomePanel.getBoundingClientRect().top;
         welcomeStage.style.transform="translate3d(0,"+translateY+"px,0)";
       }
       syncSnapshotLayer(circleProgress>=.999);
