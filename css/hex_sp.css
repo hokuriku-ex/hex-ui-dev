@@ -2588,11 +2588,6 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     margin-bottom:28px!important;
     text-align:center!important;
   }
-  .hex-v2-welcome-copy-stage .welcome_contents{
-    width:100%!important;
-    padding-inline:8px!important;
-  }
-
   /* 丸画像と重なるSPだけ、文字に細い生成り縁取り */
   .hex-v2-welcome-copy-stage .hex-welcome-copy .hex-opening-main{
     -webkit-text-stroke:3.5px #faf7ef!important;

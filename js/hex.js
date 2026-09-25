@@ -2772,11 +2772,8 @@ hexReady(function(){
       );
 
       if(welcomeStage&&welcomeStageTop===null&&circleProgress>=.999){
-        var headingHeight=welcomeCopy
-          ?welcomeCopy.getBoundingClientRect().height
-          :0;
         var imageCenter=snapshot.getBoundingClientRect().top+metrics.height*.5;
-        welcomeStageTop=imageCenter-headingHeight*.5-
+        welcomeStageTop=imageCenter-travelMetrics.stageHeight*.5-
           welcomePanel.getBoundingClientRect().top;
         welcomeStage.style.top=welcomeStageTop+"px";
         travelMetrics=measureWelcome();
