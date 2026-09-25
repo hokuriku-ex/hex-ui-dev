@@ -2568,37 +2568,15 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     height:100svh!important;
   }
   .hex-v2-welcome-copy-stage{
-    right:16px;
-    left:16px;
-    width:auto;
+    position:absolute!important;
+    right:16px!important;
+    left:16px!important;
+    width:auto!important;
     max-width:none;
   }
   .hex-v2-welcome-copy-stage .hex-welcome-copy{
     width:100%!important;
     margin-bottom:28px!important;
     text-align:center!important;
-  }
-  /* 丸画像と重なるSPだけ、文字に細い生成り縁取り */
-  .hex-v2-welcome-copy-stage .hex-welcome-copy .hex-opening-main{
-    -webkit-text-stroke:3.5px #faf7ef!important;
-    paint-order:stroke fill!important;
-    text-shadow:none!important;
-  }
-  .hex-v2-welcome-copy-stage .hex-welcome-copy .hex-opening-sub,
-  .hex-v2-welcome-copy-stage .welcome_contents .title :is(h2,h3,h4){
-    -webkit-text-stroke:2.5px #faf7ef!important;
-    paint-order:stroke fill!important;
-    text-shadow:none!important;
-  }
-  .hex-v2-welcome-copy-stage .welcome_contents .text,
-  .hex-v2-welcome-copy-stage .welcome_contents .text *{
-    -webkit-text-stroke:.75px #faf7ef!important;
-    paint-order:stroke fill!important;
-    text-shadow:none!important;
-  }
-  .hex-v2-welcome-copy-stage :is(small,.hex-signature-title,.hex-signature-name){
-    -webkit-text-stroke:1.1px #faf7ef!important;
-    paint-order:stroke fill!important;
-    text-shadow:none!important;
   }
 }

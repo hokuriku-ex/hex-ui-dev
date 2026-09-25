@@ -2071,6 +2071,7 @@ hexReady(function(){
     var welcomeBodyStartedAt=0;
     var welcomeBodyFrame=0;
     var welcomeMeasuredHeight=0;
+    var spCircleScrollFrame=0;
     var welcomeButton=null;
     var activeHero=null;
     var sourceImage=null;
@@ -2155,6 +2156,20 @@ hexReady(function(){
 
     function isSp(){return window.matchMedia("(max-width:768px)").matches;}
     function clamp(value,min,max){return Math.min(max,Math.max(min,value));}
+    function getSpCircleRadius(){
+      return clamp(Math.min(window.innerWidth,window.innerHeight)*.34,128,250);
+    }
+    function getSpStageTop(trackCircle){
+      var headerTop=parseFloat(getComputedStyle(document.documentElement)
+        .getPropertyValue('--header_height'))||80;
+      var panelTop=welcomePanel
+        ?(trackCircle&&snapshot?welcomePanel.getBoundingClientRect().top:
+          documentTop(welcomePanel)-documentTop(welcomeWrap))
+        :0;
+      var circleTop=trackCircle&&snapshot
+        ?snapshot.getBoundingClientRect().top:headerTop;
+      return Math.round(circleTop+2*getSpCircleRadius()+40-panelTop);
+    }
     function documentTop(element){
       return element.getBoundingClientRect().top+window.pageYOffset;
     }
@@ -2498,11 +2513,15 @@ hexReady(function(){
       var stageHeight=welcomeStage
         ?Math.max(welcomeStage.scrollHeight,welcomeStage.offsetHeight,1)
         :viewport*.7;
-      var bodyTravel=welcomeStageTop===null
+      var stageStart=welcomeStageTop===null&&isSp()
+        ?getSpStageTop(false):welcomeStageTop;
+      var bodyTravel=stageStart===null
         ?viewport+stageHeight
-        :Math.max(welcomeStageTop+stageHeight-viewport*.5,viewport*.5);
-      /* 本文が出そろった後もしばらく配置を固定して見せる。 */
-      var travel=bodyTravel+Math.max(220,Math.round(viewport*.45));
+        :Math.max(stageStart+stageHeight-viewport*.5,viewport*.5);
+      /* PCは固定表示の余韻を残す。SPは自然に次のセクションへ送る。 */
+      var travel=bodyTravel+(isSp()
+        ?Math.max(140,Math.round(viewport*.18))
+        :Math.max(220,Math.round(viewport*.45)));
 
       var totalHeight=Math.ceil(viewport+travel);
       if(totalHeight!==welcomeMeasuredHeight){
@@ -2627,6 +2646,7 @@ hexReady(function(){
     }
 
     function resetHero(withFade){
+      stopSpCircleScroll();
       cancelAutoZoom(false);
       welcomeActive=false;
       released=false;
@@ -2711,6 +2731,9 @@ hexReady(function(){
     }
 
     function getWelcomeCompleteTop(){
+      if(isSp()){
+        return Math.max(0,documentTop(welcomeWrap)+measureWelcome().travel-1);
+      }
       var viewport=Math.max(window.innerHeight,1);
       var stageHeight=welcomeStage
         ?Math.max(welcomeStage.scrollHeight,welcomeStage.offsetHeight,1)
@@ -2726,6 +2749,46 @@ hexReady(function(){
       var bodyTravel=Math.max(stageTop+stageHeight-viewport*.5,viewport*.5);
       var travel=bodyTravel+Math.max(220,Math.round(viewport*.45));
       return Math.max(0,documentTop(welcomeWrap)+travel-1);
+    }
+
+    function stopSpCircleScroll(){
+      if(spCircleScrollFrame){
+        window.cancelAnimationFrame(spCircleScrollFrame);
+        spCircleScrollFrame=0;
+      }
+      window.removeEventListener('pointerdown',stopSpCircleScroll,true);
+      window.removeEventListener('wheel',stopSpCircleScroll,true);
+      window.removeEventListener('keydown',stopSpCircleScroll,true);
+    }
+
+    function scrollSpCircleTo(target){
+      var from=window.pageYOffset;
+      var distance=target-from;
+      var startedAt=null;
+
+      stopSpCircleScroll();
+      if(reduced||distance<=1){
+        window.scrollTo(0,target);
+        return;
+      }
+      /* 操作を始めたらブラウザ標準のタッチスクロールへ戻す。 */
+      window.addEventListener('pointerdown',stopSpCircleScroll,
+        {passive:true,capture:true});
+      window.addEventListener('wheel',stopSpCircleScroll,
+        {passive:true,capture:true});
+      window.addEventListener('keydown',stopSpCircleScroll,true);
+
+      function advance(now){
+        if(startedAt===null){startedAt=now;}
+        var progress=clamp((now-startedAt)/1300,0,1);
+        window.scrollTo(0,from+distance*progress);
+        if(progress<1){
+          spCircleScrollFrame=window.requestAnimationFrame(advance);
+        }else{
+          stopSpCircleScroll();
+        }
+      }
+      spCircleScrollFrame=window.requestAnimationFrame(advance);
     }
 
     function beginWelcome(){
@@ -2751,7 +2814,9 @@ hexReady(function(){
       updateScrollEffects();
 
       target=Math.max(documentTop(welcomeWrap),0);
-      if(window.hexMotion&&typeof window.hexMotion.scrollTo==="function"){
+      if(isSp()){
+        scrollSpCircleTo(target);
+      }else if(window.hexMotion&&typeof window.hexMotion.scrollTo==="function"){
         window.hexMotion.scrollTo(target,{duration:1.05,force:true});
       }else{
         window.scrollTo({top:target,behavior:reduced?"auto":"smooth"});
@@ -2825,34 +2890,49 @@ hexReady(function(){
         0,1
       );
       circleProgress=circleProgress*circleProgress*(3-2*circleProgress);
+      if(isSp()){
+        /* 同じスクロール区間で、SPの丸の収束を少し穏やかにする。 */
+        circleProgress=Math.pow(circleProgress,1.18);
+      }
       startRadius=Math.hypot(window.innerWidth,window.innerHeight);
-      targetRadius=clamp(
-        Math.min(window.innerWidth,window.innerHeight)*(isSp()?.34:.28),
-        isSp()?128:180,
-        isSp()?250:390
+      targetRadius=isSp()?getSpCircleRadius():clamp(
+        Math.min(window.innerWidth,window.innerHeight)*.28,180,390
       );
       radius=startRadius+(targetRadius-startRadius)*circleProgress;
       startX=window.innerWidth*.5;
       targetX=window.innerWidth*(isSp()?.5:.27);
       x=startX+(targetX-startX)*circleProgress;
-      y=(metrics.height*.5);
+      y=isSp()
+        ?metrics.height*.5+
+          (targetRadius+16-metrics.height*.5)*circleProgress
+        :metrics.height*.5;
       snapshot.style.clipPath="circle("+radius+"px at "+x+"px "+y+"px)";
       snapshot.style.webkitClipPath="circle("+radius+"px at "+x+"px "+y+"px)";
 
       travelMetrics=measureWelcome();
 
       if(welcomeStage&&welcomeStageTop===null&&circleProgress>=.999){
-        var imageCenter=snapshot.getBoundingClientRect().top+metrics.height*.5;
-        welcomeStageScreenTop=Math.round(
-          imageCenter-travelMetrics.stageHeight*.5
-        );
-        welcomeStageTop=welcomeStageScreenTop-
-          (documentTop(welcomePanel)-welcomeTop);
+        if(isSp()){
+          welcomeStageTop=getSpStageTop(true);
+          welcomeStageScreenTop=welcomePanel.getBoundingClientRect().top+
+            welcomeStageTop;
+        }else{
+          var imageCenter=snapshot.getBoundingClientRect().top+metrics.height*.5;
+          welcomeStageScreenTop=Math.round(
+            imageCenter-travelMetrics.stageHeight*.5
+          );
+          welcomeStageTop=welcomeStageScreenTop-
+            (documentTop(welcomePanel)-welcomeTop);
+        }
+        travelMetrics=measureWelcome();
+      }
+      if(isSp()&&welcomeStageTop!==null&&circleProgress>=.999){
+        welcomeStageTop=getSpStageTop(true);
         travelMetrics=measureWelcome();
       }
       if(welcomeStage&&welcomeStageTop!==null){
         var scrollThroughWelcome=scrollY-welcomeTop;
-        var keepFixed=circleProgress>=.999&&
+        var keepFixed=!isSp()&&circleProgress>=.999&&
           scrollThroughWelcome<travelMetrics.travel;
         var wasFixed=welcomeStage.classList.contains("is-screen-fixed");
         var fixedRect=wasFixed&&!keepFixed
@@ -2862,7 +2942,9 @@ hexReady(function(){
           welcomeStageExitTop=fixedRect.top-
             welcomePanel.getBoundingClientRect().top;
         }
-        var stageTop=keepFixed
+        var stageTop=isSp()
+          ?welcomeStageTop
+          :keepFixed
           ?welcomeStageScreenTop
           :(welcomeStageExitTop===null
             ?welcomeStageTop+clamp(scrollThroughWelcome,0,travelMetrics.travel)
@@ -2897,8 +2979,9 @@ hexReady(function(){
         (scrollY-welcomeTop)/Math.max(travelMetrics.bodyTravel-1,1),0,1
       ));
 
-      if(scrollY-welcomeTop>=travelMetrics.travel){
-        if(!welcomeBodyCompleted){
+      if((isSp()&&circleProgress>=.999)||
+        (!isSp()&&scrollY-welcomeTop>=travelMetrics.travel)){
+        if(!isSp()&&!welcomeBodyCompleted){
           window.cancelAnimationFrame(welcomeBodyFrame);
           welcomeBodyFrame=0;
           welcomeBodyCompleted=true;
