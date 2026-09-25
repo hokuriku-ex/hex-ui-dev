@@ -2008,6 +2008,8 @@ hexReady(function(){
   /* true: 画像全体をマウス追従 / false: マウス追従を停止 */
   var HERO_MOUSE_FOLLOW_ENABLED=false;
   var HERO_MOUSE_FOLLOW_EASE=.075;
+  /* WELCOME本文の表示に必要なスクロール量。2なら従来の約2倍。 */
+  var WELCOME_BODY_SCROLL_SCALE=2;
   var threePromise=null;
 
   function loadThree(){
@@ -2072,6 +2074,7 @@ hexReady(function(){
     var welcomeBodyStart=0;
     var welcomeBodyStartedAt=0;
     var welcomeBodyFrame=0;
+    var spWelcomeExtraScroll=0;
     var welcomeMeasuredHeight=0;
     var spCircleScrollFrame=0;
     var spCircleReleaseScrollY=null;
@@ -2534,9 +2537,11 @@ hexReady(function(){
           stageHeight;
         travel=Math.max(1,Math.ceil(stageBottom-viewport));
         totalHeight=Math.ceil(viewport+travel);
-        bodyTravel=travel;
+        /* 画面に収まるまでの自然な移動と、下端での追加操作を合わせる。 */
+        bodyTravel=travel*WELCOME_BODY_SCROLL_SCALE;
       }else{
-        /* PCの固定表示と本文演出の距離は維持する。 */
+        /* PCでは本文が進む距離だけを延ばし、固定の解除順は維持する。 */
+        bodyTravel*=WELCOME_BODY_SCROLL_SCALE;
         travel=bodyTravel+Math.max(220,Math.round(viewport*.45));
         totalHeight=Math.ceil(viewport+travel);
       }
@@ -2700,6 +2705,7 @@ hexReady(function(){
       welcomeBodyFrame=0;
       welcomeBodyProgress=0;
       welcomeBodyTarget=0;
+      spWelcomeExtraScroll=0;
       welcomeBodyChars.forEach(function(character){
         if(welcomeBodyCompleted){
           character.style.opacity="1";
@@ -2763,7 +2769,8 @@ hexReady(function(){
         var panelOffset=documentTop(welcomePanel)-documentTop(welcomeWrap);
         stageTop=Math.round(imageCenter-stageHeight*.5)-panelOffset;
       }
-      var bodyTravel=Math.max(stageTop+stageHeight-viewport*.5,viewport*.5);
+      var bodyTravel=Math.max(stageTop+stageHeight-viewport*.5,viewport*.5)*
+        WELCOME_BODY_SCROLL_SCALE;
       var travel=bodyTravel+Math.max(220,Math.round(viewport*.45));
       return Math.max(0,documentTop(welcomeWrap)+travel-1);
     }
@@ -3005,7 +3012,8 @@ hexReady(function(){
       syncSnapshotLayer(circleProgress>=.999);
       welcomeWrap.classList.toggle("is-v2-circle-complete",circleProgress>=.999);
       updateWelcomeBody(circleProgress>=.999,clamp(
-        (scrollY-welcomeTop)/Math.max(travelMetrics.bodyTravel-1,1),0,1
+        (scrollY-welcomeTop+(isSp()?spWelcomeExtraScroll:0))/
+          Math.max(travelMetrics.bodyTravel-(isSp()?0:1),1),0,1
       ));
 
       if((isSp()&&circleProgress>=.999)||
@@ -3037,12 +3045,27 @@ hexReady(function(){
 
     function holdSpWelcomeScroll(){
       var holdTop=getSpWelcomeHoldTop();
-      if(holdTop===null||window.pageYOffset<holdTop-1){return;}
-      /* 最後の行が画面内に入った時点で1秒遅れの本文表示を完了させる。 */
-      updateWelcomeBody(true,1);
+      if(holdTop===null){return;}
+      if(window.pageYOffset<holdTop-1){
+        if(spWelcomeExtraScroll){
+          spWelcomeExtraScroll=0;
+          queueScrollEffects();
+        }
+        return;
+      }
       if(window.pageYOffset>holdTop+.5){
         window.scrollTo(0,holdTop);
       }
+    }
+
+    function advanceSpWelcomeAtBoundary(delta,holdTop){
+      var metrics=measureWelcome();
+      var remaining=Math.max(0,metrics.bodyTravel-metrics.travel);
+      spWelcomeExtraScroll=clamp(spWelcomeExtraScroll+delta,0,remaining);
+      updateWelcomeBody(true,clamp(
+        (Math.min(window.pageYOffset,holdTop)-documentTop(welcomeWrap)+
+          spWelcomeExtraScroll)/Math.max(metrics.bodyTravel,1),0,1
+      ));
     }
 
     var welcomeTouchY=null;
@@ -3053,20 +3076,40 @@ hexReady(function(){
     function onWelcomeTouchMove(event){
       if(welcomeTouchY===null||event.touches.length!==1){return;}
       var nextY=event.touches[0].clientY;
-      var movingDown=nextY<welcomeTouchY;
+      var delta=welcomeTouchY-nextY;
       welcomeTouchY=nextY;
-      var holdTop=movingDown?getSpWelcomeHoldTop():null;
-      if(holdTop!==null&&window.pageYOffset>=holdTop-1){
-        updateWelcomeBody(true,1);
+      var holdTop=getSpWelcomeHoldTop();
+      if(holdTop!==null&&window.pageYOffset>=holdTop-1&&
+        (delta>0||spWelcomeExtraScroll>0)){
+        advanceSpWelcomeAtBoundary(delta,holdTop);
         if(event.cancelable){event.preventDefault();}
       }
     }
     function onWelcomeWheel(event){
-      if(event.deltaY<=0){return;}
       var holdTop=getSpWelcomeHoldTop();
-      if(holdTop!==null&&window.pageYOffset>=holdTop-1){
-        updateWelcomeBody(true,1);
+      if(holdTop!==null&&window.pageYOffset>=holdTop-1&&
+        (event.deltaY>0||spWelcomeExtraScroll>0)){
+        var multiplier=event.deltaMode===1?16:
+          event.deltaMode===2?window.innerHeight:1;
+        advanceSpWelcomeAtBoundary(event.deltaY*multiplier,holdTop);
         if(event.cancelable){event.preventDefault();}
+      }
+    }
+    function onWelcomeKeyDown(event){
+      if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||
+        /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(
+          document.activeElement&&document.activeElement.tagName||''
+        )){return;}
+      var delta=event.key==='ArrowDown'?40:
+        event.key==='PageDown'||event.key===' '?window.innerHeight*.7:
+        event.key==='ArrowUp'?-40:
+        event.key==='PageUp'?-window.innerHeight*.7:0;
+      if(!delta){return;}
+      var holdTop=getSpWelcomeHoldTop();
+      if(holdTop!==null&&window.pageYOffset>=holdTop-1&&
+        (delta>0||spWelcomeExtraScroll>0)){
+        advanceSpWelcomeAtBoundary(delta,holdTop);
+        event.preventDefault();
       }
     }
 
@@ -3618,6 +3661,7 @@ hexReady(function(){
     window.addEventListener("touchmove",onWelcomeTouchMove,{passive:false});
     window.addEventListener("touchend",function(){welcomeTouchY=null;},{passive:true});
     window.addEventListener("wheel",onWelcomeWheel,{passive:false,capture:true});
+    window.addEventListener("keydown",onWelcomeKeyDown);
     window.addEventListener("wheel",onWheel,{passive:false,capture:true});
     window.addEventListener("resize",queueResize);
     window.addEventListener("orientationchange",queueResize);
