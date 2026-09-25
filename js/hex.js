@@ -2072,6 +2072,7 @@ hexReady(function(){
     var welcomeBodyFrame=0;
     var welcomeMeasuredHeight=0;
     var spCircleScrollFrame=0;
+    var spCircleReleaseScrollY=null;
     var welcomeButton=null;
     var activeHero=null;
     var sourceImage=null;
@@ -2160,8 +2161,11 @@ hexReady(function(){
       return clamp(Math.min(window.innerWidth,window.innerHeight)*.34,128,250);
     }
     function getSpStageTop(trackCircle){
-      var headerTop=parseFloat(getComputedStyle(document.documentElement)
-        .getPropertyValue('--header_height'))||80;
+      var headerTop=activeHero
+        ?parseFloat(getComputedStyle(activeHero).marginTop)
+        :parseFloat(getComputedStyle(document.documentElement)
+          .getPropertyValue('--header_height_smartphone'));
+      if(!Number.isFinite(headerTop)){headerTop=80;}
       var panelTop=welcomePanel
         ?(trackCircle&&snapshot?welcomePanel.getBoundingClientRect().top:
           documentTop(welcomePanel)-documentTop(welcomeWrap))
@@ -2647,6 +2651,7 @@ hexReady(function(){
 
     function resetHero(withFade){
       stopSpCircleScroll();
+      spCircleReleaseScrollY=null;
       cancelAutoZoom(false);
       welcomeActive=false;
       released=false;
@@ -2834,6 +2839,18 @@ hexReady(function(){
       welcomeWrap.insertBefore(snapshot,welcomeWrap.firstChild);
       snapshot.classList.add("is-released");
       released=true;
+      if(isSp()){
+        spCircleReleaseScrollY=window.pageYOffset;
+        if(welcomeDotPending){
+          /* ドット移動は丸の完成位置で止め、本文だけ表示済みにする。 */
+          stopSpCircleScroll();
+          welcomeDotPending=false;
+          welcomeDotTimer=window.setTimeout(function(){
+            welcomeDotTimer=0;
+            if(welcomeActive&&released){scrollToWelcomeComplete();}
+          },650);
+        }
+      }
       welcomeWrap.classList.add("is-v2-complete");
     }
 
@@ -3461,6 +3478,25 @@ hexReady(function(){
     createWelcomeStage();
     createWelcomeButton();
     function scrollToWelcomeComplete(){
+      if(isSp()){
+        /* SPの2番目のドットは丸が自然配置に切り替わった位置へ戻す。 */
+        window.cancelAnimationFrame(welcomeBodyFrame);
+        welcomeBodyFrame=0;
+        welcomeBodyProgress=1;
+        welcomeBodyTarget=1;
+        welcomeBodyCompleted=true;
+        renderWelcomeBody(1);
+        var circleTop=spCircleReleaseScrollY===null
+          ?documentTop(welcomeWrap)
+          :spCircleReleaseScrollY+1;
+        if(Math.abs(window.pageYOffset-circleTop)<2){return;}
+        if(window.hexMotion&&typeof window.hexMotion.scrollTo==="function"){
+          window.hexMotion.scrollTo(circleTop,{force:true});
+        }else{
+          window.scrollTo({top:circleTop,behavior:reduced?"auto":"smooth"});
+        }
+        return;
+      }
       var target=getWelcomeCompleteTop();
       if(window.hexMotion&&typeof window.hexMotion.scrollTo==="function"){
         window.hexMotion.scrollTo(target,{duration:1.05,force:true});
