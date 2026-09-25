@@ -4526,7 +4526,7 @@ html:has(.hex-opening)
   right:max(20px,env(safe-area-inset-right))!important;
   bottom:auto!important;
   left:auto!important;
-  z-index:2147482000!important;
+  z-index:8500!important;
   display:flex;
   align-items:center;
   justify-content:center;
