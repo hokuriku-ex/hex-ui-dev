@@ -9267,6 +9267,7 @@ html.hex-opening-finishing
 .hex-v2-handoff.is-released{position:absolute;top:var(--hex-v2-release-top,0)!important;right:auto!important;bottom:auto!important;left:var(--hex-v2-release-left,0)!important;z-index:1;width:100vw;height:calc(100dvh - var(--header_height,80px))}
 
 .hex-welcome-wrap.hex-v2-welcome{position:relative!important;z-index:93;overflow:visible!important;background:transparent!important;padding:0!important}
+.hex-welcome-wrap.hex-v2-welcome > .hex-v2-handoff{z-index:1}
 .hex-welcome-wrap.hex-v2-welcome .welcome{background:transparent!important}
 .hex-v2-welcome .welcome.has-padding{position:sticky!important;top:0!important;z-index:3!important;display:block!important;width:100%!important;min-height:100dvh!important;height:100dvh!important;margin:0!important;padding:0!important;overflow:hidden!important;transform:none!important}
 .hex-v2-welcome-copy-stage{position:absolute;top:0;right:3vw;z-index:20;width:46%;max-width:720px;will-change:transform}
