@@ -2061,6 +2061,7 @@ hexReady(function(){
     );
     var welcomeStage=null;
     var welcomeStageTop=null;
+    var welcomeStageScreenTop=null;
     var welcomeBodyChars=[];
     var welcomeBodyCompleted=false;
     var welcomeBodyProgress=0;
@@ -2599,9 +2600,13 @@ hexReady(function(){
       if(webglStage){webglStage.classList.remove("is-dragging","is-pinching");}
       if(snapshot){snapshot.remove();snapshot=null;snapshotCanvas=null;}
       if(welcomeWrap){welcomeWrap.classList.remove("is-v2-active","is-v2-complete","is-v2-circle-complete");}
-      if(welcomeStage){welcomeStage.style.removeProperty("transform");}
-      if(welcomeStage){welcomeStage.style.removeProperty("top");}
+      if(welcomeStage){
+        welcomeStage.classList.remove("is-screen-fixed");
+        welcomeStage.style.removeProperty("transform");
+        welcomeStage.style.removeProperty("top");
+      }
       welcomeStageTop=null;
+      welcomeStageScreenTop=null;
       window.cancelAnimationFrame(welcomeBodyFrame);
       welcomeBodyFrame=0;
       welcomeBodyProgress=0;
@@ -2773,7 +2778,10 @@ hexReady(function(){
 
       if(welcomeStage&&welcomeStageTop===null&&circleProgress>=.999){
         var imageCenter=snapshot.getBoundingClientRect().top+metrics.height*.5;
-        welcomeStageTop=imageCenter-travelMetrics.stageHeight*.5-
+        welcomeStageScreenTop=Math.round(
+          imageCenter-travelMetrics.stageHeight*.5
+        );
+        welcomeStageTop=welcomeStageScreenTop-
           welcomePanel.getBoundingClientRect().top;
         travelMetrics=measureWelcome();
         welcomeProgress=clamp(
@@ -2781,8 +2789,14 @@ hexReady(function(){
         );
       }
       if(welcomeStage&&welcomeStageTop!==null){
-        welcomeStage.style.top=(welcomeStageTop+
-          clamp(scrollY-welcomeTop,0,travelMetrics.travel))+"px";
+        var keepFixed=circleProgress>=.999&&welcomeProgress<.999;
+        var stageTop=keepFixed
+          ?welcomeStageScreenTop
+          :welcomeStageTop+clamp(scrollY-welcomeTop,0,travelMetrics.travel);
+        welcomeStage.classList.toggle("is-screen-fixed",keepFixed);
+        if(welcomeStage.style.top!==stageTop+"px"){
+          welcomeStage.style.top=stageTop+"px";
+        }
       }
       syncSnapshotLayer(circleProgress>=.999);
       welcomeWrap.classList.toggle("is-v2-circle-complete",circleProgress>=.999);
