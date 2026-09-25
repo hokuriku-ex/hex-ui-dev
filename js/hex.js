@@ -7835,8 +7835,6 @@ hexReady(function(){
     {name:"動画",selector:"#"+HOME_SECTIONS.MOVIE},
     {name:"採用情報",selector:"#"+HOME_SECTIONS.RECRUIT},
     {name:"お問い合わせ",selector:"#"+HOME_SECTIONS.CONTACT},
-    {name:"営業日カレンダー",selector:"#"+HOME_SECTIONS.CALENDAR},
-    {name:"施工エリア",selector:"#"+HOME_SECTIONS.AREA},
     {name:"フッター",selector:"#"+HOME_SECTIONS.FOOTER}
   ];
   var sections=sectionDefinitions.map(function(definition){
