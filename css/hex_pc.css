@@ -83,7 +83,7 @@ html{
   font-weight:500!important;
 }
 .hex-top-title-light{
-  color:#1f2774!important;
+  color:#c8a874!important;
 }
 .hex-top-title-dark{
   color:#fff!important;
@@ -4883,6 +4883,7 @@ html body
 }
 .hex-welcome-copy .hex-opening-sub{
   margin-top:0!important;
+  color:#c8a874!important;
 }
 
 /* =======================================
