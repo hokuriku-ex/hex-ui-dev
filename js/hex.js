@@ -2054,7 +2054,13 @@ hexReady(function(){
       ".hex-opening-copy-source,.hex-welcome-copy"
     );
     var welcomeContents=welcomeWrap&&welcomeWrap.querySelector(".welcome_contents");
+    var welcomeFrame=welcomeWrap&&(
+      welcomeWrap.closest(".gc_auto_frame_spotitem.gc_auto_frame_background")||
+      welcomeWrap.closest("#gc_auto_frame_home_3")||
+      welcomeWrap.parentElement
+    );
     var welcomeStage=null;
+    var welcomeStageTop=null;
     var welcomeBodyChars=[];
     var welcomeBodyCompleted=false;
     var welcomeBodyProgress=0;
@@ -2456,11 +2462,18 @@ hexReady(function(){
       var stageHeight=welcomeStage
         ?Math.max(welcomeStage.scrollHeight,welcomeStage.offsetHeight,1)
         :viewport*.7;
-      var travel=viewport+stageHeight;
+      var travel=welcomeStageTop===null
+        ?viewport+stageHeight
+        :Math.max(welcomeStageTop+stageHeight-viewport*.5,viewport*.5);
 
       if(welcomeWrap){
         welcomeWrap.style.setProperty("--hex-v2-welcome-travel",travel+"px");
         welcomeWrap.style.minHeight=(viewport+travel)+"px";
+      }
+      if(welcomeFrame){
+        welcomeFrame.style.setProperty(
+          "--hex-v2-welcome-total-height",(viewport+travel)+"px"
+        );
       }
       return{viewport:viewport,stageHeight:stageHeight,travel:travel};
     }
@@ -2586,6 +2599,8 @@ hexReady(function(){
       if(snapshot){snapshot.remove();snapshot=null;snapshotCanvas=null;}
       if(welcomeWrap){welcomeWrap.classList.remove("is-v2-active","is-v2-complete","is-v2-circle-complete");}
       if(welcomeStage){welcomeStage.style.removeProperty("transform");}
+      if(welcomeStage){welcomeStage.style.removeProperty("top");}
+      welcomeStageTop=null;
       window.cancelAnimationFrame(welcomeBodyFrame);
       welcomeBodyFrame=0;
       welcomeBodyProgress=0;
@@ -2751,17 +2766,18 @@ hexReady(function(){
         0,1
       );
 
-      if(welcomeStage){
+      if(welcomeStage&&welcomeStageTop===null&&circleProgress>=.999){
         var headingHeight=welcomeCopy
           ?welcomeCopy.getBoundingClientRect().height
           :0;
         var imageCenter=snapshot.getBoundingClientRect().top+metrics.height*.5;
-        var startingY=imageCenter-headingHeight*.5;
-        /* 親の通常スクロール分を相殺し、文字の画面上の速度を一定にする。 */
-        var desiredY=startingY-
-          welcomeProgress*(startingY+travelMetrics.stageHeight);
-        var translateY=desiredY-welcomePanel.getBoundingClientRect().top;
-        welcomeStage.style.transform="translate3d(0,"+translateY+"px,0)";
+        welcomeStageTop=imageCenter-headingHeight*.5-
+          welcomePanel.getBoundingClientRect().top;
+        welcomeStage.style.top=welcomeStageTop+"px";
+        travelMetrics=measureWelcome();
+        welcomeProgress=clamp(
+          (scrollY-welcomeTop)/Math.max(travelMetrics.travel,1),0,1
+        );
       }
       syncSnapshotLayer(circleProgress>=.999);
       welcomeWrap.classList.toggle("is-v2-circle-complete",circleProgress>=.999);
