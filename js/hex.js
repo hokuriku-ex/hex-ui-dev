@@ -2005,6 +2005,8 @@ hexReady(function(){
   var HERO_ZOOM_MAX=2;
   var HERO_AUTO_ZOOM_WAIT=500;
   var HERO_AUTO_ZOOM_DURATION=1500;
+  /* true: 画像全体をマウス追従 / false: マウス追従を停止 */
+  var HERO_MOUSE_FOLLOW_ENABLED=false;
   var HERO_MOUSE_FOLLOW_EASE=.075;
   var threePromise=null;
 
@@ -3183,6 +3185,7 @@ hexReady(function(){
       var travel;
 
       if(
+        !HERO_MOUSE_FOLLOW_ENABLED||
         event.pointerType!=="mouse"||
         isSp()||
         interactionLocked||
@@ -3334,7 +3337,7 @@ hexReady(function(){
     function renderLoop(){
       if(renderer&&camera&&scene){
         if(!dragging&&!pinch.active&&!autoZooming&&!welcomeActive){
-          if(mouseFollow.active&&!isSp()){
+          if(HERO_MOUSE_FOLLOW_ENABLED&&mouseFollow.active&&!isSp()){
             state.x+=(metrics.maxX*mouseFollow.nx-state.x)*
               HERO_MOUSE_FOLLOW_EASE;
             state.y+=(-metrics.maxY*mouseFollow.ny-state.y)*
