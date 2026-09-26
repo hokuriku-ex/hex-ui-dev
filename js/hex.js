@@ -2155,6 +2155,9 @@ hexReady(function(){
 
     if(!hero||!sticky){return;}
 
+    /* HTML上の雲PNG４枚を探索とWELCOME丸演出で共有する。 */
+    var cloudLayer=hero.querySelector(".hex-hero > .hex-cloud-layer");
+
     /* 探索方式では従来の縦スクロール案内を使用しない。 */
     hero.querySelectorAll(".hex-scroll-indicator").forEach(function(indicator){
       indicator.remove();
@@ -2724,6 +2727,18 @@ hexReady(function(){
       snapshot=document.createElement("div");
       snapshot.className="hex-v2-handoff";
       snapshot.setAttribute("aria-hidden","true");
+      /* ４枚それぞれの位置を固定して丸演出へ渡す。 */
+      if(cloudLayer){
+        var frozenClouds=cloudLayer.cloneNode(true);
+        var liveClouds=cloudLayer.querySelectorAll(".hex-cloud");
+        var snapshotClouds=frozenClouds.querySelectorAll(".hex-cloud");
+        liveClouds.forEach(function(liveCloud,index){
+          snapshotClouds[index].style.animation="none";
+          snapshotClouds[index].style.transform=
+            getComputedStyle(liveCloud).transform;
+        });
+        snapshot.appendChild(frozenClouds);
+      }
       snapshotCanvas=document.createElement("canvas");
       ratio=Math.min(window.devicePixelRatio||1,2);
       snapshotCanvas.width=Math.max(1,Math.round(metrics.width*ratio));

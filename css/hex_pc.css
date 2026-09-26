@@ -8882,15 +8882,66 @@ html.hex-opening-finishing
 .hex-v2-handoff canvas{display:block;width:100%;height:100%}
 .hex-v2-handoff.is-released{position:absolute;top:var(--hex-v2-release-top,0)!important;right:auto!important;bottom:auto!important;left:var(--hex-v2-release-left,0)!important;z-index:1;width:100vw;height:calc(100dvh - var(--header_height,80px))}
 
-/* ヒーロー画像の透過領域にだけ見せる固定ドット背景。 */
+/* 画像より背面で、ドットと淡い塗りの雲PNGを個別に漂わせる。 */
 .hex-hero,
 .hex-v2-handoff{
-  background-color:#f3f0eb;
-  background-image:
-    radial-gradient(circle,#2a5bac 5px,transparent 5px),
-    radial-gradient(circle,#e8d575 5px,transparent 5px);
-  background-position:0 0,15px 30px;
-  background-size:30px 60px;
+  background:#f3f0eb;
+}
+.hex-cloud-layer{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  overflow:hidden;
+  pointer-events:none;
+}
+.hex-cloud{
+  position:absolute;
+  display:block;
+  height:auto;
+  aspect-ratio:620 / 250;
+  object-fit:contain;
+  animation-name:hex-cloud-independent-drift;
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
+  animation-direction:alternate;
+  will-change:transform;
+}
+/* 速度・開始時点・距離を少しずつずらし、４枚を独立して動かす。 */
+.hex-cloud--1{
+  top:9%;left:2%;width:clamp(230px,22vw,360px);
+  --hex-cloud-dx:13px;--hex-cloud-dy:4px;
+  animation-duration:8.3s;animation-delay:-1.7s;
+}
+.hex-cloud--2{
+  top:16%;right:2%;width:clamp(190px,18vw,300px);
+  --hex-cloud-dx:-10px;--hex-cloud-dy:6px;
+  animation-duration:11.7s;animation-delay:-5.2s;
+}
+.hex-cloud--3{
+  top:3%;left:24%;width:clamp(140px,12vw,210px);
+  --hex-cloud-dx:-8px;--hex-cloud-dy:-3px;
+  animation-duration:9.6s;animation-delay:-3.8s;
+}
+.hex-cloud--4{
+  top:7%;right:19%;width:clamp(150px,13vw,220px);
+  --hex-cloud-dx:11px;--hex-cloud-dy:-5px;
+  animation-duration:13.4s;animation-delay:-8.1s;
+}
+@keyframes hex-cloud-independent-drift{
+  from{transform:translate3d(0,0,0);}
+  to{transform:translate3d(var(--hex-cloud-dx),var(--hex-cloud-dy),0);}
+}
+/* WebGLの透過画像と通常画像を雲より手前へ。 */
+.hex-hero>.hex-hero-scene{z-index:1;}
+.hex-webgl-stage{z-index:2;}
+.hex-v2-handoff canvas{position:relative;z-index:1;}
+@media (max-width:768px){
+  .hex-cloud--1{top:3%;left:-65px;width:180px;}
+  .hex-cloud--2{top:18%;right:-65px;width:150px;}
+  .hex-cloud--3,.hex-cloud--4{display:none;}
+}
+@media (prefers-reduced-motion:reduce){
+  .hex-cloud{animation:none;transform:none;will-change:auto;}
 }
 
 .hex-welcome-wrap.hex-v2-welcome{position:relative!important;z-index:93;overflow:visible!important;background:transparent!important;padding:0!important}
