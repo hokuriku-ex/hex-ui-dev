@@ -2001,9 +2001,9 @@ hexReady(function(){
 
   var THREE_URL="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js";
   var HERO_ZOOM_MIN=1;
-  var HERO_ZOOM_AUTO=1.35;
+  var HERO_ZOOM_AUTO=1.2;
   var HERO_ZOOM_MAX=2;
-  var HERO_AUTO_ZOOM_WAIT=500;
+  var HERO_AUTO_ZOOM_WAIT=300;
   var HERO_AUTO_ZOOM_DURATION=1500;
   /* true: 画像全体をマウス追従 / false: マウス追従を停止 */
   var HERO_MOUSE_FOLLOW_ENABLED=false;
