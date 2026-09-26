@@ -2155,14 +2155,48 @@ hexReady(function(){
 
     if(!hero||!sticky){return;}
 
-    /* HTML上の雲PNG４枚を探索とWELCOME丸演出で共有する。 */
+    /* 従来の雲HTMLからも楕円と前後２層を組み立てる。 */
+    var heroSection=hero.querySelector(".hex-hero");
     var cloudLayers=Array.from(hero.querySelectorAll(
       ".hex-hero > .hex-cloud-layer"
     ));
+    var heroEllipse=hero.querySelector(".hex-hero > .hex-hero-ellipse");
+    if(heroSection&&cloudLayers.length===1){
+      var behindClouds=cloudLayers[0];
+      var frontClouds=behindClouds.cloneNode(false);
+      behindClouds.classList.add("hex-cloud-layer--behind");
+      behindClouds.classList.remove("hex-cloud-layer--front");
+      frontClouds.classList.remove("hex-cloud-layer--behind");
+      frontClouds.classList.add("hex-cloud-layer--front");
+      Array.from(behindClouds.querySelectorAll(".hex-cloud")).forEach(
+        function(cloud,index){
+          if(cloud.classList.contains("hex-cloud--in-front-of-ellipse")||
+            (!cloud.classList.contains("hex-cloud--behind-ellipse")&&
+             (cloud.classList.contains("hex-cloud--2")||
+              cloud.classList.contains("hex-cloud--4")||
+              index===1||index===3))){
+            cloud.classList.add("hex-cloud--in-front-of-ellipse");
+            frontClouds.appendChild(cloud);
+          }else{
+            cloud.classList.add("hex-cloud--behind-ellipse");
+          }
+        }
+      );
+      heroSection.insertBefore(frontClouds,behindClouds.nextSibling);
+      cloudLayers.push(frontClouds);
+    }
+    if(heroSection&&!heroEllipse){
+      heroEllipse=document.createElement("div");
+      heroEllipse.className="hex-hero-ellipse";
+      heroEllipse.setAttribute("aria-hidden","true");
+    }
+    if(heroSection&&heroEllipse){
+      heroSection.insertBefore(heroEllipse,
+        cloudLayers[1]||heroSection.querySelector(".hex-hero-scene"));
+    }
     var clouds=cloudLayers.reduce(function(result,layer){
       return result.concat(Array.from(layer.querySelectorAll(".hex-cloud")));
     },[]);
-    var heroEllipse=hero.querySelector(".hex-hero > .hex-hero-ellipse");
 
     /* 探索方式では従来の縦スクロール案内を使用しない。 */
     hero.querySelectorAll(".hex-scroll-indicator").forEach(function(indicator){
