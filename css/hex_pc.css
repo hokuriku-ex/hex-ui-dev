@@ -8894,6 +8894,22 @@ html.hex-opening-finishing
   overflow:hidden;
   pointer-events:none;
 }
+/* 青い空 → 奥の雲 → ベージュの楕円 → 手前の雲 → 建物。 */
+.hex-cloud-layer--behind{z-index:0;}
+.hex-hero-ellipse{
+  position:absolute;
+  top:39%;
+  left:-15%;
+  z-index:1;
+  width:130%;
+  height:200%;
+  border-radius:50% 50% 0 0 / 50% 50% 0 0;
+  background:#f3f0eb;
+  transform:translate3d(0,var(--hex-ellipse-parallax-y,0px),0);
+  pointer-events:none;
+  will-change:transform;
+}
+.hex-cloud-layer--front{z-index:2;}
 .hex-cloud{
   position:absolute;
   display:block;
@@ -8914,19 +8930,19 @@ html.hex-opening-finishing
   animation-duration:7.2s;animation-delay:-1.7s;
 }
 .hex-cloud--2{
-  top:16%;right:2%;width:clamp(190px,18vw,300px);
+  top:32%;left:8%;width:clamp(190px,18vw,300px);
   --hex-cloud-start-x:30px;--hex-cloud-start-y:-7px;
   --hex-cloud-dx:-30px;--hex-cloud-dy:7px;
   animation-duration:9.4s;animation-delay:-5.2s;
 }
 .hex-cloud--3{
-  top:3%;left:24%;width:clamp(140px,12vw,210px);
+  top:4%;right:-2%;width:clamp(230px,22vw,360px);
   --hex-cloud-start-x:22px;--hex-cloud-start-y:4px;
   --hex-cloud-dx:-22px;--hex-cloud-dy:-4px;
   animation-duration:8.1s;animation-delay:-3.8s;
 }
 .hex-cloud--4{
-  top:7%;right:19%;width:clamp(150px,13vw,220px);
+  top:34%;right:6%;width:clamp(190px,18vw,300px);
   --hex-cloud-start-x:-27px;--hex-cloud-start-y:6px;
   --hex-cloud-dx:27px;--hex-cloud-dy:-6px;
   animation-duration:10.6s;animation-delay:-8.1s;
@@ -8935,13 +8951,14 @@ html.hex-opening-finishing
   from{transform:translate3d(var(--hex-cloud-start-x),calc(var(--hex-cloud-start-y) + var(--hex-cloud-parallax-y,0px)),0);}
   to{transform:translate3d(var(--hex-cloud-dx),calc(var(--hex-cloud-dy) + var(--hex-cloud-parallax-y,0px)),0);}
 }
-/* WebGLの透過画像と通常画像を雲より手前へ。 */
-.hex-hero>.hex-hero-scene{z-index:1;}
-.hex-webgl-stage{z-index:2;}
-.hex-v2-handoff canvas{position:relative;z-index:1;}
+/* 透過した建物・台座は雲の上に置く。 */
+.hex-hero>.hex-hero-scene{z-index:3;}
+.hex-webgl-stage{z-index:4;}
+.hex-v2-handoff canvas{position:relative;z-index:4;}
 @media (max-width:768px){
+  .hex-hero-ellipse{top:43%;left:-35%;width:170%;height:150%;}
   .hex-cloud--1{top:3%;left:-65px;width:180px;}
-  .hex-cloud--2{top:18%;right:-65px;width:150px;}
+  .hex-cloud--2{top:39%;left:-45px;width:150px;}
   .hex-cloud--3,.hex-cloud--4{display:none;}
 }
 @media (prefers-reduced-motion:reduce){

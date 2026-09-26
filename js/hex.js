@@ -2156,8 +2156,13 @@ hexReady(function(){
     if(!hero||!sticky){return;}
 
     /* HTML上の雲PNG４枚を探索とWELCOME丸演出で共有する。 */
-    var cloudLayer=hero.querySelector(".hex-hero > .hex-cloud-layer");
-    var clouds=cloudLayer?Array.from(cloudLayer.querySelectorAll(".hex-cloud")):[];
+    var cloudLayers=Array.from(hero.querySelectorAll(
+      ".hex-hero > .hex-cloud-layer"
+    ));
+    var clouds=cloudLayers.reduce(function(result,layer){
+      return result.concat(Array.from(layer.querySelectorAll(".hex-cloud")));
+    },[]);
+    var heroEllipse=hero.querySelector(".hex-hero > .hex-hero-ellipse");
 
     /* 探索方式では従来の縦スクロール案内を使用しない。 */
     hero.querySelectorAll(".hex-scroll-indicator").forEach(function(indicator){
@@ -2597,6 +2602,12 @@ hexReady(function(){
           cloud.style.setProperty("--hex-cloud-parallax-y",value);
         }
       });
+      if(heroEllipse){
+        var ellipseY=Math.round(state.y*metrics.scale*.22*10)/10+"px";
+        if(heroEllipse.style.getPropertyValue("--hex-ellipse-parallax-y")!==ellipseY){
+          heroEllipse.style.setProperty("--hex-ellipse-parallax-y",ellipseY);
+        }
+      }
       updateWelcomeButton();
     }
 
@@ -2739,17 +2750,21 @@ hexReady(function(){
       snapshot=document.createElement("div");
       snapshot.className="hex-v2-handoff";
       snapshot.setAttribute("aria-hidden","true");
-      /* ４枚それぞれの位置を固定して丸演出へ渡す。 */
-      if(cloudLayer){
-        var frozenClouds=cloudLayer.cloneNode(true);
-        var liveClouds=cloudLayer.querySelectorAll(".hex-cloud");
+      /* 楕円と各雲の見た目・重なり順を固定して丸演出へ渡す。 */
+      cloudLayers.forEach(function(layer,index){
+        if(index===1&&heroEllipse){snapshot.appendChild(heroEllipse.cloneNode(true));}
+        var frozenClouds=layer.cloneNode(true);
+        var liveClouds=layer.querySelectorAll(".hex-cloud");
         var snapshotClouds=frozenClouds.querySelectorAll(".hex-cloud");
-        liveClouds.forEach(function(liveCloud,index){
-          snapshotClouds[index].style.animation="none";
-          snapshotClouds[index].style.transform=
+        liveClouds.forEach(function(liveCloud,cloudIndex){
+          snapshotClouds[cloudIndex].style.animation="none";
+          snapshotClouds[cloudIndex].style.transform=
             getComputedStyle(liveCloud).transform;
         });
         snapshot.appendChild(frozenClouds);
+      });
+      if(heroEllipse&&cloudLayers.length<2){
+        snapshot.appendChild(heroEllipse.cloneNode(true));
       }
       snapshotCanvas=document.createElement("canvas");
       ratio=Math.min(window.devicePixelRatio||1,2);
