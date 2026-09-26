@@ -6472,8 +6472,6 @@ hexReady(function(){
     if(withStage){scenes.push(withStage);}
     if(brandStage){scenes.push(brandStage);}
 
-    var dotSixSceneIndex=messageStage?scenes.indexOf(messageStage):5;
-    var dotSevenSceneIndex=brandStage?scenes.indexOf(brandStage):scenes.length-1;
 
     function later(callback,delay){
       var timer=window.setTimeout(function(){
@@ -6560,13 +6558,7 @@ hexReady(function(){
     function updateDots(heroSelected){
       var activeDotIndex;
       if(!nav){return;}
-      if(heroSelected||index>=dotSevenSceneIndex){
-        activeDotIndex=6;
-      }else if(index>=dotSixSceneIndex){
-        activeDotIndex=5;
-      }else{
-        activeDotIndex=index;
-      }
+      activeDotIndex=heroSelected?scenes.length-1:index;
       Array.prototype.forEach.call(
         nav.querySelectorAll(".hex-progress-dot"),
         function(dot,dotIndex){
@@ -6586,7 +6578,7 @@ hexReady(function(){
       window.clearTimeout(autoAdvanceTimer);
       if(cancelled||transitionLocked||document.hidden||
          !OPENING_AUTO_ADVANCE_MS||!opening.isConnected){return;}
-      /* ドット6内のDraw/Withも一場面ずつ計時する。 */
+      /* 各場面のドットごとに計時する。 */
       var activeDot=nav&&nav.querySelector('.hex-progress-dot.is-current');
       if(activeDot){
         activeDot.classList.remove('is-timing');
@@ -7316,22 +7308,20 @@ hexReady(function(){
         return;
       }
 
-      /*
-       * ドットは7個。Draw / With はドット6の内部段階、
-       * 文字ロゴ完成位置だけをドット7として扱う。
-       */
-      nav=createOpeningProgressNav(opening,7);
+      /* キャッチ、Draw、With、ロゴも各場面に一つずつドットを割り当てる。 */
+      nav=createOpeningProgressNav(opening,scenes.length);
       Array.prototype.forEach.call(
         nav.querySelectorAll(".hex-progress-dot"),
         function(dot,dotIndex){
-          dot.setAttribute(
-            "data-scene-index",
-            String(
-              dotIndex===5
-                ?dotSixSceneIndex
-                :(dotIndex===6?dotSevenSceneIndex:dotIndex)
-            )
-          );
+          var labels={
+            5:'すぐそばにある、特別な時間。',
+            6:'Draw Your Everyday',
+            7:'With',
+            8:'Hokuriku-EX.'
+          };
+          if(labels[dotIndex]){
+            dot.setAttribute('aria-label',labels[dotIndex]+'へ移動');
+          }
         }
       );
       cue=createOpeningScrollCue(opening);
