@@ -3402,7 +3402,7 @@ hexReady(function(){
       if(!textureCanvas){textureCanvas=document.createElement("canvas");}
       textureCanvas.width=Math.max(1,Math.round(naturalWidth*scale));
       textureCanvas.height=Math.max(1,Math.round(naturalHeight*scale));
-      context=textureCanvas.getContext("2d",{alpha:false});
+      context=textureCanvas.getContext("2d",{alpha:true});
       if(!context){return false;}
       context.drawImage(image,0,0,textureCanvas.width,textureCanvas.height);
 
@@ -3520,7 +3520,7 @@ hexReady(function(){
           texture.colorSpace=THREE.SRGBColorSpace;
           texture.needsUpdate=true;
           geometry=new THREE.PlaneGeometry(imageWidth,imageHeight);
-          material=new THREE.MeshBasicMaterial({map:texture});
+          material=new THREE.MeshBasicMaterial({map:texture,transparent:true});
           plane=new THREE.Mesh(geometry,material);
           scene.add(plane);
 
