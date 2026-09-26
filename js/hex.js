@@ -1371,74 +1371,11 @@ hexLoad(function(){
 
     /* ハンバーガーと×アイコンの切り替え */
     if(wrapper){
-      var menuButton=wrapper.querySelector(':scope > .menu_button');
-      var wasOpen=false;
-      var circleAnimation=null;
-      var closingMenu=false;
-      var replayingCloseClick=false;
-      var menuCircleDuration=720;
-      var menuCircleEasing='cubic-bezier(.22,1,.36,1)';
-
-      function getMenuCircle(){
-        var buttonRect=menuButton&&menuButton.getBoundingClientRect();
-        var popupRect=popup.getBoundingClientRect();
-        var x=buttonRect?buttonRect.left+buttonRect.width/2-popupRect.left:popupRect.width/2;
-        var y=buttonRect?buttonRect.top+buttonRect.height/2-popupRect.top:0;
-        var radius=Math.ceil(Math.max(
-          Math.hypot(x,y),
-          Math.hypot(popupRect.width-x,y),
-          Math.hypot(x,popupRect.height-y),
-          Math.hypot(popupRect.width-x,popupRect.height-y)
-        ))+4;
-        return {
-          small:'circle(0px at '+x+'px '+y+'px)',
-          large:'circle('+radius+'px at '+x+'px '+y+'px)'
-        };
-      }
-
-      function playMenuCircle(opening){
-        var circle;
-        if(circleAnimation){circleAnimation.cancel();circleAnimation=null;}
-        if(!popup.animate||window.matchMedia('(prefers-reduced-motion:reduce)').matches){
-          return Promise.resolve();
-        }
-        circle=getMenuCircle();
-        circleAnimation=popup.animate(
-          [{clipPath:opening?circle.small:circle.large},
-           {clipPath:opening?circle.large:circle.small}],
-          {duration:menuCircleDuration,easing:menuCircleEasing,fill:'forwards'}
-        );
-        return circleAnimation.finished.catch(function(){}).then(function(){
-          if(circleAnimation){circleAnimation.cancel();circleAnimation=null;}
-        });
-      }
-
       function syncSmartphoneMenuState(){
         var isOpen=
           window.getComputedStyle(popup).display!=='none';
 
         wrapper.classList.toggle('hex-menu-open',isOpen);
-        if(isOpen&&!wasOpen){playMenuCircle(true);}
-        if(!isOpen&&circleAnimation){circleAnimation.cancel();circleAnimation=null;}
-        wasOpen=isOpen;
-      }
-
-      /* CMSの即時非表示を少し待ち、閉じる円も見せてから元の操作を実行。 */
-      if(menuButton){
-        menuButton.addEventListener('click',function(event){
-          if(replayingCloseClick||closingMenu||!wasOpen||
-             window.matchMedia('(prefers-reduced-motion:reduce)').matches){return;}
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          closingMenu=true;
-          playMenuCircle(false).then(function(){
-            closingMenu=false;
-            if(!wasOpen){return;}
-            replayingCloseClick=true;
-            menuButton.click();
-            replayingCloseClick=false;
-          });
-        },true);
       }
 
       var observer=new MutationObserver(function(){
@@ -1450,8 +1387,7 @@ hexLoad(function(){
         attributeFilter:['style','class']
       });
 
-      wasOpen=window.getComputedStyle(popup).display!=='none';
-      wrapper.classList.toggle('hex-menu-open',wasOpen);
+      syncSmartphoneMenuState();
     }
 
     /* 親メニューのアコーディオン制御 */
