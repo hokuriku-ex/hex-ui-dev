@@ -5374,6 +5374,11 @@ html body
   align-items:baseline;
   gap:0;
 }
+/* 数字は専用の文字要素だけで描画する */
+.hex-top-title:has(.hex-founded-year)[data-en]::after{
+  content:none!important;
+  display:none!important;
+}
 .hex-founded-year{
   color:#c8a874;
   font-family:var(--hex-font-italic);
@@ -5382,6 +5387,8 @@ html body
   font-style:italic;
   line-height:.9;
   letter-spacing:0;
+  -webkit-text-stroke:0;
+  text-shadow:none;
 }
 .hex-founded-text{
   color:#1f2774;
