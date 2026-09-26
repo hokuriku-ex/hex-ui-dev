@@ -129,6 +129,10 @@ html{
   backface-visibility:hidden;
   will-change:transform,opacity;
 }
+.hex-top-title-sub{
+  display:block;
+  transform-origin:50% 100%;
+}
 
 /* 日本語サブ見出しの色 */
 .hex-top-title.hex-top-title-light,
@@ -153,6 +157,11 @@ html{
   display:inline-block;
   backface-visibility:hidden;
   will-change:transform,opacity;
+}
+/* サブ見出しは英字ロール完了時にJSで表示する */
+.hex-opening-sub.has-hex-sub-pop{
+  transition:none!important;
+  transform-origin:50% 100%;
 }
 
 /* 共通センター見出し（下層ページ専用） */
@@ -3357,12 +3366,30 @@ div[hex-sp]{
 .hex-calendar-modal.is-open .hex-top-title-char{
   animation:hex-calendar-title-roll .6s cubic-bezier(.22,.8,.3,1) both;
 }
+.hex-calendar-modal .hex-top-title-sub{
+  opacity:0;
+  transform:translateY(16px) scale(.9);
+}
+.hex-calendar-modal.is-open .hex-top-title-sub{
+  animation:hex-calendar-sub-pop .55s both;
+  animation-delay:var(--hex-sub-pop-delay,.85s);
+}
 @keyframes hex-calendar-title-roll{
   from{opacity:0;transform:translateY(100%) rotate(45deg)}
   to{opacity:1;transform:translateY(0) rotate(0)}
 }
+@keyframes hex-calendar-sub-pop{
+  0%{opacity:0;transform:translateY(16px) scale(.9)}
+  65%{opacity:1;transform:translateY(-4px) scale(1.035)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
+}
 @media (prefers-reduced-motion:reduce){
   .hex-calendar-modal .hex-top-title-char{
+    opacity:1;
+    transform:none;
+    animation:none!important;
+  }
+  .hex-calendar-modal .hex-top-title-sub{
     opacity:1;
     transform:none;
     animation:none!important;
@@ -4345,29 +4372,6 @@ body,
   height:12px;
   border-color:var(--hex-opening-gold);
   background:var(--hex-opening-gold);
-}
-
-/* 開幕中のドットだけ、現在の場面の残り時間を円周で示す。 */
-.hex-opening-progress-nav .hex-progress-dot.is-current.is-timing::after{
-  content:"";
-  position:absolute;
-  inset:2px;
-  border-radius:50%;
-  background:conic-gradient(var(--hex-opening-gold) var(--hex-opening-ring-progress), transparent 0);
-  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 1.5px));
-  mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 1.5px));
-  pointer-events:none;
-  animation:hex-opening-ring-fill var(--hex-opening-auto-duration,3000ms) linear forwards;
-}
-
-@property --hex-opening-ring-progress{
-  syntax:"<angle>";
-  inherits:false;
-  initial-value:0deg;
-}
-
-@keyframes hex-opening-ring-fill{
-  to{--hex-opening-ring-progress:360deg;}
 }
 
 .hex-progress-dot:focus-visible{
