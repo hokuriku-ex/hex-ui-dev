@@ -2157,6 +2157,7 @@ hexReady(function(){
 
     /* HTML上の雲PNG４枚を探索とWELCOME丸演出で共有する。 */
     var cloudLayer=hero.querySelector(".hex-hero > .hex-cloud-layer");
+    var clouds=cloudLayer?Array.from(cloudLayer.querySelectorAll(".hex-cloud")):[];
 
     /* 探索方式では従来の縦スクロール案内を使用しない。 */
     hero.querySelectorAll(".hex-scroll-indicator").forEach(function(indicator){
@@ -2585,6 +2586,17 @@ hexReady(function(){
       camera.position.x=state.x;
       camera.position.y=state.y;
       camera.updateMatrixWorld();
+      /* カメラの縦移動を画面上の距離に換算し、奥と手前で追従量を変える。 */
+      clouds.forEach(function(cloud,index){
+        var depth=cloud.classList.contains("hex-cloud--behind-ellipse")||
+          (!cloud.classList.contains("hex-cloud--in-front-of-ellipse")&&
+           (index===0||index===2))?.12:.32;
+        var offset=Math.round(state.y*metrics.scale*depth*10)/10;
+        var value=offset+"px";
+        if(cloud.style.getPropertyValue("--hex-cloud-parallax-y")!==value){
+          cloud.style.setProperty("--hex-cloud-parallax-y",value);
+        }
+      });
       updateWelcomeButton();
     }
 

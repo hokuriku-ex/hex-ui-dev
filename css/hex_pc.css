@@ -8882,10 +8882,10 @@ html.hex-opening-finishing
 .hex-v2-handoff canvas{display:block;width:100%;height:100%}
 .hex-v2-handoff.is-released{position:absolute;top:var(--hex-v2-release-top,0)!important;right:auto!important;bottom:auto!important;left:var(--hex-v2-release-left,0)!important;z-index:1;width:100vw;height:calc(100dvh - var(--header_height,80px))}
 
-/* 画像より背面で、ドットと淡い塗りの雲PNGを個別に漂わせる。 */
+/* 画像より背面で、濃淡２色の青い雲PNGを個別に漂わせる。 */
 .hex-hero,
 .hex-v2-handoff{
-  background:#f3f0eb;
+  background:#4361b2;
 }
 .hex-cloud-layer{
   position:absolute;
@@ -8909,27 +8909,31 @@ html.hex-opening-finishing
 /* 速度・開始時点・距離を少しずつずらし、４枚を独立して動かす。 */
 .hex-cloud--1{
   top:9%;left:2%;width:clamp(230px,22vw,360px);
-  --hex-cloud-dx:13px;--hex-cloud-dy:4px;
-  animation-duration:8.3s;animation-delay:-1.7s;
+  --hex-cloud-start-x:-24px;--hex-cloud-start-y:-5px;
+  --hex-cloud-dx:24px;--hex-cloud-dy:5px;
+  animation-duration:7.2s;animation-delay:-1.7s;
 }
 .hex-cloud--2{
   top:16%;right:2%;width:clamp(190px,18vw,300px);
-  --hex-cloud-dx:-10px;--hex-cloud-dy:6px;
-  animation-duration:11.7s;animation-delay:-5.2s;
+  --hex-cloud-start-x:30px;--hex-cloud-start-y:-7px;
+  --hex-cloud-dx:-30px;--hex-cloud-dy:7px;
+  animation-duration:9.4s;animation-delay:-5.2s;
 }
 .hex-cloud--3{
   top:3%;left:24%;width:clamp(140px,12vw,210px);
-  --hex-cloud-dx:-8px;--hex-cloud-dy:-3px;
-  animation-duration:9.6s;animation-delay:-3.8s;
+  --hex-cloud-start-x:22px;--hex-cloud-start-y:4px;
+  --hex-cloud-dx:-22px;--hex-cloud-dy:-4px;
+  animation-duration:8.1s;animation-delay:-3.8s;
 }
 .hex-cloud--4{
   top:7%;right:19%;width:clamp(150px,13vw,220px);
-  --hex-cloud-dx:11px;--hex-cloud-dy:-5px;
-  animation-duration:13.4s;animation-delay:-8.1s;
+  --hex-cloud-start-x:-27px;--hex-cloud-start-y:6px;
+  --hex-cloud-dx:27px;--hex-cloud-dy:-6px;
+  animation-duration:10.6s;animation-delay:-8.1s;
 }
 @keyframes hex-cloud-independent-drift{
-  from{transform:translate3d(0,0,0);}
-  to{transform:translate3d(var(--hex-cloud-dx),var(--hex-cloud-dy),0);}
+  from{transform:translate3d(var(--hex-cloud-start-x),calc(var(--hex-cloud-start-y) + var(--hex-cloud-parallax-y,0px)),0);}
+  to{transform:translate3d(var(--hex-cloud-dx),calc(var(--hex-cloud-dy) + var(--hex-cloud-parallax-y,0px)),0);}
 }
 /* WebGLの透過画像と通常画像を雲より手前へ。 */
 .hex-hero>.hex-hero-scene{z-index:1;}
@@ -8941,7 +8945,7 @@ html.hex-opening-finishing
   .hex-cloud--3,.hex-cloud--4{display:none;}
 }
 @media (prefers-reduced-motion:reduce){
-  .hex-cloud{animation:none;transform:none;will-change:auto;}
+  .hex-cloud{animation:none;transform:translateY(var(--hex-cloud-parallax-y,0px));will-change:auto;}
 }
 
 .hex-welcome-wrap.hex-v2-welcome{position:relative!important;z-index:93;overflow:visible!important;background:transparent!important;padding:0!important}
