@@ -2155,7 +2155,7 @@ hexReady(function(){
 
     if(!hero||!sticky){return;}
 
-    /* 従来の雲HTMLからも楕円と前後２層を組み立てる。 */
+    /* 既存HTMLの雲１層は前後２層に分け、楕円はHTMLの要素だけを使う。 */
     var heroSection=hero.querySelector(".hex-hero");
     var cloudLayers=Array.from(hero.querySelectorAll(
       ".hex-hero > .hex-cloud-layer"
@@ -2182,17 +2182,9 @@ hexReady(function(){
           }
         }
       );
-      heroSection.insertBefore(frontClouds,behindClouds.nextSibling);
+      heroSection.insertBefore(frontClouds,
+        heroEllipse?heroEllipse.nextSibling:behindClouds.nextSibling);
       cloudLayers.push(frontClouds);
-    }
-    if(heroSection&&!heroEllipse){
-      heroEllipse=document.createElement("div");
-      heroEllipse.className="hex-hero-ellipse";
-      heroEllipse.setAttribute("aria-hidden","true");
-    }
-    if(heroSection&&heroEllipse){
-      heroSection.insertBefore(heroEllipse,
-        cloudLayers[1]||heroSection.querySelector(".hex-hero-scene"));
     }
     var clouds=cloudLayers.reduce(function(result,layer){
       return result.concat(Array.from(layer.querySelectorAll(".hex-cloud")));
