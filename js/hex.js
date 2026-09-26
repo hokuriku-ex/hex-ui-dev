@@ -2637,10 +2637,14 @@ hexReady(function(){
         }
       });
       if(heroEllipse){
-        var ellipseY=Math.round(state.y*metrics.scale*.22*10)/10+"px";
-        if(heroEllipse.style.getPropertyValue("--hex-ellipse-parallax-y")!==ellipseY){
-          heroEllipse.style.setProperty("--hex-ellipse-parallax-y",ellipseY);
-        }
+        /* WebGLの建物平面と同じ画像座標・拡大率・カメラ位置でPNGを描く。 */
+        var ellipseWidth=metrics.imageWidth*metrics.scale;
+        var ellipseHeight=metrics.imageHeight*metrics.scale;
+        var ellipseX=(metrics.width-ellipseWidth)/2-state.x*metrics.scale;
+        var ellipseY=(metrics.height-ellipseHeight)/2+state.y*metrics.scale;
+        heroEllipse.style.width=ellipseWidth+"px";
+        heroEllipse.style.height=ellipseHeight+"px";
+        heroEllipse.style.transform="translate3d("+ellipseX+"px,"+ellipseY+"px,0)";
       }
       updateWelcomeButton();
     }
