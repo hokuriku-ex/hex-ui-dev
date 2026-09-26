@@ -1375,6 +1375,20 @@
 
 }
 
+/* アイコン中心から広がる白い円のため、メニューの描画領域を画面全体にする。 */
+@media screen and (max-width:1200px){
+  #gc_auto_frame_header_object_smartphone_hum_pupup{
+    top:0!important;
+    height:100dvh!important;
+    max-height:100dvh!important;
+    background:#fff!important;
+  }
+  #gc_auto_frame_header_object_smartphone_hum_pupup .menu_button_popup{
+    padding-top:var(--header_height_smartphone,80px)!important;
+    box-sizing:border-box!important;
+  }
+}
+
 /* =======================================
    ヒーローキャッチ表示アニメーション
 ======================================= */
