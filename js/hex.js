@@ -2081,6 +2081,9 @@ hexReady(function(){
     var welcomeButton=null;
     var activeHero=null;
     var sourceImage=null;
+    var heroLayerImages=[];
+    var heroLayerVersion=0;
+    var heroLayerPreviewCache=null;
     var webglStage=null;
     var renderer=null;
     var scene=null;
@@ -2172,9 +2175,9 @@ hexReady(function(){
         function(cloud,index){
           if(cloud.classList.contains("hex-cloud--in-front-of-ellipse")||
             (!cloud.classList.contains("hex-cloud--behind-ellipse")&&
-             (cloud.classList.contains("hex-cloud--2")||
-              cloud.classList.contains("hex-cloud--4")||
-              index===1||index===3))){
+             (cloud.classList.contains("hex-cloud--3")||
+              cloud.classList.contains("hex-cloud--6")||
+              index===2||index===5))){
             cloud.classList.add("hex-cloud--in-front-of-ellipse");
             frontClouds.appendChild(cloud);
           }else{
@@ -2358,6 +2361,8 @@ hexReady(function(){
       mouseFollow.active=false;
       mouseFollow.armed=false;
       updateZoomMetrics();
+      /* 最初の画像表示は高さ中央ではなく画像の上端に揃える。 */
+      state.y=metrics.maxY;
       setCamera();
 
       if(reduced||!renderer||!camera){
@@ -2383,6 +2388,8 @@ hexReady(function(){
           state.zoom=HERO_ZOOM_MIN+
             (HERO_ZOOM_AUTO-HERO_ZOOM_MIN)*eased;
           updateZoomMetrics();
+          /* 自動ズーム中も上端を固定し、雲の見える空間を保つ。 */
+          state.y=metrics.maxY;
           setCamera();
 
           if(progress<1){
@@ -2617,23 +2624,27 @@ hexReady(function(){
       camera.position.x=state.x;
       camera.position.y=state.y;
       camera.updateMatrixWorld();
-      /* カメラの縦移動を画面上の距離に換算し、奥と手前で追従量を変える。 */
-      clouds.forEach(function(cloud,index){
-        var depth=cloud.classList.contains("hex-cloud--behind-ellipse")||
-          (!cloud.classList.contains("hex-cloud--in-front-of-ellipse")&&
-           (index===0||index===2))?.12:.32;
-        var offset=Math.round(state.y*metrics.scale*depth*10)/10;
-        var value=offset+"px";
-        if(cloud.style.getPropertyValue("--hex-cloud-parallax-y")!==value){
-          cloud.style.setProperty("--hex-cloud-parallax-y",value);
+      /* 縦横のドラッグを画面上の距離へ換算し、雲の奥行きで追従量を変える。 */
+      clouds.forEach(function(cloud){
+        var depth=cloud.classList.contains("hex-cloud--in-front-of-ellipse")
+          ?.32:.12;
+        var cloudX=-Math.round(state.x*metrics.scale*depth*10)/10+"px";
+        var cloudY=Math.round(state.y*metrics.scale*depth*10)/10+"px";
+        if(cloud.style.getPropertyValue("--hex-cloud-parallax-x")!==cloudX){
+          cloud.style.setProperty("--hex-cloud-parallax-x",cloudX);
+        }
+        if(cloud.style.getPropertyValue("--hex-cloud-parallax-y")!==cloudY){
+          cloud.style.setProperty("--hex-cloud-parallax-y",cloudY);
         }
       });
       if(heroEllipse){
-        /* WebGLの建物平面と同じ画像座標・拡大率・カメラ位置でPNGを描く。 */
+        /* 上端では建物と重ね、縦ドラッグ時だけ建物移動量の20%追従する。 */
         var ellipseWidth=metrics.imageWidth*metrics.scale;
         var ellipseHeight=metrics.imageHeight*metrics.scale;
         var ellipseX=(metrics.width-ellipseWidth)/2-state.x*metrics.scale;
-        var ellipseY=(metrics.height-ellipseHeight)/2+state.y*metrics.scale;
+        var ellipseY=(metrics.height-ellipseHeight)/2+
+          metrics.maxY*metrics.scale+
+          (state.y-metrics.maxY)*metrics.scale*.2;
         heroEllipse.style.width=ellipseWidth+"px";
         heroEllipse.style.height=ellipseHeight+"px";
         heroEllipse.style.transform="translate3d("+ellipseX+"px,"+ellipseY+"px,0)";
@@ -2683,10 +2694,13 @@ hexReady(function(){
       camera.near=.1;
       camera.far=10;
       updateZoomMetrics();
+      if(!ready&&!welcomeActive){state.y=metrics.maxY;}
 
       renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
       renderer.setSize(width,height,false);
       setCamera();
+      /* SP/PC切替後のキャラクター位置指定を合成画像へ反映する。 */
+      if(heroLayerImages.length&&textureCanvas){updateTextureSource(sourceImage);}
       try{
         renderer.render(scene,camera);
       }catch(error){
@@ -2755,6 +2769,7 @@ hexReady(function(){
         character.style.removeProperty("transform");
       });
       updateZoomMetrics();
+      state.y=metrics.maxY;
       setCamera();
       revealCatch(withFade);
       setHeroPageLock(true);
@@ -3476,7 +3491,35 @@ hexReady(function(){
       textureCanvas.height=Math.max(1,Math.round(naturalHeight*scale));
       context=textureCanvas.getContext("2d",{alpha:true});
       if(!context){return false;}
+      context.clearRect(0,0,textureCanvas.width,textureCanvas.height);
       context.drawImage(image,0,0,textureCanvas.width,textureCanvas.height);
+      /* 台座 → 家 → 外構 → ユニック → ７体の順で、台座の画像座標へ合成する。 */
+      heroLayerImages.forEach(function(layer){
+        var style;
+        var x;
+        var bottom;
+        var width;
+        var height;
+        if(!layer.complete||!layer.naturalWidth){return;}
+        if(!layer.classList.contains("hex-hero-character")&&
+          !layer.classList.contains("hex-hero-unic-image")){
+          context.drawImage(layer,0,0,textureCanvas.width,textureCanvas.height);
+          return;
+        }
+        style=getComputedStyle(layer);
+        x=parseFloat(style.getPropertyValue("--hex-sprite-x"));
+        bottom=parseFloat(style.getPropertyValue("--hex-sprite-bottom"));
+        width=parseFloat(style.getPropertyValue("--hex-sprite-width"));
+        if(!Number.isFinite(x)||!Number.isFinite(bottom)||
+          !Number.isFinite(width)||width<=0){return;}
+        x=textureCanvas.width*x/100;
+        bottom=textureCanvas.height*bottom/100;
+        width=textureCanvas.width*width/100;
+        height=width*layer.naturalHeight/layer.naturalWidth;
+        context.drawImage(layer,x,textureCanvas.height-bottom-height,width,height);
+      });
+      heroLayerVersion+=1;
+      heroLayerPreviewCache=null;
 
       if(texture){
         texture.image=textureCanvas;
@@ -3537,6 +3580,7 @@ hexReady(function(){
       plane=null;
       texture=null;
       textureCanvas=null;
+      heroLayerPreviewCache=null;
     }
 
     function createFallback(){
@@ -3560,6 +3604,18 @@ hexReady(function(){
       activeHero=getActiveHero();
       sourceImage=activeHero&&activeHero.querySelector(".hex-hero-bg img");
       if(!activeHero||!sourceImage){createFallback();return;}
+      heroLayerImages=Array.from(activeHero.querySelectorAll(
+        ".hex-hero-house-layer img,.hex-hero-exterior-layer img,"+
+        ".hex-hero-unic-layer .hex-hero-unic-image,"+
+        ".hex-hero-characters .hex-hero-character"
+      ));
+      heroLayerImages.forEach(function(layer){
+        layer.addEventListener("load",function(){
+          if(textureCanvas&&sourceImage&&sourceImage.naturalWidth){
+            updateTextureSource(sourceImage);
+          }
+        });
+      });
 
       function complete(){
         try{
@@ -3660,6 +3716,22 @@ hexReady(function(){
     window.hexHero={
       get:function(){return hero;},
       getActive:getActiveHero,
+      getCompositePreview:function(){
+        if(!textureCanvas){return null;}
+        if(!heroLayerPreviewCache){
+          try{
+            heroLayerPreviewCache={
+              version:heroLayerVersion,
+              src:textureCanvas.toDataURL("image/png")
+            };
+          }catch(error){return null;}
+        }
+        return heroLayerPreviewCache;
+      },
+      refreshLayers:function(){
+        return !!(sourceImage&&sourceImage.naturalWidth&&
+          updateTextureSource(sourceImage));
+      },
       releaseWelcomeBodyHold:function(){
         if(!isSp()||!welcomeActive||welcomeBodyCompleted){return;}
         window.cancelAnimationFrame(welcomeBodyFrame);
@@ -6531,6 +6603,7 @@ hexReady(function(){
     var transitionLocked=false;
     var wheelAmount=0;
     var wheelTimer=null;
+    var touchStartX=null;
     var touchStartY=null;
     /* 開幕各場面の表示時間。0にすると自動進行を停止。 */
     var OPENING_AUTO_ADVANCE_MS=3000;
@@ -6594,6 +6667,7 @@ hexReady(function(){
       window.removeEventListener("touchstart",onTouchStart,true);
       window.removeEventListener("touchmove",onTouchMove,true);
       window.removeEventListener("touchend",onTouchEnd,true);
+      window.removeEventListener("touchcancel",onTouchCancel,true);
       document.removeEventListener("keydown",onKeyDown);
       document.removeEventListener('visibilitychange',onVisibilityChange);
     }
@@ -7006,6 +7080,7 @@ hexReady(function(){
 
       if(!preview){return Promise.resolve();}
 
+      syncOpeningHeroPreview(preview);
       opening.classList.add("is-v2-hero-stage");
       preview.classList.add("is-v2-circle-reveal");
       previewRect=preview.getBoundingClientRect();
@@ -7037,6 +7112,7 @@ hexReady(function(){
           var currentRadius;
 
           if(cancelled){resolve();return;}
+          syncOpeningHeroPreview(preview);
           if(!started){started=now;}
           progress=Math.min(1,(now-started)/1100);
           eased=progress<.5
@@ -7118,6 +7194,15 @@ hexReady(function(){
       var sourceImage;
       var preview;
       var previewImage;
+      var behindClouds;
+      var frontClouds;
+      var ellipse;
+      var width;
+      var height;
+      var imageWidth;
+      var imageHeight;
+      var scale;
+      var composite;
 
       if(!hero||opening._hexOpeningHeroPreview){
         return opening._hexOpeningHeroPreview||null;
@@ -7133,18 +7218,86 @@ hexReady(function(){
       preview.className=
         "hex-opening-hero-preview hex-v2-opening-preview is-active";
       preview.setAttribute("aria-hidden","true");
-      /*
-       * 旧ヒーローの高さ変数を引き継がないよう、WebGLと同じ元画像から
-       * 開幕専用プレビューを作る。固定枠の下端に白帯が出るのを防ぐ。
-       */
+      behindClouds=document.createElement("div");
+      behindClouds.className="hex-cloud-layer hex-cloud-layer--behind";
+      frontClouds=document.createElement("div");
+      frontClouds.className="hex-cloud-layer hex-cloud-layer--front";
+      activeHero.querySelectorAll(".hex-cloud").forEach(function(cloud){
+        var cloned=cloud.cloneNode(true);
+        cloned.style.animation="none";
+        if(cloud.classList.contains("hex-cloud--3")||
+          cloud.classList.contains("hex-cloud--6")||
+          cloud.classList.contains("hex-cloud--in-front-of-ellipse")){
+          frontClouds.appendChild(cloned);
+        }else{
+          behindClouds.appendChild(cloned);
+        }
+      });
+      preview.appendChild(behindClouds);
+      ellipse=activeHero.querySelector(".hex-hero-ellipse");
+      if(ellipse){preview.appendChild(ellipse.cloneNode(true));}
+      preview.appendChild(frontClouds);
+      /* 透明の建物画像と背景を同じ上端基準の画像座標で重ねる。 */
       previewImage=sourceImage.cloneNode(true);
       previewImage.removeAttribute("id");
       previewImage.className="hex-opening-hero-preview-image";
       previewImage.alt="";
+      composite=window.hexHero&&window.hexHero.getCompositePreview&&
+        window.hexHero.getCompositePreview();
+      if(composite){
+        previewImage.src=composite.src;
+        preview.dataset.hexCompositeVersion=String(composite.version);
+      }
       preview.appendChild(previewImage);
       document.body.appendChild(preview);
+      width=preview.clientWidth||window.innerWidth;
+      height=preview.clientHeight||window.innerHeight;
+      imageWidth=sourceImage.naturalWidth||1672;
+      imageHeight=sourceImage.naturalHeight||941;
+      scale=Math.max(width/imageWidth,height/imageHeight)*
+        (window.matchMedia("(max-width:768px)").matches?1.16:1.1);
+      preview.style.setProperty("--hex-preview-image-width",imageWidth*scale+"px");
+      preview.style.setProperty("--hex-preview-image-height",imageHeight*scale+"px");
+      preview.style.setProperty("--hex-preview-image-transform",
+        "translate3d("+(width-imageWidth*scale)/2+"px,0,0)");
+      if(ellipse){
+        var previewEllipse=preview.querySelector(".hex-hero-ellipse");
+        previewEllipse.style.width=imageWidth*scale+"px";
+        previewEllipse.style.height=imageHeight*scale+"px";
+        previewEllipse.style.transform=preview.style.getPropertyValue(
+          "--hex-preview-image-transform");
+      }
       opening._hexOpeningHeroPreview=preview;
       return preview;
+    }
+
+    function syncOpeningHeroPreview(preview){
+      var hero=document.querySelector(".hex-hero");
+      var liveEllipse=hero&&hero.querySelector(".hex-hero-ellipse");
+      var previewEllipse=preview.querySelector(".hex-hero-ellipse");
+      var composite=window.hexHero&&window.hexHero.getCompositePreview&&
+        window.hexHero.getCompositePreview();
+      if(composite&&preview.dataset.hexCompositeVersion!==String(composite.version)){
+        var previewImage=preview.querySelector(".hex-opening-hero-preview-image");
+        if(previewImage){previewImage.src=composite.src;}
+        preview.dataset.hexCompositeVersion=String(composite.version);
+      }
+      if(liveEllipse&&previewEllipse&&liveEllipse.style.width){
+        previewEllipse.style.width=liveEllipse.style.width;
+        previewEllipse.style.height=liveEllipse.style.height;
+        previewEllipse.style.transform=liveEllipse.style.transform;
+        preview.style.setProperty("--hex-preview-image-width",liveEllipse.style.width);
+        preview.style.setProperty("--hex-preview-image-height",liveEllipse.style.height);
+        preview.style.setProperty("--hex-preview-image-transform",liveEllipse.style.transform);
+      }
+      if(!hero){return;}
+      hero.querySelectorAll(".hex-cloud").forEach(function(cloud){
+        var cloudType=Array.from(cloud.classList).filter(function(name){
+          return /^hex-cloud--[1-6]$/.test(name);
+        })[0];
+        var target=cloudType&&preview.querySelector("."+cloudType);
+        if(target){target.style.transform=getComputedStyle(cloud).transform;}
+      });
     }
 
     function onWheel(event){
@@ -7164,7 +7317,11 @@ hexReady(function(){
 
     function onTouchStart(event){
       if(event.touches&&event.touches.length===1){
+        touchStartX=event.touches[0].clientX;
         touchStartY=event.touches[0].clientY;
+      }else{
+        touchStartX=null;
+        touchStartY=null;
       }
     }
 
@@ -7174,12 +7331,26 @@ hexReady(function(){
     }
 
     function onTouchEnd(event){
-      var endY;
-      if(touchStartY===null||!event.changedTouches||!event.changedTouches.length){return;}
-      endY=event.changedTouches[0].clientY;
-      if(Math.abs(endY-touchStartY)>=SWIPE_THRESHOLD){
-        step(endY<touchStartY?1:-1);
+      var dx;
+      var dy;
+      if(touchStartX===null||touchStartY===null||
+        !event.changedTouches||!event.changedTouches.length){
+        onTouchCancel();
+        return;
       }
+      dx=event.changedTouches[0].clientX-touchStartX;
+      dy=event.changedTouches[0].clientY-touchStartY;
+      onTouchCancel();
+      if(window.matchMedia("(max-width:768px)").matches&&
+        Math.abs(dx)>Math.abs(dy)){
+        if(Math.abs(dx)>=SWIPE_THRESHOLD){step(dx<0?1:-1);}
+      }else if(Math.abs(dy)>=SWIPE_THRESHOLD){
+        step(dy<0?1:-1);
+      }
+    }
+
+    function onTouchCancel(){
+      touchStartX=null;
       touchStartY=null;
     }
 
@@ -7197,6 +7368,8 @@ hexReady(function(){
     function collectPreloadUrls(){
       var urls=[];
       var hero=document.querySelector(".hex-hero-wrap");
+      var ellipse;
+      var ellipseImage;
       Array.prototype.forEach.call(
         opening.querySelectorAll("img"),
         function(image){
@@ -7209,6 +7382,10 @@ hexReady(function(){
           var source=image.currentSrc||image.src;
           if(source){urls.push(source);}
         });
+        ellipse=hero.querySelector(".hex-hero-ellipse");
+        ellipseImage=ellipse&&/url\((['"]?)(.*?)\1\)/.exec(
+          getComputedStyle(ellipse).backgroundImage);
+        if(ellipseImage&&ellipseImage[2]){urls.push(ellipseImage[2]);}
       }
       return urls.filter(function(url,itemIndex,list){
         return list.indexOf(url)===itemIndex;
@@ -7423,6 +7600,7 @@ hexReady(function(){
       window.addEventListener("touchstart",onTouchStart,{passive:true,capture:true});
       window.addEventListener("touchmove",onTouchMove,{passive:false,capture:true});
       window.addEventListener("touchend",onTouchEnd,{passive:true,capture:true});
+      window.addEventListener("touchcancel",onTouchCancel,{passive:true,capture:true});
       document.addEventListener("keydown",onKeyDown);
       document.addEventListener('visibilitychange',onVisibilityChange);
 

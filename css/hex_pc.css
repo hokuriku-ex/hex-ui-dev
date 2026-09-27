@@ -4810,8 +4810,50 @@ html body
   width:100%!important;
   height:100%!important;
   object-fit:cover!important;
-  object-position:center center!important;
+  object-position:center top!important;
 }
+
+/* 台座と同じ寸法の家・外構の透過PNGを重ねる。 */
+.hex-hero .hex-hero-house-layer,
+.hex-hero .hex-hero-exterior-layer,
+.hex-hero .hex-hero-unic-layer,
+.hex-hero .hex-hero-characters{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+.hex-hero .hex-hero-house-layer{z-index:1;}
+.hex-hero .hex-hero-exterior-layer{z-index:2;}
+.hex-hero .hex-hero-unic-layer{z-index:3;}
+.hex-hero .hex-hero-characters{z-index:4;}
+.hex-hero :is(.hex-hero-house-layer,.hex-hero-exterior-layer)>img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center top;
+}
+/* 単体PNGは台座画像内の横位置・下端位置・幅を百分率で指定。 */
+.hex-hero-unic-image,
+.hex-hero-character{
+  position:absolute;
+  left:var(--hex-sprite-x);
+  bottom:var(--hex-sprite-bottom);
+  display:block;
+  width:var(--hex-sprite-width);
+  height:auto;
+  max-width:none;
+}
+.hex-hero-character--family{--hex-sprite-x:18%;--hex-sprite-bottom:3%;--hex-sprite-width:12%;}
+.hex-hero-character--supervisor{--hex-sprite-x:31%;--hex-sprite-bottom:19%;--hex-sprite-width:7%;}
+.hex-hero-character--block{--hex-sprite-x:40%;--hex-sprite-bottom:12%;--hex-sprite-width:9%;}
+.hex-hero-character--sakan{--hex-sprite-x:69%;--hex-sprite-bottom:7%;--hex-sprite-width:10%;}
+.hex-hero-character--pruning{--hex-sprite-x:55%;--hex-sprite-bottom:24%;--hex-sprite-width:9%;}
+.hex-hero-character--aluminum{--hex-sprite-x:77%;--hex-sprite-bottom:18%;--hex-sprite-width:8%;}
+.hex-hero-unic-image{--hex-sprite-x:78%;--hex-sprite-bottom:17%;--hex-sprite-width:19%;}
+.hex-hero-character--unic-operator{--hex-sprite-x:83%;--hex-sprite-bottom:19%;--hex-sprite-width:6%;}
 
 /* ヒーローを含む上位要素の切り抜きを解除 */
 .bg_post_index:has(.hex-hero-wrap),
@@ -8797,8 +8839,8 @@ html.hex-opening-finishing
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(2){background-color:#5a74b6!important}
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(3){background-color:#7789b9!important}
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(4){background-color:#97a5c9!important}
-.hex-opening-hero-preview.hex-v2-opening-preview{position:fixed!important;top:var(--header_height,80px)!important;right:0!important;bottom:0!important;left:0!important;width:100vw!important;height:auto!important;overflow:hidden!important;background:#fff;z-index:9!important}
-.hex-opening-hero-preview.hex-v2-opening-preview .hex-opening-hero-preview-image{position:absolute!important;inset:-2px!important;display:block!important;width:calc(100% + 4px)!important;height:calc(100% + 4px)!important;max-width:none!important;object-fit:cover!important;object-position:center center!important;transform:scale(1.1);transform-origin:center center}
+.hex-opening-hero-preview.hex-v2-opening-preview{position:fixed!important;top:var(--header_height,80px)!important;right:0!important;bottom:0!important;left:0!important;width:100vw!important;height:auto!important;overflow:hidden!important;background:#4361b2!important;z-index:9!important}
+.hex-opening-hero-preview.hex-v2-opening-preview .hex-opening-hero-preview-image{position:absolute!important;top:0!important;right:auto!important;bottom:auto!important;left:0!important;z-index:3!important;display:block!important;width:var(--hex-preview-image-width,100%)!important;height:var(--hex-preview-image-height,100%)!important;max-width:none!important;object-fit:fill!important;transform:var(--hex-preview-image-transform,none)!important;transform-origin:top left!important}
 .hex-opening.is-curtain-sequence .is-v2-logo-playing :is(.hex-logo-front-left-mask-path,.hex-logo-front-center-mask-path,.hex-logo-back-arm-mask-path){animation:hex-v2-logo-draw .9s cubic-bezier(.22,.8,.3,1) forwards!important}
 .hex-opening.is-curtain-sequence .is-v2-logo-playing :is(.hex-logo-back-hand,.hex-logo-company-name){animation:hex-v2-logo-fade .62s ease .5s forwards!important}
 .hex-opening.is-curtain-sequence .hex-opening-brand-stage .hex-opening-message-final{top:clamp(38px,7vh,72px)!important;transform:translate(calc(-50% + 52px),0)!important}
@@ -8890,12 +8932,14 @@ html.hex-opening-finishing
 .hex-cloud-layer{
   position:absolute;
   inset:0;
-  z-index:0;
+  z-index:auto;
   overflow:hidden;
   pointer-events:none;
 }
 /* 青い空 → 奥の雲 → ベージュの楕円 → 手前の雲 → 建物。 */
 .hex-cloud-layer--behind{z-index:0;}
+.hex-hero>.hex-cloud-layer .hex-cloud--behind-ellipse{z-index:0;}
+.hex-hero>.hex-cloud-layer .hex-cloud--in-front-of-ellipse{z-index:2;}
 .hex-hero-ellipse{
   position:absolute;
   top:0;
@@ -8923,7 +8967,7 @@ html.hex-opening-finishing
   animation-direction:alternate;
   will-change:transform;
 }
-/* 速度・開始時点・距離を少しずつずらし、４枚を独立して動かす。 */
+/* 速度・開始時点・距離を少しずつずらし、６枚を独立して動かす。 */
 .hex-cloud--1{
   top:9%;left:2%;width:clamp(230px,22vw,360px);
   --hex-cloud-start-x:-24px;--hex-cloud-start-y:-5px;
@@ -8931,26 +8975,38 @@ html.hex-opening-finishing
   animation-duration:7.2s;animation-delay:-1.7s;
 }
 .hex-cloud--2{
+  top:21%;left:22%;width:clamp(140px,12vw,210px);
+  --hex-cloud-start-x:-18px;--hex-cloud-start-y:3px;
+  --hex-cloud-dx:20px;--hex-cloud-dy:-4px;
+  animation-duration:11.3s;animation-delay:-4.4s;
+}
+.hex-cloud--3{
   top:32%;left:8%;width:clamp(190px,18vw,300px);
   --hex-cloud-start-x:30px;--hex-cloud-start-y:-7px;
   --hex-cloud-dx:-30px;--hex-cloud-dy:7px;
   animation-duration:9.4s;animation-delay:-5.2s;
 }
-.hex-cloud--3{
+.hex-cloud--4{
   top:4%;right:-2%;width:clamp(230px,22vw,360px);
   --hex-cloud-start-x:22px;--hex-cloud-start-y:4px;
   --hex-cloud-dx:-22px;--hex-cloud-dy:-4px;
   animation-duration:8.1s;animation-delay:-3.8s;
 }
-.hex-cloud--4{
+.hex-cloud--5{
+  top:20%;right:22%;width:clamp(140px,12vw,210px);
+  --hex-cloud-start-x:23px;--hex-cloud-start-y:-4px;
+  --hex-cloud-dx:-19px;--hex-cloud-dy:5px;
+  animation-duration:8.7s;animation-delay:-6.6s;
+}
+.hex-cloud--6{
   top:34%;right:6%;width:clamp(190px,18vw,300px);
   --hex-cloud-start-x:-27px;--hex-cloud-start-y:6px;
   --hex-cloud-dx:27px;--hex-cloud-dy:-6px;
   animation-duration:10.6s;animation-delay:-8.1s;
 }
 @keyframes hex-cloud-independent-drift{
-  from{transform:translate3d(var(--hex-cloud-start-x),calc(var(--hex-cloud-start-y) + var(--hex-cloud-parallax-y,0px)),0);}
-  to{transform:translate3d(var(--hex-cloud-dx),calc(var(--hex-cloud-dy) + var(--hex-cloud-parallax-y,0px)),0);}
+  from{transform:translate3d(calc(var(--hex-cloud-start-x) + var(--hex-cloud-parallax-x,0px)),calc(var(--hex-cloud-start-y) + var(--hex-cloud-parallax-y,0px)),0);}
+  to{transform:translate3d(calc(var(--hex-cloud-dx) + var(--hex-cloud-parallax-x,0px)),calc(var(--hex-cloud-dy) + var(--hex-cloud-parallax-y,0px)),0);}
 }
 /* 透過した建物・台座は雲の上に置く。 */
 .hex-hero>.hex-hero-scene{z-index:3;}
@@ -8958,11 +9014,14 @@ html.hex-opening-finishing
 .hex-v2-handoff canvas{position:relative;z-index:4;}
 @media (max-width:768px){
   .hex-cloud--1{top:3%;left:-65px;width:180px;}
-  .hex-cloud--2{top:39%;left:-45px;width:150px;}
-  .hex-cloud--3,.hex-cloud--4{display:none;}
+  .hex-cloud--2{top:19%;left:10%;width:110px;}
+  .hex-cloud--3{top:39%;left:-45px;width:150px;}
+  .hex-cloud--4{top:2%;right:-68px;width:150px;}
+  .hex-cloud--5{top:14%;right:13%;width:105px;}
+  .hex-cloud--6{top:45%;right:-40px;width:140px;}
 }
 @media (prefers-reduced-motion:reduce){
-  .hex-cloud{animation:none;transform:translateY(var(--hex-cloud-parallax-y,0px));will-change:auto;}
+  .hex-cloud{animation:none;transform:translate3d(var(--hex-cloud-parallax-x,0px),var(--hex-cloud-parallax-y,0px),0);will-change:auto;}
 }
 
 .hex-welcome-wrap.hex-v2-welcome{position:relative!important;z-index:93;overflow:visible!important;background:transparent!important;padding:0!important}
