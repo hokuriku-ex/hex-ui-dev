@@ -3493,7 +3493,7 @@ hexReady(function(){
       if(!context){return false;}
       context.clearRect(0,0,textureCanvas.width,textureCanvas.height);
       context.drawImage(image,0,0,textureCanvas.width,textureCanvas.height);
-      /* 台座 → 家 → 外構 → ユニック → ７体の順で、台座の画像座標へ合成する。 */
+      /* 台座 → 家 → 外構 → ユンボ → ユニック → ６体の順で合成する。 */
       heroLayerImages.forEach(function(layer){
         var style;
         var x;
@@ -3502,7 +3502,8 @@ hexReady(function(){
         var height;
         if(!layer.complete||!layer.naturalWidth){return;}
         if(!layer.classList.contains("hex-hero-character")&&
-          !layer.classList.contains("hex-hero-unic-image")){
+          !layer.classList.contains("hex-hero-unic-image")&&
+          !layer.classList.contains("hex-hero-excavator-image")){
           context.drawImage(layer,0,0,textureCanvas.width,textureCanvas.height);
           return;
         }
@@ -3606,7 +3607,7 @@ hexReady(function(){
       if(!activeHero||!sourceImage){createFallback();return;}
       heroLayerImages=Array.from(activeHero.querySelectorAll(
         ".hex-hero-house-layer img,.hex-hero-exterior-layer img,"+
-        ".hex-hero-unic-layer .hex-hero-unic-image,"+
+        ".hex-hero-machinery-layer img,"+
         ".hex-hero-characters .hex-hero-character"
       ));
       heroLayerImages.forEach(function(layer){

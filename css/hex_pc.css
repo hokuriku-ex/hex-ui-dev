@@ -4816,7 +4816,7 @@ html body
 /* 台座と同じ寸法の家・外構の透過PNGを重ねる。 */
 .hex-hero .hex-hero-house-layer,
 .hex-hero .hex-hero-exterior-layer,
-.hex-hero .hex-hero-unic-layer,
+.hex-hero .hex-hero-machinery-layer,
 .hex-hero .hex-hero-characters{
   position:absolute;
   inset:0;
@@ -4826,7 +4826,7 @@ html body
 }
 .hex-hero .hex-hero-house-layer{z-index:1;}
 .hex-hero .hex-hero-exterior-layer{z-index:2;}
-.hex-hero .hex-hero-unic-layer{z-index:3;}
+.hex-hero .hex-hero-machinery-layer{z-index:3;}
 .hex-hero .hex-hero-characters{z-index:4;}
 .hex-hero :is(.hex-hero-house-layer,.hex-hero-exterior-layer)>img{
   display:block;
@@ -4836,6 +4836,7 @@ html body
   object-position:center top;
 }
 /* 単体PNGは台座画像内の横位置・下端位置・幅を百分率で指定。 */
+.hex-hero-excavator-image,
 .hex-hero-unic-image,
 .hex-hero-character{
   position:absolute;
@@ -4852,8 +4853,8 @@ html body
 .hex-hero-character--sakan{--hex-sprite-x:69%;--hex-sprite-bottom:7%;--hex-sprite-width:10%;}
 .hex-hero-character--pruning{--hex-sprite-x:55%;--hex-sprite-bottom:24%;--hex-sprite-width:9%;}
 .hex-hero-character--aluminum{--hex-sprite-x:77%;--hex-sprite-bottom:18%;--hex-sprite-width:8%;}
+.hex-hero-excavator-image{--hex-sprite-x:2%;--hex-sprite-bottom:12%;--hex-sprite-width:16%;}
 .hex-hero-unic-image{--hex-sprite-x:78%;--hex-sprite-bottom:17%;--hex-sprite-width:19%;}
-.hex-hero-character--unic-operator{--hex-sprite-x:83%;--hex-sprite-bottom:19%;--hex-sprite-width:6%;}
 
 /* ヒーローを含む上位要素の切り抜きを解除 */
 .bg_post_index:has(.hex-hero-wrap),
