@@ -12984,6 +12984,28 @@ hexReady(function(){
     )){
       setMode('click');return;
     }
+    /* 記事一覧とページ送りもCMSのdiv要素に遷移処理を持つ。 */
+    var pageButton=element.closest('.bg_page_button .page_button');
+    if(pageButton){
+      setMode(pageButton.matches('.pagenow,.omission_button')?'normal':'click');
+      return;
+    }
+    var detailPage=element.closest(
+      '.gc_auto_frame_post_item_pager_prev_box,'+
+      '.gc_auto_frame_post_item_pager_next_box'
+    );
+    if(detailPage){
+      setMode(detailPage.classList.contains('hex-detail-pager-empty')?
+        'normal':'click');
+      return;
+    }
+    if(element.closest(
+      '.gc_auto_frame_post_index_home_box_contents_cell_text_list,'+
+      '.gc_auto_frame_post_index_box_contents_cell_text_list,'+
+      '.gc_auto_frame_post_index_box_contents_cell_tile'
+    )){
+      setMode('click');return;
+    }
     var clickable=element.closest(
       'a[href],button,[role="button"],[role="link"],'+
       'input[type="button"],input[type="submit"],summary'
