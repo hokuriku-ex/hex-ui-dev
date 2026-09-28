@@ -2388,8 +2388,8 @@ hexReady(function(){
           state.zoom=HERO_ZOOM_MIN+
             (HERO_ZOOM_AUTO-HERO_ZOOM_MIN)*eased;
           updateZoomMetrics();
-          /* 自動ズーム中も上端を固定し、雲の見える空間を保つ。 */
-          state.y=metrics.maxY;
+          /* 上端合わせから画像中央へ、ズーム完了と同時に移動を終える。 */
+          state.y=metrics.maxY*(1-eased);
           setCamera();
 
           if(progress<1){
