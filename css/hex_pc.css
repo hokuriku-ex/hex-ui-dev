@@ -4816,7 +4816,6 @@ html body
 /* 台座と同じ寸法の家・外構の透過PNGを重ねる。 */
 .hex-hero .hex-hero-house-layer,
 .hex-hero .hex-hero-exterior-layer,
-.hex-hero .hex-hero-machinery-layer,
 .hex-hero .hex-hero-characters{
   position:absolute;
   inset:0;
@@ -4826,7 +4825,6 @@ html body
 }
 .hex-hero .hex-hero-house-layer{z-index:1;}
 .hex-hero .hex-hero-exterior-layer{z-index:2;}
-.hex-hero .hex-hero-machinery-layer{z-index:3;}
 .hex-hero .hex-hero-characters{z-index:4;}
 .hex-hero :is(.hex-hero-house-layer,.hex-hero-exterior-layer)>img{
   display:block;
@@ -4836,8 +4834,6 @@ html body
   object-position:center top;
 }
 /* 単体PNGは台座画像内の横位置・下端位置・幅を百分率で指定。 */
-.hex-hero-excavator-image,
-.hex-hero-unic-image,
 .hex-hero-character{
   position:absolute;
   left:var(--hex-sprite-x);
@@ -4853,8 +4849,6 @@ html body
 .hex-hero-character--sakan{--hex-sprite-x:69%;--hex-sprite-bottom:7%;--hex-sprite-width:10%;}
 .hex-hero-character--pruning{--hex-sprite-x:55%;--hex-sprite-bottom:24%;--hex-sprite-width:10%;}
 .hex-hero-character--aluminum{--hex-sprite-x:77%;--hex-sprite-bottom:18%;--hex-sprite-width:10%;}
-.hex-hero-excavator-image{--hex-sprite-x:2%;--hex-sprite-bottom:12%;--hex-sprite-width:16%;}
-.hex-hero-unic-image{--hex-sprite-x:78%;--hex-sprite-bottom:17%;--hex-sprite-width:19%;}
 
 /* ヒーローを含む上位要素の切り抜きを解除 */
 .bg_post_index:has(.hex-hero-wrap),
@@ -9008,6 +9002,44 @@ html.hex-opening-finishing
 @keyframes hex-cloud-independent-drift{
   from{transform:translate3d(calc(var(--hex-cloud-start-x) + var(--hex-cloud-parallax-x,0px)),calc(var(--hex-cloud-start-y) + var(--hex-cloud-parallax-y,0px)),0);}
   to{transform:translate3d(calc(var(--hex-cloud-dx) + var(--hex-cloud-parallax-x,0px)),calc(var(--hex-cloud-dy) + var(--hex-cloud-parallax-y,0px)),0);}
+}
+/* 左右下の透過イラストはHTMLで６枚指定し、縦探索の進行に連動させる。 */
+.hex-hero-bottom-illustrations{
+  position:absolute;
+  inset:0;
+  z-index:5;
+  overflow:hidden;
+  pointer-events:none;
+}
+.hex-hero-bottom-img{
+  position:absolute;
+  display:block;
+  width:var(--hex-bottom-width);
+  height:auto;
+  max-width:none;
+  left:var(--hex-bottom-left,auto);
+  right:var(--hex-bottom-right,auto);
+  bottom:var(--hex-bottom-y,0px);
+  opacity:var(--hex-bottom-opacity,0);
+  transform:translate3d(0,var(--hex-bottom-offset,110%),0);
+  will-change:transform,opacity;
+  pointer-events:none;
+}
+/* start/end は上端表示から中央へ移る縦移動量の割合（0〜1）。 */
+.hex-hero-bottom-img--l1{z-index:1;--hex-bottom-width:clamp(300px,42vw,800px);--hex-bottom-left:-2vw;--hex-bottom-y:-10px;--hex-bottom-start:.05;--hex-bottom-end:.48;--hex-bottom-rise:1.03;}
+.hex-hero-bottom-img--l2{z-index:2;--hex-bottom-width:clamp(300px,36vw,720px);--hex-bottom-left:-3vw;--hex-bottom-y:-13px;--hex-bottom-start:.18;--hex-bottom-end:.72;--hex-bottom-rise:1.08;}
+.hex-hero-bottom-img--l3{z-index:3;--hex-bottom-width:clamp(260px,31vw,630px);--hex-bottom-left:-2vw;--hex-bottom-y:-12px;--hex-bottom-start:.30;--hex-bottom-end:.91;--hex-bottom-rise:1.05;}
+.hex-hero-bottom-img--r1{z-index:1;--hex-bottom-width:clamp(300px,42vw,800px);--hex-bottom-right:-2vw;--hex-bottom-y:-10px;--hex-bottom-start:.10;--hex-bottom-end:.53;--hex-bottom-rise:1.03;}
+.hex-hero-bottom-img--r2{z-index:2;--hex-bottom-width:clamp(300px,36vw,720px);--hex-bottom-right:-3vw;--hex-bottom-y:-13px;--hex-bottom-start:.22;--hex-bottom-end:.76;--hex-bottom-rise:1.08;}
+.hex-hero-bottom-img--r3{z-index:3;--hex-bottom-width:clamp(260px,31vw,630px);--hex-bottom-right:-2vw;--hex-bottom-y:-12px;--hex-bottom-start:.35;--hex-bottom-end:.94;--hex-bottom-rise:1.05;}
+@media (max-width:768px){
+  .hex-hero-bottom-img--l1,.hex-hero-bottom-img--r1{--hex-bottom-width:clamp(190px,60vw,340px);}
+  .hex-hero-bottom-img--l2,.hex-hero-bottom-img--r2{--hex-bottom-width:clamp(180px,58vw,330px);}
+  .hex-hero-bottom-img--l3,.hex-hero-bottom-img--r3{--hex-bottom-width:clamp(165px,53vw,300px);}
+}
+.hex-hero.is-v2-fallback .hex-hero-bottom-img{opacity:1!important;transform:none!important;}
+@media (prefers-reduced-motion:reduce){
+  .hex-hero-bottom-img{opacity:1!important;transform:none!important;will-change:auto;}
 }
 /* 透過した建物・台座は雲の上に置く。 */
 .hex-hero>.hex-hero-scene{z-index:3;}

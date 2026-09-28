@@ -2193,6 +2193,18 @@ hexReady(function(){
     var clouds=cloudLayers.reduce(function(result,layer){
       return result.concat(Array.from(layer.querySelectorAll(".hex-cloud")));
     },[]);
+    var bottomIllustrations=hero.querySelector(
+      ".hex-hero > .hex-hero-bottom-illustrations");
+    var bottomImages=bottomIllustrations
+      ?Array.from(bottomIllustrations.querySelectorAll(".hex-hero-bottom-img"))
+      :[];
+    var bottomArtTravel=new WeakMap();
+    bottomImages.forEach(function(image){
+      image.addEventListener("load",function(){
+        bottomArtTravel.set(image,image.offsetHeight);
+        updateBottomIllustrations();
+      });
+    });
 
     /* 探索方式では従来の縦スクロール案内を使用しない。 */
     hero.querySelectorAll(".hex-scroll-indicator").forEach(function(indicator){
@@ -2612,6 +2624,39 @@ hexReady(function(){
         bodyTravel:bodyTravel,travel:travel};
     }
 
+    function updateBottomIllustrations(){
+      if(!bottomImages.length){return;}
+      var progress=reduced?1:(metrics.maxY>1
+        ?clamp((metrics.maxY-state.y)/metrics.maxY,0,1)
+        :(ready?1:0));
+      bottomImages.forEach(function(image){
+        var style=getComputedStyle(image);
+        var start=parseFloat(style.getPropertyValue("--hex-bottom-start"));
+        var end=parseFloat(style.getPropertyValue("--hex-bottom-end"));
+        var rise=parseFloat(style.getPropertyValue("--hex-bottom-rise"));
+        var height=bottomArtTravel.get(image);
+        if(!Number.isFinite(start)){start=0;}
+        if(!Number.isFinite(end)||end<=start){end=1;}
+        if(!Number.isFinite(rise)||rise<=0){rise=1.05;}
+        if(height===undefined){
+          height=image.offsetHeight;
+          bottomArtTravel.set(image,height);
+        }
+        var local=clamp((progress-start)/(end-start),0,1);
+        /* 段階ごとに少しだけ行き過ぎて戻る動き。自動ループは行わない。 */
+        var eased=local===0?0:(local===1?1:
+          1+2.70158*Math.pow(local-1,3)+1.70158*Math.pow(local-1,2));
+        var offset=Math.round((1-eased)*(height*rise+24)*10)/10+"px";
+        var opacity=String(Math.round(clamp(local*4,0,1)*1000)/1000);
+        if(image.style.getPropertyValue("--hex-bottom-offset")!==offset){
+          image.style.setProperty("--hex-bottom-offset",offset);
+        }
+        if(image.style.getPropertyValue("--hex-bottom-opacity")!==opacity){
+          image.style.setProperty("--hex-bottom-opacity",opacity);
+        }
+      });
+    }
+
     function setCamera(){
       var nextX;
       var nextY;
@@ -2650,6 +2695,7 @@ hexReady(function(){
         heroEllipse.style.height=ellipseHeight+"px";
         heroEllipse.style.transform="translate3d("+ellipseX+"px,"+ellipseY+"px,0)";
       }
+      updateBottomIllustrations();
       updateWelcomeButton();
     }
 
@@ -2700,6 +2746,10 @@ hexReady(function(){
       renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
       renderer.setSize(width,height,false);
       setCamera();
+      bottomImages.forEach(function(image){
+        bottomArtTravel.set(image,image.offsetHeight);
+      });
+      updateBottomIllustrations();
       /* SP/PC切替後のキャラクター位置指定を合成画像へ反映する。 */
       if(heroLayerImages.length&&textureCanvas){updateTextureSource(sourceImage);}
       try{
@@ -2821,6 +2871,9 @@ hexReady(function(){
         0,0,snapshotCanvas.width,snapshotCanvas.height
       );
       snapshot.appendChild(snapshotCanvas);
+      if(bottomIllustrations){
+        snapshot.appendChild(bottomIllustrations.cloneNode(true));
+      }
       document.body.appendChild(snapshot);
       return snapshot;
     }
@@ -3551,7 +3604,7 @@ hexReady(function(){
       if(!context){return false;}
       context.clearRect(0,0,textureCanvas.width,textureCanvas.height);
       context.drawImage(image,0,0,textureCanvas.width,textureCanvas.height);
-      /* 台座 → 家 → 外構 → ユンボ → ユニック → ６体の順で合成する。 */
+      /* 台座 → 家 → 外構 → 家族・職人の順で合成する。 */
       heroLayerImages.forEach(function(layer){
         var style;
         var x;
@@ -3559,9 +3612,7 @@ hexReady(function(){
         var width;
         var height;
         if(!layer.complete||!layer.naturalWidth){return;}
-        if(!layer.classList.contains("hex-hero-character")&&
-          !layer.classList.contains("hex-hero-unic-image")&&
-          !layer.classList.contains("hex-hero-excavator-image")){
+        if(!layer.classList.contains("hex-hero-character")){
           context.drawImage(layer,0,0,textureCanvas.width,textureCanvas.height);
           return;
         }
@@ -3666,7 +3717,6 @@ hexReady(function(){
       if(!activeHero||!sourceImage){createFallback();return;}
       heroLayerImages=Array.from(activeHero.querySelectorAll(
         ".hex-hero-house-layer img,.hex-hero-exterior-layer img,"+
-        ".hex-hero-machinery-layer img,"+
         ".hex-hero-characters .hex-hero-character"
       ));
       heroLayerImages.forEach(function(layer){
@@ -7311,6 +7361,8 @@ hexReady(function(){
         preview.dataset.hexCompositeVersion=String(composite.version);
       }
       preview.appendChild(previewImage);
+      var bottomArt=activeHero.querySelector(".hex-hero-bottom-illustrations");
+      if(bottomArt){preview.appendChild(bottomArt.cloneNode(true));}
       document.body.appendChild(preview);
       width=preview.clientWidth||window.innerWidth;
       height=preview.clientHeight||window.innerHeight;
@@ -7359,6 +7411,17 @@ hexReady(function(){
         })[0];
         var target=cloudType&&preview.querySelector("."+cloudType);
         if(target){target.style.transform=getComputedStyle(cloud).transform;}
+      });
+      hero.querySelectorAll(".hex-hero-bottom-img").forEach(function(image){
+        var kind=Array.from(image.classList).filter(function(name){
+          return /^hex-hero-bottom-img--[lr][1-3]$/.test(name);
+        })[0];
+        var target=kind&&preview.querySelector("."+kind);
+        if(!target){return;}
+        target.style.setProperty("--hex-bottom-offset",
+          image.style.getPropertyValue("--hex-bottom-offset"));
+        target.style.setProperty("--hex-bottom-opacity",
+          image.style.getPropertyValue("--hex-bottom-opacity"));
       });
     }
 
