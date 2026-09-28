@@ -2080,6 +2080,9 @@ hexReady(function(){
   var HERO_ZOOM_MAX=2;
   /* 台座の縦移動を1とした楕円の追従率（上端の初期位置は維持）。 */
   var HERO_ELLIPSE_VERTICAL_FOLLOW=.85;
+  /* 楕円より手前の雲２枚と奥の雲４枚の縦追従率。 */
+  var HERO_CLOUD_FRONT_VERTICAL_FOLLOW=.90;
+  var HERO_CLOUD_BACK_VERTICAL_FOLLOW=.20;
   var HERO_AUTO_ZOOM_WAIT=300;
   var HERO_AUTO_ZOOM_DURATION=1500;
   /* true: 家族・職人にマウスが乗った間だけ従来の画面追従を有効にする */
@@ -2756,12 +2759,15 @@ hexReady(function(){
       camera.position.x=state.x;
       camera.position.y=state.y;
       camera.updateMatrixWorld();
-      /* 縦横のドラッグを画面上の距離へ換算し、雲の奥行きで追従量を変える。 */
+      /* 最初の雲の位置を保ち、縦だけ手前・奥ごとに追従率を変える。 */
       clouds.forEach(function(cloud){
-        var depth=cloud.classList.contains("hex-cloud--in-front-of-ellipse")
-          ?.32:.12;
+        var isFront=cloud.classList.contains("hex-cloud--in-front-of-ellipse");
+        var depth=isFront?.32:.12;
+        var verticalFollow=isFront
+          ?HERO_CLOUD_FRONT_VERTICAL_FOLLOW:HERO_CLOUD_BACK_VERTICAL_FOLLOW;
         var cloudX=-Math.round(state.x*metrics.scale*depth*10)/10+"px";
-        var cloudY=Math.round(state.y*metrics.scale*depth*10)/10+"px";
+        var cloudY=Math.round((metrics.maxY*depth+
+          (state.y-metrics.maxY)*verticalFollow)*metrics.scale*10)/10+"px";
         if(cloud.style.getPropertyValue("--hex-cloud-parallax-x")!==cloudX){
           cloud.style.setProperty("--hex-cloud-parallax-x",cloudX);
         }
