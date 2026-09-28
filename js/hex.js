@@ -2647,7 +2647,12 @@ hexReady(function(){
         var eased=local===0?0:(local===1?1:
           1+2.70158*Math.pow(local-1,3)+1.70158*Math.pow(local-1,2));
         var offset=Math.round((1-eased)*(height*rise+24)*10)/10+"px";
+        /* 跳ね上がりの最大値だけ着地点を下げ、下端に隙間を作らない。 */
+        var bounceBuffer=Math.ceil((height*rise+24)*.101+2)+"px";
         var opacity=String(Math.round(clamp(local*4,0,1)*1000)/1000);
+        if(image.style.getPropertyValue("--hex-bottom-bounce-buffer")!==bounceBuffer){
+          image.style.setProperty("--hex-bottom-bounce-buffer",bounceBuffer);
+        }
         if(image.style.getPropertyValue("--hex-bottom-offset")!==offset){
           image.style.setProperty("--hex-bottom-offset",offset);
         }
@@ -7420,6 +7425,8 @@ hexReady(function(){
         if(!target){return;}
         target.style.setProperty("--hex-bottom-offset",
           image.style.getPropertyValue("--hex-bottom-offset"));
+        target.style.setProperty("--hex-bottom-bounce-buffer",
+          image.style.getPropertyValue("--hex-bottom-bounce-buffer"));
         target.style.setProperty("--hex-bottom-opacity",
           image.style.getPropertyValue("--hex-bottom-opacity"));
       });

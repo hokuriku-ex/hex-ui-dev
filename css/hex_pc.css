@@ -9019,7 +9019,7 @@ html.hex-opening-finishing
   max-width:none;
   left:var(--hex-bottom-left,auto);
   right:var(--hex-bottom-right,auto);
-  bottom:var(--hex-bottom-y,0px);
+  bottom:calc(var(--hex-bottom-y,0px) - var(--hex-bottom-bounce-buffer,0px));
   opacity:var(--hex-bottom-opacity,0);
   transform:translate3d(0,var(--hex-bottom-offset,110%),0);
   will-change:transform,opacity;
