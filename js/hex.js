@@ -2008,6 +2008,8 @@ hexReady(function(){
   /* true: 家族・職人にマウスが乗った間だけ従来の画面追従を有効にする */
   var HERO_MOUSE_FOLLOW_ENABLED=true;
   var HERO_MOUSE_FOLLOW_EASE=.075;
+  /* 追従開始時のキャラクター位置を基準に、画面上で判定を維持する余白。 */
+  var HERO_MOUSE_FOLLOW_HOLD_PADDING=64;
   /* WELCOME本文の表示に必要なスクロール量。2なら従来の約2倍。 */
   var WELCOME_BODY_SCROLL_SCALE=2;
   var threePromise=null;
@@ -2130,6 +2132,7 @@ hexReady(function(){
     var mouseFollow={
       active:false,
       armed:false,
+      holdRect:null,
       startX:0,
       startY:0,
       nx:0,
@@ -2373,6 +2376,7 @@ hexReady(function(){
       state.zoom=HERO_ZOOM_MIN;
       mouseFollow.active=false;
       mouseFollow.armed=false;
+      mouseFollow.holdRect=null;
       updateZoomMetrics();
       /* 最初の画像表示は高さ中央ではなく画像の上端に揃える。 */
       state.y=metrics.maxY;
@@ -2789,6 +2793,7 @@ hexReady(function(){
       dragging=false;
       mouseFollow.active=false;
       mouseFollow.armed=false;
+      mouseFollow.holdRect=null;
       state.x=0;
       state.y=0;
       state.vx=0;
@@ -3262,6 +3267,7 @@ hexReady(function(){
 
       beginExplore();
       mouseFollow.active=false;
+      mouseFollow.holdRect=null;
       zoomDelta=Math.abs(event.deltaY)>=Math.abs(event.deltaX)
         ?event.deltaY
         :event.deltaX;
@@ -3389,7 +3395,20 @@ hexReady(function(){
       var i;
       if(!HERO_MOUSE_FOLLOW_ENABLED||event.pointerType!=="mouse"||
         isSp()||interactionLocked||welcomeActive||pinch.active){return;}
+      rect=webglStage.getBoundingClientRect();
+      if(mouseFollow.active&&mouseFollow.holdRect){
+        var hold=mouseFollow.holdRect;
+        if(event.clientX>=hold.left&&event.clientX<=hold.right&&
+          event.clientY>=hold.top&&event.clientY<=hold.bottom){
+          mouseFollow.nx=clamp(
+            (event.clientX-rect.left-rect.width/2)/Math.max(rect.width/2,1),-1,1);
+          mouseFollow.ny=clamp(
+            (event.clientY-rect.top-rect.height/2)/Math.max(rect.height/2,1),-1,1);
+          return;
+        }
+      }
       mouseFollow.active=false;
+      mouseFollow.holdRect=null;
       if(!mouseFollow.armed){
         mouseFollow.armed=true;
         mouseFollow.startX=event.clientX;
@@ -3400,7 +3419,6 @@ hexReady(function(){
         event.clientX-mouseFollow.startX,
         event.clientY-mouseFollow.startY
       )<6){return;}
-      rect=webglStage.getBoundingClientRect();
       imageX=metrics.imageWidth/2+state.x+
         (event.clientX-rect.left-rect.width/2)/Math.max(metrics.scale,.001);
       imageY=metrics.imageHeight/2-state.y+
@@ -3432,6 +3450,17 @@ hexReady(function(){
           !pointerHitsCharacter(layer,(imageX-x)/width,(imageY-y)/height)){
           continue;
         }
+        /* カメラが動いても判定領域は画面上の開始位置から移動させない。 */
+        var left=rect.left+rect.width/2+
+          (x-metrics.imageWidth/2-state.x)*metrics.scale;
+        var top=rect.top+rect.height/2+
+          (y-metrics.imageHeight/2+state.y)*metrics.scale;
+        mouseFollow.holdRect={
+          left:left-HERO_MOUSE_FOLLOW_HOLD_PADDING,
+          top:top-HERO_MOUSE_FOLLOW_HOLD_PADDING,
+          right:left+width*metrics.scale+HERO_MOUSE_FOLLOW_HOLD_PADDING,
+          bottom:top+height*metrics.scale+HERO_MOUSE_FOLLOW_HOLD_PADDING
+        };
         mouseFollow.nx=clamp(
           (event.clientX-rect.left-rect.width/2)/Math.max(rect.width/2,1),
           -1,1);
@@ -3449,6 +3478,7 @@ hexReady(function(){
     function onPointerLeave(){
       mouseFollow.active=false;
       mouseFollow.armed=false;
+      mouseFollow.holdRect=null;
     }
 
     function onPointerDown(event){
@@ -3459,6 +3489,7 @@ hexReady(function(){
       beginExplore();
       mouseFollow.active=false;
       mouseFollow.armed=false;
+      mouseFollow.holdRect=null;
 
       if(event.pointerType==="touch"){
         activePointers.set(event.pointerId,{
@@ -3551,6 +3582,7 @@ hexReady(function(){
       if(event.pointerType==="mouse"){
         mouseFollow.active=false;
         mouseFollow.armed=false;
+        mouseFollow.holdRect=null;
       }
 
       try{
