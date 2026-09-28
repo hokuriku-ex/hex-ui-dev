@@ -2792,6 +2792,18 @@ hexReady(function(){
         heroEllipse.style.height=ellipseHeight+"px";
         heroEllipse.style.transform="translate3d("+ellipseX+"px,"+ellipseY+"px,0)";
       }
+      if(bottomIllustrations){
+        /* 台座と同じ画像座標を使い、左右端・倍率・横移動を揃える。 */
+        var baseWidth=metrics.imageWidth*metrics.scale;
+        var baseX=(metrics.width-baseWidth)/2-state.x*metrics.scale;
+        if(bottomIllustrations.style.width!==baseWidth+"px"){
+          bottomIllustrations.style.width=baseWidth+"px";
+          bottomImages.forEach(function(image){
+            bottomArtTravel.set(image,image.offsetHeight);
+          });
+        }
+        bottomIllustrations.style.transform="translate3d("+baseX+"px,0,0)";
+      }
       updateBottomIllustrations();
       updateWelcomeButton();
     }
@@ -7592,6 +7604,13 @@ hexReady(function(){
       preview.style.setProperty("--hex-preview-image-height",imageHeight*scale+"px");
       preview.style.setProperty("--hex-preview-image-transform",
         "translate3d("+(width-imageWidth*scale)/2+"px,0,0)");
+      if(bottomArt){
+        var previewBottomArt=preview.querySelector(
+          ".hex-hero-bottom-illustrations");
+        previewBottomArt.style.width=imageWidth*scale+"px";
+        previewBottomArt.style.transform="translate3d("+
+          (width-imageWidth*scale)/2+"px,0,0)";
+      }
       if(ellipse){
         var previewEllipse=preview.querySelector(".hex-hero-ellipse");
         previewEllipse.style.width=imageWidth*scale+"px";
@@ -7623,6 +7642,13 @@ hexReady(function(){
         preview.style.setProperty("--hex-preview-image-transform",liveEllipse.style.transform);
       }
       if(!hero){return;}
+      var liveBottomArt=hero.querySelector(".hex-hero-bottom-illustrations");
+      var previewBottomArt=preview.querySelector(
+        ".hex-hero-bottom-illustrations");
+      if(liveBottomArt&&previewBottomArt&&liveBottomArt.style.width){
+        previewBottomArt.style.width=liveBottomArt.style.width;
+        previewBottomArt.style.transform=liveBottomArt.style.transform;
+      }
       hero.querySelectorAll(".hex-cloud").forEach(function(cloud){
         var cloudType=Array.from(cloud.classList).filter(function(name){
           return /^hex-cloud--[1-6]$/.test(name);
