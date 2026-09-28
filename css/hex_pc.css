@@ -9105,7 +9105,8 @@ html.hex-opening-finishing
   pointer-events:none;
   opacity:0;
   visibility:hidden;
-  transform:translate3d(-100px,-100px,0) translate(-50%,-50%);
+  transform:translate3d(-100px,-100px,0)
+    translate(calc(-50% - 12px),calc(-50% - 12px));
   transition:width .25s cubic-bezier(.22,.8,.3,1),
     height .25s cubic-bezier(.22,.8,.3,1),opacity .18s ease,
     visibility .18s ease;
@@ -9114,13 +9115,12 @@ html.hex-opening-finishing
 .hex-follow-cursor.is-visible{opacity:1;visibility:visible;}
 .hex-follow-cursor[data-mode="drag"],
 .hex-follow-cursor[data-mode="view"],
-.hex-follow-cursor[data-mode="click"]{--hex-follow-size:68px;}
+.hex-follow-cursor[data-mode="click"]{--hex-follow-size:56px;}
 .hex-follow-cursor-disc{
   position:absolute;
   inset:0;
   border-radius:50%;
   background:var(--hex-opening-gold,#e8d575);
-  box-shadow:0 3px 16px rgba(31,39,116,.15);
   will-change:transform;
 }
 .hex-follow-cursor-label{

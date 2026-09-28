@@ -12966,6 +12966,8 @@ hexReady(function(){
   function classify(){
     var element=document.elementFromPoint(targetX,targetY);
     if(!element){setMode('normal');return;}
+    /* 別ページ扱いの動画iframeには親のマウス座標が届かない。 */
+    if(element.tagName==='IFRAME'){hide();return;}
     var stage=element.closest('.hex-webgl-stage');
     if(dragHeld&&stage){setMode('drag');return;}
     var clickable=element.closest(
@@ -12973,11 +12975,11 @@ hexReady(function(){
       'input[type="button"],input[type="submit"],summary'
     );
     if(clickable&&!clickable.matches(':disabled,[aria-disabled="true"]')){
-      setMode('view');return;
+      setMode('click');return;
     }
     if(stage&&window.hexHero&&window.hexHero.isCharacterAt&&
       window.hexHero.isCharacterAt(targetX,targetY)){
-      setMode('click');return;
+      setMode('view');return;
     }
     setMode(stage?'drag':'normal');
   }
@@ -12988,12 +12990,13 @@ hexReady(function(){
     currentX+=dx*.2;
     currentY+=dy*.2;
     cursor.style.transform='translate3d('+currentX+'px,'+currentY+
-      'px,0) translate(-50%,-50%)';
+      'px,0) translate(calc(-50% - 12px),calc(-50% - 12px))';
     var stretch=1+Math.min(Math.hypot(dx,dy)*.0018,.17);
     var angle=Math.atan2(dy,dx)*180/Math.PI;
     disc.style.transform='rotate('+angle+'deg) scale('+stretch+','+
       (1/stretch)+')';
     if(now-lastCheck>=80){classify();lastCheck=now;}
+    if(!visible){frame=0;return;}
     frame=window.requestAnimationFrame(animate);
   }
 
@@ -13031,6 +13034,14 @@ hexReady(function(){
     if(visible){classify();}
   },{passive:true});
   document.addEventListener('pointerleave',hide,{passive:true});
+  document.addEventListener('pointerover',function(event){
+    if(event.target.tagName==='IFRAME'){hide();}
+  },{passive:true});
+  document.addEventListener('pointerout',function(event){
+    if(event.relatedTarget&&event.relatedTarget.tagName==='IFRAME'){
+      hide();
+    }
+  },{passive:true});
   document.addEventListener('visibilitychange',function(){
     if(document.hidden){hide();}
   });
