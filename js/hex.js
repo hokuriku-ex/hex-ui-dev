@@ -2081,7 +2081,7 @@ hexReady(function(){
   /* 台座の縦移動を1とした楕円の追従率（上端の初期位置は維持）。 */
   var HERO_ELLIPSE_VERTICAL_FOLLOW=.85;
   /* 楕円より手前の雲２枚と奥の雲４枚の縦追従率。 */
-  var HERO_CLOUD_FRONT_VERTICAL_FOLLOW=.90;
+  var HERO_CLOUD_FRONT_VERTICAL_FOLLOW=.70;
   var HERO_CLOUD_BACK_VERTICAL_FOLLOW=.20;
   var HERO_AUTO_ZOOM_WAIT=300;
   var HERO_AUTO_ZOOM_DURATION=1500;
