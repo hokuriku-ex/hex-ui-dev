@@ -2005,10 +2005,9 @@ hexReady(function(){
   var HERO_ZOOM_MAX=2;
   var HERO_AUTO_ZOOM_WAIT=300;
   var HERO_AUTO_ZOOM_DURATION=1500;
-  /* true: 家族・職人だけをマウス追従 / false: マウス追従を停止 */
+  /* true: 家族・職人にマウスが乗った間だけ従来の画面追従を有効にする */
   var HERO_MOUSE_FOLLOW_ENABLED=true;
   var HERO_MOUSE_FOLLOW_EASE=.075;
-  var HERO_MOUSE_FOLLOW_DISTANCE=18;
   /* WELCOME本文の表示に必要なスクロール量。2なら従来の約2倍。 */
   var WELCOME_BODY_SCROLL_SCALE=2;
   var threePromise=null;
@@ -2092,7 +2091,6 @@ hexReady(function(){
     var plane=null;
     var texture=null;
     var textureCanvas=null;
-    var staticTextureCanvas=null;
     var renderFrameId=0;
     var snapshot=null;
     var snapshotCanvas=null;
@@ -2136,9 +2134,7 @@ hexReady(function(){
       startY:0,
       nx:0,
       ny:0,
-      offsetX:0,
-      offsetY:0,
-      lastScale:0
+      alphaCanvases:new WeakMap()
     };
     var interactionLocked=true;
     var autoZooming=false;
@@ -2365,9 +2361,6 @@ hexReady(function(){
       state.zoom=HERO_ZOOM_MIN;
       mouseFollow.active=false;
       mouseFollow.armed=false;
-      mouseFollow.offsetX=0;
-      mouseFollow.offsetY=0;
-      if(staticTextureCanvas){redrawCharacterTexture();}
       updateZoomMetrics();
       /* 最初の画像表示は高さ中央ではなく画像の上端に揃える。 */
       state.y=metrics.maxY;
@@ -2741,9 +2734,6 @@ hexReady(function(){
       dragging=false;
       mouseFollow.active=false;
       mouseFollow.armed=false;
-      mouseFollow.offsetX=0;
-      mouseFollow.offsetY=0;
-      if(staticTextureCanvas){redrawCharacterTexture();}
       state.x=0;
       state.y=0;
       state.vx=0;
@@ -3213,6 +3203,7 @@ hexReady(function(){
       if(interactionLocked){return;}
 
       beginExplore();
+      mouseFollow.active=false;
       zoomDelta=Math.abs(event.deltaY)>=Math.abs(event.deltaX)
         ?event.deltaY
         :event.deltaX;
@@ -3303,44 +3294,98 @@ hexReady(function(){
       setCamera();
     }
 
+    function pointerHitsCharacter(layer,u,v){
+      var cached=mouseFollow.alphaCanvases.get(layer);
+      var canvas;
+      var context;
+      if(cached===undefined){
+        try{
+          canvas=document.createElement("canvas");
+          var ratio=Math.min(1,512/Math.max(layer.naturalWidth,layer.naturalHeight));
+          canvas.width=Math.max(1,Math.round(layer.naturalWidth*ratio));
+          canvas.height=Math.max(1,Math.round(layer.naturalHeight*ratio));
+          context=canvas.getContext("2d",{willReadFrequently:true});
+          context.drawImage(layer,0,0,canvas.width,canvas.height);
+          cached=canvas;
+        }catch(error){cached=null;}
+        mouseFollow.alphaCanvases.set(layer,cached);
+      }
+      if(!cached){return true;}
+      try{
+        context=cached.getContext("2d",{willReadFrequently:true});
+        return context.getImageData(
+          Math.min(cached.width-1,Math.floor(u*cached.width)),
+          Math.min(cached.height-1,Math.floor(v*cached.height)),1,1
+        ).data[3]>20;
+      }catch(error){
+        mouseFollow.alphaCanvases.set(layer,null);
+        return true;
+      }
+    }
+
     function updateMouseFollow(event){
       var rect;
-      var travel;
-
-      if(
-        !HERO_MOUSE_FOLLOW_ENABLED||
-        event.pointerType!=="mouse"||
-        isSp()||
-        interactionLocked||
-        welcomeActive||
-        pinch.active
-      ){
-        return;
-      }
-
+      var imageX;
+      var imageY;
+      var characters;
+      var i;
+      if(!HERO_MOUSE_FOLLOW_ENABLED||event.pointerType!=="mouse"||
+        isSp()||interactionLocked||welcomeActive||pinch.active){return;}
+      mouseFollow.active=false;
       if(!mouseFollow.armed){
         mouseFollow.armed=true;
         mouseFollow.startX=event.clientX;
         mouseFollow.startY=event.clientY;
         return;
       }
-
-      travel=Math.hypot(
+      if(!explored&&Math.hypot(
         event.clientX-mouseFollow.startX,
         event.clientY-mouseFollow.startY
-      );
-      if(!explored&&travel<6){return;}
-
+      )<6){return;}
       rect=webglStage.getBoundingClientRect();
-      mouseFollow.nx=clamp(
-        (event.clientX-(rect.left+rect.width/2))/Math.max(rect.width/2,1),
-        -1,1
-      );
-      mouseFollow.ny=clamp(
-        (event.clientY-(rect.top+rect.height/2))/Math.max(rect.height/2,1),
-        -1,1
-      );
-      mouseFollow.active=true;
+      imageX=metrics.imageWidth/2+state.x+
+        (event.clientX-rect.left-rect.width/2)/Math.max(metrics.scale,.001);
+      imageY=metrics.imageHeight/2-state.y+
+        (event.clientY-rect.top-rect.height/2)/Math.max(metrics.scale,.001);
+      characters=heroLayerImages.filter(function(layer){
+        return layer.classList.contains("hex-hero-character");
+      });
+      for(i=characters.length-1;i>=0;i-=1){
+        var layer=characters[i];
+        var style;
+        var x;
+        var bottom;
+        var width;
+        var height;
+        var y;
+        if(!layer.complete||!layer.naturalWidth){continue;}
+        style=getComputedStyle(layer);
+        x=parseFloat(style.getPropertyValue("--hex-sprite-x"));
+        bottom=parseFloat(style.getPropertyValue("--hex-sprite-bottom"));
+        width=parseFloat(style.getPropertyValue("--hex-sprite-width"));
+        if(!Number.isFinite(x)||!Number.isFinite(bottom)||
+          !Number.isFinite(width)||width<=0){continue;}
+        x=metrics.imageWidth*x/100;
+        bottom=metrics.imageHeight*bottom/100;
+        width=metrics.imageWidth*width/100;
+        height=width*layer.naturalHeight/layer.naturalWidth;
+        y=metrics.imageHeight-bottom-height;
+        if(imageX<x||imageX>=x+width||imageY<y||imageY>=y+height||
+          !pointerHitsCharacter(layer,(imageX-x)/width,(imageY-y)/height)){
+          continue;
+        }
+        mouseFollow.nx=clamp(
+          (event.clientX-rect.left-rect.width/2)/Math.max(rect.width/2,1),
+          -1,1);
+        mouseFollow.ny=clamp(
+          (event.clientY-rect.top-rect.height/2)/Math.max(rect.height/2,1),
+          -1,1);
+        mouseFollow.active=true;
+        beginExplore();
+        state.vx=0;
+        state.vy=0;
+        return;
+      }
     }
 
     function onPointerLeave(){
@@ -3462,33 +3507,22 @@ hexReady(function(){
     function renderLoop(){
       if(renderer&&camera&&scene){
         if(!dragging&&!pinch.active&&!autoZooming&&!welcomeActive){
-          state.x+=state.vx;
-          state.y+=state.vy;
-          state.vx*=.91;
-          state.vy*=.91;
-          if(Math.abs(state.vx)<.002){state.vx=0;}
-          if(Math.abs(state.vy)<.002){state.vy=0;}
-          setCamera();
-        }
-        if(HERO_MOUSE_FOLLOW_ENABLED&&!isSp()&&textureCanvas){
-          var targetX=mouseFollow.active
-            ?mouseFollow.nx*HERO_MOUSE_FOLLOW_DISTANCE:0;
-          var targetY=mouseFollow.active
-            ?mouseFollow.ny*HERO_MOUSE_FOLLOW_DISTANCE:0;
-          var nextX=mouseFollow.offsetX+
-            (targetX-mouseFollow.offsetX)*HERO_MOUSE_FOLLOW_EASE;
-          var nextY=mouseFollow.offsetY+
-            (targetY-mouseFollow.offsetY)*HERO_MOUSE_FOLLOW_EASE;
-          if(Math.abs(targetX-nextX)<.12){nextX=targetX;}
-          if(Math.abs(targetY-nextY)<.12){nextY=targetY;}
-          if(Math.abs(nextX-mouseFollow.offsetX)>.05||
-            Math.abs(nextY-mouseFollow.offsetY)>.05||
-            (Math.abs(nextX)+Math.abs(nextY)>.1&&
-              mouseFollow.lastScale!==metrics.scale)){
-            mouseFollow.offsetX=nextX;
-            mouseFollow.offsetY=nextY;
-            redrawCharacterTexture();
+          if(HERO_MOUSE_FOLLOW_ENABLED&&mouseFollow.active&&!isSp()){
+            state.x+=(metrics.maxX*mouseFollow.nx-state.x)*
+              HERO_MOUSE_FOLLOW_EASE;
+            state.y+=(-metrics.maxY*mouseFollow.ny-state.y)*
+              HERO_MOUSE_FOLLOW_EASE;
+            state.vx=0;
+            state.vy=0;
+          }else{
+            state.x+=state.vx;
+            state.y+=state.vy;
+            state.vx*=.91;
+            state.vy*=.91;
+            if(Math.abs(state.vx)<.002){state.vx=0;}
+            if(Math.abs(state.vy)<.002){state.vy=0;}
           }
+          setCamera();
         }
         try{
           renderer.render(scene,camera);
@@ -3498,46 +3532,6 @@ hexReady(function(){
         }
       }
       renderFrameId=window.requestAnimationFrame(renderLoop);
-    }
-
-    function redrawCharacterTexture(){
-      var context;
-      var scale;
-      if(!textureCanvas||!staticTextureCanvas||!sourceImage||
-        !sourceImage.naturalWidth){return;}
-      context=textureCanvas.getContext("2d",{alpha:true});
-      if(!context){return;}
-      context.clearRect(0,0,textureCanvas.width,textureCanvas.height);
-      context.drawImage(staticTextureCanvas,0,0);
-      scale=textureCanvas.width/sourceImage.naturalWidth/
-        Math.max(metrics.scale,.001);
-      heroLayerImages.forEach(function(layer){
-        var style;
-        var x;
-        var bottom;
-        var width;
-        var height;
-        if(!layer.classList.contains("hex-hero-character")||
-          !layer.complete||!layer.naturalWidth){return;}
-        style=getComputedStyle(layer);
-        x=parseFloat(style.getPropertyValue("--hex-sprite-x"));
-        bottom=parseFloat(style.getPropertyValue("--hex-sprite-bottom"));
-        width=parseFloat(style.getPropertyValue("--hex-sprite-width"));
-        if(!Number.isFinite(x)||!Number.isFinite(bottom)||
-          !Number.isFinite(width)||width<=0){return;}
-        x=textureCanvas.width*x/100;
-        bottom=textureCanvas.height*bottom/100;
-        width=textureCanvas.width*width/100;
-        height=width*layer.naturalHeight/layer.naturalWidth;
-        context.drawImage(layer,
-          x+mouseFollow.offsetX*scale,
-          textureCanvas.height-bottom-height+mouseFollow.offsetY*scale,
-          width,height);
-      });
-      mouseFollow.lastScale=metrics.scale;
-      heroLayerVersion+=1;
-      heroLayerPreviewCache=null;
-      if(texture){texture.needsUpdate=true;}
     }
 
     function updateTextureSource(image){
@@ -3553,22 +3547,18 @@ hexReady(function(){
       if(!textureCanvas){textureCanvas=document.createElement("canvas");}
       textureCanvas.width=Math.max(1,Math.round(naturalWidth*scale));
       textureCanvas.height=Math.max(1,Math.round(naturalHeight*scale));
-      if(!staticTextureCanvas){staticTextureCanvas=document.createElement("canvas");}
-      staticTextureCanvas.width=textureCanvas.width;
-      staticTextureCanvas.height=textureCanvas.height;
-      context=staticTextureCanvas.getContext("2d",{alpha:true});
+      context=textureCanvas.getContext("2d",{alpha:true});
       if(!context){return false;}
-      context.clearRect(0,0,staticTextureCanvas.width,staticTextureCanvas.height);
-      context.drawImage(image,0,0,staticTextureCanvas.width,staticTextureCanvas.height);
-      /* 動かない台座・家・外構・重機を先に合成して保持する。 */
+      context.clearRect(0,0,textureCanvas.width,textureCanvas.height);
+      context.drawImage(image,0,0,textureCanvas.width,textureCanvas.height);
+      /* 台座 → 家 → 外構 → ユンボ → ユニック → ６体の順で合成する。 */
       heroLayerImages.forEach(function(layer){
         var style;
         var x;
         var bottom;
         var width;
         var height;
-        if(!layer.complete||!layer.naturalWidth||
-          layer.classList.contains("hex-hero-character")){return;}
+        if(!layer.complete||!layer.naturalWidth){return;}
         if(!layer.classList.contains("hex-hero-character")&&
           !layer.classList.contains("hex-hero-unic-image")&&
           !layer.classList.contains("hex-hero-excavator-image")){
@@ -3587,7 +3577,9 @@ hexReady(function(){
         height=width*layer.naturalHeight/layer.naturalWidth;
         context.drawImage(layer,x,textureCanvas.height-bottom-height,width,height);
       });
-      redrawCharacterTexture();
+      heroLayerVersion+=1;
+      heroLayerPreviewCache=null;
+
       if(texture){
         texture.image=textureCanvas;
         texture.needsUpdate=true;
@@ -3648,7 +3640,6 @@ hexReady(function(){
       plane=null;
       texture=null;
       textureCanvas=null;
-      staticTextureCanvas=null;
       heroLayerPreviewCache=null;
     }
 
@@ -3680,6 +3671,7 @@ hexReady(function(){
       ));
       heroLayerImages.forEach(function(layer){
         layer.addEventListener("load",function(){
+          mouseFollow.alphaCanvases.delete(layer);
           if(textureCanvas&&sourceImage&&sourceImage.naturalWidth){
             updateTextureSource(sourceImage);
           }
