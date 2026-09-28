@@ -9030,12 +9030,12 @@ html.hex-opening-finishing
   pointer-events:none;
 }
 /* 幅と左右端からの距離は台座画像の描画幅に対する割合。start/end は縦探索の進行率。 */
-.hex-hero-bottom-img--l1{z-index:1;--hex-bottom-width:42%;--hex-bottom-left:-2%;--hex-bottom-y:-10px;--hex-bottom-start:.05;--hex-bottom-end:.48;--hex-bottom-rise:1.03;}
-.hex-hero-bottom-img--l2{z-index:2;--hex-bottom-width:36%;--hex-bottom-left:-3%;--hex-bottom-y:-13px;--hex-bottom-start:.18;--hex-bottom-end:.72;--hex-bottom-rise:1.08;}
-.hex-hero-bottom-img--l3{z-index:3;--hex-bottom-width:31%;--hex-bottom-left:-2%;--hex-bottom-y:-12px;--hex-bottom-start:.30;--hex-bottom-end:.91;--hex-bottom-rise:1.05;}
-.hex-hero-bottom-img--r1{z-index:1;--hex-bottom-width:42%;--hex-bottom-right:-2%;--hex-bottom-y:-10px;--hex-bottom-start:.10;--hex-bottom-end:.53;--hex-bottom-rise:1.03;}
-.hex-hero-bottom-img--r2{z-index:2;--hex-bottom-width:36%;--hex-bottom-right:-3%;--hex-bottom-y:-13px;--hex-bottom-start:.22;--hex-bottom-end:.76;--hex-bottom-rise:1.08;}
-.hex-hero-bottom-img--r3{z-index:3;--hex-bottom-width:31%;--hex-bottom-right:-2%;--hex-bottom-y:-12px;--hex-bottom-start:.35;--hex-bottom-end:.94;--hex-bottom-rise:1.05;}
+.hex-hero-bottom-img--l1{z-index:1;--hex-bottom-width:42%;--hex-bottom-left:-2%;--hex-bottom-y:-10px;--hex-bottom-start:.09;--hex-bottom-end:.52;--hex-bottom-rise:1.03;}
+.hex-hero-bottom-img--l2{z-index:2;--hex-bottom-width:36%;--hex-bottom-left:-3%;--hex-bottom-y:-13px;--hex-bottom-start:.22;--hex-bottom-end:.76;--hex-bottom-rise:1.08;}
+.hex-hero-bottom-img--l3{z-index:3;--hex-bottom-width:31%;--hex-bottom-left:-2%;--hex-bottom-y:-12px;--hex-bottom-start:.34;--hex-bottom-end:.95;--hex-bottom-rise:1.05;}
+.hex-hero-bottom-img--r1{z-index:1;--hex-bottom-width:42%;--hex-bottom-right:-2%;--hex-bottom-y:-10px;--hex-bottom-start:.14;--hex-bottom-end:.57;--hex-bottom-rise:1.03;}
+.hex-hero-bottom-img--r2{z-index:2;--hex-bottom-width:36%;--hex-bottom-right:-3%;--hex-bottom-y:-13px;--hex-bottom-start:.26;--hex-bottom-end:.80;--hex-bottom-rise:1.08;}
+.hex-hero-bottom-img--r3{z-index:3;--hex-bottom-width:31%;--hex-bottom-right:-2%;--hex-bottom-y:-12px;--hex-bottom-start:.39;--hex-bottom-end:.98;--hex-bottom-rise:1.05;}
 .hex-hero.is-v2-fallback .hex-hero-bottom-img{opacity:1!important;transform:none!important;}
 @media (prefers-reduced-motion:reduce){
   .hex-hero-bottom-img{opacity:1!important;transform:none!important;will-change:auto;}
