@@ -1433,6 +1433,19 @@
 /* =======================================
    トップページ：ウェルカム→私たちについて切り替え
 ======================================= */
+.hex-founded-marquee{
+  margin-bottom:32px;
+  padding:28px 0;
+}
+.hex-founded-marquee-line{
+  font-size:clamp(40px,10vw,64px)!important;
+  letter-spacing:.02em;
+}
+@media (prefers-reduced-motion:reduce){
+  .hex-founded-marquee-line{
+    font-size:clamp(28px,7vw,40px)!important;
+  }
+}
 /* SPは通常表示 */
 @media screen and (max-width:768px){
   .hex-founded-stage,

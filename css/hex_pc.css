@@ -5428,6 +5428,40 @@ html body
 /* =======================================
    トップページ：私たちについて
 ======================================= */
+.hex-founded-original-lead{display:none!important;}
+.hex-founded-marquee{
+  position:relative;
+  left:50%;
+  width:100vw;
+  max-width:none;
+  margin:0 0 clamp(44px,5vw,88px) -50vw;
+  padding:clamp(24px,4vw,60px) 0;
+  overflow:hidden;
+  box-sizing:border-box;
+  pointer-events:none;
+}
+.hex-founded-marquee-line{
+  display:block;
+  width:max-content;
+  max-width:none;
+  white-space:nowrap;
+  color:#1f2774;
+  font-family:var(--hex-font-gothic)!important;
+  font-size:clamp(64px,6.5vw,104px)!important;
+  font-weight:700;
+  line-height:1.18;
+  letter-spacing:.035em;
+  will-change:transform;
+}
+@media (prefers-reduced-motion:reduce){
+  .hex-founded-marquee-line{
+    width:auto;
+    padding:0 16px;
+    white-space:normal;
+    font-size:clamp(32px,5vw,64px)!important;
+    will-change:auto;
+  }
+}
 .hex-top-title:has(.hex-founded-year){
   flex-direction:row;
   justify-content:center;
