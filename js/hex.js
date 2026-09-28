@@ -2088,6 +2088,7 @@ hexReady(function(){
   /* true: 家族・職人にマウスが乗った間だけ従来の画面追従を有効にする */
   var HERO_MOUSE_FOLLOW_ENABLED=true;
   var HERO_MOUSE_FOLLOW_EASE=.075;
+  var HERO_SP_TAP_MAX_MOVE=12;
   /* 追従開始時のキャラクター位置を基準に、画面上で判定を維持する余白。 */
   var HERO_MOUSE_FOLLOW_HOLD_PADDING=64;
   /* WELCOME本文の表示に必要なスクロール量。2なら従来の約2倍。 */
@@ -2219,6 +2220,8 @@ hexReady(function(){
       ny:0,
       alphaCanvases:new WeakMap()
     };
+    var spTap={pointerId:null,x:0,y:0,hit:false};
+    var spFollow={active:false,nx:0,ny:0};
     var interactionLocked=true;
     var autoZooming=false;
     var autoZoomPending=false;
@@ -2457,6 +2460,8 @@ hexReady(function(){
       mouseFollow.active=false;
       mouseFollow.armed=false;
       mouseFollow.holdRect=null;
+      spTap.pointerId=null;
+      spFollow.active=false;
       updateZoomMetrics();
       /* 最初の画像表示は高さ中央ではなく画像の上端に揃える。 */
       state.y=metrics.maxY;
@@ -2878,6 +2883,8 @@ hexReady(function(){
       mouseFollow.active=false;
       mouseFollow.armed=false;
       mouseFollow.holdRect=null;
+      spTap.pointerId=null;
+      spFollow.active=false;
       state.x=0;
       state.y=0;
       state.vx=0;
@@ -3406,6 +3413,9 @@ hexReady(function(){
       pinch.anchorX=state.x+dx/Math.max(metrics.scale,.001);
       pinch.anchorY=state.y-dy/Math.max(metrics.scale,.001);
       dragging=false;
+      spTap.pointerId=null;
+      spTap.hit=false;
+      spFollow.active=false;
       state.vx=0;
       state.vy=0;
       webglStage.classList.remove("is-dragging");
@@ -3616,6 +3626,11 @@ hexReady(function(){
       mouseFollow.holdRect=null;
 
       if(event.pointerType==="touch"){
+        spFollow.active=false;
+        spTap.pointerId=event.pointerId;
+        spTap.x=event.clientX;
+        spTap.y=event.clientY;
+        spTap.hit=isSp()&&isHeroCharacterAt(event.clientX,event.clientY);
         activePointers.set(event.pointerId,{
           id:event.pointerId,
           x:event.clientX,
@@ -3638,6 +3653,12 @@ hexReady(function(){
       var dy;
       var now;
       var elapsed;
+
+      if(event.pointerType==="touch"&&event.pointerId===spTap.pointerId&&
+        Math.hypot(event.clientX-spTap.x,event.clientY-spTap.y)>
+          HERO_SP_TAP_MAX_MOVE){
+        spTap.hit=false;
+      }
 
       if(event.pointerType==="touch"&&activePointers.has(event.pointerId)){
         activePointers.set(event.pointerId,{
@@ -3677,6 +3698,26 @@ hexReady(function(){
 
     function endPointer(event){
       var remaining;
+
+      if(event.pointerType==="touch"&&event.pointerId===spTap.pointerId){
+        if(event.type==="pointerup"&&spTap.hit&&!pinch.active&&
+          activePointers.size===1&&!interactionLocked&&isSp()&&
+          Math.hypot(event.clientX-spTap.x,event.clientY-spTap.y)<=
+            HERO_SP_TAP_MAX_MOVE){
+          var rect=webglStage.getBoundingClientRect();
+          spFollow.nx=clamp(
+            (spTap.x-rect.left-rect.width/2)/Math.max(rect.width/2,1),
+            -1,1);
+          spFollow.ny=clamp(
+            (spTap.y-rect.top-rect.height/2)/Math.max(rect.height/2,1),
+            -1,1);
+          spFollow.active=true;
+          state.vx=0;
+          state.vy=0;
+        }
+        spTap.pointerId=null;
+        spTap.hit=false;
+      }
 
       if(event.pointerType==="touch"){
         activePointers.delete(event.pointerId);
@@ -3725,6 +3766,13 @@ hexReady(function(){
             state.x+=(metrics.maxX*mouseFollow.nx-state.x)*
               HERO_MOUSE_FOLLOW_EASE;
             state.y+=(-metrics.maxY*mouseFollow.ny-state.y)*
+              HERO_MOUSE_FOLLOW_EASE;
+            state.vx=0;
+            state.vy=0;
+          }else if(spFollow.active&&isSp()){
+            state.x+=(metrics.maxX*spFollow.nx-state.x)*
+              HERO_MOUSE_FOLLOW_EASE;
+            state.y+=(-metrics.maxY*spFollow.ny-state.y)*
               HERO_MOUSE_FOLLOW_EASE;
             state.vx=0;
             state.vy=0;
