@@ -12933,7 +12933,7 @@ hexLoad(function(){
   hexLoad(loadMotionLibraries);
 })();
 
-/* 追従カーソル: 通常／Drag／View／Click。クリック機能は追加しない。 */
+/* 追従カーソル: 通常／Drag／View／Click／Home。クリック機能は追加しない。 */
 hexReady(function(){
   var enabled=window.matchMedia(
     '(min-width:769px) and (hover:hover) and (pointer:fine) and '+
@@ -12970,6 +12970,20 @@ hexReady(function(){
     if(element.tagName==='IFRAME'){hide();return;}
     var stage=element.closest('.hex-webgl-stage');
     if(dragHeld&&stage){setMode('drag');return;}
+    /* CMSのロゴは画像や親要素に遷移処理を持つ場合がある。 */
+    if(element.closest('.headermenu_type8 .headermenu_logo')){
+      setMode('home');return;
+    }
+    /* CMSのメニューはリンク以外の要素にもクリック処理を持つ。 */
+    if(element.closest(
+      '.headermenu_type8 .menu_sub .menu_inner,'+
+      '#gc_auto_frame_header_object_smartphone_hum_pupup .menu_inner_group,'+
+      '#gc_auto_frame_header_object_smartphone_hum_pupup .menu_right > .menu_group > .menu_group_text,'+
+      '.headermenu_type8 .pc_menu > .menu_group.menu_menu,'+
+      '.bg_contactbutton > .menu_button'
+    )){
+      setMode('click');return;
+    }
     var clickable=element.closest(
       'a[href],button,[role="button"],[role="link"],'+
       'input[type="button"],input[type="submit"],summary'

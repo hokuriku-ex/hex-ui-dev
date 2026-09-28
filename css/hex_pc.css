@@ -9117,7 +9117,8 @@ html.hex-opening-finishing
 .hex-follow-cursor.is-visible{opacity:1;visibility:visible;}
 .hex-follow-cursor[data-mode="drag"],
 .hex-follow-cursor[data-mode="view"],
-.hex-follow-cursor[data-mode="click"]{
+.hex-follow-cursor[data-mode="click"],
+.hex-follow-cursor[data-mode="home"]{
   --hex-follow-size:56px;
   --hex-follow-offset:12px;
 }
