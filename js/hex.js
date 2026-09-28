@@ -2856,6 +2856,7 @@ hexReady(function(){
     }
 
     function resetHero(withFade){
+      var returningFromWelcome=welcomeActive;
       stopSpCircleScroll();
       spCircleReleaseScrollY=null;
       cancelAutoZoom(false);
@@ -2895,18 +2896,20 @@ hexReady(function(){
       welcomeBodyFrame=0;
       welcomeBodyProgress=0;
       welcomeBodyTarget=0;
+      if(returningFromWelcome){welcomeBodyCompleted=false;}
       spWelcomeExtraScroll=0;
       welcomeBodyChars.forEach(function(character){
-        if(welcomeBodyCompleted){
-          character.style.opacity="1";
-        }else{
-          character.style.removeProperty("opacity");
-        }
+        character.style.opacity=welcomeBodyCompleted?"1":"0";
         character.style.removeProperty("transform");
       });
       updateZoomMetrics();
       state.y=metrics.maxY;
       setCamera();
+      if(returningFromWelcome){
+        /* 戻った時点で再生済み判定を外し、リロード前でも次回は再演出する。 */
+        catchElement&&catchElement.classList.remove("is-catch-visible");
+        document.dispatchEvent(new Event("hex:top-returned"));
+      }
       revealCatch(withFade);
       setHeroPageLock(true);
       updateWelcomeButton();
@@ -12358,6 +12361,10 @@ hexLoad(function(){
         :[];
       var chars=[];
       var mobile=window.innerWidth<=768;
+      var titlePlayed=false;
+      var cardsPlayed=false;
+      var cardTimers=[];
+      var numberStates=[];
 
       if(title&&title.querySelector('.hex-founded-year,.hex-founded-text')){
         title.dataset.hexMotionInitialized='1';
@@ -12387,8 +12394,9 @@ hexLoad(function(){
           ScrollTrigger.create({
             trigger:title,
             start:mobile?'top 96%':'top 95%',
-            once:true,
             onEnter:function(){
+              if(titlePlayed){return;}
+              titlePlayed=true;
               gsap.to(chars,{
                 autoAlpha:1,
                 yPercent:0,
@@ -12407,6 +12415,35 @@ hexLoad(function(){
           });
         }
       }
+
+      document.addEventListener('hex:top-returned',function(){
+        titlePlayed=false;
+        cardTimers.forEach(function(timer){window.clearTimeout(timer);});
+        cardTimers=[];
+        numberStates.forEach(function(state){gsap.killTweensOf(state);});
+        numberStates=[];
+        if(chars.length&&!isReducedMotion()){
+          gsap.killTweensOf(chars);
+          gsap.set(chars,{
+            autoAlpha:0,yPercent:100,rotation:45,
+            transformOrigin:'50% 100%'
+          });
+        }
+        if(cards.length&&!isReducedMotion()){
+          cardsPlayed=false;
+          gsap.killTweensOf(cards);
+          gsap.set(cards,{autoAlpha:0,y:18});
+          cards.forEach(function(card){
+            var number=card.querySelector('.hex-number');
+            card.classList.remove('is-card-visible','is-count-complete');
+            if(number){
+              gsap.killTweensOf(number);
+              number.textContent='0';
+              gsap.set(number,{color:'#1f2774'});
+            }
+          });
+        }
+      });
 
       if(!cards.length){return;}
       if(isReducedMotion()){
@@ -12431,15 +12468,17 @@ hexLoad(function(){
       ScrollTrigger.create({
         trigger:cardWrap,
         start:mobile?'top 96%':'top 95%',
-        once:true,
         onEnter:function(){
+          if(cardsPlayed){return;}
+          cardsPlayed=true;
           cards.forEach(function(card,index){
             var number=card.querySelector('.hex-number');
             var target=number
               ?parseInt(number.dataset.hexCountTarget,10)||0
               :0;
             var state={value:0};
-            window.setTimeout(function(){
+            numberStates.push(state);
+            cardTimers.push(window.setTimeout(function(){
               card.classList.add('is-card-visible');
               gsap.to(card,{
                 autoAlpha:1,
@@ -12464,7 +12503,7 @@ hexLoad(function(){
                   }
                 });
               }
-            },index*400);
+            },index*400));
           });
         }
       });
@@ -12512,6 +12551,11 @@ hexLoad(function(){
           }
         );
 
+        document.addEventListener('hex:top-returned',function(){
+          heroPlayed=false;
+          heroRoll.reset();
+        });
+
         syncHeroCatch();
       }
 
@@ -12540,6 +12584,11 @@ hexLoad(function(){
           attributeFilter:['class']
         }
       );
+
+      document.addEventListener('hex:top-returned',function(){
+        welcomePlayed=false;
+        welcomeRoll.reset();
+      });
 
       syncWelcomeCatch();
     }
