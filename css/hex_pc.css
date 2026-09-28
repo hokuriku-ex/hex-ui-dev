@@ -9093,6 +9093,7 @@ html.hex-opening-finishing
 /* ドットナビと同じ黄色のマウス追従カーソル。画面色は変更しない。 */
 .hex-follow-cursor{
   --hex-follow-size:18px;
+  --hex-follow-offset:4px;
   position:fixed;
   top:0;
   left:0;
@@ -9106,7 +9107,7 @@ html.hex-opening-finishing
   opacity:0;
   visibility:hidden;
   transform:translate3d(-100px,-100px,0)
-    translate(calc(-50% - 12px),calc(-50% - 12px));
+    translate(calc(-50% - var(--hex-follow-offset)),calc(-50% - var(--hex-follow-offset)));
   transition:width .25s cubic-bezier(.22,.8,.3,1),
     height .25s cubic-bezier(.22,.8,.3,1),opacity .18s ease,
     visibility .18s ease;
@@ -9115,7 +9116,10 @@ html.hex-opening-finishing
 .hex-follow-cursor.is-visible{opacity:1;visibility:visible;}
 .hex-follow-cursor[data-mode="drag"],
 .hex-follow-cursor[data-mode="view"],
-.hex-follow-cursor[data-mode="click"]{--hex-follow-size:56px;}
+.hex-follow-cursor[data-mode="click"]{
+  --hex-follow-size:56px;
+  --hex-follow-offset:12px;
+}
 .hex-follow-cursor-disc{
   position:absolute;
   inset:0;
