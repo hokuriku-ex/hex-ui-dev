@@ -2005,7 +2005,7 @@ hexReady(function(){
   var HERO_ZOOM_MAX=2;
   var HERO_AUTO_ZOOM_WAIT=300;
   var HERO_AUTO_ZOOM_DURATION=1500;
-  /* true: 家族・職人だけをマウス追従 / false: 全パーツを固定 */
+  /* true: 家族・職人だけをマウス追従 / false: マウス追従を停止 */
   var HERO_MOUSE_FOLLOW_ENABLED=true;
   var HERO_MOUSE_FOLLOW_EASE=.075;
   var HERO_MOUSE_FOLLOW_DISTANCE=18;
@@ -2083,7 +2083,6 @@ hexReady(function(){
     var activeHero=null;
     var sourceImage=null;
     var heroLayerImages=[];
-    var characterPlanes=[];
     var heroLayerVersion=0;
     var heroLayerPreviewCache=null;
     var webglStage=null;
@@ -2093,6 +2092,7 @@ hexReady(function(){
     var plane=null;
     var texture=null;
     var textureCanvas=null;
+    var staticTextureCanvas=null;
     var renderFrameId=0;
     var snapshot=null;
     var snapshotCanvas=null;
@@ -2137,7 +2137,8 @@ hexReady(function(){
       nx:0,
       ny:0,
       offsetX:0,
-      offsetY:0
+      offsetY:0,
+      lastScale:0
     };
     var interactionLocked=true;
     var autoZooming=false;
@@ -2366,6 +2367,7 @@ hexReady(function(){
       mouseFollow.armed=false;
       mouseFollow.offsetX=0;
       mouseFollow.offsetY=0;
+      if(staticTextureCanvas){redrawCharacterTexture();}
       updateZoomMetrics();
       /* 最初の画像表示は高さ中央ではなく画像の上端に揃える。 */
       state.y=metrics.maxY;
@@ -2705,9 +2707,8 @@ hexReady(function(){
       renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
       renderer.setSize(width,height,false);
       setCamera();
-      /* SP/PC切替後の画像座標とキャラクター位置を更新する。 */
+      /* SP/PC切替後のキャラクター位置指定を合成画像へ反映する。 */
       if(heroLayerImages.length&&textureCanvas){updateTextureSource(sourceImage);}
-      refreshCharacterPlanes();
       try{
         renderer.render(scene,camera);
       }catch(error){
@@ -2742,6 +2743,7 @@ hexReady(function(){
       mouseFollow.armed=false;
       mouseFollow.offsetX=0;
       mouseFollow.offsetY=0;
+      if(staticTextureCanvas){redrawCharacterTexture();}
       state.x=0;
       state.y=0;
       state.vx=0;
@@ -3468,7 +3470,26 @@ hexReady(function(){
           if(Math.abs(state.vy)<.002){state.vy=0;}
           setCamera();
         }
-        if(characterPlanes.length){updateCharacterPositions();}
+        if(HERO_MOUSE_FOLLOW_ENABLED&&!isSp()&&textureCanvas){
+          var targetX=mouseFollow.active
+            ?mouseFollow.nx*HERO_MOUSE_FOLLOW_DISTANCE:0;
+          var targetY=mouseFollow.active
+            ?mouseFollow.ny*HERO_MOUSE_FOLLOW_DISTANCE:0;
+          var nextX=mouseFollow.offsetX+
+            (targetX-mouseFollow.offsetX)*HERO_MOUSE_FOLLOW_EASE;
+          var nextY=mouseFollow.offsetY+
+            (targetY-mouseFollow.offsetY)*HERO_MOUSE_FOLLOW_EASE;
+          if(Math.abs(targetX-nextX)<.12){nextX=targetX;}
+          if(Math.abs(targetY-nextY)<.12){nextY=targetY;}
+          if(Math.abs(nextX-mouseFollow.offsetX)>.05||
+            Math.abs(nextY-mouseFollow.offsetY)>.05||
+            (Math.abs(nextX)+Math.abs(nextY)>.1&&
+              mouseFollow.lastScale!==metrics.scale)){
+            mouseFollow.offsetX=nextX;
+            mouseFollow.offsetY=nextY;
+            redrawCharacterTexture();
+          }
+        }
         try{
           renderer.render(scene,camera);
         }catch(error){
@@ -3479,24 +3500,44 @@ hexReady(function(){
       renderFrameId=window.requestAnimationFrame(renderLoop);
     }
 
-    function getSpriteFrame(layer,canvasWidth,canvasHeight){
-      var style;
-      var x;
-      var bottom;
-      var width;
-      var height;
-      if(!layer.complete||!layer.naturalWidth){return null;}
-      style=getComputedStyle(layer);
-      x=parseFloat(style.getPropertyValue("--hex-sprite-x"));
-      bottom=parseFloat(style.getPropertyValue("--hex-sprite-bottom"));
-      width=parseFloat(style.getPropertyValue("--hex-sprite-width"));
-      if(!Number.isFinite(x)||!Number.isFinite(bottom)||
-        !Number.isFinite(width)||width<=0){return null;}
-      x=canvasWidth*x/100;
-      bottom=canvasHeight*bottom/100;
-      width=canvasWidth*width/100;
-      height=width*layer.naturalHeight/layer.naturalWidth;
-      return{x:x,y:canvasHeight-bottom-height,width:width,height:height};
+    function redrawCharacterTexture(){
+      var context;
+      var scale;
+      if(!textureCanvas||!staticTextureCanvas||!sourceImage||
+        !sourceImage.naturalWidth){return;}
+      context=textureCanvas.getContext("2d",{alpha:true});
+      if(!context){return;}
+      context.clearRect(0,0,textureCanvas.width,textureCanvas.height);
+      context.drawImage(staticTextureCanvas,0,0);
+      scale=textureCanvas.width/sourceImage.naturalWidth/
+        Math.max(metrics.scale,.001);
+      heroLayerImages.forEach(function(layer){
+        var style;
+        var x;
+        var bottom;
+        var width;
+        var height;
+        if(!layer.classList.contains("hex-hero-character")||
+          !layer.complete||!layer.naturalWidth){return;}
+        style=getComputedStyle(layer);
+        x=parseFloat(style.getPropertyValue("--hex-sprite-x"));
+        bottom=parseFloat(style.getPropertyValue("--hex-sprite-bottom"));
+        width=parseFloat(style.getPropertyValue("--hex-sprite-width"));
+        if(!Number.isFinite(x)||!Number.isFinite(bottom)||
+          !Number.isFinite(width)||width<=0){return;}
+        x=textureCanvas.width*x/100;
+        bottom=textureCanvas.height*bottom/100;
+        width=textureCanvas.width*width/100;
+        height=width*layer.naturalHeight/layer.naturalWidth;
+        context.drawImage(layer,
+          x+mouseFollow.offsetX*scale,
+          textureCanvas.height-bottom-height+mouseFollow.offsetY*scale,
+          width,height);
+      });
+      mouseFollow.lastScale=metrics.scale;
+      heroLayerVersion+=1;
+      heroLayerPreviewCache=null;
+      if(texture){texture.needsUpdate=true;}
     }
 
     function updateTextureSource(image){
@@ -3512,85 +3553,46 @@ hexReady(function(){
       if(!textureCanvas){textureCanvas=document.createElement("canvas");}
       textureCanvas.width=Math.max(1,Math.round(naturalWidth*scale));
       textureCanvas.height=Math.max(1,Math.round(naturalHeight*scale));
-      context=textureCanvas.getContext("2d",{alpha:true});
+      if(!staticTextureCanvas){staticTextureCanvas=document.createElement("canvas");}
+      staticTextureCanvas.width=textureCanvas.width;
+      staticTextureCanvas.height=textureCanvas.height;
+      context=staticTextureCanvas.getContext("2d",{alpha:true});
       if(!context){return false;}
-      context.clearRect(0,0,textureCanvas.width,textureCanvas.height);
-      context.drawImage(image,0,0,textureCanvas.width,textureCanvas.height);
-      /* 台座 → 家 → 外構 → ユンボ → ユニック → ６体の順で合成する。 */
+      context.clearRect(0,0,staticTextureCanvas.width,staticTextureCanvas.height);
+      context.drawImage(image,0,0,staticTextureCanvas.width,staticTextureCanvas.height);
+      /* 動かない台座・家・外構・重機を先に合成して保持する。 */
       heroLayerImages.forEach(function(layer){
-        var frame;
-        if(!layer.complete||!layer.naturalWidth){return;}
+        var style;
+        var x;
+        var bottom;
+        var width;
+        var height;
+        if(!layer.complete||!layer.naturalWidth||
+          layer.classList.contains("hex-hero-character")){return;}
         if(!layer.classList.contains("hex-hero-character")&&
           !layer.classList.contains("hex-hero-unic-image")&&
           !layer.classList.contains("hex-hero-excavator-image")){
           context.drawImage(layer,0,0,textureCanvas.width,textureCanvas.height);
           return;
         }
-        /* マウス追従中はキャラクターを別のWebGL平面で描画する。 */
-        if(HERO_MOUSE_FOLLOW_ENABLED&&
-          layer.classList.contains("hex-hero-character")){return;}
-        frame=getSpriteFrame(layer,textureCanvas.width,textureCanvas.height);
-        if(frame){context.drawImage(layer,frame.x,frame.y,frame.width,frame.height);}
+        style=getComputedStyle(layer);
+        x=parseFloat(style.getPropertyValue("--hex-sprite-x"));
+        bottom=parseFloat(style.getPropertyValue("--hex-sprite-bottom"));
+        width=parseFloat(style.getPropertyValue("--hex-sprite-width"));
+        if(!Number.isFinite(x)||!Number.isFinite(bottom)||
+          !Number.isFinite(width)||width<=0){return;}
+        x=textureCanvas.width*x/100;
+        bottom=textureCanvas.height*bottom/100;
+        width=textureCanvas.width*width/100;
+        height=width*layer.naturalHeight/layer.naturalWidth;
+        context.drawImage(layer,x,textureCanvas.height-bottom-height,width,height);
       });
-      heroLayerVersion+=1;
-      heroLayerPreviewCache=null;
-
+      redrawCharacterTexture();
       if(texture){
         texture.image=textureCanvas;
         texture.needsUpdate=true;
       }
       return true;
-    }
-
-    function updateCharacterPositions(){
-      var targetX=mouseFollow.active?mouseFollow.nx*HERO_MOUSE_FOLLOW_DISTANCE:0;
-      var targetY=mouseFollow.active?mouseFollow.ny*HERO_MOUSE_FOLLOW_DISTANCE:0;
-      mouseFollow.offsetX+=(targetX-mouseFollow.offsetX)*HERO_MOUSE_FOLLOW_EASE;
-      mouseFollow.offsetY+=(targetY-mouseFollow.offsetY)*HERO_MOUSE_FOLLOW_EASE;
-      characterPlanes.forEach(function(entry){
-        entry.mesh.position.x=entry.x+
-          mouseFollow.offsetX/Math.max(metrics.scale,.001);
-        entry.mesh.position.y=entry.y-
-          mouseFollow.offsetY/Math.max(metrics.scale,.001);
-      });
-    }
-
-    function refreshCharacterPlanes(){
-      var THREE=window.THREE;
-      characterPlanes.forEach(function(entry){
-        if(scene){scene.remove(entry.mesh);}
-        entry.mesh.geometry.dispose();
-        entry.mesh.material.map.dispose();
-        entry.mesh.material.dispose();
-      });
-      characterPlanes=[];
-      if(!HERO_MOUSE_FOLLOW_ENABLED||!scene||!sourceImage||!THREE){return;}
-      heroLayerImages.filter(function(layer){
-        return layer.classList.contains("hex-hero-character");
-      }).forEach(function(layer,index){
-        var frame=getSpriteFrame(layer,metrics.imageWidth,metrics.imageHeight);
-        var spriteTexture;
-        var mesh;
-        var x;
-        var y;
-        if(!frame){return;}
-        spriteTexture=new THREE.Texture(layer);
-        spriteTexture.colorSpace=THREE.SRGBColorSpace;
-        spriteTexture.needsUpdate=true;
-        mesh=new THREE.Mesh(
-          new THREE.PlaneGeometry(frame.width,frame.height),
-          new THREE.MeshBasicMaterial({
-            map:spriteTexture,transparent:true,depthWrite:false
-          })
-        );
-        x=frame.x+frame.width/2-metrics.imageWidth/2;
-        y=metrics.imageHeight/2-frame.y-frame.height/2;
-        mesh.position.z=.01+index*.001;
-        mesh.renderOrder=index+1;
-        scene.add(mesh);
-        characterPlanes.push({mesh:mesh,x:x,y:y});
-      });
-      updateCharacterPositions();
     }
 
     function hasVisibleRender(){
@@ -3634,13 +3636,6 @@ hexReady(function(){
         webglStage.removeEventListener("lostpointercapture",endPointer);
       }
       if(activeHero){activeHero.classList.remove("is-v2-active");}
-      characterPlanes.forEach(function(entry){
-        if(scene){scene.remove(entry.mesh);}
-        entry.mesh.geometry.dispose();
-        entry.mesh.material.map.dispose();
-        entry.mesh.material.dispose();
-      });
-      characterPlanes=[];
       if(plane&&plane.geometry){plane.geometry.dispose();}
       if(plane&&plane.material){plane.material.dispose();}
       if(texture){texture.dispose();}
@@ -3653,6 +3648,7 @@ hexReady(function(){
       plane=null;
       texture=null;
       textureCanvas=null;
+      staticTextureCanvas=null;
       heroLayerPreviewCache=null;
     }
 
@@ -3686,7 +3682,6 @@ hexReady(function(){
         layer.addEventListener("load",function(){
           if(textureCanvas&&sourceImage&&sourceImage.naturalWidth){
             updateTextureSource(sourceImage);
-            refreshCharacterPlanes();
           }
         });
       });
@@ -3795,36 +3790,17 @@ hexReady(function(){
         if(!textureCanvas){return null;}
         if(!heroLayerPreviewCache){
           try{
-            var previewCanvas=textureCanvas;
-            if(HERO_MOUSE_FOLLOW_ENABLED){
-              previewCanvas=document.createElement("canvas");
-              previewCanvas.width=textureCanvas.width;
-              previewCanvas.height=textureCanvas.height;
-              var context=previewCanvas.getContext("2d");
-              context.drawImage(textureCanvas,0,0);
-              heroLayerImages.forEach(function(layer){
-                if(!layer.classList.contains("hex-hero-character")){return;}
-                var frame=getSpriteFrame(layer,
-                  previewCanvas.width,previewCanvas.height);
-                if(frame){
-                  context.drawImage(layer,frame.x,frame.y,
-                    frame.width,frame.height);
-                }
-              });
-            }
             heroLayerPreviewCache={
               version:heroLayerVersion,
-              src:previewCanvas.toDataURL("image/png")
+              src:textureCanvas.toDataURL("image/png")
             };
           }catch(error){return null;}
         }
         return heroLayerPreviewCache;
       },
       refreshLayers:function(){
-        if(!sourceImage||!sourceImage.naturalWidth){return false;}
-        if(!updateTextureSource(sourceImage)){return false;}
-        refreshCharacterPlanes();
-        return true;
+        return !!(sourceImage&&sourceImage.naturalWidth&&
+          updateTextureSource(sourceImage));
       },
       releaseWelcomeBodyHold:function(){
         if(!isSp()||!welcomeActive||welcomeBodyCompleted){return;}
