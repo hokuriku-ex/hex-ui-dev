@@ -94,6 +94,81 @@ function hexLoad(callback){
   }
 }
 
+/* 下のコンテンツを見てヒーロー先頭へ戻ったリロードは、先頭から演出を作り直す。 */
+(function(){
+  var key='hex_top_return_reload';
+  var page=location.pathname+location.search;
+  var requested=false;
+  var navigation=window.performance&&
+    window.performance.getEntriesByType&&
+    window.performance.getEntriesByType('navigation')[0];
+  var isReload=navigation
+    ?navigation.type==='reload'
+    :!!(window.performance&&window.performance.navigation&&
+      window.performance.navigation.type===1);
+
+  try{
+    requested=sessionStorage.getItem(key)===page;
+    sessionStorage.removeItem(key);
+  }catch(error){}
+
+  if(requested&&isReload){
+    var previousRestoration='auto';
+    try{
+      previousRestoration=history.scrollRestoration;
+      history.scrollRestoration='manual';
+    }catch(error){}
+    window.scrollTo(0,0);
+    window.addEventListener('pageshow',function(){
+      window.scrollTo(0,0);
+      window.requestAnimationFrame(function(){
+        if(window.hexMotion&&window.hexMotion.scrollTo){
+          window.hexMotion.scrollTo(0,{immediate:true,force:true});
+        }else{
+          window.scrollTo(0,0);
+        }
+        window.setTimeout(function(){
+          try{history.scrollRestoration=previousRestoration;}catch(error){}
+        },350);
+      });
+    },{once:true});
+  }
+
+  hexReady(function(){
+    var hero=document.querySelector('.hex-hero-wrap');
+    var progressed=false;
+    if(!hero){return;}
+
+    function heroTop(){
+      return hero.getBoundingClientRect().top+window.pageYOffset;
+    }
+
+    function trackProgress(){
+      if(progressed||document.querySelector('.hex-opening')||
+        document.documentElement.classList.contains('hex-opening-lock')){
+        return;
+      }
+      if(window.pageYOffset>=heroTop()+hero.offsetHeight*.8){
+        progressed=true;
+      }
+    }
+
+    window.addEventListener('scroll',trackProgress,{passive:true});
+    window.addEventListener('pagehide',function(){
+      trackProgress();
+      try{
+        if(progressed&&!location.hash&&
+          window.pageYOffset<=heroTop()+8){
+          sessionStorage.setItem(key,page);
+        }else{
+          sessionStorage.removeItem(key);
+        }
+      }catch(error){}
+    });
+    trackProgress();
+  });
+})();
+
 /* =======================================
    トップページ交互背景
 ======================================= */
