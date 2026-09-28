@@ -9094,6 +9094,7 @@ html.hex-opening-finishing
 .hex-follow-cursor{
   --hex-follow-size:18px;
   --hex-follow-offset:4px;
+  --hex-follow-offset-y:var(--hex-follow-offset);
   position:fixed;
   top:0;
   left:0;
@@ -9107,7 +9108,7 @@ html.hex-opening-finishing
   opacity:0;
   visibility:hidden;
   transform:translate3d(-100px,-100px,0)
-    translate(calc(-50% - var(--hex-follow-offset)),calc(-50% - var(--hex-follow-offset)));
+    translate(calc(-50% - var(--hex-follow-offset)),calc(-50% - var(--hex-follow-offset-y)));
   transition:width .25s cubic-bezier(.22,.8,.3,1),
     height .25s cubic-bezier(.22,.8,.3,1),opacity .18s ease,
     visibility .18s ease;
@@ -9120,6 +9121,7 @@ html.hex-opening-finishing
   --hex-follow-size:56px;
   --hex-follow-offset:12px;
 }
+.hex-follow-cursor[data-mode="drag"]{--hex-follow-offset-y:20px;}
 .hex-follow-cursor-disc{
   position:absolute;
   inset:0;
@@ -9130,7 +9132,7 @@ html.hex-opening-finishing
 .hex-follow-cursor-label{
   position:relative;
   display:block;
-  color:var(--hex-opening-navy,#1f2774);
+  color:#fff;
   font-family:var(--hex-font-pop-en),sans-serif;
   font-size:12px;
   font-weight:700;

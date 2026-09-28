@@ -12990,7 +12990,7 @@ hexReady(function(){
     currentX+=dx*.2;
     currentY+=dy*.2;
     cursor.style.transform='translate3d('+currentX+'px,'+currentY+
-      'px,0) translate(calc(-50% - var(--hex-follow-offset)),calc(-50% - var(--hex-follow-offset)))';
+      'px,0) translate(calc(-50% - var(--hex-follow-offset)),calc(-50% - var(--hex-follow-offset-y)))';
     var stretch=1+Math.min(Math.hypot(dx,dy)*.0018,.17);
     var angle=Math.atan2(dy,dx)*180/Math.PI;
     disc.style.transform='rotate('+angle+'deg) scale('+stretch+','+
