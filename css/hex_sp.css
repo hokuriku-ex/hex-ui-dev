@@ -2374,6 +2374,22 @@
   .hex-opening-main.has-hex-catch-roll{
     white-space:nowrap;
   }
+  /* ヒーローとWELCOMEだけ、指定した語の後で中央改行する。 */
+  .hex-opening-main.has-hex-catch-roll.hex-sp-two-line-catch{
+    white-space:normal;
+    text-align:center;
+  }
+  .hex-sp-two-line-catch .hex-catch-roll-mobile-break{
+    display:block;
+    width:100%;
+    height:0;
+    font-size:0;
+    line-height:0;
+    overflow:hidden;
+  }
+  .hex-sp-two-line-catch .hex-catch-roll-mobile-capitalize{
+    text-transform:uppercase;
+  }
 }
 
 /* =======================================

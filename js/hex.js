@@ -2220,8 +2220,8 @@ hexReady(function(){
       ny:0,
       alphaCanvases:new WeakMap()
     };
-    var spTap={pointerId:null,x:0,y:0,hit:false};
-    var spFollow={active:false,nx:0,ny:0};
+    var spTap={pointerId:null,x:0,y:0,hit:false,targetX:0,targetY:0};
+    var spFollow={active:false,targetX:0,targetY:0};
     var interactionLocked=true;
     var autoZooming=false;
     var autoZoomPending=false;
@@ -3483,17 +3483,13 @@ hexReady(function(){
       }
     }
 
-    /* 透過PNGの画素を使い、カーソル演出用に職人・家族を判定する。 */
-    function isHeroCharacterAt(clientX,clientY){
+    /* 透過PNGの画素で人物を探し、合成画像上の人物の中心を返す。 */
+    function getHeroCharacterAt(clientX,clientY){
       if(!ready||interactionLocked||welcomeActive||!webglStage||
-        !metrics.scale){return false;}
+        !metrics.scale){return null;}
       var rect=webglStage.getBoundingClientRect();
       if(clientX<rect.left||clientX>=rect.right||
-        clientY<rect.top||clientY>=rect.bottom){return false;}
-      var hold=mouseFollow.holdRect;
-      if(mouseFollow.active&&hold&&
-        clientX>=hold.left&&clientX<=hold.right&&
-        clientY>=hold.top&&clientY<=hold.bottom){return true;}
+        clientY<rect.top||clientY>=rect.bottom){return null;}
       var imageX=metrics.imageWidth/2+state.x+
         (clientX-rect.left-rect.width/2)/metrics.scale;
       var imageY=metrics.imageHeight/2-state.y+
@@ -3515,10 +3511,21 @@ hexReady(function(){
         var y=metrics.imageHeight-bottom-height;
         if(imageX>=x&&imageX<x+width&&imageY>=y&&imageY<y+height&&
           pointerHitsCharacter(layer,(imageX-x)/width,(imageY-y)/height)){
-          return true;
+          return {x:x+width/2,y:y+height/2};
         }
       }
-      return false;
+      return null;
+    }
+
+    /* PCカーソル判定は移動開始時の保持範囲も使う。 */
+    function isHeroCharacterAt(clientX,clientY){
+      if(!ready||interactionLocked||welcomeActive||!webglStage||
+        !metrics.scale){return false;}
+      var hold=mouseFollow.holdRect;
+      if(mouseFollow.active&&hold&&
+        clientX>=hold.left&&clientX<=hold.right&&
+        clientY>=hold.top&&clientY<=hold.bottom){return true;}
+      return !!getHeroCharacterAt(clientX,clientY);
     }
 
     function updateMouseFollow(event){
@@ -3626,11 +3633,17 @@ hexReady(function(){
       mouseFollow.holdRect=null;
 
       if(event.pointerType==="touch"){
+        var character=isSp()
+          ?getHeroCharacterAt(event.clientX,event.clientY):null;
         spFollow.active=false;
         spTap.pointerId=event.pointerId;
         spTap.x=event.clientX;
         spTap.y=event.clientY;
-        spTap.hit=isSp()&&isHeroCharacterAt(event.clientX,event.clientY);
+        spTap.hit=!!character;
+        if(character){
+          spTap.targetX=character.x-metrics.imageWidth/2;
+          spTap.targetY=metrics.imageHeight/2-character.y;
+        }
         activePointers.set(event.pointerId,{
           id:event.pointerId,
           x:event.clientX,
@@ -3704,13 +3717,8 @@ hexReady(function(){
           activePointers.size===1&&!interactionLocked&&isSp()&&
           Math.hypot(event.clientX-spTap.x,event.clientY-spTap.y)<=
             HERO_SP_TAP_MAX_MOVE){
-          var rect=webglStage.getBoundingClientRect();
-          spFollow.nx=clamp(
-            (spTap.x-rect.left-rect.width/2)/Math.max(rect.width/2,1),
-            -1,1);
-          spFollow.ny=clamp(
-            (spTap.y-rect.top-rect.height/2)/Math.max(rect.height/2,1),
-            -1,1);
+          spFollow.targetX=clamp(spTap.targetX,-metrics.maxX,metrics.maxX);
+          spFollow.targetY=clamp(spTap.targetY,-metrics.maxY,metrics.maxY);
           spFollow.active=true;
           state.vx=0;
           state.vy=0;
@@ -3770,9 +3778,9 @@ hexReady(function(){
             state.vx=0;
             state.vy=0;
           }else if(spFollow.active&&isSp()){
-            state.x+=(metrics.maxX*spFollow.nx-state.x)*
+            state.x+=(spFollow.targetX-state.x)*
               HERO_MOUSE_FOLLOW_EASE;
-            state.y+=(-metrics.maxY*spFollow.ny-state.y)*
+            state.y+=(spFollow.targetY-state.y)*
               HERO_MOUSE_FOLLOW_EASE;
             state.vx=0;
             state.vy=0;
@@ -12345,6 +12353,8 @@ hexLoad(function(){
     /* ヒーロー・WELCOMEキャッチ用の1文字ロールアップ */
     function createCatchRoll(main){
       var textValue;
+      var spBreakIndex=-1;
+      var spUppercaseIndex=-1;
       var chars=[];
       var tween=null;
       var subtitle=main&&main.parentElement
@@ -12361,17 +12371,33 @@ hexLoad(function(){
         return null;
       }
 
+      if(main.closest('.hex-hero-catch')&&
+        textValue==='Build Your Everyday.'){
+        spBreakIndex='Build Your'.length;
+      }else if(main.closest('.hex-welcome-wrap')&&
+        /^With your dreams\.$/i.test(textValue)){
+        spBreakIndex='With your'.length;
+        spUppercaseIndex=spBreakIndex+1;
+      }
+
       main.textContent='';
       main.dataset.hexCatchRollReady='1';
       main.classList.add('has-hex-catch-roll');
+      if(spBreakIndex!==-1){main.classList.add('hex-sp-two-line-catch');}
       if(subtitle){
         subtitle.classList.add('has-hex-sub-pop');
       }
 
-      Array.from(textValue).forEach(function(character){
+      Array.from(textValue).forEach(function(character,index){
         var span=document.createElement('span');
 
         span.className='hex-catch-roll-char';
+        if(index===spBreakIndex){
+          span.classList.add('hex-catch-roll-mobile-break');
+        }
+        if(index===spUppercaseIndex){
+          span.classList.add('hex-catch-roll-mobile-capitalize');
+        }
         span.textContent=character===' '?'\u00a0':character;
         main.appendChild(span);
         chars.push(span);
