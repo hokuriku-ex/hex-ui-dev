@@ -4847,12 +4847,12 @@ html body
   height:auto;
   max-width:none;
 }
-.hex-hero-character--family{--hex-sprite-x:18%;--hex-sprite-bottom:3%;--hex-sprite-width:12%;}
-.hex-hero-character--supervisor{--hex-sprite-x:31%;--hex-sprite-bottom:19%;--hex-sprite-width:7%;}
-.hex-hero-character--block{--hex-sprite-x:40%;--hex-sprite-bottom:12%;--hex-sprite-width:9%;}
+.hex-hero-character--family{--hex-sprite-x:18%;--hex-sprite-bottom:3%;--hex-sprite-width:10%;}
+.hex-hero-character--supervisor{--hex-sprite-x:31%;--hex-sprite-bottom:19%;--hex-sprite-width:10%;}
+.hex-hero-character--block{--hex-sprite-x:40%;--hex-sprite-bottom:12%;--hex-sprite-width:10%;}
 .hex-hero-character--sakan{--hex-sprite-x:69%;--hex-sprite-bottom:7%;--hex-sprite-width:10%;}
-.hex-hero-character--pruning{--hex-sprite-x:55%;--hex-sprite-bottom:24%;--hex-sprite-width:9%;}
-.hex-hero-character--aluminum{--hex-sprite-x:77%;--hex-sprite-bottom:18%;--hex-sprite-width:8%;}
+.hex-hero-character--pruning{--hex-sprite-x:55%;--hex-sprite-bottom:24%;--hex-sprite-width:10%;}
+.hex-hero-character--aluminum{--hex-sprite-x:77%;--hex-sprite-bottom:18%;--hex-sprite-width:10%;}
 .hex-hero-excavator-image{--hex-sprite-x:2%;--hex-sprite-bottom:12%;--hex-sprite-width:16%;}
 .hex-hero-unic-image{--hex-sprite-x:78%;--hex-sprite-bottom:17%;--hex-sprite-width:19%;}
 
