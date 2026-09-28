@@ -2078,6 +2078,8 @@ hexReady(function(){
   var HERO_ZOOM_MIN=1;
   var HERO_ZOOM_AUTO=1.2;
   var HERO_ZOOM_MAX=2;
+  /* 台座の縦移動を1とした楕円の追従率（上端の初期位置は維持）。 */
+  var HERO_ELLIPSE_VERTICAL_FOLLOW=.85;
   var HERO_AUTO_ZOOM_WAIT=300;
   var HERO_AUTO_ZOOM_DURATION=1500;
   /* true: 家族・職人にマウスが乗った間だけ従来の画面追従を有効にする */
@@ -2768,13 +2770,13 @@ hexReady(function(){
         }
       });
       if(heroEllipse){
-        /* 上端では建物と重ね、縦ドラッグ時だけ建物移動量の20%追従する。 */
+        /* 上端位置を保ち、縦移動は台座より少し控えめに追従する。 */
         var ellipseWidth=metrics.imageWidth*metrics.scale;
         var ellipseHeight=metrics.imageHeight*metrics.scale;
         var ellipseX=(metrics.width-ellipseWidth)/2-state.x*metrics.scale;
         var ellipseY=(metrics.height-ellipseHeight)/2+
           metrics.maxY*metrics.scale+
-          (state.y-metrics.maxY)*metrics.scale*.2;
+          (state.y-metrics.maxY)*metrics.scale*HERO_ELLIPSE_VERTICAL_FOLLOW;
         heroEllipse.style.width=ellipseWidth+"px";
         heroEllipse.style.height=ellipseHeight+"px";
         heroEllipse.style.transform="translate3d("+ellipseX+"px,"+ellipseY+"px,0)";
