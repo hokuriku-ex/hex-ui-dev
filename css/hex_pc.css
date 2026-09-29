@@ -5819,12 +5819,6 @@ html body
   display:block;
   object-fit:cover;
 }
-.hex-company-round .hex-company-button-photo::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:rgba(12,22,65,.48);
-}
 .hex-company-round > .hex-btn-main-title,
 .hex-company-round > .hex-btn-main-icon{
   position:relative;
