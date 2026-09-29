@@ -5428,6 +5428,24 @@ html body
 /* =======================================
    トップページ：私たちについて
 ======================================= */
+.hex-founded-confetti{
+  position:absolute;
+  z-index:5;
+  pointer-events:none;
+  overflow:hidden;
+}
+.hex-founded-confetti-canvas{
+  position:absolute;
+  top:0;
+  width:40%;
+  height:100%;
+  pointer-events:none;
+}
+.hex-founded-confetti-canvas.is-left{left:0;}
+.hex-founded-confetti-canvas.is-right{right:0;}
+@media (prefers-reduced-motion:reduce){
+  .hex-founded-confetti{display:none;}
+}
 .hex-founded-marquee{
   position:relative;
   left:0;

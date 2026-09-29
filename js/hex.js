@@ -11362,6 +11362,8 @@ hexLoad(function(){
     'https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js';
   var LENIS_URL=
     'https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js';
+  var CONFETTI_URL=
+    'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js';
 
   var root=document.documentElement;
   var refreshTimer=null;
@@ -12617,6 +12619,101 @@ hexLoad(function(){
             }
           }
         }
+      }
+
+      /* 1972年創業に合わせて左右のCanvasから一度ずつ紙吹雪を放つ。 */
+      if(section&&title&&!isReducedMotion()){
+        var confettiLayer=document.createElement('div');
+        var leftCanvas=document.createElement('canvas');
+        var rightCanvas=document.createElement('canvas');
+        var confettiLeft=null;
+        var confettiRight=null;
+        var confettiLoading=false;
+        var confettiArmed=false;
+        var confettiLaunched=false;
+        var confettiOptions={
+          angle:90,
+          spread:100,
+          particleCount:100,
+          ticks:300,
+          startVelocity:30,
+          scalar:2,
+          gravity:1,
+          origin:{x:.5,y:.5}
+        };
+
+        confettiLayer.className='hex-founded-confetti';
+        confettiLayer.setAttribute('aria-hidden','true');
+        leftCanvas.className='hex-founded-confetti-canvas is-left';
+        rightCanvas.className='hex-founded-confetti-canvas is-right';
+        confettiLayer.appendChild(leftCanvas);
+        confettiLayer.appendChild(rightCanvas);
+        if(window.getComputedStyle(section).position==='static'){
+          section.style.position='relative';
+        }
+        section.appendChild(confettiLayer);
+
+        var alignFoundedConfetti=function(){
+          var sectionRect=section.getBoundingClientRect();
+          var titleRect=title.getBoundingClientRect();
+          var height=Math.max(1,window.innerHeight);
+          confettiLayer.style.width=
+            document.documentElement.clientWidth+'px';
+          confettiLayer.style.height=height+'px';
+          confettiLayer.style.left=(-sectionRect.left)+'px';
+          confettiLayer.style.top=(titleRect.top-sectionRect.top+
+            titleRect.height*.5-height*.5)+'px';
+        };
+        alignFoundedConfetti();
+        window.addEventListener('resize',alignFoundedConfetti,{passive:true});
+        document.addEventListener('hex:hero-layout-updated',
+          alignFoundedConfetti);
+
+        var launchFoundedConfetti=function(){
+          if(!confettiArmed||confettiLaunched||!window.confetti){return;}
+          if(!confettiLeft){
+            confettiLeft=window.confetti.create(leftCanvas,{
+              resize:true,disableForReducedMotion:true
+            });
+            confettiRight=window.confetti.create(rightCanvas,{
+              resize:true,disableForReducedMotion:true
+            });
+          }
+          alignFoundedConfetti();
+          confettiLaunched=true;
+          confettiLeft(confettiOptions);
+          confettiRight(confettiOptions);
+        };
+        var requestFoundedConfetti=function(){
+          confettiArmed=true;
+          if(window.confetti){
+            launchFoundedConfetti();
+            return;
+          }
+          if(confettiLoading){return;}
+          confettiLoading=true;
+          var script=document.createElement('script');
+          script.src=CONFETTI_URL;
+          script.async=true;
+          script.onload=launchFoundedConfetti;
+          script.onerror=function(){confettiLoading=false;};
+          document.head.appendChild(script);
+        };
+
+        ScrollTrigger.create({
+          trigger:title,
+          start:'top 60%',
+          onEnter:requestFoundedConfetti,
+          onLeaveBack:function(){
+            confettiArmed=false;
+            confettiLaunched=false;
+          },
+          onRefresh:alignFoundedConfetti
+        });
+        document.addEventListener('hex:top-returned',function(){
+          confettiArmed=false;
+          confettiLaunched=false;
+        });
       }
 
       if(title&&title.querySelector('.hex-founded-year,.hex-founded-text')){
