@@ -5434,16 +5434,13 @@ html body
   width:100vw;
   max-width:none;
   margin:0 0 clamp(44px,5vw,88px) 0!important;
-  padding:0;
+  padding:clamp(24px,4vw,60px) 0;
   overflow:hidden;
   box-sizing:border-box;
   pointer-events:none;
 }
 :is(p,h3).hex-founded-marquee-line{
   display:block;
-  position:absolute;
-  top:0;
-  left:0;
   width:max-content!important;
   max-width:none!important;
   margin:0!important;
@@ -5459,12 +5456,7 @@ html body
   will-change:transform;
 }
 @media (prefers-reduced-motion:reduce){
-  .hex-founded-marquee{
-    height:auto!important;
-    padding:clamp(24px,4vw,60px) 0;
-  }
   :is(p,h3).hex-founded-marquee-line{
-    position:relative;
     width:auto!important;
     padding:0 16px!important;
     white-space:normal;

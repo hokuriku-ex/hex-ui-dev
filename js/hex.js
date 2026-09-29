@@ -11717,6 +11717,15 @@ hexLoad(function(){
             return false;
           }
 
+          /* 創業コピーの区間は操作量を半分にし、縦位置は通常の流れに保つ。 */
+          var foundedBand=document.querySelector('.hex-founded-marquee');
+          if(foundedBand&&data&&typeof data.deltaY==='number'){
+            var foundedRect=foundedBand.getBoundingClientRect();
+            if(foundedRect.top<window.innerHeight&&foundedRect.bottom>0){
+              data.deltaY*=.5;
+            }
+          }
+
           return !isPreventTarget(
             event&&event.target
           );
@@ -12545,36 +12554,28 @@ hexLoad(function(){
             foundedStartOffset=Math.max(0,
               (parseFloat(lineStyle.fontSize)||0)+
               (parseFloat(lineStyle.letterSpacing)||0));
-            if(!isReducedMotion()){
-              /* WELCOME本文と同様、必要な縦スクロール距離を約2倍にする。 */
-              band.style.height=Math.ceil(window.innerHeight+
-                2*line.getBoundingClientRect().height)+'px';
-            }
           };
           alignFoundedBand();
           window.addEventListener('resize',alignFoundedBand,{passive:true});
           document.addEventListener('hex:hero-layout-updated',alignFoundedBand);
           if(!isReducedMotion()){
             var syncFoundedMarquee=function(self){
-              var height=Math.max(line.offsetHeight,1);
+              var rect=line.getBoundingClientRect();
+              var height=Math.max(rect.height,1);
               var viewportHeight=window.innerHeight;
-              var traveled=viewportHeight-band.getBoundingClientRect().top;
-              /* 文字は固定せず、縦方向にも半分の速さで流し続ける。 */
-              var visualTop=viewportHeight-traveled*.5;
+              var fullyEnteredTop=viewportHeight-height;
+              /* 縦位置はそのまま。横方向は全区間で一定速度にする。 */
+              var upperReadableTop=Math.min(height,fullyEnteredTop);
               var endX=Math.min(0,band.clientWidth-line.scrollWidth);
               var entryInset=foundedStartOffset*1.5;
-              var firstReadableTop=viewportHeight-height;
-              var lastReadableTop=Math.min(height,
-                Math.max(0,firstReadableTop-height*.35));
-              /* 開始前・終了後も同じ傾きで動かし、速度の段差をなくす。 */
               var x=entryInset+(endX-foundedStartOffset-entryInset)*
-                (firstReadableTop-visualTop)/
-                Math.max(firstReadableTop-lastReadableTop,1);
+                (fullyEnteredTop-rect.top)/
+                Math.max(fullyEnteredTop-upperReadableTop,1);
               line.style.transform='translate3d('+
-                x+'px,'+(traveled*.5)+'px,0)';
+                x+'px,0,0)';
             };
             ScrollTrigger.create({
-              trigger:band,
+              trigger:line,
               start:'top bottom',
               end:'bottom top',
               onUpdate:syncFoundedMarquee,
@@ -12583,6 +12584,37 @@ hexLoad(function(){
                 syncFoundedMarquee(self);
               }
             });
+            if(mobile){
+              var foundedTouchY=null;
+              var foundedBandVisible=function(){
+                var bounds=band.getBoundingClientRect();
+                return bounds.top<window.innerHeight&&bounds.bottom>0;
+              };
+              document.addEventListener('touchstart',function(event){
+                foundedTouchY=event.touches.length===1
+                  ?event.touches[0].clientY:null;
+              },{passive:true});
+              document.addEventListener('touchmove',function(event){
+                if(foundedTouchY===null||event.touches.length!==1){return;}
+                var nextY=event.touches[0].clientY;
+                var delta=foundedTouchY-nextY;
+                foundedTouchY=nextY;
+                if(!foundedBandVisible()||!event.cancelable){return;}
+                event.preventDefault();
+                window.scrollBy(0,delta*.5);
+              },{passive:false});
+              document.addEventListener('touchend',function(){
+                foundedTouchY=null;
+              },{passive:true});
+              window.addEventListener('wheel',function(event){
+                if(!event.cancelable||!foundedBandVisible()||
+                  event.ctrlKey){return;}
+                event.preventDefault();
+                var factor=event.deltaMode===1?16:
+                  event.deltaMode===2?window.innerHeight:1;
+                window.scrollBy(0,event.deltaY*factor*.5);
+              },{passive:false});
+            }
           }
         }
       }
