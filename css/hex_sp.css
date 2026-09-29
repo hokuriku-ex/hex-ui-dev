@@ -1535,6 +1535,13 @@
   .hex-company-buttons .hex-btn-main-title .main{
     font-size:18px!important;
   }
+  .hex-company-buttons > .hex-company-round-wrap{
+    flex:none;
+    width:min(100%,370px)!important;
+  }
+  .hex-company-buttons .hex-company-round-wrap > .hex-company-round{
+    padding:28px;
+  }
   .hex-company-card .hex-card{
     padding:8px!important;
   }
