@@ -5431,22 +5431,30 @@ html body
 #gc_auto_frame_home_4{
   --hex-founding-bg:#fff;
   background:#fff!important;
+  isolation:isolate;
 }
-.hex-home-bg-gray .hex-founded-white-surface,
-.hex-founded-white-surface{
-  background:#fff!important;
+#gc_auto_frame_home_4 :is(
+  .background_color,
+  .backgroundcolor_auto,
+  .backgroundcolor_white
+){
+  background:transparent!important;
 }
 #gc_auto_frame_home_4
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
-  background:#fff!important;
+  background:transparent!important;
 }
-.hex-founded-photo{
+#gc_auto_frame_home_4 > :not(.hex-founded-photo){
+  position:relative;
+  z-index:2;
+}
+#gc_auto_frame_home_4 > .hex-founded-photo{
   position:fixed;
   top:0;
   left:0;
   width:100vw;
   height:100vh;
-  z-index:1000000;
+  z-index:1;
   overflow:hidden;
   pointer-events:none;
 }
@@ -5461,7 +5469,7 @@ html body
   object-fit:cover;
   object-position:center center;
   filter:blur(12px);
-  opacity:.5;
+  opacity:.7;
   transform:scale(1.08);
 }
 .hex-founded-confetti{
