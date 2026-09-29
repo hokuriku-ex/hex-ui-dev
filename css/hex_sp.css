@@ -1433,15 +1433,17 @@
 /* =======================================
    トップページ：ウェルカム→私たちについて切り替え
 ======================================= */
-.hex-founded-marquee{
-  margin-bottom:32px;
-  padding:28px 0;
+@media screen and (max-width:768px){
+  .hex-founded-marquee{
+    margin-bottom:32px;
+    padding:28px 0;
+  }
+  :is(p,h3).hex-founded-marquee-line{
+    font-size:clamp(40px,10vw,64px)!important;
+    letter-spacing:.02em;
+  }
 }
-:is(p,h3).hex-founded-marquee-line{
-  font-size:clamp(40px,10vw,64px)!important;
-  letter-spacing:.02em;
-}
-@media (prefers-reduced-motion:reduce){
+@media screen and (max-width:768px) and (prefers-reduced-motion:reduce){
   :is(p,h3).hex-founded-marquee-line{
     font-size:clamp(28px,7vw,40px)!important;
   }
