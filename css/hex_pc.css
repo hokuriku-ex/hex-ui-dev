@@ -5447,7 +5447,10 @@ html body
   padding:0!important;
   white-space:nowrap;
   text-align:left!important;
-  color:#1f2774;
+  color:transparent!important;
+  -webkit-text-fill-color:transparent!important;
+  -webkit-text-stroke:2px #1f2774;
+  text-shadow:none!important;
   font-family:var(--hex-font-gothic)!important;
   font-size:clamp(64px,6.5vw,104px)!important;
   font-weight:700;

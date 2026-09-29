@@ -1441,6 +1441,7 @@
   :is(p,h3).hex-founded-marquee-line{
     font-size:clamp(40px,10vw,64px)!important;
     letter-spacing:.02em;
+    -webkit-text-stroke:1.5px #1f2774;
   }
 }
 @media screen and (max-width:768px) and (prefers-reduced-motion:reduce){
