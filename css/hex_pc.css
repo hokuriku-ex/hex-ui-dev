@@ -5457,6 +5457,7 @@ html body
   z-index:1;
   overflow:hidden;
   pointer-events:none;
+  opacity:.8;
 }
 .hex-founded-photo img{
   position:absolute;
@@ -5468,9 +5469,22 @@ html body
   max-height:none!important;
   object-fit:cover;
   object-position:center center;
-  filter:blur(12px);
-  opacity:.7;
   transform:scale(1.08);
+}
+.hex-founded-photo img.hex-founded-photo-blur{
+  filter:blur(12px);
+  -webkit-mask-image:radial-gradient(
+    circle closest-side at 50% 50%,
+    #000 0%,
+    #000 12%,
+    transparent 100%
+  );
+  mask-image:radial-gradient(
+    circle closest-side at 50% 50%,
+    #000 0%,
+    #000 12%,
+    transparent 100%
+  );
 }
 .hex-founded-confetti{
   position:fixed;
