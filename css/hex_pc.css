@@ -5772,6 +5772,79 @@ html body
   color:#c8a874!important;
 }
 
+/* 初めての方へ：写真入りの丸ボタン（影のずれは共通ボタンと同じ9px） */
+.hex-company-buttons{
+  gap:32px;
+  max-width:800px;
+  margin-bottom:32px;
+}
+.hex-company-buttons > .hex-button-wrap{
+  flex:0 1 370px;
+  width:min(100%,370px)!important;
+  aspect-ratio:1;
+}
+.hex-company-buttons > .hex-button-wrap::before{
+  top:9px;
+  left:9px;
+  width:calc(100% - 10px);
+  height:calc(100% - 10px);
+  border-radius:50%;
+  clip-path:none;
+}
+.hex-company-buttons .hex-btn-main.dark{
+  width:calc(100% - 10px);
+  height:calc(100% - 10px);
+  margin:0;
+  padding:32px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+  border-radius:50%;
+  isolation:isolate;
+  background-color:#1f2774!important;
+}
+.hex-company-buttons .hex-company-button-photo{
+  position:absolute!important;
+  z-index:0!important;
+  inset:0;
+  overflow:hidden;
+  border-radius:50%;
+  pointer-events:none;
+}
+.hex-company-buttons .hex-company-button-photo img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+}
+.hex-company-buttons .hex-company-button-photo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(12,22,65,.48);
+}
+.hex-company-buttons .hex-btn-main.dark > .hex-btn-main-title,
+.hex-company-buttons .hex-btn-main.dark > .hex-btn-main-icon{
+  position:relative;
+  z-index:1;
+}
+.hex-company-buttons .hex-btn-main-title{
+  width:auto;
+  max-width:100%;
+  align-items:center;
+  text-align:center;
+}
+.hex-company-buttons .hex-btn-main-title .sub,
+.hex-company-buttons .hex-btn-main-title .main{
+  text-align:center;
+}
+.hex-company-buttons .hex-btn-main-icon{
+  color:#fff;
+}
+
 /* =======================================
    トップページ：サービス案内
 ======================================= */
