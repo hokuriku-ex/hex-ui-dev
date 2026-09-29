@@ -12541,14 +12541,25 @@ hexLoad(function(){
           foundedPhotoFrame=0;
           var sectionRect=section.getBoundingClientRect();
           var viewportHeight=window.innerHeight;
-          var top=Math.max(0,Math.min(viewportHeight,sectionRect.top));
-          var bottom=Math.max(0,Math.min(viewportHeight,sectionRect.bottom));
+          var viewportWidth=document.documentElement.clientWidth;
+          var mobile=viewportWidth<=768;
+          /* 固定写真を白い余白の内側に切り抜き、角丸を常時維持する。 */
+          var inset=mobile?16:Math.min(36,Math.max(24,viewportWidth*.016));
+          var radius=mobile?Math.min(32,viewportWidth*.08):
+            Math.min(72,Math.max(40,viewportWidth*.04));
+          var headerBottom=mobile?
+            Math.min(80,Math.max(64,viewportWidth*.2)):80;
+          var top=Math.max(headerBottom+inset,sectionRect.top+inset);
+          var bottom=Math.min(viewportHeight-inset,sectionRect.bottom-inset);
+          var left=Math.max(inset,sectionRect.left+inset);
+          var right=Math.min(viewportWidth-inset,sectionRect.right-inset);
           foundedPhoto.style.height=viewportHeight+'px';
-          foundedPhoto.style.width=
-            document.documentElement.clientWidth+'px';
-          foundedPhoto.style.visibility=bottom>top?'visible':'hidden';
-          foundedPhoto.style.clipPath='inset('+top+'px 0px '+
-            (viewportHeight-bottom)+'px 0px)';
+          foundedPhoto.style.width=viewportWidth+'px';
+          foundedPhoto.style.visibility=
+            bottom>top&&right>left?'visible':'hidden';
+          foundedPhoto.style.clipPath='inset('+top+'px '+
+            (viewportWidth-right)+'px '+
+            (viewportHeight-bottom)+'px '+left+'px round '+radius+'px)';
         };
         var queueFoundedPhoto=function(){
           if(!foundedPhotoFrame){
