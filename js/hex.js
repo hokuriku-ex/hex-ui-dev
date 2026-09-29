@@ -1941,19 +1941,6 @@ hexReady(function(){
     hexIconSpan.appendChild(hexIcon);
     hexAnchor.appendChild(hexTitleSpan);
     hexAnchor.appendChild(hexIconSpan);
-    /* 初めての方へ：HTML の data-image で丸ボタンの写真を指定 */
-    if(hexView.closest('.hex-company-buttons')&&hexView.dataset.image){
-      var hexPhoto=document.createElement('span');
-      var hexPhotoImg=document.createElement('img');
-      hexPhoto.className='hex-company-button-photo';
-      hexPhoto.setAttribute('aria-hidden','true');
-      hexPhotoImg.src=hexView.dataset.image;
-      hexPhotoImg.alt='';
-      hexPhotoImg.loading='lazy';
-      hexPhotoImg.decoding='async';
-      hexPhoto.appendChild(hexPhotoImg);
-      hexAnchor.insertBefore(hexPhoto,hexTitleSpan);
-    }
     hexWrap.appendChild(hexAnchor);
     hexView.parentNode.insertBefore(hexWrap,hexView);
     hexView.style.display='none';
