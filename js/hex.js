@@ -12554,7 +12554,7 @@ hexLoad(function(){
             };
             ScrollTrigger.create({
               trigger:line,
-              start:'bottom bottom',
+              start:'top bottom',
               end:'bottom 35%',
               onUpdate:syncFoundedMarquee,
               onRefresh:function(self){
