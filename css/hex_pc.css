@@ -5428,7 +5428,6 @@ html body
 /* =======================================
    トップページ：私たちについて
 ======================================= */
-.hex-founded-original-lead{display:none!important;}
 .hex-founded-marquee{
   position:relative;
   left:50%;
@@ -5440,11 +5439,14 @@ html body
   box-sizing:border-box;
   pointer-events:none;
 }
-.hex-founded-marquee-line{
+:is(p,h3).hex-founded-marquee-line{
   display:block;
-  width:max-content;
-  max-width:none;
+  width:max-content!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0!important;
   white-space:nowrap;
+  text-align:left!important;
   color:#1f2774;
   font-family:var(--hex-font-gothic)!important;
   font-size:clamp(64px,6.5vw,104px)!important;
@@ -5454,9 +5456,9 @@ html body
   will-change:transform;
 }
 @media (prefers-reduced-motion:reduce){
-  .hex-founded-marquee-line{
-    width:auto;
-    padding:0 16px;
+  :is(p,h3).hex-founded-marquee-line{
+    width:auto!important;
+    padding:0 16px!important;
     white-space:normal;
     font-size:clamp(32px,5vw,64px)!important;
     will-change:auto;

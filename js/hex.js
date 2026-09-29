@@ -12513,46 +12513,37 @@ hexLoad(function(){
       var cardTimers=[];
       var numberStates=[];
 
-      /* 大きなコピーを1972の前に置き、縦スクロールで横へ流す。 */
+      /* HTMLのコピー自体を移動。共通フェードとのtransform競合を避ける。 */
       if(section&&title&&!section.querySelector('.hex-founded-marquee')){
         var lead='提案・技術・実績を備えた、外構・お庭のプロフェッショナル';
         var normalized=lead.replace(/\s/g,'');
-        var original=Array.prototype.slice.call(section.querySelectorAll('*'))
-          .filter(function(element){
-            return element!==section&&
-              (element.textContent||'').replace(/\s/g,'')===normalized;
-          }).pop();
-        var band=document.createElement('div');
-        var line=document.createElement('span');
-        var insertion=title.closest('.hex-center')||title;
-        band.className='hex-founded-marquee';
-        band.dataset.hexMotionInitialized='1';
-        line.className='hex-founded-marquee-line';
-        line.textContent=lead;
-        band.appendChild(line);
-        insertion.parentNode.insertBefore(band,insertion);
-        if(original){
-          original.classList.add('hex-founded-original-lead');
-          original.setAttribute('aria-hidden','true');
-        }
-        if(!isReducedMotion()){
-          gsap.fromTo(line,
-            {x:0},
-            {
-              x:function(){
-                /* 文末が画面右端に入った時点で移動を止める。 */
-                return -Math.max(0,line.scrollWidth-band.clientWidth);
-              },
-              ease:'none',
-              scrollTrigger:{
-                trigger:band,
-                start:'top bottom',
-                end:'bottom 35%',
-                scrub:true,
-                invalidateOnRefresh:true
-              }
-            }
-          );
+        var line=section.querySelector('.hex-founded-marquee-copy')||
+          Array.prototype.slice.call(section.querySelectorAll('h3,p'))
+            .filter(function(element){
+              return (element.textContent||'').replace(/\s/g,'')===normalized;
+            })[0];
+        if(line){
+          var band=document.createElement('div');
+          band.className='hex-founded-marquee';
+          band.dataset.hexMotionInitialized='1';
+          line.classList.add('hex-founded-marquee-line');
+          line.dataset.hexMotionInitialized='1';
+          line.parentNode.insertBefore(band,line);
+          band.appendChild(line);
+          if(!isReducedMotion()){
+            var syncFoundedMarquee=function(self){
+              var travel=Math.max(0,line.scrollWidth-band.clientWidth);
+              line.style.transform='translate3d('+
+                (-travel*self.progress)+'px,0,0)';
+            };
+            ScrollTrigger.create({
+              trigger:band,
+              start:'top bottom',
+              end:'bottom 35%',
+              onUpdate:syncFoundedMarquee,
+              onRefresh:syncFoundedMarquee
+            });
+          }
         }
       }
 
