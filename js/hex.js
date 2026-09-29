@@ -12550,21 +12550,28 @@ hexLoad(function(){
               var height=Math.max(rect.height,1);
               var viewportHeight=window.innerHeight;
               var fullyEnteredTop=viewportHeight-height;
+              var upperReadableTop=Math.min(height,
+                Math.max(0,fullyEnteredTop/2));
               var endX=Math.min(0,band.clientWidth-line.scrollWidth);
               var x;
 
               if(rect.top>=fullyEnteredTop){
-                /* 下端から入る間に1文字分の余白を消し、先頭を左端へ。 */
-                x=foundedStartOffset*Math.min(1,Math.max(0,
-                  (rect.top-fullyEnteredTop)/height));
-              }else if(rect.top>=0){
-                /* 全文が見える間に、末尾が右端に揃うまで送る。 */
-                x=endX*Math.min(1,Math.max(0,
-                  (fullyEnteredTop-rect.top)/Math.max(fullyEnteredTop,1)));
+                /* 入る間も動かし、全文が見えた時点で先頭に1文字分の余白。 */
+                x=foundedStartOffset*(1+Math.min(1,Math.max(0,
+                  (rect.top-fullyEnteredTop)/height)));
+              }else if(rect.top>=upperReadableTop){
+                /* 上端の手前で末尾も1文字分内側に置く。 */
+                var middle=Math.min(1,Math.max(0,
+                  (fullyEnteredTop-rect.top)/
+                  Math.max(fullyEnteredTop-upperReadableTop,1)));
+                x=foundedStartOffset+
+                  (endX-2*foundedStartOffset)*middle;
               }else{
-                /* 上端へ抜ける間も止めず、さらに1文字分だけ左へ。 */
-                x=endX-foundedStartOffset*Math.min(1,Math.max(0,
-                  -rect.top/height));
+                /* 上へ抜ける間も、末尾を見せながら左へ進める。 */
+                var leaving=Math.min(1,Math.max(0,
+                  (upperReadableTop-rect.top)/
+                  Math.max(upperReadableTop+height,1)));
+                x=endX-foundedStartOffset*(1+leaving);
               }
               line.style.transform='translate3d('+
                 x+'px,0,0)';
