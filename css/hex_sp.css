@@ -1436,7 +1436,7 @@
 @media screen and (max-width:768px){
   .hex-founded-marquee{
     margin-bottom:32px;
-    padding:28px 0;
+    padding:0;
   }
   :is(p,h3).hex-founded-marquee-line{
     font-size:clamp(40px,10vw,64px)!important;

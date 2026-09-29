@@ -12545,46 +12545,36 @@ hexLoad(function(){
             foundedStartOffset=Math.max(0,
               (parseFloat(lineStyle.fontSize)||0)+
               (parseFloat(lineStyle.letterSpacing)||0));
+            if(!isReducedMotion()){
+              /* WELCOME本文と同様、必要な縦スクロール距離を約2倍にする。 */
+              band.style.height=Math.ceil(window.innerHeight+
+                2*line.getBoundingClientRect().height)+'px';
+            }
           };
           alignFoundedBand();
           window.addEventListener('resize',alignFoundedBand,{passive:true});
           document.addEventListener('hex:hero-layout-updated',alignFoundedBand);
           if(!isReducedMotion()){
             var syncFoundedMarquee=function(self){
-              var rect=line.getBoundingClientRect();
-              var height=Math.max(rect.height,1);
+              var height=Math.max(line.offsetHeight,1);
               var viewportHeight=window.innerHeight;
-              var fullyEnteredTop=viewportHeight-height;
-              /* 読める余白を保ちながら、主な横移動を短い縦距離で進める。 */
-              var upperReadableTop=fullyEnteredTop-
-                Math.max(0,fullyEnteredTop-height)*.35;
+              var traveled=viewportHeight-band.getBoundingClientRect().top;
+              /* 文字は固定せず、縦方向にも半分の速さで流し続ける。 */
+              var visualTop=viewportHeight-traveled*.5;
               var endX=Math.min(0,band.clientWidth-line.scrollWidth);
               var entryInset=foundedStartOffset*1.5;
-              var x;
-
-              if(rect.top>=fullyEnteredTop){
-                /* 先頭側だけ、全文が見えた時点で1.5文字分の余白。 */
-                x=entryInset+foundedStartOffset*Math.min(1,Math.max(0,
-                  (rect.top-fullyEnteredTop)/height));
-              }else if(rect.top>=upperReadableTop){
-                /* 上端の手前で末尾も1文字分内側に置く。 */
-                var middle=Math.min(1,Math.max(0,
-                  (fullyEnteredTop-rect.top)/
-                  Math.max(fullyEnteredTop-upperReadableTop,1)));
-                x=entryInset+
-                  (endX-foundedStartOffset-entryInset)*middle;
-              }else{
-                /* 上へ抜ける間も、末尾を見せながら左へ進める。 */
-                var leaving=Math.min(1,Math.max(0,
-                  (upperReadableTop-rect.top)/
-                  Math.max(upperReadableTop+height,1)));
-                x=endX-foundedStartOffset*(1+leaving);
-              }
+              var firstReadableTop=viewportHeight-height;
+              var lastReadableTop=Math.min(height,
+                Math.max(0,firstReadableTop-height*.35));
+              /* 開始前・終了後も同じ傾きで動かし、速度の段差をなくす。 */
+              var x=entryInset+(endX-foundedStartOffset-entryInset)*
+                (firstReadableTop-visualTop)/
+                Math.max(firstReadableTop-lastReadableTop,1);
               line.style.transform='translate3d('+
-                x+'px,0,0)';
+                x+'px,'+(traveled*.5)+'px,0)';
             };
             ScrollTrigger.create({
-              trigger:line,
+              trigger:band,
               start:'top bottom',
               end:'bottom top',
               onUpdate:syncFoundedMarquee,
