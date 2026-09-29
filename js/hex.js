@@ -3291,7 +3291,8 @@ hexReady(function(){
         }
         return;
       }
-      if(window.pageYOffset>holdTop+.5){
+      /* 本文が完成したら創業セクションへ進める。 */
+      if(window.pageYOffset>holdTop+.5&&!welcomeBodyCompleted){
         window.scrollTo(0,holdTop);
       }
     }
