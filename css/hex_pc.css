@@ -5469,22 +5469,8 @@ html body
   max-height:none!important;
   object-fit:cover;
   object-position:center center;
-  transform:scale(1.08);
-}
-.hex-founded-photo img.hex-founded-photo-blur{
   filter:blur(12px);
-  -webkit-mask-image:radial-gradient(
-    circle closest-side at 50% 50%,
-    #000 0%,
-    #000 12%,
-    transparent 100%
-  );
-  mask-image:radial-gradient(
-    circle closest-side at 50% 50%,
-    #000 0%,
-    #000 12%,
-    transparent 100%
-  );
+  transform:scale(1.08);
 }
 .hex-founded-confetti{
   position:fixed;

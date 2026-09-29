@@ -12532,17 +12532,6 @@ hexLoad(function(){
           if(cleanPhotoUrl!==rawPhotoUrl){
             foundedPhotoImage.setAttribute('src',cleanPhotoUrl);
           }
-          /* 同じ写真を重ね、中心から外側へぼかしを弱める。 */
-          foundedPhotoImage.classList.add('hex-founded-photo-base');
-          if(!foundedPhoto.querySelector('.hex-founded-photo-blur')){
-            var blurredPhoto=foundedPhotoImage.cloneNode(false);
-            blurredPhoto.removeAttribute('id');
-            blurredPhoto.classList.remove('hex-founded-photo-base');
-            blurredPhoto.classList.add('hex-founded-photo-blur');
-            blurredPhoto.setAttribute('alt','');
-            blurredPhoto.setAttribute('aria-hidden','true');
-            foundedPhoto.appendChild(blurredPhoto);
-          }
         }
       }
       if(foundedPhoto){
