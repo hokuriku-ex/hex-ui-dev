@@ -12573,12 +12573,21 @@ hexLoad(function(){
         foundedYear.textContent=String(Math.max(0,years));
       }
       var cardWrap=section&&section.querySelector('.hex-company-card');
+      var foundedMessage=section&&section.querySelector('.hex-founded-message');
+      if(foundedMessage){
+        /* 共通フェードから外し、周年見出しの後に表示する。 */
+        foundedMessage.dataset.hexMotionInitialized='1';
+        if(!isReducedMotion()){
+          gsap.set(foundedMessage,{autoAlpha:0,y:16,scale:.9});
+        }
+      }
       var cards=cardWrap
         ?Array.prototype.slice.call(cardWrap.querySelectorAll('.hex-card'))
         :[];
       var chars=[];
       var mobile=window.innerWidth<=768;
       var titlePlayed=false;
+      var titleSequence=null;
       var cardsPlayed=false;
       var cardTimers=[];
       var numberStates=[];
@@ -12798,20 +12807,34 @@ hexLoad(function(){
             onEnter:function(){
               if(titlePlayed){return;}
               titlePlayed=true;
-              gsap.to(chars,{
+              titleSequence=gsap.timeline();
+              titleSequence.to(chars,{
                 autoAlpha:1,
                 yPercent:0,
                 rotation:0,
                 duration:.6,
                 stagger:.07,
                 ease:'power3.out',
-                overwrite:'auto',
                 onComplete:function(){
                   gsap.set(chars,{
                     clearProps:'transform,opacity,visibility,willChange'
                   });
                 }
               });
+              if(foundedMessage){
+                titleSequence.to(foundedMessage,{
+                  autoAlpha:1,
+                  y:0,
+                  scale:1,
+                  duration:.55,
+                  ease:'back.out(2.3)',
+                  onComplete:function(){
+                    gsap.set(foundedMessage,{
+                      clearProps:'transform,opacity,visibility,willChange'
+                    });
+                  }
+                },'+=.18');
+              }
             }
           });
         }
@@ -12819,6 +12842,7 @@ hexLoad(function(){
 
       document.addEventListener('hex:top-returned',function(){
         titlePlayed=false;
+        if(titleSequence){titleSequence.kill();titleSequence=null;}
         cardTimers.forEach(function(timer){window.clearTimeout(timer);});
         cardTimers=[];
         numberStates.forEach(function(state){gsap.killTweensOf(state);});
@@ -12829,6 +12853,10 @@ hexLoad(function(){
             autoAlpha:0,yPercent:100,rotation:45,
             transformOrigin:'50% 100%'
           });
+        }
+        if(foundedMessage&&!isReducedMotion()){
+          gsap.killTweensOf(foundedMessage);
+          gsap.set(foundedMessage,{autoAlpha:0,y:16,scale:.9});
         }
         if(cards.length&&!isReducedMotion()){
           cardsPlayed=false;
