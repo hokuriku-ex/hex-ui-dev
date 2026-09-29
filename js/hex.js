@@ -12546,8 +12546,8 @@ hexLoad(function(){
                 (-travel*self.progress)+'px,0,0)';
             };
             ScrollTrigger.create({
-              trigger:band,
-              start:'top bottom',
+              trigger:line,
+              start:'bottom bottom',
               end:'bottom 35%',
               onUpdate:syncFoundedMarquee,
               onRefresh:function(self){
