@@ -12537,7 +12537,7 @@ hexLoad(function(){
             band.style.width=document.documentElement.clientWidth+'px';
             band.style.left=(-band.getBoundingClientRect().left)+'px';
             var lineStyle=window.getComputedStyle(line);
-            foundedStartOffset=Math.max(0,
+            foundedStartOffset=2*Math.max(0,
               (parseFloat(lineStyle.fontSize)||0)+
               (parseFloat(lineStyle.letterSpacing)||0));
           };
