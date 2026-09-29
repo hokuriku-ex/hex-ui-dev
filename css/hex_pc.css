@@ -5456,8 +5456,8 @@ html body
   max-height:none!important;
   object-fit:cover;
   object-position:center center;
-  filter:blur(18px);
-  opacity:.18;
+  filter:blur(12px);
+  opacity:.32;
   transform:scale(1.08);
 }
 .hex-founded-confetti{
