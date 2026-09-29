@@ -2152,6 +2152,7 @@ hexReady(function(){
     var welcomeDotTimer=0;
     var welcomeBodyChars=[];
     var welcomeBodyCompleted=false;
+    var welcomeBodyForced=false;
     var welcomeBodyProgress=0;
     var welcomeBodyTarget=0;
     var welcomeBodyStart=0;
@@ -2622,7 +2623,7 @@ hexReady(function(){
       var totalDuration=.8+Math.max(0,welcomeBodyChars.length-1)*.02;
       var time=progress*totalDuration;
       welcomeBodyChars.forEach(function(character,index){
-        var local=(reduced||welcomeBodyCompleted)?1
+        var local=reduced?1
           :clamp((time-index*.02)/.8,0,1);
         /* 本文の移動は親要素の自然なスクロールだけに任せる。 */
         character.style.opacity=Math.min(1,local*8);
@@ -2640,16 +2641,18 @@ hexReady(function(){
         welcomeBodyFrame=0;
         if(welcomeBodyProgress>=.999){
           welcomeBodyCompleted=true;
-          renderWelcomeBody(1);
           queueScrollEffects();
+        }else{
+          welcomeBodyCompleted=false;
         }
       }
     }
 
     function updateWelcomeBody(circleDone,scrollProgress){
       /* 配置は固定し、本文の表示だけをWELCOME内のスクロール量で進める。 */
-      var target=circleDone?scrollProgress:0;
-      if(!welcomeBodyChars.length||welcomeBodyCompleted){return;}
+      var target=welcomeBodyForced?1:(circleDone?scrollProgress:0);
+      if(!welcomeBodyChars.length){return;}
+      if(target<.999){welcomeBodyCompleted=false;}
       if(!circleDone||reduced){
         window.cancelAnimationFrame(welcomeBodyFrame);
         welcomeBodyFrame=0;
@@ -2923,10 +2926,11 @@ hexReady(function(){
       welcomeBodyFrame=0;
       welcomeBodyProgress=0;
       welcomeBodyTarget=0;
-      if(returningFromWelcome){welcomeBodyCompleted=false;}
+      welcomeBodyCompleted=false;
+      welcomeBodyForced=false;
       spWelcomeExtraScroll=0;
       welcomeBodyChars.forEach(function(character){
-        character.style.opacity=welcomeBodyCompleted?"1":"0";
+        character.style.opacity="0";
         character.style.removeProperty("transform");
       });
       updateZoomMetrics();
@@ -3256,12 +3260,6 @@ hexReady(function(){
 
       if((isSp()&&circleProgress>=.999)||
         (!isSp()&&scrollY-welcomeTop>=travelMetrics.travel)){
-        if(!isSp()&&!welcomeBodyCompleted){
-          window.cancelAnimationFrame(welcomeBodyFrame);
-          welcomeBodyFrame=0;
-          welcomeBodyCompleted=true;
-          renderWelcomeBody(1);
-        }
         releaseSnapshot();
       }else if(released){
         refixSnapshot();
@@ -3276,9 +3274,21 @@ hexReady(function(){
 
     function getSpWelcomeHoldTop(){
       if(!isSp()||!welcomeActive||!welcomeWrap||
-        welcomeStageTop===null||welcomeBodyCompleted||
+        welcomeStageTop===null||
         !welcomeBodyChars.length){return null;}
       return documentTop(welcomeWrap)+measureWelcome().travel;
+    }
+
+    function shouldHoldSpWelcome(delta,holdTop){
+      if(holdTop===null||window.pageYOffset<holdTop-1){
+        return false;
+      }
+      var metrics=measureWelcome();
+      var remaining=Math.max(0,metrics.bodyTravel-metrics.travel);
+      return delta>0?
+        (spWelcomeExtraScroll<remaining-.5||!welcomeBodyCompleted):
+        delta<0&&window.pageYOffset<=holdTop+1&&
+          spWelcomeExtraScroll>.5;
     }
 
     function holdSpWelcomeScroll(){
@@ -3299,6 +3309,9 @@ hexReady(function(){
     function advanceSpWelcomeAtBoundary(delta,holdTop){
       var metrics=measureWelcome();
       var remaining=Math.max(0,metrics.bodyTravel-metrics.travel);
+      if(window.pageYOffset>holdTop+.5){
+        window.scrollTo(0,holdTop);
+      }
       spWelcomeExtraScroll=clamp(spWelcomeExtraScroll+delta,0,remaining);
       updateWelcomeBody(true,clamp(
         (Math.min(window.pageYOffset,holdTop)-documentTop(welcomeWrap)+
@@ -3316,17 +3329,17 @@ hexReady(function(){
       var nextY=event.touches[0].clientY;
       var delta=welcomeTouchY-nextY;
       welcomeTouchY=nextY;
+      if(Math.abs(delta)>0){welcomeBodyForced=false;}
       var holdTop=getSpWelcomeHoldTop();
-      if(holdTop!==null&&window.pageYOffset>=holdTop-1&&
-        (delta>0||spWelcomeExtraScroll>0)){
+      if(shouldHoldSpWelcome(delta,holdTop)){
         advanceSpWelcomeAtBoundary(delta,holdTop);
         if(event.cancelable){event.preventDefault();}
       }
     }
     function onWelcomeWheel(event){
+      if(event.deltaY){welcomeBodyForced=false;}
       var holdTop=getSpWelcomeHoldTop();
-      if(holdTop!==null&&window.pageYOffset>=holdTop-1&&
-        (event.deltaY>0||spWelcomeExtraScroll>0)){
+      if(shouldHoldSpWelcome(event.deltaY,holdTop)){
         var multiplier=event.deltaMode===1?16:
           event.deltaMode===2?window.innerHeight:1;
         advanceSpWelcomeAtBoundary(event.deltaY*multiplier,holdTop);
@@ -3343,9 +3356,9 @@ hexReady(function(){
         event.key==='ArrowUp'?-40:
         event.key==='PageUp'?-window.innerHeight*.7:0;
       if(!delta){return;}
+      welcomeBodyForced=false;
       var holdTop=getSpWelcomeHoldTop();
-      if(holdTop!==null&&window.pageYOffset>=holdTop-1&&
-        (delta>0||spWelcomeExtraScroll>0)){
+      if(shouldHoldSpWelcome(delta,holdTop)){
         advanceSpWelcomeAtBoundary(delta,holdTop);
         event.preventDefault();
       }
@@ -4034,6 +4047,7 @@ hexReady(function(){
         welcomeBodyProgress=1;
         welcomeBodyTarget=1;
         welcomeBodyCompleted=true;
+        welcomeBodyForced=true;
         renderWelcomeBody(1);
         var circleTop=spCircleReleaseScrollY===null
           ?documentTop(welcomeWrap)
@@ -4081,6 +4095,7 @@ hexReady(function(){
         welcomeBodyProgress=1;
         welcomeBodyTarget=1;
         welcomeBodyCompleted=true;
+        welcomeBodyForced=true;
         renderWelcomeBody(1);
       },
       cancelWelcomeDotNavigation:function(){
@@ -12550,8 +12565,9 @@ hexLoad(function(){
               var height=Math.max(rect.height,1);
               var viewportHeight=window.innerHeight;
               var fullyEnteredTop=viewportHeight-height;
-              var upperReadableTop=Math.min(height,
-                Math.max(0,fullyEnteredTop/2));
+              /* 本文演出に近い手応えへ、主な横移動を従来の約6割の縦距離に収める。 */
+              var upperReadableTop=fullyEnteredTop-
+                Math.max(0,fullyEnteredTop-height)*.6;
               var endX=Math.min(0,band.clientWidth-line.scrollWidth);
               var entryInset=foundedStartOffset*1.5;
               var x;
