@@ -1442,6 +1442,16 @@
     font-size:clamp(40px,10vw,64px)!important;
     letter-spacing:.02em;
   }
+  .hex-center-title:has(.hex-founded-year){
+    font-size:clamp(72px,22vw,140px)!important;
+    margin-bottom:16px!important;
+  }
+  .hex-founded-message{
+    margin-bottom:32px!important;
+    font-size:clamp(15px,4vw,18px)!important;
+    line-height:1.7;
+    letter-spacing:.02em;
+  }
 }
 @media screen and (max-width:768px) and (prefers-reduced-motion:reduce){
   :is(p,h3).hex-founded-marquee-line{

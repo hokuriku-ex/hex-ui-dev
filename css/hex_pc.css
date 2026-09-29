@@ -5485,35 +5485,40 @@ html body
     will-change:auto;
   }
 }
-.hex-top-title:has(.hex-founded-year){
-  flex-direction:row;
-  justify-content:center;
-  align-items:baseline;
-  gap:0;
-}
-/* 数字は専用の文字要素だけで描画する */
-.hex-top-title:has(.hex-founded-year)[data-en]::after{
-  content:none!important;
-  display:none!important;
-}
-.hex-founded-year{
-  color:#c8a874;
-  font-family:var(--hex-font-italic);
-  font-size:clamp(6.4rem,8vw,9.6rem);
-  font-weight:400;
+.hex-center-title:has(.hex-founded-year){
+  color:#1f2774!important;
+  font-family:var(--hex-font-italic)!important;
+  font-size:clamp(112px,14vw,240px)!important;
+  font-weight:400!important;
   font-style:italic;
-  line-height:.9;
-  letter-spacing:0;
+  line-height:1!important;
+  letter-spacing:0!important;
+  margin-bottom:24px!important;
+  white-space:nowrap;
+}
+.hex-founded-year,
+.hex-founded-text{
+  color:#1f2774!important;
   -webkit-text-stroke:0;
   text-shadow:none;
 }
 .hex-founded-text{
-  color:#1f2774;
-  margin-left:6px;
+  font-size:.48em;
+  margin-left:.04em;
+  vertical-align:baseline;
 }
 .hex-founded-year,
 .hex-founded-text{
   overflow:hidden;
+}
+.hex-founded-message{
+  margin:0 auto 48px!important;
+  color:#1f2774!important;
+  font-size:clamp(18px,2vw,28px)!important;
+  font-weight:500;
+  line-height:1.8;
+  letter-spacing:.06em;
+  text-align:center;
 }
 .hex-founded-title-char{
   display:inline-block;

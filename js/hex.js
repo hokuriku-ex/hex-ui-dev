@@ -12518,6 +12518,17 @@ hexLoad(function(){
     function setupFoundedMotion(){
       var section=document.getElementById(HOME_SECTIONS.ABOUT);
       var title=section&&section.querySelector('.hex-center-title');
+      var foundedYear=title&&title.querySelector('.hex-founded-year');
+      if(foundedYear){
+        /* 日付の境界は日本時間。1972年10月1日からの満年数を表示する。 */
+        var japanNow=new Date(Date.now()+9*60*60*1000);
+        var years=japanNow.getUTCFullYear()-1972;
+        if(japanNow.getUTCMonth()<9||
+          (japanNow.getUTCMonth()===9&&japanNow.getUTCDate()<1)){
+          years--;
+        }
+        foundedYear.textContent=String(Math.max(0,years));
+      }
       var cardWrap=section&&section.querySelector('.hex-company-card');
       var cards=cardWrap
         ?Array.prototype.slice.call(cardWrap.querySelectorAll('.hex-card'))
@@ -12621,7 +12632,7 @@ hexLoad(function(){
         }
       }
 
-      /* 1972年創業に合わせて左右のCanvasから一度ずつ紙吹雪を放つ。 */
+      /* 周年見出しに合わせて左右のCanvasから一度ずつ紙吹雪を放つ。 */
       if(section&&title&&!isReducedMotion()){
         var confettiLayer=document.createElement('div');
         var leftCanvas=document.createElement('canvas');
