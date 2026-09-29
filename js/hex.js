@@ -12560,11 +12560,13 @@ hexLoad(function(){
             Math.min(80,Math.max(64,viewportWidth*.2)):80;
           var top=Math.max(0,Math.min(viewportHeight,sectionRect.top));
           var bottom=Math.max(0,Math.min(viewportHeight,sectionRect.bottom));
+          /* 境界の端数で写真が1pxだけ残るのを防ぐ。 */
+          var photoBottom=Math.max(top,bottom-3);
           foundedPhoto.style.height=viewportHeight+'px';
           foundedPhoto.style.width=viewportWidth+'px';
-          foundedPhoto.style.visibility=bottom>top?'visible':'hidden';
+          foundedPhoto.style.visibility=photoBottom>top?'visible':'hidden';
           foundedPhoto.style.clipPath='inset('+top+'px 0px '+
-            (viewportHeight-bottom)+'px 0px)';
+            (viewportHeight-photoBottom)+'px 0px)';
 
           /* 写真とコンテンツの両方を最前面の白い枠で覆う。 */
           foundedFrame.style.width=viewportWidth+'px';
@@ -12671,7 +12673,7 @@ hexLoad(function(){
               /* 縦位置はそのまま。横方向は全区間で一定速度にする。 */
               var upperReadableTop=Math.min(height,fullyEnteredTop);
               var endX=Math.min(0,band.clientWidth-line.scrollWidth);
-              var entryInset=foundedStartOffset*1.5;
+              var entryInset=foundedStartOffset*2;
               var x=entryInset+(endX-foundedStartOffset-entryInset)*
                 (fullyEnteredTop-rect.top)/
                 Math.max(fullyEnteredTop-upperReadableTop,1);
