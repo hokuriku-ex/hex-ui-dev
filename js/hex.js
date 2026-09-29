@@ -12561,6 +12561,7 @@ hexLoad(function(){
         syncFoundedPhoto();
       }
       var title=section&&section.querySelector('.hex-center-title');
+      var foundedArc=title&&title.querySelector('.hex-founded-arc');
       var foundedYear=title&&title.querySelector('.hex-founded-year');
       if(foundedYear){
         /* 日付の境界は日本時間。1972年10月1日からの満年数を表示する。 */
@@ -12795,6 +12796,9 @@ hexLoad(function(){
           });
 
         if(chars.length&&!isReducedMotion()){
+          if(foundedArc){
+            gsap.set(foundedArc,{autoAlpha:0,y:12});
+          }
           gsap.set(chars,{
             autoAlpha:0,
             yPercent:100,
@@ -12808,6 +12812,19 @@ hexLoad(function(){
               if(titlePlayed){return;}
               titlePlayed=true;
               titleSequence=gsap.timeline();
+              if(foundedArc){
+                titleSequence.to(foundedArc,{
+                  autoAlpha:1,
+                  y:0,
+                  duration:.6,
+                  ease:'power3.out',
+                  onComplete:function(){
+                    gsap.set(foundedArc,{
+                      clearProps:'transform,opacity,visibility,willChange'
+                    });
+                  }
+                },0);
+              }
               titleSequence.to(chars,{
                 autoAlpha:1,
                 yPercent:0,
@@ -12820,7 +12837,7 @@ hexLoad(function(){
                     clearProps:'transform,opacity,visibility,willChange'
                   });
                 }
-              });
+              },0);
               if(foundedMessage){
                 titleSequence.to(foundedMessage,{
                   autoAlpha:1,
@@ -12853,6 +12870,10 @@ hexLoad(function(){
             autoAlpha:0,yPercent:100,rotation:45,
             transformOrigin:'50% 100%'
           });
+        }
+        if(foundedArc&&!isReducedMotion()){
+          gsap.killTweensOf(foundedArc);
+          gsap.set(foundedArc,{autoAlpha:0,y:12});
         }
         if(foundedMessage&&!isReducedMotion()){
           gsap.killTweensOf(foundedMessage);

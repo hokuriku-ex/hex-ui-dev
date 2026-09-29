@@ -1449,6 +1449,14 @@
     font-size:clamp(72px,22vw,140px)!important;
     margin-bottom:16px!important;
   }
+  .hex-founded-arc{
+    width:clamp(170px,50vw,230px);
+    height:clamp(56px,17vw,70px);
+    margin-bottom:2px;
+  }
+  .hex-founded-arc text{
+    font-size:28px;
+  }
   .hex-founded-message{
     margin-bottom:32px!important;
     font-size:clamp(14px,3.6vw,16px)!important;
