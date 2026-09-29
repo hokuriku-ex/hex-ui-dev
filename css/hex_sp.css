@@ -1483,10 +1483,6 @@
     visibility:visible!important;
     background:var(--hex-founding-bg,#f6f6f3)!important;
   }
-  #gc_auto_frame_home_4:has(.hex-founded-photo)
-  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
-    background:transparent!important;
-  }
   .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
   .gc_auto_frame_spotitem,
   .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)

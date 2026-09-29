@@ -12518,7 +12518,7 @@ hexLoad(function(){
 
     function setupFoundedMotion(){
       var section=document.getElementById(HOME_SECTIONS.ABOUT);
-      /* CMS本文内に置いた画像URL付きレイヤーをセクション全体の背景へ移す。 */
+      /* CMS外の背景レイヤーより前に置き、創業セクションの範囲だけ描画する。 */
       var foundedPhoto=section&&section.querySelector('.hex-founded-photo');
       if(foundedPhoto){
         foundedPhoto.classList.add('hex-motion-auto-off');
@@ -12534,10 +12534,8 @@ hexLoad(function(){
           }
         }
       }
-      if(foundedPhoto&&foundedPhoto.parentNode!==section){
-        section.insertBefore(foundedPhoto,section.firstChild);
-      }
       if(foundedPhoto){
+        document.body.appendChild(foundedPhoto);
         var foundedPhotoFrame=0;
         var syncFoundedPhoto=function(){
           foundedPhotoFrame=0;
@@ -12551,14 +12549,6 @@ hexLoad(function(){
           foundedPhoto.style.visibility=bottom>top?'visible':'hidden';
           foundedPhoto.style.clipPath='inset('+top+'px 0px '+
             (viewportHeight-bottom)+'px 0px)';
-          /* 祖先のtransformがfixedの基準を変える場合も画面に固定する。 */
-          var photoRect=foundedPhoto.getBoundingClientRect();
-          var offsetLeft=parseFloat(foundedPhoto.style.left)||0;
-          var offsetTop=parseFloat(foundedPhoto.style.top)||0;
-          if(Math.abs(photoRect.left)>1||Math.abs(photoRect.top)>1){
-            foundedPhoto.style.left=(offsetLeft-photoRect.left)+'px';
-            foundedPhoto.style.top=(offsetTop-photoRect.top)+'px';
-          }
         };
         var queueFoundedPhoto=function(){
           if(!foundedPhotoFrame){
