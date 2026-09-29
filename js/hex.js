@@ -12530,6 +12530,15 @@ hexLoad(function(){
           line.dataset.hexMotionInitialized='1';
           line.parentNode.insertBefore(band,line);
           band.appendChild(line);
+          var alignFoundedBand=function(){
+            /* セクションの基準幅や左右余白に関係なく画面左端へ揃える。 */
+            band.style.left='0px';
+            band.style.width=document.documentElement.clientWidth+'px';
+            band.style.left=(-band.getBoundingClientRect().left)+'px';
+          };
+          alignFoundedBand();
+          window.addEventListener('resize',alignFoundedBand,{passive:true});
+          document.addEventListener('hex:hero-layout-updated',alignFoundedBand);
           if(!isReducedMotion()){
             var syncFoundedMarquee=function(self){
               var travel=Math.max(0,line.scrollWidth-band.clientWidth);
@@ -12541,7 +12550,10 @@ hexLoad(function(){
               start:'top bottom',
               end:'bottom 35%',
               onUpdate:syncFoundedMarquee,
-              onRefresh:syncFoundedMarquee
+              onRefresh:function(self){
+                alignFoundedBand();
+                syncFoundedMarquee(self);
+              }
             });
           }
         }

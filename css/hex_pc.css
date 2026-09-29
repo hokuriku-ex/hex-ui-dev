@@ -5430,10 +5430,10 @@ html body
 ======================================= */
 .hex-founded-marquee{
   position:relative;
-  left:50%;
+  left:0;
   width:100vw;
   max-width:none;
-  margin:0 0 clamp(44px,5vw,88px) -50vw;
+  margin:0 0 clamp(44px,5vw,88px) 0!important;
   padding:clamp(24px,4vw,60px) 0;
   overflow:hidden;
   box-sizing:border-box;
