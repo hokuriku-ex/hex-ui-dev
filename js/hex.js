@@ -12537,7 +12537,7 @@ hexLoad(function(){
             band.style.width=document.documentElement.clientWidth+'px';
             band.style.left=(-band.getBoundingClientRect().left)+'px';
             var lineStyle=window.getComputedStyle(line);
-            foundedStartOffset=3*Math.max(0,
+            foundedStartOffset=Math.max(0,
               (parseFloat(lineStyle.fontSize)||0)+
               (parseFloat(lineStyle.letterSpacing)||0));
           };
@@ -12546,9 +12546,26 @@ hexLoad(function(){
           document.addEventListener('hex:hero-layout-updated',alignFoundedBand);
           if(!isReducedMotion()){
             var syncFoundedMarquee=function(self){
-              /* 文末が見えた後も止めず、文字全体が左へ抜けるまで動かす。 */
-              var x=foundedStartOffset-
-                (line.scrollWidth+foundedStartOffset)*self.progress;
+              var rect=line.getBoundingClientRect();
+              var height=Math.max(rect.height,1);
+              var viewportHeight=window.innerHeight;
+              var fullyEnteredTop=viewportHeight-height;
+              var endX=Math.min(0,band.clientWidth-line.scrollWidth);
+              var x;
+
+              if(rect.top>=fullyEnteredTop){
+                /* 下端から入る間に1文字分の余白を消し、先頭を左端へ。 */
+                x=foundedStartOffset*Math.min(1,Math.max(0,
+                  (rect.top-fullyEnteredTop)/height));
+              }else if(rect.top>=0){
+                /* 全文が見える間に、末尾が右端に揃うまで送る。 */
+                x=endX*Math.min(1,Math.max(0,
+                  (fullyEnteredTop-rect.top)/Math.max(fullyEnteredTop,1)));
+              }else{
+                /* 上端へ抜ける間も止めず、さらに1文字分だけ左へ。 */
+                x=endX-foundedStartOffset*Math.min(1,Math.max(0,
+                  -rect.top/height));
+              }
               line.style.transform='translate3d('+
                 x+'px,0,0)';
             };
