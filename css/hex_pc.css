@@ -5429,11 +5429,14 @@ html body
    トップページ：私たちについて
 ======================================= */
 .hex-founded-confetti{
-  position:absolute;
-  z-index:5;
+  position:fixed;
+  z-index:2147480000;
+  inset:0;
+  display:none;
   pointer-events:none;
   overflow:hidden;
 }
+.hex-founded-confetti.is-active{display:block;}
 .hex-founded-confetti-canvas{
   position:absolute;
   top:0;

@@ -12631,6 +12631,7 @@ hexLoad(function(){
         var confettiLoading=false;
         var confettiArmed=false;
         var confettiLaunched=false;
+        var confettiBurstId=0;
         var confettiOptions={
           angle:90,
           spread:100,
@@ -12648,29 +12649,12 @@ hexLoad(function(){
         rightCanvas.className='hex-founded-confetti-canvas is-right';
         confettiLayer.appendChild(leftCanvas);
         confettiLayer.appendChild(rightCanvas);
-        if(window.getComputedStyle(section).position==='static'){
-          section.style.position='relative';
-        }
-        section.appendChild(confettiLayer);
-
-        var alignFoundedConfetti=function(){
-          var sectionRect=section.getBoundingClientRect();
-          var titleRect=title.getBoundingClientRect();
-          var height=Math.max(1,window.innerHeight);
-          confettiLayer.style.width=
-            document.documentElement.clientWidth+'px';
-          confettiLayer.style.height=height+'px';
-          confettiLayer.style.left=(-sectionRect.left)+'px';
-          confettiLayer.style.top=(titleRect.top-sectionRect.top+
-            titleRect.height*.5-height*.5)+'px';
-        };
-        alignFoundedConfetti();
-        window.addEventListener('resize',alignFoundedConfetti,{passive:true});
-        document.addEventListener('hex:hero-layout-updated',
-          alignFoundedConfetti);
+        /* CMS内の背景レイヤーに覆われないようbody直下に描画する。 */
+        document.body.appendChild(confettiLayer);
 
         var launchFoundedConfetti=function(){
           if(!confettiArmed||confettiLaunched||!window.confetti){return;}
+          confettiLayer.classList.add('is-active');
           if(!confettiLeft){
             confettiLeft=window.confetti.create(leftCanvas,{
               resize:true,disableForReducedMotion:true
@@ -12679,10 +12663,23 @@ hexLoad(function(){
               resize:true,disableForReducedMotion:true
             });
           }
-          alignFoundedConfetti();
           confettiLaunched=true;
-          confettiLeft(confettiOptions);
-          confettiRight(confettiOptions);
+          var burstId=++confettiBurstId;
+          var titleRect=title.getBoundingClientRect();
+          var originY=Math.min(.9,Math.max(.1,
+            (titleRect.top+titleRect.height*.5)/
+              Math.max(window.innerHeight,1)));
+          var options=Object.assign({},confettiOptions,{
+            origin:{x:.5,y:originY}
+          });
+          Promise.all([
+            confettiLeft(options),
+            confettiRight(options)
+          ]).then(function(){
+            if(burstId===confettiBurstId){
+              confettiLayer.classList.remove('is-active');
+            }
+          });
         };
         var requestFoundedConfetti=function(){
           confettiArmed=true;
@@ -12708,7 +12705,7 @@ hexLoad(function(){
             confettiArmed=false;
             confettiLaunched=false;
           },
-          onRefresh:alignFoundedConfetti
+          invalidateOnRefresh:true
         });
         document.addEventListener('hex:top-returned',function(){
           confettiArmed=false;
