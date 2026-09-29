@@ -12518,6 +12518,18 @@ hexLoad(function(){
 
     function setupFoundedMotion(){
       var section=document.getElementById(HOME_SECTIONS.ABOUT);
+      /* 共通のグレー背景指定が創業フレームだけに重ならないようにする。 */
+      if(section){
+        var backgroundSelector=
+          '.background_color,.backgroundcolor_auto,.backgroundcolor_white';
+        var foundedSurface=section.closest(backgroundSelector);
+        if(foundedSurface){
+          foundedSurface.classList.add('hex-founded-white-surface');
+        }
+        section.querySelectorAll(backgroundSelector).forEach(function(surface){
+          surface.classList.add('hex-founded-white-surface');
+        });
+      }
       /* CMS外の背景レイヤーより前に置き、創業セクションの範囲だけ描画する。 */
       var foundedPhoto=section&&section.querySelector('.hex-founded-photo');
       if(foundedPhoto){

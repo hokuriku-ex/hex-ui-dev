@@ -5432,6 +5432,10 @@ html body
   --hex-founding-bg:#fff;
   background:#fff!important;
 }
+.hex-home-bg-gray .hex-founded-white-surface,
+.hex-founded-white-surface{
+  background:#fff!important;
+}
 #gc_auto_frame_home_4
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
   background:#fff!important;
@@ -5457,7 +5461,7 @@ html body
   object-fit:cover;
   object-position:center center;
   filter:blur(12px);
-  opacity:.32;
+  opacity:.5;
   transform:scale(1.08);
 }
 .hex-founded-confetti{
