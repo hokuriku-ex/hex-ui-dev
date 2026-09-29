@@ -2652,23 +2652,13 @@ hexReady(function(){
       /* 配置は固定し、本文の表示だけをWELCOME内のスクロール量で進める。 */
       var target=welcomeBodyForced?1:(circleDone?scrollProgress:0);
       if(!welcomeBodyChars.length){return;}
-      if(target<.999){welcomeBodyCompleted=false;}
-      if(!circleDone||reduced){
-        window.cancelAnimationFrame(welcomeBodyFrame);
-        welcomeBodyFrame=0;
-        welcomeBodyTarget=target;
-        welcomeBodyProgress=target;
-        if(reduced&&target>=1){welcomeBodyCompleted=true;}
-        renderWelcomeBody(target);
-        return;
-      }
-      if(Math.abs(target-welcomeBodyTarget)<.001){return;}
-      welcomeBodyStart=welcomeBodyProgress;
+      /* 進行方向に関係なく現在のスクロール位置へ即座に同期する。 */
+      window.cancelAnimationFrame(welcomeBodyFrame);
+      welcomeBodyFrame=0;
       welcomeBodyTarget=target;
-      welcomeBodyStartedAt=window.performance.now();
-      if(!welcomeBodyFrame){
-        welcomeBodyFrame=window.requestAnimationFrame(advanceWelcomeBody);
-      }
+      welcomeBodyProgress=target;
+      welcomeBodyCompleted=target>=.999;
+      renderWelcomeBody(target);
     }
 
     function measureWelcome(){
@@ -3255,7 +3245,7 @@ hexReady(function(){
       welcomeWrap.classList.toggle("is-v2-circle-complete",circleProgress>=.999);
       updateWelcomeBody(circleProgress>=.999,clamp(
         (scrollY-welcomeTop+(isSp()?spWelcomeExtraScroll:0))/
-          Math.max(travelMetrics.bodyTravel-(isSp()?0:1),1),0,1
+          Math.max(isSp()?travelMetrics.bodyTravel:travelMetrics.travel,1),0,1
       ));
 
       if((isSp()&&circleProgress>=.999)||
@@ -12565,9 +12555,9 @@ hexLoad(function(){
               var height=Math.max(rect.height,1);
               var viewportHeight=window.innerHeight;
               var fullyEnteredTop=viewportHeight-height;
-              /* 本文演出に近い手応えへ、主な横移動を従来の約6割の縦距離に収める。 */
+              /* 読める余白を保ちながら、主な横移動を短い縦距離で進める。 */
               var upperReadableTop=fullyEnteredTop-
-                Math.max(0,fullyEnteredTop-height)*.6;
+                Math.max(0,fullyEnteredTop-height)*.35;
               var endX=Math.min(0,band.clientWidth-line.scrollWidth);
               var entryInset=foundedStartOffset*1.5;
               var x;
