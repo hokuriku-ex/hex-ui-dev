@@ -9396,3 +9396,17 @@ html.hex-opening-finishing
   text-align:center;
   text-shadow:0 1px 3px rgba(13,23,45,.35);
 }
+
+/* 創業セクション末尾の横スクロール文字：白塗りと紺の縁・影 */
+#gc_auto_frame_home_4 :is(p,h3).hex-founded-marquee-line{
+  color:#fafafa!important;
+  -webkit-text-stroke:2px #1f2774;
+  paint-order:stroke fill;
+  text-shadow:
+    1px 1px 0 #1f2774,
+    2px 2px 0 #1f2774,
+    3px 3px 0 #1f2774,
+    4px 4px 0 #1f2774,
+    5px 5px 0 #1f2774,
+    6px 6px 0 #1f2774;
+}
