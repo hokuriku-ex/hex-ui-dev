@@ -2640,3 +2640,31 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     text-align:center!important;
   }
 }
+
+@media screen and (max-width:768px){
+  /* 写真が見えるよう、カードを包むCMS背景を透明にする。 */
+  #gc_auto_frame_home_4
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
+    background:transparent!important;
+  }
+  #gc_auto_frame_home_4 .hex-company-card{
+    gap:18px;
+  }
+  #gc_auto_frame_home_4 .hex-company-card .hex-card{
+    min-height:clamp(235px,70vw,300px);
+    padding:28px 18%!important;
+  }
+  #gc_auto_frame_home_4 .hex-company-card .hex-title{
+    font-size:clamp(15px,4.3vw,19px)!important;
+  }
+  #gc_auto_frame_home_4 .hex-company-card .hex-number{
+    font-size:clamp(50px,15vw,72px)!important;
+  }
+  #gc_auto_frame_home_4 .hex-company-card .hex-unit{
+    font-size:clamp(14px,4vw,18px)!important;
+  }
+  #gc_auto_frame_home_4 .hex-company-card .hex-card-text{
+    font-size:clamp(13px,3.6vw,16px)!important;
+    line-height:1.5;
+  }
+}
