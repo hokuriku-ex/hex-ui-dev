@@ -5428,6 +5428,14 @@ html body
 /* =======================================
    トップページ：私たちについて
 ======================================= */
+#gc_auto_frame_home_4{
+  --hex-founding-bg:#fff;
+  background:#fff!important;
+}
+#gc_auto_frame_home_4
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
+  background:#fff!important;
+}
 .hex-founded-photo{
   position:fixed;
   top:0;
