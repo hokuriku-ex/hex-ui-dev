@@ -2657,9 +2657,9 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     align-items:center;
     justify-content:center;
     width:100%;
-    min-height:clamp(235px,70vw,300px);
+    min-height:clamp(220px,62vw,255px);
     margin:0 auto;
-    padding:28px 18%!important;
+    padding:18px 18%!important;
   }
   #gc_auto_frame_home_4 .hex-company-card .hex-card-body{
     display:flex;
