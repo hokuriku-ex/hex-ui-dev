@@ -12553,19 +12553,20 @@ hexLoad(function(){
               var upperReadableTop=Math.min(height,
                 Math.max(0,fullyEnteredTop/2));
               var endX=Math.min(0,band.clientWidth-line.scrollWidth);
+              var entryInset=foundedStartOffset*1.5;
               var x;
 
               if(rect.top>=fullyEnteredTop){
-                /* 入る間も動かし、全文が見えた時点で先頭に1文字分の余白。 */
-                x=foundedStartOffset*(1+Math.min(1,Math.max(0,
-                  (rect.top-fullyEnteredTop)/height)));
+                /* 先頭側だけ、全文が見えた時点で1.5文字分の余白。 */
+                x=entryInset+foundedStartOffset*Math.min(1,Math.max(0,
+                  (rect.top-fullyEnteredTop)/height));
               }else if(rect.top>=upperReadableTop){
                 /* 上端の手前で末尾も1文字分内側に置く。 */
                 var middle=Math.min(1,Math.max(0,
                   (fullyEnteredTop-rect.top)/
                   Math.max(fullyEnteredTop-upperReadableTop,1)));
-                x=foundedStartOffset+
-                  (endX-2*foundedStartOffset)*middle;
+                x=entryInset+
+                  (endX-foundedStartOffset-entryInset)*middle;
               }else{
                 /* 上へ抜ける間も、末尾を見せながら左へ進める。 */
                 var leaving=Math.min(1,Math.max(0,
