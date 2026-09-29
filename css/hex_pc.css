@@ -5566,12 +5566,24 @@ html body
 }
 .hex-founded-message{
   margin:0 auto 48px!important;
-  color:#1f2774!important;
+  font-family:var(--hex-font-pop-ja)!important;
+  color:#fafafa!important;
   font-size:clamp(16px,1.6vw,22px)!important;
-  font-weight:500;
+  font-weight:700;
   line-height:1.7;
-  letter-spacing:.06em;
+  letter-spacing:.1em;
   text-align:center;
+  -webkit-text-stroke:.5px #c8a874;
+  paint-order:stroke fill;
+  text-shadow:
+    .5px .5px 0 #c8a874,
+    1px 1px 0 #c8a874,
+    1.5px 1.5px 0 #c8a874,
+    2px 2px 0 #c8a874,
+    2.5px 2.5px 0 #c8a874,
+    3px 3px 0 #c8a874,
+    3.5px 3.5px 0 #c8a874,
+    4px 4px 0 #c8a874;
 }
 .hex-founded-title-char{
   display:inline-block;
