@@ -2649,10 +2649,33 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
   #gc_auto_frame_home_4 .hex-company-card{
     gap:18px;
+    justify-items:center;
   }
   #gc_auto_frame_home_4 .hex-company-card .hex-card{
+    display:flex!important;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    width:100%;
     min-height:clamp(235px,70vw,300px);
+    margin:0 auto;
     padding:28px 18%!important;
+  }
+  #gc_auto_frame_home_4 .hex-company-card .hex-card-body{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    margin:0 auto;
+    text-align:center;
+  }
+  #gc_auto_frame_home_4 .hex-company-card .hex-card-head,
+  #gc_auto_frame_home_4 .hex-company-card .hex-card-title,
+  #gc_auto_frame_home_4 .hex-company-card .hex-card-text{
+    margin-right:auto!important;
+    margin-left:auto!important;
+    text-align:center;
   }
   #gc_auto_frame_home_4 .hex-company-card .hex-title{
     font-size:clamp(15px,4.3vw,19px)!important;
