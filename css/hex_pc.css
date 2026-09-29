@@ -9319,6 +9319,19 @@ html.hex-opening-finishing
   .hex-follow-cursor{display:none!important;}
 }
 
+/* 写真とテキストの上に置く、角丸の窓を持つ白いフレーム */
+#gc_auto_frame_home_4 > .hex-founded-frame{
+  position:fixed!important;
+  top:0;
+  left:0;
+  z-index:3!important;
+  display:block;
+  width:100vw;
+  height:100vh;
+  overflow:visible;
+  pointer-events:none;
+}
+
 /* 創業セクションの6枚のカード：月桂樹と3段の情報配置 */
 #gc_auto_frame_home_4 .hex-company-card{
   gap:clamp(16px,2.2vw,32px) clamp(8px,1.4vw,20px);

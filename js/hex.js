@@ -12536,6 +12536,16 @@ hexLoad(function(){
       }
       if(foundedPhoto){
         section.insertBefore(foundedPhoto,section.firstChild);
+        var foundedFrame=document.createElementNS(
+          'http://www.w3.org/2000/svg','svg');
+        foundedFrame.setAttribute('class','hex-founded-frame hex-motion-auto-off');
+        foundedFrame.setAttribute('aria-hidden','true');
+        var foundedFramePath=document.createElementNS(
+          'http://www.w3.org/2000/svg','path');
+        foundedFramePath.setAttribute('fill','#fff');
+        foundedFramePath.setAttribute('fill-rule','evenodd');
+        foundedFrame.appendChild(foundedFramePath);
+        foundedPhoto.insertAdjacentElement('afterend',foundedFrame);
         var foundedPhotoFrame=0;
         var syncFoundedPhoto=function(){
           foundedPhotoFrame=0;
@@ -12543,23 +12553,40 @@ hexLoad(function(){
           var viewportHeight=window.innerHeight;
           var viewportWidth=document.documentElement.clientWidth;
           var mobile=viewportWidth<=768;
-          /* 固定写真を白い余白の内側に切り抜き、角丸を常時維持する。 */
           var inset=mobile?16:Math.min(36,Math.max(24,viewportWidth*.016));
           var radius=mobile?Math.min(32,viewportWidth*.08):
             Math.min(72,Math.max(40,viewportWidth*.04));
           var headerBottom=mobile?
             Math.min(80,Math.max(64,viewportWidth*.2)):80;
-          var top=Math.max(headerBottom+inset,sectionRect.top+inset);
-          var bottom=Math.min(viewportHeight-inset,sectionRect.bottom-inset);
-          var left=Math.max(inset,sectionRect.left+inset);
-          var right=Math.min(viewportWidth-inset,sectionRect.right-inset);
+          var top=Math.max(0,Math.min(viewportHeight,sectionRect.top));
+          var bottom=Math.max(0,Math.min(viewportHeight,sectionRect.bottom));
           foundedPhoto.style.height=viewportHeight+'px';
           foundedPhoto.style.width=viewportWidth+'px';
-          foundedPhoto.style.visibility=
-            bottom>top&&right>left?'visible':'hidden';
-          foundedPhoto.style.clipPath='inset('+top+'px '+
-            (viewportWidth-right)+'px '+
-            (viewportHeight-bottom)+'px '+left+'px round '+radius+'px)';
+          foundedPhoto.style.visibility=bottom>top?'visible':'hidden';
+          foundedPhoto.style.clipPath='inset('+top+'px 0px '+
+            (viewportHeight-bottom)+'px 0px)';
+
+          /* 写真とコンテンツの両方を最前面の白い枠で覆う。 */
+          foundedFrame.style.width=viewportWidth+'px';
+          foundedFrame.style.height=viewportHeight+'px';
+          foundedFrame.style.visibility=bottom>top?'visible':'hidden';
+          foundedFrame.setAttribute('viewBox',
+            '0 0 '+viewportWidth+' '+viewportHeight);
+          var left=Math.max(inset,sectionRect.left+inset);
+          var right=Math.min(viewportWidth-inset,sectionRect.right-inset);
+          var holeTop=Math.max(headerBottom+inset,sectionRect.top+inset);
+          var holeBottom=Math.min(viewportHeight-inset,sectionRect.bottom-inset);
+          var path='M0 '+top+' H'+viewportWidth+
+            ' V'+bottom+' H0 Z';
+          if(right>left&&holeBottom>holeTop){
+            var r=Math.min(radius,(right-left)/2,(holeBottom-holeTop)/2);
+            path+=' M'+(left+r)+' '+holeTop+
+              ' H'+(right-r)+' Q'+right+' '+holeTop+' '+right+' '+(holeTop+r)+
+              ' V'+(holeBottom-r)+' Q'+right+' '+holeBottom+' '+(right-r)+' '+holeBottom+
+              ' H'+(left+r)+' Q'+left+' '+holeBottom+' '+left+' '+(holeBottom-r)+
+              ' V'+(holeTop+r)+' Q'+left+' '+holeTop+' '+(left+r)+' '+holeTop+' Z';
+          }
+          foundedFramePath.setAttribute('d',path);
         };
         var queueFoundedPhoto=function(){
           if(!foundedPhotoFrame){
