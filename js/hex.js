@@ -12522,9 +12522,53 @@ hexLoad(function(){
       var foundedPhoto=section&&section.querySelector('.hex-founded-photo');
       if(foundedPhoto){
         foundedPhoto.classList.add('hex-motion-auto-off');
+        var foundedPhotoImage=foundedPhoto.querySelector('img');
+        if(foundedPhotoImage){
+          /* CMSがsrc末尾に挿入した改行タグを除く。 */
+          var rawPhotoUrl=foundedPhotoImage.getAttribute('src')||'';
+          var cleanPhotoUrl=rawPhotoUrl.replace(
+            /(?:<br\s*\/?>|%3Cbr(?:%20)*\/?%3E)\s*$/i,''
+          );
+          if(cleanPhotoUrl!==rawPhotoUrl){
+            foundedPhotoImage.setAttribute('src',cleanPhotoUrl);
+          }
+        }
       }
       if(foundedPhoto&&foundedPhoto.parentNode!==section){
         section.insertBefore(foundedPhoto,section.firstChild);
+      }
+      if(foundedPhoto){
+        var foundedPhotoFrame=0;
+        var syncFoundedPhoto=function(){
+          foundedPhotoFrame=0;
+          var sectionRect=section.getBoundingClientRect();
+          var viewportHeight=window.innerHeight;
+          var top=Math.max(0,Math.min(viewportHeight,sectionRect.top));
+          var bottom=Math.max(0,Math.min(viewportHeight,sectionRect.bottom));
+          foundedPhoto.style.height=viewportHeight+'px';
+          foundedPhoto.style.width=
+            document.documentElement.clientWidth+'px';
+          foundedPhoto.style.visibility=bottom>top?'visible':'hidden';
+          foundedPhoto.style.clipPath='inset('+top+'px 0px '+
+            (viewportHeight-bottom)+'px 0px)';
+          /* 祖先のtransformがfixedの基準を変える場合も画面に固定する。 */
+          var photoRect=foundedPhoto.getBoundingClientRect();
+          var offsetLeft=parseFloat(foundedPhoto.style.left)||0;
+          var offsetTop=parseFloat(foundedPhoto.style.top)||0;
+          if(Math.abs(photoRect.left)>1||Math.abs(photoRect.top)>1){
+            foundedPhoto.style.left=(offsetLeft-photoRect.left)+'px';
+            foundedPhoto.style.top=(offsetTop-photoRect.top)+'px';
+          }
+        };
+        var queueFoundedPhoto=function(){
+          if(!foundedPhotoFrame){
+            foundedPhotoFrame=window.requestAnimationFrame(syncFoundedPhoto);
+          }
+        };
+        window.addEventListener('scroll',queueFoundedPhoto,{passive:true});
+        window.addEventListener('resize',queueFoundedPhoto,{passive:true});
+        document.addEventListener('hex:hero-layout-updated',queueFoundedPhoto);
+        syncFoundedPhoto();
       }
       var title=section&&section.querySelector('.hex-center-title');
       var foundedYear=title&&title.querySelector('.hex-founded-year');
