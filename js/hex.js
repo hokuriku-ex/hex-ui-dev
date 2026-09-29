@@ -12537,7 +12537,7 @@ hexLoad(function(){
             band.style.width=document.documentElement.clientWidth+'px';
             band.style.left=(-band.getBoundingClientRect().left)+'px';
             var lineStyle=window.getComputedStyle(line);
-            foundedStartOffset=2*Math.max(0,
+            foundedStartOffset=3*Math.max(0,
               (parseFloat(lineStyle.fontSize)||0)+
               (parseFloat(lineStyle.letterSpacing)||0));
           };
@@ -12546,16 +12546,16 @@ hexLoad(function(){
           document.addEventListener('hex:hero-layout-updated',alignFoundedBand);
           if(!isReducedMotion()){
             var syncFoundedMarquee=function(self){
-              var travel=Math.max(0,line.scrollWidth-band.clientWidth);
+              /* 文末が見えた後も止めず、文字全体が左へ抜けるまで動かす。 */
               var x=foundedStartOffset-
-                (travel+foundedStartOffset)*self.progress;
+                (line.scrollWidth+foundedStartOffset)*self.progress;
               line.style.transform='translate3d('+
                 x+'px,0,0)';
             };
             ScrollTrigger.create({
               trigger:line,
               start:'top bottom',
-              end:'bottom 35%',
+              end:'bottom top',
               onUpdate:syncFoundedMarquee,
               onRefresh:function(self){
                 alignFoundedBand();
