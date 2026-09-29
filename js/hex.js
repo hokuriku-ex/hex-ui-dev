@@ -12530,11 +12530,16 @@ hexLoad(function(){
           line.dataset.hexMotionInitialized='1';
           line.parentNode.insertBefore(band,line);
           band.appendChild(line);
+          var foundedStartOffset=0;
           var alignFoundedBand=function(){
             /* セクションの基準幅や左右余白に関係なく画面左端へ揃える。 */
             band.style.left='0px';
             band.style.width=document.documentElement.clientWidth+'px';
             band.style.left=(-band.getBoundingClientRect().left)+'px';
+            var lineStyle=window.getComputedStyle(line);
+            foundedStartOffset=Math.max(0,
+              (parseFloat(lineStyle.fontSize)||0)+
+              (parseFloat(lineStyle.letterSpacing)||0));
           };
           alignFoundedBand();
           window.addEventListener('resize',alignFoundedBand,{passive:true});
@@ -12542,8 +12547,10 @@ hexLoad(function(){
           if(!isReducedMotion()){
             var syncFoundedMarquee=function(self){
               var travel=Math.max(0,line.scrollWidth-band.clientWidth);
+              var x=foundedStartOffset-
+                (travel+foundedStartOffset)*self.progress;
               line.style.transform='translate3d('+
-                (-travel*self.progress)+'px,0,0)';
+                x+'px,0,0)';
             };
             ScrollTrigger.create({
               trigger:line,
