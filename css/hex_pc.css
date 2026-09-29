@@ -5499,7 +5499,7 @@ html body
   width:100vw;
   max-width:none;
   margin:0 0 clamp(44px,5vw,88px) 0!important;
-  padding:clamp(24px,4vw,60px) 0;
+  padding:clamp(24px,4vw,60px) 0 0;
   overflow:hidden;
   box-sizing:border-box;
   pointer-events:none;
@@ -5530,11 +5530,11 @@ html body
   }
 }
 .hex-center-title:has(.hex-founded-year){
-  color:#1f2774!important;
-  font-family:var(--hex-font-italic)!important;
+  color:#fafafa!important;
+  font-family:var(--hex-font-pop-en)!important;
   font-size:clamp(112px,14vw,240px)!important;
   font-weight:400!important;
-  font-style:italic;
+  font-style:normal;
   line-height:1!important;
   letter-spacing:0!important;
   margin-bottom:24px!important;
@@ -5542,9 +5542,18 @@ html body
 }
 .hex-founded-year,
 .hex-founded-text{
-  color:#1f2774!important;
-  -webkit-text-stroke:0;
-  text-shadow:none;
+  color:#fafafa!important;
+  -webkit-text-stroke:2px #1f2774;
+  paint-order:stroke fill;
+  text-shadow:
+    1px 1px 0 #1f2774,
+    2px 2px 0 #1f2774,
+    3px 3px 0 #1f2774,
+    4px 4px 0 #1f2774,
+    5px 5px 0 #1f2774,
+    6px 6px 0 #1f2774,
+    7px 7px 0 #1f2774,
+    8px 8px 0 #1f2774;
 }
 .hex-founded-text{
   font-size:.48em;
