@@ -1434,6 +1434,9 @@
    トップページ：ウェルカム→私たちについて切り替え
 ======================================= */
 @media screen and (max-width:768px){
+  .hex-founded-photo img{
+    object-position:52% center;
+  }
   .hex-founded-marquee{
     margin-bottom:32px;
     padding:28px 0;
@@ -1479,6 +1482,10 @@
     opacity:1!important;
     visibility:visible!important;
     background:var(--hex-founding-bg,#f6f6f3)!important;
+  }
+  #gc_auto_frame_home_4:has(.hex-founded-photo)
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
+    background:transparent!important;
   }
   .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card)
   .gc_auto_frame_spotitem,

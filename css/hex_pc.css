@@ -5428,6 +5428,36 @@ html body
 /* =======================================
    トップページ：私たちについて
 ======================================= */
+#gc_auto_frame_home_4:has(.hex-founded-photo){
+  position:relative;
+  isolation:isolate;
+  background:var(--hex-founding-bg,#f6f6f3)!important;
+}
+#gc_auto_frame_home_4:has(.hex-founded-photo)
+.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
+  background:transparent!important;
+}
+#gc_auto_frame_home_4 > .hex-founded-photo{
+  position:absolute;
+  top:0;
+  left:50%;
+  width:100vw;
+  height:100%;
+  z-index:-1;
+  overflow:hidden;
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+.hex-founded-photo img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center center;
+  filter:blur(18px);
+  opacity:.18;
+  transform:scale(1.08);
+}
 .hex-founded-confetti{
   position:fixed;
   z-index:2147480000;

@@ -12518,6 +12518,11 @@ hexLoad(function(){
 
     function setupFoundedMotion(){
       var section=document.getElementById(HOME_SECTIONS.ABOUT);
+      /* CMS本文内に置いた画像URL付きレイヤーをセクション全体の背景へ移す。 */
+      var foundedPhoto=section&&section.querySelector('.hex-founded-photo');
+      if(foundedPhoto&&foundedPhoto.parentNode!==section){
+        section.insertBefore(foundedPhoto,section.firstChild);
+      }
       var title=section&&section.querySelector('.hex-center-title');
       var foundedYear=title&&title.querySelector('.hex-founded-year');
       if(foundedYear){
