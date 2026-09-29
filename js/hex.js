@@ -12797,7 +12797,7 @@ hexLoad(function(){
 
         if(chars.length&&!isReducedMotion()){
           if(foundedArc){
-            gsap.set(foundedArc,{autoAlpha:0,y:12});
+            gsap.set(foundedArc,{autoAlpha:0,y:16,scale:.9});
           }
           gsap.set(chars,{
             autoAlpha:0,
@@ -12812,19 +12812,6 @@ hexLoad(function(){
               if(titlePlayed){return;}
               titlePlayed=true;
               titleSequence=gsap.timeline();
-              if(foundedArc){
-                titleSequence.to(foundedArc,{
-                  autoAlpha:1,
-                  y:0,
-                  duration:.6,
-                  ease:'power3.out',
-                  onComplete:function(){
-                    gsap.set(foundedArc,{
-                      clearProps:'transform,opacity,visibility,willChange'
-                    });
-                  }
-                },0);
-              }
               titleSequence.to(chars,{
                 autoAlpha:1,
                 yPercent:0,
@@ -12838,6 +12825,20 @@ hexLoad(function(){
                   });
                 }
               },0);
+              if(foundedArc){
+                titleSequence.to(foundedArc,{
+                  autoAlpha:1,
+                  y:0,
+                  scale:1,
+                  duration:.55,
+                  ease:'back.out(2.3)',
+                  onComplete:function(){
+                    gsap.set(foundedArc,{
+                      clearProps:'transform,opacity,visibility,willChange'
+                    });
+                  }
+                },'+=.18');
+              }
               if(foundedMessage){
                 titleSequence.to(foundedMessage,{
                   autoAlpha:1,
@@ -12850,7 +12851,7 @@ hexLoad(function(){
                       clearProps:'transform,opacity,visibility,willChange'
                     });
                   }
-                },'+=.18');
+                },foundedArc?'<':'+=.18');
               }
             }
           });
@@ -12873,7 +12874,7 @@ hexLoad(function(){
         }
         if(foundedArc&&!isReducedMotion()){
           gsap.killTweensOf(foundedArc);
-          gsap.set(foundedArc,{autoAlpha:0,y:12});
+          gsap.set(foundedArc,{autoAlpha:0,y:16,scale:.9});
         }
         if(foundedMessage&&!isReducedMotion()){
           gsap.killTweensOf(foundedMessage);
