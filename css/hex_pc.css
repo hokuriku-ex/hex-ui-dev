@@ -5443,10 +5443,19 @@ html body
   left:50%;
   width:100vw;
   height:100%;
-  z-index:-1;
+  z-index:1;
   overflow:hidden;
   transform:translateX(-50%);
   pointer-events:none;
+}
+#gc_auto_frame_home_4 :is(
+  .hex-center-title,
+  .hex-founded-message,
+  .hex-founded-marquee,
+  .hex-company-card
+){
+  position:relative;
+  z-index:2;
 }
 .hex-founded-photo img{
   display:block;

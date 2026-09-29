@@ -12520,6 +12520,9 @@ hexLoad(function(){
       var section=document.getElementById(HOME_SECTIONS.ABOUT);
       /* CMS本文内に置いた画像URL付きレイヤーをセクション全体の背景へ移す。 */
       var foundedPhoto=section&&section.querySelector('.hex-founded-photo');
+      if(foundedPhoto){
+        foundedPhoto.classList.add('hex-motion-auto-off');
+      }
       if(foundedPhoto&&foundedPhoto.parentNode!==section){
         section.insertBefore(foundedPhoto,section.firstChild);
       }
