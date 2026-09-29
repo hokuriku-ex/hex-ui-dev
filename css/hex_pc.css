@@ -5514,9 +5514,9 @@ html body
 .hex-founded-message{
   margin:0 auto 48px!important;
   color:#1f2774!important;
-  font-size:clamp(18px,2vw,28px)!important;
+  font-size:clamp(16px,1.6vw,22px)!important;
   font-weight:500;
-  line-height:1.8;
+  line-height:1.7;
   letter-spacing:.06em;
   text-align:center;
 }
