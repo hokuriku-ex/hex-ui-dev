@@ -2640,30 +2640,3 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     text-align:center!important;
   }
 }
-
-@media screen and (max-width:768px){
-  .hex-founded-emblem{
-    width:min(100%,540px);
-    min-height:clamp(205px,68vw,320px);
-    margin-bottom:32px;
-    padding:26px 18%;
-  }
-  .hex-founded-emblem .hex-center-title:has(.hex-founded-year){
-    font-size:clamp(43px,12vw,82px)!important;
-    margin:0!important;
-  }
-  .hex-founded-emblem .hex-founded-arc{
-    width:auto;
-    height:auto;
-    margin-bottom:5px;
-    font-size:clamp(15px,4.2vw,26px);
-  }
-  .hex-founded-emblem .hex-founded-text{
-    font-size:.33em;
-  }
-  .hex-founded-emblem .hex-founded-message{
-    margin-top:6px!important;
-    margin-bottom:0!important;
-    font-size:clamp(17px,4.7vw,28px)!important;
-  }
-}
