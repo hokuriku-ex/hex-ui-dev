@@ -1922,9 +1922,6 @@ hexReady(function(){
     var hexStyle=hexView.dataset.style||'light';
     var hexWidth=hexView.dataset.width||'100%';
     var hexAlign=hexView.dataset.align||'center';
-    var hexCompanyRound=!!(hexView.closest('.hex-company-buttons')&&
-      hexStyle==='dark'&&
-      (hexView.dataset.shortname==='gccat1'||hexView.dataset.shortname==='gccat2'));
     var hexWrap=document.createElement('div');
     var hexAnchor=document.createElement('a');
     var hexTitleSpan=document.createElement('span');
@@ -1933,10 +1930,8 @@ hexReady(function(){
     if(!hexTitle)return;
     if(!hexUrl)return;
     hexWrap.className='hex-button-wrap hex-align-'+hexAlign;
-    if(hexCompanyRound){hexWrap.classList.add('hex-company-round-wrap');}
     hexWrap.style.width=hexWidth;
     hexAnchor.className='hex-btn-main '+hexStyle;
-    if(hexCompanyRound){hexAnchor.classList.add('hex-company-round');}
     hexAnchor.href=hexUrl;
     window.hexSetExternal(hexAnchor,hexType);
     hexTitleSpan.className='hex-btn-main-title';
@@ -1946,19 +1941,6 @@ hexReady(function(){
     hexIconSpan.appendChild(hexIcon);
     hexAnchor.appendChild(hexTitleSpan);
     hexAnchor.appendChild(hexIconSpan);
-    /* 初めての方へ：HTML の data-image で丸ボタンの写真を指定 */
-    if(hexCompanyRound&&hexView.dataset.image){
-      var hexPhoto=document.createElement('span');
-      var hexPhotoImg=document.createElement('img');
-      hexPhoto.className='hex-company-button-photo';
-      hexPhoto.setAttribute('aria-hidden','true');
-      hexPhotoImg.src=hexView.dataset.image;
-      hexPhotoImg.alt='';
-      hexPhotoImg.loading='lazy';
-      hexPhotoImg.decoding='async';
-      hexPhoto.appendChild(hexPhotoImg);
-      hexAnchor.insertBefore(hexPhoto,hexTitleSpan);
-    }
     hexWrap.appendChild(hexAnchor);
     hexView.parentNode.insertBefore(hexWrap,hexView);
     hexView.style.display='none';
