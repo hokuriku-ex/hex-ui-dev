@@ -12554,6 +12554,11 @@ hexLoad(function(){
           var viewportWidth=document.documentElement.clientWidth;
           var mobile=viewportWidth<=768;
           var inset=mobile?16:Math.min(36,Math.max(24,viewportWidth*.016));
+          /* 左右は現状の余白を下限に、写真の見える幅を1600pxまでにする。 */
+          var sideInset=Math.max(inset,(viewportWidth-1600)/2);
+          var windowWidth=Math.max(1,viewportWidth-sideInset*2);
+          section.style.setProperty('--hex-founded-content-width',
+            Math.max(1,windowWidth-(mobile?32:Math.min(96,windowWidth*.06)))+'px');
           var radius=mobile?Math.min(32,viewportWidth*.08):
             Math.min(72,Math.max(40,viewportWidth*.04));
           var headerBottom=mobile?
@@ -12563,7 +12568,9 @@ hexLoad(function(){
           /* 境界の端数で写真が1pxだけ残るのを防ぐ。 */
           var photoBottom=Math.max(top,bottom-3);
           foundedPhoto.style.height=viewportHeight+'px';
-          foundedPhoto.style.width=viewportWidth+'px';
+          var photoWidth=Math.min(viewportWidth,1600);
+          foundedPhoto.style.width=photoWidth+'px';
+          foundedPhoto.style.left=((viewportWidth-photoWidth)/2)+'px';
           foundedPhoto.style.visibility=photoBottom>top?'visible':'hidden';
           foundedPhoto.style.clipPath='inset('+top+'px 0px '+
             (viewportHeight-photoBottom)+'px 0px)';
@@ -12574,8 +12581,8 @@ hexLoad(function(){
           foundedFrame.style.visibility=bottom>top?'visible':'hidden';
           foundedFrame.setAttribute('viewBox',
             '0 0 '+viewportWidth+' '+viewportHeight);
-          var left=Math.max(inset,sectionRect.left+inset);
-          var right=Math.min(viewportWidth-inset,sectionRect.right-inset);
+          var left=Math.max(sideInset,sectionRect.left+inset);
+          var right=Math.min(viewportWidth-sideInset,sectionRect.right-inset);
           var holeTop=Math.max(headerBottom+inset,sectionRect.top+inset);
           var holeBottom=Math.min(viewportHeight-inset,sectionRect.bottom-inset);
           var path='M0 '+top+' H'+viewportWidth+
@@ -12652,10 +12659,13 @@ hexLoad(function(){
           band.appendChild(line);
           var foundedStartOffset=0;
           var alignFoundedBand=function(){
-            /* セクションの基準幅や左右余白に関係なく画面左端へ揃える。 */
+            /* 横スクロールも白いフレームの窓幅に合わせる。 */
+            var width=document.documentElement.clientWidth;
+            var edge=width<=768?16:Math.min(36,Math.max(24,width*.016));
+            var side=Math.max(edge,(width-1600)/2);
             band.style.left='0px';
-            band.style.width=document.documentElement.clientWidth+'px';
-            band.style.left=(-band.getBoundingClientRect().left)+'px';
+            band.style.width=Math.max(1,width-side*2)+'px';
+            band.style.left=(side-band.getBoundingClientRect().left)+'px';
             var lineStyle=window.getComputedStyle(line);
             foundedStartOffset=Math.max(0,
               (parseFloat(lineStyle.fontSize)||0)+
@@ -12773,7 +12783,14 @@ hexLoad(function(){
           var originY=Math.min(.9,Math.max(.1,
             (titleRect.top+titleRect.height*.5)/
               Math.max(window.innerHeight,1)));
+          /* 1600pxを基準に、紙のサイズ・枚数・飛距離を画面幅へ連動。 */
+          var widthRatio=Math.max(.25,Math.min(1.3,
+            document.documentElement.clientWidth/1600));
           var options=Object.assign({},confettiOptions,{
+            scalar:confettiOptions.scalar*Math.max(.7,Math.sqrt(widthRatio)),
+            particleCount:Math.round(confettiOptions.particleCount*
+              Math.max(.4,widthRatio)),
+            startVelocity:confettiOptions.startVelocity*Math.sqrt(widthRatio),
             origin:{x:.5,y:originY}
           });
           Promise.all([

@@ -5496,10 +5496,10 @@ html body
 .hex-founded-marquee{
   position:relative;
   left:0;
-  width:100vw;
+  width:calc(var(--hex-founded-vw, 1vw) * 100);
   max-width:none;
-  margin:0 0 clamp(44px,5vw,88px) 0!important;
-  padding:clamp(24px,4vw,60px) 0 0;
+  margin:0 0 clamp(44px,calc(var(--hex-founded-vw, 1vw) * 5),88px) 0!important;
+  padding:clamp(24px,calc(var(--hex-founded-vw, 1vw) * 4),60px) 0 0;
   overflow:hidden;
   box-sizing:border-box;
   pointer-events:none;
@@ -5514,7 +5514,7 @@ html body
   text-align:left!important;
   color:#1f2774;
   font-family:var(--hex-font-gothic)!important;
-  font-size:clamp(64px,6.5vw,104px)!important;
+  font-size:clamp(64px,calc(var(--hex-founded-vw, 1vw) * 6.5),104px)!important;
   font-weight:700;
   line-height:1.18;
   letter-spacing:.035em;
@@ -5525,14 +5525,14 @@ html body
     width:auto!important;
     padding:0 16px!important;
     white-space:normal;
-    font-size:clamp(32px,5vw,64px)!important;
+    font-size:clamp(32px,calc(var(--hex-founded-vw, 1vw) * 5),64px)!important;
     will-change:auto;
   }
 }
 .hex-center-title:has(.hex-founded-year){
   color:#fafafa!important;
   font-family:var(--hex-font-pop-en)!important;
-  font-size:clamp(112px,14vw,240px)!important;
+  font-size:clamp(112px,calc(var(--hex-founded-vw, 1vw) * 14),240px)!important;
   font-weight:400!important;
   font-style:normal;
   line-height:1!important;
@@ -5543,8 +5543,8 @@ html body
 .hex-founded-arc{
   display:block;
   position:relative;
-  width:clamp(180px,20vw,300px);
-  height:clamp(56px,6vw,88px);
+  width:clamp(180px,calc(var(--hex-founded-vw, 1vw) * 20),300px);
+  height:clamp(56px,calc(var(--hex-founded-vw, 1vw) * 6),88px);
   margin:0 auto 4px;
   white-space:normal;
 }
@@ -5608,7 +5608,7 @@ html body
   margin:0 auto 48px!important;
   font-family:var(--hex-font-pop-ja)!important;
   color:#fafafa!important;
-  font-size:clamp(16px,1.6vw,22px)!important;
+  font-size:clamp(16px,calc(var(--hex-founded-vw, 1vw) * 1.6),22px)!important;
   font-weight:700;
   line-height:1.7;
   letter-spacing:.1em;
@@ -9334,12 +9334,12 @@ html.hex-opening-finishing
 
 /* 創業セクションの6枚のカード：月桂樹と3段の情報配置 */
 #gc_auto_frame_home_4 .hex-company-card{
-  gap:clamp(16px,2.2vw,32px) clamp(8px,1.4vw,20px);
+  gap:clamp(16px,calc(var(--hex-founded-vw, 1vw) * 2.2),32px) clamp(8px,calc(var(--hex-founded-vw, 1vw) * 1.4),20px);
 }
 #gc_auto_frame_home_4 .hex-company-card .hex-card{
   min-width:0;
-  min-height:clamp(235px,20vw,275px);
-  padding:clamp(16px,2vw,26px) 18%!important;
+  min-height:clamp(235px,calc(var(--hex-founded-vw, 1vw) * 20),275px);
+  padding:clamp(16px,calc(var(--hex-founded-vw, 1vw) * 2),26px) 18%!important;
   align-items:center;
   justify-content:center;
   border:0!important;
@@ -9368,7 +9368,7 @@ html.hex-opening-finishing
   justify-content:center;
   align-items:baseline;
   column-gap:.14em;
-  row-gap:clamp(7px,1vw,13px);
+  row-gap:clamp(7px,calc(var(--hex-founded-vw, 1vw) * 1),13px);
   width:100%;
   margin:0!important;
   text-align:center;
@@ -9377,7 +9377,7 @@ html.hex-opening-finishing
   grid-column:1 / -1;
   align-self:center;
   color:#fff!important;
-  font-size:clamp(15px,1.35vw,19px)!important;
+  font-size:clamp(15px,calc(var(--hex-founded-vw, 1vw) * 1.35),19px)!important;
   line-height:1.35;
   letter-spacing:.04em;
 }
@@ -9385,7 +9385,7 @@ html.hex-opening-finishing
   grid-column:1;
   justify-self:end;
   color:#E8D575!important;
-  font-size:clamp(52px,5.3vw,76px)!important;
+  font-size:clamp(52px,calc(var(--hex-founded-vw, 1vw) * 5.3),76px)!important;
   line-height:.9;
   white-space:nowrap;
 }
@@ -9395,15 +9395,15 @@ html.hex-opening-finishing
   justify-self:start;
   margin:0 0 .12em!important;
   color:#fff!important;
-  font-size:clamp(14px,1.25vw,18px)!important;
+  font-size:clamp(14px,calc(var(--hex-founded-vw, 1vw) * 1.25),18px)!important;
   line-height:1.2;
   white-space:nowrap;
 }
 #gc_auto_frame_home_4 .hex-company-card .hex-card-text{
   width:100%;
-  margin:clamp(9px,1.2vw,16px) 0 0!important;
+  margin:clamp(9px,calc(var(--hex-founded-vw, 1vw) * 1.2),16px) 0 0!important;
   color:#fff!important;
-  font-size:clamp(13px,1.1vw,16px)!important;
+  font-size:clamp(13px,calc(var(--hex-founded-vw, 1vw) * 1.1),16px)!important;
   line-height:1.55;
   letter-spacing:.025em;
   text-align:center;
@@ -9422,4 +9422,22 @@ html.hex-opening-finishing
     4px 4px 0 #1f2774,
     5px 5px 0 #1f2774,
     6px 6px 0 #1f2774;
+}
+
+/* 創業セクション：最大1600pxの写真と、その内側のコンテンツ */
+#gc_auto_frame_home_4{
+  --hex-founded-vw:min(1vw,16px);
+  --hex-founded-content-width:calc(min(100vw - 48px,1600px) - 96px);
+}
+#gc_auto_frame_home_4 .gc_auto_frame_spotitem_basewidth{
+  width:100%!important;
+  min-width:0!important;
+  max-width:var(--hex-founded-content-width)!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+  box-sizing:border-box;
+}
+#gc_auto_frame_home_4 .hex-founded-message{
+  max-width:100%;
+  overflow-wrap:anywhere;
 }
