@@ -13581,30 +13581,14 @@ hexReady(function(){
         speed:Math.min(200,Math.max(20,Number(entry.getAttribute('data-speed'))||
           defaultSpeeds[index]))});
     });
-    var button=document.createElement('button');
-    button.type='button';
-    button.className='hex-hashtag-pause';
-    button.textContent='一時停止';
-    button.setAttribute('aria-label','流れる文字を一時停止');
-    button.setAttribute('aria-pressed','false');
-    stage.appendChild(button);
     /* CMSの項目番号は増やさず、既存セクション同士の間へ移動する。 */
     about.parentNode.insertBefore(stage,about);
     source.hidden=true;
-    var userPaused=false;
     var inView=false;
     var reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
     function syncPause(){
-      stage.classList.toggle('is-paused',userPaused||!inView||document.hidden||reduced.matches);
-      button.hidden=reduced.matches;
+      stage.classList.toggle('is-paused',!inView||document.hidden||reduced.matches);
     }
-    button.addEventListener('click',function(){
-      userPaused=!userPaused;
-      button.textContent=userPaused?'再生':'一時停止';
-      button.setAttribute('aria-label',userPaused?'流れる文字を再生':'流れる文字を一時停止');
-      button.setAttribute('aria-pressed',String(userPaused));
-      syncPause();
-    });
     var lastWidth=0;
     function rebuild(force){
       var width=stage.clientWidth;
