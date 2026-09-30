@@ -9544,13 +9544,20 @@ html.hex-opening-finishing
   opacity:0;
   visibility:hidden;
   pointer-events:none;
-  transition:opacity .25s ease,visibility .25s ease;
+  transform:translateY(48px);
+  transition:transform .2s ease,opacity .2s ease,visibility .2s ease;
 }
 .hex-welcome-wrap .hex-welcome-body-button.is-body-complete{
   opacity:1;
   visibility:visible;
   pointer-events:auto;
+  transform:translateY(0);
+  transition:transform .6s linear(0,0.21941,0.40883,0.57028,0.7058,0.81741,0.90713,0.977,1.02903,1.06525,1.0877,1.09839,1.09935,1.09261,1.0802,1.06414,1.04645,1.02917,1.01431,1.00392,1),opacity .2s ease,visibility 0s;
 }
 @media(prefers-reduced-motion:reduce){
-  .hex-welcome-wrap .hex-welcome-body-button{transition:none;}
+  .hex-welcome-wrap .hex-welcome-body-button,
+  .hex-welcome-wrap .hex-welcome-body-button.is-body-complete{
+    transform:none;
+    transition:none;
+  }
 }
