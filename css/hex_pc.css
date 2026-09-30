@@ -9439,12 +9439,11 @@ html.hex-opening-finishing
 /* WELCOMEと創業の間：右上がりの5行ハッシュタグ */
 .hex-hashtag-banner{
   --hex-hashtag-row-height:clamp(54px,5vw,80px);
-  --hex-hashtag-overlap:calc(var(--hex-hashtag-row-height) * 2.5 + 20px);
   position:relative;
   z-index:4;
   width:100%;
   height:calc(var(--hex-hashtag-row-height) * 5 + 18vw + 40px);
-  margin:0 0 calc(-1 * var(--hex-hashtag-overlap))!important;
+  margin:0!important;
   padding:0!important;
   overflow:hidden;
   overflow:clip;
@@ -9499,4 +9498,30 @@ html.hex-opening-finishing
 }
 @media(prefers-reduced-motion:reduce){
   .hex-hashtag-track{animation:none;will-change:auto;}
+}
+
+/* 5行だけを画面中央で保持するための、通常フローの高さ確保 */
+.hex-hashtag-spacer{
+  position:relative;
+  width:100%;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible;
+}
+.hex-hashtag-header-probe{
+  position:fixed;
+  top:0;
+  left:0;
+  width:0;
+  height:var(--header_height,80px);
+  visibility:hidden;
+  pointer-events:none;
+}
+#gc_auto_frame_home_4[data-hex-hashtag-active="0"] > :not(.hex-founded-photo){
+  visibility:hidden!important;
+}
+@media(max-width:768px){
+  .hex-hashtag-header-probe{
+    height:var(--header_height_smartphone,clamp(64px,20vw,80px));
+  }
 }

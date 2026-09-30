@@ -12555,7 +12555,8 @@ hexLoad(function(){
           foundedPhoto.style.height=viewportHeight+'px';
           foundedPhoto.style.width=photoWidth+'px';
           foundedPhoto.style.left=photoLeft+'px';
-          var visible=right>left&&holeBottom>0&&holeTop<viewportHeight&&
+          var visible=section.getAttribute('data-hex-hashtag-active')!=='0'&&
+            right>left&&holeBottom>0&&holeTop<viewportHeight&&
             holeBottom-holeTop>0;
           foundedPhoto.style.visibility=visible?'visible':'hidden';
           /* 固定写真と、移動する角丸セクションが重なる部分だけ描画する。 */
@@ -12575,6 +12576,7 @@ hexLoad(function(){
         window.addEventListener('scroll',queueFoundedPhoto,{passive:true});
         window.addEventListener('resize',queueFoundedPhoto,{passive:true});
         document.addEventListener('hex:hero-layout-updated',queueFoundedPhoto);
+        document.addEventListener('hex:hashtag-pin-updated',queueFoundedPhoto);
         syncFoundedPhoto();
       }
       var title=section&&section.querySelector('.hex-center-title');
@@ -13463,24 +13465,54 @@ hexReady(function(){
           defaultSpeeds[index]))});
     });
     /* CMSの項目番号は増やさず、既存セクション同士の間へ移動する。 */
-    about.parentNode.insertBefore(stage,about);
+    var spacer=document.createElement('div');
+    spacer.className='hex-hashtag-spacer hex-motion-auto-off';
+    about.parentNode.insertBefore(spacer,about);
+    spacer.appendChild(stage);
     source.hidden=true;
     var inView=false;
     var reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
     function syncPause(){
       stage.classList.toggle('is-paused',!inView||document.hidden||reduced.matches);
     }
+    /* 元の高さを保持し、スクロール量を打ち消す移動で5行だけを固定する。
+       創業セクションの下端が固定ヘッダー下端に達した後は通常の上移動へ戻す。 */
+    var headerProbe=document.createElement('div');
+    headerProbe.className='hex-hashtag-header-probe';
+    headerProbe.setAttribute('aria-hidden','true');
+    document.body.appendChild(headerProbe);
+    var pinFrame=0;
+    var activeState=null;
+    function syncPin(){
+      pinFrame=0;
+      var scrollY=window.pageYOffset||0;
+      var height=stage.offsetHeight;
+      if(spacer.style.height!==height+'px'){spacer.style.height=height+'px';}
+      var start=spacer.getBoundingClientRect().top+scrollY+
+        height/2-window.innerHeight/2;
+      var headerBottom=headerProbe.getBoundingClientRect().height||80;
+      var end=Math.max(start,about.getBoundingClientRect().bottom+scrollY-headerBottom);
+      var shift=reduced.matches?0:Math.max(0,Math.min(scrollY-start,end-start));
+      stage.style.transform='translate3d(0,'+shift+'px,0)';
+      var active=reduced.matches||scrollY>=start;
+      if(active!==activeState){
+        activeState=active;
+        about.setAttribute('data-hex-hashtag-active',active?'1':'0');
+        document.dispatchEvent(new CustomEvent('hex:hashtag-pin-updated'));
+      }
+    }
+    function queuePin(){
+      if(!pinFrame){pinFrame=window.requestAnimationFrame(syncPin);}
+    }
+    window.addEventListener('scroll',queuePin,{passive:true});
+    window.addEventListener('resize',queuePin,{passive:true});
+    document.addEventListener('hex:hero-layout-updated',queuePin);
+    if(reduced.addEventListener){reduced.addEventListener('change',queuePin);}
     var lastWidth=0;
     function rebuild(force){
       var width=stage.clientWidth;
       if(!width||(!force&&width===lastWidth)){return;}
       lastWidth=width;
-      /* 画面左端で3行目の中央が創業セクションの開始位置に重なるようにする。 */
-      var middle=rows[2].row.getBoundingClientRect();
-      var middleAtLeft=middle.top+middle.height/2+
-        (middle.left+middle.width/2)*Math.tan(Math.PI/18);
-      stage.style.setProperty('--hex-hashtag-overlap',
-        Math.max(0,stage.getBoundingClientRect().bottom-middleAtLeft)+'px');
       rows.forEach(function(item,index){
         var group=document.createElement('span');
         group.className='hex-hashtag-group';
@@ -13509,14 +13541,16 @@ hexReady(function(){
       });
     }
     rebuild(true);
+    syncPin();
     if(window.ResizeObserver){
-      var resizeObserver=new ResizeObserver(function(){rebuild(false);});
+      var resizeObserver=new ResizeObserver(function(){rebuild(false);queuePin();});
       resizeObserver.observe(stage);
+      resizeObserver.observe(about);
     }else{
       window.addEventListener('resize',function(){rebuild(false);},{passive:true});
     }
     if(document.fonts&&document.fonts.ready){
-      document.fonts.ready.then(function(){rebuild(true);});
+      document.fonts.ready.then(function(){rebuild(true);queuePin();});
     }
     if(window.IntersectionObserver){
       var visibilityObserver=new IntersectionObserver(function(entries){
