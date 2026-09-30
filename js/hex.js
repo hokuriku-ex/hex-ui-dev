@@ -12542,26 +12542,27 @@ hexLoad(function(){
             Math.max(1,windowWidth-(mobile?32:Math.min(96,windowWidth*.06)))+'px');
           var radius=mobile?Math.min(32,viewportWidth*.08):
             Math.min(72,Math.max(40,viewportWidth*.04));
-          var headerBottom=mobile?
-            Math.min(80,Math.max(64,viewportWidth*.2)):80;
           var left=Math.max(sideInset,sectionRect.left+inset);
           var right=Math.min(viewportWidth-sideInset,sectionRect.right-inset);
-          var holeTop=Math.max(headerBottom+inset,sectionRect.top+inset);
-          var holeBottom=Math.min(viewportHeight-inset,sectionRect.bottom-inset);
+          /* 角丸の境界はコンテンツ全体の上端・下端とともにスクロールする。
+             画面外の境界も保持し、途中で角丸が画面端に張り付かないようにする。 */
+          var holeTop=sectionRect.top;
+          var holeBottom=sectionRect.bottom;
           var photoWidth=Math.min(viewportWidth,1600);
           var photoLeft=(viewportWidth-photoWidth)/2;
           foundedPhoto.style.top='0px';
           foundedPhoto.style.height=viewportHeight+'px';
           foundedPhoto.style.width=photoWidth+'px';
           foundedPhoto.style.left=photoLeft+'px';
-          var visible=right>left&&holeBottom-holeTop>3;
+          var visible=right>left&&holeBottom>0&&holeTop<viewportHeight&&
+            holeBottom-holeTop>0;
           foundedPhoto.style.visibility=visible?'visible':'hidden';
-          /* 白い枠は重ねず、写真レイヤー自身を現在の窓サイズで角丸に切り抜く。 */
+          /* 固定写真と、移動する角丸セクションが重なる部分だけ描画する。 */
           if(visible){
             var r=Math.min(radius,(right-left)/2,(holeBottom-holeTop)/2);
             foundedPhoto.style.clipPath='inset('+holeTop+'px '+
               Math.max(0,photoLeft+photoWidth-right)+'px '+
-              Math.max(0,viewportHeight-holeBottom)+'px '+
+              (viewportHeight-holeBottom)+'px '+
               Math.max(0,left-photoLeft)+'px round '+r+'px)';
           }
         };
