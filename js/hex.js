@@ -13404,8 +13404,8 @@ hexReady(function(){
     function syncPause(){
       stage.classList.toggle('is-paused',!inView||document.hidden||reduced.matches);
     }
-    /* 元の高さを保持し、スクロール量を打ち消す移動で5行だけを固定する。
-       創業セクションの下端が固定ヘッダー下端に達した後は通常の上移動へ戻す。 */
+    /* 元の高さを保持し、固定区間はposition:fixedで5行を画面中央に置く。
+       解除後は移動量を一度だけ配置に反映し、通常のスクロールで上へ抜ける。 */
     var headerProbe=document.createElement('div');
     headerProbe.className='hex-hashtag-header-probe';
     headerProbe.setAttribute('aria-hidden','true');
@@ -13417,7 +13417,8 @@ hexReady(function(){
       var scrollY=window.pageYOffset||0;
       var height=stage.offsetHeight;
       if(spacer.style.height!==height+'px'){spacer.style.height=height+'px';}
-      var start=spacer.getBoundingClientRect().top+scrollY+
+      var spacerRect=spacer.getBoundingClientRect();
+      var start=spacerRect.top+scrollY+
         height/2-window.innerHeight/2;
       var headerBottom=headerProbe.getBoundingClientRect().height||80;
       if(nextSpacer){
@@ -13428,8 +13429,22 @@ hexReady(function(){
         }
       }
       var end=Math.max(start,about.getBoundingClientRect().bottom+scrollY-headerBottom);
-      var shift=reduced.matches?0:Math.max(0,Math.min(scrollY-start,end-start));
-      stage.style.transform='translate3d(0,'+shift+'px,0)';
+      var pinned=!reduced.matches&&scrollY>=start&&scrollY<=end;
+      var released=!reduced.matches&&scrollY>end;
+      var styles={
+        position:pinned?'fixed':'relative',
+        top:pinned?((window.innerHeight-height)/2)+'px':
+          (released?Math.round((end-start)*100)/100:0)+'px',
+        left:pinned?spacerRect.left+'px':'0px',
+        width:pinned?spacerRect.width+'px':'100%',
+        transform:'none'
+      };
+      /* 固定中は同じ値を書き直さず、画面スクロールに追従させない。 */
+      Object.keys(styles).forEach(function(property){
+        if(stage.style[property]!==styles[property]){
+          stage.style[property]=styles[property];
+        }
+      });
       var active=reduced.matches||scrollY>=start;
       if(active!==activeState){
         activeState=active;
