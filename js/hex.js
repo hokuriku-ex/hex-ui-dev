@@ -2166,6 +2166,7 @@ hexReady(function(){
     var welcomeBodyStart=0;
     var welcomeBodyStartedAt=0;
     var welcomeBodyFrame=0;
+    var welcomeButtonTransitions=[];
     var welcomeMeasuredHeight=0;
     var spCircleScrollFrame=0;
     var spCircleReleaseScrollY=null;
@@ -2626,11 +2627,49 @@ hexReady(function(){
       });
     }
 
+    function cancelWelcomeButtonTransitions(){
+      welcomeButtonTransitions.forEach(function(transition){
+        transition.cancel();
+      });
+      welcomeButtonTransitions=[];
+    }
+
+    function waitForWelcomeButton(button){
+      var timer=0;
+      var transition={cancel:function(){
+        window.clearTimeout(timer);
+        button.removeEventListener('transitionend',onEnd);
+      }};
+      function finish(){
+        transition.cancel();
+        var index=welcomeButtonTransitions.indexOf(transition);
+        if(index<0){return;}
+        welcomeButtonTransitions.splice(index,1);
+        /* スクロールが止まっていても、着地後に固定解除を更新する。 */
+        queueScrollEffects();
+      }
+      function onEnd(event){
+        if(event.target===button&&event.propertyName==='transform'){
+          finish();
+        }
+      }
+      welcomeButtonTransitions.push(transition);
+      button.addEventListener('transitionend',onEnd);
+      /* transitionendが発火しない環境でも0.6秒の演出後に解除する。 */
+      timer=window.setTimeout(finish,650);
+    }
+
     function renderWelcomeBody(progress){
+      var complete=reduced||progress>=.999;
+      if(!complete){cancelWelcomeButtonTransitions();}
       if(welcomeContents){
         welcomeContents.querySelectorAll('.hex-welcome-body-button')
           .forEach(function(button){
-            button.classList.toggle('is-body-complete',reduced||progress>=.999);
+            if(complete&&!reduced&&
+              !button.classList.contains('is-body-complete')){
+              waitForWelcomeButton(button);
+            }
+            button.classList.toggle('is-body-complete',complete);
           });
       }
       var totalDuration=.8+Math.max(0,welcomeBodyChars.length-1)*.02;
@@ -2931,6 +2970,13 @@ hexReady(function(){
       welcomeBodyTarget=0;
       welcomeBodyCompleted=false;
       welcomeBodyForced=false;
+      cancelWelcomeButtonTransitions();
+      if(welcomeContents){
+        welcomeContents.querySelectorAll('.hex-welcome-body-button')
+          .forEach(function(button){
+            button.classList.remove('is-body-complete');
+          });
+      }
       welcomeBodyChars.forEach(function(character){
         character.style.opacity="0";
         character.style.removeProperty("transform");
@@ -3210,10 +3256,16 @@ hexReady(function(){
         welcomeStageTop=getSpStageTop(true);
         travelMetrics=measureWelcome();
       }
+      updateWelcomeBody(circleProgress>=.999,clamp(
+        (scrollY-welcomeTop)/
+          Math.max(isSp()?travelMetrics.bodyTravel:travelMetrics.travel,1),0,1
+      ));
+      /* 本文完了で開始するボタンの着地まで、PCの固定を維持する。 */
+      var welcomeButtonPending=welcomeButtonTransitions.length>0;
       if(welcomeStage&&welcomeStageTop!==null){
         var scrollThroughWelcome=scrollY-welcomeTop;
         var keepFixed=!isSp()&&circleProgress>=.999&&
-          scrollThroughWelcome<travelMetrics.travel;
+          (scrollThroughWelcome<travelMetrics.travel||welcomeButtonPending);
         var wasFixed=welcomeStage.classList.contains("is-screen-fixed");
         var fixedRect=wasFixed&&!keepFixed
           ?welcomeStage.getBoundingClientRect():null;
@@ -3255,13 +3307,10 @@ hexReady(function(){
       }
       syncSnapshotLayer(circleProgress>=.999);
       welcomeWrap.classList.toggle("is-v2-circle-complete",circleProgress>=.999);
-      updateWelcomeBody(circleProgress>=.999,clamp(
-        (scrollY-welcomeTop)/
-          Math.max(isSp()?travelMetrics.bodyTravel:travelMetrics.travel,1),0,1
-      ));
 
       if((isSp()&&circleProgress>=.999)||
-        (!isSp()&&scrollY-welcomeTop>=travelMetrics.travel)){
+        (!isSp()&&scrollY-welcomeTop>=travelMetrics.travel&&
+          !welcomeButtonPending)){
         releaseSnapshot();
       }else if(released){
         refixSnapshot();
