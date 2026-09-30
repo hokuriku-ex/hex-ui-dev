@@ -9561,3 +9561,11 @@ html.hex-opening-finishing
     transition:none;
   }
 }
+
+/* WELCOMEの着地待機中もスクロールバーを維持し、横ずれを防ぐ。 */
+@media (min-width:769px){
+  html.hex-welcome-button-scroll-hold,
+  html.lenis.lenis-stopped.hex-welcome-button-scroll-hold{
+    overflow-y:scroll!important;
+  }
+}

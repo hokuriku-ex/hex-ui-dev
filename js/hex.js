@@ -2170,6 +2170,9 @@ hexReady(function(){
     var welcomeButtonScrollHold=null;
     var welcomeButtonHeldLenis=null;
     var welcomeButtonResumeLenis=false;
+    var welcomeBodyDirectLenis=null;
+    var welcomeBodyOriginalLerp=null;
+    var welcomeBodyOriginalDuration;
     var welcomeMeasuredHeight=0;
     var spCircleScrollFrame=0;
     var spCircleReleaseScrollY=null;
@@ -2630,12 +2633,32 @@ hexReady(function(){
       });
     }
 
+    function setWelcomeBodyDirectScroll(active){
+      var lenis=window.hexMotion&&window.hexMotion.lenis;
+      active=active&&!isSp()&&!reduced;
+      if(welcomeBodyDirectLenis&&(!active||welcomeBodyDirectLenis!==lenis)){
+        welcomeBodyDirectLenis.options.lerp=welcomeBodyOriginalLerp;
+        welcomeBodyDirectLenis.options.duration=welcomeBodyOriginalDuration;
+        welcomeBodyDirectLenis=null;
+      }
+      if(!active||!lenis||!lenis.options||welcomeBodyDirectLenis){return;}
+      welcomeBodyDirectLenis=lenis;
+      welcomeBodyOriginalLerp=lenis.options.lerp;
+      welcomeBodyOriginalDuration=lenis.options.duration;
+      /* 入力量はそのまま、次のフレームで到達させて追従の余韻をなくす。 */
+      lenis.options.lerp=1;
+      lenis.options.duration=undefined;
+      lenis.scrollTo(window.pageYOffset,{immediate:true,force:true});
+    }
+
     function holdWelcomeButtonScroll(){
       if(isSp()||reduced||!welcomeActive||released||
         welcomeButtonScrollHold!==null){return;}
       /* 大きなホイール入力で終端を越えた分も、次のセクションへ渡さない。 */
       var end=documentTop(welcomeWrap)+measureWelcome().travel;
       welcomeButtonScrollHold=Math.min(window.pageYOffset,end);
+      /* Lenis停止時も縦スクロールバーを残し、表示幅を変えない。 */
+      document.documentElement.classList.add('hex-welcome-button-scroll-hold');
       var lenis=window.hexMotion&&window.hexMotion.lenis;
       welcomeButtonHeldLenis=lenis||null;
       welcomeButtonResumeLenis=!!(lenis&&!lenis.isStopped);
@@ -2656,6 +2679,7 @@ hexReady(function(){
         });
         if(welcomeButtonResumeLenis){welcomeButtonHeldLenis.start();}
       }
+      document.documentElement.classList.remove('hex-welcome-button-scroll-hold');
       welcomeButtonScrollHold=null;
       welcomeButtonHeldLenis=null;
       welcomeButtonResumeLenis=false;
@@ -2971,6 +2995,7 @@ hexReady(function(){
     }
 
     function resetHero(withFade){
+      setWelcomeBodyDirectScroll(false);
       var returningFromWelcome=welcomeActive;
       stopSpCircleScroll();
       spCircleReleaseScrollY=null;
@@ -3301,6 +3326,7 @@ hexReady(function(){
         welcomeStageTop=getSpStageTop(true);
         travelMetrics=measureWelcome();
       }
+      setWelcomeBodyDirectScroll(circleProgress>=.999&&!released);
       updateWelcomeBody(circleProgress>=.999,clamp(
         (scrollY-welcomeTop)/
           Math.max(isSp()?travelMetrics.bodyTravel:travelMetrics.travel,1),0,1
@@ -3363,6 +3389,7 @@ hexReady(function(){
       }else if(released){
         refixSnapshot();
       }
+      setWelcomeBodyDirectScroll(circleProgress>=.999&&!released);
     }
 
     function queueScrollEffects(){
