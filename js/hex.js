@@ -5001,6 +5001,73 @@ hexReady(function(){
    カード
 ======================================= */
 hexReady(function(){
+  var CARD_SLIDE_INTERVAL=4000;
+  var cardSlides=[];
+  var slideReduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+  var slideObserver=typeof IntersectionObserver==='function'
+    ?new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        var state=cardSlides.find(function(item){return item.box===entry.target;});
+        if(state){state.visible=entry.isIntersecting;syncCardSlide(state);}
+      });
+    }):null;
+
+  function syncCardSlide(state){
+    if(slideReduced.matches&&state.index!==0){
+      state.images[state.index].classList.remove('is-active');
+      state.images[state.index].setAttribute('aria-hidden','true');
+      state.images[0].classList.add('is-active');
+      state.images[0].removeAttribute('aria-hidden');
+      state.index=0;
+    }
+    var playing=state.box.isConnected&&state.visible&&
+      !document.hidden&&!slideReduced.matches;
+    if(!playing){
+      window.clearInterval(state.timer);
+      state.timer=0;
+      if(!state.box.isConnected&&slideObserver){slideObserver.unobserve(state.box);}
+      return;
+    }
+    if(state.timer){return;}
+    state.timer=window.setInterval(function(){
+      if(!state.box.isConnected){syncCardSlide(state);return;}
+      var next=(state.index+1)%state.images.length;
+      /* 読み込みエラー画像を避け、未読込なら現在の画像を保つ。 */
+      while(next!==state.index&&state.images[next].dataset.hexSlideFailed==='1'){
+        next=(next+1)%state.images.length;
+      }
+      var image=state.images[next];
+      if(next===state.index||!image.complete||!image.naturalWidth){return;}
+      state.images[state.index].classList.remove('is-active');
+      state.images[state.index].setAttribute('aria-hidden','true');
+      image.classList.add('is-active');
+      image.removeAttribute('aria-hidden');
+      state.index=next;
+    },state.interval);
+  }
+
+  function setupCardSlide(box,interval){
+    var images=Array.from(box.querySelectorAll('img'));
+    if(images.length<2){return;}
+    box.classList.add('has-slideshow');
+    box.dataset.slideInterval=String(interval);
+    images.forEach(function(image,index){
+      image.classList.toggle('is-active',index===0);
+      if(index){image.setAttribute('aria-hidden','true');}
+      image.addEventListener('error',function(){image.dataset.hexSlideFailed='1';});
+    });
+    var state={box:box,images:images,index:0,interval:interval,
+      visible:!slideObserver,timer:0};
+    cardSlides.push(state);
+    if(slideObserver){slideObserver.observe(box);}
+    return state;
+  }
+
+  function syncAllCardSlides(){cardSlides.forEach(syncCardSlide);}
+  document.addEventListener('visibilitychange',syncAllCardSlides);
+  if(slideReduced.addEventListener){
+    slideReduced.addEventListener('change',syncAllCardSlides);
+  }
   ['1','2','3','4','5','6'].forEach(function(col){
     document.querySelectorAll('.hex-card-grid'+col+'-start').forEach(function(gridStart){
       var gridStartBlock=window.hexBaseBlock(gridStart);
@@ -5026,14 +5093,20 @@ hexReady(function(){
             if(cardEndBlock===gridEndBlock)break;
             cardEndBlock=window.hexNextBlock(cardEndBlock);
           }
-          if(cardEndBlock){
+          if(cardEnd&&cardEndBlock){
             var imageBlock=window.hexNextBlock(currentBlock);
-            var image=null;
-            while(imageBlock){
-              if(imageBlock===cardEndBlock)break;
-              image=imageBlock.querySelector('img');
-              if(image)break;
+            var images=[];
+            while(imageBlock&&imageBlock!==cardEndBlock){
+              imageBlock.querySelectorAll('img').forEach(function(image){
+                if(image.src){images.push({src:image.src,
+                  alt:image.alt||cardStart.dataset.title||''});}
+              });
               imageBlock=window.hexNextBlock(imageBlock);
+            }
+            var slideInterval=Number(cardStart.dataset.slideInterval||
+              gridStart.dataset.slideInterval);
+            if(!Number.isFinite(slideInterval)||slideInterval<1000){
+              slideInterval=CARD_SLIDE_INTERVAL;
             }
             cards.push({
               title:cardStart.dataset.title||'',
@@ -5043,8 +5116,9 @@ hexReady(function(){
               type:cardStart.dataset.type||'internal',
               style:cardStart.dataset.style||'light',
               col:cardStart.dataset.col||'4',
-              image:image?image.src:'',
-              alt:image?image.alt||cardStart.dataset.title||'':''
+              image:images.length?images[0].src:'',
+              images:images,
+              slideInterval:slideInterval
             });
           }
         }
@@ -5079,12 +5153,15 @@ hexReady(function(){
         text.innerHTML=cardData.text;
         if(cardData.image){
           var imageBox=document.createElement('div');
-          var image=document.createElement('img');
           imageBox.className='hex-card-image';
-          image.src=cardData.image;
-          image.alt=cardData.alt;
-          imageBox.appendChild(image);
+          cardData.images.forEach(function(item){
+            var image=document.createElement('img');
+            image.src=item.src;
+            image.alt=item.alt;
+            imageBox.appendChild(image);
+          });
           card.appendChild(imageBox);
+          setupCardSlide(imageBox,cardData.slideInterval);
         }
         if(cardData.title){
           if(cardData.url){
@@ -5152,6 +5229,7 @@ hexReady(function(){
         grid.appendChild(card);
       });
       gridStartBlock.parentNode.insertBefore(grid,gridStartBlock);
+      syncAllCardSlides();
       var removeBlock=gridStartBlock;
       while(removeBlock){
         var nextRemoveBlock=window.hexNextBlock(removeBlock);
