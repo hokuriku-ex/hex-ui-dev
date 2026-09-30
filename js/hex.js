@@ -2975,6 +2975,10 @@ hexReady(function(){
         createFallback();
         return;
       }
+      if(snapshot&&!isSp()&&welcomeButtonScrollHold===null){
+        snapshot.style.width=document.documentElement.clientWidth+"px";
+        snapshot.style.height=metrics.height+"px";
+      }
       if(welcomeStage&&welcomeButtonScrollHold===null){
         /* 実際の画面リサイズ時だけ新しい横位置・幅を測り直す。 */
         welcomeStageFixedHorizontal=null;
@@ -3110,6 +3114,12 @@ hexReady(function(){
         snapshot.appendChild(bottomIllustrations.cloneNode(true));
       }
       document.body.appendChild(snapshot);
+      if(!isSp()){
+        /* 固定中も表示実寸を保持し、停止時の包含領域の変化で伸縮させない。 */
+        var snapshotRect=snapshot.getBoundingClientRect();
+        snapshot.style.width=snapshotRect.width+"px";
+        snapshot.style.height=snapshotRect.height+"px";
+      }
       return snapshot;
     }
 
@@ -3212,6 +3222,11 @@ hexReady(function(){
       var wrapRect;
       if(!snapshot||released||!welcomeWrap){return;}
       rect=snapshot.getBoundingClientRect();
+      if(!isSp()){
+        /* 100vwへの切り替えでスクロールバー幅分だけ画像が拡大するのを防ぐ。 */
+        snapshot.style.width=rect.width+"px";
+        snapshot.style.height=rect.height+"px";
+      }
       wrapRect=welcomeWrap.getBoundingClientRect();
       snapshot.style.setProperty("--hex-v2-release-top",(rect.top-wrapRect.top)+"px");
       snapshot.style.setProperty("--hex-v2-release-left",(rect.left-wrapRect.left)+"px");
