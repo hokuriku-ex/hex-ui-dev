@@ -9525,3 +9525,14 @@ html.hex-opening-finishing
     height:var(--header_height_smartphone,clamp(64px,20vw,80px));
   }
 }
+
+/* 創業の固定解除まで、次セクションを画面下で待機させる区間 */
+.hex-hashtag-next-spacer{
+  display:block;
+  width:100%;
+  margin:0!important;
+  padding:0!important;
+  border:0;
+  background:transparent;
+  pointer-events:none;
+}

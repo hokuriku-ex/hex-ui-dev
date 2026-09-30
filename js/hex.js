@@ -13469,6 +13469,15 @@ hexReady(function(){
     spacer.className='hex-hashtag-spacer hex-motion-auto-off';
     about.parentNode.insertBefore(spacer,about);
     spacer.appendChild(stage);
+    /* 次のセクションは、創業の下端がヘッダー下端へ達するまで画面下に待機。 */
+    var nextSection=document.getElementById('gc_auto_frame_home_5');
+    var nextSpacer=null;
+    if(nextSection){
+      nextSpacer=document.createElement('div');
+      nextSpacer.className='hex-hashtag-next-spacer hex-motion-auto-off';
+      nextSpacer.setAttribute('aria-hidden','true');
+      nextSection.parentNode.insertBefore(nextSpacer,nextSection);
+    }
     source.hidden=true;
     var inView=false;
     var reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -13491,6 +13500,13 @@ hexReady(function(){
       var start=spacer.getBoundingClientRect().top+scrollY+
         height/2-window.innerHeight/2;
       var headerBottom=headerProbe.getBoundingClientRect().height||80;
+      if(nextSpacer){
+        /* 解除時に次セクションの上端が画面下端に一致する高さを確保する。 */
+        var waitHeight=reduced.matches?0:Math.max(0,window.innerHeight-headerBottom);
+        if(nextSpacer.style.height!==waitHeight+'px'){
+          nextSpacer.style.height=waitHeight+'px';
+        }
+      }
       var end=Math.max(start,about.getBoundingClientRect().bottom+scrollY-headerBottom);
       var shift=reduced.matches?0:Math.max(0,Math.min(scrollY-start,end-start));
       stage.style.transform='translate3d(0,'+shift+'px,0)';
