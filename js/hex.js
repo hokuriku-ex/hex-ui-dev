@@ -13547,3 +13547,120 @@ hexReady(function(){
     if(!enabled.matches){hide();}
   });
 });
+
+/* =======================================
+   WELCOMEと創業の間：5行の斜めハッシュタグ（自動ループ）
+   HTML: .hex-hashtag-source 内に文言をp要素で5行登録。
+======================================= */
+(function(){
+  'use strict';
+  function initializeHexHashtags(){
+    var source=document.querySelector('.hex-hashtag-source');
+    var about=document.getElementById('gc_auto_frame_home_4');
+    if(!source||!about||document.querySelector('.hex-hashtag-banner')){return;}
+    var entries=Array.prototype.slice.call(source.querySelectorAll('p'),0,5);
+    if(entries.length!==5){return;}
+    var stage=document.createElement('div');
+    stage.className='hex-hashtag-banner hex-motion-auto-off';
+    stage.setAttribute('role','group');
+    stage.setAttribute('aria-label','北陸エクステリアの暮らしと庭づくり');
+    var tilt=document.createElement('div');
+    tilt.className='hex-hashtag-tilt';
+    stage.appendChild(tilt);
+    var rows=[];
+    var defaultSpeeds=[72,86,64,80,68];
+    entries.forEach(function(entry,index){
+      var text=entry.textContent.replace(/\s+/g,' ').trim();
+      var row=document.createElement('div');
+      row.className='hex-hashtag-row';
+      var track=document.createElement('div');
+      track.className='hex-hashtag-track';
+      row.appendChild(track);
+      tilt.appendChild(row);
+      rows.push({row:row,track:track,text:text||' ',
+        speed:Math.min(200,Math.max(20,Number(entry.getAttribute('data-speed'))||
+          defaultSpeeds[index]))});
+    });
+    var button=document.createElement('button');
+    button.type='button';
+    button.className='hex-hashtag-pause';
+    button.textContent='一時停止';
+    button.setAttribute('aria-label','流れる文字を一時停止');
+    button.setAttribute('aria-pressed','false');
+    stage.appendChild(button);
+    /* CMSの項目番号は増やさず、既存セクション同士の間へ移動する。 */
+    about.parentNode.insertBefore(stage,about);
+    source.hidden=true;
+    var userPaused=false;
+    var inView=false;
+    var reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+    function syncPause(){
+      stage.classList.toggle('is-paused',userPaused||!inView||document.hidden||reduced.matches);
+      button.hidden=reduced.matches;
+    }
+    button.addEventListener('click',function(){
+      userPaused=!userPaused;
+      button.textContent=userPaused?'再生':'一時停止';
+      button.setAttribute('aria-label',userPaused?'流れる文字を再生':'流れる文字を一時停止');
+      button.setAttribute('aria-pressed',String(userPaused));
+      syncPause();
+    });
+    var lastWidth=0;
+    function rebuild(force){
+      var width=stage.clientWidth;
+      if(!width||(!force&&width===lastWidth)){return;}
+      lastWidth=width;
+      rows.forEach(function(item,index){
+        var group=document.createElement('span');
+        group.className='hex-hashtag-group';
+        var phrase=document.createElement('span');
+        phrase.className='hex-hashtag-phrase';
+        phrase.textContent=item.text;
+        group.appendChild(phrase);
+        item.track.replaceChildren(group);
+        var phraseWidth=Math.max(phrase.getBoundingClientRect().width,1);
+        /* 回転前の実幅に合わせて繰り返し、短い文言でも空白を作らない。 */
+        var count=Math.max(1,Math.ceil((item.row.clientWidth+128)/phraseWidth));
+        count=Math.min(200,count);
+        for(var n=1;n<count;n++){
+          var copy=phrase.cloneNode(true);
+          copy.setAttribute('aria-hidden','true');
+          group.appendChild(copy);
+        }
+        var distance=parseFloat(window.getComputedStyle(group).width)||group.offsetWidth;
+        var duplicate=group.cloneNode(true);
+        duplicate.setAttribute('aria-hidden','true');
+        item.track.appendChild(duplicate);
+        var speed=item.speed*Math.max(.55,Math.min(1,width/1600));
+        item.track.style.setProperty('--hex-hashtag-distance',distance+'px');
+        item.track.style.setProperty('--hex-hashtag-duration',(distance/speed)+'s');
+        item.track.style.setProperty('--hex-hashtag-delay',(-distance/speed*(index*.13))+'s');
+      });
+    }
+    rebuild(true);
+    if(window.ResizeObserver){
+      var resizeObserver=new ResizeObserver(function(){rebuild(false);});
+      resizeObserver.observe(stage);
+    }else{
+      window.addEventListener('resize',function(){rebuild(false);},{passive:true});
+    }
+    if(document.fonts&&document.fonts.ready){
+      document.fonts.ready.then(function(){rebuild(true);});
+    }
+    if(window.IntersectionObserver){
+      var visibilityObserver=new IntersectionObserver(function(entries){
+        inView=entries[0].isIntersecting;
+        syncPause();
+      },{rootMargin:'100px'});
+      visibilityObserver.observe(stage);
+    }else{inView=true;}
+    document.addEventListener('visibilitychange',syncPause);
+    if(reduced.addEventListener){reduced.addEventListener('change',syncPause);}
+    syncPause();
+    /* 挿入した帯の高さを既存のスクロール位置計算にも反映する。 */
+    if(window.ScrollTrigger){window.ScrollTrigger.refresh();}
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',initializeHexHashtags);
+  }else{initializeHexHashtags();}
+})();
