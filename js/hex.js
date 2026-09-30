@@ -2158,7 +2158,6 @@ hexReady(function(){
     var welcomeBodyStart=0;
     var welcomeBodyStartedAt=0;
     var welcomeBodyFrame=0;
-    var spWelcomeExtraScroll=0;
     var welcomeMeasuredHeight=0;
     var spCircleScrollFrame=0;
     var spCircleReleaseScrollY=null;
@@ -2681,8 +2680,8 @@ hexReady(function(){
           stageHeight;
         travel=Math.max(1,Math.ceil(stageBottom-viewport));
         totalHeight=Math.ceil(viewport+travel);
-        /* 画面に収まるまでの自然な移動と、下端での追加操作を合わせる。 */
-        bodyTravel=travel*WELCOME_BODY_SCROLL_SCALE;
+        /* SPは通常のスワイプ量で本文を完了させ、追加操作で引き止めない。 */
+        bodyTravel=travel;
       }else{
         /* PCでは本文が進む距離だけを延ばし、固定の解除順は維持する。 */
         bodyTravel*=WELCOME_BODY_SCROLL_SCALE;
@@ -2918,7 +2917,6 @@ hexReady(function(){
       welcomeBodyTarget=0;
       welcomeBodyCompleted=false;
       welcomeBodyForced=false;
-      spWelcomeExtraScroll=0;
       welcomeBodyChars.forEach(function(character){
         character.style.opacity="0";
         character.style.removeProperty("transform");
@@ -3244,7 +3242,7 @@ hexReady(function(){
       syncSnapshotLayer(circleProgress>=.999);
       welcomeWrap.classList.toggle("is-v2-circle-complete",circleProgress>=.999);
       updateWelcomeBody(circleProgress>=.999,clamp(
-        (scrollY-welcomeTop+(isSp()?spWelcomeExtraScroll:0))/
+        (scrollY-welcomeTop)/
           Math.max(isSp()?travelMetrics.bodyTravel:travelMetrics.travel,1),0,1
       ));
 
@@ -3262,96 +3260,21 @@ hexReady(function(){
       window.requestAnimationFrame(updateScrollEffects);
     }
 
-    function getSpWelcomeHoldTop(){
-      if(!isSp()||!welcomeActive||!welcomeWrap||
-        welcomeStageTop===null||
-        !welcomeBodyChars.length){return null;}
-      return documentTop(welcomeWrap)+measureWelcome().travel;
-    }
-
-    function shouldHoldSpWelcome(delta,holdTop){
-      if(holdTop===null||window.pageYOffset<holdTop-1){
-        return false;
-      }
-      var metrics=measureWelcome();
-      var remaining=Math.max(0,metrics.bodyTravel-metrics.travel);
-      return delta>0?
-        (spWelcomeExtraScroll<remaining-.5||!welcomeBodyCompleted):
-        delta<0&&window.pageYOffset<=holdTop+1&&
-          spWelcomeExtraScroll>.5;
-    }
-
-    function holdSpWelcomeScroll(){
-      var holdTop=getSpWelcomeHoldTop();
-      if(holdTop===null){return;}
-      if(window.pageYOffset<holdTop-1){
-        if(spWelcomeExtraScroll){
-          spWelcomeExtraScroll=0;
-          queueScrollEffects();
-        }
-        return;
-      }
-      /* 本文が完成したら創業セクションへ進める。 */
-      if(window.pageYOffset>holdTop+.5&&!welcomeBodyCompleted){
-        window.scrollTo(0,holdTop);
-      }
-    }
-
-    function advanceSpWelcomeAtBoundary(delta,holdTop){
-      var metrics=measureWelcome();
-      var remaining=Math.max(0,metrics.bodyTravel-metrics.travel);
-      if(window.pageYOffset>holdTop+.5){
-        window.scrollTo(0,holdTop);
-      }
-      spWelcomeExtraScroll=clamp(spWelcomeExtraScroll+delta,0,remaining);
-      updateWelcomeBody(true,clamp(
-        (Math.min(window.pageYOffset,holdTop)-documentTop(welcomeWrap)+
-          spWelcomeExtraScroll)/Math.max(metrics.bodyTravel,1),0,1
-      ));
-    }
-
-    var welcomeTouchY=null;
-    function onWelcomeTouchStart(event){
-      if(event.touches.length===1){welcomeTouchY=event.touches[0].clientY;}
-      else{welcomeTouchY=null;}
-    }
+    /* 本文を強制表示した後も、通常入力でスクロール位置への同期を再開する。
+       WELCOME区間では入力をキャンセルせず、SPの慣性スクロールを維持する。 */
     function onWelcomeTouchMove(event){
-      if(welcomeTouchY===null||event.touches.length!==1){return;}
-      var nextY=event.touches[0].clientY;
-      var delta=welcomeTouchY-nextY;
-      welcomeTouchY=nextY;
-      if(Math.abs(delta)>0){welcomeBodyForced=false;}
-      var holdTop=getSpWelcomeHoldTop();
-      if(shouldHoldSpWelcome(delta,holdTop)){
-        advanceSpWelcomeAtBoundary(delta,holdTop);
-        if(event.cancelable){event.preventDefault();}
-      }
+      if(event.touches.length===1){welcomeBodyForced=false;}
     }
     function onWelcomeWheel(event){
       if(event.deltaY){welcomeBodyForced=false;}
-      var holdTop=getSpWelcomeHoldTop();
-      if(shouldHoldSpWelcome(event.deltaY,holdTop)){
-        var multiplier=event.deltaMode===1?16:
-          event.deltaMode===2?window.innerHeight:1;
-        advanceSpWelcomeAtBoundary(event.deltaY*multiplier,holdTop);
-        if(event.cancelable){event.preventDefault();}
-      }
     }
     function onWelcomeKeyDown(event){
       if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||
         /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(
           document.activeElement&&document.activeElement.tagName||''
         )){return;}
-      var delta=event.key==='ArrowDown'?40:
-        event.key==='PageDown'||event.key===' '?window.innerHeight*.7:
-        event.key==='ArrowUp'?-40:
-        event.key==='PageUp'?-window.innerHeight*.7:0;
-      if(!delta){return;}
-      welcomeBodyForced=false;
-      var holdTop=getSpWelcomeHoldTop();
-      if(shouldHoldSpWelcome(delta,holdTop)){
-        advanceSpWelcomeAtBoundary(delta,holdTop);
-        event.preventDefault();
+      if(/^(ArrowDown|PageDown| |ArrowUp|PageUp)$/.test(event.key)){
+        welcomeBodyForced=false;
       }
     }
 
@@ -4129,12 +4052,9 @@ hexReady(function(){
       reset:function(){resetHero(true);}
     };
 
-    window.addEventListener("scroll",holdSpWelcomeScroll,{passive:true});
     window.addEventListener("scroll",queueScrollEffects,{passive:true});
-    window.addEventListener("touchstart",onWelcomeTouchStart,{passive:true});
-    window.addEventListener("touchmove",onWelcomeTouchMove,{passive:false});
-    window.addEventListener("touchend",function(){welcomeTouchY=null;},{passive:true});
-    window.addEventListener("wheel",onWelcomeWheel,{passive:false,capture:true});
+    window.addEventListener("touchmove",onWelcomeTouchMove,{passive:true});
+    window.addEventListener("wheel",onWelcomeWheel,{passive:true,capture:true});
     window.addEventListener("keydown",onWelcomeKeyDown);
     window.addEventListener("wheel",onWheel,{passive:false,capture:true});
     window.addEventListener("resize",queueResize);
