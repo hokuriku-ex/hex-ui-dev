@@ -12543,13 +12543,14 @@ hexLoad(function(){
           var radius=mobile?Math.min(32,viewportWidth*.08):
             Math.min(72,Math.max(40,viewportWidth*.04));
           var left=Math.max(sideInset,sectionRect.left+inset);
-          var right=Math.min(viewportWidth-sideInset,sectionRect.right-inset);
+          /* 左側だけ余白と角丸を残し、右側は画面端まで広げる。 */
+          var right=viewportWidth;
           /* 角丸の境界はコンテンツ全体の上端・下端とともにスクロールする。
              画面外の境界も保持し、途中で角丸が画面端に張り付かないようにする。 */
           var holeTop=sectionRect.top;
           var holeBottom=sectionRect.bottom;
-          var photoWidth=Math.min(viewportWidth,1600);
-          var photoLeft=(viewportWidth-photoWidth)/2;
+          var photoWidth=viewportWidth;
+          var photoLeft=0;
           foundedPhoto.style.top='0px';
           foundedPhoto.style.height=viewportHeight+'px';
           foundedPhoto.style.width=photoWidth+'px';
@@ -12563,7 +12564,7 @@ hexLoad(function(){
             foundedPhoto.style.clipPath='inset('+holeTop+'px '+
               Math.max(0,photoLeft+photoWidth-right)+'px '+
               (viewportHeight-holeBottom)+'px '+
-              Math.max(0,left-photoLeft)+'px round '+r+'px)';
+              Math.max(0,left-photoLeft)+'px round '+r+'px 0px 0px '+r+'px)';
           }
         };
         var queueFoundedPhoto=function(){
