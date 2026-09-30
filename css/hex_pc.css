@@ -9536,3 +9536,21 @@ html.hex-opening-finishing
   background:transparent;
   pointer-events:none;
 }
+
+/* WELCOME本文下の共通ボタン：本文の表示完了に合わせて表示 */
+.hex-welcome-wrap .hex-welcome-body-button{
+  max-width:calc(100% - 8px);
+  margin:clamp(24px,3vw,40px) auto 8px!important;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .25s ease,visibility .25s ease;
+}
+.hex-welcome-wrap .hex-welcome-body-button.is-body-complete{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+@media(prefers-reduced-motion:reduce){
+  .hex-welcome-wrap .hex-welcome-body-button{transition:none;}
+}

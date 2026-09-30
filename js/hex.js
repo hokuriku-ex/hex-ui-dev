@@ -1942,7 +1942,15 @@ hexReady(function(){
     hexAnchor.appendChild(hexTitleSpan);
     hexAnchor.appendChild(hexIconSpan);
     hexWrap.appendChild(hexAnchor);
-    hexView.parentNode.insertBefore(hexWrap,hexView);
+    var welcomeOwner=hexView.closest('.hex-welcome-wrap');
+    var welcomeBody=welcomeOwner&&welcomeOwner.querySelector('.welcome_contents');
+    if(welcomeBody){
+      /* 登録位置に関係なく、WELCOME本文と同じ表示ステージに置く。 */
+      hexWrap.classList.add('hex-welcome-body-button','hex-motion-auto-off');
+      welcomeBody.appendChild(hexWrap);
+    }else{
+      hexView.parentNode.insertBefore(hexWrap,hexView);
+    }
     hexView.style.display='none';
   });
   document.querySelectorAll('.hex-link-view').forEach(function(hexView){
@@ -2619,6 +2627,12 @@ hexReady(function(){
     }
 
     function renderWelcomeBody(progress){
+      if(welcomeContents){
+        welcomeContents.querySelectorAll('.hex-welcome-body-button')
+          .forEach(function(button){
+            button.classList.toggle('is-body-complete',reduced||progress>=.999);
+          });
+      }
       var totalDuration=.8+Math.max(0,welcomeBodyChars.length-1)*.02;
       var time=progress*totalDuration;
       welcomeBodyChars.forEach(function(character,index){
