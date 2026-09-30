@@ -2577,6 +2577,17 @@ hexReady(function(){
       return{left:rect.left,width:rect.width};
     }
 
+    function positionWelcomeStageOnScreen(){
+      if(!welcomeStage){return;}
+      /* 固定中も通常配置で測定した横位置・幅を使い、停止時の再計算を避ける。 */
+      var horizontal=welcomeStageFixedHorizontal||
+        measureWelcomeStageFixedHorizontal();
+      welcomeStageFixedHorizontal=horizontal;
+      welcomeStage.style.left=horizontal.left+"px";
+      welcomeStage.style.right="auto";
+      welcomeStage.style.width=horizontal.width+"px";
+    }
+
     function positionWelcomeStageInPanel(rect){
       if(!welcomeStage||!welcomePanel){return;}
       var horizontal=rect
@@ -2636,6 +2647,10 @@ hexReady(function(){
       /* 大きなホイール入力で終端を越えた分も、次のセクションへ渡さない。 */
       var end=documentTop(welcomeWrap)+measureWelcome().travel;
       welcomeButtonScrollHold=Math.min(window.pageYOffset,end);
+      if(welcomeStage&&welcomeStage.classList.contains("is-screen-fixed")){
+        /* rootのoverflowを切り替える前に、コンテンツの座標も確定する。 */
+        positionWelcomeStageOnScreen();
+      }
       /* Lenis停止時も縦スクロールバーを残し、表示幅を変えない。 */
       document.documentElement.classList.add('hex-welcome-button-scroll-hold');
       var lenis=window.hexMotion&&window.hexMotion.lenis;
@@ -2960,9 +2975,14 @@ hexReady(function(){
         createFallback();
         return;
       }
-      if(welcomeStage&&!welcomeStage.classList.contains("is-screen-fixed")){
+      if(welcomeStage&&welcomeButtonScrollHold===null){
+        /* 実際の画面リサイズ時だけ新しい横位置・幅を測り直す。 */
         welcomeStageFixedHorizontal=null;
-        positionWelcomeStageInPanel();
+        if(welcomeStage.classList.contains("is-screen-fixed")){
+          positionWelcomeStageOnScreen();
+        }else{
+          positionWelcomeStageInPanel();
+        }
       }
       measureWelcome();
     }
@@ -3333,10 +3353,8 @@ hexReady(function(){
             ?welcomeStageTop+clamp(scrollThroughWelcome,0,travelMetrics.travel)
             :welcomeStageExitTop);
         if(keepFixed){
-          welcomeStage.style.removeProperty("left");
-          welcomeStage.style.removeProperty("right");
-          welcomeStage.style.removeProperty("width");
           welcomeStage.classList.add("is-screen-fixed");
+          positionWelcomeStageOnScreen();
         }else{
           welcomeStage.classList.remove("is-screen-fixed");
           positionWelcomeStageInPanel(fixedRect);
