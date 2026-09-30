@@ -11720,15 +11720,6 @@ hexLoad(function(){
             return false;
           }
 
-          /* 創業コピーの区間は操作量を半分にし、縦位置は通常の流れに保つ。 */
-          var foundedBand=document.querySelector('.hex-founded-marquee');
-          if(foundedBand&&data&&typeof data.deltaY==='number'){
-            var foundedRect=foundedBand.getBoundingClientRect();
-            if(foundedRect.top<window.innerHeight&&foundedRect.bottom>0){
-              data.deltaY*=.5;
-            }
-          }
-
           return !isPreventTarget(
             event&&event.target
           );
@@ -12536,16 +12527,6 @@ hexLoad(function(){
       }
       if(foundedPhoto){
         section.insertBefore(foundedPhoto,section.firstChild);
-        var foundedFrame=document.createElementNS(
-          'http://www.w3.org/2000/svg','svg');
-        foundedFrame.setAttribute('class','hex-founded-frame hex-motion-auto-off');
-        foundedFrame.setAttribute('aria-hidden','true');
-        var foundedFramePath=document.createElementNS(
-          'http://www.w3.org/2000/svg','path');
-        foundedFramePath.setAttribute('fill','#fff');
-        foundedFramePath.setAttribute('fill-rule','evenodd');
-        foundedFrame.appendChild(foundedFramePath);
-        foundedPhoto.insertAdjacentElement('afterend',foundedFrame);
         var foundedPhotoFrame=0;
         var syncFoundedPhoto=function(){
           foundedPhotoFrame=0;
@@ -12563,39 +12544,26 @@ hexLoad(function(){
             Math.min(72,Math.max(40,viewportWidth*.04));
           var headerBottom=mobile?
             Math.min(80,Math.max(64,viewportWidth*.2)):80;
-          var top=Math.max(0,Math.min(viewportHeight,sectionRect.top));
-          var bottom=Math.max(0,Math.min(viewportHeight,sectionRect.bottom));
-          /* 境界の端数で写真が1pxだけ残るのを防ぐ。 */
-          var photoBottom=Math.max(top,bottom-3);
-          foundedPhoto.style.height=viewportHeight+'px';
-          var photoWidth=Math.min(viewportWidth,1600);
-          foundedPhoto.style.width=photoWidth+'px';
-          foundedPhoto.style.left=((viewportWidth-photoWidth)/2)+'px';
-          foundedPhoto.style.visibility=photoBottom>top?'visible':'hidden';
-          foundedPhoto.style.clipPath='inset('+top+'px 0px '+
-            (viewportHeight-photoBottom)+'px 0px)';
-
-          /* 写真とコンテンツの両方を最前面の白い枠で覆う。 */
-          foundedFrame.style.width=viewportWidth+'px';
-          foundedFrame.style.height=viewportHeight+'px';
-          foundedFrame.style.visibility=bottom>top?'visible':'hidden';
-          foundedFrame.setAttribute('viewBox',
-            '0 0 '+viewportWidth+' '+viewportHeight);
           var left=Math.max(sideInset,sectionRect.left+inset);
           var right=Math.min(viewportWidth-sideInset,sectionRect.right-inset);
           var holeTop=Math.max(headerBottom+inset,sectionRect.top+inset);
           var holeBottom=Math.min(viewportHeight-inset,sectionRect.bottom-inset);
-          var path='M0 '+top+' H'+viewportWidth+
-            ' V'+bottom+' H0 Z';
-          if(right>left&&holeBottom>holeTop){
+          var photoWidth=Math.min(viewportWidth,1600);
+          var photoLeft=(viewportWidth-photoWidth)/2;
+          foundedPhoto.style.top='0px';
+          foundedPhoto.style.height=viewportHeight+'px';
+          foundedPhoto.style.width=photoWidth+'px';
+          foundedPhoto.style.left=photoLeft+'px';
+          var visible=right>left&&holeBottom-holeTop>3;
+          foundedPhoto.style.visibility=visible?'visible':'hidden';
+          /* 白い枠は重ねず、写真レイヤー自身を現在の窓サイズで角丸に切り抜く。 */
+          if(visible){
             var r=Math.min(radius,(right-left)/2,(holeBottom-holeTop)/2);
-            path+=' M'+(left+r)+' '+holeTop+
-              ' H'+(right-r)+' Q'+right+' '+holeTop+' '+right+' '+(holeTop+r)+
-              ' V'+(holeBottom-r)+' Q'+right+' '+holeBottom+' '+(right-r)+' '+holeBottom+
-              ' H'+(left+r)+' Q'+left+' '+holeBottom+' '+left+' '+(holeBottom-r)+
-              ' V'+(holeTop+r)+' Q'+left+' '+holeTop+' '+(left+r)+' '+holeTop+' Z';
+            foundedPhoto.style.clipPath='inset('+holeTop+'px '+
+              Math.max(0,photoLeft+photoWidth-right)+'px '+
+              Math.max(0,viewportHeight-holeBottom)+'px '+
+              Math.max(0,left-photoLeft)+'px round '+r+'px)';
           }
-          foundedFramePath.setAttribute('d',path);
         };
         var queueFoundedPhoto=function(){
           if(!foundedPhotoFrame){
@@ -12640,99 +12608,10 @@ hexLoad(function(){
       var cardTimers=[];
       var numberStates=[];
 
-      /* HTMLのコピー自体を移動。共通フェードとのtransform競合を避ける。 */
-      if(section&&title&&!section.querySelector('.hex-founded-marquee')){
-        var lead='提案・技術・実績を備えた、外構・お庭のプロフェッショナル';
-        var normalized=lead.replace(/\s/g,'');
-        var line=section.querySelector('.hex-founded-marquee-copy')||
-          Array.prototype.slice.call(section.querySelectorAll('h3,p'))
-            .filter(function(element){
-              return (element.textContent||'').replace(/\s/g,'')===normalized;
-            })[0];
-        if(line){
-          var band=document.createElement('div');
-          band.className='hex-founded-marquee';
-          band.dataset.hexMotionInitialized='1';
-          line.classList.add('hex-founded-marquee-line');
-          line.dataset.hexMotionInitialized='1';
-          line.parentNode.insertBefore(band,line);
-          band.appendChild(line);
-          var foundedStartOffset=0;
-          var alignFoundedBand=function(){
-            /* 横スクロールも白いフレームの窓幅に合わせる。 */
-            var width=document.documentElement.clientWidth;
-            var edge=width<=768?16:Math.min(36,Math.max(24,width*.016));
-            var side=Math.max(edge,(width-1600)/2);
-            band.style.left='0px';
-            band.style.width=Math.max(1,width-side*2)+'px';
-            band.style.left=(side-band.getBoundingClientRect().left)+'px';
-            var lineStyle=window.getComputedStyle(line);
-            foundedStartOffset=Math.max(0,
-              (parseFloat(lineStyle.fontSize)||0)+
-              (parseFloat(lineStyle.letterSpacing)||0));
-          };
-          alignFoundedBand();
-          window.addEventListener('resize',alignFoundedBand,{passive:true});
-          document.addEventListener('hex:hero-layout-updated',alignFoundedBand);
-          if(!isReducedMotion()){
-            var syncFoundedMarquee=function(self){
-              var rect=line.getBoundingClientRect();
-              var height=Math.max(rect.height,1);
-              var viewportHeight=window.innerHeight;
-              var fullyEnteredTop=viewportHeight-height;
-              /* 縦位置はそのまま。横方向は全区間で一定速度にする。 */
-              var upperReadableTop=Math.min(height,fullyEnteredTop);
-              var endX=Math.min(0,band.clientWidth-line.scrollWidth);
-              var entryInset=foundedStartOffset*2;
-              var x=entryInset+(endX-foundedStartOffset-entryInset)*
-                (fullyEnteredTop-rect.top)/
-                Math.max(fullyEnteredTop-upperReadableTop,1);
-              line.style.transform='translate3d('+
-                x+'px,0,0)';
-            };
-            ScrollTrigger.create({
-              trigger:line,
-              start:'top bottom',
-              end:'bottom top',
-              onUpdate:syncFoundedMarquee,
-              onRefresh:function(self){
-                alignFoundedBand();
-                syncFoundedMarquee(self);
-              }
-            });
-            if(mobile){
-              var foundedTouchY=null;
-              var foundedBandVisible=function(){
-                var bounds=band.getBoundingClientRect();
-                return bounds.top<window.innerHeight&&bounds.bottom>0;
-              };
-              document.addEventListener('touchstart',function(event){
-                foundedTouchY=event.touches.length===1
-                  ?event.touches[0].clientY:null;
-              },{passive:true});
-              document.addEventListener('touchmove',function(event){
-                if(foundedTouchY===null||event.touches.length!==1){return;}
-                var nextY=event.touches[0].clientY;
-                var delta=foundedTouchY-nextY;
-                foundedTouchY=nextY;
-                if(!foundedBandVisible()||!event.cancelable){return;}
-                event.preventDefault();
-                window.scrollBy(0,delta*.5);
-              },{passive:false});
-              document.addEventListener('touchend',function(){
-                foundedTouchY=null;
-              },{passive:true});
-              window.addEventListener('wheel',function(event){
-                if(!event.cancelable||!foundedBandVisible()||
-                  event.ctrlKey){return;}
-                event.preventDefault();
-                var factor=event.deltaMode===1?16:
-                  event.deltaMode===2?window.innerHeight:1;
-                window.scrollBy(0,event.deltaY*factor*.5);
-              },{passive:false});
-            }
-          }
-        }
+      /* 旧・横スクロール見出しは廃止。残っている登録要素も非表示にする。 */
+      if(section){
+        section.querySelectorAll('.hex-founded-marquee-copy,.hex-founded-marquee')
+          .forEach(function(element){element.hidden=true;});
       }
 
       /* 周年見出しに合わせて左右のCanvasから一度ずつ紙吹雪を放つ。 */
@@ -13594,6 +13473,12 @@ hexReady(function(){
       var width=stage.clientWidth;
       if(!width||(!force&&width===lastWidth)){return;}
       lastWidth=width;
+      /* 画面左端で3行目の中央が創業セクションの開始位置に重なるようにする。 */
+      var middle=rows[2].row.getBoundingClientRect();
+      var middleAtLeft=middle.top+middle.height/2+
+        (middle.left+middle.width/2)*Math.tan(Math.PI/18);
+      stage.style.setProperty('--hex-hashtag-overlap',
+        Math.max(0,stage.getBoundingClientRect().bottom-middleAtLeft)+'px');
       rows.forEach(function(item,index){
         var group=document.createElement('span');
         group.className='hex-hashtag-group';
