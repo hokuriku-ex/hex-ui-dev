@@ -2167,6 +2167,9 @@ hexReady(function(){
     var welcomeBodyStartedAt=0;
     var welcomeBodyFrame=0;
     var welcomeButtonTransitions=[];
+    var welcomeButtonScrollHold=null;
+    var welcomeButtonHeldLenis=null;
+    var welcomeButtonResumeLenis=false;
     var welcomeMeasuredHeight=0;
     var spCircleScrollFrame=0;
     var spCircleReleaseScrollY=null;
@@ -2627,11 +2630,51 @@ hexReady(function(){
       });
     }
 
+    function holdWelcomeButtonScroll(){
+      if(isSp()||reduced||!welcomeActive||released||
+        welcomeButtonScrollHold!==null){return;}
+      /* 大きなホイール入力で終端を越えた分も、次のセクションへ渡さない。 */
+      var end=documentTop(welcomeWrap)+measureWelcome().travel;
+      welcomeButtonScrollHold=Math.min(window.pageYOffset,end);
+      var lenis=window.hexMotion&&window.hexMotion.lenis;
+      welcomeButtonHeldLenis=lenis||null;
+      welcomeButtonResumeLenis=!!(lenis&&!lenis.isStopped);
+      if(lenis){
+        lenis.scrollTo(welcomeButtonScrollHold,{immediate:true,force:true});
+        lenis.stop();
+      }else{
+        window.scrollTo({top:welcomeButtonScrollHold,behavior:'instant'});
+      }
+    }
+
+    function releaseWelcomeButtonScroll(){
+      if(welcomeButtonScrollHold===null){return;}
+      if(welcomeButtonHeldLenis){
+        /* 待機中の入力・慣性を捨て、同じ位置から再開する。 */
+        welcomeButtonHeldLenis.scrollTo(welcomeButtonScrollHold,{
+          immediate:true,force:true
+        });
+        if(welcomeButtonResumeLenis){welcomeButtonHeldLenis.start();}
+      }
+      welcomeButtonScrollHold=null;
+      welcomeButtonHeldLenis=null;
+      welcomeButtonResumeLenis=false;
+    }
+
+    function onWelcomeScroll(){
+      if(welcomeButtonScrollHold!==null&&
+        Math.abs(window.pageYOffset-welcomeButtonScrollHold)>.5){
+        window.scrollTo({top:welcomeButtonScrollHold,behavior:'instant'});
+      }
+      queueScrollEffects();
+    }
+
     function cancelWelcomeButtonTransitions(){
       welcomeButtonTransitions.forEach(function(transition){
         transition.cancel();
       });
       welcomeButtonTransitions=[];
+      releaseWelcomeButtonScroll();
     }
 
     function waitForWelcomeButton(button){
@@ -2645,6 +2688,7 @@ hexReady(function(){
         var index=welcomeButtonTransitions.indexOf(transition);
         if(index<0){return;}
         welcomeButtonTransitions.splice(index,1);
+        if(!welcomeButtonTransitions.length){releaseWelcomeButtonScroll();}
         /* スクロールが止まっていても、着地後に固定解除を更新する。 */
         queueScrollEffects();
       }
@@ -2654,6 +2698,7 @@ hexReady(function(){
         }
       }
       welcomeButtonTransitions.push(transition);
+      holdWelcomeButtonScroll();
       button.addEventListener('transitionend',onEnd);
       /* transitionendが発火しない環境でも0.6秒の演出後に解除する。 */
       timer=window.setTimeout(finish,650);
@@ -3262,6 +3307,9 @@ hexReady(function(){
       ));
       /* 本文完了で開始するボタンの着地まで、PCの固定を維持する。 */
       var welcomeButtonPending=welcomeButtonTransitions.length>0;
+      /* hold開始時の終端補正を、このフレームの配置計算にも反映する。 */
+      scrollY=window.pageYOffset;
+      lastScrollY=scrollY;
       if(welcomeStage&&welcomeStageTop!==null){
         var scrollThroughWelcome=scrollY-welcomeTop;
         var keepFixed=!isSp()&&circleProgress>=.999&&
@@ -3326,9 +3374,15 @@ hexReady(function(){
     /* 本文を強制表示した後も、通常入力でスクロール位置への同期を再開する。
        WELCOME区間では入力をキャンセルせず、SPの慣性スクロールを維持する。 */
     function onWelcomeTouchMove(event){
+      if(welcomeButtonScrollHold!==null){event.preventDefault();return;}
       if(event.touches.length===1){welcomeBodyForced=false;}
     }
     function onWelcomeWheel(event){
+      if(welcomeButtonScrollHold!==null){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+      }
       if(event.deltaY){welcomeBodyForced=false;}
     }
     function onWelcomeKeyDown(event){
@@ -3336,6 +3390,12 @@ hexReady(function(){
         /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(
           document.activeElement&&document.activeElement.tagName||''
         )){return;}
+      if(welcomeButtonScrollHold!==null&&
+        /^(ArrowDown|PageDown| |ArrowUp|PageUp|Home|End)$/.test(event.key)){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+      }
       if(/^(ArrowDown|PageDown| |ArrowUp|PageUp)$/.test(event.key)){
         welcomeBodyForced=false;
       }
@@ -4115,10 +4175,10 @@ hexReady(function(){
       reset:function(){resetHero(true);}
     };
 
-    window.addEventListener("scroll",queueScrollEffects,{passive:true});
-    window.addEventListener("touchmove",onWelcomeTouchMove,{passive:true});
-    window.addEventListener("wheel",onWelcomeWheel,{passive:true,capture:true});
-    window.addEventListener("keydown",onWelcomeKeyDown);
+    window.addEventListener("scroll",onWelcomeScroll,{passive:true,capture:true});
+    window.addEventListener("touchmove",onWelcomeTouchMove,{passive:false,capture:true});
+    window.addEventListener("wheel",onWelcomeWheel,{passive:false,capture:true});
+    window.addEventListener("keydown",onWelcomeKeyDown,{capture:true});
     window.addEventListener("wheel",onWheel,{passive:false,capture:true});
     window.addEventListener("resize",queueResize);
     window.addEventListener("orientationchange",queueResize);
