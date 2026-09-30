@@ -4942,18 +4942,10 @@ html body
   font-weight:700;
   line-height:1.7;
   letter-spacing:.1em;
-  color:#fafafa!important;
-  -webkit-text-stroke:.5px #c8a874;
+  color:#c8a874!important;
+  -webkit-text-stroke:4px #fff;
   paint-order:stroke fill;
-  text-shadow:
-    .5px .5px 0 #c8a874,
-    1px 1px 0 #c8a874,
-    1.5px 1.5px 0 #c8a874,
-    2px 2px 0 #c8a874,
-    2.5px 2.5px 0 #c8a874,
-    3px 3px 0 #c8a874,
-    3.5px 3.5px 0 #c8a874,
-    4px 4px 0 #c8a874;
+  text-shadow:none;
 }
 
 /* ウェルカム側コピー */
@@ -5570,22 +5562,17 @@ html body
   overflow:visible;
 }
 .hex-founded-arc text{
-  fill:#fafafa;
+  fill:#c8a874;
   font-family:var(--hex-font-pop-ja);
   font-size:27px;
   font-weight:700;
   letter-spacing:.1em;
-  -webkit-text-stroke:.5px #c8a874;
+  -webkit-text-stroke:0;
+  stroke:#fff;
+  stroke-width:4px;
+  stroke-linejoin:round;
   paint-order:stroke fill;
-  text-shadow:
-    .5px .5px 0 #c8a874,
-    1px 1px 0 #c8a874,
-    1.5px 1.5px 0 #c8a874,
-    2px 2px 0 #c8a874,
-    2.5px 2.5px 0 #c8a874,
-    3px 3px 0 #c8a874,
-    3.5px 3.5px 0 #c8a874,
-    4px 4px 0 #c8a874;
+  text-shadow:none;
 }
 .hex-founded-year,
 .hex-founded-text{
@@ -5614,23 +5601,15 @@ html body
 .hex-founded-message{
   margin:0 auto 48px!important;
   font-family:var(--hex-font-pop-ja)!important;
-  color:#fafafa!important;
+  color:#c8a874!important;
   font-size:clamp(16px,calc(var(--hex-founded-vw, 1vw) * 1.6),22px)!important;
   font-weight:700;
   line-height:1.7;
   letter-spacing:.1em;
   text-align:center;
-  -webkit-text-stroke:.5px #c8a874;
+  -webkit-text-stroke:4px #fff;
   paint-order:stroke fill;
-  text-shadow:
-    .5px .5px 0 #c8a874,
-    1px 1px 0 #c8a874,
-    1.5px 1.5px 0 #c8a874,
-    2px 2px 0 #c8a874,
-    2.5px 2.5px 0 #c8a874,
-    3px 3px 0 #c8a874,
-    3.5px 3.5px 0 #c8a874,
-    4px 4px 0 #c8a874;
+  text-shadow:none;
 }
 .hex-founded-title-char{
   display:inline-block;
@@ -9568,4 +9547,12 @@ html.hex-opening-finishing
   html.lenis.lenis-stopped.hex-welcome-button-scroll-hold{
     overflow-y:scroll!important;
   }
+}
+
+/* WELCOME本文：文字の表示演出を保ち、塗りの外側に白い縁を描く。 */
+.hex-v2-welcome-copy-stage .welcome_contents .text,
+.hex-v2-welcome-copy-stage .welcome_contents .text *{
+  -webkit-text-stroke:3px #fff!important;
+  paint-order:stroke fill;
+  text-shadow:none!important;
 }
