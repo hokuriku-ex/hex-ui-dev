@@ -5422,13 +5422,25 @@ html body
 ======================================= */
 #gc_auto_frame_home_4{
   --hex-founding-bg:#1f2774;
-  background:#1f2774!important;
-  /* 全幅の紺背景の上に、左右余白付きの写真と本文を重ねる。 */
+  position:relative;
+  background:transparent!important;
+  /* 透明な斜め帯の上側を残し、本文側だけ全面の紺背景にする。 */
   isolation:auto;
   z-index:auto!important;
   transform:none!important;
   filter:none!important;
   opacity:1!important;
+}
+#gc_auto_frame_home_4::before{
+  content:"";
+  position:absolute;
+  top:var(--hex-founded-navy-top,0px);
+  bottom:0;
+  left:0;
+  right:0;
+  z-index:0;
+  background:#1f2774;
+  pointer-events:none;
 }
 #gc_auto_frame_home_4 :is(
   .background_color,
@@ -9439,6 +9451,20 @@ html.hex-opening-finishing
   width:calc(100% + 160px);
   transform:translateY(-50%) rotate(-10deg);
   transform-origin:center;
+}
+/* 一番上の斜め帯より上は透明、最下段より下は紺にする。 */
+.hex-hashtag-banner{
+  background:transparent;
+}
+.hex-hashtag-tilt::after{
+  content:"";
+  position:absolute;
+  top:100%;
+  left:-100vw;
+  right:-100vw;
+  height:200vh;
+  background:#1f2774;
+  pointer-events:none;
 }
 .hex-hashtag-row{
   height:var(--hex-hashtag-row-height);

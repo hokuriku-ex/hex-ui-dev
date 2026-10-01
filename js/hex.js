@@ -12706,11 +12706,24 @@ hexLoad(function(){
              画面外の境界も保持し、途中で角丸が画面端に張り付かないようにする。 */
           var holeTop=sectionRect.top;
           var holeBottom=sectionRect.bottom;
+          /* 末尾の空スペーサー2つ：1つ目まで写真、2つ目は紺の余白。 */
+          var emptySpacers=Array.prototype.filter.call(
+            section.querySelectorAll('.rsp_spacer4'),function(spacer){
+              return spacer.children.length===0&&!spacer.textContent.trim();
+            }
+          );
+          if(emptySpacers.length>=2){
+            var navySpacer=emptySpacers[emptySpacers.length-1];
+            holeBottom=Math.min(holeBottom,navySpacer.getBoundingClientRect().top);
+          }
           /* HTMLで同一セクション内に置かれた帯も、写真と重ねない。 */
           var hashtagBanner=section.querySelector(".hex-hashtag-banner");
           if(hashtagBanner){
             holeTop=Math.max(holeTop,hashtagBanner.getBoundingClientRect().bottom);
           }
+          /* 帯の上側にはセクションの紺背景も描かず、背後を見せる。 */
+          section.style.setProperty('--hex-founded-navy-top',
+            (hashtagBanner?Math.max(0,holeTop-sectionRect.top):0)+'px');
           var photoWidth=viewportWidth;
           var photoLeft=0;
           foundedPhoto.style.top='0px';
