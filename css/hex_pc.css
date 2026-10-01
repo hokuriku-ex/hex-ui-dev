@@ -9641,3 +9641,13 @@ html.hex-opening-finishing
     transition:none;
   }
 }
+
+/* ホバー切替を使うPCだけに表示する追加見出し */
+h2.hex-top-title.hex-audience-guide-title{
+  display:none!important;
+}
+@media screen and (min-width:769px) and (hover:hover) and (pointer:fine){
+  h2.hex-top-title.hex-audience-guide-title{
+    display:flex!important;
+  }
+}

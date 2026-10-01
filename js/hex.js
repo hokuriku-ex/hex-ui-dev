@@ -5292,6 +5292,7 @@ hexReady(function(){
       var item=document.createElement('div');
       item.className='hex-audience-item';
       grid.insertBefore(item,card);
+      titles[index].classList.add('hex-audience-card-title','hex-motion-auto-off');
       item.appendChild(titles[index]);
       item.appendChild(card);
     });
@@ -12492,6 +12493,7 @@ hexLoad(function(){
         :document;
       var selector=
         '.hex-top-title[data-en]'+
+        ':not(.hex-audience-card-title)'+
         ':not([data-hex-title-roll-ready])';
       var targets=[];
 
