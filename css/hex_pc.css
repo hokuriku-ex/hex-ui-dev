@@ -9642,14 +9642,9 @@ html.hex-opening-finishing
   }
 }
 
-/* ホバー切替を使うPCだけに表示する追加見出し */
+/* お客様向けセクションの見出しは、すべての端末で表示 */
 h2.hex-top-title.hex-audience-guide-title{
-  display:none!important;
-}
-@media screen and (min-width:769px) and (hover:hover) and (pointer:fine){
-  h2.hex-top-title.hex-audience-guide-title{
-    display:flex!important;
-  }
+  display:flex!important;
 }
 
 /* 画像枠内のカード見出しのみ：英語はゴールド、日本語は紺 */
@@ -9660,4 +9655,12 @@ h2.hex-top-title.hex-audience-guide-title{
 .hex-audience-grid .hex-card-image > h2.hex-audience-card-title[data-en]::after,
 .hex-audience-grid .hex-card-image > h2.hex-audience-card-title .hex-top-title-en{
   color:#c8a874!important;
+}
+
+/* SPのみ、カード用の英語見出しを約2割小さくする */
+@media screen and (max-width:768px){
+  .hex-audience-grid h2.hex-audience-card-title[data-en]::after,
+  .hex-audience-grid h2.hex-audience-card-title .hex-top-title-en{
+    font-size:clamp(5.2rem,6.5vw,7.8rem)!important;
+  }
 }
