@@ -13083,7 +13083,7 @@ hexLoad(function(){
           /* 周年数字は、数字自体が画面下端に入ったら開始する。 */
           ScrollTrigger.create({
             trigger:foundedYear||title,
-            start:'top bottom',
+            start:window.innerWidth<=768?'top 96%':'top 95%',
             onEnter:function(){
               if(titlePlayed){return;}
               titlePlayed=true;
@@ -13129,7 +13129,7 @@ hexLoad(function(){
       if(foundedMessage&&!isReducedMotion()){
         ScrollTrigger.create({
           trigger:foundedMessage,
-          start:'top bottom',
+          start:window.innerWidth<=768?'top 96%':'top 95%',
           onEnter:function(){
             if(foundedMessagePlayed){return;}
             foundedMessagePlayed=true;
