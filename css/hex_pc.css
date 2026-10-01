@@ -9657,10 +9657,22 @@ h2.hex-top-title.hex-audience-guide-title{
   color:#c8a874!important;
 }
 
-/* SPのみ、カード用の英語見出しを約2割小さくする */
+/* SPのカード用英語見出し */
 @media screen and (max-width:768px){
   .hex-audience-grid h2.hex-audience-card-title[data-en]::after,
   .hex-audience-grid h2.hex-audience-card-title .hex-top-title-en{
-    font-size:clamp(5.2rem,6.5vw,7.8rem)!important;
+    font-size:40px!important;
+  }
+}
+
+/* Which Are You?：英語メインだけ専用サイズ */
+h2.hex-top-title.hex-audience-guide-title[data-en]::after,
+h2.hex-top-title.hex-audience-guide-title .hex-top-title-en{
+  font-size:clamp(32px, 6vw, 7.2rem)!important;
+}
+@media screen and (max-width:768px){
+  h2.hex-top-title.hex-audience-guide-title[data-en]::after,
+  h2.hex-top-title.hex-audience-guide-title .hex-top-title-en{
+    font-size:48px!important;
   }
 }
