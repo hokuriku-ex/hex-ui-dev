@@ -1458,7 +1458,7 @@
     font-size:28px;
   }
   .hex-founded-message{
-    margin-bottom:32px!important;
+    margin-bottom:16px!important;
     font-size:clamp(14px,3.6vw,16px)!important;
     line-height:1.7;
     letter-spacing:.1em;
@@ -2648,7 +2648,7 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     background:transparent!important;
   }
   #gc_auto_frame_home_4 .hex-company-card{
-    gap:18px;
+    gap:9px 18px;
     justify-items:center;
   }
   #gc_auto_frame_home_4 .hex-company-card .hex-card{

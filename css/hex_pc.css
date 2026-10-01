@@ -5611,7 +5611,7 @@ html body
   overflow:hidden;
 }
 .hex-founded-message{
-  margin:0 auto 48px!important;
+  margin:0 auto 24px!important;
   font-family:var(--hex-font-pop-ja)!important;
   color:#c8a874!important;
   font-size:clamp(16px,calc(var(--hex-founded-vw, 1vw) * 1.6),22px)!important;
@@ -9319,7 +9319,7 @@ html.hex-opening-finishing
 
 /* 創業セクションの6枚のカード：月桂樹と3段の情報配置 */
 #gc_auto_frame_home_4 .hex-company-card{
-  gap:clamp(16px,calc(var(--hex-founded-vw, 1vw) * 2.2),32px) clamp(8px,calc(var(--hex-founded-vw, 1vw) * 1.4),20px);
+  gap:clamp(8px,calc(var(--hex-founded-vw, 1vw) * 1.1),16px) clamp(8px,calc(var(--hex-founded-vw, 1vw) * 1.4),20px);
 }
 #gc_auto_frame_home_4 .hex-company-card .hex-card{
   min-width:0;
@@ -9675,4 +9675,54 @@ h2.hex-top-title.hex-audience-guide-title .hex-top-title-en{
   h2.hex-top-title.hex-audience-guide-title .hex-top-title-en{
     font-size:48px!important;
   }
+}
+
+/* 創業の6枚：月桂樹の中央を、単位を除いた数字の中央に合わせる */
+#gc_auto_frame_home_4 .hex-company-card .hex-card{
+  position:relative;
+  overflow:visible!important;
+}
+#gc_auto_frame_home_4 .hex-company-card .hex-card-body{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:64%!important;
+  margin:0!important;
+  padding:0!important;
+  transform:translate(-50%,-50%);
+  overflow:visible!important;
+}
+#gc_auto_frame_home_4 .hex-company-card .hex-card-title{
+  position:relative;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  grid-template-rows:auto;
+  row-gap:0;
+  overflow:visible!important;
+}
+#gc_auto_frame_home_4 .hex-company-card .hex-number{
+  grid-column:2;
+  grid-row:1;
+  justify-self:center;
+  align-self:center;
+}
+#gc_auto_frame_home_4 .hex-company-card .hex-unit{
+  grid-column:3;
+  grid-row:1;
+  justify-self:start;
+  align-self:end;
+}
+#gc_auto_frame_home_4 .hex-company-card .hex-title{
+  position:absolute;
+  bottom:calc(100% + clamp(7px,calc(var(--hex-founded-vw,1vw) * 1),13px));
+  left:0;
+  width:100%;
+  text-align:center;
+}
+#gc_auto_frame_home_4 .hex-company-card .hex-card-text{
+  position:absolute;
+  top:calc(100% + clamp(9px,calc(var(--hex-founded-vw,1vw) * 1.2),16px));
+  left:0;
+  width:100%;
+  margin:0!important;
+  text-align:center;
 }
