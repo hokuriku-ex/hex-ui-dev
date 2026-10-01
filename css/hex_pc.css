@@ -5424,8 +5424,6 @@ html body
   --hex-founding-bg:#1f2774;
   position:relative;
   background:transparent!important;
-  /* CMSの外側クリップは解除し、写真と斜め帯自身で切り抜く。 */
-  overflow:visible!important;
   /* 透明な斜め帯の上側を残し、本文側だけ全面の紺背景にする。 */
   isolation:auto;
   z-index:94!important;

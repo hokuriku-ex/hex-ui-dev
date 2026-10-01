@@ -2730,16 +2730,9 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
 }
 
-/* SP創業セクション：帯との接合部と左右端は紺背景側で1px重ねる。
-   紺背景は画面幅を基準に左右端まで覆う。 */
+/* 創業背景の接合部：解消済みの横線対策のみ維持する。 */
 @media screen and (max-width:768px){
   #gc_auto_frame_home_4::before{
     top:calc(var(--hex-founded-navy-top,0px) - 1px);
-    left:calc(50% - 50vw - 1px);
-    right:auto;
-    width:calc(100vw + 2px);
-    max-width:none;
-    box-sizing:border-box;
-    box-shadow:none;
   }
 }
