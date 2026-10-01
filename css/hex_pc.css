@@ -9594,3 +9594,50 @@ html.hex-opening-finishing
     row-gap:clamp(48px,10vw,72px);
   }
 }
+
+/* マウス操作のPCのみ：画像枠の中央見出しと写真をホバーで切り替える */
+@media screen and (min-width:769px) and (hover:hover) and (pointer:fine){
+  .hex-audience-item.has-audience-hover .hex-card-image{
+    position:relative;
+    container-type:inline-size;
+  }
+  .hex-audience-item.has-audience-hover .hex-card-image > h2.hex-top-title{
+    position:absolute;
+    top:50%;
+    left:0;
+    z-index:2;
+    width:100%;
+    margin:0!important;
+    padding:0 12px!important;
+    transform:translateY(-50%);
+    align-items:center;
+    text-align:center;
+    opacity:1;
+    visibility:visible;
+    pointer-events:none;
+    transition:opacity .3s ease,visibility .3s ease;
+  }
+  .hex-audience-item.has-audience-hover .hex-top-title-en,
+  .hex-audience-item.has-audience-hover .hex-top-title[data-en]::after{
+    font-size:clamp(32px,12cqi,80px)!important;
+  }
+  .hex-audience-item.has-audience-hover .hex-card-image > img{
+    opacity:0;
+    transition:opacity .3s ease;
+  }
+  .hex-audience-item.has-audience-hover .hex-card:is(:hover,:focus-within)
+  .hex-card-image > img{
+    opacity:1;
+  }
+  .hex-audience-item.has-audience-hover .hex-card:is(:hover,:focus-within)
+  .hex-card-image > h2.hex-top-title{
+    opacity:0;
+    visibility:hidden;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  .hex-audience-item.has-audience-hover .hex-card-image > img,
+  .hex-audience-item.has-audience-hover .hex-card-image > h2.hex-top-title{
+    transition:none;
+  }
+}

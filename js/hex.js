@@ -5295,6 +5295,30 @@ hexReady(function(){
       item.appendChild(titles[index]);
       item.appendChild(card);
     });
+    /* 幅だけでPCと判定せず、ホバーできる入力環境だけ画像内へ移動する。 */
+    var hoverLayout=window.matchMedia(
+      '(min-width:769px) and (hover:hover) and (pointer:fine)'
+    );
+    function syncAudienceHoverLayout(){
+      cards.forEach(function(card,index){
+        var item=card.parentNode;
+        var image=card.querySelector('.hex-card-image');
+        if(hoverLayout.matches&&image){
+          image.appendChild(titles[index]);
+          item.classList.add('has-audience-hover');
+        }else{
+          item.insertBefore(titles[index],card);
+          item.classList.remove('has-audience-hover');
+        }
+      });
+      if(window.ScrollTrigger){window.ScrollTrigger.refresh();}
+    }
+    syncAudienceHoverLayout();
+    if(hoverLayout.addEventListener){
+      hoverLayout.addEventListener('change',syncAudienceHoverLayout);
+    }else if(hoverLayout.addListener){
+      hoverLayout.addListener(syncAudienceHoverLayout);
+    }
     grid.dataset.hexAudienceReady='1';
   });
 });
