@@ -2743,11 +2743,3 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     box-shadow:none;
   }
 }
-
-/* SP創業：CMSによるセクション全体の追加クリップを外す。
-   写真はis-native-frameのclip-path、斜め帯は自身のoverflowで切り抜く。 */
-@media screen and (max-width:768px){
-  #gc_auto_frame_home_4{
-    overflow:visible!important;
-  }
-}
