@@ -2657,7 +2657,8 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     align-items:center;
     justify-content:center;
     width:100%;
-    min-height:clamp(220px,62vw,255px);
+    --hex-founded-laurel-height:clamp(220px,62vw,255px);
+    min-height:calc(var(--hex-founded-laurel-height) * var(--hex-founded-card-height-ratio));
     margin:0 auto;
     padding:18px 18%!important;
   }
