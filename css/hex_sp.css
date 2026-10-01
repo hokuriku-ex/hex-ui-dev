@@ -2711,7 +2711,8 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     position:absolute!important;
     background:transparent;
     overflow:visible;
-    clip-path:inset(0 round var(--hex-founded-photo-radius,32px))!important;
+    /* 上・右の切り抜き境界を1px重ね、端の細い隙間を抑える。 */
+    clip-path:inset(-1px -1px 0 0 round var(--hex-founded-photo-radius,32px))!important;
     border-radius:var(--hex-founded-photo-radius,32px);
     transform:none!important;
     filter:none!important;
@@ -2727,12 +2728,5 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     pointer-events:none;
     transform:none!important;
     transition:none!important;
-  }
-}
-
-/* SP創業写真の上端：紺背景を2px内側に収め、境界の細い線を防ぐ */
-@media screen and (max-width:768px){
-  #gc_auto_frame_home_4::before{
-    top:calc(var(--hex-founded-navy-top,0px) + 2px);
   }
 }
