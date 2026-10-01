@@ -5426,7 +5426,7 @@ html body
   background:transparent!important;
   /* 透明な斜め帯の上側を残し、本文側だけ全面の紺背景にする。 */
   isolation:auto;
-  z-index:auto!important;
+  z-index:94!important;
   transform:none!important;
   filter:none!important;
   opacity:1!important;
@@ -9431,7 +9431,7 @@ html.hex-opening-finishing
 .hex-hashtag-banner{
   --hex-hashtag-row-height:clamp(54px,5vw,80px);
   position:relative;
-  z-index:4;
+  z-index:94;
   width:100vw;
   max-width:none!important;
   left:calc(50% - 50vw);
@@ -9459,10 +9459,10 @@ html.hex-opening-finishing
 .hex-hashtag-tilt::after{
   content:"";
   position:absolute;
-  top:100%;
+  top:calc(100% - 2px);
   left:-100vw;
   right:-100vw;
-  height:200vh;
+  height:calc(200vh + 2px);
   background:#1f2774;
   pointer-events:none;
 }

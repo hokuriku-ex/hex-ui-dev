@@ -3271,6 +3271,31 @@ hexReady(function(){
       }
     }
 
+    /* 紺の斜め上端が画面全幅でヘッダー下に届くまでWELCOMEを保持する。
+       フローの高さは増やさず、後続の創業セクションを手前へ流す。 */
+    function getWelcomeReleaseTravel(travelMetrics,welcomeTop){
+      if(isSp()){return travelMetrics.travel;}
+      var about=document.getElementById('gc_auto_frame_home_4');
+      if(!about){return travelMetrics.travel;}
+      var banner=document.querySelector('.hex-hashtag-banner');
+      var header=parseFloat(getComputedStyle(document.documentElement)
+        .getPropertyValue('--header_height'))||80;
+      var coverTop=about.getBoundingClientRect().top;
+      if(banner){
+        var tilt=banner.querySelector('.hex-hashtag-tilt');
+        var rect=banner.getBoundingClientRect();
+        if(tilt){
+          /* rotate(-10deg)の上辺と画面左端の交点。透明な三角は含めない。 */
+          var angle=10*Math.PI/180;
+          coverTop=rect.top+rect.height/2-
+            tilt.offsetHeight/(2*Math.cos(angle))+
+            (rect.left+rect.width/2)*Math.tan(angle);
+        }
+      }
+      return Math.max(travelMetrics.travel,
+        window.pageYOffset+coverTop-header-welcomeTop);
+    }
+
     function updateScrollEffects(){
       var scrollY=window.pageYOffset;
       var movingUp=scrollY<lastScrollY;
@@ -3348,10 +3373,11 @@ hexReady(function(){
       /* hold開始時の終端補正を、このフレームの配置計算にも反映する。 */
       scrollY=window.pageYOffset;
       lastScrollY=scrollY;
+      var welcomeReleaseTravel=getWelcomeReleaseTravel(travelMetrics,welcomeTop);
       if(welcomeStage&&welcomeStageTop!==null){
         var scrollThroughWelcome=scrollY-welcomeTop;
         var keepFixed=!isSp()&&circleProgress>=.999&&
-          (scrollThroughWelcome<travelMetrics.travel||welcomeButtonPending);
+          (scrollThroughWelcome<welcomeReleaseTravel||welcomeButtonPending);
         var wasFixed=welcomeStage.classList.contains("is-screen-fixed");
         var fixedRect=wasFixed&&!keepFixed
           ?welcomeStage.getBoundingClientRect():null;
@@ -3365,7 +3391,7 @@ hexReady(function(){
           :keepFixed
           ?welcomeStageScreenTop
           :(welcomeStageExitTop===null
-            ?welcomeStageTop+clamp(scrollThroughWelcome,0,travelMetrics.travel)
+            ?welcomeStageTop+clamp(scrollThroughWelcome,0,welcomeReleaseTravel)
             :welcomeStageExitTop);
         if(keepFixed){
           welcomeStage.classList.add("is-screen-fixed");
@@ -3393,7 +3419,7 @@ hexReady(function(){
       welcomeWrap.classList.toggle("is-v2-circle-complete",circleProgress>=.999);
 
       if((isSp()&&circleProgress>=.999)||
-        (!isSp()&&scrollY-welcomeTop>=travelMetrics.travel&&
+        (!isSp()&&scrollY-welcomeTop>=welcomeReleaseTravel&&
           !welcomeButtonPending)){
         releaseSnapshot();
       }else if(released){
