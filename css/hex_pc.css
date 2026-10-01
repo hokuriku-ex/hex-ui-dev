@@ -9566,3 +9566,31 @@ html.hex-opening-finishing
   height:100%;
   object-fit:cover;
 }
+
+/* 専用カード：PCはタイトル付き2列、SPはタイトルとカードを交互に表示 */
+.hex-card-grid.hex-audience-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-items:stretch;
+}
+.hex-audience-grid > .hex-audience-item{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+.hex-audience-item > h2.hex-top-title{
+  width:100%;
+  align-items:center;
+  text-align:center;
+}
+.hex-audience-item > .hex-card{
+  width:100%;
+  min-width:0;
+  flex:1;
+  box-sizing:border-box;
+}
+@media screen and (max-width:768px){
+  .hex-card-grid.hex-audience-grid{
+    grid-template-columns:minmax(0,1fr)!important;
+    row-gap:clamp(48px,10vw,72px);
+  }
+}

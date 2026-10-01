@@ -5267,6 +5267,38 @@ hexReady(function(){
   });
 });
 
+/* 専用カード2列：直前の見出しを対応するカードの上へ移す。 */
+hexReady(function(){
+  document.querySelectorAll('.hex-card-grid.hex-audience-grid').forEach(function(grid){
+    if(grid.dataset.hexAudienceReady==='1'){return;}
+    var cards=Array.prototype.filter.call(grid.children,function(child){
+      return child.classList.contains('hex-card');
+    });
+    if(cards.length!==2){return;}
+    var container=grid.closest('.gc_auto_frame_spotitem_body')||grid.parentNode;
+    var labels=['Homeowners','Businesses'];
+    var titles=labels.map(function(label){
+      var candidates=Array.prototype.filter.call(
+        container.querySelectorAll('h2.hex-top-title[data-en="'+label+'"]'),
+        function(title){
+          return !title.closest('.hex-audience-item')&&
+            !!(title.compareDocumentPosition(grid)&Node.DOCUMENT_POSITION_FOLLOWING);
+        }
+      );
+      return candidates[candidates.length-1]||null;
+    });
+    if(!titles[0]||!titles[1]){return;}
+    cards.forEach(function(card,index){
+      var item=document.createElement('div');
+      item.className='hex-audience-item';
+      grid.insertBefore(item,card);
+      item.appendChild(titles[index]);
+      item.appendChild(card);
+    });
+    grid.dataset.hexAudienceReady='1';
+  });
+});
+
 /* =======================================
    Q&A記事アイコンをファイル記事から取得
 ======================================= */
