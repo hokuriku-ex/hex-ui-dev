@@ -12666,7 +12666,7 @@ hexLoad(function(){
 
     function setupFoundedMotion(){
       var section=document.getElementById(HOME_SECTIONS.ABOUT);
-      /* セクションの白背景と本文の間に写真を配置する。 */
+      /* セクションの紺背景と本文の間に写真を配置する。 */
       var foundedPhoto=section&&section.querySelector('.hex-founded-photo');
       if(foundedPhoto){
         foundedPhoto.classList.add('hex-motion-auto-off');
@@ -12700,20 +12700,24 @@ hexLoad(function(){
           var radius=mobile?Math.min(32,viewportWidth*.08):
             Math.min(72,Math.max(40,viewportWidth*.04));
           var left=Math.max(sideInset,sectionRect.left+inset);
-          /* 左側だけ余白と角丸を残し、右側は画面端まで広げる。 */
-          var right=viewportWidth;
+          /* 右側にも左側と同じ余白を設ける。 */
+          var right=viewportWidth-left;
           /* 角丸の境界はコンテンツ全体の上端・下端とともにスクロールする。
              画面外の境界も保持し、途中で角丸が画面端に張り付かないようにする。 */
           var holeTop=sectionRect.top;
           var holeBottom=sectionRect.bottom;
+          /* HTMLで同一セクション内に置かれた帯も、写真と重ねない。 */
+          var hashtagBanner=section.querySelector(".hex-hashtag-banner");
+          if(hashtagBanner){
+            holeTop=Math.max(holeTop,hashtagBanner.getBoundingClientRect().bottom);
+          }
           var photoWidth=viewportWidth;
           var photoLeft=0;
           foundedPhoto.style.top='0px';
           foundedPhoto.style.height=viewportHeight+'px';
           foundedPhoto.style.width=photoWidth+'px';
           foundedPhoto.style.left=photoLeft+'px';
-          var visible=section.getAttribute('data-hex-hashtag-active')!=='0'&&
-            right>left&&holeBottom>0&&holeTop<viewportHeight&&
+          var visible=right>left&&holeBottom>0&&holeTop<viewportHeight&&
             holeBottom-holeTop>0;
           foundedPhoto.style.visibility=visible?'visible':'hidden';
           /* 固定写真と、移動する角丸セクションが重なる部分だけ描画する。 */
@@ -12722,7 +12726,7 @@ hexLoad(function(){
             foundedPhoto.style.clipPath='inset('+holeTop+'px '+
               Math.max(0,photoLeft+photoWidth-right)+'px '+
               (viewportHeight-holeBottom)+'px '+
-              Math.max(0,left-photoLeft)+'px round '+r+'px 0px 0px '+r+'px)';
+              Math.max(0,left-photoLeft)+'px round '+r+'px)';
           }
         };
         var queueFoundedPhoto=function(){
@@ -12733,7 +12737,6 @@ hexLoad(function(){
         window.addEventListener('scroll',queueFoundedPhoto,{passive:true});
         window.addEventListener('resize',queueFoundedPhoto,{passive:true});
         document.addEventListener('hex:hero-layout-updated',queueFoundedPhoto);
-        document.addEventListener('hex:hashtag-pin-updated',queueFoundedPhoto);
         syncFoundedPhoto();
       }
       var title=section&&section.querySelector('.hex-center-title');
@@ -13621,81 +13624,14 @@ hexReady(function(){
         speed:Math.min(200,Math.max(20,Number(entry.getAttribute('data-speed'))||
           defaultSpeeds[index]))});
     });
-    /* CMSの項目番号は増やさず、既存セクション同士の間へ移動する。 */
-    var spacer=document.createElement('div');
-    spacer.className='hex-hashtag-spacer hex-motion-auto-off';
-    about.parentNode.insertBefore(spacer,about);
-    spacer.appendChild(stage);
-    /* 次のセクションは、創業の下端がヘッダー下端へ達するまで画面下に待機。 */
-    var nextSection=document.getElementById('gc_auto_frame_home_5');
-    var nextSpacer=null;
-    if(nextSection){
-      nextSpacer=document.createElement('div');
-      nextSpacer.className='hex-hashtag-next-spacer hex-motion-auto-off';
-      nextSpacer.setAttribute('aria-hidden','true');
-      nextSection.parentNode.insertBefore(nextSpacer,nextSection);
-    }
+    /* HTMLの文言ブロックと同じ位置に表示し、固定やセクション移動を行わない。 */
+    source.parentNode.insertBefore(stage,source);
     source.hidden=true;
     var inView=false;
     var reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
     function syncPause(){
       stage.classList.toggle('is-paused',!inView||document.hidden||reduced.matches);
     }
-    /* 元の高さを保持し、固定区間はposition:fixedで5行を画面中央に置く。
-       解除後は移動量を一度だけ配置に反映し、通常のスクロールで上へ抜ける。 */
-    var headerProbe=document.createElement('div');
-    headerProbe.className='hex-hashtag-header-probe';
-    headerProbe.setAttribute('aria-hidden','true');
-    document.body.appendChild(headerProbe);
-    var pinFrame=0;
-    var activeState=null;
-    function syncPin(){
-      pinFrame=0;
-      var scrollY=window.pageYOffset||0;
-      var height=stage.offsetHeight;
-      if(spacer.style.height!==height+'px'){spacer.style.height=height+'px';}
-      var spacerRect=spacer.getBoundingClientRect();
-      var start=spacerRect.top+scrollY+
-        height/2-window.innerHeight/2;
-      var headerBottom=headerProbe.getBoundingClientRect().height||80;
-      if(nextSpacer){
-        /* 解除時に次セクションの上端が画面下端に一致する高さを確保する。 */
-        var waitHeight=reduced.matches?0:Math.max(0,window.innerHeight-headerBottom);
-        if(nextSpacer.style.height!==waitHeight+'px'){
-          nextSpacer.style.height=waitHeight+'px';
-        }
-      }
-      var end=Math.max(start,about.getBoundingClientRect().bottom+scrollY-headerBottom);
-      var pinned=!reduced.matches&&scrollY>=start&&scrollY<=end;
-      var released=!reduced.matches&&scrollY>end;
-      var styles={
-        position:pinned?'fixed':'relative',
-        top:pinned?((window.innerHeight-height)/2)+'px':
-          (released?Math.round((end-start)*100)/100:0)+'px',
-        left:pinned?spacerRect.left+'px':'0px',
-        width:pinned?spacerRect.width+'px':'100%',
-        transform:'none'
-      };
-      /* 固定中は同じ値を書き直さず、画面スクロールに追従させない。 */
-      Object.keys(styles).forEach(function(property){
-        if(stage.style[property]!==styles[property]){
-          stage.style[property]=styles[property];
-        }
-      });
-      var active=reduced.matches||scrollY>=start;
-      if(active!==activeState){
-        activeState=active;
-        about.setAttribute('data-hex-hashtag-active',active?'1':'0');
-        document.dispatchEvent(new CustomEvent('hex:hashtag-pin-updated'));
-      }
-    }
-    function queuePin(){
-      if(!pinFrame){pinFrame=window.requestAnimationFrame(syncPin);}
-    }
-    window.addEventListener('scroll',queuePin,{passive:true});
-    window.addEventListener('resize',queuePin,{passive:true});
-    document.addEventListener('hex:hero-layout-updated',queuePin);
-    if(reduced.addEventListener){reduced.addEventListener('change',queuePin);}
     var lastWidth=0;
     function rebuild(force){
       var width=stage.clientWidth;
@@ -13729,16 +13665,14 @@ hexReady(function(){
       });
     }
     rebuild(true);
-    syncPin();
     if(window.ResizeObserver){
-      var resizeObserver=new ResizeObserver(function(){rebuild(false);queuePin();});
+      var resizeObserver=new ResizeObserver(function(){rebuild(false);});
       resizeObserver.observe(stage);
-      resizeObserver.observe(about);
     }else{
       window.addEventListener('resize',function(){rebuild(false);},{passive:true});
     }
     if(document.fonts&&document.fonts.ready){
-      document.fonts.ready.then(function(){rebuild(true);queuePin();});
+      document.fonts.ready.then(function(){rebuild(true);});
     }
     if(window.IntersectionObserver){
       var visibilityObserver=new IntersectionObserver(function(entries){
@@ -13750,6 +13684,7 @@ hexReady(function(){
     document.addEventListener('visibilitychange',syncPause);
     if(reduced.addEventListener){reduced.addEventListener('change',syncPause);}
     syncPause();
+    document.dispatchEvent(new CustomEvent("hex:hero-layout-updated"));
     /* 挿入した帯の高さを既存のスクロール位置計算にも反映する。 */
     if(window.ScrollTrigger){window.ScrollTrigger.refresh();}
   }

@@ -5421,9 +5421,9 @@ html body
    トップページ：私たちについて
 ======================================= */
 #gc_auto_frame_home_4{
-  --hex-founding-bg:#fff;
-  background:#fff!important;
-  /* 白いセクション背景は文字の背面。写真と本文は独立した前面レイヤー。 */
+  --hex-founding-bg:#1f2774;
+  background:#1f2774!important;
+  /* 全幅の紺背景の上に、左右余白付きの写真と本文を重ねる。 */
   isolation:auto;
   z-index:auto!important;
   transform:none!important;
@@ -9420,7 +9420,9 @@ html.hex-opening-finishing
   --hex-hashtag-row-height:clamp(54px,5vw,80px);
   position:relative;
   z-index:4;
-  width:100%;
+  width:100vw;
+  max-width:none!important;
+  left:calc(50% - 50vw);
   height:calc(var(--hex-hashtag-row-height) * 5 + 18vw + 40px);
   margin:0!important;
   padding:0!important;
@@ -9442,8 +9444,8 @@ html.hex-opening-finishing
   height:var(--hex-hashtag-row-height);
   margin:0!important;
   padding:0!important;
-  color:#1f2774;
-  background:transparent;
+  color:#fff;
+  background:#1f2774;
   overflow:hidden;
   font-family:var(--hex-font-gothic, sans-serif)!important;
   font-size:clamp(32px,3.6vw,58px)!important;
@@ -9452,7 +9454,7 @@ html.hex-opening-finishing
   letter-spacing:.06em;
   white-space:nowrap;
 }
-.hex-hashtag-row:nth-child(even){background:#1f2774;color:#fff;}
+.hex-hashtag-row:nth-child(even){background:#fff;color:#1f2774;}
 .hex-hashtag-track{
   display:flex;
   width:max-content;
@@ -9477,43 +9479,6 @@ html.hex-opening-finishing
 }
 @media(prefers-reduced-motion:reduce){
   .hex-hashtag-track{animation:none;will-change:auto;}
-}
-
-/* 5行だけを画面中央で保持するための、通常フローの高さ確保 */
-.hex-hashtag-spacer{
-  position:relative;
-  width:100%;
-  margin:0!important;
-  padding:0!important;
-  overflow:visible;
-}
-.hex-hashtag-header-probe{
-  position:fixed;
-  top:0;
-  left:0;
-  width:0;
-  height:var(--header_height,80px);
-  visibility:hidden;
-  pointer-events:none;
-}
-#gc_auto_frame_home_4[data-hex-hashtag-active="0"] > :not(.hex-founded-photo){
-  visibility:hidden!important;
-}
-@media(max-width:768px){
-  .hex-hashtag-header-probe{
-    height:var(--header_height_smartphone,clamp(64px,20vw,80px));
-  }
-}
-
-/* 創業の固定解除まで、次セクションを画面下で待機させる区間 */
-.hex-hashtag-next-spacer{
-  display:block;
-  width:100%;
-  margin:0!important;
-  padding:0!important;
-  border:0;
-  background:transparent;
-  pointer-events:none;
 }
 
 /* WELCOME本文下の共通ボタン：本文の表示完了に合わせて表示 */
