@@ -12940,6 +12940,8 @@ hexLoad(function(){
       var chars=[];
       var mobile=window.innerWidth<=768;
       var titlePlayed=false;
+      var foundedArcPlayed=false;
+      var foundedMessagePlayed=false;
       var titleSequence=null;
       var cardsPlayed=false;
       var cardTimers=[];
@@ -13078,27 +13080,14 @@ hexLoad(function(){
             rotation:45,
             transformOrigin:'50% 100%'
           });
+          /* 周年数字は、数字自体が画面下端に入ったら開始する。 */
           ScrollTrigger.create({
-            trigger:foundedArc||title,
+            trigger:foundedYear||title,
             start:'top bottom',
             onEnter:function(){
               if(titlePlayed){return;}
               titlePlayed=true;
               titleSequence=gsap.timeline();
-              if(foundedArc){
-                titleSequence.to(foundedArc,{
-                  autoAlpha:1,
-                  y:0,
-                  scale:1,
-                  duration:.55,
-                  ease:'back.out(2.3)',
-                  onComplete:function(){
-                    gsap.set(foundedArc,{
-                      clearProps:'transform,opacity,visibility,willChange'
-                    });
-                  }
-                },0);
-              }
               titleSequence.to(chars,{
                 autoAlpha:1,
                 yPercent:0,
@@ -13111,28 +13100,56 @@ hexLoad(function(){
                     clearProps:'transform,opacity,visibility,willChange'
                   });
                 }
-              },foundedArc?'+=.18':0);
-              if(foundedMessage){
-                titleSequence.to(foundedMessage,{
-                  autoAlpha:1,
-                  y:0,
-                  scale:1,
-                  duration:.55,
+              },0);
+            }
+          });
+          if(foundedArc){
+            ScrollTrigger.create({
+              trigger:foundedArc,
+              start:'top bottom',
+              onEnter:function(){
+                if(foundedArcPlayed){return;}
+                foundedArcPlayed=true;
+                gsap.to(foundedArc,{
+                  autoAlpha:1,y:0,scale:1,duration:.55,
                   ease:'back.out(2.3)',
                   onComplete:function(){
-                    gsap.set(foundedMessage,{
+                    gsap.set(foundedArc,{
                       clearProps:'transform,opacity,visibility,willChange'
                     });
                   }
-                },'+=.18');
+                });
               }
-            }
-          });
+            });
+          }
         }
+      }
+
+      /* 本文も周年数字とは独立し、自身が画面下端に入ったら開始する。 */
+      if(foundedMessage&&!isReducedMotion()){
+        ScrollTrigger.create({
+          trigger:foundedMessage,
+          start:'top bottom',
+          onEnter:function(){
+            if(foundedMessagePlayed){return;}
+            foundedMessagePlayed=true;
+            gsap.to(foundedMessage,{
+              autoAlpha:1,y:0,scale:1,duration:.55,
+              ease:'back.out(2.3)',
+              onComplete:function(){
+                gsap.set(foundedMessage,{
+                  clearProps:'transform,opacity,visibility,willChange'
+                });
+              }
+            });
+          }
+        });
       }
 
       document.addEventListener('hex:top-returned',function(){
         titlePlayed=false;
+        foundedArcPlayed=false;
+        foundedMessagePlayed=false;
         if(titleSequence){titleSequence.kill();titleSequence=null;}
         cardTimers.forEach(function(timer){window.clearTimeout(timer);});
         cardTimers=[];

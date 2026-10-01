@@ -2648,6 +2648,7 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     background:transparent!important;
   }
   #gc_auto_frame_home_4 .hex-company-card{
+    grid-template-columns:minmax(0,1fr)!important;
     gap:9px 18px;
     justify-items:center;
   }
@@ -2726,5 +2727,12 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     pointer-events:none;
     transform:none!important;
     transition:none!important;
+  }
+}
+
+/* SP創業写真の上端：紺背景を2px内側に収め、境界の細い線を防ぐ */
+@media screen and (max-width:768px){
+  #gc_auto_frame_home_4::before{
+    top:calc(var(--hex-founded-navy-top,0px) + 2px);
   }
 }
