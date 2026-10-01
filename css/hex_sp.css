@@ -2731,10 +2731,15 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
 }
 
 /* SP創業セクション：帯との接合部と左右端は紺背景側で1px重ねる。
-   影で左右を補い、コンテンツ幅や写真の角丸は変更しない。 */
+   紺背景は画面幅を基準に左右端まで覆う。 */
 @media screen and (max-width:768px){
   #gc_auto_frame_home_4::before{
     top:calc(var(--hex-founded-navy-top,0px) - 1px);
-    box-shadow:-1px 0 0 #1f2774,1px 0 0 #1f2774;
+    left:calc(50% - 50vw - 1px);
+    right:auto;
+    width:calc(100vw + 2px);
+    max-width:none;
+    box-sizing:border-box;
+    box-shadow:none;
   }
 }
