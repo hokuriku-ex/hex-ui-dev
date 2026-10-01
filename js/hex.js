@@ -13882,3 +13882,81 @@ hexReady(function(){
     document.addEventListener('DOMContentLoaded',initializeHexHashtags);
   }else{initializeHexHashtags();}
 })();
+
+
+/* TikTok Embed Player: user click loads player; only one video plays at a time. */
+(function(){
+ 'use strict';
+ var origin='https://www.tiktok.com';
+ var cards=[];
+ var activeCard=null;
+ function send(card,type){
+  var frame=card&&card.querySelector('.hex-tiktok-frame');
+  if(frame&&frame.contentWindow){
+   frame.contentWindow.postMessage({'x-tiktok-player':true,type:type},origin);
+  }
+ }
+ function pauseOthers(current){
+  cards.forEach(function(card){if(card!==current){send(card,'pause');}});
+ }
+ function status(card,value){
+  var label=card.querySelector('.hex-tiktok-status');
+  if(label){label.textContent=value;label.hidden=!value;}
+ }
+ function init(){
+  document.querySelectorAll('.hex-tiktok-card[data-video-id]').forEach(function(card,index){
+   if(card.dataset.hexTiktokReady){return;}
+   var id=card.dataset.videoId;
+   var button=card.querySelector('.hex-tiktok-poster');
+   var screen=card.querySelector('.hex-tiktok-screen');
+   if(!/^\d+$/.test(id)||!button||!screen){return;}
+   card.dataset.hexTiktokReady='1';
+   cards.push(card);
+   button.addEventListener('click',function(){
+    if(card.querySelector('.hex-tiktok-frame')){return;}
+    activeCard=card;
+    pauseOthers(card);
+    status(card,'動画を読み込んでいます…');
+    var frame=document.createElement('iframe');
+    frame.className='hex-tiktok-frame';
+    frame.title='北陸エクステリア TikTok動画 '+(index+1);
+    frame.allow='autoplay; fullscreen; encrypted-media';
+    frame.allowFullscreen=true;
+    frame.src=origin+'/player/v1/'+id+'?autoplay=1&controls=1&description=0&music_info=0&loop=0&rel=0';
+    frame.addEventListener('load',function(){
+     screen.classList.add('is-loaded');
+     status(card,'');
+    },{once:true});
+    screen.appendChild(frame);
+    frame.focus();
+   });
+  });
+ }
+ window.addEventListener('message',function(event){
+  if(event.origin!==origin||!event.data||event.data['x-tiktok-player']!==true){return;}
+  var current=cards.find(function(card){
+   var frame=card.querySelector('.hex-tiktok-frame');
+   return frame&&frame.contentWindow===event.source;
+  });
+  if(!current){return;}
+  var data=event.data;
+  if(data.type==='onPlayerReady'){
+   current.querySelector('.hex-tiktok-screen').classList.add('is-loaded');
+   status(current,'');
+   send(current,current===activeCard?'play':'pause');
+  }else if(data.type==='onStateChange'&&data.value===1){
+   activeCard=current;
+   pauseOthers(current);
+   status(current,'');
+  }else if(data.type==='onPlayerError'){
+   var error=data.value||{};
+   if(error.errorCode===3002){status(current,'プレイヤーの再生ボタンを押してください');}
+   else{status(current,'再生できない場合は下の「TikTokで見る」をご利用ください');}
+  }
+ });
+ document.addEventListener('visibilitychange',function(){
+  if(document.hidden){cards.forEach(function(card){send(card,'pause');});}
+ });
+ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init,{once:true});}
+ else{init();}
+})();

@@ -9743,3 +9743,32 @@ h2.hex-top-title.hex-audience-guide-title .hex-top-title-en{
   z-index:0;
   pointer-events:none;
 }
+
+
+/* TikTok動画カード：共通カードのレイアウトとは独立 */
+.hex-tiktok-section{width:100%;max-width:1200px;margin:0 auto;padding:40px 24px;box-sizing:border-box;color:#1f2774;}
+.hex-tiktok-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;align-items:start;}
+.hex-tiktok-card{min-width:0;margin:0;}
+.hex-tiktok-screen{position:relative;aspect-ratio:9/16;overflow:hidden;border-radius:6px;background:#1f2774;isolation:isolate;}
+.hex-tiktok-poster{position:absolute;inset:0;display:block;width:100%;height:100%;margin:0!important;padding:0!important;border:0;border-radius:0;background:#1f2774;color:#fff;cursor:pointer;font:inherit;text-align:center;}
+.hex-tiktok-poster img{display:block;width:100%!important;height:100%!important;max-width:none!important;object-fit:cover;transition:transform .3s ease;}
+.hex-tiktok-poster::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(0,0,0,.5));pointer-events:none;}
+.hex-tiktok-play{position:absolute;z-index:1;top:50%;left:50%;display:grid;place-items:center;width:68px;height:68px;border:2px solid #fff;border-radius:50%;background:rgba(31,39,116,.7);transform:translate(-50%,-50%);}
+.hex-tiktok-play::before{content:"";display:block;width:0;height:0;margin-left:5px;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid #fff;}
+.hex-tiktok-play-label{position:absolute;bottom:24px;left:0;right:0;z-index:1;font-size:16px;letter-spacing:.08em;}
+.hex-tiktok-poster:focus-visible{outline:3px solid #e8d575;outline-offset:-5px;}
+.hex-tiktok-frame{position:absolute;inset:0;display:block;width:100%!important;height:100%!important;margin:0!important;padding:0!important;border:0;}
+.hex-tiktok-screen.is-loaded .hex-tiktok-poster{display:none;}
+.hex-tiktok-status{position:absolute;left:8px;right:8px;bottom:12px;z-index:2;margin:0!important;padding:8px;background:rgba(31,39,116,.85);color:#fff!important;font-size:13px;text-align:center;pointer-events:none;}
+.hex-tiktok-status[hidden]{display:none!important;}
+.hex-tiktok-credit{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:12px;font-size:14px;}
+.hex-tiktok-credit a{color:#1f2774!important;text-decoration:underline;text-underline-offset:3px;}
+.hex-tiktok-scroll-note{display:none;}
+@media (hover:hover) and (prefers-reduced-motion:no-preference){.hex-tiktok-poster:hover img{transform:scale(1.035);}}
+@media screen and (max-width:768px){
+ .hex-tiktok-section{padding:28px 0;}
+ .hex-tiktok-grid{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 16px 14px;scroll-padding-inline:16px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;}
+ .hex-tiktok-card{flex:0 0 min(78vw,340px);scroll-snap-align:start;}
+ .hex-tiktok-scroll-note{display:block;margin:0 16px 14px!important;font-size:13px;text-align:right;color:#1f2774!important;}
+}
+@media (prefers-reduced-motion:reduce){.hex-tiktok-poster img{transition:none;}}
