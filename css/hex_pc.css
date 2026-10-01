@@ -9651,3 +9651,13 @@ h2.hex-top-title.hex-audience-guide-title{
     display:flex!important;
   }
 }
+
+/* 画像枠内のカード見出しのみ：英語はゴールド、日本語は紺 */
+.hex-audience-grid .hex-card-image > h2.hex-audience-card-title,
+.hex-audience-grid .hex-card-image > h2.hex-audience-card-title .hex-top-title-sub{
+  color:#1f2774!important;
+}
+.hex-audience-grid .hex-card-image > h2.hex-audience-card-title[data-en]::after,
+.hex-audience-grid .hex-card-image > h2.hex-audience-card-title .hex-top-title-en{
+  color:#c8a874!important;
+}
