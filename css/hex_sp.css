@@ -2702,3 +2702,28 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
       4px 4px 0 #1f2774;
   }
 }
+
+/* SPの創業写真：角丸枠は本文とともにスクロールし、内側の写真だけ画面固定 */
+@media screen and (max-width:768px){
+  #gc_auto_frame_home_4 > .hex-founded-photo.is-native-frame{
+    position:absolute!important;
+    background:transparent;
+    overflow:visible;
+    clip-path:inset(0 round var(--hex-founded-photo-radius,32px))!important;
+    border-radius:var(--hex-founded-photo-radius,32px);
+    transform:none!important;
+    filter:none!important;
+    will-change:auto;
+    transition:none!important;
+  }
+  .hex-founded-photo.is-native-frame > .hex-founded-photo-viewport{
+    position:fixed;
+    top:0;
+    left:0;
+    overflow:hidden;
+    background:#fff;
+    pointer-events:none;
+    transform:none!important;
+    transition:none!important;
+  }
+}

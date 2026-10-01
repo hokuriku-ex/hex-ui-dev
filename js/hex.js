@@ -12771,20 +12771,39 @@ hexLoad(function(){
         var foundedPhotoFrame=0;
         var foundedMobilePhotoHeight=0;
         var foundedMobilePhotoWidth=0;
+        var foundedNativeViewport=null;
         var syncFoundedPhoto=function(){
           foundedPhotoFrame=0;
           var sectionRect=section.getBoundingClientRect();
           var viewportHeight=window.innerHeight;
           var viewportWidth=document.documentElement.clientWidth;
           var mobile=viewportWidth<=768;
+          if(mobile&&!foundedNativeViewport){
+            foundedNativeViewport=document.createElement('div');
+            foundedNativeViewport.className='hex-founded-photo-viewport';
+            while(foundedPhoto.firstChild){
+              foundedNativeViewport.appendChild(foundedPhoto.firstChild);
+            }
+            foundedPhoto.appendChild(foundedNativeViewport);
+            foundedPhoto.classList.add('is-native-frame');
+          }else if(!mobile&&foundedNativeViewport){
+            while(foundedNativeViewport.firstChild){
+              foundedPhoto.insertBefore(foundedNativeViewport.firstChild,foundedNativeViewport);
+            }
+            foundedNativeViewport.remove();
+            foundedNativeViewport=null;
+            foundedPhoto.classList.remove('is-native-frame');
+            foundedPhoto.style.removeProperty('--hex-founded-photo-radius');
+          }
+          var photoPlane=foundedNativeViewport||foundedPhoto;
           var photoHeight=viewportHeight;
           if(mobile){
             /* アドレスバーの伸縮では写真の高さを変更しない。
                最大表示領域を使い、バーが隠れても下側に隙間を作らない。 */
             if(!foundedMobilePhotoHeight||foundedMobilePhotoWidth!==viewportWidth){
               if(window.CSS&&window.CSS.supports('height','100lvh')){
-                foundedPhoto.style.height='100lvh';
-                foundedMobilePhotoHeight=Math.max(viewportHeight,foundedPhoto.offsetHeight);
+                photoPlane.style.height='100lvh';
+                foundedMobilePhotoHeight=Math.max(viewportHeight,photoPlane.offsetHeight);
               }else{
                 foundedMobilePhotoHeight=viewportHeight;
               }
@@ -12828,6 +12847,20 @@ hexLoad(function(){
           /* 帯の上側にはセクションの紺背景も描かず、背後を見せる。 */
           section.style.setProperty('--hex-founded-navy-top',
             (hashtagBanner?Math.max(0,holeTop-sectionRect.top):0)+'px');
+          if(mobile){
+            /* 枠はセクション内の通常座標で配置する。スワイプの追従はブラウザに任せる。 */
+            foundedPhoto.style.top=Math.max(0,holeTop-sectionRect.top)+'px';
+            foundedPhoto.style.left=(left-sectionRect.left)+'px';
+            foundedPhoto.style.width=Math.max(0,right-left)+'px';
+            foundedPhoto.style.height=Math.max(0,holeBottom-holeTop)+'px';
+            foundedPhoto.style.visibility=holeBottom>holeTop?'visible':'hidden';
+            foundedPhoto.style.removeProperty('clip-path');
+            foundedPhoto.style.setProperty('--hex-founded-photo-radius',
+              Math.min(radius,(right-left)/2,Math.max(0,holeBottom-holeTop)/2)+'px');
+            foundedNativeViewport.style.height=photoHeight+'px';
+            foundedNativeViewport.style.width=viewportWidth+'px';
+            return;
+          }
           var photoWidth=viewportWidth;
           var photoLeft=0;
           foundedPhoto.style.top='0px';
@@ -12853,7 +12886,10 @@ hexLoad(function(){
             foundedPhotoFrame=window.requestAnimationFrame(syncFoundedPhoto);
           }
         };
-        window.addEventListener('scroll',queueFoundedPhoto,{passive:true});
+        window.addEventListener('scroll',function(){
+          /* SPの枠はJSで追従させない。PCだけ従来のクリップ更新を行う。 */
+          if(document.documentElement.clientWidth>768){queueFoundedPhoto();}
+        },{passive:true});
         window.addEventListener('resize',queueFoundedPhoto,{passive:true});
         window.addEventListener('orientationchange',function(){
           foundedMobilePhotoHeight=0;
@@ -12861,6 +12897,19 @@ hexLoad(function(){
           queueFoundedPhoto();
         },{passive:true});
         document.addEventListener('hex:hero-layout-updated',queueFoundedPhoto);
+        if(window.ResizeObserver){
+          var foundedLayoutObserver=new ResizeObserver(function(){
+            if(document.documentElement.clientWidth<=768){queueFoundedPhoto();}
+          });
+          foundedLayoutObserver.observe(section);
+          section.querySelectorAll('.rsp_spacer4').forEach(function(spacer){
+            foundedLayoutObserver.observe(spacer);
+          });
+        }
+        window.addEventListener('load',queueFoundedPhoto,{once:true});
+        if(document.fonts&&document.fonts.ready){
+          document.fonts.ready.then(queueFoundedPhoto);
+        }
         syncFoundedPhoto();
       }
       var title=section&&section.querySelector('.hex-center-title');
