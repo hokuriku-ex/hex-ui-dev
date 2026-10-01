@@ -2711,8 +2711,7 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     position:absolute!important;
     background:transparent;
     overflow:visible;
-    /* 上・右の切り抜き境界を1px重ね、端の細い隙間を抑える。 */
-    clip-path:inset(-1px -1px 0 0 round var(--hex-founded-photo-radius,32px))!important;
+    clip-path:inset(0 round var(--hex-founded-photo-radius,32px))!important;
     border-radius:var(--hex-founded-photo-radius,32px);
     transform:none!important;
     filter:none!important;
@@ -2728,5 +2727,14 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     pointer-events:none;
     transform:none!important;
     transition:none!important;
+  }
+}
+
+/* SP創業セクション：帯との接合部と左右端は紺背景側で1px重ねる。
+   影で左右を補い、コンテンツ幅や写真の角丸は変更しない。 */
+@media screen and (max-width:768px){
+  #gc_auto_frame_home_4::before{
+    top:calc(var(--hex-founded-navy-top,0px) - 1px);
+    box-shadow:-1px 0 0 #1f2774,1px 0 0 #1f2774;
   }
 }
