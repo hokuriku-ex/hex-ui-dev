@@ -12769,12 +12769,32 @@ hexLoad(function(){
       if(foundedPhoto){
         section.insertBefore(foundedPhoto,section.firstChild);
         var foundedPhotoFrame=0;
+        var foundedMobilePhotoHeight=0;
+        var foundedMobilePhotoWidth=0;
         var syncFoundedPhoto=function(){
           foundedPhotoFrame=0;
           var sectionRect=section.getBoundingClientRect();
           var viewportHeight=window.innerHeight;
           var viewportWidth=document.documentElement.clientWidth;
           var mobile=viewportWidth<=768;
+          var photoHeight=viewportHeight;
+          if(mobile){
+            /* アドレスバーの伸縮では写真の高さを変更しない。
+               最大表示領域を使い、バーが隠れても下側に隙間を作らない。 */
+            if(!foundedMobilePhotoHeight||foundedMobilePhotoWidth!==viewportWidth){
+              if(window.CSS&&window.CSS.supports('height','100lvh')){
+                foundedPhoto.style.height='100lvh';
+                foundedMobilePhotoHeight=Math.max(viewportHeight,foundedPhoto.offsetHeight);
+              }else{
+                foundedMobilePhotoHeight=viewportHeight;
+              }
+              foundedMobilePhotoWidth=viewportWidth;
+            }
+            photoHeight=foundedMobilePhotoHeight;
+          }else{
+            foundedMobilePhotoHeight=0;
+            foundedMobilePhotoWidth=0;
+          }
           var inset=mobile?16:Math.min(36,Math.max(24,viewportWidth*.016));
           /* 左右は現状の余白を下限に、写真の見える幅を1600pxまでにする。 */
           var sideInset=Math.max(inset,(viewportWidth-1600)/2);
@@ -12811,7 +12831,9 @@ hexLoad(function(){
           var photoWidth=viewportWidth;
           var photoLeft=0;
           foundedPhoto.style.top='0px';
-          foundedPhoto.style.height=viewportHeight+'px';
+          if(foundedPhoto.style.height!==photoHeight+'px'){
+            foundedPhoto.style.height=photoHeight+'px';
+          }
           foundedPhoto.style.width=photoWidth+'px';
           foundedPhoto.style.left=photoLeft+'px';
           var visible=right>left&&holeBottom>0&&holeTop<viewportHeight&&
@@ -12822,7 +12844,7 @@ hexLoad(function(){
             var r=Math.min(radius,(right-left)/2,(holeBottom-holeTop)/2);
             foundedPhoto.style.clipPath='inset('+holeTop+'px '+
               Math.max(0,photoLeft+photoWidth-right)+'px '+
-              (viewportHeight-holeBottom)+'px '+
+              (photoHeight-holeBottom)+'px '+
               Math.max(0,left-photoLeft)+'px round '+r+'px)';
           }
         };
@@ -12833,6 +12855,11 @@ hexLoad(function(){
         };
         window.addEventListener('scroll',queueFoundedPhoto,{passive:true});
         window.addEventListener('resize',queueFoundedPhoto,{passive:true});
+        window.addEventListener('orientationchange',function(){
+          foundedMobilePhotoHeight=0;
+          foundedMobilePhotoWidth=0;
+          queueFoundedPhoto();
+        },{passive:true});
         document.addEventListener('hex:hero-layout-updated',queueFoundedPhoto);
         syncFoundedPhoto();
       }
