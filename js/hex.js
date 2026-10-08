@@ -13953,7 +13953,7 @@ hexReady(function(){
 
 /* =======================================
    下層ページ：斜め写真＋画面中央タイトル（2026-10-08）
-   写真はslides/01.webp〜10.webp。欠番はスキップ。
+   写真はslides、文字素材はtexturesの01.webp〜10.webp。欠番はスキップ。
 ======================================= */
 (function(){
   'use strict';
@@ -13965,7 +13965,7 @@ hexReady(function(){
     try{base=new URL('../',ownScript.src).href;}catch(error){}
   }
   var imageRoot=new URL('images/page-hero/',base).href;
-  var assetsPromise;
+  var assetsPromise, texturesPromise;
   function shuffle(items){
     var result=items.slice();
     for(var i=result.length-1;i>0;i--){
@@ -14006,7 +14006,35 @@ hexReady(function(){
     var photo=document.createElement('div');photo.className='hex-page-hero-photo';
     decor.appendChild(photo);hero.insertBefore(decor,hero.firstChild);
     var resizeFrame=0;
+    function fitTitle(){
+      var style=getComputedStyle(heading,'::after');
+      var text=style.content;
+      if(!text||text==='none'||text==='normal')return;
+      try{text=JSON.parse(text);}catch(error){text=text.replace(/^['"]|['"]$/g,'');}
+      var measure=document.createElement('span');
+      measure.textContent=text;
+      measure.style.cssText='position:absolute;visibility:hidden;pointer-events:none;white-space:pre;width:max-content;';
+      measure.style.fontFamily=style.fontFamily;
+      measure.style.fontWeight=style.fontWeight;
+      measure.style.fontStyle=style.fontStyle;
+      measure.style.fontSize='100px';
+      measure.style.fontStretch=style.fontStretch;
+      measure.style.fontKerning=style.fontKerning;
+      measure.style.letterSpacing=style.letterSpacing==='normal'?'normal'
+        :(parseFloat(style.letterSpacing)/(parseFloat(style.fontSize)||100))+'em';
+      hero.appendChild(measure);
+      var width=measure.getBoundingClientRect().width;
+      if(width>0){
+        var size=100*window.innerWidth*.70/width;
+        measure.style.fontSize=size+'px';
+        width=measure.getBoundingClientRect().width;
+        if(width>0)size*=window.innerWidth*.70/width;
+        hero.style.setProperty('--hex-page-title-size',size+'px');
+      }
+      measure.remove();
+    }
     function layout(){
+      fitTitle();
       var probe=document.createElement('div');
       probe.style.cssText='position:absolute;visibility:hidden;pointer-events:none;width:0;';
       probe.style.height=window.innerWidth<=768
@@ -14026,13 +14054,32 @@ hexReady(function(){
     if(document.fonts)document.fonts.ready.then(queueLayout);
     var visible=true,timer=null,index=0,slides=[];
     var reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
+    function pan(image){
+      if(!image)return;
+      if(image.hexPan)image.hexPan.cancel();
+      if(reduce.matches||!image.animate)return;
+      // 外枠を固定し、少し拡大した画像だけを左から右へ動かす。
+      image.hexPan=image.animate([
+        {transform:'translateX(-8%)'},
+        {transform:'translateX(8%)'}
+      ],{duration:10000,easing:'linear',fill:'forwards'});
+    }
+    function syncPan(){
+      slides.forEach(function(image){
+        if(!image.hexPan)return;
+        if(reduce.matches){image.hexPan.cancel();image.hexPan=null;}
+        else if(visible&&!document.hidden&&image.hexPan.playState==='paused')image.hexPan.play();
+        else image.hexPan.pause();
+      });
+    }
     function stop(){clearTimeout(timer);timer=null;}
     function schedule(){
       stop();
+      syncPan();
       if(!visible||document.hidden||reduce.matches||slides.length<2)return;
       timer=setTimeout(function(){
         slides[index].classList.remove('is-current');index=(index+1)%slides.length;
-        slides[index].classList.add('is-current');schedule();
+        slides[index].classList.add('is-current');pan(slides[index]);schedule();
       },6000);
     }
     if(window.IntersectionObserver){
@@ -14044,7 +14091,14 @@ hexReady(function(){
     document.addEventListener('visibilitychange',function(){
       schedule();
     });
-    reduce.addEventListener('change',schedule);
+    reduce.addEventListener('change',function(){pan(slides[index]);schedule();});
+    if(!texturesPromise)texturesPromise=loadFolder('textures');
+    texturesPromise.then(function(urls){
+      if(!urls.length)return;
+      var url=urls[Math.floor(Math.random()*urls.length)];
+      hero.style.setProperty('--hex-page-title-texture','url("'+url+'")');
+      hero.classList.add('has-title-texture');
+    });
     assets().then(function(data){
       shuffle(data).forEach(function(url,i){
         var image=document.createElement('img');image.src=url;image.alt='';
@@ -14052,6 +14106,7 @@ hexReady(function(){
         image.decoding='async';photo.appendChild(image);slides.push(image);
       });
       if(slides.length)photo.classList.add('has-images');
+      pan(slides[0]);
       schedule();
       window.dispatchEvent(new Event('resize'));
     });
