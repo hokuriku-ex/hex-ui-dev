@@ -9899,16 +9899,15 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
 .pagetitle_type.pagetitle_type4.hex-page-hero.has-title-texture .bg_text h1::after,
 .pagetitle_type.pagetitle_type4.hex-page-hero.has-title-texture .bg_text h1 .title_box{
   background-image:var(--hex-page-title-texture);
-  background-size:var(--hex-page-flow-distance,var(--hex-page-title-tile-width,200px)) 100%;
+  background-size:var(--hex-page-text-image-width,var(--hex-page-title-tile-width,200px)) 100%;
   background-position:0 center;background-repeat:repeat-x;
   background-origin:border-box;
-  animation:hex-page-title-flow var(--hex-page-title-flow-duration,10s) linear infinite;
+  animation:none!important;
   -webkit-background-clip:text;background-clip:text;
   color:transparent!important;-webkit-text-fill-color:transparent;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero.has-title-texture .bg_text h1 .title_box{
-  --hex-page-flow-distance:var(--hex-page-subtitle-tile-width);
-  animation-duration:var(--hex-page-subtitle-flow-duration,10s);
+  --hex-page-text-image-width:var(--hex-page-subtitle-tile-width);
 }
 .hex-page-hero-decor{
   position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none;
@@ -9927,14 +9926,3 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
   object-fit:cover;object-position:center;opacity:1;
 }
 .hex-page-hero-slide.is-current{opacity:1;}
-@media(prefers-reduced-motion:reduce){
-  .pagetitle_type.pagetitle_type4.hex-page-hero.has-title-texture .bg_text h1::after,
-  .pagetitle_type.pagetitle_type4.hex-page-hero.has-title-texture .bg_text h1 .title_box{
-    animation:none;
-  }
-}
-
-@keyframes hex-page-title-flow{
-  from{background-position:0 center;}
-  to{background-position:var(--hex-page-flow-distance,var(--hex-page-title-tile-width,200px)) center;}
-}
