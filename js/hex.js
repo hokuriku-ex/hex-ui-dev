@@ -2462,6 +2462,10 @@ hexReady(function(){
       var run;
       var started=0;
 
+      if(document.documentElement.classList.contains('hex-opening-lock')){
+        autoZoomPending=true;
+        return;
+      }
       autoZoomPending=false;
       cancelAutoZoom(false);
       state.x=0;
@@ -2526,6 +2530,7 @@ hexReady(function(){
       interactionLocked=true;
       window.clearTimeout(autoZoomTimer);
       if(!ready||!renderer||!camera||
+        document.documentElement.classList.contains("hex-opening-lock")||
         document.documentElement.classList.contains("hex-hero-display-wait")||
         document.documentElement.classList.contains("hex-hero-return-preparing")){return;}
       autoZoomPending=false;
@@ -4268,7 +4273,11 @@ hexReady(function(){
         },600);
       },
       handleWheel:onWheel,
-      reset:function(){resetHero(true);}
+      reset:function(options){
+        var forOpening=!!(options&&options.forOpening);
+        resetHero(!forOpening);
+        if(forOpening){this.prepareDisplay();}
+      }
     };
 
     window.addEventListener("scroll",onWelcomeScroll,{passive:true,capture:true});
@@ -6347,7 +6356,6 @@ hexReady(function(){
   /* <head>内の初期非表示判定と同じキーにする */
   var STORAGE_KEY="hex_top_opening_viewed";
   var REPLAY_KEY="hex_top_opening_replay";
-  var SCENE_KEY="hex_top_opening_scene";
 
   /* 常に表示true　本番公開時false */
   var FORCE_PLAY=false;
@@ -6506,7 +6514,6 @@ hexReady(function(){
 
       /* 次の読み込みで開幕を強制再生 */
       try{
-        sessionStorage.removeItem(SCENE_KEY);
         sessionStorage.setItem(REPLAY_KEY,"1");
       }catch(error){}
 
@@ -8371,15 +8378,20 @@ hexReady(function(){
         if(opening.isConnected&&!cancelled){goTo(target);return;}
         if(heroIntroDeparted){return;}
         if(target>=scenes.length){return;}
-        /* REPLAYと同じ再読込みで、探索位置・倍率・描画状態を初期化する。 */
-        try{
-          sessionStorage.setItem(SCENE_KEY,String(target));
-          sessionStorage.setItem(REPLAY_KEY,'1');
-        }catch(error){}
-        if('scrollRestoration' in window.history){
-          window.history.scrollRestoration='manual';
+        stopHeroIntro();
+        heroIntroStarted=false;
+        var hero=document.querySelector('.hex-hero-wrap');
+        hero.classList.remove('is-intro-playing','is-intro-complete');
+        var copy=hero.querySelector('.hex-hero-catch');
+        if(copy){copy.classList.remove('is-catch-visible','is-exploring');}
+        document.dispatchEvent(new Event('hex:hero-intro-reset'));
+        document.documentElement.classList.add('hex-opening-lock');
+        opening.classList.remove('is-skipping','is-v2-hero-stage');
+        document.body.insertBefore(opening._hexOpeningHost,document.body.firstChild);
+        if(window.hexHero&&window.hexHero.reset){
+          window.hexHero.reset({forOpening:true});
         }
-        window.location.reload();
+        startOpeningCurtainSequence(opening,introStage,slideStage,messageStage,true,target);
       };
 
       window.addEventListener("wheel",onWheel,{passive:false,capture:true});
@@ -8396,7 +8408,7 @@ hexReady(function(){
       scheduleAutoAdvance();
     }
 
-    if(!isReducedMotion()&&(startIndex===undefined||opening.isConnected)){
+    if(!isReducedMotion()&&startIndex===undefined){
       showLoader().then(begin);
     }else{
       begin();
@@ -8421,14 +8433,6 @@ hexReady(function(){
     createOpeningReplayButton();
 
     var replayRequested=isReplayRequested();
-    var requestedScene;
-    try{
-      var storedScene=sessionStorage.getItem(SCENE_KEY);
-      if(replayRequested&&/^\d+$/.test(storedScene||'')){
-        requestedScene=Number(storedScene);
-      }
-      sessionStorage.removeItem(SCENE_KEY);
-    }catch(error){}
     clearReplayRequest();
     var directHero=isReducedMotion()||
       (!FORCE_PLAY&&!replayRequested&&sessionStorage.getItem(STORAGE_KEY));
@@ -8494,8 +8498,7 @@ hexReady(function(){
           introStage,
           slideStage,
           messageStage,
-          replayRequested,
-          requestedScene
+          replayRequested
         );
       });
     });
