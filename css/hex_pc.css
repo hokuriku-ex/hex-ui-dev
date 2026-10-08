@@ -9851,3 +9851,9 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
   visibility:hidden!important;
   transition:none!important;
 }
+
+/* SCROLLは開幕の各場面・切替中に表示し、ヒーロー開始時に隠す。 */
+.hex-opening.is-v2-hero-stage .hex-opening-scroll-cue{
+  opacity:0;
+  visibility:hidden;
+}
