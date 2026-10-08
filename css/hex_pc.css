@@ -9858,10 +9858,10 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
   visibility:hidden;
 }
 
-/* 下層ページ：画面中央タイトル／斜め写真 */
+/* 下層ページ：コンテンツ全体の下寄せ／斜めテクスチャー */
 .pagetitle_type.pagetitle_type4.hex-page-hero{
   --hex-page-header:var(--header_height,80px);
-  display:flex!important;align-items:center!important;justify-content:center!important;
+  display:flex!important;align-items:flex-end!important;justify-content:center!important;
   position:relative!important;
   width:100%!important;max-width:none!important;
   height:calc(100vh - var(--hex-page-header))!important;
@@ -9877,6 +9877,9 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
   margin:0!important;
   padding:0!important;height:auto!important;min-height:0!important;flex:0 0 100%;
   box-sizing:border-box!important;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-anchor-nav:not(.is-fixed){
+  margin-bottom:0!important;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero .bg_text{
   padding:0 0 44px!important;margin:0!important;
