@@ -94,72 +94,6 @@ function hexLoad(callback){
   }
 }
 
-/* 下のコンテンツを見てヒーロー先頭へ戻ったリロードは、先頭から演出を作り直す。 */
-(function(){
-  var key='hex_top_return_reload';
-  var page=location.pathname+location.search;
-  var requested=false;
-  var navigation=window.performance&&
-    window.performance.getEntriesByType&&
-    window.performance.getEntriesByType('navigation')[0];
-  var isReload=navigation
-    ?navigation.type==='reload'
-    :!!(window.performance&&window.performance.navigation&&
-      window.performance.navigation.type===1);
-
-  try{
-    requested=sessionStorage.getItem(key)===page;
-    sessionStorage.removeItem(key);
-  }catch(error){}
-
-  if(requested&&isReload){
-    document.documentElement.classList.add("hex-hero-return-preparing");
-    var previousRestoration='auto';
-    try{
-      previousRestoration=history.scrollRestoration;
-      history.scrollRestoration='manual';
-    }catch(error){}
-    /* 先頭位置はshowHeroWithFadeの準備処理で一本化する。 */
-    document.addEventListener('hex:hero-display-ready',function(){
-      try{history.scrollRestoration=previousRestoration;}catch(error){}
-    },{once:true});
-  }
-
-  hexReady(function(){
-    var hero=document.querySelector('.hex-hero-wrap');
-    var progressed=false;
-    if(!hero){return;}
-
-    function heroTop(){
-      return hero.getBoundingClientRect().top+window.pageYOffset;
-    }
-
-    function trackProgress(){
-      if(progressed||document.querySelector('.hex-opening')||
-        document.documentElement.classList.contains('hex-opening-lock')){
-        return;
-      }
-      if(window.pageYOffset>=heroTop()+hero.offsetHeight*.8){
-        progressed=true;
-      }
-    }
-
-    window.addEventListener('scroll',trackProgress,{passive:true});
-    window.addEventListener('pagehide',function(){
-      trackProgress();
-      try{
-        if(progressed&&!location.hash&&
-          window.pageYOffset<=heroTop()+8){
-          sessionStorage.setItem(key,page);
-        }else{
-          sessionStorage.removeItem(key);
-        }
-      }catch(error){}
-    });
-    trackProgress();
-  });
-})();
-
 /* =======================================
    トップページ交互背景
 ======================================= */
@@ -2126,7 +2060,6 @@ hexReady(function(){
     var hero=document.querySelector(".hex-hero-wrap");
     var sticky=hero&&hero.querySelector(".hex-hero-sticky");
     var catchElement=hero&&hero.querySelector(".hex-hero-catch");
-    var returnReloadRequested=false;
     var welcomeWrap=document.querySelector(".hex-welcome-wrap")||
       document.getElementById(HOME_SECTIONS.WELCOME);
     var welcomePanel=welcomeWrap&&(
@@ -3064,7 +2997,7 @@ hexReady(function(){
       state.y=metrics.maxY;
       setCamera();
       if(returningFromWelcome){
-        /* 戻った時点で再生済み判定を外し、リロード前でも次回は再演出する。 */
+        /* 戻った時点でキャッチなどの再生済み判定を外す。 */
         catchElement&&catchElement.classList.remove("is-catch-visible");
         document.dispatchEvent(new Event("hex:top-returned"));
       }
@@ -3321,18 +3254,21 @@ hexReady(function(){
       var y;
 
       scrollQueued=false;
-      if(returnReloadRequested){return;}
       lastScrollY=scrollY;
 
       if(welcomeActive&&movingUp&&scrollY<=heroTop+2){
-        returnReloadRequested=true;
-        /* リロード待ちの旧画面に複製画像を残さない。 */
-        if(snapshot){snapshot.remove();snapshot=null;snapshotCanvas=null;}
-        /* 最上部に戻ったら、キャッチを含む初期状態をリロードで作り直す。 */
-        try{sessionStorage.setItem('hex_top_return_reload',location.pathname+location.search);}catch(error){}
-        if('scrollRestoration' in history){history.scrollRestoration='manual';}
-        document.documentElement.classList.add("hex-hero-return-preparing");
-        window.location.reload();
+        /* 画像と描画を再利用し、ヒーローの先頭演出へ戻す。 */
+        resetHero(false);
+        var headerHeight=parseFloat(getComputedStyle(document.documentElement)
+          .getPropertyValue('--header_height'))||80;
+        var target=Math.max(0,documentTop(hero)-headerHeight);
+        if(window.hexMotion&&typeof window.hexMotion.scrollTo==='function'){
+          window.hexMotion.scrollTo(target,{immediate:true,force:true});
+        }else{
+          window.scrollTo({top:target,left:0,behavior:'instant'});
+        }
+        window.hexHero.prepareDisplay();
+        document.dispatchEvent(new Event('hex:hero-restart'));
         return;
       }
 
@@ -6415,6 +6351,20 @@ hexReady(function(){
       document.dispatchEvent(new Event('hex:hero-intro-complete'));
     },OPENING_AUTO_ADVANCE_MS);
   }
+
+  document.addEventListener('hex:hero-restart',function(){
+    stopHeroIntro();
+    heroIntroStarted=false;
+    heroIntroDeparted=false;
+    var hero=document.querySelector('.hex-hero-wrap');
+    hero.classList.remove('is-intro-departed','is-intro-complete','is-intro-playing');
+    var copy=hero.querySelector('.hex-hero-catch');
+    if(copy){copy.classList.remove('is-catch-visible','is-exploring');}
+    if(sharedNav){sharedNav.hidden=false;}
+    selectHeroDot();
+    document.dispatchEvent(new Event('hex:hero-intro-reset'));
+    showHeroCatch(0);
+  });
 
   document.addEventListener('hex:hero-departed',function(){
     heroIntroDeparted=true;
