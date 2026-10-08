@@ -9858,7 +9858,7 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
   visibility:hidden;
 }
 
-/* 下層ページ：コンテンツ全体の下寄せ／斜めテクスチャー */
+/* 下層ページ：見出し・説明は中央、アンカーナビは下端 */
 .pagetitle_type.pagetitle_type4.hex-page-hero{
   --hex-page-header:var(--header_height,80px);
   display:flex!important;align-items:flex-end!important;justify-content:center!important;
@@ -9875,11 +9875,19 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
   position:relative!important;z-index:3;
   width:100%!important;max-width:none!important;
   margin:0!important;
-  padding:0!important;height:auto!important;min-height:0!important;flex:0 0 100%;
+  padding:0!important;height:100%!important;min-height:0!important;flex:0 0 100%;
+  display:flex!important;flex-direction:column!important;justify-content:flex-end!important;
   box-sizing:border-box!important;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-main{
+  position:absolute;top:50%;left:0;width:100%;
+  transform:translateY(-50%);box-sizing:border-box;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero .hex-anchor-nav:not(.is-fixed){
   margin-bottom:0!important;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-anchor-nav:not(.is-fixed):not(.has-anchor-scrollbar){
+  padding-bottom:18px!important;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero .bg_text{
   padding:0 0 44px!important;margin:0!important;
