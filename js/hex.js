@@ -6329,20 +6329,21 @@ hexReady(function(){
     });}
   }
 
-  function startHeroIntro(){
+  function startHeroIntro(duration){
     if(heroIntroStarted||heroIntroDeparted){return;}
+    duration=typeof duration==='number'?duration:OPENING_AUTO_ADVANCE_MS;
     heroIntroStarted=true;
     var hero=document.querySelector('.hex-hero-wrap');
     hero.classList.add('is-intro-playing');
     hero.classList.remove('is-intro-complete');
     selectHeroDot();
     var dot=sharedNav&&sharedNav.querySelector('.is-current');
-    if(dot&&OPENING_AUTO_ADVANCE_MS){
+    if(dot&&duration){
       void dot.offsetWidth;
-      dot.style.setProperty('--hex-opening-auto-duration',OPENING_AUTO_ADVANCE_MS+'ms');
+      dot.style.setProperty('--hex-opening-auto-duration',duration+'ms');
       dot.classList.add('is-timing');
     }
-    if(!OPENING_AUTO_ADVANCE_MS){return;}
+    if(!duration){return;}
     heroIntroTimer=window.setTimeout(function(){
       if(heroIntroDeparted){return;}
       /* 時間終了で外周タイマーだけ消し、現在位置の丸は残す。 */
@@ -6352,7 +6353,7 @@ hexReady(function(){
       var copy=hero.querySelector('.hex-hero-catch');
       if(copy){copy.classList.add('is-exploring');}
       document.dispatchEvent(new Event('hex:hero-intro-complete'));
-    },OPENING_AUTO_ADVANCE_MS);
+    },duration);
   }
 
   document.addEventListener('hex:hero-restart',function(){
@@ -7023,7 +7024,7 @@ hexReady(function(){
     }
   }
 
-  function showHeroCatch(delay,catchDelay){
+  function showHeroCatch(delay,catchDelay,heroDuration){
     var hero=document.querySelector('.hex-hero-wrap');
     var heroCatch=hero&&hero.querySelector('.hex-hero-catch');
     var run=++heroCatchRun;
@@ -7034,8 +7035,8 @@ hexReady(function(){
       if(run!==heroCatchRun||heroIntroDeparted||document.querySelector(
         '.hex-opening:not(.is-v2-hero-stage):not(.is-skipping)'
       )){return;}
-      /* 3秒の計時開始は維持し、キャッチだけ1秒後に表示。 */
-      startHeroIntro();
+      /* 計時開始とキャッチの遅延は維持し、表示経路ごとの時間を使用。 */
+      startHeroIntro(heroDuration);
       function reveal(){
         if(run!==heroCatchRun||heroIntroDeparted||
           hero.classList.contains('is-intro-complete')){return;}
@@ -7868,7 +7869,7 @@ hexReady(function(){
       transitionLocked=true;
       ensureHeroReady();
       opening.classList.add("is-v2-hero-stage");
-      showHeroCatch(0,HERO_CATCH_DELAY);
+      showHeroCatch(0,HERO_CATCH_DELAY,OPENING_AUTO_ADVANCE_MS+1000);
       updateDots(true);
 
       runHeroCircleReveal(fromCenter).then(function(){
