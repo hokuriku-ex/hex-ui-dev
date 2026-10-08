@@ -9839,3 +9839,15 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-opening-replay{
   visibility:hidden!important;
   pointer-events:none!important;
 }
+
+/* JS実行前の未配置ヒーローを、最初の描画から表示しない。 */
+.hex-hero-wrap:not(.is-v2-ready){
+  opacity:0!important;
+  visibility:hidden!important;
+  transition:none!important;
+}
+html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
+  opacity:0!important;
+  visibility:hidden!important;
+  transition:none!important;
+}
