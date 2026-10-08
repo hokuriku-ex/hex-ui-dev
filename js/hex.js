@@ -14028,6 +14028,12 @@ hexReady(function(){
       var columns=Math.ceil(w/pitch)+1;
       var rows=Math.ceil(h/pitch)+1;
       var textureTiles=[];
+      var cells=[];
+      var randomState=seed+1;
+      function seededRandom(){
+        randomState=(randomState*1664525+1013904223)>>>0;
+        return randomState/4294967296;
+      }
       for(var row=0;row<rows;row++){
         for(var col=0;col<columns;col++){
           var tile=document.createElement('span');tile.className='hex-page-hero-tile';
@@ -14037,32 +14043,56 @@ hexReady(function(){
           if(code<3){
             tile.classList.add('hex-page-hero-tile--'+code);
             tile.style.animationDelay=(-(code+row+col)%9)+'s';
-            tile.style.animationDuration=(9+code*2)+'s';
+            tile.style.animationDuration=(4.5+code)+'s';
           }
           grid.appendChild(tile);
-          // 右側・完全に画面内・タイトル周辺を避ける候補
-          if(x>w*0.78&&x+side*1.2<w&&y>side*0.25&&y+side*1.2<h&&
-            (y+side<h*0.35||y>h*0.68))textureTiles.push(tile);
+          cells.push({tile:tile,row:row,col:col,x:x,y:y});
+          // 実際の格子セルから選ぶ。別枠の四角は追加しない。
+          var photoEdge=Math.min(w*0.25,400)*(1-0.76*Math.max(0,y)/h);
+          if(x>photoEdge+side*0.1&&x+side<w-side*0.15&&y>=0&&y+side<h-side*0.15){
+            textureTiles.push(tile);
+          }
         }
       }
-      // 小画面でも右側に3枚を確保。位置は初期seedで変化、resizeで画像は変更しない。
-      var chosen=textureTiles.sort(function(a,b){
-        var ay=parseFloat(a.style.top),by=parseFloat(b.style.top);
-        if(ay!==by)return ay-by;
-        return seed%2?parseFloat(a.style.left)-parseFloat(b.style.left):parseFloat(b.style.left)-parseFloat(a.style.left);
+      // seedはページ読み込み時だけ決定。resizeでも選択は安定。
+      var candidates=textureTiles.slice();
+      for(var k=candidates.length-1;k>0;k--){
+        var j=Math.floor(seededRandom()*(k+1));
+        var tmp=candidates[k];candidates[k]=candidates[j];candidates[j]=tmp;
+      }
+      var selected=[];
+      // まず上下左右に固まらない組み合わせを優先
+      candidates.forEach(function(tile){
+        if(selected.length>=Math.min(3,textures.length))return;
+        var cell=cells.find(function(c){return c.tile===tile;});
+        if(selected.every(function(other){
+          var previous=cells.find(function(c){return c.tile===other;});
+          return Math.abs(cell.row-previous.row)+Math.abs(cell.col-previous.col)>1;
+        }))selected.push(tile);
       });
-      for(var n=0;n<Math.min(3,textures.length);n++){
-        var target=chosen.length>=3?chosen[Math.floor(n*(chosen.length-1)/2)]:null;
-        if(!target){
-          target=document.createElement('span');target.className='hex-page-hero-tile';
-          var tx=w-side*(1.35+(seed%3)*0.12);
-          var ty=[h*0.12,h*0.29,h*0.78][n];
-          target.style.cssText='left:'+tx+'px;top:'+Math.min(ty,h-side*1.3)+'px;width:'+side+'px;height:'+side+'px;';
-          grid.appendChild(target);
-        }
-        target.className='hex-page-hero-tile hex-page-hero-texture';
+      candidates.forEach(function(tile){
+        if(selected.length<Math.min(3,textures.length)&&selected.indexOf(tile)===-1)selected.push(tile);
+      });
+      selected.forEach(function(target,n){
+        target.classList.add('hex-page-hero-texture');
         target.style.backgroundImage='url("'+textures[n]+'")';
-      }
+      });
+      // 同じ列の上下2セルが、横に少し避けながら位置を交換。
+      // 交換先も画面内のセルに限定し、テクスチャーも同じ動きに参加。
+      cells.forEach(function(cell){
+        if(cell.row%2!==1||cell.x<w*0.27||cell.x+side>w)return;
+        var partner=cells.find(function(c){return c.row===cell.row+1&&c.col===cell.col;});
+        if(!partner||cell.y<0||partner.y+side>h)return;
+        if((seed+cell.col*3+cell.row)%4!==0&&
+          selected.indexOf(cell.tile)===-1&&selected.indexOf(partner.tile)===-1)return;
+        [cell,partner].forEach(function(current,i){
+          current.tile.style.setProperty('--hex-swap-y',(i===0?160:-160)+'%');
+          current.tile.style.setProperty('--hex-swap-x',(i===0?45:-45)+'%');
+          current.tile.style.animationName='hex-page-square-swap';
+          current.tile.style.animationDuration=(6+(cell.col%3))+'s';
+          current.tile.style.animationDelay=(-(seed+cell.col)%8)+'s';
+        });
+      });
     }
     function queueLayout(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(layout);}
     layout();

@@ -9904,7 +9904,7 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
 .hex-page-hero-tile--0{animation-name:hex-page-square-turn;}
 .hex-page-hero-tile--1{animation-name:hex-page-square-stretch;}
 .hex-page-hero-tile--2{animation-name:hex-page-square-shift;}
-.hex-page-hero-texture{background-size:cover;background-position:center;animation:none;}
+.hex-page-hero-texture{background-size:cover;background-position:center;}
 .hex-page-hero-photo{
   position:absolute;inset:0 auto 0 0;width:min(25vw,400px);z-index:2;
   clip-path:polygon(0 0,100% 0,24% 100%,0 100%);
@@ -9923,4 +9923,15 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
 @media(prefers-reduced-motion:reduce){
   .hex-page-hero-tile{animation:none!important;}
   .hex-page-hero-slide{transition:none;}
+}
+
+/* 同列の上下セルを交換。画像は四角と一緒に動き、種類は変えない */
+@keyframes hex-page-square-swap{
+  0%,15%,100%{transform:translate(0,0)}
+  22%{transform:translate(var(--hex-swap-x),0)}
+  37%{transform:translate(var(--hex-swap-x),var(--hex-swap-y))}
+  44%,60%{transform:translate(0,var(--hex-swap-y))}
+  67%{transform:translate(var(--hex-swap-x),var(--hex-swap-y))}
+  82%{transform:translate(var(--hex-swap-x),0)}
+  89%{transform:translate(0,0)}
 }
