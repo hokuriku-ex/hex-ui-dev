@@ -13949,3 +13949,171 @@ hexReady(function(){
  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init,{once:true});}
  else{init();}
 })();
+
+
+/* =======================================
+   下層ページ：斜め写真＋スクエア背景（2026-10-08）
+   画像は各フォルダの01.webp〜10.webp。欠番はスキップ。
+======================================= */
+(function(){
+  'use strict';
+  var ownScript=document.currentScript;
+  var base=HEX_IS_PRODUCTION
+    ?'https://hokuriku-ex.github.io/hex-ui/'
+    :'https://hokuriku-ex.github.io/hex-ui-dev/';
+  if(ownScript&&ownScript.src){
+    try{base=new URL('../',ownScript.src).href;}catch(error){}
+  }
+  var imageRoot=new URL('images/page-hero/',base).href;
+  var assetsPromise;
+  function shuffle(items){
+    var result=items.slice();
+    for(var i=result.length-1;i>0;i--){
+      var j=Math.floor(Math.random()*(i+1));
+      var value=result[i];result[i]=result[j];result[j]=value;
+    }
+    return result;
+  }
+  function loadFolder(folder){
+    return Promise.all(Array.from({length:10},function(_,i){
+      return new Promise(function(resolve){
+        var image=new Image();
+        var url=imageRoot+folder+'/'+String(i+1).padStart(2,'0')+'.webp';
+        var done=false;
+        var timeout=setTimeout(function(){finish(null);},15000);
+        function finish(value){
+          if(done)return;done=true;clearTimeout(timeout);
+          image.onload=null;image.onerror=null;resolve(value);
+        }
+        image.onload=function(){finish(url);};
+        image.onerror=function(){finish(null);};
+        image.src=url;
+      });
+    })).then(function(items){return items.filter(Boolean);});
+  }
+  function assets(){
+    if(!assetsPromise)assetsPromise=Promise.all([loadFolder('slides'),loadFolder('textures')]);
+    return assetsPromise;
+  }
+  function init(hero){
+    if(hero.classList.contains('hex-page-hero'))return;
+    var contents=hero.querySelector(':scope > .contents');
+    var heading=hero.querySelector('.bg_text h1');
+    if(!contents||!heading)return;
+    hero.classList.add('hex-page-hero');
+    var decor=document.createElement('div');
+    decor.className='hex-page-hero-decor';decor.setAttribute('aria-hidden','true');
+    var grid=document.createElement('div');grid.className='hex-page-hero-grid';
+    var photo=document.createElement('div');photo.className='hex-page-hero-photo';
+    decor.appendChild(grid);decor.appendChild(photo);hero.insertBefore(decor,hero.firstChild);
+    var seed=Math.floor(Math.random()*100000);
+    var textures=[];
+    var resizeFrame=0;
+    function layout(){
+      var probe=document.createElement('div');
+      probe.style.cssText='position:absolute;visibility:hidden;pointer-events:none;width:0;';
+      probe.style.height=window.innerWidth<=768
+        ?'var(--header_height_smartphone, clamp(64px,20vw,80px))'
+        :'var(--header_height,80px)';
+      hero.appendChild(probe);
+      var header=probe.getBoundingClientRect().height||80;probe.remove();
+      hero.style.setProperty('--hex-page-header',header+'px');
+      hero.style.setProperty('--hex-page-title-height',heading.getBoundingClientRect().height+'px');
+      var w=hero.clientWidth;
+      var h=decor.clientHeight;
+      var side=Math.min(w,1600)*0.07875; // 1600px時126px、参考の四角の比率
+      var pitch=side*1.6;
+      if(!side||!h)return;
+      grid.replaceChildren();
+      var columns=Math.ceil(w/pitch)+1;
+      var rows=Math.ceil(h/pitch)+1;
+      var textureTiles=[];
+      for(var row=0;row<rows;row++){
+        for(var col=0;col<columns;col++){
+          var tile=document.createElement('span');tile.className='hex-page-hero-tile';
+          var x=col*pitch-side*0.5,y=row*pitch-side*0.5;
+          tile.style.cssText='left:'+x+'px;top:'+y+'px;width:'+side+'px;height:'+side+'px;';
+          var code=(seed+row*71+col*37)%11;
+          if(code<3){
+            tile.classList.add('hex-page-hero-tile--'+code);
+            tile.style.animationDelay=(-(code+row+col)%9)+'s';
+            tile.style.animationDuration=(9+code*2)+'s';
+          }
+          grid.appendChild(tile);
+          // 右側・完全に画面内・タイトル周辺を避ける候補
+          if(x>w*0.78&&x+side*1.2<w&&y>side*0.25&&y+side*1.2<h&&
+            (y+side<h*0.35||y>h*0.68))textureTiles.push(tile);
+        }
+      }
+      // 小画面でも右側に3枚を確保。位置は初期seedで変化、resizeで画像は変更しない。
+      var chosen=textureTiles.sort(function(a,b){
+        var ay=parseFloat(a.style.top),by=parseFloat(b.style.top);
+        if(ay!==by)return ay-by;
+        return seed%2?parseFloat(a.style.left)-parseFloat(b.style.left):parseFloat(b.style.left)-parseFloat(a.style.left);
+      });
+      for(var n=0;n<Math.min(3,textures.length);n++){
+        var target=chosen.length>=3?chosen[Math.floor(n*(chosen.length-1)/2)]:null;
+        if(!target){
+          target=document.createElement('span');target.className='hex-page-hero-tile';
+          var tx=w-side*(1.35+(seed%3)*0.12);
+          var ty=[h*0.12,h*0.29,h*0.78][n];
+          target.style.cssText='left:'+tx+'px;top:'+Math.min(ty,h-side*1.3)+'px;width:'+side+'px;height:'+side+'px;';
+          grid.appendChild(target);
+        }
+        target.className='hex-page-hero-tile hex-page-hero-texture';
+        target.style.backgroundImage='url("'+textures[n]+'")';
+      }
+    }
+    function queueLayout(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(layout);}
+    layout();
+    window.addEventListener('resize',queueLayout,{passive:true});
+    if(window.visualViewport)window.visualViewport.addEventListener('resize',queueLayout,{passive:true});
+    if(window.ResizeObserver){new ResizeObserver(queueLayout).observe(heading);}
+    if(document.fonts)document.fonts.ready.then(queueLayout);
+    var visible=true,timer=null,index=0,slides=[];
+    var reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
+    function stop(){clearTimeout(timer);timer=null;}
+    function schedule(){
+      stop();
+      if(!visible||document.hidden||reduce.matches||slides.length<2)return;
+      timer=setTimeout(function(){
+        slides[index].classList.remove('is-current');index=(index+1)%slides.length;
+        slides[index].classList.add('is-current');schedule();
+      },6000);
+    }
+    if(window.IntersectionObserver){
+      new IntersectionObserver(function(entries){
+        visible=entries[0].isIntersecting;
+        hero.classList.toggle('hex-page-hero-paused',!visible);schedule();
+      }).observe(hero);
+    }
+    document.addEventListener('visibilitychange',function(){
+      hero.classList.toggle('hex-page-hero-paused',document.hidden||!visible);schedule();
+    });
+    reduce.addEventListener('change',schedule);
+    assets().then(function(data){
+      textures=shuffle(data[1]).slice(0,3);layout();
+      shuffle(data[0]).forEach(function(url,i){
+        var image=document.createElement('img');image.src=url;image.alt='';
+        image.className='hex-page-hero-slide'+(i===0?' is-current':'');
+        image.decoding='async';photo.appendChild(image);slides.push(image);
+      });
+      if(slides.length)photo.classList.add('has-images');
+      schedule();
+      window.dispatchEvent(new Event('resize'));
+    });
+  }
+  function scan(){document.querySelectorAll('.pagetitle_type.pagetitle_type4').forEach(init);}
+  hexReady(scan);
+  hexLoad(scan);
+  // HOPWEBのページ差し替えにも対応
+  hexReady(function(){
+    var queued=false;
+    new MutationObserver(function(records){
+      var relevant=records.some(function(record){return Array.from(record.addedNodes).some(function(node){
+        return node.nodeType===1&&(node.matches('.pagetitle_type4')||node.querySelector('.pagetitle_type4'));
+      });});
+      if(relevant&&!queued){queued=true;requestAnimationFrame(function(){queued=false;scan();});}
+    }).observe(document.body,{childList:true,subtree:true});
+  });
+})();

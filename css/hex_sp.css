@@ -2757,3 +2757,10 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     top:var(--header_height_smartphone,var(--header_height,80px));
   }
 }
+
+/* 下層ページ：配置比率はPCと共通。画面内への収まり調整は行わない */
+@media(max-width:768px){
+  .pagetitle_type.pagetitle_type4.hex-page-hero{
+    --hex-page-header:var(--header_height_smartphone,clamp(64px,20vw,80px));
+  }
+}
