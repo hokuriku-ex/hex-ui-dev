@@ -9861,7 +9861,7 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
 /* 下層ページ：画面中央タイトル／斜め写真 */
 .pagetitle_type.pagetitle_type4.hex-page-hero{
   --hex-page-header:var(--header_height,80px);
-  --hex-page-title-height:140px;
+  display:flex!important;align-items:center!important;justify-content:center!important;
   position:relative!important;
   width:100%!important;max-width:none!important;
   height:calc(100vh - var(--hex-page-header))!important;
@@ -9875,8 +9875,7 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
   position:relative!important;z-index:3;
   width:100%!important;max-width:none!important;
   margin:0!important;
-  padding:calc((100vh - var(--hex-page-header) - var(--hex-page-title-height))/2) 0 0!important;
-  padding:calc((100dvh - var(--hex-page-header) - var(--hex-page-title-height))/2) 0 0!important;
+  padding:0!important;height:auto!important;min-height:0!important;flex:0 0 100%;
   box-sizing:border-box!important;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero .bg_text{
@@ -9889,9 +9888,10 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero .bg_text h1 .title_box{
   margin:0!important;padding:0!important;
+  font-size:calc(var(--hex-page-title-size,clamp(48px,8vw,128px)) / 3)!important;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero .bg_text h1::after{
-  font-size:var(--hex-page-title-size,clamp(48px,6vw,96px))!important;
+  font-size:var(--hex-page-title-size,clamp(48px,8vw,128px))!important;
   width:max-content!important;max-width:none!important;white-space:nowrap!important;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero.has-title-texture .bg_text h1::after{
@@ -9909,8 +9909,11 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
   background:#fafafa;visibility:hidden;
 }
 .hex-page-hero-photo.has-images{visibility:visible;}
+.hex-page-hero-photo-track{
+  position:absolute;top:0;left:-12.5%;width:125%;height:100%;
+}
 .hex-page-hero-slide{
-  position:absolute;top:0;left:-12.5%;width:125%!important;height:100%!important;max-width:none!important;
+  position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none!important;
   object-fit:cover;object-position:center;opacity:0;transition:opacity 1.5s ease;
 }
 .hex-page-hero-slide.is-current{opacity:1;}
