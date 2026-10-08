@@ -14057,33 +14057,37 @@ hexReady(function(){
     if(document.fonts)document.fonts.ready.then(queueLayout);
     var visible=true,timer=null,index=0,slides=[];
     var reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
-    function pan(){
-      if(track.hexPan)track.hexPan.cancel();
-      track.hexPan=null;
-      if(reduce.matches||!track.animate)return;
-      // 斜め枠を固定。写真切替にかかわらず内側を常時ゆっくり往復。
-      track.hexPan=track.animate([
+    function pan(image){
+      if(!image)return;
+      if(image.hexPan)image.hexPan.cancel();
+      image.hexPan=null;
+      if(reduce.matches||!image.animate)return;
+      // 表示中とフェード中は左→右。開始位置への戻しは非表示時のみ。
+      image.hexPan=image.animate([
         {transform:'translateX(-8%)'},
         {transform:'translateX(8%)'}
-      ],{duration:10000,easing:'ease-in-out',iterations:Infinity,direction:'alternate'});
+      ],{duration:8000,easing:'linear',fill:'forwards'});
     }
     function syncPan(){
-      var animation=track.hexPan;
-      if(!animation)return;
-      if(reduce.matches){animation.cancel();track.hexPan=null;}
-      else if(visible&&!document.hidden){
-        if(animation.playState==='paused')animation.play();
-      }else if(animation.playState==='running')animation.pause();
+      slides.forEach(function(image){
+        var animation=image.hexPan;
+        if(!animation)return;
+        if(reduce.matches){animation.cancel();image.hexPan=null;}
+        else if(visible&&!document.hidden){
+          if(animation.playState==='paused')animation.play();
+        }else if(animation.playState==='running')animation.pause();
+      });
     }
     function stop(){clearTimeout(timer);timer=null;}
     function schedule(){
       stop();
       syncPan();
       if(!visible||document.hidden||reduce.matches||slides.length<2)return;
+      var elapsed=slides[index].hexPan?Number(slides[index].hexPan.currentTime)||0:0;
       timer=setTimeout(function(){
         slides[index].classList.remove('is-current');index=(index+1)%slides.length;
-        slides[index].classList.add('is-current');schedule();
-      },6000);
+        pan(slides[index]);slides[index].classList.add('is-current');schedule();
+      },Math.max(0,6000-elapsed));
     }
     if(window.IntersectionObserver){
       new IntersectionObserver(function(entries){
@@ -14094,7 +14098,7 @@ hexReady(function(){
     document.addEventListener('visibilitychange',function(){
       schedule();
     });
-    reduce.addEventListener('change',function(){pan();schedule();});
+    reduce.addEventListener('change',function(){pan(slides[index]);schedule();});
     if(!texturesPromise)texturesPromise=loadFolder('textures');
     texturesPromise.then(function(urls){
       if(!urls.length)return;
@@ -14103,13 +14107,16 @@ hexReady(function(){
       hero.classList.add('has-title-texture');
     });
     assets().then(function(data){
-      shuffle(data).forEach(function(url,i){
+      var ordered=shuffle(data);
+      // 1枚でも複製を交互にフェードし、見える画像を逆向きに戻さない。
+      if(ordered.length===1)ordered.push(ordered[0]);
+      ordered.forEach(function(url,i){
         var image=document.createElement('img');image.src=url;image.alt='';
         image.className='hex-page-hero-slide'+(i===0?' is-current':'');
         image.decoding='async';track.appendChild(image);slides.push(image);
       });
       if(slides.length)photo.classList.add('has-images');
-      if(slides.length)pan();
+      if(slides.length)pan(slides[0]);
       schedule();
       window.dispatchEvent(new Event('resize'));
     });
