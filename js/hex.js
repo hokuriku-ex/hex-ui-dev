@@ -2280,6 +2280,7 @@ hexReady(function(){
       if(!catchElement||document.documentElement.classList.contains("hex-opening-lock")||
         document.documentElement.classList.contains("hex-hero-display-wait")||
         document.documentElement.classList.contains("hex-hero-return-preparing")||
+        hero.classList.contains("is-catch-waiting")||
         hero.classList.contains("is-intro-departed")||
         hero.classList.contains("is-intro-complete")){return;}
       catchElement.classList.remove("is-exploring");
@@ -6302,6 +6303,8 @@ hexReady(function(){
   var OPENING_AUTO_ADVANCE_MS=3000;
   var sharedNav=null;
   var heroIntroTimer=null;
+  var heroCatchRun=0;
+  var HERO_CATCH_DELAY=1000;
   var heroIntroStarted=false;
   var heroIntroDeparted=false;
 
@@ -6368,6 +6371,7 @@ hexReady(function(){
 
   document.addEventListener('hex:hero-departed',function(){
     heroIntroDeparted=true;
+    heroCatchRun+=1;
     stopHeroIntro();
     var hero=document.querySelector('.hex-hero-wrap');
     hero.classList.remove('is-intro-playing','is-intro-complete');
@@ -6957,6 +6961,10 @@ hexReady(function(){
         return;
       }
 
+      if(typeof opening._hexSkipToHero==='function'){
+        opening._hexSkipToHero();
+        return;
+      }
       opening.classList.add("is-skipping");
 
       if(typeof opening._hexV2Cancel==="function"){
@@ -7015,20 +7023,27 @@ hexReady(function(){
     }
   }
 
-  function showHeroCatch(delay){
-    var heroCatch=document.querySelector(".hex-hero-catch");
-
-    if(!heroCatch){
-      return;
-    }
-
+  function showHeroCatch(delay,catchDelay){
+    var hero=document.querySelector('.hex-hero-wrap');
+    var heroCatch=hero&&hero.querySelector('.hex-hero-catch');
+    var run=++heroCatchRun;
+    if(!heroCatch){return;}
+    hero.classList.toggle('is-catch-waiting',!!catchDelay);
+    heroCatch.classList.remove('is-catch-visible','is-exploring');
     window.setTimeout(function(){
-      if(heroIntroDeparted||document.querySelector(
-        ".hex-opening:not(.is-v2-hero-stage):not(.is-skipping)"
+      if(run!==heroCatchRun||heroIntroDeparted||document.querySelector(
+        '.hex-opening:not(.is-v2-hero-stage):not(.is-skipping)'
       )){return;}
-      heroCatch.classList.remove("is-exploring");
-      heroCatch.classList.add("is-catch-visible");
+      /* 3秒の計時開始は維持し、キャッチだけ1秒後に表示。 */
       startHeroIntro();
+      function reveal(){
+        if(run!==heroCatchRun||heroIntroDeparted||
+          hero.classList.contains('is-intro-complete')){return;}
+        hero.classList.remove('is-catch-waiting');
+        heroCatch.classList.add('is-catch-visible');
+      }
+      if(catchDelay){window.setTimeout(reveal,catchDelay);}
+      else{reveal();}
     },delay||0);
   }
 
@@ -7373,14 +7388,21 @@ hexReady(function(){
       document.removeEventListener('visibilitychange',onVisibilityChange);
     }
 
+    opening._hexSkipToHero=function(){
+      cancel();
+      startOpeningCurtainSequence(opening,introStage,slideStage,messageStage,true,scenes.length);
+    };
     opening._hexV2Cancel=cancel;
     opening._hexOpeningCleanup=cancel;
     opening.classList.add("is-curtain-sequence");
 
-    scenes.forEach(function(scene,sceneIndex){
-      scene.classList.toggle("is-v2-current",sceneIndex===0);
-      scene.setAttribute("aria-hidden",sceneIndex===0?"false":"true");
-    });
+    /* SKIP時は押した場面を残し、その上で中央の丸を広げる。 */
+    if(startIndex===undefined||startIndex<scenes.length){
+      scenes.forEach(function(scene,sceneIndex){
+        scene.classList.toggle("is-v2-current",sceneIndex===0);
+        scene.setAttribute("aria-hidden",sceneIndex===0?"false":"true");
+      });
+    }
 
     function animateIncoming(scene){
       var introMain;
@@ -7769,7 +7791,7 @@ hexReady(function(){
       });
     }
 
-    function runHeroCircleReveal(){
+    function runHeroCircleReveal(fromCenter){
       var preview=createOpeningHeroPreview();
       var wordmark=opening.querySelector(".hex-logo-company-name");
       var previewRect;
@@ -7785,7 +7807,7 @@ hexReady(function(){
       opening.classList.add("is-v2-hero-stage");
       preview.classList.add("is-v2-circle-reveal");
       previewRect=preview.getBoundingClientRect();
-      wordmarkRect=wordmark&&wordmark.getBoundingClientRect();
+      wordmarkRect=!fromCenter&&wordmark&&wordmark.getBoundingClientRect();
       originX=wordmarkRect&&wordmarkRect.width
         ?wordmarkRect.left+wordmarkRect.width/2-previewRect.left
         :previewRect.width/2;
@@ -7840,16 +7862,16 @@ hexReady(function(){
       });
     }
 
-    function finishToHero(){
+    function finishToHero(fromCenter){
       if(transitionLocked){return;}
       stopAutoAdvance();
       transitionLocked=true;
       ensureHeroReady();
       opening.classList.add("is-v2-hero-stage");
-      showHeroCatch(0);
+      showHeroCatch(0,HERO_CATCH_DELAY);
       updateDots(true);
 
-      runHeroCircleReveal().then(function(){
+      runHeroCircleReveal(fromCenter).then(function(){
         scenes.forEach(function(scene){
           scene.classList.remove("is-v2-current");
           scene.setAttribute("aria-hidden","true");
@@ -8328,6 +8350,7 @@ hexReady(function(){
         if(opening.isConnected&&!cancelled){goTo(target);return;}
         if(heroIntroDeparted){return;}
         if(target>=scenes.length){return;}
+        heroCatchRun+=1;
         stopHeroIntro();
         heroIntroStarted=false;
         var hero=document.querySelector('.hex-hero-wrap');
@@ -8352,6 +8375,10 @@ hexReady(function(){
       document.addEventListener("keydown",onKeyDown);
       document.addEventListener('visibilitychange',onVisibilityChange);
 
+      if(startIndex>=scenes.length){
+        finishToHero(true);
+        return;
+      }
       index=Math.max(0,Math.min(scenes.length-1,startIndex||0));
       activate(index);
       updateDots(false);
