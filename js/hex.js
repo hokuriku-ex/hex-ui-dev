@@ -13952,8 +13952,8 @@ hexReady(function(){
 
 
 /* =======================================
-   下層ページ：斜め写真＋画面中央タイトル（2026-10-08）
-   写真はslides、文字素材はtexturesの01.webp〜10.webp。欠番はスキップ。
+   下層ページ：斜めテクスチャー＋写真文字（2026-10-08）
+   斜めはtextures、文字はslidesの01.webp〜99.webp。欠番は再試行しない。
 ======================================= */
 (function(){
   'use strict';
@@ -13975,24 +13975,32 @@ hexReady(function(){
     return result;
   }
   function loadFolder(folder){
-    return Promise.all(Array.from({length:10},function(_,i){
-      return new Promise(function(resolve){
+    // 先に番号をシャッフルすれば、重複のないランダム抽選になる。
+    var candidates=shuffle(Array.from({length:99},function(_,i){return i+1;}));
+    return new Promise(function(resolve){
+      var cursor=0;
+      function attempt(){
+        if(cursor>=candidates.length){resolve([]);return;}
         var image=new Image();
-        var url=imageRoot+folder+'/'+String(i+1).padStart(2,'0')+'.webp';
+        var number=candidates[cursor++];
+        var url=imageRoot+folder+'/'+String(number).padStart(2,'0')+'.webp';
         var done=false;
         var timeout=setTimeout(function(){finish(null);},15000);
         function finish(value){
           if(done)return;done=true;clearTimeout(timeout);
-          image.onload=null;image.onerror=null;resolve(value);
+          image.onload=null;image.onerror=null;
+          if(value){resolve([value]);}
+          else{attempt();}
         }
         image.onload=function(){finish(url);};
         image.onerror=function(){finish(null);};
         image.src=url;
-      });
-    })).then(function(items){return items.filter(Boolean);});
+      }
+      attempt();
+    });
   }
   function assets(){
-    if(!assetsPromise)assetsPromise=loadFolder('slides');
+    if(!assetsPromise)assetsPromise=loadFolder('textures');
     return assetsPromise;
   }
   function init(hero){
@@ -14027,11 +14035,13 @@ hexReady(function(){
       hero.appendChild(measure);
       var width=measure.getBoundingClientRect().width;
       if(width>0){
-        var preferred=Math.min(128,Math.max(48,window.innerWidth*.08));
-        var size=Math.min(preferred,100*window.innerWidth*.60/width);
+        var smartphone=window.innerWidth<=768;
+        var limit=smartphone?Math.max(1,window.innerWidth-32):window.innerWidth*.60;
+        var preferred=smartphone?128:Math.min(128,Math.max(48,window.innerWidth*.08));
+        var size=Math.min(preferred,100*limit/width);
         measure.style.fontSize=size+'px';
         width=measure.getBoundingClientRect().width;
-        if(width>window.innerWidth*.60)size*=window.innerWidth*.60/width;
+        if(width>limit)size*=limit/width;
         hero.style.setProperty('--hex-page-title-size',size+'px');
       }
       measure.remove();
@@ -14046,14 +14056,17 @@ hexReady(function(){
       hero.appendChild(probe);
       var header=probe.getBoundingClientRect().height||80;probe.remove();
       hero.style.setProperty('--hex-page-header',header+'px');
-      
-
+      if(window.innerWidth<=768){
+        var gap=24;
+        var available=contents.getBoundingClientRect().top-hero.getBoundingClientRect().top-gap;
+        hero.style.setProperty('--hex-page-photo-height',Math.max(0,available)+'px');
+      }
     }
     function queueLayout(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(layout);}
     layout();
     window.addEventListener('resize',queueLayout,{passive:true});
     if(window.visualViewport)window.visualViewport.addEventListener('resize',queueLayout,{passive:true});
-    
+    if(window.ResizeObserver)new ResizeObserver(queueLayout).observe(contents);
     if(document.fonts)document.fonts.ready.then(queueLayout);
     var visible=true,timer=null,index=0,slides=[];
     var reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -14099,7 +14112,7 @@ hexReady(function(){
       schedule();
     });
     reduce.addEventListener('change',function(){pan(slides[index]);schedule();});
-    if(!texturesPromise)texturesPromise=loadFolder('textures');
+    if(!texturesPromise)texturesPromise=loadFolder('slides');
     texturesPromise.then(function(urls){
       if(!urls.length)return;
       var url=urls[Math.floor(Math.random()*urls.length)];
@@ -14107,9 +14120,9 @@ hexReady(function(){
       hero.classList.add('has-title-texture');
     });
     assets().then(function(data){
-      var ordered=shuffle(data);
-      // 1枚でも複製を交互にフェードし、見える画像を逆向きに戻さない。
-      if(ordered.length===1)ordered.push(ordered[0]);
+      var selected=shuffle(data)[0];
+      // 素材は1枚を固定。同じ画像の複製を交互にフェードして一方向ループ。
+      var ordered=selected?[selected,selected]:[];
       ordered.forEach(function(url,i){
         var image=document.createElement('img');image.src=url;image.alt='';
         image.className='hex-page-hero-slide'+(i===0?' is-current':'');

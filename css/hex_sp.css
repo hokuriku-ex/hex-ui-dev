@@ -2758,9 +2758,22 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
 }
 
-/* 下層ページ：配置比率はPCと共通。画面内への収まり調整は行わない */
+/* 下層ページ：全体を下寄せ、上の空き範囲に斜めカット素材 */
 @media(max-width:768px){
   .pagetitle_type.pagetitle_type4.hex-page-hero{
     --hex-page-header:var(--header_height_smartphone,clamp(64px,20vw,80px));
+    align-items:flex-end!important;
+  }
+  .pagetitle_type.pagetitle_type4.hex-page-hero > .contents{
+    margin:0!important;padding:0!important;
+  }
+  .hex-page-hero .hex-anchor-nav:not(.is-fixed){
+    margin-bottom:0!important;
+  }
+  .hex-page-hero .hex-page-hero-photo{
+    inset:0 0 auto!important;
+    width:100%!important;
+    height:var(--hex-page-photo-height,0px);
+    clip-path:polygon(0 0,100% 0,100% 75%,0 100%);
   }
 }
