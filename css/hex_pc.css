@@ -9772,3 +9772,50 @@ h2.hex-top-title.hex-audience-guide-title .hex-top-title-en{
  .hex-tiktok-scroll-note{display:block;margin:0 16px 14px!important;font-size:13px;text-align:right;color:#1f2774!important;}
 }
 @media (prefers-reduced-motion:reduce){.hex-tiktok-poster img{transition:none;}}
+
+/* 開幕・ヒーロー共通の右側ドットナビ */
+.hex-opening-progress-nav{
+  position:fixed;
+  z-index:9000;
+  top:50%;
+  right:max(20px,calc(env(safe-area-inset-right,0px) + 14px));
+  bottom:auto;
+  left:auto;
+  flex-direction:column;
+  max-height:calc(100dvh - var(--header_height,80px) * 2 - 24px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-width:none;
+  transform:translateY(-50%);
+}
+.hex-opening-progress-nav::-webkit-scrollbar{display:none}
+.hex-opening-progress-nav[hidden]{display:none!important}
+.hex-opening-skip{
+  top:auto!important;
+  bottom:max(24px,calc(env(safe-area-inset-bottom,0px) + 16px))!important;
+}
+.hex-opening.is-v2-hero-stage .hex-opening-skip{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+/* 自動進行前はキャッチ、進行後は操作ボタンを表示。 */
+.hex-hero-wrap.is-intro-playing .hex-hero-catch.is-catch-visible{
+  opacity:1!important;
+  visibility:visible!important;
+}
+.hex-hero-wrap.is-intro-complete .hex-hero-catch,
+.hex-hero-wrap.is-intro-departed .hex-hero-catch{
+  opacity:0!important;
+  visibility:hidden!important;
+  transition:opacity .45s ease,visibility 0s linear .45s!important;
+}
+.hex-hero-wrap:not(.is-intro-complete) .hex-hero-welcome-button,
+.hex-hero-wrap.is-intro-departed .hex-hero-welcome-button{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+.hex-opening-replay{
+  transition:opacity .45s ease,visibility 0s linear 0s,transform .45s ease;
+}

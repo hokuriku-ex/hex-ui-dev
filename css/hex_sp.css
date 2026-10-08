@@ -2736,3 +2736,18 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     top:calc(var(--hex-founded-navy-top,0px) - 1px);
   }
 }
+
+/* 開幕・ヒーロー共通ドット／SKIPのスマートフォン位置 */
+@media (max-width:768px){
+  .hex-opening-progress-nav{
+    top:50%;
+    right:max(8px,calc(env(safe-area-inset-right,0px) + 4px));
+    bottom:auto;
+    left:auto;
+    transform:translateY(-50%);
+  }
+  .hex-opening-skip{
+    top:auto!important;
+    bottom:max(14px,calc(env(safe-area-inset-bottom,0px) + 10px))!important;
+  }
+}
