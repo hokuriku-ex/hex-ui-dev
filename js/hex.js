@@ -13995,7 +13995,10 @@ hexReady(function(){
         }
         image.onload=function(){
           imageRatios[url]=(image.naturalWidth||1)/(image.naturalHeight||1);
-          finish(url);
+          // デコード完了まで導入文を表示する。画像エラー時も画面を進める。
+          if(typeof image.decode==='function'){
+            image.decode().then(function(){finish(url);},function(){finish(url);});
+          }else{finish(url);}
         };
         image.onerror=function(){finish(null);};
         image.src=url;
@@ -14013,11 +14016,21 @@ hexReady(function(){
     var heading=hero.querySelector('.bg_text h1');
     if(!contents||!heading)return;
     hero.classList.add('hex-page-hero');
+    hero.classList.add('is-hero-loading');
+    hero.setAttribute('aria-busy','true');
+    var intro=contents.querySelector('.hex-intro');
+    if(intro){
+      intro.classList.add('hex-page-hero-loading-intro');
+      intro.setAttribute('aria-hidden','false');
+    }
     var main=document.createElement('div');main.className='hex-page-hero-main';
     Array.from(contents.children).forEach(function(child){
-      if(!child.matches('.hex-anchor-nav,.hex-anchor-nav-placeholder'))main.appendChild(child);
+      if(child!==intro&&!child.matches('.hex-anchor-nav,.hex-anchor-nav-placeholder'))main.appendChild(child);
     });
     contents.insertBefore(main,contents.firstChild);
+    main.setAttribute('inert','');
+    var nav=contents.querySelector('.hex-anchor-nav');
+    if(nav)nav.setAttribute('inert','');
     var decor=document.createElement('div');
     decor.className='hex-page-hero-decor';decor.setAttribute('aria-hidden','true');
     var photo=document.createElement('div');photo.className='hex-page-hero-photo';
@@ -14090,7 +14103,7 @@ hexReady(function(){
     }
     if(document.fonts)document.fonts.ready.then(queueLayout);
     if(!texturesPromise)texturesPromise=loadFolder('slides');
-    texturesPromise.then(function(urls){
+    var titleReady=texturesPromise.then(function(urls){
       if(!urls.length)return;
       var url=urls[Math.floor(Math.random()*urls.length)];
       hero.style.setProperty('--hex-page-title-texture','url("'+url+'")');
@@ -14098,7 +14111,7 @@ hexReady(function(){
       layout();
       hero.classList.add('has-title-texture');
     });
-    assets().then(function(data){
+    var decorReady=assets().then(function(data){
       var selected=data[0];
       if(selected){
         var image=document.createElement('img');image.src=selected;image.alt='';
@@ -14106,6 +14119,16 @@ hexReady(function(){
         track.appendChild(image);photo.classList.add('has-images');
       }
       window.dispatchEvent(new Event('resize'));
+    });
+    Promise.all([titleReady,decorReady,document.fonts?document.fonts.ready:Promise.resolve()]).then(function(){
+      // 欠番しかない場合も、従来色のタイトルで表示を完了する。
+      if(intro)intro.setAttribute('aria-hidden','true');
+      main.removeAttribute('inert');
+      if(nav)nav.removeAttribute('inert');
+      hero.classList.remove('is-hero-loading');
+      hero.classList.add('is-hero-ready');
+      hero.setAttribute('aria-busy','false');
+      layout();
     });
   }
   function scan(){document.querySelectorAll('.pagetitle_type.pagetitle_type4').forEach(init);}
