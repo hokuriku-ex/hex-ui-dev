@@ -9819,3 +9819,23 @@ h2.hex-top-title.hex-audience-guide-title .hex-top-title-en{
 .hex-opening-replay{
   transition:opacity .45s ease,visibility 0s linear 0s,transform .45s ease;
 }
+
+/* リロード後は位置・初回描画・ページ演出の準備が揃うまで覆う。 */
+html:is(.hex-hero-return-preparing,.hex-hero-display-wait)::after{
+  content:"";
+  position:fixed;
+  top:var(--header_height,80px);
+  right:0;
+  bottom:0;
+  left:0;
+  z-index:2147481900;
+  background:#fff;
+  pointer-events:auto;
+}
+html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-hero-wrap,
+html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-opening-progress-nav,
+html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-opening-replay{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}

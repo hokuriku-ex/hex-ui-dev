@@ -113,6 +113,7 @@ function hexLoad(callback){
   }catch(error){}
 
   if(requested&&isReload){
+    document.documentElement.classList.add("hex-hero-return-preparing");
     var previousRestoration='auto';
     try{
       previousRestoration=history.scrollRestoration;
@@ -2353,6 +2354,8 @@ hexReady(function(){
 
     function revealCatch(withFade){
       if(!catchElement||document.documentElement.classList.contains("hex-opening-lock")||
+        document.documentElement.classList.contains("hex-hero-display-wait")||
+        document.documentElement.classList.contains("hex-hero-return-preparing")||
         hero.classList.contains("is-intro-departed")||
         hero.classList.contains("is-intro-complete")){return;}
       catchElement.classList.remove("is-exploring");
@@ -2531,7 +2534,9 @@ hexReady(function(){
       autoZoomPendingDelay=Math.max(0,delay||0);
       interactionLocked=true;
       window.clearTimeout(autoZoomTimer);
-      if(!ready||!renderer||!camera){return;}
+      if(!ready||!renderer||!camera||
+        document.documentElement.classList.contains("hex-hero-display-wait")||
+        document.documentElement.classList.contains("hex-hero-return-preparing")){return;}
       autoZoomPending=false;
       autoZoomTimer=window.setTimeout(startAutoZoom,autoZoomPendingDelay);
     }
@@ -3325,6 +3330,7 @@ hexReady(function(){
         /* 最上部に戻ったら、キャッチを含む初期状態をリロードで作り直す。 */
         try{sessionStorage.setItem('hex_top_return_reload',location.pathname+location.search);}catch(error){}
         if('scrollRestoration' in history){history.scrollRestoration='manual';}
+        document.documentElement.classList.add("hex-hero-return-preparing");
         window.location.reload();
         return;
       }
@@ -4180,6 +4186,23 @@ hexReady(function(){
     window.hexHero={
       get:function(){return hero;},
       getActive:getActiveHero,
+      /* 初回表示前に、現在の寸法で一度描画まで完了させる。 */
+      prepareDisplay:function(){
+        if(!ready){return false;}
+        if(hero.classList.contains('is-v2-fallback')){
+          var image=getActiveHero()&&getActiveHero().querySelector('.hex-hero-bg img');
+          return !image||image.complete;
+        }
+        if(!renderer||!camera||!sourceImage||!sourceImage.naturalWidth){return false;}
+        try{
+          resizeRenderer();
+          if(!renderer){return hero.classList.contains('is-v2-fallback');}
+          renderer.render(scene,camera);
+          if(hasVisibleRender()){return true;}
+        }catch(error){}
+        createFallback();
+        return true;
+      },
       isCharacterAt:isHeroCharacterAt,
       getCompositePreview:function(){
         if(!textureCanvas){return null;}
@@ -4254,6 +4277,9 @@ hexReady(function(){
     window.addEventListener("wheel",onWheel,{passive:false,capture:true});
     window.addEventListener("resize",queueResize);
     window.addEventListener("orientationchange",queueResize);
+    document.addEventListener("hex:hero-display-ready",function(){
+      if(autoZoomPending){scheduleAutoZoom(autoZoomPendingDelay);}
+    });
     document.addEventListener("hex:hero-intro-complete",updateWelcomeButton);
     document.addEventListener("hex:opening-finished",function(){
       hero.classList.add("is-ready");
@@ -7045,36 +7071,74 @@ hexReady(function(){
   }
 
   function showHeroWithFade(){
-    document.documentElement.classList.add(
-      "hex-direct-hero-fade"
-    );
+    var root=document.documentElement;
+    var hero=document.querySelector('.hex-hero-wrap');
+    var prepared=false;
+    var previousGeometry=null;
+    var stableFrames=0;
 
+    root.classList.add('hex-direct-hero-fade','hex-hero-display-wait');
     ensureHeroReady();
 
-    /*
-    * ヒーローのサイズ・位置計算が
-    * 描画へ反映されるまでページを表示しない
-    */
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
+    function waitForDisplay(){
+      var cover=document.getElementById('hex-motion-preparation-cover');
+      var motion=window.hexMotion;
+      var api=window.hexHero;
+      var headerHeight=parseFloat(getComputedStyle(root)
+        .getPropertyValue('--header_height'))||80;
+      var target;
+      var rect;
+      var geometry;
 
-        /* 補正後に初期非表示を解除 */
-        showPendingPage();
+      /* pageshowでの位置補正、演出登録、白カバーの解除を先に済ませる。 */
+      if(document.readyState!=='complete'||
+        root.classList.contains('hex-motion-preparing')||cover||
+        (document.fonts&&document.fonts.status==='loading')){
+        window.requestAnimationFrame(waitForDisplay);
+        return;
+      }
+      if(!prepared){
+        if(!api||typeof api.prepareDisplay!=='function'||!api.prepareDisplay()){
+          window.requestAnimationFrame(waitForDisplay);
+          return;
+        }
+        prepared=true;
+      }
 
-        document.documentElement.classList.add(
-          "hex-direct-hero-fade-ready"
-        );
+      target=Math.max(0,hero.getBoundingClientRect().top+
+        window.pageYOffset-headerHeight);
+      if(motion&&typeof motion.scrollTo==='function'){
+        motion.scrollTo(target,{immediate:true,force:true});
+      }else{
+        window.scrollTo({top:target,left:0,behavior:'instant'});
+      }
+      rect=hero.getBoundingClientRect();
+      geometry=[rect.top,rect.left,rect.width,rect.height,window.pageYOffset]
+        .map(function(value){return Math.round(value*10)/10;}).join(',');
+      stableFrames=geometry===previousGeometry?stableFrames+1:0;
+      previousGeometry=geometry;
+      if(stableFrames<3){
+        window.requestAnimationFrame(waitForDisplay);
+        return;
+      }
+      /* 安定した座標でもう一度描画してから、非表示を一度だけ解除。 */
+      if(!api.prepareDisplay()){
+        prepared=false;
+        stableFrames=0;
+        window.requestAnimationFrame(waitForDisplay);
+        return;
+      }
+      showPendingPage();
+      root.classList.add('hex-direct-hero-fade-ready');
+      root.classList.remove('hex-hero-display-wait','hex-hero-return-preparing');
+      document.dispatchEvent(new Event('hex:hero-display-ready'));
+      showHeroCatch(180);
+      window.setTimeout(function(){
+        root.classList.remove('hex-direct-hero-fade','hex-direct-hero-fade-ready');
+      },DIRECT_HERO_FADE_DURATION+100);
+    }
 
-        showHeroCatch(180);
-
-        window.setTimeout(function(){
-          document.documentElement.classList.remove(
-            "hex-direct-hero-fade",
-            "hex-direct-hero-fade-ready"
-          );
-        },DIRECT_HERO_FADE_DURATION+100);
-      });
-    });
+    window.requestAnimationFrame(waitForDisplay);
   }
 
   function finishOpening(opening){

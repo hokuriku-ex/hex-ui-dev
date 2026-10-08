@@ -2751,3 +2751,9 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     bottom:max(14px,calc(env(safe-area-inset-bottom,0px) + 10px))!important;
   }
 }
+
+@media (max-width:768px){
+  html:is(.hex-hero-return-preparing,.hex-hero-display-wait)::after{
+    top:var(--header_height_smartphone,var(--header_height,80px));
+  }
+}
