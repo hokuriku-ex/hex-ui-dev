@@ -9896,7 +9896,9 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero.has-title-texture .bg_text h1::after{
   background-image:var(--hex-page-title-texture);
-  background-size:cover;background-position:center;background-repeat:no-repeat;
+  background-size:var(--hex-page-title-tile-width,200px) 100%;
+  background-position:0 center;background-repeat:repeat-x;
+  animation:hex-page-title-flow var(--hex-page-title-flow-duration,10s) linear infinite;
   -webkit-background-clip:text;background-clip:text;
   color:transparent!important;-webkit-text-fill-color:transparent;
 }
@@ -9910,13 +9912,20 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
 }
 .hex-page-hero-photo.has-images{visibility:visible;}
 .hex-page-hero-photo-track{
-  position:absolute;top:0;left:-12.5%;width:125%;height:100%;
+  position:absolute;inset:0;width:100%;height:100%;
 }
 .hex-page-hero-slide{
   position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none!important;
-  object-fit:cover;object-position:center;opacity:0;transition:opacity 1.5s ease;
+  object-fit:cover;object-position:center;opacity:1;
 }
 .hex-page-hero-slide.is-current{opacity:1;}
 @media(prefers-reduced-motion:reduce){
-  .hex-page-hero-slide{transition:none;}
+  .pagetitle_type.pagetitle_type4.hex-page-hero.has-title-texture .bg_text h1::after{
+    animation:none;
+  }
+}
+
+@keyframes hex-page-title-flow{
+  from{background-position:0 center;}
+  to{background-position:var(--hex-page-title-tile-width,200px) center;}
 }
