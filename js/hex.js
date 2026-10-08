@@ -13952,8 +13952,8 @@ hexReady(function(){
 
 
 /* =======================================
-   下層ページ：斜め写真＋スクエア背景（2026-10-08）
-   画像は各フォルダの01.webp〜10.webp。欠番はスキップ。
+   下層ページ：斜め写真＋画面中央タイトル（2026-10-08）
+   写真はslides/01.webp〜10.webp。欠番はスキップ。
 ======================================= */
 (function(){
   'use strict';
@@ -13992,7 +13992,7 @@ hexReady(function(){
     })).then(function(items){return items.filter(Boolean);});
   }
   function assets(){
-    if(!assetsPromise)assetsPromise=Promise.all([loadFolder('slides'),loadFolder('textures')]);
+    if(!assetsPromise)assetsPromise=loadFolder('slides');
     return assetsPromise;
   }
   function init(hero){
@@ -14003,11 +14003,8 @@ hexReady(function(){
     hero.classList.add('hex-page-hero');
     var decor=document.createElement('div');
     decor.className='hex-page-hero-decor';decor.setAttribute('aria-hidden','true');
-    var grid=document.createElement('div');grid.className='hex-page-hero-grid';
     var photo=document.createElement('div');photo.className='hex-page-hero-photo';
-    decor.appendChild(grid);decor.appendChild(photo);hero.insertBefore(decor,hero.firstChild);
-    var seed=Math.floor(Math.random()*100000);
-    var textures=[];
+    decor.appendChild(photo);hero.insertBefore(decor,hero.firstChild);
     var resizeFrame=0;
     function layout(){
       var probe=document.createElement('div');
@@ -14019,80 +14016,7 @@ hexReady(function(){
       var header=probe.getBoundingClientRect().height||80;probe.remove();
       hero.style.setProperty('--hex-page-header',header+'px');
       hero.style.setProperty('--hex-page-title-height',heading.getBoundingClientRect().height+'px');
-      var w=hero.clientWidth;
-      var h=decor.clientHeight;
-      var side=Math.min(w,1600)*0.07875; // 1600px時126px、参考の四角の比率
-      var pitch=side*1.6;
-      if(!side||!h)return;
-      grid.replaceChildren();
-      var columns=Math.ceil(w/pitch)+1;
-      var rows=Math.ceil(h/pitch)+1;
-      var textureTiles=[];
-      var cells=[];
-      var randomState=seed+1;
-      function seededRandom(){
-        randomState=(randomState*1664525+1013904223)>>>0;
-        return randomState/4294967296;
-      }
-      for(var row=0;row<rows;row++){
-        for(var col=0;col<columns;col++){
-          var tile=document.createElement('span');tile.className='hex-page-hero-tile';
-          var x=col*pitch-side*0.5,y=row*pitch-side*0.5;
-          tile.style.cssText='left:'+x+'px;top:'+y+'px;width:'+side+'px;height:'+side+'px;';
-          var code=(seed+row*71+col*37)%11;
-          if(code<3){
-            tile.classList.add('hex-page-hero-tile--'+code);
-            tile.style.animationDelay=(-(code+row+col)%9)+'s';
-            tile.style.animationDuration=(4.5+code)+'s';
-          }
-          grid.appendChild(tile);
-          cells.push({tile:tile,row:row,col:col,x:x,y:y});
-          // 実際の格子セルから選ぶ。別枠の四角は追加しない。
-          var photoEdge=Math.min(w*0.25,400)*(1-0.76*Math.max(0,y)/h);
-          if(x>photoEdge+side*0.1&&x+side<w-side*0.15&&y>=0&&y+side<h-side*0.15){
-            textureTiles.push(tile);
-          }
-        }
-      }
-      // seedはページ読み込み時だけ決定。resizeでも選択は安定。
-      var candidates=textureTiles.slice();
-      for(var k=candidates.length-1;k>0;k--){
-        var j=Math.floor(seededRandom()*(k+1));
-        var tmp=candidates[k];candidates[k]=candidates[j];candidates[j]=tmp;
-      }
-      var selected=[];
-      // まず上下左右に固まらない組み合わせを優先
-      candidates.forEach(function(tile){
-        if(selected.length>=Math.min(3,textures.length))return;
-        var cell=cells.find(function(c){return c.tile===tile;});
-        if(selected.every(function(other){
-          var previous=cells.find(function(c){return c.tile===other;});
-          return Math.abs(cell.row-previous.row)+Math.abs(cell.col-previous.col)>1;
-        }))selected.push(tile);
-      });
-      candidates.forEach(function(tile){
-        if(selected.length<Math.min(3,textures.length)&&selected.indexOf(tile)===-1)selected.push(tile);
-      });
-      selected.forEach(function(target,n){
-        target.classList.add('hex-page-hero-texture');
-        target.style.backgroundImage='url("'+textures[n]+'")';
-      });
-      // 同じ列の上下2セルが、横に少し避けながら位置を交換。
-      // 交換先も画面内のセルに限定し、テクスチャーも同じ動きに参加。
-      cells.forEach(function(cell){
-        if(cell.row%2!==1||cell.x<w*0.27||cell.x+side>w)return;
-        var partner=cells.find(function(c){return c.row===cell.row+1&&c.col===cell.col;});
-        if(!partner||cell.y<0||partner.y+side>h)return;
-        if((seed+cell.col*3+cell.row)%4!==0&&
-          selected.indexOf(cell.tile)===-1&&selected.indexOf(partner.tile)===-1)return;
-        [cell,partner].forEach(function(current,i){
-          current.tile.style.setProperty('--hex-swap-y',(i===0?160:-160)+'%');
-          current.tile.style.setProperty('--hex-swap-x',(i===0?45:-45)+'%');
-          current.tile.style.animationName='hex-page-square-swap';
-          current.tile.style.animationDuration=(6+(cell.col%3))+'s';
-          current.tile.style.animationDelay=(-(seed+cell.col)%8)+'s';
-        });
-      });
+
     }
     function queueLayout(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(layout);}
     layout();
@@ -14114,16 +14038,15 @@ hexReady(function(){
     if(window.IntersectionObserver){
       new IntersectionObserver(function(entries){
         visible=entries[0].isIntersecting;
-        hero.classList.toggle('hex-page-hero-paused',!visible);schedule();
+        schedule();
       }).observe(hero);
     }
     document.addEventListener('visibilitychange',function(){
-      hero.classList.toggle('hex-page-hero-paused',document.hidden||!visible);schedule();
+      schedule();
     });
     reduce.addEventListener('change',schedule);
     assets().then(function(data){
-      textures=shuffle(data[1]).slice(0,3);layout();
-      shuffle(data[0]).forEach(function(url,i){
+      shuffle(data).forEach(function(url,i){
         var image=document.createElement('img');image.src=url;image.alt='';
         image.className='hex-page-hero-slide'+(i===0?' is-current':'');
         image.decoding='async';photo.appendChild(image);slides.push(image);

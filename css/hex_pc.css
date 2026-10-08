@@ -9858,7 +9858,7 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
   visibility:hidden;
 }
 
-/* 下層ページ：画面中央タイトル／斜め写真／スクエア背景 */
+/* 下層ページ：画面中央タイトル／斜め写真 */
 .pagetitle_type.pagetitle_type4.hex-page-hero{
   --hex-page-header:var(--header_height,80px);
   --hex-page-title-height:140px;
@@ -9896,15 +9896,6 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
 .hex-page-hero-decor{
   position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none;
 }
-.hex-page-hero-grid{position:absolute;inset:0;z-index:0;}
-.hex-page-hero-tile{
-  position:absolute;display:block;background:#E8D575;opacity:1;
-  transform-origin:center;animation-timing-function:ease-in-out;animation-iteration-count:infinite;
-}
-.hex-page-hero-tile--0{animation-name:hex-page-square-turn;}
-.hex-page-hero-tile--1{animation-name:hex-page-square-stretch;}
-.hex-page-hero-tile--2{animation-name:hex-page-square-shift;}
-.hex-page-hero-texture{background-size:cover;background-position:center;}
 .hex-page-hero-photo{
   position:absolute;inset:0 auto 0 0;width:min(25vw,400px);z-index:2;
   clip-path:polygon(0 0,100% 0,24% 100%,0 100%);
@@ -9916,22 +9907,6 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
   object-fit:cover;object-position:center;opacity:0;transition:opacity 1.5s ease;
 }
 .hex-page-hero-slide.is-current{opacity:1;}
-.hex-page-hero-paused .hex-page-hero-tile{animation-play-state:paused;}
-@keyframes hex-page-square-turn{0%,30%,100%{transform:rotate(0)}50%,75%{transform:rotate(45deg)}}
-@keyframes hex-page-square-stretch{0%,25%,100%{transform:scaleY(1)}45%,65%{transform:scaleY(.4)}}
-@keyframes hex-page-square-shift{0%,30%,100%{transform:translateY(0)}50%,70%{transform:translateY(25%)}}
 @media(prefers-reduced-motion:reduce){
-  .hex-page-hero-tile{animation:none!important;}
   .hex-page-hero-slide{transition:none;}
-}
-
-/* 同列の上下セルを交換。画像は四角と一緒に動き、種類は変えない */
-@keyframes hex-page-square-swap{
-  0%,15%,100%{transform:translate(0,0)}
-  22%{transform:translate(var(--hex-swap-x),0)}
-  37%{transform:translate(var(--hex-swap-x),var(--hex-swap-y))}
-  44%,60%{transform:translate(0,var(--hex-swap-y))}
-  67%{transform:translate(var(--hex-swap-x),var(--hex-swap-y))}
-  82%{transform:translate(var(--hex-swap-x),0)}
-  89%{transform:translate(0,0)}
 }
