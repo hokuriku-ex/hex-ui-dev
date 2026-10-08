@@ -14061,6 +14061,8 @@ hexReady(function(){
       var tileWidth=Math.max(1,titleHeight*titleRatio);
       hero.style.setProperty('--hex-page-title-tile-width',tileWidth+'px');
       hero.style.setProperty('--hex-page-title-flow-duration',(tileWidth/20)+'s');
+      hero.style.setProperty('--hex-page-subtitle-tile-width',(tileWidth/3)+'px');
+      hero.style.setProperty('--hex-page-subtitle-flow-duration',(tileWidth/3/20)+'s');
       var probe=document.createElement('div');
       probe.style.cssText='position:absolute;visibility:hidden;pointer-events:none;width:0;';
       probe.style.height=window.innerWidth<=768
