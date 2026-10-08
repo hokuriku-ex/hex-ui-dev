@@ -9893,11 +9893,13 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
 .pagetitle_type.pagetitle_type4.hex-page-hero .bg_text h1::after{
   font-size:var(--hex-page-title-size,clamp(48px,8vw,128px))!important;
   width:max-content!important;max-width:none!important;white-space:nowrap!important;
+  padding:0 .2em!important;box-sizing:content-box!important;flex-shrink:0;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero.has-title-texture .bg_text h1::after{
   background-image:var(--hex-page-title-texture);
   background-size:var(--hex-page-title-tile-width,200px) 100%;
   background-position:0 center;background-repeat:repeat-x;
+  background-origin:border-box;
   animation:hex-page-title-flow var(--hex-page-title-flow-duration,10s) linear infinite;
   -webkit-background-clip:text;background-clip:text;
   color:transparent!important;-webkit-text-fill-color:transparent;

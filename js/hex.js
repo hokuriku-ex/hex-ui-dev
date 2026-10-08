@@ -14032,6 +14032,9 @@ hexReady(function(){
       measure.style.fontWeight=style.fontWeight;
       measure.style.fontStyle=style.fontStyle;
       measure.style.fontSize='100px';
+      // Oleo Scriptの字形の張り出しも、切り抜き領域と幅制限に含める。
+      measure.style.paddingInline='.2em';
+      measure.style.boxSizing='content-box';
       measure.style.fontStretch=style.fontStretch;
       measure.style.fontKerning=style.fontKerning;
       measure.style.letterSpacing=style.letterSpacing==='normal'?'normal'
