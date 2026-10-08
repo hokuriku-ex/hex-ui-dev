@@ -14018,8 +14018,10 @@ hexReady(function(){
     hero.classList.add('hex-page-hero');
     hero.classList.add('is-hero-loading');
     hero.setAttribute('aria-busy','true');
-    var intro=contents.querySelector('.hex-intro');
+    // 既存の導入文移動はwindow.load時。先に取得・移動して待機表示を確保する。
+    var intro=contents.querySelector('.hex-intro')||document.querySelector('.hex-intro');
     if(intro){
+      contents.appendChild(intro);
       intro.classList.add('hex-page-hero-loading-intro');
       intro.setAttribute('aria-hidden','false');
     }

@@ -9956,3 +9956,8 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
 .pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-main .bg_text{
   padding-bottom:0!important;
 }
+
+/* 導入文が既存のスクロール表示処理で隠されていても待機中は表示 */
+.pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-loading .hex-page-hero-loading-intro :is(h4,p,span){
+  opacity:1!important;visibility:visible!important;transform:none!important;
+}
