@@ -1294,8 +1294,8 @@
 
   .hex-opening-scroll-cue{
     bottom:max(
-      52px,
-      calc(env(safe-area-inset-bottom) + 48px)
+      14px,
+      calc(env(safe-area-inset-bottom) + 10px)
     );
   }
 
