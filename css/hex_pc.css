@@ -10106,3 +10106,11 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
   mask-size:100% var(--hex-curve-depth),100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) - var(--hex-curve-depth));
   -webkit-mask-position:top,bottom,center;mask-position:top,bottom,center;
 }
+
+/* Center the titles between the header and the apex of the arch. */
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-main{
+  top:calc((var(--hex-page-image-height,100%) - var(--hex-curve-depth)) / 2);
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero > .contents:not(:has(.hex-anchor-nav)) .hex-page-hero-main{
+  top:50%;
+}
