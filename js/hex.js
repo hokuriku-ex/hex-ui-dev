@@ -14068,7 +14068,7 @@ hexReady(function(){
     }
     var main=document.createElement('div');main.className='hex-page-hero-main';
     Array.from(contents.children).forEach(function(child){
-      if(child!==intro&&!child.matches('.hex-anchor-nav,.hex-anchor-nav-placeholder'))main.appendChild(child);
+      if(child!==intro&&!child.matches('.hex-anchor-source,.hex-anchor-nav,.hex-anchor-nav-placeholder'))main.appendChild(child);
     });
     contents.insertBefore(main,contents.firstChild);
     main.setAttribute('inert','');
@@ -14080,7 +14080,7 @@ hexReady(function(){
     var track=document.createElement('div');track.className='hex-page-hero-photo-track';
     photo.appendChild(track);
     decor.appendChild(photo);hero.insertBefore(decor,hero.firstChild);
-    var resizeFrame=0, titleRatio=1;
+    var resizeFrame=0, titleRatio=1,layoutObserver=null,observedNav=null;
     function fitTitle(){
       var style=getComputedStyle(heading,'::after');
       var text=style.content;
@@ -14115,6 +14115,14 @@ hexReady(function(){
       measure.remove();
     }
     function layout(){
+      // ナビはload後に生成されるため、初期化時の参照を固定しない。
+      var currentNav=contents.querySelector('.hex-anchor-nav');
+      if(currentNav)nav=currentNav;
+      if(nav){
+        if(hero.classList.contains('is-hero-loading')||hero.classList.contains('is-hero-revealing'))nav.setAttribute('inert','');
+        else nav.removeAttribute('inert');
+        if(layoutObserver&&observedNav!==nav){layoutObserver.observe(nav);observedNav=nav;}
+      }
       fitTitle();
       var titleStyle=getComputedStyle(heading,'::after');
       var titleSize=parseFloat(hero.style.getPropertyValue('--hex-page-title-size'))||48;
@@ -14147,10 +14155,15 @@ hexReady(function(){
     window.addEventListener('resize',queueLayout,{passive:true});
     if(window.visualViewport)window.visualViewport.addEventListener('resize',queueLayout,{passive:true});
     if(window.ResizeObserver){
-      var layoutObserver=new ResizeObserver(queueLayout);
+      layoutObserver=new ResizeObserver(queueLayout);
       layoutObserver.observe(contents);layoutObserver.observe(main);
       if(nav)layoutObserver.observe(nav);
     }
+    new MutationObserver(function(records){
+      if(records.some(function(record){return Array.from(record.addedNodes).some(function(node){
+        return node.nodeType===1&&node.matches('.hex-anchor-nav,.hex-anchor-nav-placeholder');
+      });}))queueLayout();
+    }).observe(contents,{childList:true,subtree:true});
     if(document.fonts)document.fonts.ready.then(queueLayout);
     if(!texturesPromise)texturesPromise=loadFolder('slides');
     var titleReady=texturesPromise.then(function(urls){
