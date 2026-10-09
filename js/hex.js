@@ -14097,6 +14097,10 @@ hexReady(function(){
     }
     function queueLayout(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(layout);}
     layout();
+    // 初回描画から導入文を最低3秒表示。画像の準備とは並行して待つ。
+    var introReady=intro?new Promise(function(resolve){
+      requestAnimationFrame(function(){setTimeout(resolve,3000);});
+    }):Promise.resolve();
     window.addEventListener('resize',queueLayout,{passive:true});
     if(window.visualViewport)window.visualViewport.addEventListener('resize',queueLayout,{passive:true});
     if(window.ResizeObserver){
@@ -14122,7 +14126,7 @@ hexReady(function(){
       }
       window.dispatchEvent(new Event('resize'));
     });
-    Promise.all([titleReady,decorReady,document.fonts?document.fonts.ready:Promise.resolve()]).then(function(){
+    Promise.all([introReady,titleReady,decorReady,document.fonts?document.fonts.ready:Promise.resolve()]).then(function(){
       // 欠番しかない場合も、従来色のタイトルで表示を完了する。
       if(intro)intro.setAttribute('aria-hidden','true');
       main.removeAttribute('inert');
