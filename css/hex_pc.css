@@ -9986,3 +9986,19 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
   inset:0!important;width:100%!important;height:100%!important;
   clip-path:none!important;
 }
+
+/* 下層タイトル：背景を淡くぼかし、写真文字の輪郭を白で補う */
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-photo-track{
+  opacity:.4;
+  filter:blur(4px);
+  /* ぼかしで画像の端が薄くなる部分を枠外へ出す */
+  inset:-12px;width:auto;height:auto;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero.has-title-texture .bg_text h1::after{
+  -webkit-text-stroke:1.5px #fff;
+  paint-order:stroke fill;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero.has-title-texture .bg_text h1 .title_box{
+  -webkit-text-stroke:.75px #fff;
+  paint-order:stroke fill;
+}
