@@ -9967,3 +9967,9 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
 body:has(.pagetitle_type.pagetitle_type4.hex-page-hero) > #hex-motion-preparation-cover{
   display:none!important;pointer-events:none!important;
 }
+
+/* 画像自身のvisibility指定より優先し、タイトルと同時に表示する。 */
+.pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-loading .hex-page-hero-decor,
+.pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-loading .hex-page-hero-decor *{
+  visibility:hidden!important;
+}
