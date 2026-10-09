@@ -14206,6 +14206,18 @@ hexReady(function(){
       var covered=rect.bottom<=header||rect.top>=window.innerHeight;
       if(covered)hero.classList.add('is-hero-covered');
       else hero.classList.remove('is-hero-covered');
+      // 固定背景の描画をタイトルセクション内に限定する。
+      // ナビなし等で後続セクションが透明でも、画像がフォーム下に残らない。
+      // 丸展開中はそのclip-pathを優先し、完了後のlayoutで切り替える。
+      if(!hero.classList.contains('is-hero-loading')&&!hero.classList.contains('is-hero-revealing')){
+        var decorRect=decor.getBoundingClientRect();
+        var bottom=Number.isFinite(rect.bottom)?rect.bottom:rect.top+rect.height;
+        var viewportBottom=Number.isFinite(decorRect.bottom)?decorRect.bottom:window.innerHeight;
+        var crop=Math.max(0,Math.min(decorRect.height,viewportBottom-bottom));
+        var bounds='inset(0px 0px '+crop+'px 0px)';
+        decor.style.setProperty('clip-path',bounds);
+        decor.style.setProperty('-webkit-clip-path',bounds);
+      }
       // ページ先頭から離れたら消し、先頭へ戻った時だけ再表示。
       // iOSの上方向のバウンス（負値）も先頭として扱う。
       var scrollTop=window.scrollY||window.pageYOffset||document.documentElement.scrollTop||0;
