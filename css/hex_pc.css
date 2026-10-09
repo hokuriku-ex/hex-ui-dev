@@ -6075,19 +6075,19 @@ html body
 #gc_auto_frame_company_1 h1::after { content: "Company"; }
 #gc_auto_frame_gccat8_1 h1::after { content: "Recruit"; }
 #gc_auto_frame_staff_1 h1::after { content: "Staff"; }
-#gc_auto_frame_gccat2_1 h1::after { content: "For Homeowners"; }
-#gc_auto_frame_gccat1_1 h1::after { content: "For Businesses"; }
+#gc_auto_frame_gccat2_1 h1::after { content: "Homeowners"; }
+#gc_auto_frame_gccat1_1 h1::after { content: "Businesses"; }
 #gc_auto_frame_gccat7_1 h1::after { content: "Project Flow"; }
 #gc_auto_frame_gccat26_1 h1::after { content: "Application Flow"; }
-#gc_auto_frame_gccat9_1 h1::after { content: "Work Menu"; }
-#gc_auto_frame_gccat5_1 h1::after { content: "Featured Items"; }
-#gc_auto_frame_gccat14_1 h1::after { content: "Manufacturers & Products"; }
+#gc_auto_frame_gccat9_1 h1::after { content: "Services"; }
+#gc_auto_frame_gccat5_1 h1::after { content: "Pickup"; }
+#gc_auto_frame_gccat14_1 h1::after { content: "Products"; }
 #gc_auto_frame_work_1 h1::after { content: "Works"; }
 #gc_auto_frame_gccat27_1 h1::after { content: "Plans"; }
 #gc_auto_frame_information_1 h1::after { content: "News"; }
-#gc_auto_frame_staffblog_1 h1::after { content: "Staff Blog"; }
+#gc_auto_frame_staffblog_1 h1::after { content: "Blog"; }
 #gc_auto_frame_contact_1 h1::after { content: "Contact"; }
-#gc_auto_frame_gccat21_1 h1::after { content: "Drawings & Documents"; }
+#gc_auto_frame_gccat21_1 h1::after { content: "Documents"; }
 #gc_auto_frame_qanda_1 h1::after { content: "FAQ"; }
 
 /* 記事タイトル非表示 */
