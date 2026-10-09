@@ -14323,7 +14323,8 @@ hexReady(function(){
     function update(){
       var visible=list.clientWidth,total=list.scrollWidth,max=total-visible,width=bar.clientWidth;
       if(width<=0)return;
-      var initial=Math.min(width,Math.max(32,total>0?width*visible/total:width));
+      var count=list.querySelectorAll('.hex-anchor-nav-link').length;
+      var initial=width/Math.max(1,count);
       var progress=max>1?Math.max(0,Math.min(1,list.scrollLeft/max)):1;
       var length=initial+(width-initial)*progress;
       nav.style.setProperty('--hex-anchor-progress-width',length+'px');
