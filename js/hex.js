@@ -14374,18 +14374,27 @@ hexReady(function(){
     return null;
   }
   function pair(marker){
-    var frame=marker.closest('[id^="gc_auto_frame_"],.gc_auto_frame_page_title');
-    var boundary=frame||marker;
-    // マーカー専用ブロックならその前後。次セクション内ならそのブロックを前面にする。
-    var standalone=boundary===marker||(!boundary.textContent.trim()&&!boundary.querySelector('img,video,canvas,iframe,form,input,button,a,h1,h2,h3'));
+    var front=marker.closest('.hex-bg-range');
+    var body=marker.closest('.content_body');
+    var boundary=front||marker;
+    // HOPWEBのspanラッパーを抜け、content_body直下のマーカーブロックを基準にする。
+    if(!front&&body){
+      while(boundary.parentElement&&boundary.parentElement!==body)boundary=boundary.parentElement;
+      front=sectionSibling(boundary,'nextElementSibling');
+      // 背景ラッパー生成前には途中のspanを登録せず、生成後に再判定する。
+      if(body.querySelector('.hex-bg-start')&&(!front||!front.matches('.hex-bg-range')))return null;
+    }
+    if(!front){
+      var frame=marker.closest('[id^="gc_auto_frame_"],.gc_auto_frame_page_title');
+      boundary=frame||marker;
+      var standalone=boundary===marker||(!boundary.textContent.trim()&&!boundary.querySelector('img,video,canvas,iframe,form,input,button,a,h1,h2,h3'));
+      front=standalone?sectionSibling(boundary,'nextElementSibling'):boundary;
+    }
     var back=sectionSibling(boundary,'previousElementSibling');
-    var front=standalone?sectionSibling(boundary,'nextElementSibling'):boundary;
-    // 通常のHTMLでマーカーがラッパーに包まれている場合も上の階層を探す。
+    // 前のブロックは上の階層にも探すが、見つけた前面背景の参照は維持する。
     while(!back&&boundary.parentElement&&boundary.parentElement!==document.body){
       boundary=boundary.parentElement;
       back=sectionSibling(boundary,'previousElementSibling');
-      if(standalone)front=sectionSibling(boundary,'nextElementSibling');
-      else front=boundary;
     }
     return back&&front&&back!==front?{back:back,front:front}:null;
   }
@@ -14424,6 +14433,13 @@ hexReady(function(){
     if(!waiting){attempts=0;connect();}
   }
   hexReady(scan);hexLoad(scan);
+  hexReady(function(){
+    new MutationObserver(function(records){
+      if(records.some(function(record){return Array.from(record.addedNodes).some(function(node){
+        return node.nodeType===1&&(node.matches('.hex-bg-range,.hex-rise-start')||node.querySelector('.hex-bg-range,.hex-rise-start'));
+      });}))scan();
+    }).observe(document.body,{childList:true,subtree:true});
+  });
   if(document.fonts)document.fonts.ready.then(function(){if(window.ScrollTrigger)window.ScrollTrigger.refresh();});
   if(reduced){
     var onPreference=function(){
