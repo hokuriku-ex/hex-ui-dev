@@ -1055,7 +1055,7 @@ a.hex-text-link[target="_blank"]::after{
   z-index:0;
   isolation:isolate;
   width:100%;
-  padding-top:64px!important;
+  padding-top:128px!important;
   box-sizing:border-box;
   font-size:0;
   line-height:0;
@@ -6138,7 +6138,7 @@ html body
 /* 会社情報ページ */
 .gc_auto_frame_publicinfo_company .publicinfo_company_type1 .bg_contents{
   width:100%!important;
-  padding-top:64px!important;
+  padding-top:128px!important;
   padding-bottom:min(10%, 120px)!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box!important;
@@ -6150,21 +6150,21 @@ html body
 
 /* スタッフ紹介ページ */
 .gc_auto_frame_publicinfo_staff{
-  padding-top:64px!important;
+  padding-top:128px!important;
   padding-bottom:min(10%, 120px)!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
 }
 
 /* 施工事例・お知らせページ */
 .gc_auto_frame_post_index .bg_post_index.post_index_type1{
-  padding-top:64px!important;
+  padding-top:128px!important;
 }
 .gc_auto_frame_post_index .bg_post_index.post_index_type2{
-  padding-top:64px!important;
+  padding-top:128px!important;
 }
 .gc_auto_frame_post_item .post_item_contents{
   width:100%!important;
-  padding-top:64px!important;
+  padding-top:128px!important;
   padding-bottom:min(10%, 120px)!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box!important;
@@ -6173,7 +6173,7 @@ html body
 /* よくある質問ページ */
 .gc_auto_frame_publicinfo_qanda .publicinfo_qanda_contents{
   width:100%!important;
-  padding-top:64px!important;
+  padding-top:128px!important;
   padding-bottom:min(10%, 120px)!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box!important;
