@@ -13953,7 +13953,7 @@ hexReady(function(){
 
 /* =======================================
    下層ページ：斜めテクスチャー＋写真文字（2026-10-08）
-   斜めはtextures、文字はslidesの01.webp〜99.webp。欠番は再試行しない。
+   斜めはtextures、文字はslidesの01.webp〜30.webp。欠番は再試行しない。
 ======================================= */
 (function(){
   'use strict';
@@ -13977,7 +13977,7 @@ hexReady(function(){
   }
   function loadFolder(folder){
     // 先に番号をシャッフルすれば、重複のないランダム抽選になる。
-    var candidates=shuffle(Array.from({length:99},function(_,i){return i+1;}));
+    var candidates=shuffle(Array.from({length:30},function(_,i){return i+1;}));
     return new Promise(function(resolve){
       var cursor=0;
       function attempt(){
