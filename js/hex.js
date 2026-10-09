@@ -14130,6 +14130,13 @@ hexReady(function(){
       hero.appendChild(probe);
       var header=probe.getBoundingClientRect().height||80;probe.remove();
       hero.style.setProperty('--hex-page-header',header+'px');
+      var heroRect=hero.getBoundingClientRect();
+      if(nav&&!nav.classList.contains('is-fixed')){
+        var imageHeight=Math.max(0,Math.min(heroRect.height,nav.getBoundingClientRect().top-heroRect.top));
+        hero.style.setProperty('--hex-page-image-height',imageHeight+'px');
+      }else if(!nav){
+        hero.style.setProperty('--hex-page-image-height',heroRect.height+'px');
+      }
     }
     function queueLayout(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(layout);}
     layout();
@@ -14142,6 +14149,7 @@ hexReady(function(){
     if(window.ResizeObserver){
       var layoutObserver=new ResizeObserver(queueLayout);
       layoutObserver.observe(contents);layoutObserver.observe(main);
+      if(nav)layoutObserver.observe(nav);
     }
     if(document.fonts)document.fonts.ready.then(queueLayout);
     if(!texturesPromise)texturesPromise=loadFolder('slides');

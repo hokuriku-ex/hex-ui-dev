@@ -10002,3 +10002,18 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
   -webkit-text-stroke:.75px #fff;
   paint-order:stroke fill;
 }
+
+/* 背景と見出しの中央位置を、ヘッダー下〜アンカーナビ上に合わせる */
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-photo{
+  height:var(--hex-page-image-height,100%)!important;
+  bottom:auto!important;overflow:hidden;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-photo-track{opacity:.8;}
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-main{
+  top:calc(var(--hex-page-image-height,100%) / 2);
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero .bg_text h1 .title_box,
+.pagetitle_type.pagetitle_type4.hex-page-hero.has-title-texture .bg_text h1 .title_box{
+  background:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+  -webkit-text-stroke:0!important;text-shadow:none!important;
+}

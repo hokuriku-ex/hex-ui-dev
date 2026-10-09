@@ -2784,3 +2784,9 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     clip-path:none!important;
   }
 }
+
+@media(max-width:768px){
+  .pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-photo{
+    height:var(--hex-page-image-height,100%)!important;bottom:auto!important;
+  }
+}
