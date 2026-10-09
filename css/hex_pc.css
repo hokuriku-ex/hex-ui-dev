@@ -10048,7 +10048,7 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
   content:none;
 }
 
-:root{--hex-curve-depth:clamp(32px,5vw,80px);}
+:root{--hex-curve-depth:clamp(64px,10vw,160px);}
 
 /* 共通カーブ：内容の高さではなく画面幅に連動（PC・SP共通） */
 .hex-bg-range:is(.hex-bg-curve-both,.hex-bg-curve-top,.hex-bg-curve-bottom)::before{
