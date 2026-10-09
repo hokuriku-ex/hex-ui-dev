@@ -10044,7 +10044,7 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
   position:relative;z-index:1;background:transparent!important;
 }
 /* ナビがないページにはカーブ帯を表示しない */
-.pagetitle_type.pagetitle_type4.hex-page-hero > .contents:not(:has(.hex-anchor-nav))::before{
+.pagetitle_type.pagetitle_type4.hex-page-hero:not(.has-hero-nav) > .contents::before{
   content:none;
 }
 
@@ -10111,6 +10111,35 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
 .pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-main{
   top:calc((var(--hex-page-image-height,100%) - var(--hex-curve-depth)) / 2);
 }
-.pagetitle_type.pagetitle_type4.hex-page-hero > .contents:not(:has(.hex-anchor-nav)) .hex-page-hero-main{
+.pagetitle_type.pagetitle_type4.hex-page-hero:not(.has-hero-nav) > .contents .hex-page-hero-main{
   top:50%;
+}
+
+/* ナビ上下に同じ18pxの余白。増えた高さは背景・アーチ位置へ反映 */
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-anchor-nav:not(.is-fixed){
+  padding-top:18px!important;padding-bottom:18px!important;
+}
+/* 写真とタイトルは画面に残し、アーチと次セクションが前面を流れる */
+.pagetitle_type.pagetitle_type4.hex-page-hero{
+  isolation:isolate;z-index:0;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-decor{
+  position:fixed;top:var(--hex-page-header);bottom:0;left:0;right:0;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-main{
+  position:fixed;
+  top:calc(var(--hex-page-header) + (var(--hex-page-image-height,100%) - var(--hex-curve-depth)) / 2);
+  left:0;width:100%;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero:not(.has-hero-nav) > .contents .hex-page-hero-main{
+  top:calc(var(--hex-page-header) + (100dvh - var(--hex-page-header)) / 2);
+}
+.hex-page-hero-following{
+  position:relative;z-index:1;isolation:isolate;
+  background-color:var(--hex-page-following-surface,#fafafa);
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-covered .hex-page-hero-main,
+.pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-covered .hex-page-hero-decor,
+.pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-covered .hex-page-hero-decor *{
+  visibility:hidden!important;pointer-events:none!important;
 }

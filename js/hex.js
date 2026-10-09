@@ -14066,6 +14066,7 @@ hexReady(function(){
       }
       current=current.parentElement;
     }
+    hero._hexNextSection=next;
     if(!next)return '#fafafa';
     var rect=next.getBoundingClientRect(),x=rect.left+rect.width/2,y=rect.top+1;
     var color=null;
@@ -14157,6 +14158,7 @@ hexReady(function(){
       var currentNav=contents.querySelector('.hex-anchor-nav');
       if(currentNav)nav=currentNav;
       if(nav){
+        hero.classList.add('has-hero-nav');
         if(hero.classList.contains('is-hero-loading')||hero.classList.contains('is-hero-revealing'))nav.setAttribute('inert','');
         else nav.removeAttribute('inert');
         if(layoutObserver&&observedNav!==nav){layoutObserver.observe(nav);observedNav=nav;}
@@ -14176,7 +14178,14 @@ hexReady(function(){
       hero.appendChild(probe);
       var header=probe.getBoundingClientRect().height||80;probe.remove();
       hero.style.setProperty('--hex-page-header',header+'px');
-      hero.style.setProperty('--hex-page-nav-background',nextSectionColor(hero));
+      var surface=nextSectionColor(hero);
+      hero.style.setProperty('--hex-page-nav-background',surface);
+      var nextSection=hero._hexNextSection;
+      if(nextSection){
+        nextSection.classList.add('hex-page-hero-following');
+        nextSection.style.setProperty('--hex-page-following-surface',surface);
+      }
+      syncHeroCover();
       var heroRect=hero.getBoundingClientRect();
       if(nav&&!nav.classList.contains('is-fixed')){
         var imageHeight=Math.max(0,Math.min(heroRect.height,nav.getBoundingClientRect().top-heroRect.top));
@@ -14185,6 +14194,14 @@ hexReady(function(){
         hero.style.setProperty('--hex-page-image-height',heroRect.height+'px');
       }
     }
+    function syncHeroCover(){
+      var header=parseFloat(hero.style.getPropertyValue('--hex-page-header'))||80;
+      var rect=hero.getBoundingClientRect();
+      var covered=rect.bottom<=header||rect.top>=window.innerHeight;
+      if(covered)hero.classList.add('is-hero-covered');
+      else hero.classList.remove('is-hero-covered');
+    }
+    window.addEventListener('scroll',syncHeroCover,{passive:true});
     function queueLayout(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(layout);}
     layout();
     // 初回描画から導入文を最低3秒表示。画像の準備とは並行して待つ。
