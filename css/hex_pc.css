@@ -10257,3 +10257,11 @@ body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
 .hex-rise-managed-back{
   translate:0 var(--hex-rise-offset,0px);
 }
+
+/* 補正値にCSSの遅延を掛けず、ブラウザのスクロールアンカー補正も避ける */
+.hex-rise-managed-back{
+  transition:none!important;
+  overflow-anchor:none;
+  will-change:translate;
+}
+html:has(.hex-rise-start){overflow-anchor:none;}

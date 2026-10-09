@@ -14363,7 +14363,8 @@ hexReady(function(){
 /* 共通オーバーラップ：開始マーカーから前のセクションをピン留めし、次を重ねる */
 (function(){
   'use strict';
-  var entries=[],managed=[],frame=0,measureFrame=0;
+  var entries=[],managed=[],frame=0,measureFrame=0,measureTimer=0;
+  var lastScrollTime=0,clockTimer=0,clockAttempts=0,clockBound=false;
   var reduced=window.matchMedia?window.matchMedia('(prefers-reduced-motion: reduce)'):null;
   function sectionSibling(node,direction){
     for(var sibling=node&&node[direction];sibling;sibling=sibling[direction]){
@@ -14456,7 +14457,20 @@ hexReady(function(){
       }
     });
   }
-  function queueUpdate(){if(!frame)frame=requestAnimationFrame(update);}
+  function onScroll(){
+    lastScrollTime=Date.now();
+    // 追加のRAFを挟まず、スクロール通知の時点でも位置を合わせる。
+    update();
+  }
+  function connectClock(){
+    clockTimer=0;
+    var gsap=window.hexMotion&&window.hexMotion.gsap;
+    if(gsap&&gsap.ticker&&!clockBound){
+      // 既存のLenis rafの後、同じGSAPフレーム内で補正を完了する。
+      gsap.ticker.add(update);clockBound=true;return;
+    }
+    if(entries.length&&!clockBound&&clockAttempts++<120)clockTimer=setTimeout(connectClock,250);
+  }
   function measure(){
     measureFrame=0;
     var scroll=scrollPosition();
@@ -14494,7 +14508,12 @@ hexReady(function(){
     });
     update();
   }
-  function queueMeasure(){if(!measureFrame)measureFrame=requestAnimationFrame(measure);}
+  function queueMeasure(){
+    clearTimeout(measureTimer);
+    var delay=lastScrollTime?Math.max(0,160-(Date.now()-lastScrollTime)):0;
+    if(delay){measureTimer=setTimeout(queueMeasure,delay);return;}
+    if(!measureFrame)measureFrame=requestAnimationFrame(measure);
+  }
   function scan(){
     document.querySelectorAll('.hex-rise-start').forEach(function(marker){
       marker.textContent='';marker.setAttribute('aria-hidden','true');
@@ -14505,10 +14524,11 @@ hexReady(function(){
       raiseFollowing(entry);
     });
     queueMeasure();
+    if(!clockBound&&!clockTimer)connectClock();
   }
   hexReady(scan);hexLoad(scan);
   hexReady(function(){
-    window.addEventListener('scroll',queueUpdate,{passive:true});
+    window.addEventListener('scroll',onScroll,{passive:true});
     window.addEventListener('resize',queueMeasure,{passive:true});
     if(window.visualViewport)window.visualViewport.addEventListener('resize',queueMeasure,{passive:true});
     new MutationObserver(function(records){
@@ -14522,5 +14542,5 @@ hexReady(function(){
     }
   });
   if(document.fonts)document.fonts.ready.then(queueMeasure);
-  if(reduced&&reduced.addEventListener)reduced.addEventListener('change',queueUpdate);
+  if(reduced&&reduced.addEventListener)reduced.addEventListener('change',update);
 })();
