@@ -2790,3 +2790,11 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     height:var(--hex-page-image-height,100%)!important;bottom:auto!important;
   }
 }
+
+/* SPのナビ背景：上辺の丸みを80pxに統一 */
+@media(max-width:768px){
+  .pagetitle_type.pagetitle_type4.hex-page-hero > .contents::before{
+    -webkit-clip-path:none;clip-path:none;
+    border-radius:50% 50% 0 0 / 80px 80px 0 0;
+  }
+}

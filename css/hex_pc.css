@@ -10017,3 +10017,33 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
   background:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
   -webkit-text-stroke:0!important;text-shadow:none!important;
 }
+
+/* タイトル領域のナビ背景を次セクションの天端の色に合わせる */
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-anchor-nav:not(.is-fixed){
+  background-color:var(--hex-page-nav-background,#fafafa)!important;
+}
+
+.pagetitle_type.pagetitle_type4.hex-page-hero > .contents::before{
+  content:"";position:absolute;left:0;right:0;bottom:0;
+  top:var(--hex-page-image-height,100%);z-index:-1;
+  background:var(--hex-page-nav-background,#fafafa);pointer-events:none;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-loading > .contents::before{
+  visibility:hidden;
+}
+
+/* アンカーナビの背景上端：画像の前面に32px重なる楕円カーブ */
+.pagetitle_type.pagetitle_type4.hex-page-hero > .contents::before{
+  top:calc(var(--hex-page-image-height,100%) - 32px);
+  z-index:0;
+  -webkit-clip-path:ellipse(100% 100% at 50% 100%);
+  clip-path:ellipse(100% 100% at 50% 100%);
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-main{z-index:1;}
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-anchor-nav:not(.is-fixed){
+  position:relative;z-index:1;background:transparent!important;
+}
+/* ナビがないページにはカーブ帯を表示しない */
+.pagetitle_type.pagetitle_type4.hex-page-hero > .contents:not(:has(.hex-anchor-nav))::before{
+  content:none;
+}
