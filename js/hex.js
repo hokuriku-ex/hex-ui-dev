@@ -14359,3 +14359,77 @@ hexReady(function(){
     }).observe(document.body,{childList:true,subtree:true});
   });
 })();
+
+/* 共通オーバーラップ：開始マーカーから前のセクションをピン留めし、次を重ねる */
+(function(){
+  'use strict';
+  var entries=[],waiting=0,attempts=0;
+  var reduced=window.matchMedia?window.matchMedia('(prefers-reduced-motion: reduce)'):null;
+  function sectionSibling(node,direction){
+    for(var sibling=node&&node[direction];sibling;sibling=sibling[direction]){
+      if(sibling.matches('script,style,link,template,.hex-rise-start'))continue;
+      var style=getComputedStyle(sibling);
+      if(style.display!=='none'&&style.position!=='fixed'&&sibling.getBoundingClientRect().height>0)return sibling;
+    }
+    return null;
+  }
+  function pair(marker){
+    var frame=marker.closest('[id^="gc_auto_frame_"],.gc_auto_frame_page_title');
+    var boundary=frame||marker;
+    // マーカー専用ブロックならその前後。次セクション内ならそのブロックを前面にする。
+    var standalone=boundary===marker||(!boundary.textContent.trim()&&!boundary.querySelector('img,video,canvas,iframe,form,input,button,a,h1,h2,h3'));
+    var back=sectionSibling(boundary,'previousElementSibling');
+    var front=standalone?sectionSibling(boundary,'nextElementSibling'):boundary;
+    // 通常のHTMLでマーカーがラッパーに包まれている場合も上の階層を探す。
+    while(!back&&boundary.parentElement&&boundary.parentElement!==document.body){
+      boundary=boundary.parentElement;
+      back=sectionSibling(boundary,'previousElementSibling');
+      if(standalone)front=sectionSibling(boundary,'nextElementSibling');
+      else front=boundary;
+    }
+    return back&&front&&back!==front?{back:back,front:front}:null;
+  }
+  function attach(entry){
+    if(entry.trigger||!window.ScrollTrigger||!window.gsap)return;
+    if(reduced&&reduced.matches)return;
+    // 下層タイトルは既存の固定表示を使用。二重にピン留めしない。
+    if(entry.back.matches('.hex-page-hero')||entry.back.querySelector('.hex-page-hero'))return;
+    window.gsap.registerPlugin(window.ScrollTrigger);
+    entry.trigger=window.ScrollTrigger.create({
+      trigger:entry.marker,
+      start:'top bottom',
+      end:function(){return '+='+entry.back.getBoundingClientRect().height;},
+      pin:entry.back,
+      pinSpacing:false,
+      invalidateOnRefresh:true
+    });
+  }
+  function connect(){
+    waiting=0;
+    entries.forEach(attach);
+    if(!window.ScrollTrigger&&entries.length&&attempts++<120)waiting=setTimeout(connect,250);
+  }
+  function scan(){
+    document.querySelectorAll('.hex-rise-start').forEach(function(marker){
+      // 管理画面で入力した説明文字は画面にも読み上げにも残さない。
+      marker.textContent='';marker.setAttribute('aria-hidden','true');
+      if(marker._hexRiseEntry)return;
+      var sections=pair(marker);if(!sections)return;
+      var entry={marker:marker,back:sections.back,front:sections.front,trigger:null};
+      marker._hexRiseEntry=entry;entries.push(entry);
+      entry.back.classList.add('hex-rise-back-layer');
+      entry.front.classList.add('hex-rise-front-layer');
+      attach(entry);
+    });
+    if(!waiting){attempts=0;connect();}
+  }
+  hexReady(scan);hexLoad(scan);
+  if(document.fonts)document.fonts.ready.then(function(){if(window.ScrollTrigger)window.ScrollTrigger.refresh();});
+  if(reduced){
+    var onPreference=function(){
+      entries.forEach(function(entry){if(entry.trigger){entry.trigger.kill(true);entry.trigger=null;}});
+      connect();
+    };
+    if(reduced.addEventListener)reduced.addEventListener('change',onPreference);
+  }
+})();

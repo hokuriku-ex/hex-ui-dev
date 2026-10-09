@@ -10242,3 +10242,13 @@ body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
 .pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-loading > .contents::after{
   visibility:hidden;
 }
+
+/* 開始マーカーは位置計測用。文言・余白は表示しない */
+.hex-rise-start{
+  display:block!important;position:relative;
+  height:0!important;min-height:0!important;margin:0!important;padding:0!important;
+  border:0!important;line-height:0!important;font-size:0!important;
+  pointer-events:none;
+}
+.hex-rise-back-layer{position:relative;z-index:0;}
+.hex-rise-front-layer{position:relative;z-index:1;isolation:isolate;}
