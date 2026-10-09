@@ -10088,21 +10088,21 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
 .pagetitle_type.pagetitle_type4.hex-page-hero > .contents::before{
   -webkit-mask-image:var(--hex-curve-top-mask),linear-gradient(#000,#000);
   mask-image:var(--hex-curve-top-mask),linear-gradient(#000,#000);
-  -webkit-mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) + 1px);
-  mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) + 1px);
+  -webkit-mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth));
+  mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth));
   -webkit-mask-position:top,bottom;mask-position:top,bottom;
 }
 .hex-bg-range.hex-bg-curve-bottom::before{
   -webkit-mask-image:var(--hex-curve-bottom-mask),linear-gradient(#000,#000);
   mask-image:var(--hex-curve-bottom-mask),linear-gradient(#000,#000);
-  -webkit-mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) + 1px);
-  mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) + 1px);
+  -webkit-mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth));
+  mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth));
   -webkit-mask-position:bottom,top;mask-position:bottom,top;
 }
 .hex-bg-range.hex-bg-curve-both::before{
   -webkit-mask-image:var(--hex-curve-top-mask),var(--hex-curve-bottom-mask),linear-gradient(#000,#000);
   mask-image:var(--hex-curve-top-mask),var(--hex-curve-bottom-mask),linear-gradient(#000,#000);
-  -webkit-mask-size:100% var(--hex-curve-depth),100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) - var(--hex-curve-depth) + 2px);
-  mask-size:100% var(--hex-curve-depth),100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) - var(--hex-curve-depth) + 2px);
+  -webkit-mask-size:100% var(--hex-curve-depth),100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) - var(--hex-curve-depth));
+  mask-size:100% var(--hex-curve-depth),100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) - var(--hex-curve-depth));
   -webkit-mask-position:top,bottom,center;mask-position:top,bottom,center;
 }
