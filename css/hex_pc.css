@@ -10252,3 +10252,8 @@ body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
 }
 .hex-rise-back-layer{position:relative;z-index:0;}
 .hex-rise-front-layer{position:relative;z-index:1;isolation:isolate;}
+
+/* 共通オーバーラップ：一つのスクロール制御で位置を引き継ぐ */
+.hex-rise-managed-back{
+  translate:0 var(--hex-rise-offset,0px);
+}
