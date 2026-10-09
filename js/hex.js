@@ -14113,7 +14113,7 @@ hexReady(function(){
     main.setAttribute('inert','');
     var nav=contents.querySelector('.hex-anchor-nav');
     if(nav)nav.setAttribute('inert','');
-    // 開幕と同じSCROLL表示。アンカーの有無にかかわらずアーチ上に置く。
+    // 開幕と同じSCROLL表示。アンカーがないページだけ、下端に表示する。
     var scrollCue=document.createElement('div');
     scrollCue.className='hex-opening-scroll-cue hex-page-hero-scroll-cue';
     scrollCue.setAttribute('aria-hidden','true');
@@ -14206,6 +14206,11 @@ hexReady(function(){
       var covered=rect.bottom<=header||rect.top>=window.innerHeight;
       if(covered)hero.classList.add('is-hero-covered');
       else hero.classList.remove('is-hero-covered');
+      // ページ先頭から離れたら消し、先頭へ戻った時だけ再表示。
+      // iOSの上方向のバウンス（負値）も先頭として扱う。
+      var scrollTop=window.scrollY||window.pageYOffset||document.documentElement.scrollTop||0;
+      if(scrollTop>1)scrollCue.classList.add('is-hidden');
+      else scrollCue.classList.remove('is-hidden');
     }
     window.addEventListener('scroll',syncHeroCover,{passive:true});
     function queueLayout(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(layout);}

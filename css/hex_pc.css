@@ -10179,10 +10179,10 @@ body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
 .pagetitle_type.pagetitle_type4.hex-page-hero:not(.has-hero-nav) > .contents .hex-page-hero-main{
   top:calc(var(--hex-page-header) + (var(--hex-page-image-height,100%) - var(--hex-curve-depth)) / 2);
 }
-/* 開幕と同じSCROLLナビ。アーチ最上端から12px下、中央に配置 */
+/* 開幕と同じSCROLLナビ。画面下から18px、中央に配置 */
 .pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-scroll-cue{
-  position:absolute;z-index:2;left:50%;bottom:auto;
-  top:calc(var(--hex-page-image-height,100%) - var(--hex-curve-depth) + 12px);
+  position:absolute;z-index:2;left:50%;bottom:18px;
+  top:auto;
   margin:0;padding:0;color:var(--hex-opening-navy,#1f2774);
   transform:translateX(-50%);pointer-events:none;
 }
@@ -10191,4 +10191,19 @@ body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-loading .hex-page-hero-scroll-cue{
   visibility:hidden!important;
+}
+
+/* アンカーありではSCROLLを出さない。なしの場合はスクロール開始でフェード */
+.pagetitle_type.pagetitle_type4.hex-page-hero.has-hero-nav .hex-page-hero-scroll-cue{
+  display:none!important;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-scroll-cue{
+  opacity:1;visibility:visible;
+  transition:opacity .3s ease,visibility .3s ease;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-scroll-cue.is-hidden{
+  opacity:0;visibility:hidden;
+}
+@media(prefers-reduced-motion:reduce){
+  .pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-scroll-cue{transition:none;}
 }
