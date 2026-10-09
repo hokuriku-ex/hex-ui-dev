@@ -2857,3 +2857,22 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   mask-size:100% var(--hex-curve-depth),100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) - var(--hex-curve-depth));
   -webkit-mask-position:top,bottom,center;mask-position:top,bottom,center;
 }
+
+/* アーチと平面背景の接合部だけに1pxの同色帯を追加。曲線の位置は変えない */
+.hex-bg-range.hex-bg-curve-top::before,
+.pagetitle_type.pagetitle_type4.hex-page-hero > .contents::before{
+  -webkit-mask-image:var(--hex-curve-top-mask),linear-gradient(#000,#000),linear-gradient(#000,#000);
+  mask-image:var(--hex-curve-top-mask),linear-gradient(#000,#000),linear-gradient(#000,#000);
+  -webkit-mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth)),100% 1px;
+  mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth)),100% 1px;
+  -webkit-mask-position:top,bottom,0 calc(var(--hex-curve-depth) - .5px);
+  mask-position:top,bottom,0 calc(var(--hex-curve-depth) - .5px);
+}
+/* アンカー帯と次セクションの境目も、帯の下へ同色の1px線を重ねる */
+.pagetitle_type.pagetitle_type4.hex-page-hero > .contents::after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  z-index:1;background:var(--hex-page-nav-background,#fafafa);pointer-events:none;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-loading > .contents::after{
+  visibility:hidden;
+}
