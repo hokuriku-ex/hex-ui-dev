@@ -14148,10 +14148,10 @@ hexReady(function(){
       hero.appendChild(measure);
       var width=measure.getBoundingClientRect().width;
       if(width>0){
-        var smartphone=window.innerWidth<=768;
-        var limit=smartphone?Math.max(1,window.innerWidth-32):window.innerWidth*.60;
-        var preferred=smartphone?128:Math.min(128,Math.max(48,window.innerWidth*.08));
-        var size=Math.min(preferred,100*limit/width);
+        // 1000px以上は964px、未満は左右16pxを残して文字幅を合わせる。
+        var limit=window.innerWidth<1000?Math.max(1,window.innerWidth-32):964;
+        // Staffなどの短い見出しは、幅いっぱいまで過度に拡大しない。
+        var size=Math.min(128,100*limit/width);
         measure.style.fontSize=size+'px';
         width=measure.getBoundingClientRect().width;
         if(width>limit)size*=limit/width;
