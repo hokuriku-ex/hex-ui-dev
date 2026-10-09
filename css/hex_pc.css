@@ -9973,3 +9973,10 @@ body:has(.pagetitle_type.pagetitle_type4.hex-page-hero) > #hex-motion-preparatio
 .pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-loading .hex-page-hero-decor *{
   visibility:hidden!important;
 }
+
+/* 導入文の待機中だけ、PC・SPともページスクロールを停止 */
+html.hex-page-intro-scroll-lock,
+html.hex-page-intro-scroll-lock body{
+  overflow:hidden!important;overscroll-behavior:none!important;
+}
+html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}

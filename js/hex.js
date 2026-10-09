@@ -14010,6 +14010,46 @@ hexReady(function(){
     if(!assetsPromise)assetsPromise=loadFolder('textures');
     return assetsPromise;
   }
+  var scrollLocks=new Set(),heldLenis=null,resumeLenis=false,lockFrame=0;
+  function preventScroll(event){
+    if(event.type==='keydown'){
+      if(event.ctrlKey||event.metaKey||event.altKey)return;
+      if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' ','Spacebar'].indexOf(event.key)===-1)return;
+    }
+    if(event.cancelable)event.preventDefault();
+  }
+  function syncScrollLock(){
+    scrollLocks.forEach(function(hero){if(hero.isConnected===false)scrollLocks.delete(hero);});
+    if(!scrollLocks.size){releaseScrollLock();return;}
+    // 共通モーションが後から初期化される場合も、待機中はLenisを止める。
+    var lenis=window.hexMotion&&window.hexMotion.lenis;
+    if(lenis&&lenis!==heldLenis){
+      heldLenis=lenis;resumeLenis=!lenis.isStopped;lenis.stop();
+    }
+    lockFrame=requestAnimationFrame(syncScrollLock);
+  }
+  function releaseScrollLock(){
+    if(scrollLocks.size)return;
+    cancelAnimationFrame(lockFrame);
+    document.documentElement.classList.remove('hex-page-intro-scroll-lock');
+    window.removeEventListener('wheel',preventScroll,true);
+    window.removeEventListener('touchmove',preventScroll,true);
+    window.removeEventListener('keydown',preventScroll,true);
+    if(heldLenis&&resumeLenis)heldLenis.start();
+    heldLenis=null;resumeLenis=false;
+  }
+  function lockIntroScroll(hero){
+    scrollLocks.add(hero);
+    if(scrollLocks.size===1){
+      document.documentElement.classList.add('hex-page-intro-scroll-lock');
+      window.addEventListener('wheel',preventScroll,{passive:false,capture:true});
+      window.addEventListener('touchmove',preventScroll,{passive:false,capture:true});
+      window.addEventListener('keydown',preventScroll,{capture:true});
+      syncScrollLock();
+    }
+    return function(){scrollLocks.delete(hero);releaseScrollLock();};
+  }
+  window.addEventListener('pagehide',function(){scrollLocks.clear();releaseScrollLock();});
   function init(hero){
     if(hero.classList.contains('hex-page-hero'))return;
     var contents=hero.querySelector(':scope > .contents');
@@ -14018,6 +14058,7 @@ hexReady(function(){
     hero.classList.add('hex-page-hero');
     hero.classList.add('is-hero-loading');
     hero.setAttribute('aria-busy','true');
+    var unlockScroll=lockIntroScroll(hero);
     // 既存の導入文移動はwindow.load時。先に取得・移動して待機表示を確保する。
     var intro=contents.querySelector('.hex-intro')||document.querySelector('.hex-intro');
     if(intro){
@@ -14134,6 +14175,7 @@ hexReady(function(){
       hero.classList.remove('is-hero-loading');
       hero.classList.add('is-hero-ready');
       hero.setAttribute('aria-busy','false');
+      unlockScroll();
       layout();
     });
   }
