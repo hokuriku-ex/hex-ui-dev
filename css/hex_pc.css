@@ -10160,3 +10160,14 @@ body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
     top:var(--header_height_smartphone,clamp(64px,20vw,80px));
   }
 }
+
+/* ナビの進捗バー：左端を固定し、右端だけを伸ばす */
+.hex-anchor-nav.hex-anchor-progress-bar .hex-anchor-scrollbar-thumb{
+  left:0!important;
+  width:var(--hex-anchor-progress-width,100%)!important;
+  transform:none!important;translate:none!important;
+  transition:width .24s ease-out;
+}
+@media(prefers-reduced-motion:reduce){
+  .hex-anchor-nav.hex-anchor-progress-bar .hex-anchor-scrollbar-thumb{transition:none;}
+}

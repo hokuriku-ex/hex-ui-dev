@@ -14297,3 +14297,40 @@ hexReady(function(){
     }).observe(document.body,{childList:true,subtree:true});
   });
 })();
+
+/* アンカーナビのバー：左端固定、右端をスクロール量に合わせて伸ばす */
+(function(){
+  'use strict';
+  function init(nav){
+    if(nav.classList.contains('hex-anchor-progress-bar'))return;
+    var list=nav.querySelector('.hex-anchor-nav-list');
+    var bar=nav.querySelector('.hex-anchor-scrollbar');
+    if(!list||!bar)return;
+    nav.classList.add('hex-anchor-progress-bar');
+    var frame=0;
+    function update(){
+      var visible=list.clientWidth,total=list.scrollWidth,max=total-visible,width=bar.clientWidth;
+      if(width<=0)return;
+      var initial=Math.min(width,Math.max(32,total>0?width*visible/total:width));
+      var progress=max>1?Math.max(0,Math.min(1,list.scrollLeft/max)):1;
+      var length=initial+(width-initial)*progress;
+      nav.style.setProperty('--hex-anchor-progress-width',length+'px');
+    }
+    function queue(){cancelAnimationFrame(frame);frame=requestAnimationFrame(update);}
+    list.addEventListener('scroll',queue,{passive:true});
+    window.addEventListener('resize',queue,{passive:true});
+    if(window.ResizeObserver){var observer=new ResizeObserver(queue);observer.observe(list);observer.observe(bar);}
+    update();
+  }
+  function scan(){document.querySelectorAll('.hex-anchor-nav').forEach(init);}
+  hexReady(scan);hexLoad(scan);
+  hexReady(function(){
+    var queued=false;
+    new MutationObserver(function(records){
+      var relevant=records.some(function(record){return Array.from(record.addedNodes).some(function(node){
+        return node.nodeType===1&&(node.matches('.hex-anchor-nav,.hex-anchor-scrollbar')||node.querySelector('.hex-anchor-nav,.hex-anchor-scrollbar'));
+      });});
+      if(relevant&&!queued){queued=true;requestAnimationFrame(function(){queued=false;scan();});}
+    }).observe(document.body,{childList:true,subtree:true});
+  });
+})();
