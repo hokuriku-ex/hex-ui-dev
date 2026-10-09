@@ -14130,11 +14130,6 @@ hexReady(function(){
       hero.appendChild(probe);
       var header=probe.getBoundingClientRect().height||80;probe.remove();
       hero.style.setProperty('--hex-page-header',header+'px');
-      if(window.innerWidth<=768){
-        var gap=24;
-        var available=main.getBoundingClientRect().top-hero.getBoundingClientRect().top-gap;
-        hero.style.setProperty('--hex-page-photo-height',Math.max(0,available)+'px');
-      }
     }
     function queueLayout(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(layout);}
     layout();

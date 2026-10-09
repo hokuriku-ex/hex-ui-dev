@@ -9980,3 +9980,9 @@ html.hex-page-intro-scroll-lock body{
   overflow:hidden!important;overscroll-behavior:none!important;
 }
 html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
+
+/* 下層ページ：素材画像をヘッダー下のタイトル領域全面に表示 */
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-photo{
+  inset:0!important;width:100%!important;height:100%!important;
+  clip-path:none!important;
+}

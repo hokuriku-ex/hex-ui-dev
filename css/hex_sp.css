@@ -2777,3 +2777,10 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     clip-path:polygon(0 0,100% 0,100% 75%,0 100%);
   }
 }
+
+@media(max-width:768px){
+  .pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-photo{
+    inset:0!important;width:100%!important;height:100%!important;
+    clip-path:none!important;
+  }
+}
