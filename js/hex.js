@@ -14409,20 +14409,43 @@ hexReady(function(){
       }
     }
   }
+  function previousContents(entry){
+    var blocks=[];
+    // 前面の枝より前にある各階層の兄弟を取得。DOMのラッパーは追加しない。
+    for(var branch=entry.front;branch&&branch!==document.body;branch=branch.parentElement){
+      for(var node=branch.previousElementSibling;node;node=node.previousElementSibling){
+        if(node.matches('script,style,link,template,.hex-rise-start,.pin-spacer'))continue;
+        if(node.matches('header,.bg_headermenu')||node.querySelector('header,.bg_headermenu'))continue;
+        if(node.matches('.hex-page-hero')||node.querySelector('.hex-page-hero'))continue;
+        var style=getComputedStyle(node);
+        if(style.display==='none'||style.position==='fixed'||node.getBoundingClientRect().height<=0)continue;
+        if(blocks.indexOf(node)===-1)blocks.push(node);
+      }
+    }
+    // 以前のピン留めでスペーサーが存在しても、直前の対象を漏らさない。
+    if(blocks.indexOf(entry.back)===-1&&!entry.back.matches('.hex-page-hero')&&!entry.back.querySelector('.hex-page-hero'))blocks.push(entry.back);
+    return blocks;
+  }
   function attach(entry){
     if(entry.trigger||!window.ScrollTrigger||!window.gsap)return;
     if(reduced&&reduced.matches)return;
-    // 下層タイトルは既存の固定表示を使用。二重にピン留めしない。
-    if(entry.back.matches('.hex-page-hero')||entry.back.querySelector('.hex-page-hero'))return;
     window.gsap.registerPlugin(window.ScrollTrigger);
-    entry.trigger=window.ScrollTrigger.create({
-      trigger:entry.marker,
-      start:'top bottom',
-      end:function(){return '+='+entry.back.getBoundingClientRect().height;},
-      pin:entry.back,
-      pinSpacing:false,
-      invalidateOnRefresh:true
+    var blocks=previousContents(entry);
+    if(!blocks.length)return;
+    var pins=[];
+    blocks.forEach(function(block){
+      block.classList.add('hex-rise-back-layer');
+      pins.push(window.ScrollTrigger.create({
+        trigger:entry.marker,
+        start:'top bottom',
+        // マーカー以降が画面を覆うまで、以前の各コンテンツを同時に固定する。
+        end:function(){return '+='+window.innerHeight;},
+        pin:block,
+        pinSpacing:false,
+        invalidateOnRefresh:true
+      }));
     });
+    entry.trigger={kill:function(revert){pins.forEach(function(pin){pin.kill(revert);});}};
   }
   function connect(){
     waiting=0;
