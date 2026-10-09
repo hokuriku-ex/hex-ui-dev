@@ -14247,6 +14247,7 @@ hexReady(function(){
       if(selected){
         var image=document.createElement('img');image.src=selected;image.alt='';
         image.className='hex-page-hero-slide is-current';image.decoding='async';
+        track.style.setProperty('background-image','url("'+selected+'")');
         track.appendChild(image);photo.classList.add('has-images');
       }
       window.dispatchEvent(new Event('resize'));

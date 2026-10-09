@@ -10207,3 +10207,19 @@ body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
 @media(prefers-reduced-motion:reduce){
   .pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-scroll-cue{transition:none;}
 }
+
+/* 元画像のCSS pxサイズを維持し、足りない範囲は繰り返す（PC・SP共通） */
+.pagetitle_type.pagetitle_type4.hex-page-hero.has-title-texture .bg_text h1::after{
+  background-size:auto auto!important;
+  background-repeat:repeat!important;
+  background-position:left center;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-photo-track{
+  background-size:auto auto;
+  background-repeat:repeat;
+  background-position:center;
+}
+/* 背景描画をimgのcoverから元サイズのタイルへ切り替える */
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-photo-track > .hex-page-hero-slide{
+  display:none!important;
+}
