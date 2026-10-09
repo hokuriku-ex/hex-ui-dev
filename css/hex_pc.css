@@ -10143,3 +10143,20 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
 .pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-covered .hex-page-hero-decor *{
   visibility:hidden!important;pointer-events:none!important;
 }
+
+/* 固定タイトルはアーチとナビの背面に置く */
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-main{z-index:0;}
+.pagetitle_type.pagetitle_type4.hex-page-hero > .contents::before{z-index:1;}
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-anchor-nav:not(.is-fixed){z-index:2;}
+
+/* 下層タイトルの初期化前はヘッダー下を導入文と同じ色で覆う */
+body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
+  content:"";position:fixed;
+  top:var(--header_height,80px);left:0;right:0;bottom:0;
+  z-index:2147482100;background:#fafafa;pointer-events:auto;
+}
+@media(max-width:768px){
+  body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
+    top:var(--header_height_smartphone,clamp(64px,20vw,80px));
+  }
+}
