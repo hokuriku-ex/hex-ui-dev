@@ -14113,6 +14113,12 @@ hexReady(function(){
     main.setAttribute('inert','');
     var nav=contents.querySelector('.hex-anchor-nav');
     if(nav)nav.setAttribute('inert','');
+    // 開幕と同じSCROLL表示。アンカーの有無にかかわらずアーチ上に置く。
+    var scrollCue=document.createElement('div');
+    scrollCue.className='hex-opening-scroll-cue hex-page-hero-scroll-cue';
+    scrollCue.setAttribute('aria-hidden','true');
+    scrollCue.innerHTML='<span>SCROLL</span><i></i>';
+    contents.appendChild(scrollCue);
     var decor=document.createElement('div');
     decor.className='hex-page-hero-decor';decor.setAttribute('aria-hidden','true');
     var photo=document.createElement('div');photo.className='hex-page-hero-photo';
@@ -14191,7 +14197,7 @@ hexReady(function(){
         var imageHeight=Math.max(0,Math.min(heroRect.height,nav.getBoundingClientRect().top-heroRect.top));
         hero.style.setProperty('--hex-page-image-height',imageHeight+'px');
       }else if(!nav){
-        hero.style.setProperty('--hex-page-image-height',heroRect.height+'px');
+        hero.style.setProperty('--hex-page-image-height',Math.max(0,heroRect.height-72)+'px');
       }
     }
     function syncHeroCover(){

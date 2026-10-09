@@ -10171,3 +10171,24 @@ body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
 @media(prefers-reduced-motion:reduce){
   .hex-anchor-nav.hex-anchor-progress-bar .hex-anchor-scrollbar-thumb{transition:none;}
 }
+
+/* アンカーがないページにも、次セクションと同色のアーチを表示 */
+.pagetitle_type.pagetitle_type4.hex-page-hero:not(.has-hero-nav) > .contents::before{
+  content:"";
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero:not(.has-hero-nav) > .contents .hex-page-hero-main{
+  top:calc(var(--hex-page-header) + (var(--hex-page-image-height,100%) - var(--hex-curve-depth)) / 2);
+}
+/* 開幕と同じSCROLLナビ。アーチ最上端から12px下、中央に配置 */
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-scroll-cue{
+  position:absolute;z-index:2;left:50%;bottom:auto;
+  top:calc(var(--hex-page-image-height,100%) - var(--hex-curve-depth) + 12px);
+  margin:0;padding:0;color:var(--hex-opening-navy,#1f2774);
+  transform:translateX(-50%);pointer-events:none;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-scroll-cue i{
+  background:linear-gradient(to bottom,var(--hex-opening-gold,#c5a66e) 0 50%,rgba(31,39,116,.25) 50% 100%);
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-loading .hex-page-hero-scroll-cue{
+  visibility:hidden!important;
+}
