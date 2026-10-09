@@ -14410,6 +14410,17 @@ hexReady(function(){
       }
     }
   }
+  function prepareFlow(node){
+    // セクションの外枠だけを通常フローに戻す。内側のナビ・カード・モーダルは変更しない。
+    var wrappers='.gc_auto_body,.gc_auto_frame_spotitem,.gc_auto_frame_spotitem_box,'+
+      '.gc_auto_frame_spotitem_body,.gc_auto_frame_spotitem_basewidth,'+
+      '[id^="gc_auto_frame_"],.bg_post_index,.post_index,.post_index_contents,'+
+      '.content,.content_body,.hex-bg-range';
+    for(var parent=node;parent&&parent!==document.body;parent=parent.parentElement){
+      if(parent.matches('header,.bg_headermenu')||getComputedStyle(parent).position==='fixed')break;
+      if(parent.matches(wrappers))parent.classList.add('hex-rise-flow-root');
+    }
+  }
   function previousContents(entry){
     var blocks=[];
     // 前面の枝より前にある各階層の兄弟を取得。DOMのラッパーは追加しない。
@@ -14517,10 +14528,11 @@ hexReady(function(){
   function scan(){
     document.querySelectorAll('.hex-rise-start').forEach(function(marker){
       marker.textContent='';marker.setAttribute('aria-hidden','true');
-      if(marker._hexRiseEntry){raiseFollowing(marker._hexRiseEntry);return;}
+      if(marker._hexRiseEntry){prepareFlow(marker._hexRiseEntry.front);prepareFlow(marker._hexRiseEntry.back);raiseFollowing(marker._hexRiseEntry);return;}
       var sections=pair(marker);if(!sections)return;
       var entry={marker:marker,back:sections.back,front:sections.front,blocks:[],start:0};
       marker._hexRiseEntry=entry;entries.push(entry);
+      prepareFlow(entry.front);prepareFlow(entry.back);
       raiseFollowing(entry);
     });
     queueMeasure();

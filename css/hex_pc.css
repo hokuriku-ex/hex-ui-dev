@@ -10265,3 +10265,17 @@ body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
   will-change:translate;
 }
 html:has(.hex-rise-start){overflow-anchor:none;}
+
+/* 共通オーバーラップ：外枠を独立スクロール領域にしない。
+   片軸だけvisibleにすると、もう片軸のauto/hiddenによってautoへ変わるため両軸を解除。
+   クラスはJSで対象セクションの外枠だけに付与。ナビ等の内部スクロールは維持する。 */
+html body .hex-rise-flow-root{
+  overflow:visible!important;
+  overflow-x:visible!important;
+  overflow-y:visible!important;
+}
+/* ページの大枠では横方向だけ切り取る。clip + visibleは内部スクロール領域を作らない。 */
+html body .gc_auto_body.hex-rise-flow-root{
+  overflow-x:clip!important;
+  overflow-y:visible!important;
+}
