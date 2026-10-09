@@ -9900,7 +9900,7 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
 .pagetitle_type.pagetitle_type4.hex-page-hero .bg_text h1 .title_box{
   margin:0!important;padding:0 .2em!important;
   width:max-content!important;max-width:calc(100% - 32px)!important;box-sizing:border-box;
-  font-size:calc(var(--hex-page-title-size,clamp(48px,8vw,128px)) / 3)!important;
+  font-size:calc(var(--hex-page-title-size,clamp(48px,8vw,128px)) / 5)!important;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero .bg_text h1::after{
   font-size:var(--hex-page-title-size,clamp(48px,8vw,128px))!important;
