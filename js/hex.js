@@ -14170,13 +14170,44 @@ hexReady(function(){
     Promise.all([introReady,titleReady,decorReady,document.fonts?document.fonts.ready:Promise.resolve()]).then(function(){
       // 欠番しかない場合も、従来色のタイトルで表示を完了する。
       if(intro)intro.setAttribute('aria-hidden','true');
-      main.removeAttribute('inert');
-      if(nav)nav.removeAttribute('inert');
+      var layers=[contents,decor];
+      var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var rect=hero.getBoundingClientRect();
+      var radius=Math.hypot(rect.width/2,rect.height/2)+4;
+      function clip(value){layers.forEach(function(layer){
+        layer.style.setProperty('clip-path',value);
+        layer.style.setProperty('-webkit-clip-path',value);
+      });}
+      function finishReveal(){
+        layers.forEach(function(layer){
+          layer.style.removeProperty('clip-path');
+          layer.style.removeProperty('-webkit-clip-path');
+        });
+        hero.classList.remove('is-hero-revealing');
+        main.removeAttribute('inert');
+        if(nav)nav.removeAttribute('inert');
+        hero.setAttribute('aria-busy','false');
+        unlockScroll();
+        layout();
+      }
+      if(!reduced)clip('circle(1px at 50% 50%)');
       hero.classList.remove('is-hero-loading');
       hero.classList.add('is-hero-ready');
-      hero.setAttribute('aria-busy','false');
-      unlockScroll();
       layout();
+      if(reduced){finishReveal();return;}
+      hero.classList.add('is-hero-revealing');
+      var started=null;
+      function revealFrame(now){
+        if(hero.isConnected===false){finishReveal();return;}
+        if(started===null)started=now;
+        var progress=Math.min(1,(now-started)/1100);
+        // 開幕と同じ1.1秒・中央起点・三次のイーズインアウト。
+        var eased=progress<.5?4*progress*progress*progress:1-Math.pow(-2*progress+2,3)/2;
+        clip('circle('+(1+(radius-1)*eased)+'px at 50% 50%)');
+        if(progress<1){requestAnimationFrame(revealFrame);}
+        else{finishReveal();}
+      }
+      requestAnimationFrame(revealFrame);
     });
   }
   function scan(){document.querySelectorAll('.pagetitle_type.pagetitle_type4').forEach(init);}
