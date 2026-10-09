@@ -6077,8 +6077,8 @@ html body
 #gc_auto_frame_staff_1 h1::after { content: "Staff"; }
 #gc_auto_frame_gccat2_1 h1::after { content: "Homeowners"; }
 #gc_auto_frame_gccat1_1 h1::after { content: "Businesses"; }
-#gc_auto_frame_gccat7_1 h1::after { content: "Project Flow"; }
-#gc_auto_frame_gccat26_1 h1::after { content: "Application Flow"; }
+#gc_auto_frame_gccat7_1 h1::after { content: "Projects"; }
+#gc_auto_frame_gccat26_1 h1::after { content: "Applications"; }
 #gc_auto_frame_gccat9_1 h1::after { content: "Services"; }
 #gc_auto_frame_gccat5_1 h1::after { content: "Pickup"; }
 #gc_auto_frame_gccat14_1 h1::after { content: "Brands"; }
