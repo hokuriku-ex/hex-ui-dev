@@ -10073,3 +10073,36 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
   -webkit-clip-path:none;clip-path:none;
   border-radius:50% 50% 0 0 / var(--hex-curve-depth) var(--hex-curve-depth) 0 0;
 }
+
+/* 横幅全体を一本の曲線にする。端が急に落ちるborder-radiusは使わない */
+:root{
+  --hex-curve-top-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M0%20100%20Q50%20-100%20100%20100%20Z%22%20fill%3D%22black%22%2F%3E%3C%2Fsvg%3E");
+  --hex-curve-bottom-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M0%200%20H100%20Q50%20200%200%200%20Z%22%20fill%3D%22black%22%2F%3E%3C%2Fsvg%3E");
+}
+.hex-bg-range:is(.hex-bg-curve-both,.hex-bg-curve-top,.hex-bg-curve-bottom)::before,
+.pagetitle_type.pagetitle_type4.hex-page-hero > .contents::before{
+  border-radius:0;-webkit-clip-path:none;clip-path:none;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+}
+.hex-bg-range.hex-bg-curve-top::before,
+.pagetitle_type.pagetitle_type4.hex-page-hero > .contents::before{
+  -webkit-mask-image:var(--hex-curve-top-mask),linear-gradient(#000,#000);
+  mask-image:var(--hex-curve-top-mask),linear-gradient(#000,#000);
+  -webkit-mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) + 1px);
+  mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) + 1px);
+  -webkit-mask-position:top,bottom;mask-position:top,bottom;
+}
+.hex-bg-range.hex-bg-curve-bottom::before{
+  -webkit-mask-image:var(--hex-curve-bottom-mask),linear-gradient(#000,#000);
+  mask-image:var(--hex-curve-bottom-mask),linear-gradient(#000,#000);
+  -webkit-mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) + 1px);
+  mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) + 1px);
+  -webkit-mask-position:bottom,top;mask-position:bottom,top;
+}
+.hex-bg-range.hex-bg-curve-both::before{
+  -webkit-mask-image:var(--hex-curve-top-mask),var(--hex-curve-bottom-mask),linear-gradient(#000,#000);
+  mask-image:var(--hex-curve-top-mask),var(--hex-curve-bottom-mask),linear-gradient(#000,#000);
+  -webkit-mask-size:100% var(--hex-curve-depth),100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) - var(--hex-curve-depth) + 2px);
+  mask-size:100% var(--hex-curve-depth),100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) - var(--hex-curve-depth) + 2px);
+  -webkit-mask-position:top,bottom,center;mask-position:top,bottom,center;
+}
