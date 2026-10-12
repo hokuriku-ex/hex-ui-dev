@@ -10267,6 +10267,14 @@ html body .gc_auto_body.hex-rise-flow-root{
   overflow-y:visible!important;
 }
 
+/* SPスナップ：停止点で慣性を遮断し、次の操作まで一度止める。 */
+@media(max-width:768px){
+  html.hex-overlap-snap-hold{
+    overflow-y:hidden!important;
+    overscroll-behavior-y:none;
+  }
+}
+
 /* ネイティブsticky：スクロール量を逆方向の移動で相殺しない */
 .hex-rise-runway{
   position:relative;z-index:1;display:block;overflow:visible!important;

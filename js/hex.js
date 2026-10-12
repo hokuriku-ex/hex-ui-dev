@@ -14395,6 +14395,40 @@ hexReady(function(){
   var reduced=window.matchMedia?window.matchMedia('(prefers-reduced-motion: reduce)'):null;
   var snapRanges=[],snapTimer=0,snapSafetyTimer=0;
   var snapGesture=null,snapPending=false,snapActive=false,snapLenis=null,snapRunId=0;
+  var snapHeldTarget=null;
+  function firstCrossedSnapStop(ranges,from,to){
+    var points=[];
+    ranges.forEach(function(range){points.push(range.from,range.to);});
+    points.sort(function(a,b){return a-b;});
+    if(to>from){
+      for(var i=0;i<points.length;i++)if(points[i]>from+2&&points[i]<=to)return points[i];
+    }else if(to<from){
+      for(var j=points.length-1;j>=0;j--)if(points[j]<from-2&&points[j]>=to)return points[j];
+    }
+    return null;
+  }
+  function holdSnapStop(target){
+    clearTimeout(snapTimer);clearTimeout(snapSafetyTimer);
+    snapTimer=0;snapPending=false;snapActive=false;snapHeldTarget=target;
+    // SPの慣性をここで遮断。同じスワイプで次の停止点まで通り抜けさせない。
+    document.documentElement.classList.add('hex-overlap-snap-hold');
+    window.scrollTo({top:target,behavior:'instant'});
+    if(snapGesture)snapGesture.scrollLast=target;
+  }
+  function catchSnapCrossing(){
+    if(window.innerWidth>768||!snapGesture||snapGesture.kind==='wheel'||!snapGesture.vertical)return false;
+    var position=scrollPosition();
+    if(snapHeldTarget!==null){
+      if(Math.abs(position-snapHeldTarget)>1)window.scrollTo({top:snapHeldTarget,behavior:'instant'});
+      return true;
+    }
+    // 自動着地中は既に停止点へ向かっているため、二重に介入しない。
+    if(snapActive||!snapEnabled())return false;
+    var stop=firstCrossedSnapStop(snapRanges,snapGesture.scrollLast,position);
+    snapGesture.scrollLast=position;
+    if(stop===null)return false;
+    holdSnapStop(stop);return true;
+  }
   function snapEnabled(){
     if(reduced&&reduced.matches)return false;
     if(window.innerWidth<=768&&window.hexMotion&&window.hexMotion.usesLenis)return false;
@@ -14433,6 +14467,7 @@ hexReady(function(){
   function cancelSnap(stopAnimation){
     clearTimeout(snapTimer);clearTimeout(snapSafetyTimer);
     snapTimer=0;snapPending=false;snapGesture=null;
+    snapHeldTarget=null;document.documentElement.classList.remove('hex-overlap-snap-hold');
     snapRunId++;
     if(stopAnimation&&snapActive){
       if(snapLenis)snapLenis.scrollTo(scrollPosition(),{immediate:true});
@@ -14479,23 +14514,31 @@ hexReady(function(){
     if(window.innerWidth>768||!snapEnabled()||event.touches.length!==1||snapExcluded(event.target))return;
     var touch=event.touches[0];
     snapGesture={touching:true,x:touch.clientX,y:touch.clientY,lastY:touch.clientY,
-      lastTime:Date.now(),velocity:0,travel:0,vertical:false,scrollStart:scrollPosition()};
+      lastTime:Date.now(),velocity:0,travel:0,vertical:false,scrollStart:scrollPosition(),scrollLast:scrollPosition()};
   }
   function onSnapTouchMove(event){
     if(!snapGesture)return;
     if(event.touches.length!==1){cancelSnap(false);return;}
+    if(snapHeldTarget!==null){if(event.cancelable)event.preventDefault();return;}
     var touch=event.touches[0],now=Date.now();
     var dx=touch.clientX-snapGesture.x,dy=snapGesture.y-touch.clientY;
     if(Math.abs(dx)>Math.abs(dy)*1.2&&Math.abs(dx)>12){cancelSnap(false);return;}
     snapGesture.vertical=Math.abs(dy)>8&&Math.abs(dy)>Math.abs(dx);
     snapGesture.travel=dy;
     snapGesture.velocity=(snapGesture.lastY-touch.clientY)/Math.max(1,now-snapGesture.lastTime);
+    // 大きな指移動はブラウザがスクロールする前に停止点で受け止める。
+    if(snapGesture.vertical&&event.cancelable&&snapEnabled()){
+      var position=scrollPosition();
+      var stop=firstCrossedSnapStop(snapRanges,position,position+snapGesture.lastY-touch.clientY);
+      if(stop!==null){event.preventDefault();holdSnapStop(stop);return;}
+    }
     snapGesture.lastY=touch.clientY;snapGesture.lastTime=now;
   }
   function onSnapTouchEnd(event){
     if(!snapGesture)return;
     if(event.touches.length){cancelSnap(false);return;}
     snapGesture.touching=false;
+    if(snapHeldTarget!==null){snapPending=false;return;}
     if(!snapGesture.vertical){cancelSnap(false);return;}
     if(Date.now()-snapGesture.lastTime>120)snapGesture.velocity=0;
     snapPending=true;scheduleSnap();
@@ -14696,6 +14739,7 @@ hexReady(function(){
   hexReady(function(){
     window.addEventListener('scroll',function(){
       lastScrollTime=Date.now();updateVeils();
+      if(catchSnapCrossing())return;
       // 指を離した後の慣性が止まってから着地。指で動かしている間は介入しない。
       // PCの待機はホイール入力から数え、Lenisの慣性で延長し続けない。
       if((!snapGesture||!snapGesture.touching)&&!(snapGesture&&snapGesture.kind==='wheel'&&snapPending))scheduleSnap();
@@ -14706,7 +14750,7 @@ hexReady(function(){
     },{passive:true});
     window.addEventListener('wheel',onSnapWheel,{passive:true,capture:true});
     window.addEventListener('touchstart',onSnapTouchStart,{passive:true,capture:true});
-    window.addEventListener('touchmove',onSnapTouchMove,{passive:true,capture:true});
+    window.addEventListener('touchmove',onSnapTouchMove,{passive:false,capture:true});
     window.addEventListener('touchend',onSnapTouchEnd,{passive:true,capture:true});
     window.addEventListener('touchcancel',function(){cancelSnap(false);},{passive:true,capture:true});
     window.addEventListener('pointerdown',function(){cancelSnap(true);},{passive:true,capture:true});
