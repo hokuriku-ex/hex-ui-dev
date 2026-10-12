@@ -10253,19 +10253,6 @@ body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
 .hex-rise-back-layer{position:relative;z-index:0;}
 .hex-rise-front-layer{position:relative;z-index:1;isolation:isolate;}
 
-/* 共通オーバーラップ：一つのスクロール制御で位置を引き継ぐ */
-.hex-rise-managed-back{
-  translate:0 var(--hex-rise-offset,0px);
-}
-
-/* 補正値にCSSの遅延を掛けず、ブラウザのスクロールアンカー補正も避ける */
-.hex-rise-managed-back{
-  transition:none!important;
-  overflow-anchor:none;
-  will-change:translate;
-}
-html:has(.hex-rise-start){overflow-anchor:none;}
-
 /* 共通オーバーラップ：外枠を独立スクロール領域にしない。
    片軸だけvisibleにすると、もう片軸のauto/hiddenによってautoへ変わるため両軸を解除。
    クラスはJSで対象セクションの外枠だけに付与。ナビ等の内部スクロールは維持する。 */
@@ -10278,4 +10265,24 @@ html body .hex-rise-flow-root{
 html body .gc_auto_body.hex-rise-flow-root{
   overflow-x:clip!important;
   overflow-y:visible!important;
+}
+
+/* ネイティブsticky：スクロール量を逆方向の移動で相殺しない */
+.hex-rise-runway{
+  position:relative;z-index:1;display:block;overflow:visible!important;
+  box-sizing:border-box;min-width:0;isolation:isolate;
+}
+.hex-rise-sticky{
+  position:sticky;display:flow-root;overflow:visible!important;
+  width:100%;box-sizing:border-box;
+}
+.hex-rise-veil{
+  position:absolute;inset:0 auto 0 50%;width:100vw;
+  transform:translateX(-50%);z-index:2147480000;
+  background:#fff;opacity:0;pointer-events:none;
+}
+@media(prefers-reduced-motion:reduce){
+  .hex-rise-runway{height:auto!important;margin-bottom:0!important;}
+  .hex-rise-sticky{position:relative!important;top:auto!important;}
+  .hex-rise-veil{display:none!important;}
 }
