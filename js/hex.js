@@ -14397,8 +14397,15 @@ hexReady(function(){
   var snapGesture=null,snapPending=false,snapActive=false,snapLenis=null,snapRunId=0;
   var snapHeldTarget=null;
   var snapBlockedTouch=false;
+  var snapInputLocked=false,snapOrigin=0,snapDestination=0;
   function setSnapInputLock(locked){
+    snapInputLocked=locked;
     document.documentElement.classList.toggle('hex-overlap-snap-animating',locked);
+  }
+  function updateSnapInputLock(){
+    if(!snapActive||!snapInputLocked)return;
+    var distance=Math.abs(snapDestination-snapOrigin);
+    if(distance<1||Math.abs(scrollPosition()-snapOrigin)>=distance*.5)setSnapInputLock(false);
   }
   function firstCrossedSnapStop(ranges,from,to){
     var points=[];
@@ -14495,12 +14502,13 @@ hexReady(function(){
     var target=chooseSnapTarget(snapRanges,position,snapGesture,window.innerHeight);
     if(target===null)return;
     snapActive=true;
+    snapOrigin=position;snapDestination=target;
     setSnapInputLock(true);
     var run=++snapRunId;
     snapLenis=window.innerWidth>768&&window.hexMotion&&window.hexMotion.lenis||null;
     if(snapLenis){
       // 既存のPCスクロールと同じLenisへ移動先を渡し、慣性を引き継いで着地する。
-      snapLenis.scrollTo(target,{duration:.75,lock:true,easing:function(t){return 1-Math.pow(1-t,3);},
+      snapLenis.scrollTo(target,{duration:.75,lock:false,easing:function(t){return 1-Math.pow(1-t,3);},
         onComplete:function(){
           if(run!==snapRunId)return;
           snapActive=false;snapLenis=null;setSnapInputLock(false);clearTimeout(snapSafetyTimer);
@@ -14521,7 +14529,7 @@ hexReady(function(){
     if(snapPending||snapActive)snapTimer=setTimeout(settleSnap,snapGesture&&snapGesture.kind==='wheel'?180:160);
   }
   function onSnapTouchStart(event){
-    if(snapActive){snapBlockedTouch=true;return;}
+    if(snapInputLocked){snapBlockedTouch=true;return;}
     cancelSnap(true);
     if(window.innerWidth>768||!snapEnabled()||event.touches.length!==1||snapExcluded(event.target))return;
     var touch=event.touches[0];
@@ -14529,7 +14537,7 @@ hexReady(function(){
       lastTime:Date.now(),velocity:0,travel:0,vertical:false,scrollStart:scrollPosition(),scrollLast:scrollPosition()};
   }
   function onSnapTouchMove(event){
-    if(snapActive||snapBlockedTouch){if(event.cancelable)event.preventDefault();return;}
+    if(snapInputLocked||snapBlockedTouch){if(event.cancelable)event.preventDefault();return;}
     if(!snapGesture)return;
     if(event.touches.length!==1){cancelSnap(false);return;}
     if(snapHeldTarget!==null){if(event.cancelable)event.preventDefault();return;}
@@ -14559,7 +14567,12 @@ hexReady(function(){
     snapPending=true;scheduleSnap();
   }
   function onSnapWheel(event){
-    if(snapActive){if(event.cancelable)event.preventDefault();return;}
+    if(snapInputLocked){
+      if(event.cancelable)event.preventDefault();
+      if(event.stopImmediatePropagation)event.stopImmediatePropagation();
+      return;
+    }
+    if(snapActive)cancelSnap(true);
     if(window.innerWidth<=768||event.ctrlKey||event.shiftKey||event.defaultPrevented||
       !snapEnabled()||snapExcluded(event.target))return;
     if(Math.abs(event.deltaY)<1||Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
@@ -14754,6 +14767,7 @@ hexReady(function(){
   hexReady(function(){
     window.addEventListener('scroll',function(){
       lastScrollTime=Date.now();updateVeils();
+      updateSnapInputLock();
       if(catchSnapCrossing())return;
       // 指を離した後の慣性が止まってから着地。指で動かしている間は介入しない。
       // PCの待機はホイール入力から数え、Lenisの慣性で延長し続けない。
@@ -14770,10 +14784,10 @@ hexReady(function(){
     window.addEventListener('touchcancel',function(){
       snapBlockedTouch=false;if(!snapActive)cancelSnap(false);
     },{passive:true,capture:true});
-    window.addEventListener('pointerdown',function(){if(!snapActive)cancelSnap(true);},{passive:true,capture:true});
+    window.addEventListener('pointerdown',function(){if(!snapInputLocked)cancelSnap(true);},{passive:true,capture:true});
     window.addEventListener('keydown',function(event){
       if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].indexOf(event.key)!==-1){
-        if(snapActive){event.preventDefault();return;}
+        if(snapInputLocked){event.preventDefault();return;}
         cancelSnap(true);
       }
     },{capture:true});
