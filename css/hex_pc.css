@@ -10267,6 +10267,12 @@ html body .gc_auto_body.hex-rise-flow-root{
   overflow-y:visible!important;
 }
 
+/* 自動着地中はユーザー操作をロック。プログラムによるスクロールは維持する。 */
+html.hex-overlap-snap-animating{
+  overflow-y:hidden!important;
+  overscroll-behavior-y:none;
+  scrollbar-gutter:stable;
+}
 /* SPスナップ：停止点で慣性を遮断し、次の操作まで一度止める。 */
 @media(max-width:768px){
   html.hex-overlap-snap-hold{

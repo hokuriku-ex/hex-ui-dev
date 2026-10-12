@@ -14396,6 +14396,10 @@ hexReady(function(){
   var snapRanges=[],snapTimer=0,snapSafetyTimer=0;
   var snapGesture=null,snapPending=false,snapActive=false,snapLenis=null,snapRunId=0;
   var snapHeldTarget=null;
+  var snapBlockedTouch=false;
+  function setSnapInputLock(locked){
+    document.documentElement.classList.toggle('hex-overlap-snap-animating',locked);
+  }
   function firstCrossedSnapStop(ranges,from,to){
     var points=[];
     ranges.forEach(function(range){points.push(range.from,range.to);});
@@ -14468,6 +14472,7 @@ hexReady(function(){
     clearTimeout(snapTimer);clearTimeout(snapSafetyTimer);
     snapTimer=0;snapPending=false;snapGesture=null;
     snapHeldTarget=null;document.documentElement.classList.remove('hex-overlap-snap-hold');
+    setSnapInputLock(false);snapBlockedTouch=false;
     snapRunId++;
     if(stopAnimation&&snapActive){
       if(snapLenis)snapLenis.scrollTo(scrollPosition(),{immediate:true});
@@ -14480,7 +14485,7 @@ hexReady(function(){
     if(snapActive){
       // Lenisによる着地完了はonCompleteで判定し、途中のscrollendでは解除しない。
       if(snapLenis)return;
-      snapActive=false;clearTimeout(snapSafetyTimer);return;
+      snapActive=false;setSnapInputLock(false);clearTimeout(snapSafetyTimer);return;
     }
     if(!snapPending||!snapGesture||snapGesture.touching)return;
     snapPending=false;
@@ -14490,26 +14495,33 @@ hexReady(function(){
     var target=chooseSnapTarget(snapRanges,position,snapGesture,window.innerHeight);
     if(target===null)return;
     snapActive=true;
+    setSnapInputLock(true);
     var run=++snapRunId;
     snapLenis=window.innerWidth>768&&window.hexMotion&&window.hexMotion.lenis||null;
     if(snapLenis){
       // 既存のPCスクロールと同じLenisへ移動先を渡し、慣性を引き継いで着地する。
-      snapLenis.scrollTo(target,{duration:.75,easing:function(t){return 1-Math.pow(1-t,3);},
+      snapLenis.scrollTo(target,{duration:.75,lock:true,easing:function(t){return 1-Math.pow(1-t,3);},
         onComplete:function(){
           if(run!==snapRunId)return;
-          snapActive=false;snapLenis=null;clearTimeout(snapSafetyTimer);
+          snapActive=false;snapLenis=null;setSnapInputLock(false);clearTimeout(snapSafetyTimer);
         }});
     }else{
       // SPおよびLenisなしの環境はブラウザのsmooth scrollで着地する。
       window.scrollTo({top:target,behavior:'smooth'});
     }
-    snapSafetyTimer=setTimeout(function(){if(run===snapRunId){snapActive=false;snapLenis=null;}},2000);
+    snapSafetyTimer=setTimeout(function(){
+      if(run===snapRunId){
+        if(snapLenis)snapLenis.scrollTo(scrollPosition(),{immediate:true,force:true});
+        snapActive=false;snapLenis=null;setSnapInputLock(false);
+      }
+    },2000);
   }
   function scheduleSnap(){
     clearTimeout(snapTimer);
     if(snapPending||snapActive)snapTimer=setTimeout(settleSnap,snapGesture&&snapGesture.kind==='wheel'?180:160);
   }
   function onSnapTouchStart(event){
+    if(snapActive){snapBlockedTouch=true;return;}
     cancelSnap(true);
     if(window.innerWidth>768||!snapEnabled()||event.touches.length!==1||snapExcluded(event.target))return;
     var touch=event.touches[0];
@@ -14517,6 +14529,7 @@ hexReady(function(){
       lastTime:Date.now(),velocity:0,travel:0,vertical:false,scrollStart:scrollPosition(),scrollLast:scrollPosition()};
   }
   function onSnapTouchMove(event){
+    if(snapActive||snapBlockedTouch){if(event.cancelable)event.preventDefault();return;}
     if(!snapGesture)return;
     if(event.touches.length!==1){cancelSnap(false);return;}
     if(snapHeldTarget!==null){if(event.cancelable)event.preventDefault();return;}
@@ -14535,6 +14548,8 @@ hexReady(function(){
     snapGesture.lastY=touch.clientY;snapGesture.lastTime=now;
   }
   function onSnapTouchEnd(event){
+    if(snapBlockedTouch){if(!event.touches.length)snapBlockedTouch=false;return;}
+    if(snapActive)return;
     if(!snapGesture)return;
     if(event.touches.length){cancelSnap(false);return;}
     snapGesture.touching=false;
@@ -14544,10 +14559,10 @@ hexReady(function(){
     snapPending=true;scheduleSnap();
   }
   function onSnapWheel(event){
+    if(snapActive){if(event.cancelable)event.preventDefault();return;}
     if(window.innerWidth<=768||event.ctrlKey||event.shiftKey||event.defaultPrevented||
       !snapEnabled()||snapExcluded(event.target))return;
     if(Math.abs(event.deltaY)<1||Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
-    if(snapActive)cancelSnap(true);
     if(!snapGesture||snapGesture.kind!=='wheel'||!snapPending){
       snapGesture={kind:'wheel',touching:false,scrollStart:scrollPosition(),travel:0,velocity:0};
     }
@@ -14748,15 +14763,20 @@ hexReady(function(){
       if(snapGesture&&snapGesture.kind==='wheel'&&snapPending)return;
       settleSnap();
     },{passive:true});
-    window.addEventListener('wheel',onSnapWheel,{passive:true,capture:true});
+    window.addEventListener('wheel',onSnapWheel,{passive:false,capture:true});
     window.addEventListener('touchstart',onSnapTouchStart,{passive:true,capture:true});
     window.addEventListener('touchmove',onSnapTouchMove,{passive:false,capture:true});
     window.addEventListener('touchend',onSnapTouchEnd,{passive:true,capture:true});
-    window.addEventListener('touchcancel',function(){cancelSnap(false);},{passive:true,capture:true});
-    window.addEventListener('pointerdown',function(){cancelSnap(true);},{passive:true,capture:true});
+    window.addEventListener('touchcancel',function(){
+      snapBlockedTouch=false;if(!snapActive)cancelSnap(false);
+    },{passive:true,capture:true});
+    window.addEventListener('pointerdown',function(){if(!snapActive)cancelSnap(true);},{passive:true,capture:true});
     window.addEventListener('keydown',function(event){
-      if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].indexOf(event.key)!==-1)cancelSnap(true);
-    });
+      if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].indexOf(event.key)!==-1){
+        if(snapActive){event.preventDefault();return;}
+        cancelSnap(true);
+      }
+    },{capture:true});
     window.addEventListener('pagehide',function(){cancelSnap(false);});
     if(reduced&&reduced.addEventListener)reduced.addEventListener('change',function(){cancelSnap(true);});
     window.addEventListener('resize',queueMeasure,{passive:true});
