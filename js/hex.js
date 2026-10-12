@@ -14455,7 +14455,8 @@ hexReady(function(){
     // ナビ等の内部スクロールや、固定UIの操作はページスナップに使わない。
     for(var node=target;node&&node!==document.body;node=node.parentElement){
       var style=getComputedStyle(node);
-      if(style.position==='fixed')return true;
+      // 下層タイトルの固定レイヤーはページ内容。固定UIとして除外しない。
+      if(style.position==='fixed'&&!node.matches('.hex-page-hero-main,.hex-page-hero-decor'))return true;
       if(/auto|scroll/.test(style.overflowY)&&node.scrollHeight>node.clientHeight+1)return true;
       if(/auto|scroll/.test(style.overflowX)&&node.scrollWidth>node.clientWidth+1)return true;
     }
@@ -14685,6 +14686,26 @@ hexReady(function(){
       if(item.opacity!==opacity){item.opacity=opacity;item.veil.style.opacity=String(opacity);}
     });
   }
+  function addTitleSnapRanges(ranges,scroll,header,maximumScroll){
+    document.querySelectorAll('.pagetitle_type.pagetitle_type4.hex-page-hero').forEach(function(hero){
+      var next=hero._hexNextSection;
+      if(!next){
+        var branch=hero.closest('[id^="gc_auto_frame_"],.gc_auto_frame_page_title')||hero;
+        while(branch&&branch!==document.body&&!next){
+          for(var sibling=branch.nextElementSibling;sibling;sibling=sibling.nextElementSibling){
+            var style=getComputedStyle(sibling);
+            if(style.display!=='none'&&style.visibility!=='hidden'&&style.position!=='fixed'&&sibling.getBoundingClientRect().height>0){next=sibling;break;}
+          }
+          branch=branch.parentElement;
+        }
+      }
+      if(!next)return;
+      var box=hero.getBoundingClientRect();
+      if(box.height<=0||getComputedStyle(next).display==='none')return;
+      ranges.push({from:Math.max(0,Math.min(maximumScroll,box.bottom+scroll-window.innerHeight)),
+        to:Math.max(0,Math.min(maximumScroll,originalNode(next).getBoundingClientRect().top+scroll-header))});
+    });
+  }
   function measure(){
     measureFrame=0;
     var scroll=scrollPosition();
@@ -14719,13 +14740,20 @@ hexReady(function(){
     var maximumScroll=Math.max(0,documentBottom-window.innerHeight);
     // 自然な文書座標で前の下端と次の開始位置を取得する。
     // 本文途中には停止点を設けず、この二点の間だけ半自動にする。
-    snapRanges=entries.map(function(entry){
+    snapRanges=entries.filter(function(entry){
+      // 最初のタイトル境界は専用の自然なセクション上端で登録し、二重停止を避ける。
+      var back=originalNode(entry.back);
+      return !back.matches('.hex-page-hero')&&!back.querySelector('.hex-page-hero');
+    }).map(function(entry){
       var back=originalNode(entry.back);
       var bottom=back.getBoundingClientRect().bottom+scroll;
       var nextTop=entry.marker.getBoundingClientRect().top+scroll;
       return {from:Math.max(0,Math.min(maximumScroll,bottom-window.innerHeight)),
         to:Math.max(0,Math.min(maximumScroll,nextTop-header))};
-    }).filter(function(range){return range.to-range.from>24;})
+    });
+    // 開始マーカーがないページでも、タイトル→次セクションは同じスナップを使う。
+    addTitleSnapRanges(snapRanges,scroll,header,maximumScroll);
+    snapRanges=snapRanges.filter(function(range){return range.to-range.from>24;})
       .sort(function(a,b){return a.from-b.from||a.to-b.to;});
     var layouts=managed.map(function(item){
       var relevant=entries.filter(function(entry){return entry.blocks.indexOf(item.node)!==-1;});
@@ -14804,6 +14832,7 @@ hexReady(function(){
     if(window.ResizeObserver){
       sizeObserver=new ResizeObserver(queueMeasure);
       document.querySelectorAll('.content_body').forEach(function(node){sizeObserver.observe(node);});
+      document.querySelectorAll('.pagetitle_type.pagetitle_type4.hex-page-hero').forEach(function(node){sizeObserver.observe(node);});
       managed.forEach(function(item){sizeObserver.observe(item.sticky);});
     }
   });
