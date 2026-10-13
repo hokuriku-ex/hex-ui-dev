@@ -10468,3 +10468,11 @@ html.hex-overlap-snap-animating{
 .hex-rise-home-runway > .hex-rise-sticky > .hex-home-overlap-front.hex-bg-round-top + .hex-rise-veil{
   border-radius:var(--hex-bg-round-radius) var(--hex-bg-round-radius) 0 0;
 }
+
+/* トップのフッター：home_17と標準フッターの内側背景にも角丸を適用。 */
+.hex-home-overlap-front.hex-bg-round-top:is(#gc_auto_frame_home_17,.gc_auto_frame_footer,.hex-footer-frame),
+.hex-home-overlap-front.hex-bg-round-top .hex-footer-frame,
+.hex-home-overlap-front.hex-bg-round-top:is(#gc_auto_frame_home_17,.gc_auto_frame_footer,.hex-footer-frame) :is(.background_color,.backgroundcolor_auto,.backgroundcolor_footercolor,.gc_auto_frame_spotitem_basewidth){
+  border-top-left-radius:var(--hex-bg-round-radius)!important;
+  border-top-right-radius:var(--hex-bg-round-radius)!important;
+}
