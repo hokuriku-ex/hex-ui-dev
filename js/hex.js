@@ -602,7 +602,9 @@ function hexInitAnchorNav(){
     link.hexColorTween=tween;
   }
 
+  var anchorTouching=false,anchorRefreshPending=false;
   function moveAnchorList(targetLeft){
+    if(anchorTouching)return;
     var gsap=getAnchorGsap();
 
     if(gsap&&canAnimateAnchorNav()){
@@ -850,6 +852,7 @@ function hexInitAnchorNav(){
     );
   }
   function refreshHexAnchorNav(){
+    if(anchorTouching){anchorRefreshPending=true;return;}
     anchorShapeCache=new WeakMap();
     var mobileAdjust=0;
     fixedNavHeight=0;
@@ -869,6 +872,7 @@ function hexInitAnchorNav(){
     updateHexAnchorNav();
   }
   function updateHexAnchorNav(){
+    if(anchorTouching)return;
     var scrollTop=
       window.pageYOffset||
       document.documentElement.scrollTop;
@@ -1066,6 +1070,7 @@ function hexInitAnchorNav(){
   nav.appendChild(anchorScrollbar);
 
   function syncAnchorScrollbar(){
+    if(anchorTouching)return;
     if(!anchorList)return;
 
     var visibleWidth=anchorList.clientWidth;
@@ -1134,6 +1139,25 @@ function hexInitAnchorNav(){
       });
     });
   }
+  document.addEventListener('touchstart',function(){
+    anchorTouching=true;nav.dataset.hexAnchorTouching='1';
+    var gsap=getAnchorGsap();
+    if(gsap)gsap.killTweensOf(anchorList);
+  },{passive:true,capture:true});
+  function releaseAnchorTouch(event){
+    if(event.touches&&event.touches.length)return;
+    if(!anchorTouching)return;
+    anchorTouching=false;delete nav.dataset.hexAnchorTouching;
+    requestAnimationFrame(function(){
+      if(anchorTouching)return;
+      if(anchorRefreshPending){anchorRefreshPending=false;refreshHexAnchorNav();}
+      else updateHexAnchorNav();
+      syncAnchorScrollbar();
+      nav.dispatchEvent(new Event('hex:anchor-touch-release'));
+    });
+  }
+  document.addEventListener('touchend',releaseAnchorTouch,{passive:true,capture:true});
+  document.addEventListener('touchcancel',releaseAnchorTouch,{passive:true,capture:true});
   anchorList.addEventListener(
     'scroll',
     syncAnchorScrollbar,
@@ -14439,6 +14463,7 @@ hexReady(function(){
     nav.classList.add('hex-anchor-progress-bar');
     var frame=0;
     function update(){
+      if(nav.dataset.hexAnchorTouching==='1')return;
       var visible=list.clientWidth,total=list.scrollWidth,max=total-visible,width=bar.clientWidth;
       if(width<=0)return;
       var count=list.querySelectorAll('.hex-anchor-nav-link').length;
@@ -14449,6 +14474,7 @@ hexReady(function(){
     }
     function queue(){cancelAnimationFrame(frame);frame=requestAnimationFrame(update);}
     list.addEventListener('scroll',queue,{passive:true});
+    nav.addEventListener('hex:anchor-touch-release',queue);
     window.addEventListener('resize',queue,{passive:true});
     if(window.ResizeObserver){var observer=new ResizeObserver(queue);observer.observe(list);observer.observe(bar);}
     update();
@@ -14826,6 +14852,19 @@ hexReady(function(){
     var duration=Math.max(0,end-start);
     return {top:top-start,height:height+duration,tail:duration,start:start};
   }
+  function syncOverlapCorners(entry){
+    var front=entry.front;
+    // 全トップ境界と下層の問い合わせ・フッターに共通の補完を適用。
+    if(!front.matches('.hex-bg-round-top')||
+      !front.matches('.hex-home-overlap-front,.hex-overlap-round-front'))return;
+    var fill=front._hexOverlapCornerFill;
+    if(!fill){
+      fill=document.createElement('div');fill.className='hex-overlap-corner-fill';
+      fill.setAttribute('aria-hidden','true');front.insertBefore(fill,front.firstChild);
+      front._hexOverlapCornerFill=fill;
+    }
+    fill.style.backgroundColor=sectionCoverColor(originalNode(entry.back));
+  }
   function createItem(node){
     var runway=document.createElement('div'),sticky=document.createElement('div'),veil=document.createElement('div');
     runway.className='hex-rise-runway';sticky.className='hex-rise-sticky';veil.className='hex-rise-veil';
@@ -14938,6 +14977,7 @@ hexReady(function(){
     entries.sort(function(a,b){return a.start-b.start;});
     var header=fixedHeaderHeight();
     snapHeaderHeight=header;
+    entries.forEach(syncOverlapCorners);
     var documentBottom=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);
     var maximumScroll=Math.max(0,documentBottom-window.innerHeight);
     // 自然な文書座標で前の下端と次の開始位置を取得する。
