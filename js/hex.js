@@ -14471,6 +14471,8 @@ hexReady(function(){
     holdSnapStop(stop);return true;
   }
   function snapEnabled(){
+    // トップの独自演出と干渉しないよう、自動着地は下層だけに適用する。
+    if(homeFoundedSection())return false;
     if(reduced&&reduced.matches)return false;
     if(window.innerWidth<=768&&window.hexMotion&&window.hexMotion.usesLenis)return false;
     if(window.hexMotion&&window.hexMotion.lenis&&window.hexMotion.lenis.isStopped)return false;
@@ -14746,6 +14748,7 @@ hexReady(function(){
   function createItem(node){
     var runway=document.createElement('div'),sticky=document.createElement('div'),veil=document.createElement('div');
     runway.className='hex-rise-runway';sticky.className='hex-rise-sticky';veil.className='hex-rise-veil';
+    if(homeFoundedSection())runway.style.overflowAnchor='none';
     veil.setAttribute('aria-hidden','true');
     node.parentNode.insertBefore(runway,node);
     runway.appendChild(sticky);sticky.appendChild(node);sticky.appendChild(veil);
@@ -14817,6 +14820,7 @@ hexReady(function(){
     // 自然な文書座標で前の下端と次の開始位置を取得する。
     // 本文途中には停止点を設けず、この二点の間だけ半自動にする。
     snapRanges=entries.filter(function(entry){
+      if(entry.home)return false;
       // 最初のタイトル境界は専用の自然なセクション上端で登録し、二重停止を避ける。
       var back=originalNode(entry.back);
       return !back.matches('.hex-page-hero')&&!back.querySelector('.hex-page-hero');
@@ -14858,6 +14862,8 @@ hexReady(function(){
   }
   function scan(){
     if(homeFoundedSection()){
+      // stickyの再計測で、ブラウザのアンカー補正が遠方へ移動させるのを防ぐ。
+      document.documentElement.style.overflowAnchor='none';
       // 手動マーカーの配置にかかわらず、トップの独自演出を巻き込まない。
       document.querySelectorAll('.hex-rise-start').forEach(function(marker){
         marker.textContent='';marker.setAttribute('aria-hidden','true');
