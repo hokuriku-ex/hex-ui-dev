@@ -14864,6 +14864,16 @@ hexReady(function(){
       front._hexOverlapCornerFill=fill;
     }
     var back=originalNode(entry.back);
+    if(front.matches('.gc_auto_frame_footer,.hex-footer-frame')||front.querySelector('.gc_auto_frame_footer')){
+      // 施工エリアの移動元が間に残っていても、実際の問い合わせ枠を参照する。
+      var contacts=entries.map(function(other){return originalNode(other.front);}).filter(function(node){
+        return node!==front&&!node.contains(front)&&
+          (node.matches('.hex-contact-section')||node.querySelector('.hex-contact-section'))&&
+          !!(node.compareDocumentPosition(front)&4)&&
+          getComputedStyle(node).display!=='none'&&node.getBoundingClientRect().height>0;
+      }).sort(function(a,b){return a.compareDocumentPosition(b)&4?-1:1;});
+      if(contacts.length)back=contacts[contacts.length-1];
+    }
     // 一つのCMS枠に複数背景がある場合、境界に接する最後の背景を使う。
     var ranges=Array.from(back.querySelectorAll('.hex-bg-range')).filter(function(range){
       return getComputedStyle(range).display!=='none'&&range.getBoundingClientRect().height>0;
