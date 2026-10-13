@@ -96,9 +96,6 @@ function hexLoad(callback){
 
 /* 創業末尾の連続した空スペーサー。途中の見出し前の余白は含めない。 */
 function hexFoundedTrailingSpacers(section){
-  if(section._hexFoundedTrailingSpacers&&section.querySelector('.hex-founded-overlap-tail')){
-    return section._hexFoundedTrailingSpacers;
-  }
   var body=section.querySelector('.gc_auto_frame_spotitem_body');
   if(!body)return [];
   var branches=Array.from(body.children),spacers=[],started=false;
@@ -14703,30 +14700,10 @@ hexReady(function(){
   }
   function scanHome(){
     var sections=homeOverlapSections();
-    var founded=homeFoundedSection(),tail=null;
-    var spacers=founded?hexFoundedTrailingSpacers(founded):[];
-    if(spacers.length>=2){
-      tail=founded.querySelector('.hex-founded-overlap-tail');
-      if(!tail){
-        var first=spacers[spacers.length-(spacers.length>=3?2:1)];
-        var last=spacers[spacers.length-1];
-        var body=first.closest('.gc_auto_frame_spotitem_body');
-        var start=first,end=last;
-        while(start.parentElement&&start.parentElement!==body)start=start.parentElement;
-        while(end.parentElement&&end.parentElement!==body)end=end.parentElement;
-        if(body&&start.parentElement===body&&end.parentElement===body){
-          tail=document.createElement('div');tail.className='hex-founded-overlap-tail';
-          body.insertBefore(tail,start);
-          for(var branch=start;branch;){
-            var next=branch.nextElementSibling,done=branch===end;
-            tail.appendChild(branch);if(done)break;branch=next;
-          }
-        }
-      }
-    }
+    var founded=homeFoundedSection();
     sections.forEach(function(front,index){
-      // 最初の境界だけ創業の末尾の紺余白を使い、創業本体は固定しない。
-      if(!index&&(!tail||front.id!==HOME_SECTIONS.FIRST))return;
+      // 創業全体を、下端が画面下に揃う時点から最初の切り替え区間だけ固定する。
+      if(!index&&(!founded||front.id!==HOME_SECTIONS.FIRST))return;
       var marker=front._hexHomeRiseMarker;
       if(!marker){
         marker=document.createElement('div');
@@ -14737,8 +14714,8 @@ hexReady(function(){
         front._hexHomeRiseMarker=marker;
       }
       if(marker._hexRiseEntry)return;
-      var entry={marker:marker,back:index?sections[index-1]:tail,front:front,
-        blocks:[],start:0,home:true,foundedTail:!index};
+      var entry={marker:marker,back:index?sections[index-1]:founded,front:front,
+        blocks:[],start:0,home:true,foundedEnd:!index};
       marker._hexRiseEntry=entry;entries.push(entry);
       front.classList.add('hex-home-overlap-front');
       prepareFlow(front);prepareFlow(entry.back);raiseFollowing(entry);
@@ -14767,7 +14744,7 @@ hexReady(function(){
     runway.className='hex-rise-runway';sticky.className='hex-rise-sticky';veil.className='hex-rise-veil';
     if(homeFoundedSection()){
       runway.style.overflowAnchor='none';
-      if(!node.classList.contains('hex-founded-overlap-tail'))runway.classList.add('hex-rise-home-runway');
+      runway.classList.add('hex-rise-home-runway');
     }
     veil.setAttribute('aria-hidden','true');
     node.parentNode.insertBefore(runway,node);
@@ -14807,7 +14784,7 @@ hexReady(function(){
   }
   function homeSnapRange(entry,scroll,header,maximumScroll){
     if(window.innerWidth<=768||!entry.home||typeof HOME_SECTIONS==='undefined'||
-      (!entry.foundedTail&&!/^gc_auto_frame_home_(?:[5-9]|1[0-7])$/.test(entry.back.id)))return null;
+      (!entry.foundedEnd&&!/^gc_auto_frame_home_(?:[5-9]|1[0-7])$/.test(entry.back.id)))return null;
     // stickyを自然な配置へ戻してから、次の天端一つで両方の停止点を決める。
     // 距離は最大でも画面高さ−ヘッダー。離れたセクションへ飛ばない。
     var boundary=entry.marker.getBoundingClientRect().top+scroll;
