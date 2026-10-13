@@ -14863,7 +14863,13 @@ hexReady(function(){
       fill.setAttribute('aria-hidden','true');front.insertBefore(fill,front.firstChild);
       front._hexOverlapCornerFill=fill;
     }
-    fill.style.backgroundColor=sectionCoverColor(originalNode(entry.back));
+    var back=originalNode(entry.back);
+    // 一つのCMS枠に複数背景がある場合、境界に接する最後の背景を使う。
+    var ranges=Array.from(back.querySelectorAll('.hex-bg-range')).filter(function(range){
+      return getComputedStyle(range).display!=='none'&&range.getBoundingClientRect().height>0;
+    });
+    var color=sectionCoverColor(ranges.length?ranges[ranges.length-1]:back);
+    fill.style.backgroundColor=color;
   }
   function createItem(node){
     var runway=document.createElement('div'),sticky=document.createElement('div'),veil=document.createElement('div');
@@ -15047,6 +15053,9 @@ hexReady(function(){
     });
     fronts.forEach(function(front){
       front.classList.add('hex-overlap-round-front','hex-bg-round-top');
+      front.querySelectorAll('.gc_auto_frame_footer,.hex-footer-frame').forEach(function(footer){
+        footer.classList.add('hex-overlap-round-front','hex-bg-round-top');
+      });
       if(entries.some(function(entry){return entry.front===front;}))return;
       var existing=front.querySelector('.hex-rise-start');
       if(existing&&!existing._hexRiseEntry)return;

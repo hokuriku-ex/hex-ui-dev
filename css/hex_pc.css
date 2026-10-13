@@ -10496,8 +10496,8 @@ html.hex-overlap-snap-animating{
 }
 /* 角丸フッターの外側だけを、直前セクションの色で補う。 */
 .hex-overlap-corner-fill{
-  position:absolute;top:0;left:0;width:100%;height:var(--hex-bg-round-radius);
-  z-index:100;pointer-events:none;
+  position:absolute;top:0;left:50%;width:100vw;height:var(--hex-bg-round-radius);
+  transform:translateX(-50%);z-index:2147480000;pointer-events:none;
   -webkit-mask-image:radial-gradient(circle at bottom right,transparent calc(var(--hex-bg-round-radius) - .5px),#000 var(--hex-bg-round-radius)),radial-gradient(circle at bottom left,transparent calc(var(--hex-bg-round-radius) - .5px),#000 var(--hex-bg-round-radius));
   mask-image:radial-gradient(circle at bottom right,transparent calc(var(--hex-bg-round-radius) - .5px),#000 var(--hex-bg-round-radius)),radial-gradient(circle at bottom left,transparent calc(var(--hex-bg-round-radius) - .5px),#000 var(--hex-bg-round-radius));
   -webkit-mask-size:var(--hex-bg-round-radius) 100%;mask-size:var(--hex-bg-round-radius) 100%;
