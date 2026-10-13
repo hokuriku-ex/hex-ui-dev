@@ -14429,6 +14429,7 @@ hexReady(function(){
   var snapBlockedTouch=false;
   var snapInputLocked=false,snapOrigin=0,snapDestination=0;
   var homeWheelLast=0,homeWheelDirection=0,homeWheelConsumed=false;
+  var snapHeaderHeight=80;
   function setSnapInputLock(locked){
     snapInputLocked=locked;
     document.documentElement.classList.toggle('hex-overlap-snap-animating',locked);
@@ -14531,6 +14532,7 @@ hexReady(function(){
     }
     if(!snapPending||!snapGesture||snapGesture.touching)return;
     snapPending=false;
+    refreshHomeSnapRanges();
     if(!snapEnabled())return;
     var position=scrollPosition();
     if(Math.abs(position-snapGesture.scrollStart)<3)return;
@@ -14604,6 +14606,7 @@ hexReady(function(){
   }
   function onSnapWheel(event){
     if(homeFoundedSection()){
+      refreshHomeSnapRanges();
       if(event.ctrlKey||event.shiftKey||Math.abs(event.deltaY)<1||
         Math.abs(event.deltaX)>Math.abs(event.deltaY)||snapExcluded(event.target))return;
       var direction=event.deltaY>0?1:-1,now=Date.now();
@@ -14811,6 +14814,15 @@ hexReady(function(){
     return {from:Math.max(0,Math.min(maximumScroll,boundary-window.innerHeight)),
       to:Math.max(0,Math.min(maximumScroll,boundary-header)),home:true};
   }
+  function refreshHomeSnapRanges(){
+    if(!homeFoundedSection())return;
+    var scroll=scrollPosition(),header=snapHeaderHeight;
+    var maximumScroll=Math.max(0,Math.max(document.documentElement.scrollHeight,
+      document.body.scrollHeight)-window.innerHeight);
+    snapRanges=entries.map(function(entry){
+      return homeSnapRange(entry,scroll,header,maximumScroll);
+    }).filter(function(range){return range&&range.to-range.from>24;});
+  }
   function measure(){
     measureFrame=0;
     var scroll=scrollPosition();
@@ -14841,6 +14853,7 @@ hexReady(function(){
     entries.forEach(function(entry){entry.start=entry.marker.getBoundingClientRect().top+scroll-window.innerHeight;});
     entries.sort(function(a,b){return a.start-b.start;});
     var header=fixedHeaderHeight();
+    snapHeaderHeight=header;
     var documentBottom=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);
     var maximumScroll=Math.max(0,documentBottom-window.innerHeight);
     // 自然な文書座標で前の下端と次の開始位置を取得する。
@@ -14882,6 +14895,8 @@ hexReady(function(){
       item.runway.style.height=g.height+'px';item.runway.style.marginBottom=-g.tail+'px';
       item.sticky.style.position='';item.sticky.style.top=g.top+'px';
     });
+    // 自然な配置での一時計測値を、固定枠を設定した後の実座標へ更新する。
+    refreshHomeSnapRanges();
     updateVeils();
   }
   function queueMeasure(){
