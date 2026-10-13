@@ -14860,7 +14860,7 @@ hexReady(function(){
   }
   function updateVeils(){
     var scroll=scrollPosition(),disabled=reduced&&reduced.matches;
-    managed.forEach(function(item){
+    var updates=managed.map(function(item){
       // JSで変えるのは白い幕の濃度だけ。固定位置・translateはスクロール中に更新しない。
       // sticky設定後の実表示位置に同期。自然座標との差で開始が遅れるのを防ぐ。
       var progress;
@@ -14872,8 +14872,18 @@ hexReady(function(){
       }
       progress=Math.max(0,Math.min(1,progress));
       var opacity=disabled?0:Math.round(progress*1000)/1000;
+      return {item:item,opacity:opacity};
+    });
+    // 座標の読み取りを全て終えてから描画を更新する。
+    updates.forEach(function(record){
+      var item=record.item,opacity=record.opacity;
       if(item.opacity!==opacity){item.opacity=opacity;item.veil.style.opacity=String(opacity);}
     });
+  }
+  var veilFrame=0;
+  function queueVeils(){
+    if(veilFrame)return;
+    veilFrame=requestAnimationFrame(function(){veilFrame=0;updateVeils();});
   }
   function addTitleSnapRanges(ranges,scroll,header,maximumScroll){
     document.querySelectorAll('.pagetitle_type.pagetitle_type4.hex-page-hero').forEach(function(hero){
@@ -15022,7 +15032,7 @@ hexReady(function(){
   hexReady(scan);hexLoad(scan);
   hexReady(function(){
     window.addEventListener('scroll',function(){
-      lastScrollTime=Date.now();updateVeils();
+      lastScrollTime=Date.now();queueVeils();
       updateSnapInputLock();
       // 指を離した後の慣性が止まってから着地。指で動かしている間は介入しない。
       // PCの待機はホイール入力から数え、Lenisの慣性で延長し続けない。
