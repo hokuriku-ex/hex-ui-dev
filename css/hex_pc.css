@@ -10476,3 +10476,15 @@ html.hex-overlap-snap-animating{
   border-top-left-radius:var(--hex-bg-round-radius)!important;
   border-top-right-radius:var(--hex-bg-round-radius)!important;
 }
+
+/* 下層共通：問い合わせ・フッターをIDに依存せず背景だけ角丸化。 */
+.hex-overlap-round-front.hex-bg-round-top{
+  --hex-bg-upper-depth:var(--hex-bg-round-radius);
+  border-radius:var(--hex-bg-round-radius) var(--hex-bg-round-radius) 0 0;
+}
+.hex-overlap-round-front.hex-bg-round-top > .gc_auto_frame_spotitem > :is(.background_color,.gc_auto_frame_spotitem_basewidth),
+.hex-overlap-round-front.hex-bg-round-top:is(.gc_auto_frame_footer,.hex-footer-frame) :is(.background_color,.backgroundcolor_auto,.backgroundcolor_footercolor,.gc_auto_frame_spotitem_basewidth),
+.hex-overlap-round-front.hex-bg-round-top + .hex-rise-veil{
+  border-top-left-radius:var(--hex-bg-round-radius)!important;
+  border-top-right-radius:var(--hex-bg-round-radius)!important;
+}

@@ -14793,7 +14793,7 @@ hexReady(function(){
     node=originalNode(node);
     var home=!!homeFoundedSection()&&(node.matches('[id^="gc_auto_frame_home_"],.gc_auto_frame_footer'));
     var base=header+(home?16:0);
-    var edge=node.matches('.hex-bg-range,.hex-home-overlap-front.hex-bg-round-top')?node:node.querySelector('.hex-bg-range');
+    var edge=node.matches('.hex-bg-range,.hex-home-overlap-front.hex-bg-round-top,.hex-overlap-round-front.hex-bg-round-top')?node:node.querySelector('.hex-bg-range');
     if(!edge)return base;
     var value=getComputedStyle(edge).getPropertyValue('--hex-bg-upper-depth').trim();
     if(!value)return base;
@@ -15011,6 +15011,36 @@ hexReady(function(){
     if(delay){measureTimer=setTimeout(queueMeasure,delay);return;}
     if(!measureFrame)measureFrame=requestAnimationFrame(measure);
   }
+  function scanSharedRoundSections(){
+    var fronts=[];
+    document.querySelectorAll('.hex-contact-section,.gc_auto_frame_footer').forEach(function(content){
+      var front=content.matches('.gc_auto_frame_footer')?content:content.closest('.hex-bg-range');
+      if(!front){
+        for(var parent=content.parentElement;parent&&parent!==document.body;parent=parent.parentElement){
+          if(parent.matches('[id^="gc_auto_frame_"],.content')){front=parent;}
+          if(parent.matches('.content_body,.gc_auto_body'))break;
+        }
+      }
+      if(front&&fronts.indexOf(front)===-1)fronts.push(front);
+    });
+    fronts.forEach(function(front){
+      front.classList.add('hex-overlap-round-front','hex-bg-round-top');
+      if(entries.some(function(entry){return entry.front===front;}))return;
+      var existing=front.querySelector('.hex-rise-start');
+      if(existing&&!existing._hexRiseEntry)return;
+      var boundary=front,back=sectionSibling(boundary,'previousElementSibling');
+      while(!back&&boundary.parentElement&&boundary.parentElement!==document.body){
+        boundary=boundary.parentElement;back=sectionSibling(boundary,'previousElementSibling');
+      }
+      if(!back||back===front||back.contains(front))return;
+      var marker=document.createElement('div');marker.className='hex-rise-start';
+      marker.setAttribute('aria-hidden','true');front.parentNode.insertBefore(marker,front);
+      var entry={marker:marker,back:back,front:front,blocks:[],start:0};
+      marker._hexRiseEntry=entry;entries.push(entry);
+      prepareFlow(front);prepareFlow(back);raiseFollowing(entry);
+      if(sizeObserver)sizeObserver.observe(front);
+    });
+  }
   function scan(){
     if(homeFoundedSection()){
       // stickyの再計測で、ブラウザのアンカー補正が遠方へ移動させるのを防ぐ。
@@ -15021,6 +15051,7 @@ hexReady(function(){
       });
       scanHome();queueMeasure();return;
     }
+    scanSharedRoundSections();
     document.querySelectorAll('.hex-rise-start').forEach(function(marker){
       marker.textContent='';marker.setAttribute('aria-hidden','true');
       if(marker._hexRiseEntry)return;
