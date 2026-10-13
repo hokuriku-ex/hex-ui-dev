@@ -661,10 +661,18 @@ function hexInitAnchorNav(){
       offset+=getHexAnchorHeaderHeight();
     }
 
-    var targetTop=
-      target.getBoundingClientRect().top+
-      window.pageYOffset-
-      offset;
+    // 再計測は座標取得前に実行。固定中の表示位置を移動先に使わない。
+    if(window.hexMotion&&typeof window.hexMotion.refreshLayout==='function'){
+      window.hexMotion.refreshLayout();
+    }
+    var targetTop;
+    var sticky=target.closest('.hex-rise-sticky');
+    if(sticky){
+      targetTop=sticky.parentElement.getBoundingClientRect().top+window.pageYOffset+
+        target.getBoundingClientRect().top-sticky.getBoundingClientRect().top-offset;
+    }else{
+      targetTop=target.getBoundingClientRect().top+window.pageYOffset-offset;
+    }
     var distance=Math.abs(
       window.pageYOffset-targetTop
     );
@@ -682,12 +690,8 @@ function hexInitAnchorNav(){
       window.hexMotion&&
       typeof window.hexMotion.scrollTo==='function'
     ){
-      if(typeof window.hexMotion.refreshLayout==='function'){
-        window.hexMotion.refreshLayout();
-      }
-
-      window.hexMotion.scrollTo(target,{
-        offset:-offset,
+      window.hexMotion.scrollTo(targetTop,{
+        offset:0,
         duration:duration,
         easing:hexAnchorEasing,
         immediate:reducedMotion,
