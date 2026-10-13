@@ -1991,14 +1991,6 @@
     padding-top:80px;
     padding-bottom:80px;
   }
-  .post_index_contents > .content:has(.hex-reasons-section)::before{
-    width:140vw;
-    /* PCの楕円切り抜きを解除 */
-    -webkit-clip-path:none;
-    clip-path:none;
-    /* 高さが固定された緩やかなカーブ */
-    border-radius:50% 50% 0 0 / 80px 80px 0 0;
-  }
   .hex-reasons-section{
     gap:14px;
   }
