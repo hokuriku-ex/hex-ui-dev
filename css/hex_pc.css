@@ -6744,13 +6744,18 @@ html body
   margin-right:0;
   padding-left:0;
   padding-right:0;
+  background:transparent!important;
+}
+/* HOPWEB標準の本文背景を透過し、共通背景を表示する。 */
+.content_body:has(.hex-worries-section){
+  background:transparent!important;
 }
 .hex-worries-section{
   position:relative;
   width:100%;
   margin:0;
   padding:0;
-  background:transparent;
+  background:transparent!important;
 }
 
 /* お悩み相談 */
