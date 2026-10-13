@@ -644,6 +644,19 @@ function hexInitAnchorNav(){
     );
   }
 
+  var anchorShapeCache=new WeakMap();
+  function anchorShapeClearance(target){
+    if(!window.hexOverlapAnchor)return 0;
+    if(!anchorShapeCache.has(target))anchorShapeCache.set(target,window.hexOverlapAnchor.shapeClearance(target));
+    return anchorShapeCache.get(target);
+  }
+  function anchorDocumentTop(target){
+    var sticky=target.closest('.hex-rise-sticky');
+    return sticky
+      ?sticky.parentElement.getBoundingClientRect().top+window.pageYOffset+
+        target.getBoundingClientRect().top-sticky.getBoundingClientRect().top
+      :target.getBoundingClientRect().top+window.pageYOffset;
+  }
   function scrollToAnchorTarget(target){
     var offset=getHexAnchorOffset();
     if(window.hexOverlapAnchor){
@@ -668,16 +681,10 @@ function hexInitAnchorNav(){
       window.hexMotion.refreshLayout();
     }
     if(window.hexOverlapAnchor){
-      offset+=window.hexOverlapAnchor.shapeClearance(target);
+      anchorShapeCache.delete(target);
+      offset+=anchorShapeClearance(target);
     }
-    var targetTop;
-    var sticky=target.closest('.hex-rise-sticky');
-    if(sticky){
-      targetTop=sticky.parentElement.getBoundingClientRect().top+window.pageYOffset+
-        target.getBoundingClientRect().top-sticky.getBoundingClientRect().top-offset;
-    }else{
-      targetTop=target.getBoundingClientRect().top+window.pageYOffset-offset;
-    }
+    var targetTop=anchorDocumentTop(target)-offset;
     var distance=Math.abs(
       window.pageYOffset-targetTop
     );
@@ -859,6 +866,7 @@ function hexInitAnchorNav(){
     );
   }
   function refreshHexAnchorNav(){
+    anchorShapeCache=new WeakMap();
     var mobileAdjust=0;
     fixedNavHeight=0;
     nav.classList.remove('is-fixed');
@@ -931,10 +939,11 @@ function hexInitAnchorNav(){
     var previousColor=null;
     var nextColor=null;
     var activeChanged=false;
-    var checkLine=scrollTop+getHexAnchorOffset()+36;
+    var fixed=nav.classList.contains('is-fixed');
+    var baseOffset=getHexAnchorOffset()+(fixed?getHexAnchorFixedHeight():getHexAnchorHeaderHeight());
     pairs.forEach(function(pair){
-      var targetTop=pair.target.getBoundingClientRect().top+window.pageYOffset;
-      if(checkLine>=targetTop)activePair=pair;
+      var landingTop=anchorDocumentTop(pair.target)-baseOffset-anchorShapeClearance(pair.target);
+      if(scrollTop+2>=landingTop)activePair=pair;
     });
 
     nextActiveLink=activePair?activePair.link:null;
