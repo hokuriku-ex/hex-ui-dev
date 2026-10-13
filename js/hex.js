@@ -154,18 +154,20 @@ hexReady(function(){
     'hex-bg-arrow'
   ];
   var backgroundShapeBag=[];
+  var previousBackgroundEndShape=null;
+  function drawBackgroundShape(){
+    var candidates=backgroundRandomCandidates.filter(function(shape,index,list){
+      return backgroundShapes.indexOf(shape)!==-1&&list.indexOf(shape)===index;
+    });
+    if(!candidates.length)return null;
+    if(!backgroundShapeBag.length)backgroundShapeBag=candidates.slice();
+    return backgroundShapeBag.splice(Math.floor(Math.random()*backgroundShapeBag.length),1)[0];
+  }
   function applyRandomBackgroundShape(wrapper){
     if(!wrapper.classList.contains('hex-bg-random'))return;
     /* 明示指定は抽選せず、抽選袋からも取り除かない。 */
     if(backgroundShapes.some(function(shape){return wrapper.classList.contains(shape);}))return;
-    var candidates=backgroundRandomCandidates.filter(function(shape,index,list){
-      return backgroundShapes.indexOf(shape)!==-1&&list.indexOf(shape)===index;
-    });
-    /* 空・不正な候補では、意図しない上下装飾を採用しない。 */
-    if(!candidates.length)return;
-    if(!backgroundShapeBag.length)backgroundShapeBag=candidates.slice();
-    var index=Math.floor(Math.random()*backgroundShapeBag.length);
-    wrapper.classList.add(backgroundShapeBag.splice(index,1)[0]);
+    var shape=drawBackgroundShape();if(shape)wrapper.classList.add(shape);
   }
   function findBackgroundEnd(start,body){
     var markers=Array.from(body.querySelectorAll('.hex-bg-start,.hex-bg-end'))
@@ -187,15 +189,24 @@ hexReady(function(){
     return classes;
   }
   function isBackgroundShape(className){return backgroundShapes.indexOf(className)!==-1||className==='hex-bg-random';}
+  function selectBackgroundShape(classes){
+    var explicit=classes.find(function(className){return backgroundShapes.indexOf(className)!==-1;});
+    return explicit||(classes.indexOf('hex-bg-random')!==-1?drawBackgroundShape():null);
+  }
   function applyBackgroundDecoration(wrapper,start,end){
     var upper=backgroundMarkerClasses(start),lower=backgroundMarkerClasses(end);
-    var useLower=lower.some(isBackgroundShape);
-    // 下端を優先。上端・下端の形状を同時には適用しない。
-    var selected=useLower?lower:upper;
+    // 優先は隣接範囲の境界に対して判定。同じ範囲の上端・下端は両方使用できる。
+    var upperShape=previousBackgroundEndShape?null:selectBackgroundShape(upper);
+    var lowerShape=selectBackgroundShape(lower);
     upper.filter(function(className){return !isBackgroundShape(className);}).forEach(function(className){wrapper.classList.add(className);});
-    selected.forEach(function(className){wrapper.classList.add(className);});
-    if(selected.some(isBackgroundShape))wrapper.classList.add(useLower?'hex-bg-decoration-end':'hex-bg-decoration-start');
-    applyRandomBackgroundShape(wrapper);
+    if(upperShape){wrapper.classList.add(upperShape);wrapper.classList.add('hex-bg-decoration-start');}
+    if(lowerShape){
+      wrapper.classList.add(lowerShape.replace('hex-bg-','hex-bg-lower-'));
+      wrapper.classList.add('hex-bg-has-lower-decoration');
+    }
+    if(upperShape||lowerShape)wrapper.classList.add('hex-bg-has-decoration');
+    if((upperShape&&upper.indexOf('hex-bg-random')!==-1)||(lowerShape&&lower.indexOf('hex-bg-random')!==-1))wrapper.classList.add('hex-bg-random');
+    previousBackgroundEndShape=lowerShape;
   }
   document.querySelectorAll('.hex-bg-start').forEach(function(start){
     var body=start.closest('.content_body');
