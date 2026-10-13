@@ -1079,11 +1079,33 @@ a.hex-text-link[target="_blank"]::after{
 }
 /* オーバーラップ用スペーサー */
 .hex-overlap-spacer{
+  position:relative;
+  z-index:0;
+  isolation:isolate;
   width:100%;
   padding-top:calc(
     (100dvh - var(--header_height, 80px)) / 2
   )!important;
+  box-sizing:border-box;
+  font-size:0;
+  line-height:0;
   clear:both;
+}
+.hex-overlap-spacer::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 50%;
+  z-index:-1;
+  width:100vw;
+  background-color:var(--hex-overlap-spacer-bg, transparent);
+  transform:translateX(-50%);
+}
+.bg_post_index:has(.hex-overlap-spacer),
+.post_index:has(.hex-overlap-spacer),
+.post_index_contents:has(.hex-overlap-spacer),
+.content:has(.hex-overlap-spacer),
+.content_body:has(.hex-overlap-spacer){
+  overflow:visible!important;
 }
 
 /* =======================================
