@@ -14761,6 +14761,27 @@ hexReady(function(){
     document.body.appendChild(probe);
     var height=probe.getBoundingClientRect().height||80;probe.remove();return height;
   }
+  function sectionLandingOffset(node,header){
+    node=originalNode(node);
+    var edge=node.matches('.hex-bg-range')?node:node.querySelector('.hex-bg-range');
+    if(!edge)return header;
+    var value=getComputedStyle(edge).getPropertyValue('--hex-bg-upper-depth').trim();
+    if(!value)return header;
+    var probe=document.createElement('div');
+    probe.style.cssText='position:absolute;visibility:hidden;pointer-events:none;width:0;';
+    probe.style.height=value;edge.appendChild(probe);
+    var depth=probe.getBoundingClientRect().height;probe.remove();
+    return header+(depth>0?depth+16:0);
+  }
+  function sectionCoverColor(node){
+    var candidates=[node].concat(Array.from(node.querySelectorAll('.hex-bg-range,.background_color,.gc_auto_frame_spotitem_basewidth')));
+    for(var i=0;i<candidates.length;i++){
+      var style=getComputedStyle(candidates[i]);
+      var color=style.getPropertyValue('--hex-bg-range-color').trim()||style.backgroundColor;
+      if(color&&color!=='transparent'&&color!=='rgba(0, 0, 0, 0)')return color;
+    }
+    return '#fff';
+  }
   function geometry(top,height,start,end,header){
     // 短いセクションはヘッダー直下まで流す。長いセクションの負のtopは維持する。
     start=Math.max(0,start,top-header);
@@ -14785,8 +14806,8 @@ hexReady(function(){
     var scroll=scrollPosition(),disabled=reduced&&reduced.matches;
     managed.forEach(function(item){
       // JSで変えるのは白い幕の濃度だけ。固定位置・translateはスクロール中に更新しない。
-      var progress=Math.max(0,Math.min(1,(scroll-item.start)/Math.max(1,window.innerHeight*.5)));
-      var opacity=disabled?0:Math.round(progress*.6*1000)/1000;
+      var progress=Math.max(0,Math.min(1,(scroll-item.start)/Math.max(1,item.fadeEnd-item.start)));
+      var opacity=disabled?0:Math.round(progress*1000)/1000;
       if(item.opacity!==opacity){item.opacity=opacity;item.veil.style.opacity=String(opacity);}
     });
   }
@@ -14807,7 +14828,7 @@ hexReady(function(){
       var box=hero.getBoundingClientRect();
       if(box.height<=0||getComputedStyle(next).display==='none')return;
       ranges.push({from:Math.max(0,Math.min(maximumScroll,box.bottom+scroll-window.innerHeight)),
-        to:Math.max(0,Math.min(maximumScroll,originalNode(next).getBoundingClientRect().top+scroll-header))});
+        to:Math.max(0,Math.min(maximumScroll,originalNode(next).getBoundingClientRect().top+scroll-sectionLandingOffset(next,header)))});
     });
   }
   function homeSnapRange(entry,scroll,header,maximumScroll){
@@ -14817,7 +14838,7 @@ hexReady(function(){
     // 距離は最大でも画面高さ−ヘッダー。離れたセクションへ飛ばない。
     var boundary=entry.marker.getBoundingClientRect().top+scroll;
     return {from:Math.max(0,Math.min(maximumScroll,boundary-window.innerHeight)),
-      to:Math.max(0,Math.min(maximumScroll,boundary-header)),home:true};
+      to:Math.max(0,Math.min(maximumScroll,boundary-sectionLandingOffset(entry.front,header))),home:true};
   }
   function refreshHomeSnapRanges(){
     if(!homeFoundedSection())return;
@@ -14873,7 +14894,7 @@ hexReady(function(){
       var bottom=back.getBoundingClientRect().bottom+scroll;
       var nextTop=entry.marker.getBoundingClientRect().top+scroll;
       return {from:Math.max(0,Math.min(maximumScroll,bottom-window.innerHeight)),
-        to:Math.max(0,Math.min(maximumScroll,nextTop-header))};
+        to:Math.max(0,Math.min(maximumScroll,nextTop-sectionLandingOffset(entry.front,header)))};
     });
     entries.forEach(function(entry){
       var range=homeSnapRange(entry,scroll,header,maximumScroll);
@@ -14888,7 +14909,9 @@ hexReady(function(){
       if(!relevant.length)return null;
       var start=relevant[0].start,end=relevant[relevant.length-1].start+window.innerHeight;
       var top=item.runway.getBoundingClientRect().top+scroll,height=item.sticky.getBoundingClientRect().height;
-      var g=geometry(top,height,start,end,header);
+      var g=geometry(top,height,start,end,sectionLandingOffset(item.node,header));
+      item.fadeEnd=relevant[0].marker.getBoundingClientRect().top+scroll-sectionLandingOffset(relevant[0].front,header);
+      item.veil.style.backgroundColor=sectionCoverColor(item.node);
       // 最後のセクションが短い場合も、runwayがページ末尾を押し広げない。
       g.tail=Math.min(g.tail,Math.max(0,documentBottom-top-height));g.height=height+g.tail;
       return {item:item,layout:g};
