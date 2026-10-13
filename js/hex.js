@@ -14452,7 +14452,7 @@ hexReady(function(){
   }
   function snapExcluded(target){
     if(!target||target.nodeType!==1)return true;
-    if(target.closest('a,button,input,textarea,select,iframe,canvas,[contenteditable="true"],[data-lenis-prevent],.hex-anchor-nav,.hex-gallery,.hex-webgl-stage'))return true;
+    if(target.closest('input,textarea,select,iframe,canvas,[contenteditable="true"],[data-lenis-prevent],.hex-anchor-nav,.hex-gallery,.hex-webgl-stage'))return true;
     // ナビ等の内部スクロールや、固定UIの操作はページスナップに使わない。
     for(var node=target;node&&node!==document.body;node=node.parentElement){
       var style=getComputedStyle(node);
