@@ -175,25 +175,39 @@ hexReady(function(){
     'hex-bg-triangle-medium',
     'hex-bg-triangle-small'
   ];
-  /* 抽選候補はここだけで指定する。採用する上端装飾を絞る場合は候補を変更する。 */
-  var backgroundRandomCandidates=[
-    'hex-bg-wave-large-left',
-    'hex-bg-wave-large-right',
-    'hex-bg-wave-medium',
-    'hex-bg-round-top',
-    'hex-bg-slant-left',
-    'hex-bg-slant-right',
-    'hex-bg-triangle-medium'
+  /* ページ上から曲線→直線を交互に抽選。各グループ内では使い切るまで重複なし。 */
+  var backgroundRandomGroups=[
+    [
+      'hex-bg-wave-large-left',
+      'hex-bg-wave-large-right',
+      'hex-bg-wave-medium'
+    ],
+    [
+      'hex-bg-slant-left',
+      'hex-bg-slant-right',
+      'hex-bg-triangle-medium'
+    ]
   ];
-  var backgroundShapeBag=[];
+  var backgroundShapeBags=backgroundRandomGroups.map(function(){return [];});
+  var nextBackgroundGroup=0;
   var previousBackgroundEndShape=null;
   function drawBackgroundShape(){
-    var candidates=backgroundRandomCandidates.filter(function(shape,index,list){
-      return backgroundShapes.indexOf(shape)!==-1&&list.indexOf(shape)===index;
-    });
-    if(!candidates.length)return null;
-    if(!backgroundShapeBag.length)backgroundShapeBag=candidates.slice();
-    return backgroundShapeBag.splice(Math.floor(Math.random()*backgroundShapeBag.length),1)[0];
+    for(var offset=0;offset<backgroundRandomGroups.length;offset++){
+      var groupIndex=(nextBackgroundGroup+offset)%backgroundRandomGroups.length;
+      var candidates=backgroundRandomGroups[groupIndex].filter(function(shape,index,list){
+        return backgroundShapes.indexOf(shape)!==-1&&list.indexOf(shape)===index;
+      });
+      if(!candidates.length)continue;
+      var bag=(backgroundShapeBags[groupIndex]||[]).filter(function(shape){
+        return candidates.indexOf(shape)!==-1;
+      });
+      if(!bag.length)bag=candidates.slice();
+      var shape=bag.splice(Math.floor(Math.random()*bag.length),1)[0];
+      backgroundShapeBags[groupIndex]=bag;
+      nextBackgroundGroup=(groupIndex+1)%backgroundRandomGroups.length;
+      return shape;
+    }
+    return null;
   }
   function applyRandomBackgroundShape(wrapper){
     if(!wrapper.classList.contains('hex-bg-random'))return;
