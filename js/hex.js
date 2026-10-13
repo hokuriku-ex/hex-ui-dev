@@ -648,7 +648,6 @@ function hexInitAnchorNav(){
     var offset=getHexAnchorOffset();
     if(window.hexOverlapAnchor){
       window.hexOverlapAnchor.cancelSnap();
-      offset+=window.hexOverlapAnchor.shapeClearance(target);
     }
     var startsBeforeFixed=
       !nav.classList.contains('is-fixed');
@@ -664,6 +663,9 @@ function hexInitAnchorNav(){
     // 再計測は座標取得前に実行。固定中の表示位置を移動先に使わない。
     if(window.hexMotion&&typeof window.hexMotion.refreshLayout==='function'){
       window.hexMotion.refreshLayout();
+    }
+    if(window.hexOverlapAnchor){
+      offset+=window.hexOverlapAnchor.shapeClearance(target);
     }
     var targetTop;
     var sticky=target.closest('.hex-rise-sticky');
@@ -14784,7 +14786,14 @@ hexReady(function(){
   window.hexOverlapAnchor={
     cancelSnap:function(){cancelSnap(true);},
     shapeClearance:function(target){
-      var section=target.closest('.hex-bg-range')||target.closest('[id^="gc_auto_frame_"],.content_body');
+      // 内側のCMS枠だけで探索を終えず、固定されるセクションまで確認する。
+      var section=target.closest('.hex-bg-range');
+      if(!section){
+        for(var parent=target.parentElement;parent&&parent!==document.body;parent=parent.parentElement){
+          if(parent.querySelector('.hex-bg-range')){section=parent;break;}
+          if(parent.matches('.hex-rise-sticky,.content_body'))break;
+        }
+      }
       return section?Math.max(0,sectionLandingOffset(section,0)-16):0;
     }
   };
