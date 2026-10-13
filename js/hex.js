@@ -180,12 +180,14 @@ hexReady(function(){
     [
       'hex-bg-wave-large-left',
       'hex-bg-wave-large-right',
-      'hex-bg-wave-medium'
+      'hex-bg-wave-medium',
+      'hex-bg-wave-small'
     ],
     [
       'hex-bg-slant-left',
       'hex-bg-slant-right',
-      'hex-bg-triangle-medium'
+      'hex-bg-triangle-medium',
+      'hex-bg-triangle-small'
     ]
   ];
   var backgroundShapeBags=backgroundRandomGroups.map(function(){return [];});
@@ -14768,6 +14770,7 @@ hexReady(function(){
         blocks:[],start:0,home:true,foundedEnd:!index};
       marker._hexRiseEntry=entry;entries.push(entry);
       front.classList.add('hex-home-overlap-front');
+      front.classList.add('hex-bg-round-top');
       prepareFlow(front);prepareFlow(entry.back);raiseFollowing(entry);
       if(sizeObserver)sizeObserver.observe(front);
     });
@@ -14787,7 +14790,7 @@ hexReady(function(){
     node=originalNode(node);
     var home=!!homeFoundedSection()&&(node.matches('[id^="gc_auto_frame_home_"],.gc_auto_frame_footer'));
     var base=header+(home?16:0);
-    var edge=node.matches('.hex-bg-range')?node:node.querySelector('.hex-bg-range');
+    var edge=node.matches('.hex-bg-range,.hex-home-overlap-front.hex-bg-round-top')?node:node.querySelector('.hex-bg-range');
     if(!edge)return base;
     var value=getComputedStyle(edge).getPropertyValue('--hex-bg-upper-depth').trim();
     if(!value)return base;

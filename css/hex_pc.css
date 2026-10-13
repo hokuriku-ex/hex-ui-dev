@@ -10455,3 +10455,10 @@ html.hex-overlap-snap-animating{
   --hex-wave-lower-width:100%;
   --hex-wave-lower-mask:var(--hex-wave-large-right-end-mask);
 }
+
+/* トップ：オーバーラップするセクション全体の上端を角丸にする。 */
+.hex-home-overlap-front.hex-bg-round-top{
+  --hex-bg-upper-depth:var(--hex-bg-round-radius);
+  -webkit-clip-path:inset(0 round var(--hex-bg-round-radius) var(--hex-bg-round-radius) 0 0);
+  clip-path:inset(0 round var(--hex-bg-round-radius) var(--hex-bg-round-radius) 0 0);
+}
