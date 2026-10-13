@@ -94,6 +94,27 @@ function hexLoad(callback){
   }
 }
 
+/* 創業末尾の連続した空スペーサー。途中の見出し前の余白は含めない。 */
+function hexFoundedTrailingSpacers(section){
+  if(section._hexFoundedTrailingSpacers&&section.querySelector('.hex-founded-overlap-tail')){
+    return section._hexFoundedTrailingSpacers;
+  }
+  var body=section.querySelector('.gc_auto_frame_spotitem_body');
+  if(!body)return [];
+  var branches=Array.from(body.children),spacers=[],started=false;
+  for(var i=branches.length-1;i>=0;i--){
+    var branch=branches[i];
+    var spacer=branch.matches('.rsp_spacer4')?branch:branch.querySelector('.rsp_spacer4');
+    if(spacer&&!spacer.children.length&&!spacer.textContent.trim()&&!branch.textContent.trim()){
+      spacers.unshift(spacer);started=true;continue;
+    }
+    if(!started)continue;
+    if(branch.textContent.trim()||branch.querySelector('img,video,iframe,canvas,.hex-card-grid,.hex-hashtag-banner'))break;
+  }
+  section._hexFoundedTrailingSpacers=spacers;
+  return spacers;
+}
+
 /* =======================================
    トップページ交互背景
 ======================================= */
@@ -12874,14 +12895,10 @@ hexLoad(function(){
              画面外の境界も保持し、途中で角丸が画面端に張り付かないようにする。 */
           var holeTop=sectionRect.top;
           var holeBottom=sectionRect.bottom;
-          /* 末尾の空スペーサー2つ：1つ目まで写真、2つ目は紺の余白。 */
-          var emptySpacers=Array.prototype.filter.call(
-            section.querySelectorAll('.rsp_spacer4'),function(spacer){
-              return spacer.children.length===0&&!spacer.textContent.trim();
-            }
-          );
+          /* 末尾が3連続なら、1つ目まで写真、2・3つ目は紺の余白。 */
+          var emptySpacers=hexFoundedTrailingSpacers(section);
           if(emptySpacers.length>=2){
-            var navySpacer=emptySpacers[emptySpacers.length-1];
+            var navySpacer=emptySpacers[emptySpacers.length-(emptySpacers.length>=3?2:1)];
             holeBottom=Math.min(holeBottom,navySpacer.getBoundingClientRect().top);
           }
           /* HTMLで同一セクション内に置かれた帯も、写真と重ねない。 */
@@ -14686,9 +14703,30 @@ hexReady(function(){
   }
   function scanHome(){
     var sections=homeOverlapSections();
+    var founded=homeFoundedSection(),tail=null;
+    var spacers=founded?hexFoundedTrailingSpacers(founded):[];
+    if(spacers.length>=2){
+      tail=founded.querySelector('.hex-founded-overlap-tail');
+      if(!tail){
+        var first=spacers[spacers.length-(spacers.length>=3?2:1)];
+        var last=spacers[spacers.length-1];
+        var body=first.closest('.gc_auto_frame_spotitem_body');
+        var start=first,end=last;
+        while(start.parentElement&&start.parentElement!==body)start=start.parentElement;
+        while(end.parentElement&&end.parentElement!==body)end=end.parentElement;
+        if(body&&start.parentElement===body&&end.parentElement===body){
+          tail=document.createElement('div');tail.className='hex-founded-overlap-tail';
+          body.insertBefore(tail,start);
+          for(var branch=start;branch;){
+            var next=branch.nextElementSibling,done=branch===end;
+            tail.appendChild(branch);if(done)break;branch=next;
+          }
+        }
+      }
+    }
     sections.forEach(function(front,index){
-      // 創業を固定せず、創業の次は通常表示。その次から直前の一つに重ねる。
-      if(!index)return;
+      // 最初の境界だけ創業の末尾の紺余白を使い、創業本体は固定しない。
+      if(!index&&(!tail||front.id!==HOME_SECTIONS.FIRST))return;
       var marker=front._hexHomeRiseMarker;
       if(!marker){
         marker=document.createElement('div');
@@ -14699,8 +14737,10 @@ hexReady(function(){
         front._hexHomeRiseMarker=marker;
       }
       if(marker._hexRiseEntry)return;
-      var entry={marker:marker,back:sections[index-1],front:front,blocks:[],start:0,home:true};
+      var entry={marker:marker,back:index?sections[index-1]:tail,front:front,
+        blocks:[],start:0,home:true,foundedTail:!index};
       marker._hexRiseEntry=entry;entries.push(entry);
+      front.classList.add('hex-home-overlap-front');
       prepareFlow(front);prepareFlow(entry.back);raiseFollowing(entry);
       if(sizeObserver)sizeObserver.observe(front);
     });
@@ -14725,7 +14765,10 @@ hexReady(function(){
   function createItem(node){
     var runway=document.createElement('div'),sticky=document.createElement('div'),veil=document.createElement('div');
     runway.className='hex-rise-runway';sticky.className='hex-rise-sticky';veil.className='hex-rise-veil';
-    if(homeFoundedSection())runway.style.overflowAnchor='none';
+    if(homeFoundedSection()){
+      runway.style.overflowAnchor='none';
+      if(!node.classList.contains('hex-founded-overlap-tail'))runway.classList.add('hex-rise-home-runway');
+    }
     veil.setAttribute('aria-hidden','true');
     node.parentNode.insertBefore(runway,node);
     runway.appendChild(sticky);sticky.appendChild(node);sticky.appendChild(veil);
@@ -14764,7 +14807,7 @@ hexReady(function(){
   }
   function homeSnapRange(entry,scroll,header,maximumScroll){
     if(window.innerWidth<=768||!entry.home||typeof HOME_SECTIONS==='undefined'||
-      !/^gc_auto_frame_home_(?:[5-9]|1[0-7])$/.test(entry.back.id))return null;
+      (!entry.foundedTail&&!/^gc_auto_frame_home_(?:[5-9]|1[0-7])$/.test(entry.back.id)))return null;
     // stickyを自然な配置へ戻してから、次の天端一つで両方の停止点を決める。
     // 距離は最大でも画面高さ−ヘッダー。離れたセクションへ飛ばない。
     var boundary=entry.marker.getBoundingClientRect().top+scroll;

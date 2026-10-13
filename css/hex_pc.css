@@ -10189,6 +10189,14 @@ html.hex-overlap-snap-animating{
   position:sticky;display:flow-root;overflow:visible!important;
   width:100%;box-sizing:border-box;
 }
+/* 創業の末尾の紺余白だけを固定。本文・写真・紙吹雪を固定枠へ入れない。 */
+.hex-founded-overlap-tail{position:relative;display:flow-root;}
+.hex-founded-overlap-tail::before{
+  content:"";position:absolute;inset:0 auto 0 50%;width:100vw;
+  transform:translateX(-50%);background:#1f2774;pointer-events:none;z-index:-1;
+}
+/* 創業本体（z-index:94）より前へ重ね、以降はDOM順に重なる。 */
+.hex-rise-home-runway,.hex-home-overlap-front{z-index:95!important;}
 .hex-rise-veil{
   position:absolute;inset:0 auto 0 50%;width:100vw;
   transform:translateX(-50%);z-index:2147480000;
