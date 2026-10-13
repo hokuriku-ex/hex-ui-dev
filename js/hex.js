@@ -14785,15 +14785,17 @@ hexReady(function(){
   }
   function sectionLandingOffset(node,header){
     node=originalNode(node);
+    var home=!!homeFoundedSection()&&(node.matches('[id^="gc_auto_frame_home_"],.gc_auto_frame_footer'));
+    var base=header+(home?16:0);
     var edge=node.matches('.hex-bg-range')?node:node.querySelector('.hex-bg-range');
-    if(!edge)return header;
+    if(!edge)return base;
     var value=getComputedStyle(edge).getPropertyValue('--hex-bg-upper-depth').trim();
-    if(!value)return header;
+    if(!value)return base;
     var probe=document.createElement('div');
     probe.style.cssText='position:absolute;visibility:hidden;pointer-events:none;width:0;';
     probe.style.height=value;edge.appendChild(probe);
     var depth=probe.getBoundingClientRect().height;probe.remove();
-    return header+(depth>0?depth+16:0);
+    return depth>0?header+depth+16:base;
   }
   window.hexOverlapAnchor={
     cancelSnap:function(){cancelSnap(true);},
@@ -14834,6 +14836,8 @@ hexReady(function(){
     veil.setAttribute('aria-hidden','true');
     node.parentNode.insertBefore(runway,node);
     runway.appendChild(sticky);sticky.appendChild(node);sticky.appendChild(veil);
+    // トップも共通の背景色幕を使用。ぼかしは併用しない。
+    veil.style.backdropFilter='none';veil.style.webkitBackdropFilter='none';veil.style.filter='none';
     var item={node:node,runway:runway,sticky:sticky,veil:veil,start:0,opacity:-1};
     runway._hexRiseItem=item;
     prepareFlow(runway);if(sizeObserver)sizeObserver.observe(sticky);return item;
