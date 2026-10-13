@@ -10179,13 +10179,6 @@ html.hex-overlap-snap-animating{
   overscroll-behavior-y:none;
   scrollbar-gutter:stable;
 }
-/* SPスナップ：停止点で慣性を遮断し、次の操作まで一度止める。 */
-@media(max-width:768px){
-  html.hex-overlap-snap-hold{
-    overflow-y:hidden!important;
-    overscroll-behavior-y:none;
-  }
-}
 
 /* ネイティブsticky：スクロール量を逆方向の移動で相殺しない */
 .hex-rise-runway{
