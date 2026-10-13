@@ -14786,6 +14786,7 @@ hexReady(function(){
     document.body.appendChild(probe);
     var height=probe.getBoundingClientRect().height||80;probe.remove();return height;
   }
+  var landingDepthCache=new WeakMap();
   function sectionLandingOffset(node,header){
     node=originalNode(node);
     var home=!!homeFoundedSection()&&(node.matches('[id^="gc_auto_frame_home_"],.gc_auto_frame_footer'));
@@ -14794,10 +14795,16 @@ hexReady(function(){
     if(!edge)return base;
     var value=getComputedStyle(edge).getPropertyValue('--hex-bg-upper-depth').trim();
     if(!value)return base;
-    var probe=document.createElement('div');
-    probe.style.cssText='position:absolute;visibility:hidden;pointer-events:none;width:0;';
-    probe.style.height=value;edge.appendChild(probe);
-    var depth=probe.getBoundingClientRect().height;probe.remove();
+    var key=value+'|'+window.innerWidth+'|'+window.innerHeight;
+    var cached=landingDepthCache.get(edge),depth;
+    if(cached&&cached.key===key){depth=cached.depth;}
+    else{
+      var probe=document.createElement('div');
+      probe.style.cssText='position:absolute;visibility:hidden;pointer-events:none;width:0;';
+      probe.style.height=value;edge.appendChild(probe);
+      depth=probe.getBoundingClientRect().height;probe.remove();
+      landingDepthCache.set(edge,{key:key,depth:depth});
+    }
     return depth>0?header+depth+16:base;
   }
   window.hexOverlapAnchor={

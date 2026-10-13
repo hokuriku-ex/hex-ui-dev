@@ -10456,9 +10456,15 @@ html.hex-overlap-snap-animating{
   --hex-wave-lower-mask:var(--hex-wave-large-right-end-mask);
 }
 
-/* トップ：オーバーラップするセクション全体の上端を角丸にする。 */
+/* トップ：コンテンツ全体は切り抜かず、背景レイヤーのみ角丸にする。 */
 .hex-home-overlap-front.hex-bg-round-top{
   --hex-bg-upper-depth:var(--hex-bg-round-radius);
-  -webkit-clip-path:inset(0 round var(--hex-bg-round-radius) var(--hex-bg-round-radius) 0 0);
-  clip-path:inset(0 round var(--hex-bg-round-radius) var(--hex-bg-round-radius) 0 0);
+  border-radius:var(--hex-bg-round-radius) var(--hex-bg-round-radius) 0 0;
+}
+.hex-home-overlap-front.hex-bg-round-top > .gc_auto_frame_spotitem > .background_color,
+.hex-home-overlap-front.hex-bg-round-top > .gc_auto_frame_spotitem > .gc_auto_frame_spotitem_basewidth{
+  border-radius:var(--hex-bg-round-radius) var(--hex-bg-round-radius) 0 0;
+}
+.hex-rise-home-runway > .hex-rise-sticky > .hex-home-overlap-front.hex-bg-round-top + .hex-rise-veil{
+  border-radius:var(--hex-bg-round-radius) var(--hex-bg-round-radius) 0 0;
 }
