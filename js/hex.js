@@ -14473,7 +14473,7 @@ hexReady(function(){
     holdSnapStop(stop);return true;
   }
   function snapEnabled(){
-    // まずトップのPC・初めての方へ→サービス案内だけで自動着地を検証する。
+    // トップのPCは創業の次以降の境界だけに自動着地を適用。SPは手動を維持。
     if(homeFoundedSection()&&(window.innerWidth<=768||
       !snapRanges.some(function(range){return range.home;})))return false;
     if(reduced&&reduced.matches)return false;
@@ -14807,7 +14807,7 @@ hexReady(function(){
   }
   function homeSnapRange(entry,scroll,header,maximumScroll){
     if(window.innerWidth<=768||!entry.home||typeof HOME_SECTIONS==='undefined'||
-      entry.back.id!==HOME_SECTIONS.FIRST||entry.front.id!==HOME_SECTIONS.SERVICE)return null;
+      !/^gc_auto_frame_home_(?:[5-9]|1[0-7])$/.test(entry.back.id))return null;
     // stickyを自然な配置へ戻してから、次の天端一つで両方の停止点を決める。
     // 距離は最大でも画面高さ−ヘッダー。離れたセクションへ飛ばない。
     var boundary=entry.marker.getBoundingClientRect().top+scroll;
