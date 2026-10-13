@@ -14815,10 +14815,14 @@ hexReady(function(){
     }
   };
   function sectionCoverColor(node){
-    var candidates=[node].concat(Array.from(node.querySelectorAll('.hex-bg-range,.background_color,.gc_auto_frame_spotitem_basewidth')));
+    // トップの背景指定を、CMSの外側に残る白い背景より優先する。
+    if(node.classList.contains('hex-home-bg-gray'))return '#fafafa';
+    if(node.classList.contains('hex-home-bg-white'))return '#fff';
+    var candidates=Array.from(node.querySelectorAll('.hex-bg-range,.background_color,.gc_auto_frame_spotitem_basewidth')).concat([node]);
     for(var i=0;i<candidates.length;i++){
       var style=getComputedStyle(candidates[i]);
-      var color=style.getPropertyValue('--hex-bg-range-color').trim()||style.backgroundColor;
+      var color=candidates[i].matches('.hex-bg-range')
+        ?style.getPropertyValue('--hex-bg-range-color').trim()||style.backgroundColor:style.backgroundColor;
       if(color&&color!=='transparent'&&color!=='rgba(0, 0, 0, 0)')return color;
     }
     return '#fff';
@@ -14849,7 +14853,15 @@ hexReady(function(){
     var scroll=scrollPosition(),disabled=reduced&&reduced.matches;
     managed.forEach(function(item){
       // JSで変えるのは白い幕の濃度だけ。固定位置・translateはスクロール中に更新しない。
-      var progress=Math.max(0,Math.min(1,(scroll-item.start)/Math.max(1,item.fadeEnd-item.start)));
+      // sticky設定後の実表示位置に同期。自然座標との差で開始が遅れるのを防ぐ。
+      var progress;
+      if(item.fadeFront){
+        var frontTop=item.fadeFront.getBoundingClientRect().top;
+        progress=(window.innerHeight-frontTop)/Math.max(1,window.innerHeight-item.fadeOffset);
+      }else{
+        progress=(scroll-item.start)/Math.max(1,item.fadeEnd-item.start);
+      }
+      progress=Math.max(0,Math.min(1,progress));
       var opacity=disabled?0:Math.round(progress*1000)/1000;
       if(item.opacity!==opacity){item.opacity=opacity;item.veil.style.opacity=String(opacity);}
     });
@@ -14954,6 +14966,8 @@ hexReady(function(){
       var top=item.runway.getBoundingClientRect().top+scroll,height=item.sticky.getBoundingClientRect().height;
       var g=geometry(top,height,start,end,sectionLandingOffset(item.node,header));
       item.fadeEnd=relevant[0].marker.getBoundingClientRect().top+scroll-sectionLandingOffset(relevant[0].front,header);
+      item.fadeFront=originalNode(relevant[0].front);
+      item.fadeOffset=sectionLandingOffset(relevant[0].front,header);
       item.veil.style.backgroundColor=sectionCoverColor(item.node);
       // 最後のセクションが短い場合も、runwayがページ末尾を押し広げない。
       g.tail=Math.min(g.tail,Math.max(0,documentBottom-top-height));g.height=height+g.tail;
