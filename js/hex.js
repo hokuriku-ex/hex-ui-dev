@@ -14428,6 +14428,7 @@ hexReady(function(){
   var snapHeldTarget=null;
   var snapBlockedTouch=false;
   var snapInputLocked=false,snapOrigin=0,snapDestination=0;
+  var homeWheelLast=0,homeWheelDirection=0,homeWheelConsumed=false;
   function setSnapInputLock(locked){
     snapInputLocked=locked;
     document.documentElement.classList.toggle('hex-overlap-snap-animating',locked);
@@ -14471,8 +14472,9 @@ hexReady(function(){
     holdSnapStop(stop);return true;
   }
   function snapEnabled(){
-    // トップの独自演出と干渉しないよう、自動着地は下層だけに適用する。
-    if(homeFoundedSection())return false;
+    // まずトップのPC・初めての方へ→サービス案内だけで自動着地を検証する。
+    if(homeFoundedSection()&&(window.innerWidth<=768||
+      !snapRanges.some(function(range){return range.home;})))return false;
     if(reduced&&reduced.matches)return false;
     if(window.innerWidth<=768&&window.hexMotion&&window.hexMotion.usesLenis)return false;
     if(window.hexMotion&&window.hexMotion.lenis&&window.hexMotion.lenis.isStopped)return false;
@@ -14534,6 +14536,7 @@ hexReady(function(){
     if(Math.abs(position-snapGesture.scrollStart)<3)return;
     var target=chooseSnapTarget(snapRanges,position,snapGesture,window.innerHeight);
     if(target===null)return;
+    if(homeFoundedSection())homeWheelConsumed=true;
     snapActive=true;
     snapOrigin=position;snapDestination=target;
     setSnapInputLock(true);
@@ -14600,6 +14603,20 @@ hexReady(function(){
     snapPending=true;scheduleSnap();
   }
   function onSnapWheel(event){
+    if(homeFoundedSection()){
+      if(event.ctrlKey||event.shiftKey||Math.abs(event.deltaY)<1||
+        Math.abs(event.deltaX)>Math.abs(event.deltaY)||snapExcluded(event.target))return;
+      var direction=event.deltaY>0?1:-1,now=Date.now();
+      var continuation=homeWheelConsumed&&direction===homeWheelDirection&&now-homeWheelLast<300;
+      homeWheelLast=now;homeWheelDirection=direction;
+      // 同じホイール操作の残りを別の自動着地として再登録しない。
+      if(continuation){
+        if(event.cancelable)event.preventDefault();
+        if(event.stopImmediatePropagation)event.stopImmediatePropagation();
+        return;
+      }
+      if(!snapInputLocked)homeWheelConsumed=false;
+    }
     if(snapInputLocked){
       if(event.cancelable)event.preventDefault();
       if(event.stopImmediatePropagation)event.stopImmediatePropagation();
@@ -14785,6 +14802,15 @@ hexReady(function(){
         to:Math.max(0,Math.min(maximumScroll,originalNode(next).getBoundingClientRect().top+scroll-header))});
     });
   }
+  function homeSnapRange(entry,scroll,header,maximumScroll){
+    if(window.innerWidth<=768||!entry.home||typeof HOME_SECTIONS==='undefined'||
+      entry.back.id!==HOME_SECTIONS.FIRST||entry.front.id!==HOME_SECTIONS.SERVICE)return null;
+    // stickyを自然な配置へ戻してから、次の天端一つで両方の停止点を決める。
+    // 距離は最大でも画面高さ−ヘッダー。離れたセクションへ飛ばない。
+    var boundary=entry.marker.getBoundingClientRect().top+scroll;
+    return {from:Math.max(0,Math.min(maximumScroll,boundary-window.innerHeight)),
+      to:Math.max(0,Math.min(maximumScroll,boundary-header)),home:true};
+  }
   function measure(){
     measureFrame=0;
     var scroll=scrollPosition();
@@ -14830,6 +14856,10 @@ hexReady(function(){
       var nextTop=entry.marker.getBoundingClientRect().top+scroll;
       return {from:Math.max(0,Math.min(maximumScroll,bottom-window.innerHeight)),
         to:Math.max(0,Math.min(maximumScroll,nextTop-header))};
+    });
+    entries.forEach(function(entry){
+      var range=homeSnapRange(entry,scroll,header,maximumScroll);
+      if(range)snapRanges.push(range);
     });
     // 開始マーカーがないページでも、タイトル→次セクションは同じスナップを使う。
     addTitleSnapRanges(snapRanges,scroll,header,maximumScroll);
