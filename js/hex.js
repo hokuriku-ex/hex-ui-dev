@@ -167,54 +167,64 @@ hexReady(function(){
     var index=Math.floor(Math.random()*backgroundShapeBag.length);
     wrapper.classList.add(backgroundShapeBag.splice(index,1)[0]);
   }
+  function findBackgroundEnd(start,body){
+    var markers=Array.from(body.querySelectorAll('.hex-bg-start,.hex-bg-end'))
+      .filter(function(marker){return marker.closest('.content_body')===body;});
+    var index=markers.indexOf(start);
+    if(index===-1)return null;
+    for(var i=index+1;i<markers.length;i++){
+      if(markers[i].classList.contains('hex-bg-start'))return null;
+      if(markers[i].classList.contains('hex-bg-end'))return markers[i];
+    }
+    return null;
+  }
+  function backgroundMarkerClasses(marker){
+    var classes=(marker.dataset.bgClass||'').split(/\s+/).filter(Boolean);
+    // data-bg-classに加え、マーカーへの直接の形状クラス指定にも対応する。
+    Array.from(marker.classList).forEach(function(className){
+      if((backgroundShapes.indexOf(className)!==-1||className==='hex-bg-random')&&classes.indexOf(className)===-1)classes.push(className);
+    });
+    return classes;
+  }
+  function isBackgroundShape(className){return backgroundShapes.indexOf(className)!==-1||className==='hex-bg-random';}
+  function applyBackgroundDecoration(wrapper,start,end){
+    var upper=backgroundMarkerClasses(start),lower=backgroundMarkerClasses(end);
+    var useLower=lower.some(isBackgroundShape);
+    // 下端を優先。上端・下端の形状を同時には適用しない。
+    var selected=useLower?lower:upper;
+    upper.filter(function(className){return !isBackgroundShape(className);}).forEach(function(className){wrapper.classList.add(className);});
+    selected.forEach(function(className){wrapper.classList.add(className);});
+    if(selected.some(isBackgroundShape))wrapper.classList.add(useLower?'hex-bg-decoration-end':'hex-bg-decoration-start');
+    applyRandomBackgroundShape(wrapper);
+  }
   document.querySelectorAll('.hex-bg-start').forEach(function(start){
     var body=start.closest('.content_body');
     if(!body)return;
 
-    var end=body.querySelector('.hex-bg-end');
+    var end=findBackgroundEnd(start,body);
     if(!end)return;
 
-    var startBlock=start.closest(
-      ':scope > span'
-    ) || start;
-
-    var endBlock=end.closest(
-      ':scope > span'
-    ) || end;
-
-    /* HOPWEBの直下ブロックまで取得 */
-    while(startBlock.parentElement!==body){
-      startBlock=startBlock.parentElement;
-    }
-
-    while(endBlock.parentElement!==body){
-      endBlock=endBlock.parentElement;
-    }
+    // 同一HTMLパーツ内の開始・終了も扱えるよう、両方を含む親を基準にする。
+    var parent=start.parentElement;
+    while(parent&&!parent.contains(end))parent=parent.parentElement;
+    if(!parent||!body.contains(parent)&&parent!==body)return;
+    var startBlock=start,endBlock=end;
+    while(startBlock.parentElement!==parent)startBlock=startBlock.parentElement;
+    while(endBlock.parentElement!==parent)endBlock=endBlock.parentElement;
 
     var color=start.dataset.bgColor || '#fff';
     var wrapper=document.createElement('div');
 
     wrapper.className='hex-bg-range';
 
-    var customClass=start.dataset.bgClass;
-
-    if(customClass){
-      customClass
-        .split(/\s+/)
-        .filter(Boolean)
-        .forEach(function(className){
-          wrapper.classList.add(className);
-        });
-    }
-
-    applyRandomBackgroundShape(wrapper);
+    applyBackgroundDecoration(wrapper,start,end);
 
     wrapper.style.setProperty(
       '--hex-bg-range-color',
       color
     );
 
-    body.insertBefore(wrapper,startBlock.nextSibling);
+    parent.insertBefore(wrapper,startBlock.nextSibling);
 
     var current=wrapper.nextSibling;
 
@@ -226,6 +236,7 @@ hexReady(function(){
 
     startBlock.style.display='none';
     endBlock.style.display='none';
+    if(!wrapper.textContent.trim()&&wrapper.getBoundingClientRect().height<1)wrapper.classList.add('hex-bg-empty');
   });
 });
 

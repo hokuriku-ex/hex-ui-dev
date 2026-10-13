@@ -10290,3 +10290,42 @@ html.hex-overlap-snap-animating{
   -webkit-mask-position:center top,left top,right top,center bottom,0 25.5px;
   mask-position:center top,left top,right top,center bottom,0 25.5px;
 }
+
+/* 下端指定専用：上端の形状と同じ曲線方向を保ち、下端に配置する。 */
+:root{
+  --hex-curve-up-end-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M0%200%20H100%20V100%20Q50%20-100%200%20100%20Z%22%20fill%3D%22black%22%2F%3E%3C%2Fsvg%3E");
+  --hex-curve-down-end-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M0%200%20H100%20Q50%20200%200%200%20Z%22%20fill%3D%22black%22%2F%3E%3C%2Fsvg%3E");
+}
+.hex-bg-range.hex-bg-decoration-end.hex-bg-curve-top::before{
+  -webkit-mask-image:var(--hex-curve-up-end-mask),linear-gradient(#000,#000),linear-gradient(#000,#000);
+  mask-image:var(--hex-curve-up-end-mask),linear-gradient(#000,#000),linear-gradient(#000,#000);
+}
+.hex-bg-range.hex-bg-decoration-end.hex-bg-curve-bottom::before{
+  -webkit-mask-image:var(--hex-curve-down-end-mask),linear-gradient(#000,#000),linear-gradient(#000,#000);
+  mask-image:var(--hex-curve-down-end-mask),linear-gradient(#000,#000),linear-gradient(#000,#000);
+}
+.hex-bg-range.hex-bg-decoration-end:is(.hex-bg-curve-top,.hex-bg-curve-bottom)::before{
+  border-radius:0;-webkit-clip-path:none;clip-path:none;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth)),100% 1px;
+  mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth)),100% 1px;
+  -webkit-mask-position:bottom,top,0 calc(100% - var(--hex-curve-depth) - .5px);
+  mask-position:bottom,top,0 calc(100% - var(--hex-curve-depth) - .5px);
+}
+.hex-bg-range.hex-bg-decoration-end.hex-bg-curve-top > *{top:0;}
+/* 下端の▽は従来の寸法・向きで描く。下端指定の範囲は通常背景より前に置く。 */
+.hex-bg-range.hex-bg-decoration-end.hex-bg-arrow{z-index:1;}
+.hex-bg-range.hex-bg-decoration-end.hex-bg-arrow::before{-webkit-mask:none;mask:none;}
+.hex-bg-range.hex-bg-decoration-end.hex-bg-arrow::after{
+  content:"";position:absolute;left:50%;bottom:-26px;z-index:2;
+  width:0;height:0;border-left:38px solid transparent;border-right:38px solid transparent;
+  border-top:26px solid var(--hex-bg-range-color,#fff);
+  transform:translateX(-50%);pointer-events:none;
+}
+/* 内容が空でも、装飾の描画に必要な高さを残す。 */
+.hex-bg-range.hex-bg-empty:is(.hex-bg-curve-top,.hex-bg-curve-bottom){min-height:var(--hex-curve-depth);}
+.hex-bg-range.hex-bg-empty.hex-bg-arrow{min-height:26px;}
+/* 空の下端▽は三角形だけを表示し、その高さを余白で確保する。 */
+.hex-bg-range.hex-bg-empty.hex-bg-decoration-end.hex-bg-arrow{
+  min-height:0;height:0;margin-bottom:26px;
+}
