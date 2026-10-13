@@ -658,6 +658,9 @@ function hexInitAnchorNav(){
      */
     if(startsBeforeFixed){
       offset+=getHexAnchorHeaderHeight();
+    }else{
+      // 固定済みナビでは、ナビ一段分の余白を追加して下で停止する。
+      offset+=getHexAnchorFixedHeight();
     }
 
     // 再計測は座標取得前に実行。固定中の表示位置を移動先に使わない。
