@@ -10221,8 +10221,8 @@ html.hex-overlap-snap-animating{
   -webkit-mask-image:var(--hex-arrow-top-mask),linear-gradient(#000,#000),linear-gradient(#000,#000),linear-gradient(#000,#000),linear-gradient(#000,#000);
   mask-image:var(--hex-arrow-top-mask),linear-gradient(#000,#000),linear-gradient(#000,#000),linear-gradient(#000,#000),linear-gradient(#000,#000);
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-  -webkit-mask-size:76px 26px,calc(50% - 38px) 100%,calc(50% - 38px) 100%,100% calc(100% - 26px),100% 1px;
-  mask-size:76px 26px,calc(50% - 38px) 100%,calc(50% - 38px) 100%,100% calc(100% - 26px),100% 1px;
+  -webkit-mask-size:76px 26px,calc(50% - 37px) 100%,calc(50% - 37px) 100%,100% calc(100% - 25px),100% 1px;
+  mask-size:76px 26px,calc(50% - 37px) 100%,calc(50% - 37px) 100%,100% calc(100% - 25px),100% 1px;
   -webkit-mask-position:center top,left top,right top,center bottom,0 25.5px;
   mask-position:center top,left top,right top,center bottom,0 25.5px;
 }
@@ -10254,12 +10254,12 @@ html.hex-overlap-snap-animating{
 }
 .content_body:has(.hex-bg-lower-arrow),
 .hex-rise-runway:has(.hex-bg-lower-arrow){position:relative;z-index:2;}
-/* ▽は上端のマスクと独立し、下端へ従来寸法で突出させる。 */
+/* ▽は下端へ26px突出。背景内に1px重ね、端数座標での隙間を防ぐ。 */
 .hex-bg-range.hex-bg-lower-arrow{z-index:1;}
 .hex-bg-range.hex-bg-lower-arrow::after{
   content:"";position:absolute;top:auto;left:50%;bottom:-26px;z-index:2;
   width:0;height:0;border-left:38px solid transparent;border-right:38px solid transparent;
-  border-top:26px solid var(--hex-bg-range-color,#fff);
+  border-top:27px solid var(--hex-bg-range-color,#fff);
   transform:translateX(-50%);pointer-events:none;
 }
 /* 空の範囲でも、上端と下端の装飾帯の合計分だけ高さを残す。 */
