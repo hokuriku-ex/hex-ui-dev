@@ -249,6 +249,11 @@
       96px
     )!important;
   }
+  .hex-overlap-spacer{
+    padding-top:calc(
+      (100dvh - var(--header_height_smartphone, clamp(64px, 20vw, 80px))) / 2
+    )!important;
+  }
 }
 
 /* =======================================
