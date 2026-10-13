@@ -249,6 +249,14 @@ hexReady(function(){
     endBlock.style.display='none';
     if(!wrapper.textContent.trim()&&wrapper.getBoundingClientRect().height<1)wrapper.classList.add('hex-bg-empty');
   });
+  // 下端の▼は次の.contentへ突出するため、内側の疑似要素だけでなく親の重なり順も確保する。
+  // ▼付きセクションが連続しても、前の下端が後の背景に隠れないよう前から高い値を割り当てる。
+  var backgroundContents=Array.from(document.querySelectorAll('.content'));
+  backgroundContents.forEach(function(content,index){
+    if(!content.querySelectorAll('.hex-bg-lower-arrow').length)return;
+    content.classList.add('hex-bg-lower-decoration-layer');
+    content.style.setProperty('--hex-bg-decoration-layer',String(backgroundContents.length-index+2));
+  });
 });
 
 /* =======================================
