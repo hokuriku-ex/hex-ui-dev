@@ -474,17 +474,13 @@
 /* 背景色範囲指定 */
 @media screen and (max-width:768px){
   .hex-bg-range:is(
-    .hex-bg-curve-both,
+    
     .hex-bg-curve-top,
     .hex-bg-curve-bottom
   )::before{
     width:140vw;
     -webkit-clip-path:none;
     clip-path:none;
-  }
-  /* 上下カーブ */
-  .hex-bg-range.hex-bg-curve-both::before{
-    border-radius:50% / 80px;
   }
   /* 上だけカーブ */
   .hex-bg-range.hex-bg-curve-top::before{
@@ -2802,11 +2798,8 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
 /* 既存SP専用の80px指定も、共通の幅連動指定へ統一 */
 
 /* 共通カーブ：内容の高さではなく画面幅に連動（PC・SP共通） */
-.hex-bg-range:is(.hex-bg-curve-both,.hex-bg-curve-top,.hex-bg-curve-bottom)::before{
+.hex-bg-range:is(.hex-bg-curve-top,.hex-bg-curve-bottom)::before{
   -webkit-clip-path:none;clip-path:none;
-}
-.hex-bg-range.hex-bg-curve-both::before{
-  border-radius:50% / var(--hex-curve-depth);
 }
 .hex-bg-range.hex-bg-curve-top::before{
   border-radius:50% 50% 0 0 / var(--hex-curve-depth) var(--hex-curve-depth) 0 0;
@@ -2828,9 +2821,9 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
 /* 横幅全体を一本の曲線にする。端が急に落ちるborder-radiusは使わない */
 :root{
   --hex-curve-top-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M0%20100%20Q50%20-100%20100%20100%20Z%22%20fill%3D%22black%22%2F%3E%3C%2Fsvg%3E");
-  --hex-curve-bottom-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M0%200%20H100%20Q50%20200%200%200%20Z%22%20fill%3D%22black%22%2F%3E%3C%2Fsvg%3E");
+  --hex-curve-bottom-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M0%200%20Q50%20200%20100%200%20V100%20H0%20Z%22%20fill%3D%22black%22%2F%3E%3C%2Fsvg%3E");
 }
-.hex-bg-range:is(.hex-bg-curve-both,.hex-bg-curve-top,.hex-bg-curve-bottom)::before,
+.hex-bg-range:is(.hex-bg-curve-top,.hex-bg-curve-bottom)::before,
 .pagetitle_type.pagetitle_type4.hex-page-hero > .contents::before{
   border-radius:0;-webkit-clip-path:none;clip-path:none;
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
@@ -2848,14 +2841,7 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   mask-image:var(--hex-curve-bottom-mask),linear-gradient(#000,#000);
   -webkit-mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth));
   mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth));
-  -webkit-mask-position:bottom,top;mask-position:bottom,top;
-}
-.hex-bg-range.hex-bg-curve-both::before{
-  -webkit-mask-image:var(--hex-curve-top-mask),var(--hex-curve-bottom-mask),linear-gradient(#000,#000);
-  mask-image:var(--hex-curve-top-mask),var(--hex-curve-bottom-mask),linear-gradient(#000,#000);
-  -webkit-mask-size:100% var(--hex-curve-depth),100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) - var(--hex-curve-depth));
-  mask-size:100% var(--hex-curve-depth),100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth) - var(--hex-curve-depth));
-  -webkit-mask-position:top,bottom,center;mask-position:top,bottom,center;
+  -webkit-mask-position:top,bottom;mask-position:top,bottom;
 }
 
 /* アーチと平面背景の接合部だけに1pxの同色帯を追加。曲線の位置は変えない */
@@ -2875,4 +2861,16 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-loading > .contents::after{
   visibility:hidden;
+}
+
+/* 下向きカーブ：上端の切り込み。下端は直線に統一する。 */
+.hex-bg-range.hex-bg-curve-bottom::before{
+  border-radius:0;-webkit-clip-path:none;clip-path:none;
+  -webkit-mask-image:var(--hex-curve-bottom-mask),linear-gradient(#000,#000),linear-gradient(#000,#000);
+  mask-image:var(--hex-curve-bottom-mask),linear-gradient(#000,#000),linear-gradient(#000,#000);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth)),100% 1px;
+  mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth)),100% 1px;
+  -webkit-mask-position:top,bottom,0 calc(var(--hex-curve-depth) - .5px);
+  mask-position:top,bottom,0 calc(var(--hex-curve-depth) - .5px);
 }

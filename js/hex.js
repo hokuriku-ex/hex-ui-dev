@@ -145,13 +145,13 @@ hexReady(function(){
   var backgroundShapes=[
     'hex-bg-curve-top',
     'hex-bg-curve-bottom',
-    'hex-bg-curve-both'
+    'hex-bg-arrow'
   ];
-  /* 抽選候補はここだけで指定する。上下を混ぜたくない場合は候補を絞る。 */
+  /* 抽選候補はここだけで指定する。採用する上端装飾を絞る場合は候補を変更する。 */
   var backgroundRandomCandidates=[
     'hex-bg-curve-top',
     'hex-bg-curve-bottom',
-    'hex-bg-curve-both'
+    'hex-bg-arrow'
   ];
   var backgroundShapeBag=[];
   function applyRandomBackgroundShape(wrapper){
