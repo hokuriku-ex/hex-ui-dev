@@ -473,12 +473,14 @@
 ======================================= */
 /* 背景色範囲指定 */
 @media screen and (max-width:768px){
+  /* アンカーナビ・共通背景の曲線をSPでは控えめな高さに統一。 */
+  :root{--hex-curve-depth:48px;}
   .hex-bg-range:is(
     
     .hex-bg-curve-top,
     .hex-bg-curve-bottom
   )::before{
-    width:140vw;
+    width:100vw;
     -webkit-clip-path:none;
     clip-path:none;
   }
