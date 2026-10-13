@@ -14824,6 +14824,8 @@ hexReady(function(){
     }
   };
   function sectionCoverColor(node){
+    // 創業の最終背景は紺色。外側の交互背景グレーより優先する。
+    if(node===homeFoundedSection())return '#1f2774';
     // トップの背景指定を、CMSの外側に残る白い背景より優先する。
     if(node.classList.contains('hex-home-bg-gray'))return '#fafafa';
     if(node.classList.contains('hex-home-bg-white'))return '#fff';
