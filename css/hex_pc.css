@@ -10278,34 +10278,40 @@ html.hex-overlap-snap-animating{
   --hex-wave-top-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M-1%2053.314%20L0%2050%20C8.333%2022.386%2016.667%200%2025%200%20C33.333%200%2041.667%2022.386%2050%2050%20C58.333%2077.614%2066.667%20100%2075%20100%20C83.333%20100%2091.667%2077.614%20100%2050%20L101%2046.686%20V101%20H-1%20Z%22%20fill%3D%22black%22%2F%3E%3C%2Fsvg%3E");
   --hex-wave-end-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20preserveAspectRatio%3D%22none%22%3E%3Cg%20transform%3D%22translate%280%20100%29%20scale%281%20-1%29%22%3E%3Cpath%20d%3D%22M-1%2053.314%20L0%2050%20C8.333%2022.386%2016.667%200%2025%200%20C33.333%200%2041.667%2022.386%2050%2050%20C58.333%2077.614%2066.667%20100%2075%20100%20C83.333%20100%2091.667%2077.614%20100%2050%20L101%2046.686%20V101%20H-1%20Z%22%20fill%3D%22black%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
 }
-.hex-bg-range.hex-bg-wave-large{
+.hex-bg-range:is(.hex-bg-wave-large,.hex-bg-wave-large-left){
   --hex-bg-upper-depth:var(--hex-wave-large-depth);
   --hex-wave-upper-width:100%;
+  --hex-wave-upper-mask:var(--hex-wave-top-mask);
 }
-.hex-bg-range.hex-bg-lower-wave-large{
+.hex-bg-range:is(.hex-bg-lower-wave-large,.hex-bg-lower-wave-large-left){
   --hex-bg-lower-depth:var(--hex-wave-large-depth);
   --hex-wave-lower-width:100%;
+  --hex-wave-lower-mask:var(--hex-wave-end-mask);
 }
 .hex-bg-range.hex-bg-wave-medium{
   --hex-bg-upper-depth:var(--hex-wave-medium-depth);
   --hex-wave-upper-width:var(--hex-wave-medium-width);
+  --hex-wave-upper-mask:var(--hex-wave-top-mask);
 }
 .hex-bg-range.hex-bg-lower-wave-medium{
   --hex-bg-lower-depth:var(--hex-wave-medium-depth);
   --hex-wave-lower-width:var(--hex-wave-medium-width);
+  --hex-wave-lower-mask:var(--hex-wave-end-mask);
 }
 .hex-bg-range.hex-bg-wave-small{
   --hex-bg-upper-depth:var(--hex-wave-small-depth);
   --hex-wave-upper-width:var(--hex-wave-small-width);
+  --hex-wave-upper-mask:var(--hex-wave-top-mask);
 }
 .hex-bg-range.hex-bg-lower-wave-small{
   --hex-bg-lower-depth:var(--hex-wave-small-depth);
   --hex-wave-lower-width:var(--hex-wave-small-width);
+  --hex-wave-lower-mask:var(--hex-wave-end-mask);
 }
-.hex-bg-range:is(.hex-bg-wave-large,.hex-bg-wave-medium,.hex-bg-wave-small)::before{
+.hex-bg-range:is(.hex-bg-wave-large,.hex-bg-wave-large-left,.hex-bg-wave-large-right,.hex-bg-wave-medium,.hex-bg-wave-small)::before{
   border-radius:0;-webkit-clip-path:none;clip-path:none;
-  -webkit-mask-image:var(--hex-wave-top-mask),linear-gradient(#000,#000),linear-gradient(#000,#000);
-  mask-image:var(--hex-wave-top-mask),linear-gradient(#000,#000),linear-gradient(#000,#000);
+  -webkit-mask-image:var(--hex-wave-upper-mask),linear-gradient(#000,#000),linear-gradient(#000,#000);
+  mask-image:var(--hex-wave-upper-mask),linear-gradient(#000,#000),linear-gradient(#000,#000);
   -webkit-mask-size:var(--hex-wave-upper-width) var(--hex-bg-upper-depth),100% calc(100% - var(--hex-bg-upper-depth) + 1px),100% 1px;
   mask-size:var(--hex-wave-upper-width) var(--hex-bg-upper-depth),100% calc(100% - var(--hex-bg-upper-depth) + 1px),100% 1px;
   -webkit-mask-position:0 top,0 bottom,0 calc(var(--hex-bg-upper-depth) - .5px);
@@ -10314,15 +10320,15 @@ html.hex-overlap-snap-animating{
   mask-repeat:repeat-x,no-repeat,no-repeat;
 }
 /* 終了マーカーでも同じ波を選べるよう、下端は上下反転して独立描画。 */
-.hex-bg-range:is(.hex-bg-lower-wave-large,.hex-bg-lower-wave-medium,.hex-bg-lower-wave-small)::before{
+.hex-bg-range:is(.hex-bg-lower-wave-large,.hex-bg-lower-wave-large-left,.hex-bg-lower-wave-large-right,.hex-bg-lower-wave-medium,.hex-bg-lower-wave-small)::before{
   bottom:var(--hex-bg-lower-depth);
 }
-.hex-bg-range:is(.hex-bg-lower-wave-large,.hex-bg-lower-wave-medium,.hex-bg-lower-wave-small)::after{
+.hex-bg-range:is(.hex-bg-lower-wave-large,.hex-bg-lower-wave-large-left,.hex-bg-lower-wave-large-right,.hex-bg-lower-wave-medium,.hex-bg-lower-wave-small)::after{
   content:"";position:absolute;left:50%;bottom:0;z-index:-1;
   width:100vw;height:var(--hex-bg-lower-depth);transform:translateX(-50%);
   background:var(--hex-bg-range-color,#fff);pointer-events:none;
   border:0;border-radius:0;-webkit-clip-path:none;clip-path:none;
-  -webkit-mask-image:var(--hex-wave-end-mask);mask-image:var(--hex-wave-end-mask);
+  -webkit-mask-image:var(--hex-wave-lower-mask);mask-image:var(--hex-wave-lower-mask);
   -webkit-mask-size:var(--hex-wave-lower-width) 100%;mask-size:var(--hex-wave-lower-width) 100%;
   -webkit-mask-position:0 top;mask-position:0 top;
   -webkit-mask-repeat:repeat-x;mask-repeat:repeat-x;
@@ -10360,7 +10366,7 @@ html.hex-overlap-snap-animating{
 
 /* 共通背景：緩い左右の斜めカット、角丸なしの中・小の連続三角 */
 :root{
-  --hex-slant-depth:clamp(24px,4vw,64px);
+  --hex-slant-depth:clamp(48px,8vw,128px);
   --hex-triangle-medium-depth:var(--hex-wave-medium-depth);
   --hex-triangle-medium-width:var(--hex-wave-medium-width);
   --hex-triangle-small-depth:var(--hex-wave-small-depth);
@@ -10432,4 +10438,20 @@ html.hex-overlap-snap-animating{
   -webkit-mask-position:0 top;mask-position:0 top;
   -webkit-mask-repeat:repeat-x;mask-repeat:repeat-x;
 }
-@media(max-width:768px){:root{--hex-slant-depth:24px;}}
+@media(max-width:768px){:root{--hex-slant-depth:48px;}}
+
+/* 大波を左右反転の2種類に分ける。旧wave-largeは左版として維持。 */
+:root{
+  --hex-wave-large-right-top-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20preserveAspectRatio%3D%22none%22%3E%3Cg%20transform%3D%22translate%28100%200%29%20scale%28-1%201%29%22%3E%3Cpath%20d%3D%22M-1%2053.314%20L0%2050%20C8.333%2022.386%2016.667%200%2025%200%20C33.333%200%2041.667%2022.386%2050%2050%20C58.333%2077.614%2066.667%20100%2075%20100%20C83.333%20100%2091.667%2077.614%20100%2050%20L101%2046.686%20V101%20H-1%20Z%22%20fill%3D%22black%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --hex-wave-large-right-end-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20preserveAspectRatio%3D%22none%22%3E%3Cg%20transform%3D%22translate%28100%20100%29%20scale%28-1%20-1%29%22%3E%3Cpath%20d%3D%22M-1%2053.314%20L0%2050%20C8.333%2022.386%2016.667%200%2025%200%20C33.333%200%2041.667%2022.386%2050%2050%20C58.333%2077.614%2066.667%20100%2075%20100%20C83.333%20100%2091.667%2077.614%20100%2050%20L101%2046.686%20V101%20H-1%20Z%22%20fill%3D%22black%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+.hex-bg-range.hex-bg-wave-large-right{
+  --hex-bg-upper-depth:var(--hex-wave-large-depth);
+  --hex-wave-upper-width:100%;
+  --hex-wave-upper-mask:var(--hex-wave-large-right-top-mask);
+}
+.hex-bg-range.hex-bg-lower-wave-large-right{
+  --hex-bg-lower-depth:var(--hex-wave-large-depth);
+  --hex-wave-lower-width:100%;
+  --hex-wave-lower-mask:var(--hex-wave-large-right-end-mask);
+}

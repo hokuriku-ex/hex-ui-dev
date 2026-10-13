@@ -165,6 +165,8 @@ hexReady(function(){
     'hex-bg-curve-bottom',
     'hex-bg-arrow',
     'hex-bg-wave-large',
+    'hex-bg-wave-large-left',
+    'hex-bg-wave-large-right',
     'hex-bg-wave-medium',
     'hex-bg-wave-small',
     'hex-bg-round-top',
@@ -175,17 +177,13 @@ hexReady(function(){
   ];
   /* 抽選候補はここだけで指定する。採用する上端装飾を絞る場合は候補を変更する。 */
   var backgroundRandomCandidates=[
-    'hex-bg-curve-top',
-    'hex-bg-curve-bottom',
-    'hex-bg-arrow',
-    'hex-bg-wave-large',
+    'hex-bg-wave-large-left',
+    'hex-bg-wave-large-right',
     'hex-bg-wave-medium',
-    'hex-bg-wave-small',
     'hex-bg-round-top',
     'hex-bg-slant-left',
     'hex-bg-slant-right',
-    'hex-bg-triangle-medium',
-    'hex-bg-triangle-small'
+    'hex-bg-triangle-medium'
   ];
   var backgroundShapeBag=[];
   var previousBackgroundEndShape=null;
