@@ -14736,6 +14736,8 @@ hexReady(function(){
     if(!founded)return [];
     var sections=[];
     for(var i=5;i<=17;i++){
+      // お知らせのタブ用データ枠は、初期化前でも独立した境界にしない。
+      if(i===9||i===10)continue;
       var node=document.getElementById('gc_auto_frame_home_'+i);
       if(node)sections.push(node);
     }
