@@ -646,6 +646,10 @@ function hexInitAnchorNav(){
 
   function scrollToAnchorTarget(target){
     var offset=getHexAnchorOffset();
+    if(window.hexOverlapAnchor){
+      window.hexOverlapAnchor.cancelSnap();
+      offset+=window.hexOverlapAnchor.shapeClearance(target);
+    }
     var startsBeforeFixed=
       !nav.classList.contains('is-fixed');
 
@@ -14773,6 +14777,13 @@ hexReady(function(){
     var depth=probe.getBoundingClientRect().height;probe.remove();
     return header+(depth>0?depth+16:0);
   }
+  window.hexOverlapAnchor={
+    cancelSnap:function(){cancelSnap(true);},
+    shapeClearance:function(target){
+      var section=target.closest('.hex-bg-range')||target.closest('[id^="gc_auto_frame_"],.content_body');
+      return section?Math.max(0,sectionLandingOffset(section,0)-16):0;
+    }
+  };
   function sectionCoverColor(node){
     var candidates=[node].concat(Array.from(node.querySelectorAll('.hex-bg-range,.background_color,.gc_auto_frame_spotitem_basewidth')));
     for(var i=0;i<candidates.length;i++){
