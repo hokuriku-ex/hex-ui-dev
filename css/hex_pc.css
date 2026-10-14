@@ -8181,7 +8181,7 @@ body.hex-form-dialog-open{
   max-width:var(--hex_small_width)!important;
   margin:0 auto!important;
   /* 固定ヘッダーの下からhex-top-spacerと同じ128pxを確保。 */
-  padding:calc(var(--header_height,80px) + 128px) 0 clamp(96px,calc(7.4246vw + 38.90px),128px)!important;
+  padding:calc(var(--header_height,80px) + 128px) 0 48px!important;
   background:#fff!important;
   border:none!important;
   box-shadow:none!important;
@@ -8270,8 +8270,8 @@ body.hex-form-dialog-open{
   grid-template-columns:1fr 1fr;
   gap:24px;
   background:none!important;
-  /* 下余白は確認画面の外枠にまとめ、rsp_spacer4相当の高さを確保。 */
-  padding-bottom:0!important;
+  /* ボタン列自体の下にrsp_spacer4相当の余白を確保。 */
+  padding-bottom:clamp(96px,calc(7.4246vw + 38.90px),128px)!important;
   justify-content:center!important;
 }
 #gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round{
