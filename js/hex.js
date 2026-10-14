@@ -1,3 +1,9 @@
+/* 数字のidパラメータがあるページは記事詳細。パラメータの並び順は問わない。 */
+function hexIsArticlePage(){
+  return /^\d+$/.test(new URLSearchParams(window.location.search).get('id')||'');
+}
+document.documentElement.classList.toggle('hex-article-page',hexIsArticlePage());
+
 /* ページ移動・リロード時のCMSヘッダーを準備完了まで隠す。先頭復帰はリロード時だけ。 */
 (function(){
   var navigation=window.performance&&window.performance.getEntriesByType
@@ -8725,6 +8731,7 @@ hexReady(function(){
    導入文・アンカーナビをページタイトル内へ移動
 ======================================= */
 hexLoad(function(){
+  if(hexIsArticlePage())return;
   var hexIntro=document.querySelector('.hex-intro');
   var hexAnchorSource=document.querySelector('.hex-anchor-source');
   var pageTitleContents=document.querySelector(
@@ -14148,6 +14155,7 @@ hexReady(function(){
 ======================================= */
 (function(){
   'use strict';
+  if(hexIsArticlePage())return;
   var ownScript=document.currentScript;
   var base=HEX_IS_PRODUCTION
     ?'https://hokuriku-ex.github.io/hex-ui/'

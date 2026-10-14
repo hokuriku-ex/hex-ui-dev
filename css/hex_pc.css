@@ -3,6 +3,15 @@
 ======================================= */
 /* リロード時のヘッダー表示は、このカスタムCSSの適用後に開始する。 */
 :root{--hex-header-style-ready:1;}
+/* 記事詳細は共通タイトルと導入演出を使わない。初期化前の画面カバーも解除。 */
+html.hex-article-page .gc_auto_frame_page_title,
+html.hex-article-page .pagetitle_type.pagetitle_type4,
+html.hex-article-page .hex-intro{
+  display:none!important;
+}
+html.hex-article-page body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
+  content:none!important;
+}
 /* ベース幅を1200pxから1600pxに広げる */
 @media screen and (min-width:769px){
   html:root{
