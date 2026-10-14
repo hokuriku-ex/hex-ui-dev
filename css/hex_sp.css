@@ -2309,7 +2309,7 @@
   #gc_auto_frame_lp_form_dialog_box{
     max-width:none!important;
     margin:0!important;
-    padding:calc(var(--header_height_smartphone,clamp(64px,20vw,80px)) + 128px) 16px 40px!important;
+    padding:calc(var(--header_height_smartphone,clamp(64px,20vw,80px)) + 128px) 16px clamp(64px,calc(7.8431vw + 35.76px),96px)!important;
   }
   #gc_auto_frame_lp_form_dialog_box .hex-dialog-confirm-title{
     margin:0 auto 24px!important;
@@ -2341,6 +2341,9 @@
     width:100%;
     max-width:300px;
     margin:0 auto 14px;
+  }
+  #gc_auto_frame_lp_form_dialog .hex-form-button-motion-wrap.is-dialog:last-child{
+    margin-bottom:0;
   }
   #gc_auto_frame_lp_form_dialog .gc_auto_frame_lp_form_box_button_round{
     width:100%!important;
