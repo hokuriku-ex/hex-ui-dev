@@ -6024,7 +6024,7 @@ html body
   position:absolute;
   inset:0;
   z-index:0;
-  background:#fafafa!important;
+  background:#1f2774!important;
 }
 .gc_auto_frame_page_title .pagetitle_type4 .bg_text{
   padding:36px 0 22px!important;
@@ -6110,7 +6110,7 @@ html body
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box!important;
   text-align:left;
-  color:#203459;
+  color:#fff;
   font-size:16px;
   font-weight:500;
   line-height:1.9;
