@@ -8179,8 +8179,9 @@ body.hex-form-dialog-open{
 #gc_auto_frame_lp_form_dialog_box{
   width:auto!important;
   max-width:var(--hex_small_width)!important;
-  margin:60px auto!important;
-  padding:0 0 48px!important;
+  margin:0 auto!important;
+  /* 固定ヘッダーの下からhex-top-spacerと同じ128pxを確保。 */
+  padding:calc(var(--header_height,80px) + 128px) 0 48px!important;
   background:#fff!important;
   border:none!important;
   box-shadow:none!important;

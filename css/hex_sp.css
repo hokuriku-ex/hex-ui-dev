@@ -2309,7 +2309,7 @@
   #gc_auto_frame_lp_form_dialog_box{
     max-width:none!important;
     margin:0!important;
-    padding:32px 16px 40px!important;
+    padding:calc(var(--header_height_smartphone,clamp(64px,20vw,80px)) + 128px) 16px 40px!important;
   }
   #gc_auto_frame_lp_form_dialog_box .hex-dialog-confirm-title{
     margin:0 auto 24px!important;
