@@ -1,10 +1,9 @@
-/* ブラウザのリロード時だけ、復元位置・URL内アンカーよりページ先頭を優先。 */
+/* ページ移動・リロード時のCMSヘッダーを準備完了まで隠す。先頭復帰はリロード時だけ。 */
 (function(){
   var navigation=window.performance&&window.performance.getEntriesByType
     ?window.performance.getEntriesByType('navigation')[0]:null;
   var reload=navigation?navigation.type==='reload':
     !!(window.performance&&window.performance.navigation&&window.performance.navigation.type===1);
-  if(!reload)return;
   var root=document.documentElement;
   var headerGuard=document.createElement('style');
   headerGuard.textContent='html.hex-reload-header-pending .headermenu_type8,html.hex-reload-header-pending .bg_headermenu{visibility:hidden!important;}';
@@ -25,6 +24,7 @@
   }
   window.addEventListener('load',function(){headerLoaded=true;},{once:true});
   revealHeaderWhenReady();
+  if(!reload)return;
   var restoration=window.history.scrollRestoration;
   if('scrollRestoration' in window.history)window.history.scrollRestoration='manual';
   if(window.location.hash){
