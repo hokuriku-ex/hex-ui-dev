@@ -14431,7 +14431,7 @@ hexReady(function(){
     layout();
     // 初回描画から導入文を最低3秒表示。画像の準備とは並行して待つ。
     var introReady=intro?new Promise(function(resolve){
-      requestAnimationFrame(function(){setTimeout(resolve,3000);});
+      requestAnimationFrame(function(){setTimeout(resolve,2000);});
     }):Promise.resolve();
     window.addEventListener('load',queueLayout,{once:true});
     window.addEventListener('resize',queueLayout,{passive:true});
