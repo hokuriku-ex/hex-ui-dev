@@ -1,3 +1,33 @@
+/* ブラウザのリロード時だけ、復元位置・URL内アンカーよりページ先頭を優先。 */
+(function(){
+  var navigation=window.performance&&window.performance.getEntriesByType
+    ?window.performance.getEntriesByType('navigation')[0]:null;
+  var reload=navigation?navigation.type==='reload':
+    !!(window.performance&&window.performance.navigation&&window.performance.navigation.type===1);
+  if(!reload)return;
+  var restoration=window.history.scrollRestoration;
+  if('scrollRestoration' in window.history)window.history.scrollRestoration='manual';
+  if(window.location.hash){
+    window.history.replaceState(window.history.state,'',window.location.pathname+window.location.search);
+  }
+  function resetScroll(){
+    var motion=window.hexMotion;
+    if(motion&&typeof motion.scrollTo==='function')motion.scrollTo(0,{immediate:true,force:true});
+    else window.scrollTo({top:0,left:0,behavior:'instant'});
+  }
+  resetScroll();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',resetScroll,{once:true});
+  window.addEventListener('load',resetScroll,{once:true});
+  window.addEventListener('pageshow',function(event){
+    if(event.persisted)return;
+    resetScroll();
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      resetScroll();
+      if('scrollRestoration' in window.history)window.history.scrollRestoration=restoration;
+    });});
+  });
+})();
+
 /* =======================================
    定数定義
 ======================================= */
