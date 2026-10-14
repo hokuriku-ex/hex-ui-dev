@@ -10247,6 +10247,15 @@ html.hex-overlap-snap-animating{
   scrollbar-gutter:stable;
 }
 
+/* PCの自動着地中もスクロールバーを維持。
+   入力はJSのwheel/touch制御で止め、写真の幅・固定座標を変えない。 */
+@media (min-width:769px){
+  html.hex-overlap-snap-animating{
+    overflow-y:scroll!important;
+    scrollbar-gutter:auto;
+  }
+}
+
 /* ネイティブsticky：スクロール量を逆方向の移動で相殺しない */
 .hex-rise-runway{
   position:relative;z-index:1;display:block;overflow:visible!important;
