@@ -5,6 +5,22 @@
   var reload=navigation?navigation.type==='reload':
     !!(window.performance&&window.performance.navigation&&window.performance.navigation.type===1);
   if(!reload)return;
+  var root=document.documentElement;
+  var headerGuard=document.createElement('style');
+  headerGuard.textContent='html.hex-reload-header-pending .headermenu_type8,html.hex-reload-header-pending .bg_headermenu{visibility:hidden!important;}';
+  (document.head||root).appendChild(headerGuard);
+  root.classList.add('hex-reload-header-pending');
+  var headerLoaded=document.readyState==='complete';
+  function revealHeaderWhenReady(){
+    if(!headerLoaded||getComputedStyle(root).getPropertyValue('--hex-header-style-ready').trim()!=='1'){
+      setTimeout(revealHeaderWhenReady,50);return;
+    }
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      root.classList.remove('hex-reload-header-pending');headerGuard.remove();
+    });});
+  }
+  window.addEventListener('load',function(){headerLoaded=true;},{once:true});
+  revealHeaderWhenReady();
   var restoration=window.history.scrollRestoration;
   if('scrollRestoration' in window.history)window.history.scrollRestoration='manual';
   if(window.location.hash){
