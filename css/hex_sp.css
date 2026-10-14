@@ -161,6 +161,9 @@
   .bg_page_button{
     gap:10px!important;
     margin:28px auto 0!important;
+    padding-bottom:calc(
+      (100dvh - var(--header_height_smartphone, 80px)) / 2
+    )!important;
   }
   .bg_page_button .page_button{
     min-width:40px!important;
