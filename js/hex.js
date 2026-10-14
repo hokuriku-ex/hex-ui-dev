@@ -1,6 +1,9 @@
-/* 数字のidパラメータがあるページは記事詳細。パラメータの並び順は問わない。 */
+/* 数字のid（記事詳細）またはpage_no（一覧ページング）は共通タイトル・導入を省略。 */
 function hexIsArticlePage(){
-  return /^\d+$/.test(new URLSearchParams(window.location.search).get('id')||'');
+  var params=new URLSearchParams(window.location.search);
+  return ['id','page_no'].some(function(name){
+    return /^\d+$/.test(params.get(name)||'');
+  });
 }
 document.documentElement.classList.toggle('hex-article-page',hexIsArticlePage());
 
