@@ -2221,6 +2221,11 @@
     margin:0;
     box-sizing:border-box;
   }
+  .gc_auto_frame_lp_form_box{
+    padding-bottom:calc(
+      (100dvh - var(--header_height_smartphone, 80px)) / 2
+    )!important;
+  }
   #form_lp_form .hex-form-row{
     display:block;
     margin-bottom:28px;

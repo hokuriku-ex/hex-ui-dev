@@ -7802,7 +7802,9 @@ html body
 .gc_auto_frame_lp_form_box{
   width:100%!important;
   padding-top:0!important;
-  padding-bottom:10%!important;
+  padding-bottom:calc(
+    (100dvh - var(--header_height, 80px)) / 2
+  )!important;
 }
 #gc_auto_frame_lp_form_body{
   max-width:var(--hex_small_width);
