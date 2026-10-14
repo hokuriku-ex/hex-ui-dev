@@ -5207,7 +5207,7 @@ hexReady(function(){
    カード
 ======================================= */
 hexReady(function(){
-  var CARD_SLIDE_INTERVAL=4000;
+  var CARD_SLIDE_INTERVAL=3000;
   var cardSlides=[];
   var slideReduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   var slideObserver=typeof IntersectionObserver==='function'
