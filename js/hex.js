@@ -16,7 +16,7 @@
     var fontsReady=!document.fonts||document.fonts.status==='loaded';
     if(!headerLoaded||root.dataset.hexHeaderMenuReady!=='1'||!infoReady||!fontsReady||
       getComputedStyle(root).getPropertyValue('--hex-header-style-ready').trim()!=='1'){
-      setTimeout(revealHeaderWhenReady,50);return;
+      setTimeout(revealHeaderWhenReady,16);return;
     }
     requestAnimationFrame(function(){requestAnimationFrame(function(){
       root.classList.remove('hex-reload-header-pending');headerGuard.remove();
@@ -1538,7 +1538,7 @@ hexLoad(function(){
       }
     });
     document.documentElement.dataset.hexHeaderMenuReady='1';
-  },100);
+  },0);
 });
 
 /* =======================================
