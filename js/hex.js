@@ -15189,7 +15189,7 @@ hexReady(function(){
     window.addEventListener('scroll',function(){
       lastScrollTime=Date.now();queueVeils();
       updateSnapInputLock();
-      //  指を離した後の慣性が止まってから着地。指で動かしている間は介入しない。
+      // 指を離した後の慣性が止まってから着地。指で動かしている間は介入しない。
       // PCの待機はホイール入力から数え、Lenisの慣性で延長し続けない。
       if((!snapGesture||!snapGesture.touching)&&!(snapGesture&&snapGesture.kind==='wheel'&&snapPending))scheduleSnap();
     },{passive:true});
