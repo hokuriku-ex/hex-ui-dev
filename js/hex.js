@@ -12,7 +12,11 @@
   root.classList.add('hex-reload-header-pending');
   var headerLoaded=document.readyState==='complete';
   function revealHeaderWhenReady(){
-    if(!headerLoaded||getComputedStyle(root).getPropertyValue('--hex-header-style-ready').trim()!=='1'){
+    var pcMenu=document.querySelector('.bg_pc_menu .pc_menu');
+    var infoReady=!pcMenu||window.innerWidth<=1200||!!pcMenu.querySelector('.hex-header-info');
+    var fontsReady=!document.fonts||document.fonts.status==='loaded';
+    if(!headerLoaded||root.dataset.hexHeaderMenuReady!=='1'||!infoReady||!fontsReady||
+      getComputedStyle(root).getPropertyValue('--hex-header-style-ready').trim()!=='1'){
       setTimeout(revealHeaderWhenReady,50);return;
     }
     requestAnimationFrame(function(){requestAnimationFrame(function(){
@@ -1533,6 +1537,7 @@ hexLoad(function(){
         },true);
       }
     });
+    document.documentElement.dataset.hexHeaderMenuReady='1';
   },100);
 });
 
