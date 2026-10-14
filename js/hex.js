@@ -6,7 +6,7 @@
     !!(window.performance&&window.performance.navigation&&window.performance.navigation.type===1);
   var root=document.documentElement;
   var headerGuard=document.createElement('style');
-  headerGuard.textContent='html.hex-reload-header-pending .headermenu_type8,html.hex-reload-header-pending .bg_headermenu{visibility:hidden!important;}';
+  headerGuard.textContent='html.hex-reload-header-pending .headermenu_type8,html.hex-reload-header-pending .bg_headermenu,html.hex-reload-header-pending .bg_contactbutton,html.hex-reload-header-pending .hex-header-sns{visibility:hidden!important;}';
   (document.head||root).appendChild(headerGuard);
   root.classList.add('hex-reload-header-pending');
   var headerLoaded=document.readyState==='complete';
@@ -8838,6 +8838,8 @@ function hexCreateFooterSns(){
   if(!sns)return;
   footerLogo.appendChild(sns);
 }
+/* ヘッダーSNSはフッターの再配置を待たず、ヘッダー表示前に用意する。 */
+hexReady(function(){hexCreateHeaderSns();});
 function hexCreateHeaderSns(retryCount){
   retryCount=retryCount||0;
 
@@ -8854,7 +8856,7 @@ function hexCreateHeaderSns(retryCount){
   var menu=document.querySelector('.bg_menu_button_popup');
 
   if(!menu){
-    if(retryCountCount<20){
+    if(retryCount<20){
       setTimeout(function(){
         hexCreateHeaderSns(retryCount+1);
       },50);
