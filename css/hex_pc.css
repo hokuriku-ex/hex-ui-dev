@@ -3641,6 +3641,18 @@ body,
   background:#f3f0eb!important;
 }
 
+.hex-home-bg-white{--hex-home-section-bg:#fff;}
+.hex-home-bg-gray{--hex-home-section-bg:#f3f0eb;}
+/* オーバーラップ余白も所属セクションの交互背景に揃える。 */
+.hex-home-bg-white .hex-overlap-spacer,
+.hex-home-bg-gray .hex-overlap-spacer{
+  --hex-overlap-spacer-bg:var(--hex-home-section-bg)!important;
+}
+/* 創業末尾は交互背景より紺色を優先する。 */
+#gc_auto_frame_home_4 .hex-overlap-spacer{
+  --hex-overlap-spacer-bg:#1f2774!important;
+}
+
 /* =======================================
    トップページ：開幕アニメーション
 ======================================= */

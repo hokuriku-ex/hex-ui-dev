@@ -14843,8 +14843,8 @@ hexReady(function(){
     // 創業の最終背景は紺色。外側の交互背景グレーより優先する。
     if(node===homeFoundedSection())return '#1f2774';
     // トップの背景指定を、CMSの外側に残る白い背景より優先する。
-    if(node.classList.contains('hex-home-bg-gray'))return '#fafafa';
-    if(node.classList.contains('hex-home-bg-white'))return '#fff';
+    if(node.classList.contains('hex-home-bg-gray'))return getComputedStyle(node).getPropertyValue('--hex-home-section-bg').trim()||'#f3f0eb';
+    if(node.classList.contains('hex-home-bg-white'))return getComputedStyle(node).getPropertyValue('--hex-home-section-bg').trim()||'#fff';
     var candidates=Array.from(node.querySelectorAll('.hex-bg-range,.background_color,.gc_auto_frame_spotitem_basewidth')).concat([node]);
     for(var i=0;i<candidates.length;i++){
       var style=getComputedStyle(candidates[i]);
