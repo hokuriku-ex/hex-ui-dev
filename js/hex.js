@@ -2080,6 +2080,7 @@ hexReady(function(){
     var hexUrl=window.hexBuildUrl(hexView);
     var hexType=hexView.dataset.type||'internal';
     var hexStyle=hexView.dataset.style||'light';
+    var hexWidth=hexView.dataset.width||'100%';
     var hexCol=hexView.dataset.col||'1';
     var hexAlign=hexView.dataset.align||'center';
     var hexWrap=document.createElement('div');
