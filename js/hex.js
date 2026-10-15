@@ -5772,6 +5772,11 @@ function hexHomeNewsUpdateButton(buttonArea,shortname,pagetype){
   if(title){
     title.textContent=view.dataset.title||'一覧を見る';
   }
+
+  /* 遅延生成されたボタンにも共通の背景色を設定し、斜線の透けを防ぐ。 */
+  if(isButton&&typeof window.hexSyncButtonSurfaces==='function'){
+    window.hexSyncButtonSurfaces(buttonArea);
+  }
 }
 
 /* =======================================
