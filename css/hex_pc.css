@@ -10661,3 +10661,9 @@ html body .hex-home-has-bg-range .hex-overlap-spacer{
 html body .hex-home-has-bg-range .hex-bg-range .hex-overlap-spacer{
   --hex-overlap-spacer-bg:var(--hex-bg-range-color,#fff)!important;
 }
+
+/* 角丸外側の補完面にも前セクションの柄を重ねる。外側のマスク形状は維持。 */
+.hex-overlap-corner-fill > .hex-bg-patterns-layer{
+  position:absolute!important;inset:0!important;
+  width:100%;height:100%;z-index:0!important;
+}

@@ -376,6 +376,7 @@ hexReady(function(){
     });
     syncHatchingMasks();
     window.hexSyncHatchingVeils();
+    if(window.hexSyncOverlapCornerImages)window.hexSyncOverlapCornerImages();
   }
   window.addEventListener('resize',syncHatchingSpacers,{passive:true});
   window.addEventListener('load',syncHatchingSpacers,{once:true});
@@ -15213,6 +15214,21 @@ hexReady(function(){
     var duration=Math.max(0,end-start);
     return {top:top-start,height:height+duration,tail:duration,start:start};
   }
+  function syncOverlapCornerImagePosition(entry){
+    var fill=entry.front._hexOverlapCornerFill;
+    var source=fill&&fill._hexCornerImageSource;
+    if(!source)return;
+    var origin=source.getBoundingClientRect(),rect=fill.getBoundingClientRect();
+    var style=getComputedStyle(source);
+    var position=style.getPropertyValue('--hex-bg-patterns-position').trim()||'0px 0px';
+    var parts=position.split(/\s+/);
+    var x=(parseFloat(parts[0])||0)-(rect.left-origin.left);
+    var y=(parseFloat(parts[1])||0)-(rect.top-origin.top);
+    var value=x+'px '+y+'px';
+    if(fill.style.getPropertyValue('--hex-bg-patterns-position')!==value){
+      fill.style.setProperty('--hex-bg-patterns-position',value);
+    }
+  }
   function syncOverlapCorners(entry){
     var front=entry.front;
     // 全トップ境界と下層の問い合わせ・フッターに共通の補完を適用。
@@ -15237,7 +15253,43 @@ hexReady(function(){
     }
     var color=sectionEndColor(back);
     fill.style.backgroundColor=color;
+    /* 角丸の外側には直前範囲の画像も補完する。単色で画像を消さない。 */
+    var owners=Array.from(back.querySelectorAll('.hex-bg-has-patterns,.hex-bg-spacer-patterns'));
+    if(back.matches('.hex-bg-has-patterns,.hex-bg-spacer-patterns'))owners.unshift(back);
+    var owner=owners.filter(function(node){
+      return getComputedStyle(node).display!=='none'&&node.getBoundingClientRect().height>0;
+    }).pop();
+    // 最後の範囲に画像がなければ、その前の画像を誤って延長しない。
+    var endings=Array.from(back.querySelectorAll('.hex-bg-range,.hex-overlap-spacer')).filter(function(node){
+      return getComputedStyle(node).display!=='none'&&node.getBoundingClientRect().height>0;
+    });
+    if(endings.length){
+      var last=endings[endings.length-1];
+      var lastOwner=last.matches('.hex-bg-has-patterns,.hex-bg-spacer-patterns')?last:last.closest('.hex-bg-has-patterns');
+      if(!lastOwner)owner=null;else owner=lastOwner;
+    }
+    var image=owner&&getComputedStyle(owner).getPropertyValue('--hex-bg-patterns-image').trim();
+    var layer=fill.querySelector('.hex-bg-patterns-layer');
+    if(!image){
+      if(layer)layer.remove();fill._hexCornerImageSource=null;
+      return;
+    }
+    if(!layer){
+      layer=document.createElement('span');layer.className='hex-bg-patterns-layer';
+      var ink=document.createElement('span');ink.className='hex-bg-patterns-ink';
+      layer.appendChild(ink);fill.appendChild(layer);
+    }
+    layer.classList.toggle('hex-bg-texture-layer',owner.classList.contains('hex-bg-image-textures'));
+    var ownerStyle=getComputedStyle(owner);
+    ['image','color','size','opacity'].forEach(function(name){
+      var property='--hex-bg-patterns-'+name;
+      fill.style.setProperty(property,ownerStyle.getPropertyValue(property).trim());
+    });
+    // 描画レイヤーの原点を使い、波形や余白のオフセットにも合わせる。
+    fill._hexCornerImageSource=owner.querySelector('.hex-bg-patterns-layer-before > .hex-bg-patterns-ink')||owner;
+    syncOverlapCornerImagePosition(entry);
   }
+  window.hexSyncOverlapCornerImages=function(){entries.forEach(syncOverlapCorners);};
   function createItem(node){
     var runway=document.createElement('div'),sticky=document.createElement('div'),veil=document.createElement('div');
     runway.className='hex-rise-runway';sticky.className='hex-rise-sticky';veil.className='hex-rise-veil';
@@ -15275,6 +15327,7 @@ hexReady(function(){
       var item=record.item,opacity=record.opacity;
       if(item.opacity!==opacity){item.opacity=opacity;item.veil.style.opacity=String(opacity);}
     });
+    entries.forEach(syncOverlapCornerImagePosition);
   }
   var veilFrame=0;
   function queueVeils(){
