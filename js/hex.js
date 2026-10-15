@@ -14664,6 +14664,8 @@ hexReady(function(){
       }else if(!nav){
         hero.style.setProperty('--hex-page-image-height',Math.max(0,heroRect.height-72)+'px');
       }
+      // ナビ・画像・フォントの準備後に変わるアーチの原点を装飾側へ通知する。
+      hero.dispatchEvent(new Event('hex:page-hero-layout',{bubbles:true}));
     }
     function syncHeroCover(){
       var header=parseFloat(hero.style.getPropertyValue('--hex-page-header'))||80;
@@ -15789,7 +15791,7 @@ hexReady(function(){
     (runner.random?assets():load(value).then(function(asset){return asset?[asset]:[];})).then(function(available){
       runner.available=available;
       if(!available.length){track.remove();return;}
-      setAsset(runner,runner.random?drawAsset(available):available[0]);render(runner);start();
+      setAsset(runner,runner.random?drawAsset(available):available[0]);layout(runner);start();
     });
   }
   function scan(){
@@ -15804,6 +15806,7 @@ hexReady(function(){
     layoutFrame=requestAnimationFrame(function(){layoutFrame=0;scan();runners.forEach(layout);start();});
   }
   scan();
+  document.addEventListener('hex:page-hero-layout',queueLayout);
   window.addEventListener('resize',queueLayout,{passive:true});window.addEventListener('load',queueLayout,{once:true});
   document.addEventListener('visibilitychange',function(){lastTime=0;start();});
   function reducedChange(){if(reduced.matches){if(frame)cancelAnimationFrame(frame);frame=0;}else start();}
