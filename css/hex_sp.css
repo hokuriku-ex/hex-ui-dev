@@ -1263,10 +1263,8 @@
   }
   .hex-opening-slide-title{
     left:24px;
-    bottom:max(
-      48px,
-      calc(env(safe-area-inset-bottom) + 32px)
-    );
+    top:48px;
+    bottom:auto;
     font-size:clamp(38px,12vw,58px);
     -webkit-text-stroke:1.5px #1f2774;
     text-shadow:

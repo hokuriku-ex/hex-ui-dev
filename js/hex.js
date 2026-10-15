@@ -6961,8 +6961,20 @@ hexReady(function(){
 
   /* SKIP時に開幕画面が消える時間 */
   var SKIP_FADE_DURATION=500;
-  /* 開幕とヒーローで共通の表示時間（キャッチ演出時間を含む）。 */
-  var OPENING_AUTO_ADVANCE_MS=3000;
+  /* ドット1〜7の表示時間（ms）。0はその場面の自動進行・終了を停止。 */
+  var OPENING_SCENE_DURATIONS_MS={
+    1:3000,
+    2:2000,
+    3:2000,
+    4:2000,
+    5:2000,
+    6:3000,
+    7:3000
+  };
+  function getOpeningSceneDuration(sceneNumber){
+    var duration=OPENING_SCENE_DURATIONS_MS[sceneNumber];
+    return Number.isFinite(duration)&&duration>=0?duration:3000;
+  }
   var sharedNav=null;
   var heroIntroTimer=null;
   var heroCatchRun=0;
@@ -6993,7 +7005,7 @@ hexReady(function(){
 
   function startHeroIntro(duration){
     if(heroIntroStarted||heroIntroDeparted){return;}
-    duration=typeof duration==='number'?duration:OPENING_AUTO_ADVANCE_MS;
+    duration=typeof duration==='number'?duration:getOpeningSceneDuration(7);
     heroIntroStarted=true;
     var hero=document.querySelector('.hex-hero-wrap');
     hero.classList.add('is-intro-playing');
@@ -8113,17 +8125,18 @@ hexReady(function(){
 
     function scheduleAutoAdvance(){
       window.clearTimeout(autoAdvanceTimer);
+      var duration=getOpeningSceneDuration(index+1);
       if(cancelled||transitionLocked||document.hidden||
-         !OPENING_AUTO_ADVANCE_MS||!opening.isConnected){return;}
+         !duration||!opening.isConnected){return;}
       /* 各場面のドットごとに計時する。 */
       var activeDot=nav&&nav.querySelector('.hex-progress-dot.is-current');
       if(activeDot){
         activeDot.classList.remove('is-timing');
         void activeDot.offsetWidth;
-        activeDot.style.setProperty('--hex-opening-auto-duration',OPENING_AUTO_ADVANCE_MS+'ms');
+        activeDot.style.setProperty('--hex-opening-auto-duration',duration+'ms');
         activeDot.classList.add('is-timing');
       }
-      autoAdvanceTimer=window.setTimeout(function(){step(1);},OPENING_AUTO_ADVANCE_MS);
+      autoAdvanceTimer=window.setTimeout(function(){step(1);},duration);
     }
 
     function stopAutoAdvance(){
@@ -8514,7 +8527,7 @@ hexReady(function(){
       transitionLocked=true;
       ensureHeroReady();
       opening.classList.add("is-v2-hero-stage");
-      showHeroCatch(0,HERO_CATCH_DELAY,OPENING_AUTO_ADVANCE_MS+1000);
+      showHeroCatch(0,HERO_CATCH_DELAY,getOpeningSceneDuration(7));
       updateDots(true);
 
       // 最後の日本語キャッチから、中央の丸演出でヒーローへ。

@@ -3978,7 +3978,8 @@ body,
   position:absolute;
   z-index:3;
   left:clamp(24px,6vw,96px);
-  bottom:clamp(48px,10vh,120px);
+  top:clamp(48px,10vh,120px);
+  bottom:auto;
   margin:0;
   font-family:var(--hex-font-pop-en);
   font-size:clamp(42px,6vw,92px);
