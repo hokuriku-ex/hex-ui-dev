@@ -10704,7 +10704,7 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
 
 /* 曲線を走る重機。速度は1秒あたりのCSS長さ（単位なしはpx/秒）、回転の上限は度数。 */
 :root{
-  --hex-vehicle-width:clamp(96px,9vw,148px);
+  --hex-vehicle-width:clamp(144px,13.5vw,222px);
   --hex-vehicle-speed:3vw;
   --hex-vehicle-max-angle:20;
 }
@@ -10739,6 +10739,6 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   visibility:hidden!important;
 }
 @media(max-width:768px){
-  :root{--hex-vehicle-width:clamp(72px,18vw,100px);--hex-vehicle-speed:7.2vw;}
+  :root{--hex-vehicle-width:clamp(108px,27vw,150px);--hex-vehicle-speed:7.2vw;}
 }
 @media(prefers-reduced-motion:reduce){.hex-vehicle-track{visibility:hidden!important;}}
