@@ -249,6 +249,36 @@ hexReady(function(){
     });
     return hatchingImageChecks[file];
   }
+  function syncHatchingSpacers(){
+    document.querySelectorAll('.hex-overlap-spacer').forEach(function(spacer){
+      /* 範囲内は親の背景をそのまま見せ、柄の二重描画を避ける。 */
+      if(spacer.closest('.hex-bg-range'))return;
+      var owner=spacer.parentElement,ranges=[];
+      while(owner&&owner!==document.body){
+        ranges=Array.from(owner.querySelectorAll('.hex-bg-range')).filter(function(range){
+          return !!(range.compareDocumentPosition(spacer)&4);
+        });
+        if(ranges.length||owner.matches('[id^="gc_auto_frame_"],.content_body'))break;
+        owner=owner.parentElement;
+      }
+      var source=ranges.length?ranges[ranges.length-1]:null;
+      var image=source&&source.style.getPropertyValue('--hex-bg-hatching-image');
+      if(!image){
+        spacer.classList.remove('hex-bg-spacer-hatching');
+        spacer.style.removeProperty('--hex-bg-hatching-image');
+        return;
+      }
+      spacer.style.setProperty('--hex-bg-hatching-image',image);
+      spacer.style.setProperty('--hex-bg-hatching-base-color',
+        getComputedStyle(source).getPropertyValue('--hex-bg-range-color').trim()||'#fff');
+      var offset=spacer.getBoundingClientRect().top-source.getBoundingClientRect().top;
+      spacer.style.setProperty('--hex-bg-hatching-position','0px '+(-offset)+'px');
+      spacer.classList.add('hex-bg-spacer-hatching');
+    });
+  }
+  window.addEventListener('resize',syncHatchingSpacers,{passive:true});
+  window.addEventListener('load',syncHatchingSpacers,{once:true});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(syncHatchingSpacers);
   function applyBackgroundHatching(wrapper,start){
     var value=(start.dataset.bgImage||'').trim();
     if(!value)return;
@@ -271,6 +301,7 @@ hexReady(function(){
         if(!url){attempt();return;}
         wrapper.style.setProperty('--hex-bg-hatching-image','url("'+url+'")');
         wrapper.classList.add('hex-bg-has-hatching');
+        syncHatchingSpacers();
       });
     }
     attempt();
@@ -396,6 +427,7 @@ hexReady(function(){
     endBlock.style.display='none';
     if(!wrapper.textContent.trim()&&wrapper.getBoundingClientRect().height<1)wrapper.classList.add('hex-bg-empty');
   });
+  syncHatchingSpacers();
   // 下端の▼は次の.contentへ突出するため、内側の疑似要素だけでなく親の重なり順も確保する。
   // ▼付きセクションが連続しても、前の下端が後の背景に隠れないよう前から高い値を割り当てる。
   var backgroundContents=Array.from(document.querySelectorAll('.content'));

@@ -10597,10 +10597,16 @@ html.hex-overlap-snap-animating{
 /* 既存の背景面へ重ねるので、曲線・角丸・斜め形状の切り抜きも維持する。
    背景と同色の半透明レイヤーで柄だけを薄くし、本文の透明度は変えない。 */
 .hex-bg-range.hex-bg-has-hatching::before,
-.hex-bg-range.hex-bg-has-hatching::after{
-  --hex-bg-hatching-wash:color-mix(in srgb,var(--hex-bg-range-color,#fff) calc(100% - clamp(0,var(--hex-bg-hatching-opacity),1) * 100%),transparent);
+.hex-bg-range.hex-bg-has-hatching::after,
+.hex-overlap-spacer.hex-bg-spacer-hatching::before{
+  --hex-bg-hatching-wash:color-mix(in srgb,var(--hex-bg-hatching-base-color,var(--hex-bg-range-color,#fff)) calc(100% - clamp(0,var(--hex-bg-hatching-opacity),1) * 100%),transparent);
   background-image:linear-gradient(var(--hex-bg-hatching-wash),var(--hex-bg-hatching-wash)),var(--hex-bg-hatching-image)!important;
   background-size:auto,var(--hex-bg-hatching-size)!important;
   background-repeat:repeat,repeat!important;
-  background-position:0 0,0 0!important;
+  background-position:0 0,var(--hex-bg-hatching-position,0 0)!important;
+}
+
+/* 範囲内のオーバーラップ余白は、背後の柄を連続して見せる。 */
+.hex-bg-range.hex-bg-has-hatching .hex-overlap-spacer::before{
+  background-color:transparent!important;
 }
