@@ -2474,6 +2474,7 @@ hexReady(function(){
   var HERO_MOUSE_FOLLOW_HOLD_PADDING=64;
   /* WELCOME本文の表示に必要なスクロール量。2なら従来の約2倍。 */
   var WELCOME_BODY_SCROLL_SCALE=2;
+  var WELCOME_BODY_AUTO_DURATION=1800;
   var threePromise=null;
 
   function loadThree(){
@@ -2544,6 +2545,9 @@ hexReady(function(){
     var welcomeButtonHeldLenis=null;
     var welcomeButtonResumeLenis=false;
     var welcomeMeasuredHeight=0;
+    var welcomeAutoPhase='';
+    var welcomeAutoTimer=0;
+    var welcomeAutoFrame=0;
     var spCircleScrollFrame=0;
     var spCircleReleaseScrollY=null;
     var welcomeButton=null;
@@ -2766,7 +2770,7 @@ hexReady(function(){
       welcomeButton.addEventListener("click",function(event){
         event.preventDefault();
         if(!welcomeButton.classList.contains("is-visible")){return;}
-        beginWelcome();
+        beginWelcome(true);
       });
       sticky.appendChild(welcomeButton);
     }
@@ -3095,7 +3099,10 @@ hexReady(function(){
         var index=welcomeButtonTransitions.indexOf(transition);
         if(index<0){return;}
         welcomeButtonTransitions.splice(index,1);
-        if(!welcomeButtonTransitions.length){releaseWelcomeButtonScroll();}
+        if(!welcomeButtonTransitions.length){
+          releaseWelcomeButtonScroll();
+          if(welcomeAutoPhase==='button')cancelWelcomeAuto();
+        }
         /* スクロールが止まっていても、着地後に固定解除を更新する。 */
         queueScrollEffects();
       }
@@ -3388,6 +3395,7 @@ hexReady(function(){
 
     function resetHero(withFade){
       var returningFromWelcome=welcomeActive;
+      cancelWelcomeAuto();
       stopSpCircleScroll();
       spCircleReleaseScrollY=null;
       cancelAutoZoom(false);
@@ -3574,10 +3582,57 @@ hexReady(function(){
       spCircleScrollFrame=window.requestAnimationFrame(advance);
     }
 
-    function beginWelcome(){
+    function cancelWelcomeAuto(){
+      window.clearTimeout(welcomeAutoTimer);welcomeAutoTimer=0;
+      window.cancelAnimationFrame(welcomeAutoFrame);welcomeAutoFrame=0;
+      welcomeAutoPhase='';
+    }
+
+    function startWelcomeBodyAuto(){
+      if(welcomeAutoPhase!=='title'||!welcomeActive||!welcomeWrap)return;
+      window.clearTimeout(welcomeAutoTimer);welcomeAutoTimer=0;
+      stopSpCircleScroll();
+      welcomeBodyForced=false;
+      welcomeAutoPhase='body';
+      var from=window.pageYOffset,startedAt=null;
+      function advance(now){
+        welcomeAutoFrame=0;
+        if(welcomeAutoPhase!=='body'||!welcomeActive)return;
+        if(startedAt===null)startedAt=now;
+        var progress=reduced?1:clamp((now-startedAt)/WELCOME_BODY_AUTO_DURATION,0,1);
+        // 現在の寸法から終端を求め、従来と同じスクロール連動演出だけを進める。
+        var target=documentTop(welcomeWrap)+measureWelcome().travel;
+        var position=from+(target-from)*progress;
+        if(progress>=1)welcomeAutoPhase='button';
+        if(window.hexMotion&&typeof window.hexMotion.scrollTo==='function'){
+          window.hexMotion.scrollTo(position,{immediate:true,force:true});
+        }else{window.scrollTo({top:position,left:0,behavior:'instant'});}
+        updateScrollEffects();
+        if(progress<1){welcomeAutoFrame=window.requestAnimationFrame(advance);}
+        else if(!welcomeButtonTransitions.length){cancelWelcomeAuto();}
+      }
+      welcomeAutoFrame=window.requestAnimationFrame(advance);
+    }
+
+    function queueWelcomeBodyAuto(){
+      if(welcomeAutoPhase!=='circle')return;
+      welcomeAutoPhase='title';
+      // ロール演出が無効な環境でも、見出しを表示してから進める。
+      welcomeAutoTimer=window.setTimeout(startWelcomeBodyAuto,reduced?0:2200);
+    }
+
+    document.addEventListener('hex:welcome-title-complete',function(event){
+      if(event.target&&event.target.closest('.hex-welcome-wrap')===welcomeWrap){
+        startWelcomeBodyAuto();
+      }
+    });
+
+    function beginWelcome(autoBody){
       var target;
       var handoff;
       if(welcomeActive||!welcomeWrap){return;}
+      cancelWelcomeAuto();
+      if(autoBody===true)welcomeAutoPhase='circle';
       document.dispatchEvent(new Event("hex:hero-departed"));
       cancelAutoZoom(false);
       welcomeActive=true;
@@ -3824,6 +3879,7 @@ hexReady(function(){
       }
       syncSnapshotLayer(circleProgress>=.999);
       welcomeWrap.classList.toggle("is-v2-circle-complete",circleProgress>=.999);
+      if(circleProgress>=.999&&scrollY>=welcomeTop-1)queueWelcomeBodyAuto();
 
       if((isSp()&&circleProgress>=.999)||
         (!isSp()&&scrollY-welcomeTop>=welcomeReleaseTravel&&
@@ -3844,7 +3900,7 @@ hexReady(function(){
        WELCOME区間では入力をキャンセルせず、SPの慣性スクロールを維持する。 */
     function onWelcomeTouchMove(event){
       if(welcomeButtonScrollHold!==null){event.preventDefault();return;}
-      if(event.touches.length===1){welcomeBodyForced=false;}
+      if(event.touches.length===1){cancelWelcomeAuto();welcomeBodyForced=false;}
     }
     function onWelcomeWheel(event){
       if(welcomeButtonScrollHold!==null){
@@ -3852,7 +3908,7 @@ hexReady(function(){
         event.stopImmediatePropagation();
         return;
       }
-      if(event.deltaY){welcomeBodyForced=false;}
+      if(event.deltaY){cancelWelcomeAuto();welcomeBodyForced=false;}
     }
     function onWelcomeKeyDown(event){
       if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||
@@ -3865,7 +3921,8 @@ hexReady(function(){
         event.stopImmediatePropagation();
         return;
       }
-      if(/^(ArrowDown|PageDown| |ArrowUp|PageUp)$/.test(event.key)){
+      if(/^(ArrowDown|PageDown| |ArrowUp|PageUp|Home|End)$/.test(event.key)){
+        cancelWelcomeAuto();
         welcomeBodyForced=false;
       }
     }
@@ -13174,6 +13231,9 @@ hexLoad(function(){
             gsap.set(chars,{
               clearProps:'transform,opacity,visibility,willChange'
             });
+            if(main.closest('.hex-welcome-wrap')){
+              main.dispatchEvent(new Event('hex:welcome-title-complete',{bubbles:true}));
+            }
           }
         });
       }
