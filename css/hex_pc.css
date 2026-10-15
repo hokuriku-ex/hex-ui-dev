@@ -780,7 +780,7 @@ a.hex-text-link[target="_blank"]::after{
     gap:12px!important;
     margin:34px auto 0!important;
     padding-bottom:calc(
-      (100dvh - var(--header_height, 80px)) / 2
+      (var(--hex-viewport-height,100dvh) - var(--header_height, 80px)) / 2
     )!important;
   }
   .bg_page_button .page_button{
@@ -1097,7 +1097,7 @@ a.hex-text-link[target="_blank"]::after{
   isolation:isolate;
   width:100%;
   padding-top:calc(
-    (100dvh - var(--header_height, 80px)) / 2
+    (var(--hex-viewport-height,100dvh) - var(--header_height, 80px)) / 2
   )!important;
   box-sizing:border-box;
   font-size:0;
@@ -3013,10 +3013,10 @@ div[hex-sp]{
   #gc_auto_frame_header_object_smartphone_hum_pupup{
     top:var(--header_height)!important;
     height:calc(
-      100dvh - var(--header_height)
+      var(--hex-viewport-height,100dvh) - var(--header_height)
     )!important;
     max-height:calc(
-      100dvh - var(--header_height)
+      var(--hex-viewport-height,100dvh) - var(--header_height)
     )!important;
   }
 }
@@ -3321,7 +3321,7 @@ div[hex-sp]{
 .hex-calendar-modal-dialog{
   position:relative;
   width:min(var(--hex_small_width),100%);
-  max-height:calc(100dvh - 80px);
+  max-height:calc(var(--hex-viewport-height,100dvh) - 80px);
   overflow:auto;
   background:#fff!important;
   color:#203459!important;
@@ -4124,7 +4124,7 @@ body,
   display:block;
   width:100vw;
   max-width:none;
-  height:min(100dvh,760px);
+  height:min(var(--hex-viewport-height,100dvh),760px);
   overflow:visible;
   color:var(--hex-opening-navy);
 }
@@ -4218,7 +4218,7 @@ body,
   position:relative;
   z-index:10;
   width:100%;
-  min-height:100dvh;
+  min-height:var(--hex-viewport-height,100dvh);
   background:var(--hex-opening-white);
 }
 
@@ -4228,7 +4228,7 @@ body,
   right:auto;
   bottom:auto;
   left:auto;
-  height:calc(100dvh - var(--header_height));
+  height:calc(var(--hex-viewport-height,100dvh) - var(--header_height));
 }
 
 .hex-opening.is-scroll-driven{
@@ -4497,7 +4497,7 @@ body,
   display:flex;
   flex-direction:column;
   align-items:center;
-  max-height:calc(100dvh - var(--header_height,80px) - var(--header_height,80px) - 24px);
+  max-height:calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px) - var(--header_height,80px) - 24px);
   overflow-y:auto;
   overscroll-behavior:contain;
   scrollbar-width:none;
@@ -4737,7 +4737,7 @@ html:has(.hex-opening)
   z-index:0;
   width:100%;
   max-width:100%;
-  height:100dvh;
+  height:var(--hex-viewport-height,100dvh);
   overflow:visible!important;
   box-sizing:border-box;
 }
@@ -4745,7 +4745,7 @@ html:has(.hex-opening)
   position:relative;
   width:100%;
   max-width:100%;
-  height:100dvh;
+  height:var(--hex-viewport-height,100dvh);
   overflow:hidden!important;
   box-sizing:border-box;
 }
@@ -4781,7 +4781,7 @@ body:has(.hex-hero-wrap){
   overflow:hidden;
   width:100%!important;
   min-width:0!important;
-  height:calc(100dvh - var(--header_height,80px))!important;
+  height:calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))!important;
   min-height:0!important;
   margin-top:var(--header_height,80px)!important;
   background:#fff;
@@ -5095,7 +5095,7 @@ html body
   z-index:95;
   width:100%;
   min-height:100vh;
-  min-height:100dvh;
+  min-height:var(--hex-viewport-height,100dvh);
   background:transparent!important;
   padding-bottom:var(--hex-welcome-entry-offset,0px);
   box-sizing:border-box;
@@ -5117,7 +5117,7 @@ html body
   justify-content:center;
   width:100%;
   min-height:100vh;
-  min-height:100dvh;
+  min-height:var(--hex-viewport-height,100dvh);
   padding:
     calc(80px + clamp(24px, 3vh, 40px))
     0
@@ -6178,7 +6178,7 @@ html body
   width:100%!important;
   padding-top:128px!important;
   padding-bottom:calc(
-    (100dvh - var(--header_height, 80px)) / 2
+    (var(--hex-viewport-height,100dvh) - var(--header_height, 80px)) / 2
   )!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box!important;
@@ -6192,7 +6192,7 @@ html body
 .gc_auto_frame_publicinfo_staff{
   padding-top:128px!important;
   padding-bottom:calc(
-    (100dvh - var(--header_height, 80px)) / 2
+    (var(--hex-viewport-height,100dvh) - var(--header_height, 80px)) / 2
   )!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
 }
@@ -6208,7 +6208,7 @@ html body
   width:100%!important;
   padding-top:128px!important;
   padding-bottom:calc(
-    (100dvh - var(--header_height, 80px)) / 2
+    (var(--hex-viewport-height,100dvh) - var(--header_height, 80px)) / 2
   )!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box!important;
@@ -6219,7 +6219,7 @@ html body
   width:100%!important;
   padding-top:128px!important;
   padding-bottom:calc(
-    (100dvh - var(--header_height, 80px)) / 2
+    (var(--hex-viewport-height,100dvh) - var(--header_height, 80px)) / 2
   )!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   box-sizing:border-box!important;
@@ -7813,7 +7813,7 @@ html body
   width:100%!important;
   padding-top:0!important;
   padding-bottom:calc(
-    (100dvh - var(--header_height, 80px)) / 2
+    (var(--hex-viewport-height,100dvh) - var(--header_height, 80px)) / 2
   )!important;
 }
 #gc_auto_frame_lp_form_body{
@@ -8962,7 +8962,7 @@ html.hex-opening-finishing
 .hex-simple-loader-bar{position:absolute;top:calc(50% + 14px);left:50%;width:clamp(120px,30vw,480px);height:1px;overflow:hidden;background:rgba(255,255,255,.2);transform:translateX(-50%)}
 .hex-simple-loader-bar::after{content:"";display:block;width:100%;height:100%;background:#c8a874;transform:scaleX(var(--hex-loader-progress));transform-origin:left center;transition:transform .18s ease-out}
 
-.hex-opening-scroll-host:has(.is-curtain-sequence){height:100dvh!important;min-height:100dvh!important;background:#fff}
+.hex-opening-scroll-host:has(.is-curtain-sequence){height:var(--hex-viewport-height,100dvh)!important;min-height:var(--hex-viewport-height,100dvh)!important;background:#fff}
 .hex-opening-scroll-host>.hex-opening.is-curtain-sequence{position:fixed!important;top:var(--header_height,80px)!important;right:0!important;bottom:0!important;left:0!important;width:100vw!important;height:auto!important}
 .hex-opening.is-curtain-sequence{background:#fff;touch-action:none}
 .hex-opening.is-curtain-sequence.is-v2-hero-stage{background:transparent}
@@ -9047,9 +9047,9 @@ html.hex-opening-finishing
   to{opacity:1;transform:translateY(0)}
 }
 
-.hex-hero-wrap{height:100dvh!important;min-height:100dvh!important}
-.hex-hero-sticky{position:relative!important;top:auto!important;height:100dvh!important;overflow:hidden!important;touch-action:auto}
-.hex-hero{width:100%!important;max-width:100%!important;height:calc(100dvh - var(--header_height,80px))!important;margin-top:var(--header_height,80px)!important}
+.hex-hero-wrap{height:var(--hex-viewport-height,100dvh)!important;min-height:var(--hex-viewport-height,100dvh)!important}
+.hex-hero-sticky{position:relative!important;top:auto!important;height:var(--hex-viewport-height,100dvh)!important;overflow:hidden!important;touch-action:auto}
+.hex-hero{width:100%!important;max-width:100%!important;height:calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))!important;margin-top:var(--header_height,80px)!important}
 .hex-webgl-stage{position:absolute;inset:0;z-index:2;overflow:hidden;width:100%;height:100%;cursor:grab;touch-action:none;user-select:none;opacity:1;background:transparent}
 .hex-webgl-stage.is-dragging{cursor:grabbing}
 .hex-webgl-stage.is-resetting{animation:hex-v2-hero-reset .7s ease both}
@@ -9073,7 +9073,7 @@ html.hex-opening-finishing
 
 .hex-v2-handoff{position:fixed;top:var(--header_height,80px);right:0;bottom:0;left:0;z-index:92;overflow:hidden;pointer-events:none;clip-path:circle(150vmax at 50% 50%);will-change:clip-path}
 .hex-v2-handoff canvas{display:block;width:100%;height:100%}
-.hex-v2-handoff.is-released{position:absolute;top:var(--hex-v2-release-top,0)!important;right:auto!important;bottom:auto!important;left:var(--hex-v2-release-left,0)!important;z-index:1;width:100vw;height:calc(100dvh - var(--header_height,80px))}
+.hex-v2-handoff.is-released{position:absolute;top:var(--hex-v2-release-top,0)!important;right:auto!important;bottom:auto!important;left:var(--hex-v2-release-left,0)!important;z-index:1;width:100vw;height:calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))}
 
 /* 画像より背面で、濃淡２色の青い雲PNGを個別に漂わせる。 */
 .hex-hero,
@@ -9220,12 +9220,12 @@ html.hex-opening-finishing
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-v2-welcome),
 .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-v2-welcome) :is(.gc_auto_frame_spotitem_basewidth,.gc_auto_frame_spotitem_box,.gc_auto_frame_spotitem_body){
   height:auto!important;
-  min-height:var(--hex-v2-welcome-total-height,100dvh)!important;
+  min-height:var(--hex-v2-welcome-total-height,var(--hex-viewport-height,100dvh))!important;
   overflow:visible!important;
 }
 .hex-welcome-wrap.hex-v2-welcome > .hex-v2-handoff{z-index:1}
 .hex-welcome-wrap.hex-v2-welcome .welcome{background:transparent!important}
-.hex-v2-welcome .welcome.has-padding{position:relative!important;top:0!important;z-index:3!important;display:block!important;width:100%!important;min-height:100dvh!important;height:100dvh!important;margin:0!important;padding:0!important;overflow:visible!important;transform:none!important}
+.hex-v2-welcome .welcome.has-padding{position:relative!important;top:0!important;z-index:3!important;display:block!important;width:100%!important;min-height:var(--hex-viewport-height,100dvh)!important;height:var(--hex-viewport-height,100dvh)!important;margin:0!important;padding:0!important;overflow:visible!important;transform:none!important}
 .hex-v2-welcome-copy-stage{position:absolute;top:0;right:3vw;z-index:20;width:46%;max-width:720px}
 @media screen and (min-width:769px){
   .hex-v2-welcome-copy-stage{right:calc(max(0px, (100vw - 1600px)/2) + min(3vw, 48px))}
@@ -9773,7 +9773,7 @@ h2.hex-top-title.hex-audience-guide-title .hex-top-title-en{
   bottom:auto;
   left:auto;
   flex-direction:column;
-  max-height:calc(100dvh - var(--header_height,80px) * 2 - 24px);
+  max-height:calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px) * 2 - 24px);
   overflow-y:auto;
   overscroll-behavior:contain;
   scrollbar-width:none;
@@ -9856,7 +9856,7 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
   position:relative!important;
   width:100%!important;max-width:none!important;
   height:calc(100vh - var(--hex-page-header))!important;
-  height:calc(100dvh - var(--hex-page-header))!important;
+  height:calc(var(--hex-viewport-height,100dvh) - var(--hex-page-header))!important;
   min-height:0!important;
   padding:0!important;
   overflow:visible!important;
@@ -10113,7 +10113,7 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
   left:0;width:100%;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero:not(.has-hero-nav) > .contents .hex-page-hero-main{
-  top:calc(var(--hex-page-header) + (100dvh - var(--hex-page-header)) / 2);
+  top:calc(var(--hex-page-header) + (var(--hex-viewport-height,100dvh) - var(--hex-page-header)) / 2);
 }
 .hex-page-hero-following{
   position:relative;z-index:1;isolation:isolate;
@@ -10614,8 +10614,8 @@ html.hex-overlap-snap-animating{
   -webkit-mask-size:var(--hex-bg-patterns-size,300px auto);
   mask-size:var(--hex-bg-patterns-size,300px auto);
   -webkit-mask-repeat:repeat;mask-repeat:repeat;
-  -webkit-mask-position:var(--hex-bg-patterns-position,0 0);
-  mask-position:var(--hex-bg-patterns-position,0 0);
+  -webkit-mask-position:0 0;
+  mask-position:0 0;
   mask-mode:alpha;
 }
 /* 範囲内の余白は親の背景を見せ、柄が二重にならないようにする。 */
@@ -10641,7 +10641,7 @@ html.hex-overlap-snap-animating{
   background-color:transparent;
   background-image:var(--hex-bg-patterns-image);
   background-size:var(--hex-bg-patterns-size,300px auto);
-  background-position:var(--hex-bg-patterns-position,0 0);
+  background-position:0 0;
   background-repeat:repeat;
   -webkit-mask-image:none;mask-image:none;
 }
@@ -10702,11 +10702,10 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   top:0;
 }
 
-/* 曲線を走る重機。速度は1秒あたりのCSS長さ（単位なしはpx/秒）、回転の上限は度数。 */
+/* 曲線を走る重機。速度は1秒あたりのCSS長さ（単位なしはpx/秒）。回転の角度制限なし。 */
 :root{
   --hex-vehicle-width:clamp(144px,13.5vw,222px);
   --hex-vehicle-speed:3vw;
-  --hex-vehicle-max-angle:20;
 }
 .hex-vehicle-track{
   display:block;position:absolute!important;
@@ -10742,3 +10741,25 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   :root{--hex-vehicle-width:clamp(108px,27vw,150px);--hex-vehicle-speed:7.2vw;}
 }
 @media(prefers-reduced-motion:reduce){.hex-vehicle-track{visibility:hidden!important;}}
+
+/* 背景範囲の画像をviewportに固定。逆スクロールやbackground-attachmentは使わない。 */
+.hex-bg-patterns-layer > .hex-bg-patterns-ink{
+  position:fixed!important;
+  inset:0!important;
+  width:auto!important;height:auto!important;
+  margin:0!important;transform:none!important;
+  -webkit-mask-position:0 0;
+  mask-position:0 0;
+  background-position:0 0;
+}
+/* 固定画像の親がtransformで固定基準にならないよう、同じ中央位置を通常配置で表す。 */
+.hex-rise-veil,
+.hex-overlap-corner-fill{
+  left:calc(50% - 50vw)!important;
+  transform:none!important;
+}
+/* 角丸補完面の元の二隅マスクに加え、viewport固定の画像を面の外へ出さない。 */
+.hex-overlap-corner-fill{
+  -webkit-clip-path:inset(0);
+  clip-path:inset(0);
+}

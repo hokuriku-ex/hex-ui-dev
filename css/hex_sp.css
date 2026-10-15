@@ -162,7 +162,7 @@
     gap:10px!important;
     margin:28px auto 0!important;
     padding-bottom:calc(
-      (100dvh - var(--header_height_smartphone, 80px)) / 2
+      (var(--hex-viewport-height,100dvh) - var(--header_height_smartphone, 80px)) / 2
     )!important;
   }
   .bg_page_button .page_button{
@@ -254,7 +254,7 @@
   }
   .hex-overlap-spacer{
     padding-top:calc(
-      (100dvh - var(--header_height_smartphone, clamp(64px, 20vw, 80px))) / 2
+      (var(--hex-viewport-height,100dvh) - var(--header_height_smartphone, clamp(64px, 20vw, 80px))) / 2
     )!important;
   }
 }
@@ -859,10 +859,10 @@
   #gc_auto_frame_header_object_smartphone_hum_pupup{
     top:var(--header_height_smartphone)!important;
     height:calc(
-      100dvh - var(--header_height_smartphone)
+      var(--hex-viewport-height,100dvh) - var(--header_height_smartphone)
     )!important;
     max-height:calc(
-      100dvh - var(--header_height_smartphone)
+      var(--hex-viewport-height,100dvh) - var(--header_height_smartphone)
     )!important;
   }
 }
@@ -1291,7 +1291,7 @@
   .hex-logo-story{
     width:160vw;
     max-width:none;
-    height:100dvh;
+    height:var(--hex-viewport-height,100dvh);
   }
 
   .hex-opening-progress-nav{
@@ -1627,7 +1627,7 @@
   .gc_auto_frame_publicinfo_company .publicinfo_company_type1 .bg_contents{
     padding-inline:16px!important;
     padding-bottom:calc(
-      (100dvh - var(--header_height_smartphone, 80px)) / 2
+      (var(--hex-viewport-height,100dvh) - var(--header_height_smartphone, 80px)) / 2
     )!important;
   }
 
@@ -1635,7 +1635,7 @@
   .gc_auto_frame_publicinfo_staff{
     padding-inline:16px!important;
     padding-bottom:calc(
-      (100dvh - var(--header_height_smartphone, 80px)) / 2
+      (var(--hex-viewport-height,100dvh) - var(--header_height_smartphone, 80px)) / 2
     )!important;
   }
 
@@ -1643,7 +1643,7 @@
   .gc_auto_frame_post_item .post_item_contents{
     padding-inline:16px!important;
     padding-bottom:calc(
-      (100dvh - var(--header_height_smartphone, 80px)) / 2
+      (var(--hex-viewport-height,100dvh) - var(--header_height_smartphone, 80px)) / 2
     )!important;
   }
 
@@ -1651,7 +1651,7 @@
   .gc_auto_frame_publicinfo_qanda .publicinfo_qanda_contents{
     padding-inline:16px!important;
     padding-bottom:calc(
-      (100dvh - var(--header_height_smartphone, 80px)) / 2
+      (var(--hex-viewport-height,100dvh) - var(--header_height_smartphone, 80px)) / 2
     )!important;
   }
 }
@@ -2229,7 +2229,7 @@
   }
   .gc_auto_frame_lp_form_box{
     padding-bottom:calc(
-      (100dvh - var(--header_height_smartphone, 80px)) / 2
+      (var(--hex-viewport-height,100dvh) - var(--header_height_smartphone, 80px)) / 2
     )!important;
   }
   #form_lp_form .hex-form-row{
@@ -2619,10 +2619,10 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
 
   /* 開幕側と同じ動的ビューポート高に揃え、切替時の下端余白をなくす */
   .hex-hero-wrap,
-  .hex-hero-sticky{height:100dvh!important;min-height:100dvh!important}
+  .hex-hero-sticky{height:var(--hex-viewport-height,100dvh)!important;min-height:var(--hex-viewport-height,100dvh)!important}
   .hex-hero{
     margin-top:var(--header_height_smartphone,80px)!important;
-    height:calc(100dvh - var(--header_height_smartphone,80px))!important;
+    height:calc(var(--hex-viewport-height,100dvh) - var(--header_height_smartphone,80px))!important;
   }
   /* WELCOME移行中は固定した丸スナップショットだけを表示する */
   .hex-hero-wrap.is-welcome-transition .hex-hero{opacity:0!important;visibility:hidden!important;transition:none!important}
@@ -2636,10 +2636,10 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   .hex-webgl-stage{cursor:grab}
   .hex-v2-handoff{
     top:var(--header_height_smartphone,80px)!important;
-    height:calc(100dvh - var(--header_height_smartphone,80px));
+    height:calc(var(--hex-viewport-height,100dvh) - var(--header_height_smartphone,80px));
   }
   .hex-v2-handoff.is-released{
-    height:calc(100dvh - var(--header_height_smartphone,80px));
+    height:calc(var(--hex-viewport-height,100dvh) - var(--header_height_smartphone,80px));
   }
 
   .hex-v2-welcome .welcome.has-padding{
@@ -2896,4 +2896,13 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   mask-size:100% var(--hex-curve-depth),100% calc(100% - var(--hex-curve-depth)),100% 1px;
   -webkit-mask-position:top,bottom,0 calc(var(--hex-curve-depth) - .5px);
   mask-position:top,bottom,0 calc(var(--hex-curve-depth) - .5px);
+}
+
+
+/* トップ・下層SP：左右余白は既存CMSコンテンツ側に任せ、範囲ラッパーで重ねない。 */
+@media screen and (max-width:768px){
+  .hex-bg-range{
+    padding-left:0!important;
+    padding-right:0!important;
+  }
 }

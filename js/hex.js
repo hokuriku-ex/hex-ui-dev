@@ -1,3 +1,150 @@
+/* スマホの高さはタッチ開始から慣性スクロール・UI伸縮の安定まで保持する。 */
+(function(){
+  'use strict';
+  var root=document.documentElement,visual=window.visualViewport;
+  // 実機調整用。スクロールと高さが連続して安定する時間／指を離した後の最低待機時間。
+  var VIEWPORT_SETTLE_QUIET_MS=350;
+  var VIEWPORT_RELEASE_GRACE_MS=450;
+  var VIEWPORT_SETTLE_POLL_MS=80;
+  var frozenHeight=0,touching=false,timer=0,frame=0,forcePending=false;
+  var knownWidth=window.innerWidth;
+  var emittedWidth=knownWidth,emittedHeight=rawHeight();
+  var lastScrollAt=0,lastHeightAt=0,releasedAt=0;
+  var sampleY=scrollY(),sampleHeight=rawHeight(),sampleVisible=visibleHeight();
+  function mobile(){return window.matchMedia('(max-width:768px)').matches;}
+  function rawHeight(){return Math.max(1,window.innerHeight||root.clientHeight||1);}
+  function visibleHeight(){return visual&&visual.height>0?visual.height:rawHeight();}
+  function scrollY(){return window.scrollY||window.pageYOffset||0;}
+  function editing(){
+    var active=document.activeElement;
+    return !!(active&&(active.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)));
+  }
+  function normalScale(){return !visual||Math.abs((visual.scale||1)-1)<.01;}
+  window.hexViewportHeight=function(){return mobile()&&frozenHeight?frozenHeight:rawHeight();};
+  window.hexViewportIsHeld=function(){return !!(mobile()&&frozenHeight);};
+  function notify(force){
+    forcePending=forcePending||!!force;
+    if(frame)return;
+    frame=window.requestAnimationFrame(function(){
+      frame=0;
+      // 操作前に予約されていた高さ更新も、保持中は流さない。
+      if(frozenHeight){forcePending=false;return;}
+      var width=window.innerWidth,height=rawHeight();
+      var changed=width!==emittedWidth||Math.abs(height-emittedHeight)>.5;
+      var forced=forcePending;forcePending=false;
+      if(!changed&&!forced)return;
+      emittedWidth=width;emittedHeight=height;
+      window.dispatchEvent(new Event('hex:viewport-resize'));
+    });
+  }
+  function release(force){
+    var wasFrozen=!!frozenHeight;
+    window.clearTimeout(timer);timer=0;
+    frozenHeight=0;touching=false;
+    root.style.removeProperty('--hex-viewport-height');
+    // 保持中に待機した再計測も、ここで一度まとめて再開する。
+    notify(!!force||wasFrozen);
+  }
+  function sample(now){
+    var y=scrollY(),height=rawHeight(),visible=visibleHeight();
+    if(Math.abs(y-sampleY)>.5){lastScrollAt=now;sampleY=y;}
+    if(Math.abs(height-sampleHeight)>.5||Math.abs(visible-sampleVisible)>.5){
+      lastHeightAt=now;sampleHeight=height;sampleVisible=visible;
+    }
+  }
+  function queueSettle(){
+    window.clearTimeout(timer);timer=0;
+    if(frozenHeight&&!touching)timer=window.setTimeout(checkSettle,VIEWPORT_SETTLE_POLL_MS);
+  }
+  function checkSettle(){
+    timer=0;
+    if(!frozenHeight||touching)return;
+    if(!mobile()||editing()||!normalScale()||window.innerWidth!==knownWidth){release(true);return;}
+    var now=Date.now();sample(now);
+    if(now-releasedAt>=VIEWPORT_RELEASE_GRACE_MS&&
+      now-lastScrollAt>=VIEWPORT_SETTLE_QUIET_MS&&
+      now-lastHeightAt>=VIEWPORT_SETTLE_QUIET_MS){release(false);}
+    else queueSettle();
+  }
+  function onResize(){
+    var width=window.innerWidth;
+    if(width!==knownWidth){knownWidth=width;release(true);return;}
+    if(!mobile()||editing()||!normalScale()){release(true);return;}
+    if(frozenHeight){lastHeightAt=Date.now();sample(lastHeightAt);queueSettle();return;}
+    notify(false);
+  }
+  window.addEventListener('touchstart',function(event){
+    if(!mobile()||editing()||!normalScale()||event.touches.length!==1){release(false);return;}
+    window.clearTimeout(timer);timer=0;
+    touching=true;knownWidth=window.innerWidth;
+    // 慣性中に次の操作が始まった場合も、保持を途切れさせない。
+    if(!frozenHeight){
+      frozenHeight=rawHeight();
+      root.style.setProperty('--hex-viewport-height',frozenHeight+'px');
+    }
+    var now=Date.now();lastScrollAt=now;lastHeightAt=now;
+    sampleY=scrollY();sampleHeight=rawHeight();sampleVisible=visibleHeight();
+  },{passive:true,capture:true});
+  window.addEventListener('touchmove',function(event){
+    if(frozenHeight&&(event.touches.length!==1||!normalScale()))release(true);
+  },{passive:true,capture:true});
+  function finishTouch(event){
+    if(event.touches&&event.touches.length)return;
+    if(!frozenHeight)return;
+    touching=false;releasedAt=Date.now();sample(releasedAt);queueSettle();
+  }
+  window.addEventListener('touchend',finishTouch,{passive:true,capture:true});
+  window.addEventListener('touchcancel',finishTouch,{passive:true,capture:true});
+  function onScroll(){
+    if(!frozenHeight)return;
+    lastScrollAt=Date.now();sample(lastScrollAt);queueSettle();
+  }
+  // ネイティブスクロールと演出の更新は止めず、終了の判定だけに利用する。
+  window.addEventListener('scroll',onScroll,{passive:true});
+  if(visual)visual.addEventListener('scroll',onScroll,{passive:true});
+  // scrollendは終了の手掛かり。UI高さが遅れて変わる場合に備え、直ちには解除しない。
+  document.addEventListener('scrollend',function(){if(frozenHeight&&!touching)queueSettle();},{passive:true});
+  window.addEventListener('resize',onResize,{passive:true});
+  if(visual)visual.addEventListener('resize',onResize,{passive:true});
+  window.addEventListener('orientationchange',function(){release(true);},{passive:true});
+  window.addEventListener('pageshow',function(){knownWidth=window.innerWidth;release(true);},{passive:true});
+  document.addEventListener('visibilitychange',function(){if(document.hidden)release(true);});
+  document.addEventListener('focusin',function(){if(editing())release(true);},true);
+  document.addEventListener('focusout',function(){notify(true);},true);
+})();
+
+/* 背景の柄は画面に固定し、形状レイヤーだけを通常レイアウトで動かす。
+   座標補正は中央寄せ用transformをleft/topへ置換する初期化のみ。スクロール量は使わない。 */
+window.hexPrepareFixedBackgroundLayer=function(layer){
+  var style=getComputedStyle(layer);
+  var transform=style.transform;
+  if(transform&&transform!=='none'){
+    var matrix=new DOMMatrixReadOnly(transform);
+    // 共通背景の形状レイヤーは平行移動のみ。移動量を通常配置へ移す。
+    if(matrix.is2D&&matrix.a===1&&matrix.b===0&&matrix.c===0&&matrix.d===1){
+      if(matrix.e){
+        if(style.left!=='auto')layer.style.left='calc('+style.left+' + '+matrix.e+'px)';
+        else if(style.right!=='auto')layer.style.right='calc('+style.right+' - '+matrix.e+'px)';
+      }
+      if(matrix.f){
+        if(style.top!=='auto')layer.style.top='calc('+style.top+' + '+matrix.f+'px)';
+        else if(style.bottom!=='auto')layer.style.bottom='calc('+style.bottom+' - '+matrix.f+'px)';
+      }
+      layer.style.transform='none';
+    }
+  }
+  // overflowだけではviewport固定の子を切り抜けないため、明示したclip-pathを使う。
+  // 波・斜め等のmask、アーチ・三角形等のclip-pathはそのまま残す。
+  if(!style.clipPath||style.clipPath==='none'){
+    var clip='inset(0 round '+(style.borderRadius||'0px')+')';
+    layer.style.clipPath=clip;
+    layer.style.webkitClipPath=clip;
+  }
+};
+window.hexPrepareFixedBackgroundImages=function(){
+  document.querySelectorAll('.hex-bg-patterns-layer').forEach(window.hexPrepareFixedBackgroundLayer);
+};
+
 /* 数字のid（記事詳細）またはpage_no（一覧ページング）は共通タイトル・導入を省略。 */
 function hexIsArticlePage(){
   var params=new URLSearchParams(window.location.search);
@@ -303,6 +450,7 @@ hexReady(function(){
           layer.style.top='auto';layer.style.width=(borderLeft+borderRight)+'px';
           layer.style.height=borderTop+'px';layer.style.clipPath='polygon(0 0,100% 0,50% 100%)';
         }
+        window.hexPrepareFixedBackgroundLayer(layer);
       });
     });
   }
@@ -329,7 +477,7 @@ hexReady(function(){
         group.style.left=(rect.left-origin.left)+'px';
         group.style.top=(rect.top-origin.top)+'px';
         group.style.width=rect.width+'px';group.style.height=rect.height+'px';
-        ['image','color','size','opacity','position'].forEach(function(name){
+        ['image','color','size','opacity'].forEach(function(name){
           var property='--hex-bg-patterns-'+name,value=style.getPropertyValue(property).trim();
           if(value)group.style.setProperty(property,value);
         });
@@ -339,7 +487,7 @@ hexReady(function(){
       veil.querySelectorAll('.hex-rise-veil-patterns').forEach(function(group){group.remove();});
       groups.forEach(function(group){if(group)veil.appendChild(group);});
     });
-    if(window.hexSyncBackgroundImageViewport)window.hexSyncBackgroundImageViewport();
+    if(window.hexPrepareFixedBackgroundImages)window.hexPrepareFixedBackgroundImages();
   };
   function syncHatchingSpacers(){
     document.querySelectorAll('.hex-overlap-spacer').forEach(function(spacer){
@@ -371,16 +519,14 @@ hexReady(function(){
         getComputedStyle(source).getPropertyValue('--hex-bg-patterns-opacity').trim()||'1');
       spacer.style.setProperty('--hex-bg-patterns-base-color',
         getComputedStyle(source).getPropertyValue('--hex-bg-range-color').trim()||'#fff');
-      var offset=spacer.getBoundingClientRect().top-source.getBoundingClientRect().top;
-      spacer.style.setProperty('--hex-bg-patterns-position','0px '+(-offset)+'px');
       spacer.classList.add('hex-bg-spacer-patterns');
     });
     syncHatchingMasks();
     window.hexSyncHatchingVeils();
     if(window.hexSyncOverlapCornerImages)window.hexSyncOverlapCornerImages();
-    if(window.hexSyncBackgroundImageViewport)window.hexSyncBackgroundImageViewport();
+    if(window.hexPrepareFixedBackgroundImages)window.hexPrepareFixedBackgroundImages();
   }
-  window.addEventListener('resize',syncHatchingSpacers,{passive:true});
+  window.addEventListener('hex:viewport-resize',syncHatchingSpacers,{passive:true});
   window.addEventListener('load',syncHatchingSpacers,{once:true});
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(syncHatchingSpacers);
   function applyBackgroundHatching(wrapper,start){
@@ -1500,7 +1646,7 @@ function hexInitAnchorNav(){
   window.addEventListener('scroll',function(){
     updateHexAnchorNav();
   });
-  window.addEventListener('resize',function(){
+  window.addEventListener('hex:viewport-resize',function(){
     refreshHexAnchorNav();
     refreshAnchorScrollbar();
   });
@@ -2689,12 +2835,12 @@ hexReady(function(){
     function isSp(){return window.matchMedia("(max-width:768px)").matches;}
     function clamp(value,min,max){return Math.min(max,Math.max(min,value));}
     function getSpCircleRadius(){
-      return clamp(Math.min(window.innerWidth,window.innerHeight)*.34,128,250);
+      return clamp(Math.min(window.innerWidth,window.hexViewportHeight())*.34,128,250);
     }
     function getPcCircleRadius(){
       /* 左27%の中心を保ち、画面の左端とヒーローの上下端に16px残す。 */
       return Math.min(
-        clamp(Math.min(window.innerWidth,window.innerHeight)*.42,180,480),
+        clamp(Math.min(window.innerWidth,window.hexViewportHeight())*.42,180,480),
         Math.max(1,window.innerWidth*.27-16),
         Math.max(1,metrics.height*.5-16)
       );
@@ -3173,7 +3319,7 @@ hexReady(function(){
     }
 
     function measureWelcome(){
-      var viewport=Math.max(window.innerHeight,1);
+      var viewport=Math.max(window.hexViewportHeight(),1);
       var stageHeight=welcomeStage
         ?Math.max(welcomeStage.scrollHeight,welcomeStage.offsetHeight,1)
         :viewport*.7;
@@ -3524,7 +3670,7 @@ hexReady(function(){
       if(isSp()){
         return Math.max(0,documentTop(welcomeWrap)+measureWelcome().travel-1);
       }
-      var viewport=Math.max(window.innerHeight,1);
+      var viewport=Math.max(window.hexViewportHeight(),1);
       var stageHeight=welcomeStage
         ?Math.max(welcomeStage.scrollHeight,welcomeStage.offsetHeight,1)
         :viewport*.7;
@@ -3632,7 +3778,7 @@ hexReady(function(){
       var handoff;
       if(welcomeActive||!welcomeWrap){return;}
       cancelWelcomeAuto();
-      if(autoBody===true)welcomeAutoPhase='circle';
+      if(autoBody===true&&!isSp())welcomeAutoPhase='circle';
       document.dispatchEvent(new Event("hex:hero-departed"));
       cancelAutoZoom(false);
       welcomeActive=true;
@@ -3746,7 +3892,7 @@ hexReady(function(){
       var scrollY=window.pageYOffset;
       var movingUp=scrollY<lastScrollY;
       var heroTop=documentTop(hero);
-      var welcomeTop=welcomeWrap?documentTop(welcomeWrap):heroTop+window.innerHeight;
+      var welcomeTop=welcomeWrap?documentTop(welcomeWrap):heroTop+window.hexViewportHeight();
       var travelMetrics;
       var circleProgress;
       var startRadius;
@@ -3792,7 +3938,7 @@ hexReady(function(){
         if(released){refixSnapshot(true);}
         syncSnapshotLayer(false);
       }
-      startRadius=Math.hypot(window.innerWidth,window.innerHeight);
+      startRadius=Math.hypot(window.innerWidth,window.hexViewportHeight());
       targetRadius=isSp()?getSpCircleRadius():getPcCircleRadius();
       radius=startRadius+(targetRadius-startRadius)*circleProgress;
       startX=window.innerWidth*.5;
@@ -4727,7 +4873,7 @@ hexReady(function(){
     window.addEventListener("wheel",onWelcomeWheel,{passive:false,capture:true});
     window.addEventListener("keydown",onWelcomeKeyDown,{capture:true});
     window.addEventListener("wheel",onWheel,{passive:false,capture:true});
-    window.addEventListener("resize",queueResize);
+    window.addEventListener("hex:viewport-resize",queueResize);
     window.addEventListener("orientationchange",queueResize);
     document.addEventListener("hex:hero-display-ready",function(){
       if(autoZoomPending){scheduleAutoZoom(autoZoomPendingDelay);}
@@ -5082,7 +5228,7 @@ hexReady(function(){
   }
 
   /* 画面幅変更時に展開高さを再計算 */
-  window.addEventListener('resize', function(){
+  window.addEventListener('hex:viewport-resize', function(){
 
     document
       .querySelectorAll('.hex-action-grid.is-open')
@@ -6806,7 +6952,7 @@ function hexLoadAllAlphaVideos(scope){
 hexReady(function(){
   "use strict";
 
-  /* <head>内の初期非表示判定と同じキーにする */
+  /* 閲覧済み記録はlocalStorage、リプレイ要求はタブ内だけのsessionStorage。 */
   var STORAGE_KEY="hex_top_opening_viewed";
   var REPLAY_KEY="hex_top_opening_replay";
 
@@ -6913,6 +7059,20 @@ hexReady(function(){
     return !!document.querySelector(".hex-hero-wrap");
   }
 
+  // 自動表示の閲覧記録は期限を設けずlocalStorageへ保存する。
+  // ストレージが利用できない環境でも、開幕の初期化は止めない。
+  function hasViewedOpening(){
+    try{
+      return window.localStorage.getItem(STORAGE_KEY)==="1";
+    }catch(error){return false;}
+  }
+
+  function rememberOpeningViewed(){
+    try{
+      window.localStorage.setItem(STORAGE_KEY,"1");
+    }catch(error){}
+  }
+
   function isReplayRequested(){
     try{
       return sessionStorage.getItem(REPLAY_KEY)==="1";
@@ -6948,7 +7108,7 @@ hexReady(function(){
     function updateReplayVisibility(){
       var rect=hero.getBoundingClientRect();
       var buttonBottom=button.getBoundingClientRect().bottom;
-      var visible=rect.top<window.innerHeight&&
+      var visible=rect.top<window.hexViewportHeight()&&
         rect.bottom>buttonBottom+16&&
         hero.closest('.hex-hero-wrap').classList.contains('is-intro-complete')&&
         !hero.closest('.hex-hero-wrap').classList.contains('is-intro-departed')&&
@@ -6999,7 +7159,7 @@ hexReady(function(){
     /* 横スクロールするヒーロー内のクリップを避ける */
     document.body.appendChild(button);
     window.addEventListener('scroll',requestReplayUpdate,{passive:true});
-    window.addEventListener('resize',requestReplayUpdate);
+    window.addEventListener('hex:viewport-resize',requestReplayUpdate);
     ['hex:opening-finished','hex:hero-intro-complete','hex:hero-departed','hex:hero-intro-reset'].forEach(function(name){
       document.addEventListener(name,requestReplayUpdate);
     });
@@ -7311,46 +7471,36 @@ hexReady(function(){
   function createOpeningMessage(opening,data){
     var stage=document.createElement("div");
     var first=document.createElement("div");
-    var drawStage=document.createElement("div");
-    var drawCopy=document.createElement("div");
-    var withStage=document.createElement("div");
-    var withCopy=document.createElement("div");
-    var brandStage=document.createElement("div");
     var logoStage=opening.querySelector(".hex-opening-logo-stage");
-
     stage.className="hex-opening-message-stage";
-    drawStage.className="hex-opening-draw-stage";
-    drawCopy.className="hex-opening-draw-copy";
-    withStage.className="hex-opening-with-stage";
-    withCopy.className="hex-opening-with-copy";
-    brandStage.className="hex-opening-brand-stage";
-
     if(data.first){
       first.className="hex-opening-message-first";
       first.innerHTML=data.first;
       stage.appendChild(first);
     }
-
-    drawCopy.textContent="Draw Your Everyday";
-    withCopy.textContent="With";
-    drawStage.appendChild(drawCopy);
-    withStage.appendChild(withCopy);
-
+    // ローディング時のロゴアニメは残すが、独立した開幕シーンにはしない。
     if(logoStage){
-      var wordmarkSvg=logoStage.querySelector(".hex-logo-story");
-      logoStage.classList.add("hex-opening-wordmark-stage");
-      if(wordmarkSvg){
-        wordmarkSvg.setAttribute("viewBox","250 410 500 110");
-        wordmarkSvg.setAttribute("aria-label","Hokuriku-EX.");
-      }
-      brandStage.appendChild(logoStage);
+      var logoSource=document.createElement("div");
+      logoSource.className="hex-opening-loader-logo-source";
+      logoSource.hidden=true;
+      logoSource.setAttribute("aria-hidden","true");
+      logoSource.style.setProperty("display","none","important");
+      logoSource.appendChild(logoStage);
+      opening.appendChild(logoSource);
     }
-
     opening.insertBefore(stage,opening.firstChild);
-    opening.insertBefore(drawStage,opening.firstChild);
-    opening.insertBefore(withStage,opening.firstChild);
-    opening.insertBefore(brandStage,opening.firstChild);
     return stage;
+  }
+
+  // 通常再生・閲覧済みスキップ・リプレイで同じ場面リストを使う。
+  function collectOpeningScenes(introStage,slideStage,messageStage){
+    var scenes=[];
+    if(introStage)scenes.push(introStage);
+    if(slideStage){
+      Array.prototype.forEach.call(slideStage.querySelectorAll(".hex-opening-slide"),function(slide){scenes.push(slide);});
+    }
+    if(messageStage&&messageStage.children.length)scenes.push(messageStage);
+    return scenes;
   }
 
   /*
@@ -7814,15 +7964,7 @@ hexReady(function(){
     replayRequested,
     startIndex
   ){
-    var brandStage=opening.querySelector(".hex-opening-brand-stage");
-    var drawStage=opening.querySelector(".hex-opening-draw-stage");
-    var withStage=opening.querySelector(".hex-opening-with-stage");
-    var slides=slideStage
-      ?Array.prototype.slice.call(
-        slideStage.querySelectorAll(".hex-opening-slide")
-      )
-      :[];
-    var scenes=[];
+    var scenes=collectOpeningScenes(introStage,slideStage,messageStage);
     var index=0;
     var cancelled=false;
     var timers=[];
@@ -7858,12 +8000,6 @@ hexReady(function(){
     );
     var useFadeTransitions=compactIphone||!curtainApiReady;
 
-    if(introStage){scenes.push(introStage);}
-    slides.forEach(function(slide){scenes.push(slide);});
-    if(messageStage&&messageStage.children.length){scenes.push(messageStage);}
-    if(drawStage){scenes.push(drawStage);}
-    if(withStage){scenes.push(withStage);}
-    if(brandStage){scenes.push(brandStage);}
 
 
     function later(callback,delay){
@@ -8064,14 +8200,7 @@ hexReady(function(){
     }
 
     function runCurtain(currentScene,nextScene,isHero,direction){
-      var outgoingTextOnly=!!(
-        currentScene&&
-        (
-          currentScene===messageStage||
-          currentScene===drawStage||
-          currentScene===withStage
-        )
-      );
+      var outgoingTextOnly=!!(currentScene&&currentScene===messageStage);
 
       if(outgoingTextOnly){
         currentScene.classList.add("is-v2-text-exiting");
@@ -8388,7 +8517,8 @@ hexReady(function(){
       showHeroCatch(0,HERO_CATCH_DELAY,OPENING_AUTO_ADVANCE_MS+1000);
       updateDots(true);
 
-      runHeroCircleReveal(fromCenter).then(function(){
+      // 最後の日本語キャッチから、中央の丸演出でヒーローへ。
+      runHeroCircleReveal(true).then(function(){
         scenes.forEach(function(scene){
           scene.classList.remove("is-v2-current");
           scene.setAttribute("aria-hidden","true");
@@ -8493,7 +8623,7 @@ hexReady(function(){
       if(bottomArt){preview.appendChild(bottomArt.cloneNode(true));}
       document.body.appendChild(preview);
       width=preview.clientWidth||window.innerWidth;
-      height=preview.clientHeight||window.innerHeight;
+      height=preview.clientHeight||window.hexViewportHeight();
       imageWidth=sourceImage.naturalWidth||1672;
       imageHeight=sourceImage.naturalHeight||941;
       scale=Math.max(width/imageWidth,height/imageHeight)*
@@ -8841,19 +8971,15 @@ hexReady(function(){
         return;
       }
 
-      /* キャッチ、Draw、With、ロゴも各場面に一つずつドットを割り当てる。 */
+      /* 画像5場面＋日本語キャッチ＋ヒーローの計7ドット。 */
       nav=sharedNav||createOpeningProgressNav(opening,scenes.length+1,scenes.length);
       Array.prototype.forEach.call(
         nav.querySelectorAll(".hex-progress-dot"),
         function(dot,dotIndex){
-          var labels={
-            5:'すぐそばにある、特別な時間。',
-            6:'Draw Your Everyday',
-            7:'With',
-            8:'Hokuriku-EX.'
-          };
-          if(labels[dotIndex]){
-            dot.setAttribute('aria-label',labels[dotIndex]+'へ移動');
+          if(dotIndex===scenes.length){
+            dot.setAttribute('aria-label','ヒーローへ移動');
+          }else if(scenes[dotIndex]===messageStage){
+            dot.setAttribute('aria-label','すぐそばにある、特別な時間。へ移動');
           }
         }
       );
@@ -8929,11 +9055,11 @@ hexReady(function(){
     var replayRequested=isReplayRequested();
     clearReplayRequest();
     var directHero=isReducedMotion()||
-      (!FORCE_PLAY&&!replayRequested&&sessionStorage.getItem(STORAGE_KEY));
+      (!FORCE_PLAY&&!replayRequested&&hasViewedOpening());
 
 
     if(!FORCE_PLAY){
-      sessionStorage.setItem(STORAGE_KEY,"1");
+      rememberOpeningViewed();
     }
 
     ensureHeroReady();
@@ -8961,9 +9087,7 @@ hexReady(function(){
     openingHost.appendChild(opening);
     opening._hexOpeningHost=openingHost;
     if(directHero){
-      var sceneCount=(introStage?1:0)+(slideStage?slideStage.children.length:0)+
-        (messageStage&&messageStage.children.length?1:0)+
-        opening.querySelectorAll('.hex-opening-draw-stage,.hex-opening-with-stage,.hex-opening-brand-stage').length;
+      var sceneCount=collectOpeningScenes(introStage,slideStage,messageStage).length;
       createOpeningProgressNav(opening,sceneCount+1,sceneCount);
       /* 共通ドットのクリック制御を作り、開幕の計時・入力は停止する。 */
       startOpeningCurtainSequence(opening,introStage,slideStage,messageStage,true,sceneCount-1);
@@ -10120,7 +10244,7 @@ function hexClosestByClass(el,className){
   return null;
 }
 var hexStaffWindowWidth=window.innerWidth;
-window.addEventListener('resize',function(){
+window.addEventListener('hex:viewport-resize',function(){
   if(window.innerWidth===hexStaffWindowWidth)return;
   hexStaffWindowWidth=window.innerWidth;
   var wraps=document.getElementsByClassName('hex-staff-wrap');
@@ -12109,6 +12233,8 @@ hexLoad(function(){
     'https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js';
   var LENIS_URL=
     'https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js';
+  /* 創業セクションの紙吹雪。再開する場合はtrueに変更する。 */
+  var FOUNDED_CONFETTI_ENABLED=false;
   var CONFETTI_URL=
     'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js';
 
@@ -12435,6 +12561,8 @@ hexLoad(function(){
     }
 
     gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({autoRefreshEvents:'visibilitychange,DOMContentLoaded,load'});
+    window.addEventListener('hex:viewport-resize',function(){scheduleRefresh();},{passive:true});
 
     /*
      * PCだけLenisを初期化する。
@@ -12494,6 +12622,8 @@ hexLoad(function(){
       window.clearTimeout(refreshTimer);
 
       refreshTimer=window.setTimeout(function(){
+        // タッチ前に予約された寸法再計測も、安定後の共通通知まで待つ。
+        if(window.hexViewportIsHeld&&window.hexViewportIsHeld())return;
         if(lenis){
           lenis.resize();
         }
@@ -13286,7 +13416,7 @@ hexLoad(function(){
         var syncFoundedPhoto=function(){
           foundedPhotoFrame=0;
           var sectionRect=section.getBoundingClientRect();
-          var viewportHeight=window.innerHeight;
+          var viewportHeight=window.hexViewportHeight();
           var viewportWidth=document.documentElement.clientWidth;
           var mobile=viewportWidth<=768;
           if(mobile&&!foundedNativeViewport){
@@ -13403,7 +13533,7 @@ hexLoad(function(){
           /* SPの枠はJSで追従させない。PCだけ従来のクリップ更新を行う。 */
           if(document.documentElement.clientWidth>768){queueFoundedPhoto();}
         },{passive:true});
-        window.addEventListener('resize',queueFoundedPhoto,{passive:true});
+        window.addEventListener('hex:viewport-resize',queueFoundedPhoto,{passive:true});
         window.addEventListener('orientationchange',function(){
           foundedMobilePhotoHeight=0;
           foundedMobilePhotoWidth=0;
@@ -13467,7 +13597,7 @@ hexLoad(function(){
       }
 
       /* 周年見出しに合わせて左右のCanvasから一度ずつ紙吹雪を放つ。 */
-      if(section&&title&&!isReducedMotion()){
+      if(FOUNDED_CONFETTI_ENABLED&&section&&title&&!isReducedMotion()){
         var confettiLayer=document.createElement('div');
         var leftCanvas=document.createElement('canvas');
         var rightCanvas=document.createElement('canvas');
@@ -13513,7 +13643,7 @@ hexLoad(function(){
           var titleRect=title.getBoundingClientRect();
           var originY=Math.min(.9,Math.max(.1,
             (titleRect.top+titleRect.height*.5)/
-              Math.max(window.innerHeight,1)));
+              Math.max(window.hexViewportHeight(),1)));
           /* 1600pxを基準に、紙のサイズ・枚数・飛距離を画面幅へ連動。 */
           var widthRatio=Math.max(.25,Math.min(1.3,
             document.documentElement.clientWidth/1600));
@@ -14095,7 +14225,7 @@ hexLoad(function(){
       },{once:true});
     }
 
-    window.addEventListener('resize',function(){
+    window.addEventListener('hex:viewport-resize',function(){
       scheduleRefresh(160);
     },{passive:true});
   }
@@ -14374,7 +14504,7 @@ hexReady(function(){
       var resizeObserver=new ResizeObserver(function(){rebuild(false);});
       resizeObserver.observe(stage);
     }else{
-      window.addEventListener('resize',function(){rebuild(false);},{passive:true});
+      window.addEventListener('hex:viewport-resize',function(){rebuild(false);},{passive:true});
     }
     if(document.fonts&&document.fonts.ready){
       document.fonts.ready.then(function(){rebuild(true);});
@@ -14732,7 +14862,7 @@ hexReady(function(){
     function syncHeroCover(){
       var header=parseFloat(hero.style.getPropertyValue('--hex-page-header'))||80;
       var rect=hero.getBoundingClientRect();
-      var covered=rect.bottom<=header||rect.top>=window.innerHeight;
+      var covered=rect.bottom<=header||rect.top>=window.hexViewportHeight();
       if(covered)hero.classList.add('is-hero-covered');
       else hero.classList.remove('is-hero-covered');
       // 固定背景の描画をタイトルセクション内に限定する。
@@ -14741,7 +14871,7 @@ hexReady(function(){
       if(!hero.classList.contains('is-hero-loading')&&!hero.classList.contains('is-hero-revealing')){
         var decorRect=decor.getBoundingClientRect();
         var bottom=Number.isFinite(rect.bottom)?rect.bottom:rect.top+rect.height;
-        var viewportBottom=Number.isFinite(decorRect.bottom)?decorRect.bottom:window.innerHeight;
+        var viewportBottom=Number.isFinite(decorRect.bottom)?decorRect.bottom:window.hexViewportHeight();
         var crop=Math.max(0,Math.min(decorRect.height,viewportBottom-bottom));
         var bounds='inset(0px 0px '+crop+'px 0px)';
         decor.style.setProperty('clip-path',bounds);
@@ -14761,8 +14891,8 @@ hexReady(function(){
       requestAnimationFrame(function(){setTimeout(resolve,2000);});
     }):Promise.resolve();
     window.addEventListener('load',queueLayout,{once:true});
-    window.addEventListener('resize',queueLayout,{passive:true});
-    if(window.visualViewport)window.visualViewport.addEventListener('resize',queueLayout,{passive:true});
+    window.addEventListener('hex:viewport-resize',queueLayout,{passive:true});
+    if(window.visualViewport)window.addEventListener('hex:viewport-resize',queueLayout,{passive:true});
     if(window.ResizeObserver){
       layoutObserver=new ResizeObserver(queueLayout);
       layoutObserver.observe(contents);layoutObserver.observe(main);
@@ -14874,7 +15004,7 @@ hexReady(function(){
     function queue(){cancelAnimationFrame(frame);frame=requestAnimationFrame(update);}
     list.addEventListener('scroll',queue,{passive:true});
     nav.addEventListener('hex:anchor-touch-release',queue);
-    window.addEventListener('resize',queue,{passive:true});
+    window.addEventListener('hex:viewport-resize',queue,{passive:true});
     if(window.ResizeObserver){var observer=new ResizeObserver(queue);observer.observe(list);observer.observe(bar);}
     update();
   }
@@ -14974,7 +15104,7 @@ hexReady(function(){
     if(!snapEnabled())return;
     var position=scrollPosition();
     if(Math.abs(position-snapGesture.scrollStart)<3)return;
-    var target=chooseSnapTarget(snapRanges,position,snapGesture,window.innerHeight);
+    var target=chooseSnapTarget(snapRanges,position,snapGesture,window.hexViewportHeight());
     if(target===null)return;
     if(homeFoundedSection())homeWheelConsumed=true;
     snapActive=true;
@@ -15205,7 +15335,7 @@ hexReady(function(){
     if(!edge)return base;
     var value=getComputedStyle(edge).getPropertyValue('--hex-bg-upper-depth').trim();
     if(!value)return base;
-    var key=value+'|'+window.innerWidth+'|'+window.innerHeight;
+    var key=value+'|'+window.innerWidth+'|'+window.hexViewportHeight();
     var cached=landingDepthCache.get(edge),depth;
     if(cached&&cached.key===key){depth=cached.depth;}
     else{
@@ -15281,21 +15411,6 @@ hexReady(function(){
     var duration=Math.max(0,end-start);
     return {top:top-start,height:height+duration,tail:duration,start:start};
   }
-  function syncOverlapCornerImagePosition(entry){
-    var fill=entry.front._hexOverlapCornerFill;
-    var source=fill&&fill._hexCornerImageSource;
-    if(!source)return;
-    var origin=source.getBoundingClientRect(),rect=fill.getBoundingClientRect();
-    var style=getComputedStyle(source);
-    var position=style.getPropertyValue('--hex-bg-patterns-position').trim()||'0px 0px';
-    var parts=position.split(/\s+/);
-    var x=(parseFloat(parts[0])||0)-(rect.left-origin.left);
-    var y=(parseFloat(parts[1])||0)-(rect.top-origin.top);
-    var value=x+'px '+y+'px';
-    if(fill.style.getPropertyValue('--hex-bg-patterns-position')!==value){
-      fill.style.setProperty('--hex-bg-patterns-position',value);
-    }
-  }
   function syncOverlapCorners(entry){
     var front=entry.front;
     // 全トップ境界と下層の問い合わせ・フッターに共通の補完を適用。
@@ -15352,13 +15467,11 @@ hexReady(function(){
       var property='--hex-bg-patterns-'+name;
       fill.style.setProperty(property,ownerStyle.getPropertyValue(property).trim());
     });
-    // 描画レイヤーの原点を使い、波形や余白のオフセットにも合わせる。
-    fill._hexCornerImageSource=owner.querySelector('.hex-bg-patterns-layer-before > .hex-bg-patterns-ink')||owner;
-    syncOverlapCornerImagePosition(entry);
+    window.hexPrepareFixedBackgroundLayer(layer);
   }
   window.hexSyncOverlapCornerImages=function(){
     entries.forEach(syncOverlapCorners);
-    if(window.hexSyncBackgroundImageViewport)window.hexSyncBackgroundImageViewport();
+    if(window.hexPrepareFixedBackgroundImages)window.hexPrepareFixedBackgroundImages();
   };
   function createItem(node){
     var runway=document.createElement('div'),sticky=document.createElement('div'),veil=document.createElement('div');
@@ -15384,7 +15497,7 @@ hexReady(function(){
       var progress;
       if(item.fadeFront){
         var frontTop=item.fadeFront.getBoundingClientRect().top;
-        progress=(window.innerHeight-frontTop)/Math.max(1,window.innerHeight-item.fadeOffset);
+        progress=(window.hexViewportHeight()-frontTop)/Math.max(1,window.hexViewportHeight()-item.fadeOffset);
       }else{
         progress=(scroll-item.start)/Math.max(1,item.fadeEnd-item.start);
       }
@@ -15397,8 +15510,7 @@ hexReady(function(){
       var item=record.item,opacity=record.opacity;
       if(item.opacity!==opacity){item.opacity=opacity;item.veil.style.opacity=String(opacity);}
     });
-    entries.forEach(syncOverlapCornerImagePosition);
-    if(window.hexSyncBackgroundImageViewport)window.hexSyncBackgroundImageViewport();
+    if(window.hexPrepareFixedBackgroundImages)window.hexPrepareFixedBackgroundImages();
   }
   var veilFrame=0;
   function queueVeils(){
@@ -15421,7 +15533,7 @@ hexReady(function(){
       if(!next)return;
       var box=hero.getBoundingClientRect();
       if(box.height<=0||getComputedStyle(next).display==='none')return;
-      ranges.push({from:Math.max(0,Math.min(maximumScroll,box.bottom+scroll-window.innerHeight)),
+      ranges.push({from:Math.max(0,Math.min(maximumScroll,box.bottom+scroll-window.hexViewportHeight())),
         to:Math.max(0,Math.min(maximumScroll,originalNode(next).getBoundingClientRect().top+scroll-sectionLandingOffset(next,header)))});
     });
   }
@@ -15431,14 +15543,14 @@ hexReady(function(){
     // stickyを自然な配置へ戻してから、次の天端一つで両方の停止点を決める。
     // 距離は最大でも画面高さ−ヘッダー。離れたセクションへ飛ばない。
     var boundary=entry.marker.getBoundingClientRect().top+scroll;
-    return {from:Math.max(0,Math.min(maximumScroll,boundary-window.innerHeight)),
+    return {from:Math.max(0,Math.min(maximumScroll,boundary-window.hexViewportHeight())),
       to:Math.max(0,Math.min(maximumScroll,boundary-sectionLandingOffset(entry.front,header))),home:true};
   }
   function refreshHomeSnapRanges(){
     if(!homeFoundedSection())return;
     var scroll=scrollPosition(),header=snapHeaderHeight;
     var maximumScroll=Math.max(0,Math.max(document.documentElement.scrollHeight,
-      document.body.scrollHeight)-window.innerHeight);
+      document.body.scrollHeight)-window.hexViewportHeight());
     snapRanges=entries.map(function(entry){
       return homeSnapRange(entry,scroll,header,maximumScroll);
     }).filter(function(range){return range&&range.to-range.from>24;});
@@ -15446,7 +15558,7 @@ hexReady(function(){
   function measure(){
     measureFrame=0;
     var scroll=scrollPosition();
-    entries.forEach(function(entry){entry.start=entry.marker.getBoundingClientRect().top+scroll-window.innerHeight;});
+    entries.forEach(function(entry){entry.start=entry.marker.getBoundingClientRect().top+scroll-window.hexViewportHeight();});
     entries.sort(function(a,b){return a.start-b.start;});
     entries.forEach(function(entry){
       var blocks=[];
@@ -15470,13 +15582,13 @@ hexReady(function(){
     // まず伸長分を除いた元の高さへ戻し、自然な文書座標で計測する。
     managed.forEach(function(item){item.runway.style.height='auto';item.runway.style.marginBottom='0px';item.sticky.style.position='relative';item.sticky.style.top='auto';});
     // マーカーは固定対象に含めない。ラッパー追加後の余白もここで取り込む。
-    entries.forEach(function(entry){entry.start=entry.marker.getBoundingClientRect().top+scroll-window.innerHeight;});
+    entries.forEach(function(entry){entry.start=entry.marker.getBoundingClientRect().top+scroll-window.hexViewportHeight();});
     entries.sort(function(a,b){return a.start-b.start;});
     var header=fixedHeaderHeight();
     snapHeaderHeight=header;
     entries.forEach(syncOverlapCorners);
     var documentBottom=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);
-    var maximumScroll=Math.max(0,documentBottom-window.innerHeight);
+    var maximumScroll=Math.max(0,documentBottom-window.hexViewportHeight());
     // 自然な文書座標で前の下端と次の開始位置を取得する。
     // 本文途中には停止点を設けず、この二点の間だけ半自動にする。
     snapRanges=entries.filter(function(entry){
@@ -15488,7 +15600,7 @@ hexReady(function(){
       var back=originalNode(entry.back);
       var bottom=back.getBoundingClientRect().bottom+scroll;
       var nextTop=entry.marker.getBoundingClientRect().top+scroll;
-      return {from:Math.max(0,Math.min(maximumScroll,bottom-window.innerHeight)),
+      return {from:Math.max(0,Math.min(maximumScroll,bottom-window.hexViewportHeight())),
         to:Math.max(0,Math.min(maximumScroll,nextTop-sectionLandingOffset(entry.front,header)))};
     });
     entries.forEach(function(entry){
@@ -15502,7 +15614,7 @@ hexReady(function(){
     var layouts=managed.map(function(item){
       var relevant=entries.filter(function(entry){return entry.blocks.indexOf(item.node)!==-1;});
       if(!relevant.length)return null;
-      var start=relevant[0].start,end=relevant[relevant.length-1].start+window.innerHeight;
+      var start=relevant[0].start,end=relevant[relevant.length-1].start+window.hexViewportHeight();
       var top=item.runway.getBoundingClientRect().top+scroll,height=item.sticky.getBoundingClientRect().height;
       var g=geometry(top,height,start,end,sectionLandingOffset(item.node,header));
       item.fadeEnd=relevant[0].marker.getBoundingClientRect().top+scroll-sectionLandingOffset(relevant[0].front,header);
@@ -15614,8 +15726,8 @@ hexReady(function(){
     },{capture:true});
     window.addEventListener('pagehide',function(){cancelSnap(false);});
     if(reduced&&reduced.addEventListener)reduced.addEventListener('change',function(){cancelSnap(true);});
-    window.addEventListener('resize',queueMeasure,{passive:true});
-    if(window.visualViewport)window.visualViewport.addEventListener('resize',queueMeasure,{passive:true});
+    window.addEventListener('hex:viewport-resize',queueMeasure,{passive:true});
+    if(window.visualViewport)window.addEventListener('hex:viewport-resize',queueMeasure,{passive:true});
     new MutationObserver(function(records){
       if(records.some(function(record){return Array.from(record.addedNodes).some(function(node){
         // 自分が作ったラッパーと移動したコンテンツによる再登録は無視。
@@ -15638,39 +15750,13 @@ hexReady(function(){
 })();
 
 
-/* =======================================
-   共通背景画像：柄の原点を画面に固定する（範囲・オーバーラップの配置は変更しない）
-======================================= */
+/* 共通背景画像：初期化・再配置時だけ切り抜き面を準備。スクロール監視は不要。 */
 hexReady(function(){
-  var frame=0;
-  function syncBackgroundImageViewport(){
-    frame=0;
-    // 全ての座標を先に読み、書き込みによる再レイアウトを挟まない。
-    var positions=Array.from(document.querySelectorAll('.hex-bg-patterns-ink')).map(function(ink){
-      var rect=ink.getBoundingClientRect();
-      if(rect.width<=0||rect.height<=0)return null;
-      return {ink:ink,value:(-rect.left)+'px '+(-rect.top)+'px'};
-    });
-    positions.forEach(function(record){
-      if(!record)return;
-      if(record.ink.style.getPropertyValue('--hex-bg-patterns-position')!==record.value){
-        record.ink.style.setProperty('--hex-bg-patterns-position',record.value);
-      }
-    });
-  }
-  function queueBackgroundImageViewport(){
-    if(!frame)frame=requestAnimationFrame(syncBackgroundImageViewport);
-  }
-  window.hexSyncBackgroundImageViewport=queueBackgroundImageViewport;
-  window.addEventListener('scroll',queueBackgroundImageViewport,{passive:true});
-  window.addEventListener('resize',queueBackgroundImageViewport,{passive:true});
-  window.addEventListener('load',queueBackgroundImageViewport,{once:true});
-  if(window.visualViewport){
-    window.visualViewport.addEventListener('resize',queueBackgroundImageViewport,{passive:true});
-    window.visualViewport.addEventListener('scroll',queueBackgroundImageViewport,{passive:true});
-  }
-  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(queueBackgroundImageViewport);
-  queueBackgroundImageViewport();
+  var prepare=window.hexPrepareFixedBackgroundImages;
+  window.addEventListener('hex:viewport-resize',prepare,{passive:true});
+  window.addEventListener('load',prepare,{once:true});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(prepare);
+  prepare();
 });
 
 
@@ -15797,8 +15883,6 @@ hexReady(function(){
     // 単位なしは従来のpx/秒、vw等の長さ指定は画面幅に応じた移動量/秒。
     var speed=/^\d+(?:\.\d+)?$/.test(speedValue)?Number(speedValue):resolveLength(runner.host,speedValue);
     runner.speed=Number.isFinite(speed)&&speed>0?speed:48;
-    var maxAngle=parseFloat(style.getPropertyValue('--hex-vehicle-max-angle'));
-    runner.maxAngle=Number.isFinite(maxAngle)?Math.max(0,maxAngle):20;
     runner.pad=runner.size*2;
     var top=parseFloat(pseudo.top)||0;
     runner.track.style.setProperty('--hex-vehicle-track-top',(top-runner.pad)+'px');
@@ -15819,10 +15903,9 @@ hexReady(function(){
   function render(runner){
     if(!runner.asset||!runner.width)return;
     var x=runner.x,span=runner.size*.23;
-    // 接地点の前後を結ぶ傾きに合わせ、急な谷での回転も抑える。
+    // 接地点の前後を結ぶ傾きへ、角度制限なしで追従する。
     var a=ground(runner,x-span),b=ground(runner,x+span);
     var angle=Math.atan2(b-a,span*2)*180/Math.PI;
-    angle=Math.max(-runner.maxAngle,Math.min(runner.maxAngle,angle));
     var y=runner.pad+(a+b)/2;
     runner.actor.style.transform='translate3d('+x+'px,'+y+'px,0) translate(-50%,-100%) rotate('+angle+'deg)';
   }
@@ -15876,7 +15959,7 @@ hexReady(function(){
   }
   scan();
   document.addEventListener('hex:page-hero-layout',queueLayout);
-  window.addEventListener('resize',queueLayout,{passive:true});window.addEventListener('load',queueLayout,{once:true});
+  window.addEventListener('hex:viewport-resize',queueLayout,{passive:true});window.addEventListener('load',queueLayout,{once:true});
   document.addEventListener('visibilitychange',function(){lastTime=0;start();});
   function reducedChange(){if(reduced.matches){if(frame)cancelAnimationFrame(frame);frame=0;}else start();}
   if(reduced.addEventListener)reduced.addEventListener('change',reducedChange);else reduced.addListener(reducedChange);
