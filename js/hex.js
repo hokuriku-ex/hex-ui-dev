@@ -339,6 +339,7 @@ hexReady(function(){
       veil.querySelectorAll('.hex-rise-veil-patterns').forEach(function(group){group.remove();});
       groups.forEach(function(group){if(group)veil.appendChild(group);});
     });
+    if(window.hexSyncBackgroundImageViewport)window.hexSyncBackgroundImageViewport();
   };
   function syncHatchingSpacers(){
     document.querySelectorAll('.hex-overlap-spacer').forEach(function(spacer){
@@ -377,6 +378,7 @@ hexReady(function(){
     syncHatchingMasks();
     window.hexSyncHatchingVeils();
     if(window.hexSyncOverlapCornerImages)window.hexSyncOverlapCornerImages();
+    if(window.hexSyncBackgroundImageViewport)window.hexSyncBackgroundImageViewport();
   }
   window.addEventListener('resize',syncHatchingSpacers,{passive:true});
   window.addEventListener('load',syncHatchingSpacers,{once:true});
@@ -15289,7 +15291,10 @@ hexReady(function(){
     fill._hexCornerImageSource=owner.querySelector('.hex-bg-patterns-layer-before > .hex-bg-patterns-ink')||owner;
     syncOverlapCornerImagePosition(entry);
   }
-  window.hexSyncOverlapCornerImages=function(){entries.forEach(syncOverlapCorners);};
+  window.hexSyncOverlapCornerImages=function(){
+    entries.forEach(syncOverlapCorners);
+    if(window.hexSyncBackgroundImageViewport)window.hexSyncBackgroundImageViewport();
+  };
   function createItem(node){
     var runway=document.createElement('div'),sticky=document.createElement('div'),veil=document.createElement('div');
     runway.className='hex-rise-runway';sticky.className='hex-rise-sticky';veil.className='hex-rise-veil';
@@ -15328,6 +15333,7 @@ hexReady(function(){
       if(item.opacity!==opacity){item.opacity=opacity;item.veil.style.opacity=String(opacity);}
     });
     entries.forEach(syncOverlapCornerImagePosition);
+    if(window.hexSyncBackgroundImageViewport)window.hexSyncBackgroundImageViewport();
   }
   var veilFrame=0;
   function queueVeils(){
@@ -15565,3 +15571,39 @@ hexReady(function(){
   if(document.fonts)document.fonts.ready.then(queueMeasure);
   if(reduced&&reduced.addEventListener)reduced.addEventListener('change',queueMeasure);
 })();
+
+
+/* =======================================
+   共通背景画像：柄の原点を画面に固定する（範囲・オーバーラップの配置は変更しない）
+======================================= */
+hexReady(function(){
+  var frame=0;
+  function syncBackgroundImageViewport(){
+    frame=0;
+    // 全ての座標を先に読み、書き込みによる再レイアウトを挟まない。
+    var positions=Array.from(document.querySelectorAll('.hex-bg-patterns-ink')).map(function(ink){
+      var rect=ink.getBoundingClientRect();
+      if(rect.width<=0||rect.height<=0)return null;
+      return {ink:ink,value:(-rect.left)+'px '+(-rect.top)+'px'};
+    });
+    positions.forEach(function(record){
+      if(!record)return;
+      if(record.ink.style.getPropertyValue('--hex-bg-patterns-position')!==record.value){
+        record.ink.style.setProperty('--hex-bg-patterns-position',record.value);
+      }
+    });
+  }
+  function queueBackgroundImageViewport(){
+    if(!frame)frame=requestAnimationFrame(syncBackgroundImageViewport);
+  }
+  window.hexSyncBackgroundImageViewport=queueBackgroundImageViewport;
+  window.addEventListener('scroll',queueBackgroundImageViewport,{passive:true});
+  window.addEventListener('resize',queueBackgroundImageViewport,{passive:true});
+  window.addEventListener('load',queueBackgroundImageViewport,{once:true});
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',queueBackgroundImageViewport,{passive:true});
+    window.visualViewport.addEventListener('scroll',queueBackgroundImageViewport,{passive:true});
+  }
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(queueBackgroundImageViewport);
+  queueBackgroundImageViewport();
+});
