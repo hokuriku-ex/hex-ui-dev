@@ -10701,3 +10701,44 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
 .hex-bg-range.hex-bg-curve-top.hex-bg-decoration-start > :not(.hex-bg-patterns-layer){
   top:0;
 }
+
+/* 曲線を走る重機。速度はpx/秒、回転の上限は度数で指定する。 */
+:root{
+  --hex-vehicle-width:clamp(96px,9vw,148px);
+  --hex-vehicle-speed:48;
+  --hex-vehicle-max-angle:20;
+}
+.hex-vehicle-track{
+  display:block;position:absolute!important;
+  top:var(--hex-vehicle-track-top,0px)!important;
+  left:50%!important;right:auto!important;bottom:auto!important;
+  width:var(--hex-vehicle-track-width,100vw)!important;
+  height:var(--hex-vehicle-track-height,400px)!important;
+  transform:translateX(-50%)!important;z-index:3!important;
+  padding:0!important;margin:0!important;border:0!important;
+  overflow:hidden!important;pointer-events:none!important;visibility:hidden;
+  box-sizing:border-box;contain:layout;
+}
+.hex-vehicle-track.is-ready{visibility:visible;}
+.hex-vehicle-actor{
+  display:block;position:absolute;top:0;left:0;
+  width:var(--hex-vehicle-width,128px);height:auto;
+  transform-origin:50% 100%;will-change:transform;
+  pointer-events:none;
+}
+.hex-vehicle-crop{
+  display:block;position:relative;width:100%;overflow:hidden;
+}
+.hex-vehicle-crop > img{
+  display:block!important;position:absolute!important;
+  max-width:none!important;height:auto!important;max-height:none!important;
+  margin:0!important;padding:0!important;border:0!important;
+  object-fit:fill;pointer-events:none;user-select:none;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero:is(.is-hero-loading,.is-hero-covered) .hex-vehicle-track{
+  visibility:hidden!important;
+}
+@media(max-width:768px){
+  :root{--hex-vehicle-width:clamp(72px,18vw,100px);--hex-vehicle-speed:28;}
+}
+@media(prefers-reduced-motion:reduce){.hex-vehicle-track{visibility:hidden!important;}}
