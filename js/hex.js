@@ -226,7 +226,7 @@ hexLoad(function(){
 });
 
 /* =======================================
-   下層ページ背景色範囲指定
+   共通背景範囲指定（トップは初めての方へ以降）
 ======================================= */
 hexReady(function(){
   /* 背景画像：種類ごとに01〜30。欠番は種類ごとのリストへ追加する。 */
@@ -247,6 +247,7 @@ hexReady(function(){
   var patternsUsedFiles=new Set();
   /* 明示指定は先に確保し、後から初期化される範囲ともランダム柄を重複させない。 */
   document.querySelectorAll('.hex-bg-start[data-bg-image]').forEach(function(start){
+    if(isFixedRoundBackgroundSection(start))return;
     var file=(start.dataset.bgImage||'').trim();
     var type=backgroundImageType(start);
     if(validBackgroundImageFile(file,type))patternsUsedFiles.add(type+'/'+file);
@@ -465,9 +466,35 @@ hexReady(function(){
     if(backgroundShapes.some(function(shape){return wrapper.classList.contains(shape);}))return;
     var shape=drawBackgroundShape();if(shape)wrapper.classList.add(shape);
   }
+  /* トップはCMSセクション単位で範囲を作り、既存のsticky境界を移動させない。 */
+  function homeBackgroundSection(marker){
+    var frame=marker.closest('[id^="gc_auto_frame_home_"]');
+    if(!frame)return null;
+    var match=/^gc_auto_frame_home_(\d+)$/.exec(frame.id);
+    return match&&Number(match[1])>=5&&Number(match[1])<=17?frame:null;
+  }
+  /* お問い合わせ・フッターは範囲マーカーを使わず、既存の固定角丸を維持する。 */
+  function isFixedRoundBackgroundSection(marker){
+    if(marker.closest('.hex-contact-section,.gc_auto_frame_footer,.hex-footer-frame'))return true;
+    var frame=marker.closest('[id^="gc_auto_frame_home_"]');
+    if(frame&&(frame.id===HOME_SECTIONS.CONTACT||frame.id===HOME_SECTIONS.FOOTER))return true;
+    var section=marker.closest('[id^="gc_auto_frame_"],.content');
+    return !!(section&&section.querySelector('.hex-contact-section,.gc_auto_frame_footer,.hex-footer-frame'));
+  }
+  function backgroundMarkerScope(marker){
+    if(isFixedRoundBackgroundSection(marker))return null;
+    var home=marker.closest('[id^="gc_auto_frame_home_"]');
+    if(home){
+      var section=homeBackgroundSection(marker);
+      if(!section)return null;
+      var content=marker.closest('.gc_auto_frame_spotitem_body');
+      return content&&section.contains(content)?content:section;
+    }
+    return marker.closest('.content_body');
+  }
   function findBackgroundEnd(start,body){
     var markers=Array.from(body.querySelectorAll('.hex-bg-start,.hex-bg-end'))
-      .filter(function(marker){return marker.closest('.content_body')===body;});
+      .filter(function(marker){return backgroundMarkerScope(marker)===body;});
     var index=markers.indexOf(start);
     if(index===-1)return null;
     for(var i=index+1;i<markers.length;i++){
@@ -505,7 +532,7 @@ hexReady(function(){
     previousBackgroundEndShape=lowerShape;
   }
   document.querySelectorAll('.hex-bg-start').forEach(function(start){
-    var body=start.closest('.content_body');
+    var body=backgroundMarkerScope(start);
     if(!body)return;
 
     var end=findBackgroundEnd(start,body);
@@ -523,6 +550,17 @@ hexReady(function(){
     var wrapper=document.createElement('div');
 
     wrapper.className='hex-bg-range';
+    var homeSection=homeBackgroundSection(start);
+    if(homeSection){
+      wrapper.classList.add('hex-home-bg-range');
+      homeSection.classList.add('hex-home-has-bg-range');
+      if(!homeSection._hexHomeFirstBackgroundRange){
+        homeSection._hexHomeFirstBackgroundRange=wrapper;
+        homeSection.style.setProperty('--hex-home-section-bg',color);
+      }
+      homeSection.style.setProperty('--hex-home-range-end-bg',color);
+    }
+
 
     applyBackgroundDecoration(wrapper,start,end);
     applyBackgroundHatching(wrapper,start);
@@ -15073,7 +15111,8 @@ hexReady(function(){
         blocks:[],start:0,home:true,foundedEnd:!index};
       marker._hexRiseEntry=entry;entries.push(entry);
       front.classList.add('hex-home-overlap-front');
-      front.classList.add('hex-bg-round-top');
+      // 明示範囲にはその形状を使用。外側の固定角丸を二重に重ねない。
+      if(!front.classList.contains('hex-home-has-bg-range'))front.classList.add('hex-bg-round-top');
       prepareFlow(front);prepareFlow(entry.back);raiseFollowing(entry);
       if(sizeObserver)sizeObserver.observe(front);
     });
@@ -15127,6 +15166,9 @@ hexReady(function(){
   function sectionCoverColor(node){
     // 創業の最終背景は紺色。外側の交互背景グレーより優先する。
     if(node===homeFoundedSection())return '#1f2774';
+    if(node.classList.contains('hex-home-has-bg-range')){
+      return getComputedStyle(node).getPropertyValue('--hex-home-range-end-bg').trim()||'#fff';
+    }
     // トップの背景指定を、CMSの外側に残る白い背景より優先する。
     if(node.classList.contains('hex-home-bg-gray'))return getComputedStyle(node).getPropertyValue('--hex-home-section-bg').trim()||'#f3f0eb';
     if(node.classList.contains('hex-home-bg-white'))return getComputedStyle(node).getPropertyValue('--hex-home-section-bg').trim()||'#fff';

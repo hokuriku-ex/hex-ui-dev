@@ -10645,3 +10645,19 @@ html.hex-overlap-snap-animating{
   background-repeat:repeat;
   -webkit-mask-image:none;mask-image:none;
 }
+
+/* トップの明示範囲は交互背景より優先。形状の切り欠きも前セクションを見せる。 */
+html body .hex-home-has-bg-range,
+html body .hex-home-has-bg-range :is(.background_color,.backgroundcolor_auto,.backgroundcolor_white,.backgroundcolor_footercolor,.gc_auto_frame_spotitem_basewidth){
+  background:transparent!important;
+}
+html body .hex-home-has-bg-range :is(.gc_auto_frame_spotitem,.gc_auto_frame_spotitem_box,.gc_auto_frame_spotitem_body){
+  overflow:visible!important;
+}
+/* 外側の余白は最後の範囲色、範囲内の余白はその範囲色を使用する。 */
+html body .hex-home-has-bg-range .hex-overlap-spacer{
+  --hex-overlap-spacer-bg:var(--hex-home-range-end-bg,#fff)!important;
+}
+html body .hex-home-has-bg-range .hex-bg-range .hex-overlap-spacer{
+  --hex-overlap-spacer-bg:var(--hex-bg-range-color,#fff)!important;
+}
