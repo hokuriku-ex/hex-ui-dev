@@ -10667,3 +10667,27 @@ html body .hex-home-has-bg-range .hex-bg-range .hex-overlap-spacer{
   position:absolute!important;inset:0!important;
   width:100%;height:100%;z-index:0!important;
 }
+
+/* トップお知らせ：範囲指定内では一覧のCMS白背景を透過し、範囲の色・画像を見せる。 */
+html body #gc_auto_frame_home_8 .hex-bg-range .hex-home-news-list,
+html body #gc_auto_frame_home_8 .hex-bg-range .hex-home-news-list :is(
+  .hex-home-news-panel,
+  .post_index_home_type1,
+  .bg_post_index_home,
+  .post_index_home,
+  .post_index_home_contents,
+  .bg_items,
+  .background_color,
+  .backgroundcolor_auto,
+  .backgroundcolor_white,
+  .gc_auto_frame_spotitem_basewidth,
+  .gc_auto_frame_post_index_home_box_contents_cell_list,
+  .gc_auto_frame_post_index_home_box_contents_cell_text_list
+){
+  background:transparent!important;
+}
+
+/* お知らせの一覧ボタン：白への自動補完より、所属範囲の背景色を優先する。 */
+html body #gc_auto_frame_home_8 .hex-bg-range .hex-home-news-button .hex-btn-main{
+  --hex-button-surface:var(--hex-bg-range-color,#fff)!important;
+}
