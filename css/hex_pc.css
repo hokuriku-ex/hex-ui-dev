@@ -10687,7 +10687,8 @@ html body #gc_auto_frame_home_8 .hex-bg-range .hex-home-news-list :is(
   background:transparent!important;
 }
 
-/* お知らせの一覧ボタン：白への自動補完より、所属範囲の背景色を優先する。 */
-html body #gc_auto_frame_home_8 .hex-bg-range .hex-home-news-button .hex-btn-main{
+/* 共通ボタン：所属する最も内側の背景範囲の色を、自動補完より優先する。 */
+html body .hex-bg-range .hex-button-wrap > .hex-btn-main,
+html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   --hex-button-surface:var(--hex-bg-range-color,#fff)!important;
 }
