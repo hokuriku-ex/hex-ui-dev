@@ -2102,9 +2102,11 @@ hexReady(function(){
     hexIcon.className=window.hexIconClass(hexType);
     hexIconSpan.appendChild(hexIcon);
     hexAnchor.appendChild(hexTitleSpan);
-    hexDetailSpan.className='hex-link-detail';
-    hexDetailSpan.textContent=hexDetail;
-    hexAnchor.appendChild(hexDetailSpan);
+    if(hexDetail!=='false'){
+      hexDetailSpan.className='hex-link-detail';
+      hexDetailSpan.textContent=hexDetail;
+      hexAnchor.appendChild(hexDetailSpan);
+    }
     hexAnchor.appendChild(hexIconSpan);
     hexWrap.appendChild(hexAnchor);
     hexView.parentNode.insertBefore(hexWrap,hexView);
