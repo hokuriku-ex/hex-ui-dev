@@ -685,6 +685,9 @@
 ======================================= */
 /* フッター全体 */
 @media screen and (max-width:768px){
+  .hex-footer-frame{
+    --hex-footer-space:clamp(64px,calc(7.8431vw + 35.76px),96px);
+  }
   .hex-footer-frame .footer_contents{
     display:flex !important;
     flex-direction:column !important;
@@ -770,9 +773,9 @@
 
   .hex-footer-frame .footer_contents{
     grid-template-columns:1fr!important;
-    gap:48px!important;
-    padding-top:80px!important;
-    padding-bottom:48px!important;
+    row-gap:var(--hex-footer-space)!important;
+    padding-top:var(--hex-footer-space)!important;
+    padding-bottom:var(--hex-footer-space)!important;
   }
 
   /* 会社ロゴ */

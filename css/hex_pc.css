@@ -3483,6 +3483,7 @@ body.hex-calendar-modal-open{
 ======================================= */
 /* フッター全体 */
 .hex-footer-frame{
+  --hex-footer-space:clamp(96px,calc(7.4246vw + 38.90px),128px);
   width:100%!important;
   float:none!important;
   margin:0!important;
@@ -3504,12 +3505,13 @@ body.hex-calendar-modal-open{
 .hex-footer-frame .footer_contents{
   max-width:var(--base_width)!important;
   margin:0 auto!important;
-  padding-top:10%!important;
-  padding-bottom:5%!important;
+  padding-top:var(--hex-footer-space)!important;
+  padding-bottom:var(--hex-footer-space)!important;
   padding-inline:clamp(24px, calc(1.93vw + 9.2px), 40px)!important;
   display:grid!important;
   grid-template-columns:repeat(3, minmax(0, 1fr))!important;
-  gap:40px!important;
+  column-gap:40px!important;
+  row-gap:var(--hex-footer-space)!important;
   align-items:start!important;
 }
 
@@ -3517,6 +3519,12 @@ body.hex-calendar-modal-open{
 .hex-footer-frame .footer_contents *{
   color:#fff!important;
   box-sizing:border-box!important;
+}
+
+/* 各段の外側余白はfooter_contentsの間隔に統一する。 */
+.hex-footer-frame .footer_contents > :is(.hex-footer-area,.footer_text,.footer_logo,.footer_copyright){
+  margin-top:0!important;
+  margin-bottom:0!important;
 }
 
 /* ロゴ */
