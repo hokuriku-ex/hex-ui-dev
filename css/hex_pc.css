@@ -10692,3 +10692,12 @@ html body .hex-bg-range .hex-button-wrap > .hex-btn-main,
 html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   --hex-button-surface:var(--hex-bg-range-color,#fff)!important;
 }
+
+/* 上端の形状の下端から既存の余白を始める。装飾の高さを本文と別に確保する。 */
+.hex-bg-range.hex-bg-decoration-start:not(.hex-bg-empty){
+  padding-top:var(--hex-bg-upper-depth,0px)!important;
+}
+/* 旧カーブ用の本文持ち上げを解除。背景画像レイヤーの座標は維持する。 */
+.hex-bg-range.hex-bg-curve-top.hex-bg-decoration-start > :not(.hex-bg-patterns-layer){
+  top:0;
+}
