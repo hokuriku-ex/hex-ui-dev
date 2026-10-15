@@ -233,6 +233,12 @@ hexReady(function(){
   var hatchingRoot='https://hokuriku-ex.github.io/hex-ui-dev/images/background/hatching/';
   var hatchingExcludedNumbers=[];
   var hatchingImageChecks=Object.create(null);
+  var hatchingUsedFiles=new Set();
+  /* 明示指定は先に確保し、後から初期化される範囲ともランダム柄を重複させない。 */
+  document.querySelectorAll('.hex-bg-start[data-bg-image]').forEach(function(start){
+    var file=(start.dataset.bgImage||'').trim();
+    if(/^(?:0[1-9]|[1-9][0-9])\.svg$/.test(file))hatchingUsedFiles.add(file);
+  });
   function checkHatchingImage(file){
     if(hatchingImageChecks[file])return hatchingImageChecks[file];
     hatchingImageChecks[file]=new Promise(function(resolve){
@@ -285,6 +291,40 @@ hexReady(function(){
       });
     });
   }
+  /* 背景色の幕にも同じ柄を描き、幕の濃度が上がっても柄を残す。
+     元の柄と幕の柄を同じ位置・色・濃度でクロスフェードする。 */
+  window.hexSyncHatchingVeils=function(){
+    document.querySelectorAll('.hex-rise-veil').forEach(function(veil){
+      var item=veil.parentElement;
+      if(!item)return;
+      var node=Array.from(item.children).find(function(child){return child!==veil;});
+      if(!node)return;
+      var owners=Array.from(node.querySelectorAll('.hex-bg-has-hatching,.hex-bg-spacer-hatching'));
+      if(node.matches('.hex-bg-has-hatching,.hex-bg-spacer-hatching'))owners.unshift(node);
+      var origin=veil.getBoundingClientRect();
+      var groups=owners.map(function(owner){
+        var layers=Array.from(owner.children).filter(function(child){
+          return child.classList.contains('hex-bg-hatching-layer');
+        });
+        if(!layers.length||getComputedStyle(owner).display==='none')return null;
+        var rect=owner.getBoundingClientRect(),style=getComputedStyle(owner);
+        var group=document.createElement('span');
+        group.className='hex-rise-veil-hatching';
+        group.setAttribute('aria-hidden','true');
+        group.style.left=(rect.left-origin.left)+'px';
+        group.style.top=(rect.top-origin.top)+'px';
+        group.style.width=rect.width+'px';group.style.height=rect.height+'px';
+        ['image','color','size','opacity','position'].forEach(function(name){
+          var property='--hex-bg-hatching-'+name,value=style.getPropertyValue(property).trim();
+          if(value)group.style.setProperty(property,value);
+        });
+        layers.forEach(function(layer){group.appendChild(layer.cloneNode(true));});
+        return group;
+      });
+      veil.querySelectorAll('.hex-rise-veil-hatching').forEach(function(group){group.remove();});
+      groups.forEach(function(group){if(group)veil.appendChild(group);});
+    });
+  };
   function syncHatchingSpacers(){
     document.querySelectorAll('.hex-overlap-spacer').forEach(function(spacer){
       /* 範囲内は親の背景をそのまま見せ、柄の二重描画を避ける。 */
@@ -302,9 +342,12 @@ hexReady(function(){
       if(!image){
         spacer.classList.remove('hex-bg-spacer-hatching');
         spacer.style.removeProperty('--hex-bg-hatching-image');
+        spacer.style.removeProperty('--hex-bg-hatching-color');
         return;
       }
       spacer.style.setProperty('--hex-bg-hatching-image',image);
+      spacer.style.setProperty('--hex-bg-hatching-color',
+        getComputedStyle(source).getPropertyValue('--hex-bg-hatching-color').trim()||'#203459');
       spacer.style.setProperty('--hex-bg-hatching-base-color',
         getComputedStyle(source).getPropertyValue('--hex-bg-range-color').trim()||'#fff');
       var offset=spacer.getBoundingClientRect().top-source.getBoundingClientRect().top;
@@ -312,6 +355,7 @@ hexReady(function(){
       spacer.classList.add('hex-bg-spacer-hatching');
     });
     syncHatchingMasks();
+    window.hexSyncHatchingVeils();
   }
   window.addEventListener('resize',syncHatchingSpacers,{passive:true});
   window.addEventListener('load',syncHatchingSpacers,{once:true});
@@ -319,8 +363,13 @@ hexReady(function(){
   function applyBackgroundHatching(wrapper,start){
     var value=(start.dataset.bgImage||'').trim();
     if(!value)return;
+    var imageColor=(start.dataset.bgImagecolor||'').trim();
+    if(imageColor&&CSS.supports('color',imageColor)){
+      wrapper.style.setProperty('--hex-bg-hatching-color',imageColor);
+    }
+    var random=value==='random';
     var candidates=[];
-    if(value==='random'){
+    if(random){
       for(var number=1;number<=99;number++){
         if(hatchingExcludedNumbers.indexOf(number)===-1)candidates.push(String(number).padStart(2,'0')+'.svg');
       }
@@ -333,9 +382,13 @@ hexReady(function(){
     }else{return;}
     var cursor=0;
     function attempt(){
+      while(cursor<candidates.length&&random&&hatchingUsedFiles.has(candidates[cursor]))cursor++;
       if(cursor>=candidates.length)return;
-      checkHatchingImage(candidates[cursor++]).then(function(url){
-        if(!url){attempt();return;}
+      var file=candidates[cursor++];
+      checkHatchingImage(file).then(function(url){
+        /* 並行ロード中に他の範囲で選ばれた画像も、確定前に再確認する。 */
+        if(!url||(random&&hatchingUsedFiles.has(file))){attempt();return;}
+        hatchingUsedFiles.add(file);
         wrapper.style.setProperty('--hex-bg-hatching-image','url("'+url+'")');
         wrapper.classList.add('hex-bg-has-hatching');
         syncHatchingSpacers();
@@ -15274,6 +15327,7 @@ hexReady(function(){
     });
     // 自然な配置での一時計測値を、固定枠を設定した後の実座標へ更新する。
     refreshHomeSnapRanges();
+    if(window.hexSyncHatchingVeils)window.hexSyncHatchingVeils();
     updateVeils();
   }
   function queueMeasure(){

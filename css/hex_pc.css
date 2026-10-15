@@ -10626,3 +10626,12 @@ html.hex-overlap-snap-animating{
 .hex-overlap-spacer > .hex-bg-hatching-layer{
   position:absolute!important;z-index:-1!important;
 }
+
+/* 幕に重ねる柄は元の範囲と同じ位置・濃度。本文だけを背景色へ溶かす。 */
+.hex-rise-veil-hatching{
+  display:block;position:absolute;pointer-events:none;
+  isolation:isolate;overflow:visible;
+}
+.hex-rise-veil-hatching > .hex-bg-hatching-layer{
+  position:absolute!important;z-index:0!important;
+}
