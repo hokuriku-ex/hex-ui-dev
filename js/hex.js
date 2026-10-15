@@ -229,33 +229,46 @@ hexLoad(function(){
    下層ページ背景色範囲指定
 ======================================= */
 hexReady(function(){
-  /* ハッチング画像：01.svg〜99.svg。欠番はここへ番号で追加する。 */
-  var hatchingRoot='https://hokuriku-ex.github.io/hex-ui-dev/images/background/hatching/';
-  var hatchingExcludedNumbers=[];
+  /* 背景画像：種類ごとに01〜30。欠番は種類ごとのリストへ追加する。 */
+  var hatchingRoot='https://hokuriku-ex.github.io/hex-ui-dev/images/background/';
+  var backgroundImageTypes={
+    hatching:{extension:'svg',excludedNumbers:[]},
+    textures:{extension:'webp',excludedNumbers:[]}
+  };
+  function backgroundImageType(start){
+    return (start.dataset.bgImagetype||'hatching').trim();
+  }
+  function validBackgroundImageFile(file,type){
+    var config=backgroundImageTypes[type];
+    return !!config&&/^(?:0[1-9]|[12][0-9]|30)$/.test(file.split('.')[0])&&
+      file===file.split('.')[0]+'.'+config.extension;
+  }
   var hatchingImageChecks=Object.create(null);
   var hatchingUsedFiles=new Set();
   /* 明示指定は先に確保し、後から初期化される範囲ともランダム柄を重複させない。 */
   document.querySelectorAll('.hex-bg-start[data-bg-image]').forEach(function(start){
     var file=(start.dataset.bgImage||'').trim();
-    if(/^(?:0[1-9]|[1-9][0-9])\.svg$/.test(file))hatchingUsedFiles.add(file);
+    var type=backgroundImageType(start);
+    if(validBackgroundImageFile(file,type))hatchingUsedFiles.add(type+'/'+file);
   });
-  function checkHatchingImage(file){
-    if(hatchingImageChecks[file])return hatchingImageChecks[file];
-    hatchingImageChecks[file]=new Promise(function(resolve){
+  function checkHatchingImage(file,type){
+    var key=type+'/'+file;
+    if(hatchingImageChecks[key])return hatchingImageChecks[key];
+    hatchingImageChecks[key]=new Promise(function(resolve){
       var image=new Image(),done=false;
       var timer=setTimeout(function(){finish(false);},5000);
       function finish(ok){
         if(done)return;done=true;clearTimeout(timer);
         image.onload=null;image.onerror=null;
-        resolve(ok?hatchingRoot+file:null);
+        resolve(ok?hatchingRoot+key:null);
       }
       image.onload=function(){finish(true);};
       image.onerror=function(){finish(false);};
-      image.src=hatchingRoot+file;
+      image.src=hatchingRoot+key;
     });
-    return hatchingImageChecks[file];
+    return hatchingImageChecks[key];
   }
-  /* 背景面の形状を複製し、その内側だけSVGマスクを描画する。 */
+  /* 背景面の形状を複製し、その内側へSVGマスクまたはテクスチャーを描画する。 */
   function syncHatchingMasks(){
     document.querySelectorAll('.hex-bg-has-hatching,.hex-bg-spacer-hatching').forEach(function(owner){
       var range=owner.classList.contains('hex-bg-has-hatching');
@@ -275,6 +288,7 @@ hexReady(function(){
           ink.className='hex-bg-hatching-ink';
           layer.appendChild(ink);owner.appendChild(layer);
         }
+        layer.classList.toggle('hex-bg-texture-layer',owner.classList.contains('hex-bg-image-textures'));
         ['top','right','bottom','left','width','height','transform','border-radius','clip-path',
           '-webkit-mask-image','-webkit-mask-size','-webkit-mask-position','-webkit-mask-repeat',
           'mask-image','mask-size','mask-position','mask-repeat'].forEach(function(property){
@@ -341,16 +355,18 @@ hexReady(function(){
       var image=source&&source.style.getPropertyValue('--hex-bg-hatching-image');
       if(!image){
         spacer.classList.remove('hex-bg-spacer-hatching');
+        spacer.classList.remove('hex-bg-image-textures');
         spacer.style.removeProperty('--hex-bg-hatching-image');
         spacer.style.removeProperty('--hex-bg-hatching-color');
         spacer.style.removeProperty('--hex-bg-hatching-opacity');
         return;
       }
+      spacer.classList.toggle('hex-bg-image-textures',source.classList.contains('hex-bg-image-textures'));
       spacer.style.setProperty('--hex-bg-hatching-image',image);
       spacer.style.setProperty('--hex-bg-hatching-color',
         getComputedStyle(source).getPropertyValue('--hex-bg-hatching-color').trim()||'#203459');
       spacer.style.setProperty('--hex-bg-hatching-opacity',
-        getComputedStyle(source).getPropertyValue('--hex-bg-hatching-opacity').trim()||'0.5');
+        getComputedStyle(source).getPropertyValue('--hex-bg-hatching-opacity').trim()||'1');
       spacer.style.setProperty('--hex-bg-hatching-base-color',
         getComputedStyle(source).getPropertyValue('--hex-bg-range-color').trim()||'#fff');
       var offset=spacer.getBoundingClientRect().top-source.getBoundingClientRect().top;
@@ -366,8 +382,10 @@ hexReady(function(){
   function applyBackgroundHatching(wrapper,start){
     var value=(start.dataset.bgImage||'').trim();
     if(!value)return;
+    var type=backgroundImageType(start),config=backgroundImageTypes[type];
+    if(!config)return;
     var imageColor=(start.dataset.bgImagecolor||'').trim();
-    if(imageColor&&CSS.supports('color',imageColor)){
+    if(type==='hatching'&&imageColor&&CSS.supports('color',imageColor)){
       wrapper.style.setProperty('--hex-bg-hatching-color',imageColor);
     }
     var imageOpacity=(start.dataset.bgImageopacity||'').trim();
@@ -380,25 +398,26 @@ hexReady(function(){
     var random=value==='random';
     var candidates=[];
     if(random){
-      for(var number=1;number<=99;number++){
-        if(hatchingExcludedNumbers.indexOf(number)===-1)candidates.push(String(number).padStart(2,'0')+'.svg');
+      for(var number=1;number<=30;number++){
+        if(config.excludedNumbers.indexOf(number)===-1)candidates.push(String(number).padStart(2,'0')+'.'+config.extension);
       }
       for(var i=candidates.length-1;i>0;i--){
         var j=Math.floor(Math.random()*(i+1)),temp=candidates[i];
         candidates[i]=candidates[j];candidates[j]=temp;
       }
-    }else if(/^(?:0[1-9]|[1-9][0-9])\.svg$/.test(value)){
+    }else if(validBackgroundImageFile(value,type)){
       candidates=[value];
     }else{return;}
     var cursor=0;
     function attempt(){
-      while(cursor<candidates.length&&random&&hatchingUsedFiles.has(candidates[cursor]))cursor++;
+      while(cursor<candidates.length&&random&&hatchingUsedFiles.has(type+'/'+candidates[cursor]))cursor++;
       if(cursor>=candidates.length)return;
       var file=candidates[cursor++];
-      checkHatchingImage(file).then(function(url){
+      checkHatchingImage(file,type).then(function(url){
         /* 並行ロード中に他の範囲で選ばれた画像も、確定前に再確認する。 */
-        if(!url||(random&&hatchingUsedFiles.has(file))){attempt();return;}
-        hatchingUsedFiles.add(file);
+        if(!url||(random&&hatchingUsedFiles.has(type+'/'+file))){attempt();return;}
+        hatchingUsedFiles.add(type+'/'+file);
+        wrapper.classList.toggle('hex-bg-image-textures',type==='textures');
         wrapper.style.setProperty('--hex-bg-hatching-image','url("'+url+'")');
         wrapper.classList.add('hex-bg-has-hatching');
         syncHatchingSpacers();

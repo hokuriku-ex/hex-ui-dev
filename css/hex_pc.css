@@ -10593,7 +10593,7 @@ html.hex-overlap-snap-animating{
 :root{
   --hex-bg-hatching-size:300px auto;
   --hex-bg-hatching-color:#203459;
-  --hex-bg-hatching-opacity:0.5;
+  --hex-bg-hatching-opacity:1;
 }
 /* 背景色は従来の面に維持し、その手前・本文の背後へ柄だけを重ねる。 */
 .hex-bg-range.hex-bg-has-hatching::before,
@@ -10608,7 +10608,7 @@ html.hex-overlap-snap-animating{
 .hex-bg-hatching-layer > .hex-bg-hatching-ink{
   display:block;position:absolute;inset:0;pointer-events:none;
   background-color:var(--hex-bg-hatching-color,#203459);
-  opacity:var(--hex-bg-hatching-opacity,0.5);
+  opacity:var(--hex-bg-hatching-opacity,1);
   -webkit-mask-image:var(--hex-bg-hatching-image);
   mask-image:var(--hex-bg-hatching-image);
   -webkit-mask-size:var(--hex-bg-hatching-size,300px auto);
@@ -10634,4 +10634,14 @@ html.hex-overlap-snap-animating{
 }
 .hex-rise-veil-hatching > .hex-bg-hatching-layer{
   position:absolute!important;z-index:0!important;
+}
+
+/* テクスチャーは着色マスクを使わず、画像本来の色で繰り返す。 */
+.hex-bg-texture-layer > .hex-bg-hatching-ink{
+  background-color:transparent;
+  background-image:var(--hex-bg-hatching-image);
+  background-size:var(--hex-bg-hatching-size,300px auto);
+  background-position:var(--hex-bg-hatching-position,0 0);
+  background-repeat:repeat;
+  -webkit-mask-image:none;mask-image:none;
 }
