@@ -343,11 +343,14 @@ hexReady(function(){
         spacer.classList.remove('hex-bg-spacer-hatching');
         spacer.style.removeProperty('--hex-bg-hatching-image');
         spacer.style.removeProperty('--hex-bg-hatching-color');
+        spacer.style.removeProperty('--hex-bg-hatching-opacity');
         return;
       }
       spacer.style.setProperty('--hex-bg-hatching-image',image);
       spacer.style.setProperty('--hex-bg-hatching-color',
         getComputedStyle(source).getPropertyValue('--hex-bg-hatching-color').trim()||'#203459');
+      spacer.style.setProperty('--hex-bg-hatching-opacity',
+        getComputedStyle(source).getPropertyValue('--hex-bg-hatching-opacity').trim()||'0.5');
       spacer.style.setProperty('--hex-bg-hatching-base-color',
         getComputedStyle(source).getPropertyValue('--hex-bg-range-color').trim()||'#fff');
       var offset=spacer.getBoundingClientRect().top-source.getBoundingClientRect().top;
@@ -366,6 +369,13 @@ hexReady(function(){
     var imageColor=(start.dataset.bgImagecolor||'').trim();
     if(imageColor&&CSS.supports('color',imageColor)){
       wrapper.style.setProperty('--hex-bg-hatching-color',imageColor);
+    }
+    var imageOpacity=(start.dataset.bgImageopacity||'').trim();
+    if(/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(imageOpacity)){
+      var opacity=Number(imageOpacity);
+      if(opacity>=0&&opacity<=1){
+        wrapper.style.setProperty('--hex-bg-hatching-opacity',String(opacity));
+      }
     }
     var random=value==='random';
     var candidates=[];
