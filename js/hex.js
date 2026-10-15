@@ -2474,7 +2474,7 @@ hexReady(function(){
   var HERO_MOUSE_FOLLOW_HOLD_PADDING=64;
   /* WELCOME本文の表示に必要なスクロール量。2なら従来の約2倍。 */
   var WELCOME_BODY_SCROLL_SCALE=2;
-  var WELCOME_BODY_AUTO_DURATION=1800;
+  var WELCOME_BODY_AUTO_DURATION=900;
   var threePromise=null;
 
   function loadThree(){
@@ -3618,10 +3618,10 @@ hexReady(function(){
       if(welcomeAutoPhase!=='circle')return;
       welcomeAutoPhase='title';
       // ロール演出が無効な環境でも、見出しを表示してから進める。
-      welcomeAutoTimer=window.setTimeout(startWelcomeBodyAuto,reduced?0:2200);
+      welcomeAutoTimer=window.setTimeout(startWelcomeBodyAuto,reduced?0:1200);
     }
 
-    document.addEventListener('hex:welcome-title-complete',function(event){
+    document.addEventListener('hex:welcome-subtitle-start',function(event){
       if(event.target&&event.target.closest('.hex-welcome-wrap')===welcomeWrap){
         startWelcomeBodyAuto();
       }
@@ -13222,7 +13222,12 @@ hexLoad(function(){
                 delay:(.6+(chars.length-1)*.07)/2,
                 duration:.55,
                 ease:'back.out(2.3)',
-                overwrite:'auto'
+                overwrite:'auto',
+                onStart:function(){
+                  if(main.closest('.hex-welcome-wrap')){
+                    main.dispatchEvent(new Event('hex:welcome-subtitle-start',{bubbles:true}));
+                  }
+                }
               });
             }
           },
@@ -13231,9 +13236,6 @@ hexLoad(function(){
             gsap.set(chars,{
               clearProps:'transform,opacity,visibility,willChange'
             });
-            if(main.closest('.hex-welcome-wrap')){
-              main.dispatchEvent(new Event('hex:welcome-title-complete',{bubbles:true}));
-            }
           }
         });
       }
