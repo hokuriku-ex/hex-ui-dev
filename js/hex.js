@@ -230,51 +230,51 @@ hexLoad(function(){
 ======================================= */
 hexReady(function(){
   /* 背景画像：種類ごとに01〜30。欠番は種類ごとのリストへ追加する。 */
-  var hatchingRoot='https://hokuriku-ex.github.io/hex-ui-dev/images/background/';
+  var patternsRoot='https://hokuriku-ex.github.io/hex-ui-dev/images/background/';
   var backgroundImageTypes={
-    hatching:{extension:'svg',excludedNumbers:[]},
+    patterns:{extension:'svg',excludedNumbers:[]},
     textures:{extension:'webp',excludedNumbers:[]}
   };
   function backgroundImageType(start){
-    return (start.dataset.bgImagetype||'hatching').trim();
+    return (start.dataset.bgImagetype||'patterns').trim();
   }
   function validBackgroundImageFile(file,type){
     var config=backgroundImageTypes[type];
     return !!config&&/^(?:0[1-9]|[12][0-9]|30)$/.test(file.split('.')[0])&&
       file===file.split('.')[0]+'.'+config.extension;
   }
-  var hatchingImageChecks=Object.create(null);
-  var hatchingUsedFiles=new Set();
+  var patternsImageChecks=Object.create(null);
+  var patternsUsedFiles=new Set();
   /* 明示指定は先に確保し、後から初期化される範囲ともランダム柄を重複させない。 */
   document.querySelectorAll('.hex-bg-start[data-bg-image]').forEach(function(start){
     var file=(start.dataset.bgImage||'').trim();
     var type=backgroundImageType(start);
-    if(validBackgroundImageFile(file,type))hatchingUsedFiles.add(type+'/'+file);
+    if(validBackgroundImageFile(file,type))patternsUsedFiles.add(type+'/'+file);
   });
   function checkHatchingImage(file,type){
     var key=type+'/'+file;
-    if(hatchingImageChecks[key])return hatchingImageChecks[key];
-    hatchingImageChecks[key]=new Promise(function(resolve){
+    if(patternsImageChecks[key])return patternsImageChecks[key];
+    patternsImageChecks[key]=new Promise(function(resolve){
       var image=new Image(),done=false;
       var timer=setTimeout(function(){finish(false);},5000);
       function finish(ok){
         if(done)return;done=true;clearTimeout(timer);
         image.onload=null;image.onerror=null;
-        resolve(ok?hatchingRoot+key:null);
+        resolve(ok?patternsRoot+key:null);
       }
       image.onload=function(){finish(true);};
       image.onerror=function(){finish(false);};
-      image.src=hatchingRoot+key;
+      image.src=patternsRoot+key;
     });
-    return hatchingImageChecks[key];
+    return patternsImageChecks[key];
   }
   /* 背景面の形状を複製し、その内側へSVGマスクまたはテクスチャーを描画する。 */
   function syncHatchingMasks(){
-    document.querySelectorAll('.hex-bg-has-hatching,.hex-bg-spacer-hatching').forEach(function(owner){
-      var range=owner.classList.contains('hex-bg-has-hatching');
+    document.querySelectorAll('.hex-bg-has-patterns,.hex-bg-spacer-patterns').forEach(function(owner){
+      var range=owner.classList.contains('hex-bg-has-patterns');
       var surfaces=range?['before','after']:['before'];
       surfaces.forEach(function(surface){
-        var key='hex-bg-hatching-layer-'+surface;
+        var key='hex-bg-patterns-layer-'+surface;
         var layer=Array.from(owner.children).find(function(child){return child.classList.contains(key);});
         var style=getComputedStyle(owner,'::'+surface);
         if(style.content==='none'||style.display==='none'){
@@ -282,10 +282,10 @@ hexReady(function(){
         }
         if(!layer){
           layer=document.createElement('span');
-          layer.className='hex-bg-hatching-layer '+key;
+          layer.className='hex-bg-patterns-layer '+key;
           layer.setAttribute('aria-hidden','true');
           var ink=document.createElement('span');
-          ink.className='hex-bg-hatching-ink';
+          ink.className='hex-bg-patterns-ink';
           layer.appendChild(ink);owner.appendChild(layer);
         }
         layer.classList.toggle('hex-bg-texture-layer',owner.classList.contains('hex-bg-image-textures'));
@@ -313,29 +313,29 @@ hexReady(function(){
       if(!item)return;
       var node=Array.from(item.children).find(function(child){return child!==veil;});
       if(!node)return;
-      var owners=Array.from(node.querySelectorAll('.hex-bg-has-hatching,.hex-bg-spacer-hatching'));
-      if(node.matches('.hex-bg-has-hatching,.hex-bg-spacer-hatching'))owners.unshift(node);
+      var owners=Array.from(node.querySelectorAll('.hex-bg-has-patterns,.hex-bg-spacer-patterns'));
+      if(node.matches('.hex-bg-has-patterns,.hex-bg-spacer-patterns'))owners.unshift(node);
       var origin=veil.getBoundingClientRect();
       var groups=owners.map(function(owner){
         var layers=Array.from(owner.children).filter(function(child){
-          return child.classList.contains('hex-bg-hatching-layer');
+          return child.classList.contains('hex-bg-patterns-layer');
         });
         if(!layers.length||getComputedStyle(owner).display==='none')return null;
         var rect=owner.getBoundingClientRect(),style=getComputedStyle(owner);
         var group=document.createElement('span');
-        group.className='hex-rise-veil-hatching';
+        group.className='hex-rise-veil-patterns';
         group.setAttribute('aria-hidden','true');
         group.style.left=(rect.left-origin.left)+'px';
         group.style.top=(rect.top-origin.top)+'px';
         group.style.width=rect.width+'px';group.style.height=rect.height+'px';
         ['image','color','size','opacity','position'].forEach(function(name){
-          var property='--hex-bg-hatching-'+name,value=style.getPropertyValue(property).trim();
+          var property='--hex-bg-patterns-'+name,value=style.getPropertyValue(property).trim();
           if(value)group.style.setProperty(property,value);
         });
         layers.forEach(function(layer){group.appendChild(layer.cloneNode(true));});
         return group;
       });
-      veil.querySelectorAll('.hex-rise-veil-hatching').forEach(function(group){group.remove();});
+      veil.querySelectorAll('.hex-rise-veil-patterns').forEach(function(group){group.remove();});
       groups.forEach(function(group){if(group)veil.appendChild(group);});
     });
   };
@@ -352,26 +352,26 @@ hexReady(function(){
         owner=owner.parentElement;
       }
       var source=ranges.length?ranges[ranges.length-1]:null;
-      var image=source&&source.style.getPropertyValue('--hex-bg-hatching-image');
+      var image=source&&source.style.getPropertyValue('--hex-bg-patterns-image');
       if(!image){
-        spacer.classList.remove('hex-bg-spacer-hatching');
+        spacer.classList.remove('hex-bg-spacer-patterns');
         spacer.classList.remove('hex-bg-image-textures');
-        spacer.style.removeProperty('--hex-bg-hatching-image');
-        spacer.style.removeProperty('--hex-bg-hatching-color');
-        spacer.style.removeProperty('--hex-bg-hatching-opacity');
+        spacer.style.removeProperty('--hex-bg-patterns-image');
+        spacer.style.removeProperty('--hex-bg-patterns-color');
+        spacer.style.removeProperty('--hex-bg-patterns-opacity');
         return;
       }
       spacer.classList.toggle('hex-bg-image-textures',source.classList.contains('hex-bg-image-textures'));
-      spacer.style.setProperty('--hex-bg-hatching-image',image);
-      spacer.style.setProperty('--hex-bg-hatching-color',
-        getComputedStyle(source).getPropertyValue('--hex-bg-hatching-color').trim()||'#203459');
-      spacer.style.setProperty('--hex-bg-hatching-opacity',
-        getComputedStyle(source).getPropertyValue('--hex-bg-hatching-opacity').trim()||'1');
-      spacer.style.setProperty('--hex-bg-hatching-base-color',
+      spacer.style.setProperty('--hex-bg-patterns-image',image);
+      spacer.style.setProperty('--hex-bg-patterns-color',
+        getComputedStyle(source).getPropertyValue('--hex-bg-patterns-color').trim()||'#203459');
+      spacer.style.setProperty('--hex-bg-patterns-opacity',
+        getComputedStyle(source).getPropertyValue('--hex-bg-patterns-opacity').trim()||'1');
+      spacer.style.setProperty('--hex-bg-patterns-base-color',
         getComputedStyle(source).getPropertyValue('--hex-bg-range-color').trim()||'#fff');
       var offset=spacer.getBoundingClientRect().top-source.getBoundingClientRect().top;
-      spacer.style.setProperty('--hex-bg-hatching-position','0px '+(-offset)+'px');
-      spacer.classList.add('hex-bg-spacer-hatching');
+      spacer.style.setProperty('--hex-bg-patterns-position','0px '+(-offset)+'px');
+      spacer.classList.add('hex-bg-spacer-patterns');
     });
     syncHatchingMasks();
     window.hexSyncHatchingVeils();
@@ -385,14 +385,14 @@ hexReady(function(){
     var type=backgroundImageType(start),config=backgroundImageTypes[type];
     if(!config)return;
     var imageColor=(start.dataset.bgImagecolor||'').trim();
-    if(type==='hatching'&&imageColor&&CSS.supports('color',imageColor)){
-      wrapper.style.setProperty('--hex-bg-hatching-color',imageColor);
+    if(type==='patterns'&&imageColor&&CSS.supports('color',imageColor)){
+      wrapper.style.setProperty('--hex-bg-patterns-color',imageColor);
     }
     var imageOpacity=(start.dataset.bgImageopacity||'').trim();
     if(/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(imageOpacity)){
       var opacity=Number(imageOpacity);
       if(opacity>=0&&opacity<=1){
-        wrapper.style.setProperty('--hex-bg-hatching-opacity',String(opacity));
+        wrapper.style.setProperty('--hex-bg-patterns-opacity',String(opacity));
       }
     }
     var random=value==='random';
@@ -410,16 +410,16 @@ hexReady(function(){
     }else{return;}
     var cursor=0;
     function attempt(){
-      while(cursor<candidates.length&&random&&hatchingUsedFiles.has(type+'/'+candidates[cursor]))cursor++;
+      while(cursor<candidates.length&&random&&patternsUsedFiles.has(type+'/'+candidates[cursor]))cursor++;
       if(cursor>=candidates.length)return;
       var file=candidates[cursor++];
       checkHatchingImage(file,type).then(function(url){
         /* 並行ロード中に他の範囲で選ばれた画像も、確定前に再確認する。 */
-        if(!url||(random&&hatchingUsedFiles.has(type+'/'+file))){attempt();return;}
-        hatchingUsedFiles.add(type+'/'+file);
+        if(!url||(random&&patternsUsedFiles.has(type+'/'+file))){attempt();return;}
+        patternsUsedFiles.add(type+'/'+file);
         wrapper.classList.toggle('hex-bg-image-textures',type==='textures');
-        wrapper.style.setProperty('--hex-bg-hatching-image','url("'+url+'")');
-        wrapper.classList.add('hex-bg-has-hatching');
+        wrapper.style.setProperty('--hex-bg-patterns-image','url("'+url+'")');
+        wrapper.classList.add('hex-bg-has-patterns');
         syncHatchingSpacers();
       });
     }
@@ -14375,7 +14375,7 @@ hexReady(function(){
 
 /* =======================================
    下層ページ：斜めテクスチャー＋写真文字（2026-10-08）
-   斜めはtextures、文字はslidesの01.webp〜30.webp。欠番は再試行しない。
+   斜めはtextures、文字はphotosの01.webp〜30.webp。欠番は再試行しない。
 ======================================= */
 (function(){
   'use strict';
@@ -14668,7 +14668,7 @@ hexReady(function(){
       });}))queueLayout();
     }).observe(contents,{childList:true,subtree:true});
     if(document.fonts)document.fonts.ready.then(queueLayout);
-    if(!texturesPromise)texturesPromise=loadFolder('slides');
+    if(!texturesPromise)texturesPromise=loadFolder('photos');
     var titleReady=texturesPromise.then(function(urls){
       if(!urls.length)return;
       var url=urls[Math.floor(Math.random()*urls.length)];
