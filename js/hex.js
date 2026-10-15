@@ -5718,8 +5718,9 @@ function hexDisableHomeNewsLegacyMotion(panel){
 }
 
 function hexHomeNewsUpdateButton(buttonArea,shortname,pagetype){
-  var view=buttonArea.querySelector('.hex-link-view');
+  var view=buttonArea.querySelector('.hex-button-view,.hex-link-view');
   if(!view)return;
+  var isButton=view.classList.contains('hex-button-view');
 
   view.dataset.shortname=shortname;
   view.dataset.pagetype=pagetype;
@@ -5727,7 +5728,7 @@ function hexHomeNewsUpdateButton(buttonArea,shortname,pagetype){
   var url=window.hexBuildUrl(view);
   if(!url)return;
 
-  var wrap=buttonArea.querySelector('.hex-home-news-link-wrap');
+  var wrap=buttonArea.querySelector('.hex-home-news-link-wrap,.hex-button-wrap,.hex-link-wrap');
   var link=null;
   var title=null;
   var iconSpan=null;
@@ -5740,10 +5741,10 @@ function hexHomeNewsUpdateButton(buttonArea,shortname,pagetype){
     iconSpan=document.createElement('span');
     icon=document.createElement('i');
 
-    wrap.className='hex-link-wrap hex-align-'+(view.dataset.align||'center')+' hex-home-news-link-wrap';
-    link.className='hex-link '+(view.dataset.style||'light');
-    title.className='hex-link-title';
-    iconSpan.className='hex-link-icon';
+    wrap.className=(isButton?'hex-button-wrap':'hex-link-wrap')+' hex-align-'+(view.dataset.align||'center')+' hex-home-news-link-wrap';
+    link.className=(isButton?'hex-btn-main':'hex-link')+' '+(view.dataset.style||'light');
+    title.className=isButton?'hex-btn-main-title':'hex-link-title';
+    iconSpan.className=isButton?'hex-btn-main-icon':'hex-link-icon';
     icon.className=window.hexIconClass(view.dataset.type||'internal');
 
     iconSpan.appendChild(icon);
@@ -5754,11 +5755,16 @@ function hexHomeNewsUpdateButton(buttonArea,shortname,pagetype){
     view.style.display='none';
   }else{
     link=wrap.querySelector('a');
-    title=wrap.querySelector('.hex-link-title');
+    title=wrap.querySelector('.hex-btn-main-title,.hex-link-title');
+  }
+
+  view.style.display='none';
+  if(isButton){
+    wrap.style.width=view.dataset.width||'100%';
   }
 
   if(link){
-    link.style.width=view.dataset.width||'100%';
+    if(!isButton)link.style.width=view.dataset.width||'100%';
     link.href=url;
     window.hexSetExternal(link,view.dataset.type||'internal');
   }
