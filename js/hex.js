@@ -249,6 +249,42 @@ hexReady(function(){
     });
     return hatchingImageChecks[file];
   }
+  /* 背景面の形状を複製し、その内側だけSVGマスクを描画する。 */
+  function syncHatchingMasks(){
+    document.querySelectorAll('.hex-bg-has-hatching,.hex-bg-spacer-hatching').forEach(function(owner){
+      var range=owner.classList.contains('hex-bg-has-hatching');
+      var surfaces=range?['before','after']:['before'];
+      surfaces.forEach(function(surface){
+        var key='hex-bg-hatching-layer-'+surface;
+        var layer=Array.from(owner.children).find(function(child){return child.classList.contains(key);});
+        var style=getComputedStyle(owner,'::'+surface);
+        if(style.content==='none'||style.display==='none'){
+          if(layer)layer.remove();return;
+        }
+        if(!layer){
+          layer=document.createElement('span');
+          layer.className='hex-bg-hatching-layer '+key;
+          layer.setAttribute('aria-hidden','true');
+          var ink=document.createElement('span');
+          ink.className='hex-bg-hatching-ink';
+          layer.appendChild(ink);owner.appendChild(layer);
+        }
+        ['top','right','bottom','left','width','height','transform','border-radius','clip-path',
+          '-webkit-mask-image','-webkit-mask-size','-webkit-mask-position','-webkit-mask-repeat',
+          'mask-image','mask-size','mask-position','mask-repeat'].forEach(function(property){
+          layer.style.setProperty(property,style.getPropertyValue(property));
+        });
+        /* CSSのborderで作る下端の三角形も、同じ領域に切り抜く。 */
+        var borderTop=parseFloat(style.borderTopWidth)||0;
+        var borderLeft=parseFloat(style.borderLeftWidth)||0;
+        var borderRight=parseFloat(style.borderRightWidth)||0;
+        if(parseFloat(style.height)===0&&borderTop>0&&borderLeft+borderRight>0){
+          layer.style.top='auto';layer.style.width=(borderLeft+borderRight)+'px';
+          layer.style.height=borderTop+'px';layer.style.clipPath='polygon(0 0,100% 0,50% 100%)';
+        }
+      });
+    });
+  }
   function syncHatchingSpacers(){
     document.querySelectorAll('.hex-overlap-spacer').forEach(function(spacer){
       /* 範囲内は親の背景をそのまま見せ、柄の二重描画を避ける。 */
@@ -275,6 +311,7 @@ hexReady(function(){
       spacer.style.setProperty('--hex-bg-hatching-position','0px '+(-offset)+'px');
       spacer.classList.add('hex-bg-spacer-hatching');
     });
+    syncHatchingMasks();
   }
   window.addEventListener('resize',syncHatchingSpacers,{passive:true});
   window.addEventListener('load',syncHatchingSpacers,{once:true});
