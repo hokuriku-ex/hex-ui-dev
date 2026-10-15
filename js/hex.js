@@ -7364,10 +7364,25 @@ hexReady(function(){
   function prepareOpeningIntroCharRoll(main){
     var textValue;
 
-    if(!main||main.dataset.hexOpeningCharRollReady==="1"){
+    if(!main||main._hexOpeningSharedRoll){return;}
+    if(typeof window.hexCreateCatchRoll==='function'&&main.parentElement){
+      if(main.dataset.hexOpeningCharRollReady==='1')main.textContent=main.textContent.replace(/\u00a0/g,' ');
+      main.classList.remove('has-hex-opening-char-roll','is-char-roll-played');
+      main._hexOpeningSharedRoll=window.hexCreateCatchRoll(main);
       return;
     }
-
+    // 共通演出の読み込みが遅い場合も、同じ文字間隔とサブのタイミングで表示する。
+    if(!main._hexOpeningRollWaiting){
+      main._hexOpeningRollWaiting=true;
+      document.addEventListener('hex:catch-roll-ready',function(){
+        prepareOpeningIntroCharRoll(main);
+        var stage=main.closest('.hex-opening-intro-stage')||main.closest('.hex-opening-message-stage');
+        if(main._hexOpeningSharedRoll&&stage&&stage.classList.contains('is-v2-entered')&&!isReducedMotion()){
+          main._hexOpeningSharedRoll.play();
+        }
+      },{once:true});
+    }
+    if(main.dataset.hexOpeningCharRollReady==="1")return;
     textValue=(main.textContent||"").trim();
     if(!textValue){
       return;
@@ -7377,11 +7392,18 @@ hexReady(function(){
     main.dataset.hexOpeningCharRollReady="1";
     main.classList.add("has-hex-opening-char-roll");
     main.setAttribute("aria-label",textValue);
+    if(main.parentElement){
+      main.parentElement.style.setProperty('--hex-opening-intro-sub-delay',((.6+(Array.from(textValue).length-1)*.07)/2)+'s');
+    }
+    var mobileBreak=/^What Shall We Draw\?$/i.test(textValue)?'What Shall'.length:
+      (/^Draw Your Everyday With$/i.test(textValue)?'Draw Your'.length:-1);
+    if(mobileBreak!==-1)main.classList.add('hex-sp-two-line-catch');
 
     Array.from(textValue).forEach(function(character,index){
       var span=document.createElement("span");
 
       span.className="hex-opening-intro-char";
+      if(index===mobileBreak)span.classList.add('hex-catch-roll-mobile-break');
       span.setAttribute("aria-hidden","true");
       span.style.setProperty(
         "--hex-opening-char-index",
@@ -7423,14 +7445,13 @@ hexReady(function(){
     catchBox.className="hex-opening-intro-catch";
 
     if(data.main){
-      main.className="hex-opening-intro-main";
+      main.className="hex-opening-intro-main hex-opening-main";
       main.innerHTML=data.main;
-      prepareOpeningIntroCharRoll(main);
       catchBox.appendChild(main);
     }
 
     if(data.sub){
-      sub.className="hex-opening-intro-sub";
+      sub.className="hex-opening-intro-sub hex-opening-sub";
       sub.innerHTML=data.sub;
       catchBox.appendChild(sub);
     }
@@ -7440,6 +7461,7 @@ hexReady(function(){
     }
 
     opening.insertBefore(stage,opening.firstChild);
+    if(data.main)prepareOpeningIntroCharRoll(main);
 
     return stage;
   }
@@ -7447,6 +7469,8 @@ hexReady(function(){
   function collectOpeningMessage(){
     var source=document.querySelector(".hex-opening-message-source");
     var first;
+    var main;
+    var sub;
     var finalCopy;
     var sourceBlock;
     var data;
@@ -7455,14 +7479,18 @@ hexReady(function(){
       return null;
     }
 
+    main=source.querySelector(".hex-opening-message-main");
+    sub=source.querySelector(".hex-opening-message-sub");
     first=source.querySelector(".hex-opening-message-first");
     finalCopy=source.querySelector(".hex-opening-message-final");
 
-    if(!first&&!finalCopy){
+    if(!main&&!sub&&!first&&!finalCopy){
       return null;
     }
 
     data={
+      main:main ? main.innerHTML : "",
+      sub:sub ? sub.innerHTML : "",
       first:first ? first.innerHTML : "",
       finalCopy:finalCopy ? finalCopy.innerHTML : ""
     };
@@ -7485,7 +7513,21 @@ hexReady(function(){
     var first=document.createElement("div");
     var logoStage=opening.querySelector(".hex-opening-logo-stage");
     stage.className="hex-opening-message-stage";
-    if(data.first){
+    if(data.main||data.sub){
+      var catchBox=document.createElement("div");
+      var main=document.createElement("span");
+      var sub=document.createElement("span");
+      catchBox.className="hex-opening-intro-catch hex-opening-message-catch";
+      if(data.main){
+        main.className="hex-opening-intro-main hex-opening-main hex-opening-message-main";
+        main.innerHTML=data.main;catchBox.appendChild(main);
+      }
+      if(data.sub){
+        sub.className="hex-opening-intro-sub hex-opening-sub hex-opening-message-sub";
+        sub.innerHTML=data.sub;catchBox.appendChild(sub);
+      }
+      stage.appendChild(catchBox);
+    }else if(data.first){
       first.className="hex-opening-message-first";
       first.innerHTML=data.first;
       stage.appendChild(first);
@@ -7501,6 +7543,8 @@ hexReady(function(){
       opening.appendChild(logoSource);
     }
     opening.insertBefore(stage,opening.firstChild);
+    var title=stage.querySelector('.hex-opening-message-main');
+    if(title)prepareOpeningIntroCharRoll(title);
     return stage;
   }
 
@@ -8084,12 +8128,13 @@ hexReady(function(){
         scene.classList.add("is-v2-image-entered");
       }
 
-      if(scene===introStage){
-        introMain=scene.querySelector(
-          ".hex-opening-intro-main.has-hex-opening-char-roll"
-        );
+      if(scene===introStage||scene===messageStage){
+        introMain=scene.querySelector(".hex-opening-intro-main");
         if(introMain){
-          introMain.classList.add("is-char-roll-played");
+          prepareOpeningIntroCharRoll(introMain);
+          if(introMain._hexOpeningSharedRoll){
+            if(!reduced)introMain._hexOpeningSharedRoll.play();
+          }else{introMain.classList.add("is-char-roll-played");}
         }
       }
 
@@ -8992,7 +9037,9 @@ hexReady(function(){
           if(dotIndex===scenes.length){
             dot.setAttribute('aria-label','ヒーローへ移動');
           }else if(scenes[dotIndex]===messageStage){
-            dot.setAttribute('aria-label','すぐそばにある、特別な時間。へ移動');
+            var messageTitle=messageStage.querySelector('.hex-opening-message-main');
+            var label=messageTitle?messageTitle.textContent.replace(/\u00a0/g,' ').trim():'すぐそばにある、特別な時間。';
+            dot.setAttribute('aria-label',label+'へ移動');
           }
         }
       );
@@ -13302,6 +13349,10 @@ hexLoad(function(){
         /^With your dreams\.$/i.test(textValue)){
         spBreakIndex='With your'.length;
         spUppercaseIndex=spBreakIndex+1;
+      }else if(main.closest('.hex-opening-intro-stage')&&/^What Shall We Draw\?$/i.test(textValue)){
+        spBreakIndex='What Shall'.length;
+      }else if(main.closest('.hex-opening-message-stage')&&/^Draw Your Everyday With$/i.test(textValue)){
+        spBreakIndex='Draw Your'.length;
       }
 
       main.textContent='';
@@ -14217,6 +14268,9 @@ hexLoad(function(){
     /* フェードと見出しは下層ページと同じ初期化経路を使う */
     setupFoundedMotion();
     setupMotionTargets(document);
+    // 開幕1番もヒーロー・WELCOMEと同じロール演出を使用する。
+    window.hexCreateCatchRoll=createCatchRoll;
+    document.dispatchEvent(new Event('hex:catch-roll-ready'));
     setupHeroAndWelcomeCatchRolls();
 
     /* 初回の対象登録と位置計算が終わってから白カバーを外す */

@@ -10764,3 +10764,41 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   -webkit-clip-path:inset(0);
   clip-path:inset(0);
 }
+
+
+/* 開幕1・6番：WELCOMEと同じメイン・サブの書体・配色・ロール演出。背景画像と中央配置は維持。 */
+.hex-opening.is-curtain-sequence :is(.hex-opening-intro-stage,.hex-opening-message-stage) .hex-opening-intro-catch{
+  opacity:1!important;visibility:visible!important;
+  transform:none!important;transition:none!important;
+}
+.hex-opening-intro-catch .hex-opening-intro-main{
+  font-family:var(--hex-font-pop-en)!important;
+  font-size:clamp(32px,6vw,7.2rem)!important;
+  font-weight:400!important;line-height:1.4!important;letter-spacing:.04em!important;
+  color:#1f2774!important;-webkit-text-stroke:0!important;text-shadow:none!important;
+}
+.hex-opening-intro-catch .hex-opening-intro-sub{
+  margin-top:0!important;font-family:var(--hex-font-pop-ja)!important;
+  font-size:clamp(14px,1.15vw,18px)!important;
+  font-weight:700!important;line-height:1.7!important;letter-spacing:.1em!important;
+  color:#c8a874!important;-webkit-text-stroke:0!important;text-shadow:none!important;
+}
+/* 共通GSAP演出の準備がまだの場合だけ使用する代替演出。 */
+:is(.hex-opening-intro-stage,.hex-opening-message-stage) .hex-opening-intro-sub:not(.has-hex-sub-pop){
+  opacity:0;transform:translateY(16px) scale(.9);transform-origin:50% 100%;
+}
+:is(.hex-opening-intro-stage,.hex-opening-message-stage).is-v2-entered .hex-opening-intro-sub:not(.has-hex-sub-pop){
+  animation:hex-opening-intro-sub-pop .55s cubic-bezier(.34,1.56,.64,1) var(--hex-opening-intro-sub-delay,.93s) both;
+}
+.hex-opening-intro-catch .hex-opening-intro-char{
+  transition-timing-function:cubic-bezier(.165,.84,.44,1);
+}
+@keyframes hex-opening-intro-sub-pop{
+  from{opacity:0;transform:translateY(16px) scale(.9);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+@media(prefers-reduced-motion:reduce){
+  :is(.hex-opening-intro-stage,.hex-opening-message-stage) .hex-opening-intro-sub:not(.has-hex-sub-pop){
+    opacity:1;transform:none;animation:none!important;
+  }
+}

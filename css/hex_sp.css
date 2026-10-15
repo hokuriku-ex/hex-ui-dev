@@ -2904,3 +2904,20 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     padding-right:0!important;
   }
 }
+
+
+/* 開幕1・6番SP：WELCOMEと同じ48pxメイン・13pxサブ。指定コピーは2行で収める。 */
+@media screen and (max-width:768px){
+  .hex-opening.is-curtain-sequence :is(.hex-opening-intro-stage,.hex-opening-message-stage) .hex-opening-intro-catch{
+    transform:none!important;transition:none!important;
+  }
+  .hex-opening-intro-catch .hex-opening-intro-main{
+    font-size:48px!important;line-height:1.4!important;letter-spacing:.04em!important;
+  }
+  .hex-opening-intro-catch .hex-opening-intro-sub{
+    margin-top:0!important;font-size:13px!important;line-height:1.7!important;
+  }
+  .hex-opening-intro-main.hex-sp-two-line-catch{
+    white-space:normal;text-align:center;
+  }
+}
