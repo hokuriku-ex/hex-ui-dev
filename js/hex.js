@@ -15731,14 +15731,19 @@ hexReady(function(){
       }
     }
     runner.size=resolveLength(runner.host,'var(--hex-vehicle-width,128px)')||128;
-    runner.speed=Math.max(1,parseFloat(style.getPropertyValue('--hex-vehicle-speed'))||48);
+    var speedValue=style.getPropertyValue('--hex-vehicle-speed').trim()||'3vw';
+    // 単位なしは従来のpx/秒、vw等の長さ指定は画面幅に応じた移動量/秒。
+    var speed=/^\d+(?:\.\d+)?$/.test(speedValue)?Number(speedValue):resolveLength(runner.host,speedValue);
+    runner.speed=Number.isFinite(speed)&&speed>0?speed:48;
     var maxAngle=parseFloat(style.getPropertyValue('--hex-vehicle-max-angle'));
     runner.maxAngle=Number.isFinite(maxAngle)?Math.max(0,maxAngle):20;
     runner.pad=runner.size*2;
     var top=parseFloat(pseudo.top)||0;
     runner.track.style.setProperty('--hex-vehicle-track-top',(top-runner.pad)+'px');
     runner.track.style.setProperty('--hex-vehicle-track-height',(runner.depth+runner.pad*2)+'px');
-    if(!Number.isFinite(runner.x))runner.x=width+runner.size;
+    // 初回は全体が見え、右端から少し進んだ位置で開始する。
+    // 画像準備前の再計測にも追従。走行開始後の進み具合は維持する。
+    if(!Number.isFinite(runner.x)||!runner.asset)runner.x=Math.max(runner.size*.5,width-runner.size);
     render(runner);
   }
   function setAsset(runner,asset){
