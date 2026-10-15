@@ -15691,9 +15691,11 @@ hexReady(function(){
     return cubic.apply(null,curves[segment].concat([t]))/100;
   }
   function ground(runner,x){
-    var w=runner.width,d=runner.depth,u=Math.max(0,Math.min(1,x/w));
+    var w=runner.width,d=runner.depth,u=x/w;
+    // アーチは画面外にも曲線を延長し、出入りの途中で水平へ戻さない。
     if(runner.kind==='curve')return d*Math.pow(2*u-1,2);
     if(runner.kind==='curve-bottom')return 4*d*u*(1-u);
+    u=Math.max(0,Math.min(1,u));
     if(runner.kind==='wave'){
       var p=x/runner.period;p=p-Math.floor(p);
       if(runner.reverse)p=1-p;
