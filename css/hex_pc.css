@@ -10588,3 +10588,19 @@ html.hex-overlap-snap-animating{
   -webkit-mask-position:left top,right top;mask-position:left top,right top;
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
 }
+
+/* 共通背景ハッチング：サイズ・濃さはここで全背景をまとめて調整する。 */
+:root{
+  --hex-bg-hatching-size:300px auto;
+  --hex-bg-hatching-opacity:0.05;
+}
+/* 既存の背景面へ重ねるので、曲線・角丸・斜め形状の切り抜きも維持する。
+   背景と同色の半透明レイヤーで柄だけを薄くし、本文の透明度は変えない。 */
+.hex-bg-range.hex-bg-has-hatching::before,
+.hex-bg-range.hex-bg-has-hatching::after{
+  --hex-bg-hatching-wash:color-mix(in srgb,var(--hex-bg-range-color,#fff) calc(100% - clamp(0,var(--hex-bg-hatching-opacity),1) * 100%),transparent);
+  background-image:linear-gradient(var(--hex-bg-hatching-wash),var(--hex-bg-hatching-wash)),var(--hex-bg-hatching-image)!important;
+  background-size:auto,var(--hex-bg-hatching-size)!important;
+  background-repeat:repeat,repeat!important;
+  background-position:0 0,0 0!important;
+}

@@ -229,6 +229,52 @@ hexLoad(function(){
    下層ページ背景色範囲指定
 ======================================= */
 hexReady(function(){
+  /* ハッチング画像：01.svg〜99.svg。欠番はここへ番号で追加する。 */
+  var hatchingRoot='https://hokuriku-ex.github.io/hex-ui-dev/images/background/hatching/';
+  var hatchingExcludedNumbers=[];
+  var hatchingImageChecks=Object.create(null);
+  function checkHatchingImage(file){
+    if(hatchingImageChecks[file])return hatchingImageChecks[file];
+    hatchingImageChecks[file]=new Promise(function(resolve){
+      var image=new Image(),done=false;
+      var timer=setTimeout(function(){finish(false);},5000);
+      function finish(ok){
+        if(done)return;done=true;clearTimeout(timer);
+        image.onload=null;image.onerror=null;
+        resolve(ok?hatchingRoot+file:null);
+      }
+      image.onload=function(){finish(true);};
+      image.onerror=function(){finish(false);};
+      image.src=hatchingRoot+file;
+    });
+    return hatchingImageChecks[file];
+  }
+  function applyBackgroundHatching(wrapper,start){
+    var value=(start.dataset.bgImage||'').trim();
+    if(!value)return;
+    var candidates=[];
+    if(value==='random'){
+      for(var number=1;number<=99;number++){
+        if(hatchingExcludedNumbers.indexOf(number)===-1)candidates.push(String(number).padStart(2,'0')+'.svg');
+      }
+      for(var i=candidates.length-1;i>0;i--){
+        var j=Math.floor(Math.random()*(i+1)),temp=candidates[i];
+        candidates[i]=candidates[j];candidates[j]=temp;
+      }
+    }else if(/^(?:0[1-9]|[1-9][0-9])\.svg$/.test(value)){
+      candidates=[value];
+    }else{return;}
+    var cursor=0;
+    function attempt(){
+      if(cursor>=candidates.length)return;
+      checkHatchingImage(candidates[cursor++]).then(function(url){
+        if(!url){attempt();return;}
+        wrapper.style.setProperty('--hex-bg-hatching-image','url("'+url+'")');
+        wrapper.classList.add('hex-bg-has-hatching');
+      });
+    }
+    attempt();
+  }
   /* 既存形状の登録リスト。明示指定は抽選・使用済み判定から除外する。 */
   var backgroundShapes=[
     'hex-bg-curve-top',
@@ -329,6 +375,7 @@ hexReady(function(){
     wrapper.className='hex-bg-range';
 
     applyBackgroundDecoration(wrapper,start,end);
+    applyBackgroundHatching(wrapper,start);
 
     wrapper.style.setProperty(
       '--hex-bg-range-color',
