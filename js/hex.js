@@ -7,6 +7,15 @@ function hexIsArticlePage(){
 }
 document.documentElement.classList.toggle('hex-article-page',hexIsArticlePage());
 
+/* 標準固定フッターはCSSの読み込み前から隠す。ヘッダー表示後も解除しない。 */
+(function(){
+  if(document.getElementById('hex-standard-fixed-footer-guard'))return;
+  var footerGuard=document.createElement('style');
+  footerGuard.id='hex-standard-fixed-footer-guard';
+  footerGuard.textContent='html body .gc_auto_frame_footer_fixed{display:none!important;visibility:hidden!important;pointer-events:none!important;}';
+  (document.head||document.documentElement).appendChild(footerGuard);
+})();
+
 /* ページ移動・リロード時のCMSヘッダーを準備完了まで隠す。先頭復帰はリロード時だけ。 */
 (function(){
   var navigation=window.performance&&window.performance.getEntriesByType
