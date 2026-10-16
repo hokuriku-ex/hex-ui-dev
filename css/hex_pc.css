@@ -10846,3 +10846,8 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
     transform:none!important;transition-duration:.01ms!important;transition-delay:0s!important;
   }
 }
+
+/* 「選ばれる理由」はトップページ共通メインタイトルと同じ文字サイズ。 */
+.hex-founded-title{
+  font-size:clamp(6.4rem,8vw,9.6rem)!important;
+}
