@@ -2777,6 +2777,10 @@ hexReady(function(){
     var welcomeAutoPhase='';
     var welcomeAutoTimer=0;
     var welcomeAutoFrame=0;
+    var welcomeReverseActive=false;
+    var welcomeReverseFrame=0;
+    var welcomeReverseScrollY=null;
+    var WELCOME_REVERSE_DURATION=1050;
     var spCircleScrollFrame=0;
     var spCircleReleaseScrollY=null;
     var welcomeButton=null;
@@ -3302,6 +3306,10 @@ hexReady(function(){
     }
 
     function onWelcomeScroll(){
+      if(welcomeReverseActive&&welcomeReverseScrollY!==null&&
+        Math.abs(window.pageYOffset-welcomeReverseScrollY)>.5){
+        window.scrollTo({top:welcomeReverseScrollY,left:0,behavior:'instant'});
+      }
       if(welcomeButtonScrollHold!==null&&
         Math.abs(window.pageYOffset-welcomeButtonScrollHold)>.5){
         window.scrollTo({top:welcomeButtonScrollHold,behavior:'instant'});
@@ -3624,6 +3632,7 @@ hexReady(function(){
 
     function resetHero(withFade){
       var returningFromWelcome=welcomeActive;
+      stopWelcomeReverseSnap();
       cancelWelcomeAuto();
       stopSpCircleScroll();
       spCircleReleaseScrollY=null;
@@ -3815,6 +3824,45 @@ hexReady(function(){
       window.clearTimeout(welcomeAutoTimer);welcomeAutoTimer=0;
       window.cancelAnimationFrame(welcomeAutoFrame);welcomeAutoFrame=0;
       welcomeAutoPhase='';
+    }
+
+    function stopWelcomeReverseSnap(){
+      welcomeReverseActive=false;
+      if(welcomeReverseFrame){window.cancelAnimationFrame(welcomeReverseFrame);}
+      welcomeReverseFrame=0;
+      welcomeReverseScrollY=null;
+      document.documentElement.classList.remove('hex-welcome-reverse-snap');
+    }
+
+    /* 丸の拡大が始まったら、既存スクロール演出のままヒーローまで戻す。 */
+    function startWelcomeReverseSnap(){
+      if(welcomeReverseActive||!welcomeActive||!snapshot||!welcomeWrap)return;
+      cancelWelcomeAuto();
+      stopSpCircleScroll();
+      welcomeDotPending=false;
+      window.clearTimeout(welcomeDotTimer);welcomeDotTimer=0;
+      welcomeReverseActive=true;
+      welcomeReverseScrollY=window.pageYOffset;
+      document.documentElement.classList.add('hex-welcome-reverse-snap');
+      var from=window.pageYOffset,startedAt=null;
+      function advance(now){
+        welcomeReverseFrame=0;
+        if(!welcomeReverseActive||!welcomeActive){stopWelcomeReverseSnap();return;}
+        if(startedAt===null)startedAt=now;
+        var progress=reduced?1:clamp((now-startedAt)/WELCOME_REVERSE_DURATION,0,1);
+        var eased=1-Math.pow(1-progress,3);
+        var target=Math.max(0,documentTop(hero));
+        var position=from+(target-from)*eased;
+        welcomeReverseScrollY=position;
+        if(window.hexMotion&&typeof window.hexMotion.scrollTo==='function'){
+          window.hexMotion.scrollTo(position,{immediate:true,force:true});
+        }else{window.scrollTo({top:position,left:0,behavior:'instant'});}
+        // 終点ではupdateScrollEffects内の従来のresetHero経路で復帰する。
+        updateScrollEffects();
+        if(welcomeReverseActive&&progress<1){welcomeReverseFrame=window.requestAnimationFrame(advance);}
+        else{stopWelcomeReverseSnap();}
+      }
+      welcomeReverseFrame=window.requestAnimationFrame(advance);
     }
 
     function startWelcomeBodyAuto(){
@@ -4020,6 +4068,7 @@ hexReady(function(){
       if(movingUp&&circleProgress<.999){
         if(released){refixSnapshot(true);}
         syncSnapshotLayer(false);
+        startWelcomeReverseSnap();
       }
       startRadius=Math.hypot(window.innerWidth,window.hexViewportHeight());
       targetRadius=isSp()?getSpCircleRadius():getPcCircleRadius();
@@ -4128,11 +4177,11 @@ hexReady(function(){
     /* 本文を強制表示した後も、通常入力でスクロール位置への同期を再開する。
        WELCOME区間では入力をキャンセルせず、SPの慣性スクロールを維持する。 */
     function onWelcomeTouchMove(event){
-      if(welcomeButtonScrollHold!==null){event.preventDefault();return;}
+      if(welcomeReverseActive||welcomeButtonScrollHold!==null){event.preventDefault();return;}
       if(event.touches.length===1){cancelWelcomeAuto();welcomeBodyForced=false;}
     }
     function onWelcomeWheel(event){
-      if(welcomeButtonScrollHold!==null){
+      if(welcomeReverseActive||welcomeButtonScrollHold!==null){
         event.preventDefault();
         event.stopImmediatePropagation();
         return;
@@ -4144,7 +4193,7 @@ hexReady(function(){
         /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(
           document.activeElement&&document.activeElement.tagName||''
         )){return;}
-      if(welcomeButtonScrollHold!==null&&
+      if((welcomeReverseActive||welcomeButtonScrollHold!==null)&&
         /^(ArrowDown|PageDown| |ArrowUp|PageUp|Home|End)$/.test(event.key)){
         event.preventDefault();
         event.stopImmediatePropagation();
@@ -12740,6 +12789,8 @@ hexLoad(function(){
         /* PCは開幕から通常コンテンツまで同じLenisで処理する。 */
         virtualScroll:function(data){
           var event=data&&data.event;
+
+          if(root.classList.contains('hex-welcome-reverse-snap')){return false;}
 
           if(root.classList.contains('hex-hero-manual-lock')){
             if(
