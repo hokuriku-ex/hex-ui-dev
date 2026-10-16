@@ -3382,15 +3382,15 @@ div[hex-sp]{
   transform:translateY(100%) rotate(45deg);
 }
 .hex-calendar-modal.is-open .hex-top-title-char{
-  animation:hex-calendar-title-roll .6s cubic-bezier(.22,.8,.3,1) both;
+  animation:hex-calendar-title-roll .5s cubic-bezier(.22,.8,.3,1) both;
 }
 .hex-calendar-modal .hex-top-title-sub{
   opacity:0;
   transform:translateY(16px) scale(.9);
 }
 .hex-calendar-modal.is-open .hex-top-title-sub{
-  animation:hex-calendar-sub-pop .55s both;
-  animation-delay:var(--hex-sub-pop-delay,.85s);
+  animation:hex-calendar-sub-pop .4583333333s both;
+  animation-delay:var(--hex-sub-pop-delay,.7083333333s);
 }
 @keyframes hex-calendar-title-roll{
   from{opacity:0;transform:translateY(100%) rotate(45deg)}
@@ -8932,10 +8932,10 @@ html.hex-opening-finishing
   backface-visibility:hidden;
   will-change:transform,opacity;
   transition:
-    opacity .6s cubic-bezier(.215,.61,.355,1),
-    transform .6s cubic-bezier(.215,.61,.355,1);
+    opacity .5s cubic-bezier(.215,.61,.355,1),
+    transform .5s cubic-bezier(.215,.61,.355,1);
   transition-delay:
-    calc(var(--hex-opening-char-index,0) * .07s);
+    calc(var(--hex-opening-char-index,0) * .0583333333s);
 }
 
 .hex-opening-intro-main.is-char-roll-played
@@ -8943,7 +8943,7 @@ html.hex-opening-finishing
   opacity:1;
   transform:translateY(0) rotate(0deg);
   transition-delay:
-    calc(var(--hex-opening-char-index,0) * .07s);
+    calc(var(--hex-opening-char-index,0) * .0583333333s);
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -10789,7 +10789,7 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   opacity:0;transform:translateY(16px) scale(.9);transform-origin:50% 100%;
 }
 :is(.hex-opening-intro-stage,.hex-opening-message-stage).is-v2-entered .hex-opening-intro-sub:not(.has-hex-sub-pop){
-  animation:hex-opening-intro-sub-pop .55s cubic-bezier(.34,1.56,.64,1) var(--hex-opening-intro-sub-delay,.93s) both;
+  animation:hex-opening-intro-sub-pop .4583333333s cubic-bezier(.34,1.56,.64,1) var(--hex-opening-intro-sub-delay,.775s) both;
 }
 .hex-opening-intro-catch .hex-opening-intro-char{
   transition-timing-function:cubic-bezier(.165,.84,.44,1);

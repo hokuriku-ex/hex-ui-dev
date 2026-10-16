@@ -2945,3 +2945,13 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     transform:none!important;transition-duration:.01ms!important;transition-delay:0s!important;
   }
 }
+
+/* メインタイトルはSPで1行。実幅が足りない場合だけJSが文字サイズを縮める。 */
+@media screen and (max-width:768px){
+  .hex-title-fit-one-line{white-space:nowrap!important;}
+  .hex-title-fit-one-line .hex-catch-roll-mobile-break{
+    display:inline-block!important;width:auto!important;height:auto!important;
+    font-size:inherit!important;line-height:inherit!important;overflow:visible!important;
+  }
+  .hex-title-fit-one-line .hex-catch-roll-mobile-capitalize{text-transform:none!important;}
+}

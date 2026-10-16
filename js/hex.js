@@ -1,3 +1,84 @@
+/* SPメインタイトル：文字サイズの既定値を上限に、表示幅へ1行で収める。 */
+(function(){
+  'use strict';
+  var titles=new Map(),frame=0,knownWidth=document.documentElement.clientWidth;
+  function restore(main,original){
+    if(original.value)main.style.setProperty('font-size',original.value,original.priority);
+    else main.style.removeProperty('font-size');
+  }
+  function measure(main,style){
+    var node=document.createElement('span');
+    node.style.cssText='position:fixed;left:0;top:0;display:inline-block;width:max-content;max-width:none;white-space:pre;visibility:hidden;pointer-events:none;transform:none;padding:0;margin:0;border:0;';
+    ['fontFamily','fontSize','fontWeight','fontStyle','fontStretch','fontVariant','fontKerning','letterSpacing','wordSpacing','textTransform'].forEach(function(key){node.style[key]=style[key];});
+    var chars=main.querySelectorAll(':scope > .hex-catch-roll-char,:scope > .hex-opening-intro-char,:scope > .hex-top-title-char');
+    if(chars.length){
+      Array.prototype.forEach.call(chars,function(char){
+        var copy=document.createElement('span');
+        copy.style.cssText='display:inline-block;white-space:pre;padding:0;margin:0;border:0;';
+        copy.textContent=char.textContent;node.appendChild(copy);
+      });
+    }else{node.textContent=main.textContent;}
+    document.body.appendChild(node);
+    var width=node.getBoundingClientRect().width;
+    node.remove();
+    return width;
+  }
+  function fit(main,original){
+    if(!main.isConnected)return false;
+    var previous=main.style.getPropertyValue('font-size');
+    restore(main,original);
+    if(document.documentElement.clientWidth>768)return previous!==main.style.getPropertyValue('font-size');
+    var parent=main.parentElement;
+    if(!parent||!main.getClientRects().length)return false;
+    var style=getComputedStyle(main),parentStyle=getComputedStyle(parent);
+    var base=parseFloat(style.fontSize);
+    var parentWidth=parent.clientWidth-(parseFloat(parentStyle.paddingLeft)||0)-(parseFloat(parentStyle.paddingRight)||0);
+    var viewport=document.documentElement.clientWidth;
+    var available=Math.min(parentWidth||viewport-32,viewport-32);
+    // 影・縁取りは計測文字幅に含まれないため、右下の余裕を別に確保する。
+    var outline=parseFloat(style.webkitTextStrokeWidth)||0;
+    var shadow=style.textShadow&&style.textShadow!=='none'?8:0;
+    available-=Math.max(outline,shadow)+2;
+    var natural=measure(main,style);
+    if(base>0&&natural>available&&available>0){
+      var size=base*available/natural;
+      main.style.setProperty('font-size',(Math.floor(size*100)/100)+'px','important');
+      // 固定pxの文字間隔などによる誤差も実測して収める。
+      for(var i=0;i<2;i++){
+        var actual=measure(main,getComputedStyle(main));
+        if(actual<=available+.1)break;
+        size*=available/actual;
+        main.style.setProperty('font-size',(Math.floor(size*100)/100)+'px','important');
+      }
+    }
+    return previous!==main.style.getPropertyValue('font-size');
+  }
+  function run(){
+    frame=0;var changed=false;
+    titles.forEach(function(original,main){if(fit(main,original))changed=true;});
+    if(changed&&window.hexMotion&&window.hexMotion.refreshLayout)window.hexMotion.refreshLayout();
+  }
+  function queue(){if(!frame)frame=window.requestAnimationFrame(run);}
+  window.hexRegisterMainTitle=function(main){
+    if(!main)return;
+    if(!titles.has(main))titles.set(main,{value:main.style.getPropertyValue('font-size'),priority:main.style.getPropertyPriority('font-size')});
+    main.classList.add('hex-title-fit-one-line');queue();
+  };
+  function onWidthChange(){
+    var width=document.documentElement.clientWidth;
+    if(width===knownWidth)return;
+    knownWidth=width;queue();
+  }
+  window.addEventListener('resize',onWidthChange,{passive:true});
+  window.addEventListener('hex:viewport-resize',onWidthChange,{passive:true});
+  window.addEventListener('load',queue,{once:true});
+  ['hex:hero-layout-updated','hex:opening-finished','hex:top-returned'].forEach(function(name){document.addEventListener(name,queue);});
+  if(document.fonts){
+    document.fonts.ready.then(queue);
+    if(document.fonts.addEventListener)document.fonts.addEventListener('loadingdone',queue);
+  }
+})();
+
 /* スマホの高さはタッチ開始から慣性スクロール・UI伸縮の安定まで保持する。 */
 (function(){
   'use strict';
@@ -6318,7 +6399,7 @@ hexLoad(function(){
     }
     title.style.setProperty(
       '--hex-sub-pop-delay',
-      (((Array.from(english).length-1)*.07+.6)/2)+'s'
+      (((Array.from(english).length-1)*(.07*5/6)+.5)/2)+'s'
     );
 
     wrap=document.createElement('span');
@@ -6328,11 +6409,12 @@ hexLoad(function(){
       var span=document.createElement('span');
       span.className='hex-top-title-char';
       span.textContent=character===' '?'\u00a0':character;
-      span.style.animationDelay=(index*.07)+'s';
+      span.style.animationDelay=(index*(.07*5/6))+'s';
       wrap.appendChild(span);
     });
     title.classList.add('has-hex-title-roll');
     title.appendChild(wrap);
+    if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(wrap);
     calendarTitlePrepared=true;
   }
 
@@ -7312,6 +7394,7 @@ hexReady(function(){
           catchCopy.appendChild(subtitle);
         }
         slide.appendChild(catchCopy);
+        if(item.title&&window.hexRegisterMainTitle)window.hexRegisterMainTitle(title);
       }
 
       stage.appendChild(slide);
@@ -7405,7 +7488,7 @@ hexReady(function(){
     main.classList.add("has-hex-opening-char-roll");
     main.setAttribute("aria-label",textValue);
     if(main.parentElement){
-      main.parentElement.style.setProperty('--hex-opening-intro-sub-delay',((.6+(Array.from(textValue).length-1)*.07)/2)+'s');
+      main.parentElement.style.setProperty('--hex-opening-intro-sub-delay',((.5+(Array.from(textValue).length-1)*(.07*5/6))/2)+'s');
     }
     var mobileBreak=/^What Shall We Draw\?$/i.test(textValue)?'What Shall'.length:
       (/^Draw Your Everyday With$/i.test(textValue)?'Draw Your'.length:-1);
@@ -7424,6 +7507,7 @@ hexReady(function(){
       span.textContent=character===" "?"\u00a0":character;
       main.appendChild(span);
     });
+    if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
   }
 
   function createOpeningIntro(opening,data){
@@ -13287,6 +13371,8 @@ hexLoad(function(){
         subtitle=null;
       }
 
+      if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(englishWrap);
+
       if(isReducedMotion()){
         gsap.set(chars,{
           autoAlpha:1,
@@ -13315,8 +13401,8 @@ hexLoad(function(){
         autoAlpha:1,
         yPercent:0,
         rotation:0,
-        duration:.6,
-        stagger:.07,
+        duration:.5,
+        stagger:(.07*5/6),
         ease:'power3.out',
         overwrite:'auto',
         onStart:function(){
@@ -13325,8 +13411,8 @@ hexLoad(function(){
               autoAlpha:1,
               y:0,
               scale:1,
-              delay:(.6+(chars.length-1)*.07)/2,
-              duration:.55,
+              delay:(.5+(chars.length-1)*(.07*5/6))/2,
+              duration:(.55*5/6),
               ease:'back.out(2.3)',
               overwrite:'auto',
               onComplete:function(){
@@ -13407,6 +13493,8 @@ hexLoad(function(){
         chars.push(span);
       });
 
+      if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
+
       function reset(){
         if(tween){
           tween.kill();
@@ -13426,14 +13514,15 @@ hexLoad(function(){
       }
 
       function play(){
+        if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
         reset();
 
         tween=gsap.to(chars,{
           autoAlpha:1,
           yPercent:0,
           rotation:0,
-          duration:.6,
-          stagger:.07,
+          duration:.5,
+          stagger:(.07*5/6),
           ease:'power3.out',
           overwrite:'auto',
           onStart:function(){
@@ -13442,8 +13531,8 @@ hexLoad(function(){
                 autoAlpha:1,
                 y:0,
                 scale:1,
-                delay:(.6+(chars.length-1)*.07)/2,
-                duration:.55,
+                delay:(.5+(chars.length-1)*(.07*5/6))/2,
+                duration:(.55*5/6),
                 ease:'back.out(2.3)',
                 overwrite:'auto',
                 onStart:function(){
@@ -13828,8 +13917,8 @@ hexLoad(function(){
                 autoAlpha:1,
                 yPercent:0,
                 rotation:0,
-                duration:.6,
-                stagger:.07,
+                duration:.5,
+                stagger:(.07*5/6),
                 ease:'power3.out',
                 onComplete:function(){
                   gsap.set(chars,{
@@ -13847,7 +13936,7 @@ hexLoad(function(){
                 if(foundedArcPlayed){return;}
                 foundedArcPlayed=true;
                 gsap.to(foundedArc,{
-                  autoAlpha:1,y:0,scale:1,duration:.55,
+                  autoAlpha:1,y:0,scale:1,duration:(.55*5/6),
                   ease:'back.out(2.3)',
                   onComplete:function(){
                     gsap.set(foundedArc,{
@@ -13870,7 +13959,7 @@ hexLoad(function(){
             if(foundedMessagePlayed){return;}
             foundedMessagePlayed=true;
             gsap.to(foundedMessage,{
-              autoAlpha:1,y:0,scale:1,duration:.55,
+              autoAlpha:1,y:0,scale:1,duration:(.55*5/6),
               ease:'back.out(2.3)',
               onComplete:function(){
                 gsap.set(foundedMessage,{
