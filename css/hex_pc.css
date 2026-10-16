@@ -8978,8 +8978,8 @@ html.hex-opening-finishing
 /* 初回画像だけ、SKIP後のヒーローと同じ強さ・速度でフェード表示する */
 .hex-opening.is-curtain-sequence .hex-opening-intro-stage .hex-opening-intro-photo{opacity:0!important}
 .hex-opening.is-curtain-sequence .hex-opening-intro-stage.is-v2-image-entered .hex-opening-intro-photo{opacity:1!important;transition:opacity .9s ease,transform 1.2s cubic-bezier(.22,.8,.3,1) .08s!important}
-.hex-opening.is-curtain-sequence :is(.hex-opening-intro-catch,.hex-opening-slide-catch,.hex-opening-message-first,.hex-opening-message-final,.hex-opening-logo-stage){opacity:0;transform:translate3d(52px,0,0)!important}
-.hex-opening.is-curtain-sequence .is-v2-entered :is(.hex-opening-intro-catch,.hex-opening-slide-catch,.hex-opening-message-first,.hex-opening-message-final,.hex-opening-logo-stage){opacity:1;transform:translate3d(0,0,0)!important;transition:opacity .72s ease .56s,transform .82s cubic-bezier(.22,.8,.3,1) .56s!important}
+.hex-opening.is-curtain-sequence :is(.hex-opening-intro-catch,.hex-opening-message-first,.hex-opening-message-final,.hex-opening-logo-stage){opacity:0;transform:translate3d(52px,0,0)!important}
+.hex-opening.is-curtain-sequence .is-v2-entered :is(.hex-opening-intro-catch,.hex-opening-message-first,.hex-opening-message-final,.hex-opening-logo-stage){opacity:1;transform:translate3d(0,0,0)!important;transition:opacity .72s ease .56s,transform .82s cubic-bezier(.22,.8,.3,1) .56s!important}
 .hex-opening.is-curtain-sequence :is(.hex-opening-message-first,.hex-opening-message-final){transform:translate(calc(-50% + 52px),-50%)!important}
 .hex-opening.is-curtain-sequence .is-v2-entered :is(.hex-opening-message-first,.hex-opening-message-final){transform:translate(-50%,-50%)!important}
 .hex-opening.is-curtain-sequence .is-v2-entered .hex-opening-logo-stage{transition-delay:.7s!important}
@@ -10823,26 +10823,31 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   color:#c8a874!important;-webkit-text-stroke:4px #fafafa!important;
   paint-order:stroke fill;text-shadow:none!important;
 }
-/* 2〜5番の左上位置は親に持たせ、メインとサブを同時に動かす。 */
+/* 2〜5番は左上の同じ位置で、メインとサブを同時にフェード表示。 */
 .hex-opening-slide-catch{
   position:absolute;z-index:3;
   left:clamp(24px,6vw,96px);top:clamp(48px,10vh,120px);
   right:24px;bottom:auto;text-align:left;
-  opacity:0;transform:translate3d(52px,0,0);
+  opacity:0;transform:none;
 }
 .hex-opening-slide-catch .hex-opening-slide-title{
-  position:static;inset:auto;margin:0;
+  position:static;inset:auto;margin:0;white-space:nowrap;
   opacity:1!important;transform:none!important;transition:none!important;
 }
 .hex-opening-slide.is-active .hex-opening-slide-catch{
-  opacity:1;transform:translate3d(0,0,0);
-  transition:opacity .8s ease .25s,transform .8s ease .25s;
+  opacity:1;transform:none;
+  transition:opacity .8s ease .25s;
+}
+.hex-opening.is-curtain-sequence .is-v2-entered .hex-opening-slide-catch{
+  opacity:1;transform:none!important;
+  transition:opacity .72s ease .56s!important;
 }
 .hex-opening.is-scroll-driven .hex-opening-slide-catch{
   opacity:1;transform:none;transition:none;
 }
 @media(prefers-reduced-motion:reduce){
-  .hex-opening.is-curtain-sequence .hex-opening-slide-catch{
+  .hex-opening.is-curtain-sequence .hex-opening-slide-catch,
+  .hex-opening.is-curtain-sequence .is-v2-entered .hex-opening-slide-catch{
     transform:none!important;transition-duration:.01ms!important;transition-delay:0s!important;
   }
 }

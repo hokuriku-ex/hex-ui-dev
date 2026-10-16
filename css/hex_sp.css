@@ -2526,13 +2526,13 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
 ======================================= */
 @media screen and (max-width:768px){
   .hex-opening.is-curtain-sequence
-  :is(.hex-opening-intro-catch,.hex-opening-slide-catch,.hex-opening-message-first,.hex-opening-message-final,.hex-opening-logo-stage){
+  :is(.hex-opening-intro-catch,.hex-opening-message-first,.hex-opening-message-final,.hex-opening-logo-stage){
     opacity:0;
     transform:translate3d(0,44px,0)!important;
   }
 
   .hex-opening.is-curtain-sequence .is-v2-entered
-  :is(.hex-opening-intro-catch,.hex-opening-slide-catch,.hex-opening-message-first,.hex-opening-message-final,.hex-opening-logo-stage){
+  :is(.hex-opening-intro-catch,.hex-opening-message-first,.hex-opening-message-final,.hex-opening-logo-stage){
     opacity:1;
     transform:translate3d(0,0,0)!important;
   }
@@ -2922,7 +2922,7 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
 }
 
-/* 開幕1〜5番SP：縁取りはヒーロー共通。2〜5番は左上・右から同時表示。 */
+/* 開幕1〜5番SP：縁取りはヒーロー共通。2〜5番は左上・その場で同時フェード。 */
 @media screen and (max-width:768px){
   .hex-opening-intro-stage .hex-opening-intro-catch .hex-opening-intro-main,
   .hex-opening-slide-catch .hex-opening-slide-title{
@@ -2934,10 +2934,10 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
   .hex-opening-slide-catch{left:24px;top:48px;right:24px;text-align:left;}
   .hex-opening.is-curtain-sequence .hex-opening-slide-catch{
-    transform:translate3d(52px,0,0)!important;
+    transform:none!important;
   }
   .hex-opening.is-curtain-sequence .is-v2-entered .hex-opening-slide-catch{
-    transform:translate3d(0,0,0)!important;
+    transform:none!important;
   }
 }
 @media screen and (max-width:768px) and (prefers-reduced-motion:reduce){

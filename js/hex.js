@@ -1,4 +1,4 @@
-/* SPメインタイトル：文字サイズの既定値を上限に、表示幅へ1行で収める。 */
+/* メインタイトル：SPは表示幅、開幕2〜5番は全端末で画面幅50%へ収める。 */
 (function(){
   'use strict';
   var titles=new Map(),frame=0,knownWidth=document.documentElement.clientWidth;
@@ -27,7 +27,8 @@
     if(!main.isConnected)return false;
     var previous=main.style.getPropertyValue('font-size');
     restore(main,original);
-    if(document.documentElement.clientWidth>768)return previous!==main.style.getPropertyValue('font-size');
+    var isOpeningSlide=main.classList.contains('hex-opening-slide-title');
+    if(document.documentElement.clientWidth>768&&!isOpeningSlide)return previous!==main.style.getPropertyValue('font-size');
     var parent=main.parentElement;
     if(!parent||!main.getClientRects().length)return false;
     var style=getComputedStyle(main),parentStyle=getComputedStyle(parent);
@@ -35,6 +36,7 @@
     var parentWidth=parent.clientWidth-(parseFloat(parentStyle.paddingLeft)||0)-(parseFloat(parentStyle.paddingRight)||0);
     var viewport=document.documentElement.clientWidth;
     var available=Math.min(parentWidth||viewport-32,viewport-32);
+    if(isOpeningSlide)available=Math.min(available,viewport*.5);
     // 影・縁取りは計測文字幅に含まれないため、右下の余裕を別に確保する。
     var outline=parseFloat(style.webkitTextStrokeWidth)||0;
     var shadow=style.textShadow&&style.textShadow!=='none'?8:0;
