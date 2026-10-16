@@ -10849,5 +10849,13 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
 
 /* 「選ばれる理由」はトップページ共通メインタイトルと同じ文字サイズ。 */
 .hex-founded-title{
+  font-family:var(--hex-font-pop-en)!important;
   font-size:clamp(6.4rem,8vw,9.6rem)!important;
+}
+
+/* 「選ばれる理由」：共通タイトルの文字ロール用。影が切れない余白を確保。 */
+.hex-founded-title.has-hex-title-roll{
+  display:inline-block;overflow:hidden;
+  padding:0 8px 8px 0;margin:0 -8px -8px 0;
+  vertical-align:bottom;
 }

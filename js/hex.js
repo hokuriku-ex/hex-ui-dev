@@ -13205,9 +13205,11 @@ hexLoad(function(){
         ':not([data-hex-title-roll-ready])';
       var targets=[];
 
-      /* 下層ページの共通お問い合わせ見出しには適用しない */
+      /* 下層の共通お問い合わせは従来通り除外。「選ばれる理由」は直接指定できる。 */
       if(!document.querySelector('.hex-hero-wrap')){
-        return targets;
+        selector='.hex-founded-title:not([data-hex-title-roll-ready])';
+      }else{
+        selector+=',.hex-founded-title:not([data-hex-title-roll-ready])';
       }
 
       targets=Array.prototype.slice.call(
@@ -13219,6 +13221,9 @@ hexLoad(function(){
       }
 
       return targets.filter(function(target){
+        if(target.classList.contains('hex-founded-title')){
+          return !!(target.textContent||'').trim()&&!target.closest('.hex-opening');
+        }
         return(
           !!(target.getAttribute('data-en')||'').trim()&&
           !target.closest(
@@ -13233,8 +13238,10 @@ hexLoad(function(){
     }
 
     function setupTopTitleRollTarget(target){
-      var english=(target.getAttribute('data-en')||'').trim();
-      var englishWrap=document.createElement('span');
+      if(target.dataset.hexTitleRollReady){return;}
+      var isFoundedTitle=target.classList.contains('hex-founded-title');
+      var english=(isFoundedTitle?target.textContent:(target.getAttribute('data-en')||'')).trim();
+      var englishWrap=isFoundedTitle?target:document.createElement('span');
       var chars=[];
       var tween;
       var resetChars;
@@ -13243,27 +13250,37 @@ hexLoad(function(){
       target.dataset.hexMotionInitialized='1';
       target.classList.add('has-hex-title-roll');
 
-      englishWrap.className='hex-top-title-en';
-      englishWrap.setAttribute('aria-hidden','true');
+      if(isFoundedTitle){
+        target.textContent='';
+        target.setAttribute('aria-label',english);
+        var heading=target.closest('.hex-center-title');
+        if(heading){heading.dataset.hexMotionInitialized='1';}
+      }else{
+        englishWrap.className='hex-top-title-en';
+        englishWrap.setAttribute('aria-hidden','true');
+      }
 
       Array.from(english).forEach(function(character){
         var span=document.createElement('span');
 
         span.className='hex-top-title-char';
+        if(isFoundedTitle){span.setAttribute('aria-hidden','true');}
         span.textContent=character===' '?'\u00a0':character;
         englishWrap.appendChild(span);
         chars.push(span);
       });
 
-      target.appendChild(englishWrap);
+      if(!isFoundedTitle){target.appendChild(englishWrap);}
 
       var subtitle=document.createElement('span');
       subtitle.className='hex-top-title-sub';
-      Array.prototype.slice.call(target.childNodes).forEach(function(node){
-        if(node.nodeType===3&&(node.textContent||'').trim()){
-          subtitle.appendChild(node);
-        }
-      });
+      if(!isFoundedTitle){
+        Array.prototype.slice.call(target.childNodes).forEach(function(node){
+          if(node.nodeType===3&&(node.textContent||'').trim()){
+            subtitle.appendChild(node);
+          }
+        });
+      }
       if(subtitle.childNodes.length){
         target.insertBefore(subtitle,target.firstChild);
       }else{
