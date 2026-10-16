@@ -7228,6 +7228,7 @@ hexReady(function(){
 
       slides.push({
         title:title,
+        subtitle:source.getAttribute("data-subtitle")||"",
         pcSrc:pcSrc,
         spSrc:spSrc,
         alt:source.getAttribute("data-alt")||title,
@@ -7296,10 +7297,21 @@ hexReady(function(){
       picture.appendChild(image);
       slide.appendChild(picture);
 
-      if(item.title){
-        title.className="hex-opening-slide-title";
-        title.textContent=item.title;
-        slide.appendChild(title);
+      if(item.title||item.subtitle){
+        var catchCopy=document.createElement("div");
+        catchCopy.className="hex-opening-slide-catch";
+        if(item.title){
+          title.className="hex-opening-slide-title";
+          title.textContent=item.title;
+          catchCopy.appendChild(title);
+        }
+        if(item.subtitle){
+          var subtitle=document.createElement("p");
+          subtitle.className="hex-opening-slide-subtitle";
+          subtitle.textContent=item.subtitle;
+          catchCopy.appendChild(subtitle);
+        }
+        slide.appendChild(catchCopy);
       }
 
       stage.appendChild(slide);
