@@ -902,7 +902,16 @@ function hexPrepareHomeAnchorNav(source){
     var boundary=first._hexHomeRiseMarker||first.closest('.hex-rise-home-runway')||first;
     boundary.parentNode.insertBefore(panel,boundary);
   }
-  var color=getComputedStyle(first).getPropertyValue('--hex-home-section-bg').trim()||'#fafafa';
+  var ranges=Array.from(founded.querySelectorAll('.hex-founded-bg-range'));
+  var arch=panel._hexHomeAnchorArch||ranges[ranges.length-1];
+  if(arch&&arch.classList.contains('hex-bg-curve-top')){
+    panel.classList.add('hex-home-anchor-has-arch');
+    arch.classList.add('hex-home-anchor-arch');
+    if(arch.parentNode!==panel)panel.insertBefore(arch,panel.firstChild);
+    panel._hexHomeAnchorArch=arch;
+  }else{arch=null;}
+  var color=arch?getComputedStyle(arch).getPropertyValue('--hex-bg-range-color').trim():'';
+  color=color||getComputedStyle(first).getPropertyValue('--hex-home-section-bg').trim()||'#fafafa';
   panel.style.setProperty('--hex-home-anchor-bg',color);
   panel.appendChild(source);
   return panel;
@@ -1438,7 +1447,7 @@ function hexInitAnchorNav(){
       originalParent.insertBefore(nav,originalNext);
     }
     fixedStart=homePanel
-      ?homePanel.getBoundingClientRect().top+window.pageYOffset-getHexAnchorHeaderHeight()
+      ?nav.getBoundingClientRect().top+window.pageYOffset-getHexAnchorHeaderHeight()
       :nav.getBoundingClientRect().top+
         window.pageYOffset+nav.offsetHeight-36-getHexAnchorHeaderHeight()-mobileAdjust;
     updateHexAnchorNav();
@@ -15817,6 +15826,22 @@ hexReady(function(){
         to:Math.max(0,Math.min(maximumScroll,originalNode(next).getBoundingClientRect().top+scroll-sectionLandingOffset(next,header)))});
     });
   }
+  function homeAnchorArchPanel(entry){
+    var panel=entry.home&&entry.foundedEnd&&window.hexHomeAnchorNav&&window.hexHomeAnchorNav.panel;
+    return panel&&panel.classList.contains('hex-home-anchor-has-arch')?panel:null;
+  }
+  function homeEntryStart(entry,scroll){
+    var panel=homeAnchorArchPanel(entry);
+    return (panel||entry.marker).getBoundingClientRect().top+scroll-window.hexViewportHeight();
+  }
+  function homeAnchorRevealRange(entry,scroll,maximumScroll){
+    if(window.innerWidth<=768)return null;
+    var panel=homeAnchorArchPanel(entry);
+    if(!panel)return null;
+    var box=panel.getBoundingClientRect();
+    return {from:Math.max(0,Math.min(maximumScroll,box.top+scroll-window.hexViewportHeight())),
+      to:Math.max(0,Math.min(maximumScroll,box.bottom+scroll-window.hexViewportHeight())),home:true};
+  }
   function homeSnapRange(entry,scroll,header,maximumScroll){
     if(window.innerWidth<=768||!entry.home||typeof HOME_SECTIONS==='undefined'||
       (!entry.foundedEnd&&!/^gc_auto_frame_home_(?:[5-9]|1[0-7])$/.test(entry.back.id)))return null;
@@ -15831,14 +15856,18 @@ hexReady(function(){
     var scroll=scrollPosition(),header=snapHeaderHeight;
     var maximumScroll=Math.max(0,Math.max(document.documentElement.scrollHeight,
       document.body.scrollHeight)-window.hexViewportHeight());
-    snapRanges=entries.map(function(entry){
-      return homeSnapRange(entry,scroll,header,maximumScroll);
-    }).filter(function(range){return range&&range.to-range.from>24;});
+    snapRanges=[];
+    entries.forEach(function(entry){
+      var reveal=homeAnchorRevealRange(entry,scroll,maximumScroll);
+      var content=homeSnapRange(entry,scroll,header,maximumScroll);
+      if(reveal&&reveal.to-reveal.from>24)snapRanges.push(reveal);
+      if(content&&content.to-content.from>24)snapRanges.push(content);
+    });
   }
   function measure(){
     measureFrame=0;
     var scroll=scrollPosition();
-    entries.forEach(function(entry){entry.start=entry.marker.getBoundingClientRect().top+scroll-window.hexViewportHeight();});
+    entries.forEach(function(entry){entry.start=homeEntryStart(entry,scroll);});
     entries.sort(function(a,b){return a.start-b.start;});
     entries.forEach(function(entry){
       var blocks=[];
@@ -15862,7 +15891,7 @@ hexReady(function(){
     // まず伸長分を除いた元の高さへ戻し、自然な文書座標で計測する。
     managed.forEach(function(item){item.runway.style.height='auto';item.runway.style.marginBottom='0px';item.sticky.style.position='relative';item.sticky.style.top='auto';});
     // マーカーは固定対象に含めない。ラッパー追加後の余白もここで取り込む。
-    entries.forEach(function(entry){entry.start=entry.marker.getBoundingClientRect().top+scroll-window.hexViewportHeight();});
+    entries.forEach(function(entry){entry.start=homeEntryStart(entry,scroll);});
     entries.sort(function(a,b){return a.start-b.start;});
     var header=fixedHeaderHeight();
     snapHeaderHeight=header;
@@ -15884,6 +15913,8 @@ hexReady(function(){
         to:Math.max(0,Math.min(maximumScroll,nextTop-sectionLandingOffset(entry.front,header)))};
     });
     entries.forEach(function(entry){
+      var reveal=homeAnchorRevealRange(entry,scroll,maximumScroll);
+      if(reveal)snapRanges.push(reveal);
       var range=homeSnapRange(entry,scroll,header,maximumScroll);
       if(range)snapRanges.push(range);
     });
@@ -15894,7 +15925,7 @@ hexReady(function(){
     var layouts=managed.map(function(item){
       var relevant=entries.filter(function(entry){return entry.blocks.indexOf(item.node)!==-1;});
       if(!relevant.length)return null;
-      var start=relevant[0].start,end=relevant[relevant.length-1].start+window.hexViewportHeight();
+      var start=relevant[0].start,end=relevant[relevant.length-1].marker.getBoundingClientRect().top+scroll;
       var top=item.runway.getBoundingClientRect().top+scroll,height=item.sticky.getBoundingClientRect().height;
       var g=geometry(top,height,start,end,sectionLandingOffset(item.node,header));
       item.fadeEnd=relevant[0].marker.getBoundingClientRect().top+scroll-sectionLandingOffset(relevant[0].front,header);
