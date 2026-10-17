@@ -10875,3 +10875,17 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   color:var(--hex-bg-border-color)!important;
   opacity:1!important;visibility:visible!important;
 }
+
+/* トップのアンカーナビ：創業直後の独立した帯。次セクションとの境界を帯の下端に置く。 */
+.hex-home-anchor-panel{
+  display:flow-root;position:relative;isolation:isolate;z-index:95;
+  width:100%;min-width:0;box-sizing:border-box;
+  margin:0!important;padding:0!important;
+  background:var(--hex-home-anchor-bg,#fafafa);
+}
+.hex-home-anchor-panel > .hex-home-anchor-nav:not(.is-fixed){
+  position:relative;top:auto!important;
+  margin:0 calc(50% - 50vw)!important;
+  padding-top:18px!important;padding-bottom:18px!important;
+}
+.hex-home-anchor-nav.is-fixed{z-index:199!important;}

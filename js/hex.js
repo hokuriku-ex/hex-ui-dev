@@ -882,9 +882,29 @@ hexLoad(function(){
     hexInitAnchorNav();
   },200);
 });
+/* トップのナビは、最初の重なりの内側から外し、創業の直後へ独立配置する。 */
+function hexPrepareHomeAnchorNav(source){
+  if(!source||!document.querySelector('.hex-hero-wrap'))return null;
+  var founded=document.getElementById(HOME_SECTIONS.ABOUT);
+  var first=document.getElementById(HOME_SECTIONS.FIRST);
+  if(!founded||!first)return null;
+  var panel=document.querySelector('.hex-home-anchor-panel');
+  if(!panel){
+    panel=document.createElement('div');
+    panel.className='hex-home-anchor-panel hex-motion-auto-off';
+    // 既にオーバーラップ枠ができている場合も、開始マーカーより前へ置く。
+    var boundary=first._hexHomeRiseMarker||first.closest('.hex-rise-home-runway')||first;
+    boundary.parentNode.insertBefore(panel,boundary);
+  }
+  var color=getComputedStyle(first).getPropertyValue('--hex-home-section-bg').trim()||'#fafafa';
+  panel.style.setProperty('--hex-home-anchor-bg',color);
+  panel.appendChild(source);
+  return panel;
+}
 function hexInitAnchorNav(){
   var source=document.querySelector('.hex-anchor-source');
-  if(!source)return;
+  if(!source||source._hexAnchorNav)return;
+  var homePanel=hexPrepareHomeAnchorNav(source);
   var text=source.textContent||'';
   if(!text)return;
   var titles=text.split('|').map(function(item){
@@ -897,6 +917,7 @@ function hexInitAnchorNav(){
   if(!targets.length)return;
   var nav=document.createElement('div');
   nav.className='hex-anchor-nav';
+  if(homePanel)nav.classList.add('hex-home-anchor-nav');
   if(source.id==='hex-anchor-auto-page'){
     nav.classList.add('hex-anchor-nav-auto-page');
   }
@@ -1330,6 +1351,7 @@ function hexInitAnchorNav(){
   if(!list.children.length)return;
   nav.appendChild(list);
   source.parentNode.insertBefore(nav,source.nextSibling);
+  source._hexAnchorNav=nav;
   var placeholder=document.createElement('div');
   placeholder.className='hex-anchor-nav-placeholder';
   nav.parentNode.insertBefore(placeholder,nav.nextSibling);
@@ -1351,7 +1373,14 @@ function hexInitAnchorNav(){
     if(Number.isFinite(value)&&value>0){
       return value;
     }
-
+    if(homePanel){
+      var probe=document.createElement('div');
+      probe.style.cssText='position:fixed;visibility:hidden;pointer-events:none;width:0;';
+      probe.style.height='var('+propertyName+',80px)';
+      document.body.appendChild(probe);
+      var resolved=probe.getBoundingClientRect().height;probe.remove();
+      if(resolved>0)return resolved;
+    }
     return 80;
   }
   function getHexAnchorFixedHeight(){
@@ -1402,13 +1431,10 @@ function hexInitAnchorNav(){
     if(nav.parentNode!==originalParent){
       originalParent.insertBefore(nav,originalNext);
     }
-    fixedStart=
-      nav.getBoundingClientRect().top+
-      window.pageYOffset+
-      nav.offsetHeight-
-      36-
-      getHexAnchorHeaderHeight()-
-      mobileAdjust;
+    fixedStart=homePanel
+      ?homePanel.getBoundingClientRect().top+window.pageYOffset-getHexAnchorHeaderHeight()
+      :nav.getBoundingClientRect().top+
+        window.pageYOffset+nav.offsetHeight-36-getHexAnchorHeaderHeight()-mobileAdjust;
     updateHexAnchorNav();
   }
   function updateHexAnchorNav(){
@@ -1734,6 +1760,13 @@ function hexInitAnchorNav(){
     refreshHexAnchorNav();
     refreshAnchorScrollbar();
   });
+  if(homePanel){
+    window.hexHomeAnchorNav={panel:homePanel,nav:nav,placeholder:placeholder,
+      fixedHeight:getHexAnchorFixedHeight,refresh:refreshHexAnchorNav};
+    document.addEventListener('hex:home-overlap-measured',refreshHexAnchorNav);
+    if(document.fonts&&document.fonts.ready)document.fonts.ready.then(refreshHexAnchorNav);
+    document.dispatchEvent(new CustomEvent('hex:home-anchor-ready',{detail:{panel:homePanel}}));
+  }
 }
 
 /* =======================================
@@ -15566,10 +15599,12 @@ hexReady(function(){
     var height=probe.getBoundingClientRect().height||80;probe.remove();return height;
   }
   var landingDepthCache=new WeakMap();
-  function sectionLandingOffset(node,header){
+  function sectionLandingOffset(node,header,ignoreNav){
     node=originalNode(node);
     var home=!!homeFoundedSection()&&(node.matches('[id^="gc_auto_frame_home_"],.gc_auto_frame_footer'));
-    var base=header+(home?16:0);
+    var homeNav=home&&!ignoreNav&&window.hexHomeAnchorNav;
+    var navHeight=homeNav?homeNav.fixedHeight():0;
+    var base=header+navHeight+(home?16:0);
     var edge=node.matches('.hex-bg-range,.hex-home-overlap-front.hex-bg-round-top,.hex-overlap-round-front.hex-bg-round-top')?node:node.querySelector('.hex-bg-range');
     if(!edge)return base;
     var value=getComputedStyle(edge).getPropertyValue('--hex-bg-upper-depth').trim();
@@ -15584,7 +15619,7 @@ hexReady(function(){
       depth=probe.getBoundingClientRect().height;probe.remove();
       landingDepthCache.set(edge,{key:key,depth:depth});
     }
-    return depth>0?header+depth+16:base;
+    return depth>0?header+navHeight+depth+16:base;
   }
   window.hexOverlapAnchor={
     cancelSnap:function(){cancelSnap(true);},
@@ -15597,7 +15632,7 @@ hexReady(function(){
           if(parent.matches('.hex-rise-sticky,.content_body'))break;
         }
       }
-      return section?Math.max(0,sectionLandingOffset(section,0)-16):0;
+      return section?Math.max(0,sectionLandingOffset(section,0,true)-16):0;
     }
   };
   function sectionCoverColor(node){
@@ -15875,6 +15910,7 @@ hexReady(function(){
     refreshHomeSnapRanges();
     if(window.hexSyncHatchingVeils)window.hexSyncHatchingVeils();
     updateVeils();
+    if(window.hexHomeAnchorNav)document.dispatchEvent(new Event('hex:home-overlap-measured'));
   }
   function queueMeasure(){
     clearTimeout(measureTimer);
@@ -15965,6 +16001,10 @@ hexReady(function(){
     },{capture:true});
     window.addEventListener('pagehide',function(){cancelSnap(false);});
     if(reduced&&reduced.addEventListener)reduced.addEventListener('change',function(){cancelSnap(true);});
+    document.addEventListener('hex:home-anchor-ready',function(event){
+      if(sizeObserver&&event.detail&&event.detail.panel)sizeObserver.observe(event.detail.panel);
+      queueMeasure();
+    });
     window.addEventListener('hex:viewport-resize',queueMeasure,{passive:true});
     if(window.visualViewport)window.addEventListener('hex:viewport-resize',queueMeasure,{passive:true});
     new MutationObserver(function(records){
