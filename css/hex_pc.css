@@ -10905,3 +10905,9 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
 .hex-home-anchor-has-arch > .hex-home-anchor-nav:not(.is-fixed){
   background:var(--hex-home-anchor-bg,#fafafa)!important;
 }
+
+/* 固定中・固定解除のフェード中も、通常ナビの高さ保持枠をアーチと同じ色で埋める。 */
+.hex-home-anchor-panel.hex-home-anchor-has-arch > .hex-anchor-nav-placeholder.is-active{
+  background:var(--hex-home-anchor-bg,#fafafa)!important;
+  box-shadow:0 -1px 0 var(--hex-home-anchor-bg,#fafafa),0 1px 0 var(--hex-home-anchor-bg,#fafafa);
+}
