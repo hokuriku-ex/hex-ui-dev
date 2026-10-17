@@ -10889,3 +10889,8 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   padding-top:18px!important;padding-bottom:18px!important;
 }
 .hex-home-anchor-nav.is-fixed{z-index:199!important;}
+
+/* 創業の局所背景：CMSの最大幅を越えてアーチ・線・装飾を表示する。背景色は範囲内だけ。 */
+#gc_auto_frame_home_4.hex-founded-has-bg-range :is(.gc_auto_frame_spotitem,.gc_auto_frame_spotitem_basewidth,.gc_auto_frame_spotitem_box,.gc_auto_frame_spotitem_body){
+  overflow:visible!important;
+}

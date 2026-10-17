@@ -456,7 +456,7 @@ hexLoad(function(){
 });
 
 /* =======================================
-   共通背景範囲指定（トップは初めての方へ以降）
+   共通背景範囲指定（トップは創業内の明示範囲と初めての方へ以降）
 ======================================= */
 hexReady(function(){
   /* 背景画像：種類ごとに01〜30。欠番は種類ごとのリストへ追加する。 */
@@ -703,7 +703,7 @@ hexReady(function(){
     var frame=marker.closest('[id^="gc_auto_frame_home_"]');
     if(!frame)return null;
     var match=/^gc_auto_frame_home_(\d+)$/.exec(frame.id);
-    return match&&Number(match[1])>=5&&Number(match[1])<=17?frame:null;
+    return match&&Number(match[1])>=4&&Number(match[1])<=17?frame:null;
   }
   /* お問い合わせ・フッターは範囲マーカーを使わず、既存の固定角丸を維持する。 */
   function isFixedRoundBackgroundSection(marker){
@@ -787,6 +787,12 @@ hexReady(function(){
     var homeSection=homeBackgroundSection(start);
     if(homeSection){
       wrapper.classList.add('hex-home-bg-range');
+    }
+    if(homeSection&&homeSection.id===HOME_SECTIONS.ABOUT){
+      // 創業は指定範囲だけを塗る。全体の紺背景・写真・余白の色は変更しない。
+      wrapper.classList.add('hex-founded-bg-range');
+      homeSection.classList.add('hex-founded-has-bg-range');
+    }else if(homeSection){
       homeSection.classList.add('hex-home-has-bg-range');
       if(!homeSection._hexHomeFirstBackgroundRange){
         homeSection._hexHomeFirstBackgroundRange=wrapper;
