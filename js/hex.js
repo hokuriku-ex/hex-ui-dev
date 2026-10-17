@@ -782,6 +782,7 @@ hexReady(function(){
     var wrapper=document.createElement('div');
 
     wrapper.className='hex-bg-range';
+    if(start.dataset.borderColor)wrapper.dataset.borderColor=start.dataset.borderColor;
     if(start.dataset.bgVehicle)wrapper.dataset.bgVehicle=start.dataset.bgVehicle;
     var homeSection=homeBackgroundSection(start);
     if(homeSection){
@@ -16206,4 +16207,119 @@ hexReady(function(){
   new MutationObserver(function(records){
     if(records.some(function(record){return Array.from(record.addedNodes).some(function(node){return node.nodeType===1&&(node.matches('.hex-bg-range,.hex-page-hero')||node.querySelector('.hex-bg-range,.hex-page-hero'));});}))queueLayout();
   }).observe(document.body,{childList:true,subtree:true});
+});
+
+/* 背景範囲：data-border-colorがある場合だけ、実寸の上端形状を2pxでなぞる。 */
+hexReady(function(){
+  'use strict';
+  var NS='http://www.w3.org/2000/svg',items=[],frame=0,knownWidth=document.documentElement.clientWidth;
+  function element(name){return document.createElementNS(NS,name);}
+  function length(host,value,width){
+    value=(value||'').trim();
+    if(!value)return 0;
+    if(/^[-\d.]+px$/.test(value))return parseFloat(value)||0;
+    if(/^[-\d.]+%$/.test(value))return (parseFloat(value)||0)*width/100;
+    var probe=document.createElement('span');
+    probe.className='hex-bg-border-probe';
+    probe.style.cssText='position:absolute!important;visibility:hidden!important;pointer-events:none!important;height:0!important;padding:0!important;margin:0!important;border:0!important;max-width:none!important;min-width:0!important;';
+    probe.style.setProperty('width',value,'important');host.appendChild(probe);
+    var result=probe.getBoundingClientRect().width;probe.remove();return result;
+  }
+  // 座標は背景のSVGマスクと共通。px座標で作成し、拡大・縮小しても線幅は2px。
+  function geometry(w,d,kind,period){
+    var paths=[],reverse=false;
+    if(kind==='curve-top')paths.push('M0 '+d+' Q'+w/2+' '+(-d)+' '+w+' '+d);
+    else if(kind==='curve-bottom')paths.push('M0 0 Q'+w/2+' '+(d*2)+' '+w+' 0');
+    else if(kind==='round'){
+      var r=Math.min(d,w/2);
+      paths.push('M0 '+r+' A'+r+' '+r+' 0 0 1 '+r+' 0 H'+(w-r)+' A'+r+' '+r+' 0 0 1 '+w+' '+r);
+    }else if(kind==='arrow'){
+      paths.push('M0 0 H'+(w/2-38)+' L'+w/2+' 26 L'+(w/2+38)+' 0 H'+w);
+    }else if(kind==='slant-left')paths.push('M0 0 L'+w+' '+(d*.9));
+    else if(kind==='slant-right')paths.push('M0 '+(d*.9)+' L'+w+' 0');
+    else if(kind==='wave'||kind==='wave-right'||kind==='triangle'){
+      period=Math.max(period||w,1);reverse=kind==='wave-right';
+      // 端数のある最終周期はSVGの表示枠で切り取り、CSSのrepeat-xと位相を合わせる。
+      var commands=['M0 '+(kind==='triangle'?d*.425:d*.5)];
+      for(var offset=0;offset<w;offset+=period){
+        function x(n){return offset+period*n/100;}
+        function y(n){return d*n/100;}
+        if(kind==='triangle')commands.push('L'+x(25)+' 0 L'+x(75)+' '+y(85)+' L'+x(100)+' '+y(42.5));
+        else commands.push(
+          'C'+x(8.333)+' '+y(22.386)+' '+x(16.667)+' 0 '+x(25)+' 0',
+          'C'+x(33.333)+' 0 '+x(41.667)+' '+y(22.386)+' '+x(50)+' '+y(50),
+          'C'+x(58.333)+' '+y(77.614)+' '+x(66.667)+' '+y(100)+' '+x(75)+' '+y(100),
+          'C'+x(83.333)+' '+y(100)+' '+x(91.667)+' '+y(77.614)+' '+x(100)+' '+y(50)
+        );
+      }
+      paths.push(commands.join(' '));
+    }else paths.push('M0 0 H'+w);
+    return {paths:paths,reverse:reverse};
+  }
+  function draw(item){
+    var host=item.host;if(!host.isConnected)return;
+    var pseudo=getComputedStyle(host,'::before'),style=getComputedStyle(host),classes=host.classList;
+    var w=parseFloat(pseudo.width)||document.documentElement.clientWidth;
+    var d=length(host,style.getPropertyValue('--hex-bg-upper-depth'),w),kind='flat',period=w;
+    if(classes.contains('hex-bg-decoration-start')){
+      if(classes.contains('hex-bg-curve-top'))kind='curve-top';
+      else if(classes.contains('hex-bg-curve-bottom'))kind='curve-bottom';
+      else if(classes.contains('hex-bg-round-top'))kind='round';
+      else if(classes.contains('hex-bg-arrow'))kind='arrow';
+      else if(classes.contains('hex-bg-slant-left'))kind='slant-left';
+      else if(classes.contains('hex-bg-slant-right'))kind='slant-right';
+      else if(classes.contains('hex-bg-triangle-medium')||classes.contains('hex-bg-triangle-small')){
+        kind='triangle';period=length(host,style.getPropertyValue('--hex-angular-upper-width'),w)||w;
+      }else if(['hex-bg-wave-large','hex-bg-wave-large-left','hex-bg-wave-large-right','hex-bg-wave-medium','hex-bg-wave-small'].some(function(c){return classes.contains(c);})){ 
+        kind=classes.contains('hex-bg-wave-large-right')?'wave-right':'wave';
+        period=length(host,style.getPropertyValue('--hex-wave-upper-width'),w)||w;
+      }
+    }
+    if(kind==='round')d=Math.min(d,parseFloat(pseudo.height)||d,w/2);
+    if(kind==='flat')d=0;
+    if(kind==='arrow')d=26;
+    if(!(w>0))return;
+    var top=(parseFloat(pseudo.top)||0)-1;
+    var key=[w,d,kind,period,pseudo.left,top,pseudo.transform].join('|');
+    if(key===item.key)return;item.key=key;
+    var svg=item.svg;
+    svg.style.setProperty('width',w+'px','important');
+    svg.style.setProperty('height',Math.max(d+2,2)+'px','important');
+    svg.style.setProperty('left',pseudo.left==='auto'?'calc(50% - '+w/2+'px)':pseudo.left,'important');
+    svg.style.setProperty('top',top+'px','important');
+    svg.style.setProperty('transform',pseudo.transform||'none','important');
+    svg.setAttribute('viewBox','0 -1 '+w+' '+Math.max(d+2,2));
+    while(svg.firstChild)svg.removeChild(svg.firstChild);
+    var result=geometry(w,d,kind,period);
+    result.paths.forEach(function(commands){
+      var path=element('path');path.setAttribute('d',commands);
+      path.setAttribute('fill','none');path.setAttribute('stroke','currentColor');
+      path.setAttribute('stroke-width','2');path.setAttribute('vector-effect','non-scaling-stroke');
+      path.setAttribute('stroke-linejoin','round');
+      if(result.reverse)path.setAttribute('transform','translate('+w+' 0) scale(-1 1)');
+      svg.appendChild(path);
+    });
+  }
+  function run(){frame=0;items.forEach(draw);}
+  function queue(){if(!frame)frame=requestAnimationFrame(run);}
+  var observer=window.ResizeObserver?new ResizeObserver(queue):null;
+  document.querySelectorAll('.hex-bg-range[data-border-color]').forEach(function(host){
+    var color=(host.dataset.borderColor||'').trim();
+    if(!color||!window.CSS||!CSS.supports('color',color))return;
+    var svg=element('svg');
+    svg.setAttribute('class','hex-bg-top-border hex-motion-auto-off');
+    svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+    svg.setAttribute('preserveAspectRatio','none');
+    host.style.setProperty('--hex-bg-border-color',color);
+    host.appendChild(svg);items.push({host:host,svg:svg,key:''});
+    if(observer)observer.observe(host);
+  });
+  if(!items.length)return;
+  queue();
+  window.addEventListener('load',queue,{once:true});
+  function widthChanged(){var w=document.documentElement.clientWidth;if(w!==knownWidth){knownWidth=w;queue();}}
+  window.addEventListener('resize',widthChanged,{passive:true});
+  window.addEventListener('hex:viewport-resize',widthChanged,{passive:true});
+  document.addEventListener('hex:hero-layout-updated',queue);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(queue);
 });
