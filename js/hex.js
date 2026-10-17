@@ -1438,6 +1438,15 @@ function hexInitAnchorNav(){
   function refreshHexAnchorNav(){
     if(anchorTouching){anchorRefreshPending=true;return;}
     anchorShapeCache=new WeakMap();
+    if(homePanel&&nav.classList.contains('is-fixed')){
+      // 固定中の再計測ではDOM・placeholder・表示演出を戻さない。
+      // 元の位置は通常フローに残した高さ保持枠から取得する。
+      fixedNavHeight=nav.getBoundingClientRect().height||fixedNavHeight||36;
+      fixedStart=placeholder.getBoundingClientRect().top+
+        window.pageYOffset-getHexAnchorHeaderHeight();
+      updateHexAnchorNav();
+      return;
+    }
     var mobileAdjust=0;
     fixedNavHeight=0;
     nav.classList.remove('is-fixed');
