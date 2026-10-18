@@ -3669,11 +3669,6 @@ body,
 .hex-home-bg-gray .hex-overlap-spacer{
   --hex-overlap-spacer-bg:var(--hex-home-section-bg)!important;
 }
-/* 創業末尾は交互背景より紺色を優先する。 */
-#gc_auto_frame_home_4 .hex-overlap-spacer{
-  --hex-overlap-spacer-bg:#1f2774!important;
-}
-
 /* =======================================
    トップページ：開幕アニメーション
 ======================================= */
@@ -5332,7 +5327,6 @@ html body
 ======================================= */
 :root{
   --hex-welcome-exit-progress:0;
-  --hex-founding-bg:#f6f6f3;
 }
 
 /* =======================================
@@ -5459,69 +5453,8 @@ html body
 /* =======================================
    トップページ：私たちについて
 ======================================= */
-#gc_auto_frame_home_4{
-  --hex-founding-bg:#1f2774;
-  position:relative;
-  background:transparent!important;
-  /* 透明な斜め帯の上側を残し、本文側だけ全面の紺背景にする。 */
-  isolation:auto;
-  z-index:94!important;
-  transform:none!important;
-  filter:none!important;
-  opacity:1!important;
-}
-#gc_auto_frame_home_4::before{
-  content:"";
-  position:absolute;
-  top:var(--hex-founded-navy-top,0px);
-  bottom:0;
-  left:0;
-  right:0;
-  z-index:0;
-  background:#1f2774;
-  pointer-events:none;
-}
-#gc_auto_frame_home_4 :is(
-  .background_color,
-  .backgroundcolor_auto,
-  .backgroundcolor_white
-){
-  background:transparent!important;
-}
-#gc_auto_frame_home_4
-.gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
-  background:transparent!important;
-}
-#gc_auto_frame_home_4 > :not(.hex-founded-photo){
-  position:relative;
-  z-index:6;
-}
-#gc_auto_frame_home_4 > .hex-founded-photo{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100vw;
-  height:100vh;
-  z-index:5;
-  overflow:hidden;
-  pointer-events:none;
-  background:#fff;
-  opacity:1;
-}
-.hex-founded-photo img{
-  position:absolute;
-  inset:0;
-  display:block;
-  width:100%!important;
-  height:100%!important;
-  max-width:none!important;
-  max-height:none!important;
-  object-fit:cover;
-  object-position:center center;
-  filter:blur(5px);
-  opacity:.8;
-  transform:scale(1.08);
-}
+/* 旧・固定写真用HTMLは使用しない。背景は共通範囲指定で管理する。 */
+.hex-founded-photo{display:none!important;}
 .hex-founded-confetti{
   position:fixed;
   z-index:2147480000;
@@ -9405,7 +9338,7 @@ html.hex-opening-finishing
     6px 6px 0 #1f2774;
 }
 
-/* 創業セクション：最大1600pxの写真と、その内側のコンテンツ */
+/* 創業セクション：既存の本文幅と文字サイズを維持 */
 #gc_auto_frame_home_4{
   --hex-founded-vw:min(1vw,16px);
   --hex-founded-content-width:calc(min(100vw - 48px,1600px) - 96px);
@@ -10889,11 +10822,6 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   padding-top:18px!important;padding-bottom:18px!important;
 }
 .hex-home-anchor-nav.is-fixed{z-index:199!important;}
-
-/* 創業の局所背景：CMSの最大幅を越えてアーチ・線・装飾を表示する。背景色は範囲内だけ。 */
-#gc_auto_frame_home_4.hex-founded-has-bg-range :is(.gc_auto_frame_spotitem,.gc_auto_frame_spotitem_basewidth,.gc_auto_frame_spotitem_box,.gc_auto_frame_spotitem_body){
-  overflow:visible!important;
-}
 
 /* 創業末尾のアーチと通常ナビを同じ帯にする。上側の切り欠きは前の背景を見せる。 */
 .hex-home-anchor-panel.hex-home-anchor-has-arch{
