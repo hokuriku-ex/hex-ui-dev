@@ -4058,7 +4058,7 @@ hexReady(function(){
       if(isSp()){return travelMetrics.travel;}
       var about=document.getElementById('gc_auto_frame_home_4');
       if(!about){return travelMetrics.travel;}
-      var banner=document.querySelector('.hex-hashtag-banner');
+      var banner=about.querySelector('.hex-hashtag-banner');
       var header=parseFloat(getComputedStyle(document.documentElement)
         .getPropertyValue('--header_height'))||80;
       var coverTop=about.getBoundingClientRect().top;
@@ -14723,15 +14723,14 @@ hexReady(function(){
 });
 
 /* =======================================
-   WELCOMEと創業の間：5行の斜めハッシュタグ（自動ループ）
+   HTML配置位置で表示：5行の斜めハッシュタグ（自動ループ）
    HTML: .hex-hashtag-source 内に文言をp要素で5行登録。
 ======================================= */
 (function(){
   'use strict';
   function initializeHexHashtags(){
     var source=document.querySelector('.hex-hashtag-source');
-    var about=document.getElementById('gc_auto_frame_home_4');
-    if(!source||!about||document.querySelector('.hex-hashtag-banner')){return;}
+    if(!source||document.querySelector('.hex-hashtag-banner')){return;}
     var entries=Array.prototype.slice.call(source.querySelectorAll('p'),0,5);
     if(entries.length!==5){return;}
     var stage=document.createElement('div');
