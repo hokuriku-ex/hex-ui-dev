@@ -864,6 +864,37 @@ hexLoad(function(){
     hexInitAnchorNav();
   },200);
 });
+/* トップのナビ背景：CMS外枠ではなく次セクションの先頭範囲を優先する。 */
+function hexHomeAnchorBackgroundColor(section){
+  if(!section)return '#fafafa';
+  function solid(value){
+    return !!value&&value!=='transparent'&&
+      !/^rgba\([^)]*,\s*0(?:\.0+)?\s*\)$/.test(value);
+  }
+  var ranges=Array.from(section.querySelectorAll('.hex-bg-range')).filter(function(range){
+    return range.closest('[id^="gc_auto_frame_home_"]')===section&&
+      getComputedStyle(range).display!=='none'&&range.getBoundingClientRect().height>0;
+  });
+  if(ranges.length){
+    var style=getComputedStyle(ranges[0]);
+    var color=style.getPropertyValue('--hex-bg-range-color').trim();
+    if(solid(color))return color;
+    if(solid(style.backgroundColor))return style.backgroundColor;
+  }
+  /* 共通背景の初期化前にも、開始マーカーの明示色を読めるようにする。 */
+  var marker=section.querySelector('.hex-bg-start[data-bg-color]');
+  if(marker&&solid((marker.dataset.bgColor||'').trim()))return marker.dataset.bgColor.trim();
+  var sectionStyle=getComputedStyle(section);
+  var sectionColor=sectionStyle.getPropertyValue('--hex-home-section-bg').trim();
+  if(solid(sectionColor))return sectionColor;
+  if(solid(sectionStyle.backgroundColor))return sectionStyle.backgroundColor;
+  var surfaces=Array.from(section.querySelectorAll('.background_color,.backgroundcolor_auto,.backgroundcolor_white'));
+  for(var i=0;i<surfaces.length;i++){
+    var surface=getComputedStyle(surfaces[i]);
+    if(surface.display!=='none'&&solid(surface.backgroundColor))return surface.backgroundColor;
+  }
+  return '#fafafa';
+}
 /* トップのナビはWELCOME末尾（創業の直前）へ独立配置する。 */
 function hexPrepareHomeAnchorNav(source){
   if(!source||!document.querySelector('.hex-hero-wrap'))return null;
@@ -880,7 +911,7 @@ function hexPrepareHomeAnchorNav(source){
   if(panel.nextElementSibling!==boundary){
     boundary.parentNode.insertBefore(panel,boundary);
   }
-  panel.style.setProperty('--hex-home-anchor-bg','#fafafa');
+  panel.style.setProperty('--hex-home-anchor-bg',hexHomeAnchorBackgroundColor(founded));
   panel.appendChild(source);
   return panel;
 }
@@ -1403,7 +1434,28 @@ function hexInitAnchorNav(){
       titleSpace
     );
   }
+  function syncHomeAnchorBackground(){
+    if(!homePanel)return;
+    var next=document.getElementById(HOME_SECTIONS.ABOUT);
+    var color=hexHomeAnchorBackgroundColor(next);
+    if(homePanel.style.getPropertyValue('--hex-home-anchor-bg')!==color){
+      homePanel.style.setProperty('--hex-home-anchor-bg',color);
+    }
+    /* 濃い背景でも文字を読めるように、通常表示だけ白／紺を選ぶ。 */
+    var rgb=getComputedStyle(homePanel).backgroundColor.match(/^rgba?\(\s*([\d.]+)[, ]+([\d.]+)[, ]+([\d.]+)/);
+    var ink='#1f2774';
+    if(rgb){
+      function linear(value){value=Number(value)/255;return value<=.04045?value/12.92:Math.pow((value+.055)/1.055,2.4);}
+      function luminance(r,g,b){return .2126*linear(r)+.7152*linear(g)+.0722*linear(b);}
+      var light=luminance(rgb[1],rgb[2],rgb[3]);
+      var navy=luminance(31,39,116);
+      if(1.05/(light+.05)>(Math.max(light,navy)+.05)/(Math.min(light,navy)+.05))ink='#fff';
+    }
+    homePanel.style.setProperty('--hex-home-anchor-ink',ink);
+    homePanel.style.setProperty('--hex-home-anchor-hover',ink==='#fff'?'#c8a874':'#4a7fd0');
+  }
   function refreshHexAnchorNav(){
+    syncHomeAnchorBackground();
     if(anchorTouching){anchorRefreshPending=true;return;}
     anchorShapeCache=new WeakMap();
     if(homePanel&&nav.classList.contains('is-fixed')){
@@ -1785,6 +1837,8 @@ function hexInitAnchorNav(){
   if(homePanel){
     window.hexHomeAnchorNav={panel:homePanel,nav:nav,placeholder:placeholder,
       fixedHeight:getHexAnchorFixedHeight,refresh:refreshHexAnchorNav,syncWelcomeEnd:syncWelcomeEndAnchor};
+    syncHomeAnchorBackground();
+    document.addEventListener('hex:hero-layout-updated',syncHomeAnchorBackground);
     syncWelcomeEndAnchor();
     if(window.ResizeObserver){
       var welcomeEndSizeObserver=new ResizeObserver(syncWelcomeEndAnchor);

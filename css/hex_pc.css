@@ -10835,3 +10835,19 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   min-height:max(1px,calc(var(--hex-viewport-height,100dvh) - var(--hex-welcome-nav-height,0px)))!important;
   height:max(1px,calc(var(--hex-viewport-height,100dvh) - var(--hex-welcome-nav-height,0px)))!important;
 }
+
+/* トップの通常ナビは、次の共通背景範囲と同色にする。固定時は従来の白背景。 */
+html body .hex-home-anchor-panel > .hex-home-anchor-nav:not(.is-fixed){
+  background:var(--hex-home-anchor-bg,#fafafa)!important;
+}
+html body .hex-home-anchor-panel .hex-home-anchor-nav.hex-anchor-nav:not(.is-fixed) a.hex-anchor-nav-link{
+  color:var(--hex-home-anchor-ink,#1f2774)!important;
+  border-color:var(--hex-home-anchor-ink,#1f2774)!important;
+}
+html body .hex-home-anchor-panel .hex-home-anchor-nav.hex-anchor-nav:not(.is-fixed) a.hex-anchor-nav-link::after{
+  color:var(--hex-home-anchor-ink,#1f2774)!important;
+}
+html body .hex-home-anchor-panel .hex-home-anchor-nav.hex-anchor-nav:not(.is-fixed) a.hex-anchor-nav-link:is(:hover,:focus,.is-active),
+html body .hex-home-anchor-panel .hex-home-anchor-nav.hex-anchor-nav:not(.is-fixed) a.hex-anchor-nav-link:is(:hover,:focus,.is-active)::after{
+  color:var(--hex-home-anchor-hover,#4a7fd0)!important;
+}
