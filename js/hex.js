@@ -1759,10 +1759,17 @@ function hexInitAnchorNav(){
     var complete=!!state.complete;
     homePanel.classList.toggle('is-welcome-end-hidden',!complete);
     nav.classList.toggle('is-welcome-end-hidden',!complete);
-    if(!Number.isFinite(state.end))return;
-    /* 自動進行の終点は変えず、通常配置のナビ下端をその画面下端へ揃える。 */
     var height=homePanel.getBoundingClientRect().height;
     if(height<=0)return;
+    /* 固定前の帯（固定後は高さ保持枠）の実寸をWELCOMEの予約領域にする。 */
+    window.hexWelcomeAnchorState=state;
+    if(Math.abs((state.navHeight||0)-height)>.5){
+      state.navHeight=height;
+      document.documentElement.style.setProperty('--hex-welcome-nav-height',height+'px');
+      document.dispatchEvent(new Event('hex:welcome-nav-resize'));
+    }
+    if(!Number.isFinite(state.end))return;
+    /* ナビを含むWELCOME全体の下端を、自動進行終点の画面下端へ揃える。 */
     var margin=parseFloat(homePanel.style.getPropertyValue('margin-top'))||0;
     var naturalTop=homePanel.getBoundingClientRect().top+window.pageYOffset-margin;
     var nextMargin=Math.round((state.end-height-naturalTop)*10)/10;
@@ -2966,15 +2973,25 @@ hexReady(function(){
 
     function isSp(){return window.matchMedia("(max-width:768px)").matches;}
     function clamp(value,min,max){return Math.min(max,Math.max(min,value));}
+    function getWelcomeNavHeight(){
+      return Math.max(0,Number(window.hexWelcomeAnchorState&&
+        window.hexWelcomeAnchorState.navHeight)||0);
+    }
+    function getWelcomeContentHeight(){
+      return Math.max(1,(metrics.height||window.hexViewportHeight())-getWelcomeNavHeight());
+    }
     function getSpCircleRadius(){
-      return clamp(Math.min(window.innerWidth,window.hexViewportHeight())*.34,128,250);
+      return Math.min(
+        clamp(Math.min(window.innerWidth,getWelcomeContentHeight())*.34,128,250),
+        Math.max(1,getWelcomeContentHeight()*.5-16)
+      );
     }
     function getPcCircleRadius(){
-      /* 左27%の中心を保ち、画面の左端とヒーローの上下端に16px残す。 */
+      /* ナビを除いた領域内で、丸の上下と画面左端に16px残す。 */
       return Math.min(
-        clamp(Math.min(window.innerWidth,window.hexViewportHeight())*.42,180,480),
+        clamp(Math.min(window.innerWidth,getWelcomeContentHeight())*.42,180,480),
         Math.max(1,window.innerWidth*.27-16),
-        Math.max(1,metrics.height*.5-16)
+        Math.max(1,getWelcomeContentHeight()*.5-16)
       );
     }
     function getSpStageTop(trackCircle){
@@ -3369,6 +3386,8 @@ hexReady(function(){
 
     function measureWelcome(){
       var viewport=Math.max(window.hexViewportHeight(),1);
+      var navHeight=getWelcomeNavHeight();
+      var contentHeight=getWelcomeContentHeight();
       var stageHeight=welcomeStage
         ?Math.max(welcomeStage.scrollHeight,welcomeStage.offsetHeight,1)
         :viewport*.7;
@@ -3376,7 +3395,7 @@ hexReady(function(){
         ?getSpStageTop(false):welcomeStageTop;
       var bodyTravel=stageStart===null
         ?viewport+stageHeight
-        :Math.max(stageStart+stageHeight-viewport*.5,viewport*.5);
+        :Math.max(stageStart+stageHeight-contentHeight*.5,contentHeight*.5);
       var travel;
       var totalHeight;
       if(isSp()){
@@ -3385,7 +3404,7 @@ hexReady(function(){
           ?documentTop(welcomePanel)-documentTop(welcomeWrap):0;
         var stageBottom=panelOffset+(stageStart===null?viewport:stageStart)+
           stageHeight;
-        travel=Math.max(1,Math.ceil(stageBottom-viewport));
+        travel=Math.max(1,Math.ceil(stageBottom+navHeight-viewport));
         totalHeight=Math.ceil(viewport+travel);
         /* SPは通常のスワイプ量で本文を完了させ、追加操作で引き止めない。 */
         bodyTravel=travel;
@@ -3414,7 +3433,7 @@ hexReady(function(){
       if(window.hexHomeAnchorNav&&window.hexHomeAnchorNav.syncWelcomeEnd){
         window.hexHomeAnchorNav.syncWelcomeEnd();
       }
-      return{viewport:viewport,stageHeight:stageHeight,
+      return{viewport:viewport,contentHeight:contentHeight,navHeight:navHeight,stageHeight:stageHeight,
         bodyTravel:bodyTravel,travel:travel};
     }
 
@@ -3717,25 +3736,7 @@ hexReady(function(){
     }
 
     function getWelcomeCompleteTop(){
-      if(isSp()){
-        return Math.max(0,documentTop(welcomeWrap)+measureWelcome().travel-1);
-      }
-      var viewport=Math.max(window.hexViewportHeight(),1);
-      var stageHeight=welcomeStage
-        ?Math.max(welcomeStage.scrollHeight,welcomeStage.offsetHeight,1)
-        :viewport*.7;
-      var stageTop=welcomeStageTop;
-      if(stageTop===null){
-        var imageCenter=snapshot
-          ?snapshot.getBoundingClientRect().top+metrics.height*.5
-          :viewport*.5;
-        var panelOffset=documentTop(welcomePanel)-documentTop(welcomeWrap);
-        stageTop=Math.round(imageCenter-stageHeight*.5)-panelOffset;
-      }
-      var bodyTravel=Math.max(stageTop+stageHeight-viewport*.5,viewport*.5)*
-        WELCOME_BODY_SCROLL_SCALE;
-      var travel=bodyTravel+Math.max(220,Math.round(viewport*.45));
-      return Math.max(0,documentTop(welcomeWrap)+travel-1);
+      return Math.max(0,documentTop(welcomeWrap)+measureWelcome().travel-1);
     }
 
     function stopSpCircleScroll(){
@@ -4023,7 +4024,7 @@ hexReady(function(){
       y=isSp()
         ?metrics.height*.5+
           (targetRadius+16-metrics.height*.5)*circleProgress
-        :metrics.height*.5;
+        :metrics.height*.5+(getWelcomeContentHeight()*.5-metrics.height*.5)*circleProgress;
       snapshot.style.clipPath="circle("+radius+"px at "+x+"px "+y+"px)";
       snapshot.style.webkitClipPath="circle("+radius+"px at "+x+"px "+y+"px)";
 
@@ -4035,7 +4036,7 @@ hexReady(function(){
           welcomeStageScreenTop=welcomePanel.getBoundingClientRect().top+
             welcomeStageTop;
         }else{
-          var imageCenter=snapshot.getBoundingClientRect().top+metrics.height*.5;
+          var imageCenter=snapshot.getBoundingClientRect().top+getWelcomeContentHeight()*.5;
           welcomeStageScreenTop=Math.round(
             imageCenter-travelMetrics.stageHeight*.5
           );
@@ -4945,6 +4946,15 @@ hexReady(function(){
     window.addEventListener("wheel",onWelcomeWheel,{passive:false,capture:true});
     window.addEventListener("keydown",onWelcomeKeyDown,{capture:true});
     window.addEventListener("wheel",onWheel,{passive:false,capture:true});
+    document.addEventListener('hex:welcome-nav-resize',function(){
+      if(welcomeStage){
+        welcomeStageTop=null;
+        welcomeStageScreenTop=null;
+        welcomeStageExitTop=null;
+      }
+      queueResize();
+      queueScrollEffects();
+    });
     window.addEventListener("hex:viewport-resize",queueResize);
     window.addEventListener("orientationchange",queueResize);
     document.addEventListener("hex:hero-display-ready",function(){

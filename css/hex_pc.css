@@ -10829,3 +10829,9 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   .hex-home-anchor-panel,
   .hex-home-anchor-nav{transition:none;}
 }
+
+/* WELCOMEはナビの実寸を予約し、本文・丸画像の領域と分ける。 */
+.hex-v2-welcome .welcome.has-padding{
+  min-height:max(1px,calc(var(--hex-viewport-height,100dvh) - var(--hex-welcome-nav-height,0px)))!important;
+  height:max(1px,calc(var(--hex-viewport-height,100dvh) - var(--hex-welcome-nav-height,0px)))!important;
+}
