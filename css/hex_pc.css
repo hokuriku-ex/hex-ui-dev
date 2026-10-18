@@ -9436,37 +9436,11 @@ html.hex-opening-finishing
   .hex-hashtag-track{animation:none;will-change:auto;}
 }
 
-/* WELCOME本文下の共通ボタン：本文の表示完了に合わせて表示 */
-.hex-welcome-wrap .hex-welcome-body-button{
-  max-width:calc(100% - 8px);
-  margin:clamp(24px,3vw,40px) auto 8px!important;
-  opacity:0;
-  visibility:hidden;
-  pointer-events:none;
-  transform:translateY(48px);
-  transition:transform .2s ease,opacity .2s ease,visibility .2s ease;
-}
-.hex-welcome-wrap .hex-welcome-body-button.is-body-complete{
-  opacity:1;
-  visibility:visible;
-  pointer-events:auto;
-  transform:translateY(0);
-  transition:transform .6s linear(0,0.21941,0.40883,0.57028,0.7058,0.81741,0.90713,0.977,1.02903,1.06525,1.0877,1.09839,1.09935,1.09261,1.0802,1.06414,1.04645,1.02917,1.01431,1.00392,1),opacity .2s ease,visibility 0s;
-}
-@media(prefers-reduced-motion:reduce){
-  .hex-welcome-wrap .hex-welcome-body-button,
-  .hex-welcome-wrap .hex-welcome-body-button.is-body-complete{
-    transform:none;
-    transition:none;
-  }
-}
-
-/* WELCOMEの着地待機中もスクロールバーを維持し、横ずれを防ぐ。 */
-@media (min-width:769px){
-  html.hex-welcome-button-scroll-hold,
-  html.lenis.lenis-stopped.hex-welcome-button-scroll-hold{
-    overflow-y:scroll!important;
-  }
+/* WELCOME末尾ボタンは廃止。旧HTMLが残っていても余白を作らない。 */
+.hex-welcome-wrap .hex-button-view,
+.hex-welcome-wrap .hex-welcome-body-button,
+.hex-welcome-wrap .welcome_contents > .hex-button-wrap{
+  display:none!important;
 }
 
 /* WELCOME本文：文字の表示演出を保ち、塗りの外側に白い縁を描く。 */
@@ -10809,7 +10783,7 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   opacity:1!important;visibility:visible!important;
 }
 
-/* トップのアンカーナビ：創業直後の独立した帯。次セクションとの境界を帯の下端に置く。 */
+/* トップのアンカーナビ：WELCOME末尾・創業直前の独立した帯。 */
 .hex-home-anchor-panel{
   display:flow-root;position:relative;isolation:isolate;z-index:95;
   width:100%;min-width:0;box-sizing:border-box;
@@ -10838,4 +10812,20 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
 .hex-home-anchor-panel.hex-home-anchor-has-arch > .hex-anchor-nav-placeholder.is-active{
   background:var(--hex-home-anchor-bg,#fafafa)!important;
   box-shadow:0 -1px 0 var(--hex-home-anchor-bg,#fafafa),0 1px 0 var(--hex-home-anchor-bg,#fafafa);
+}
+
+/* WELCOME本文が完了したら画面下端のナビを表示。非表示中も高さ計測は保つ。 */
+.hex-home-anchor-panel,
+.hex-home-anchor-nav{
+  transition:opacity .25s ease,visibility .25s ease;
+}
+.hex-home-anchor-panel.is-welcome-end-hidden,
+.hex-home-anchor-nav.is-welcome-end-hidden{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .hex-home-anchor-panel,
+  .hex-home-anchor-nav{transition:none;}
 }
