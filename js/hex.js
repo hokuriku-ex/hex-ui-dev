@@ -1442,7 +1442,13 @@ function hexInitAnchorNav(){
       homePanel.style.setProperty('--hex-home-anchor-bg',color);
     }
     /* 濃い背景でも文字を読めるように、通常表示だけ白／紺を選ぶ。 */
-    var rgb=getComputedStyle(homePanel).backgroundColor.match(/^rgba?\(\s*([\d.]+)[, ]+([\d.]+)[, ]+([\d.]+)/);
+    var colorProbe=document.createElement('span');
+    colorProbe.style.cssText='display:none;';
+    colorProbe.style.color=color;
+    homePanel.appendChild(colorProbe);
+    var resolvedColor=getComputedStyle(colorProbe).color;
+    colorProbe.remove();
+    var rgb=resolvedColor.match(/^rgba?\(\s*([\d.]+)[, ]+([\d.]+)[, ]+([\d.]+)/);
     var ink='#1f2774';
     if(rgb){
       function linear(value){value=Number(value)/255;return value<=.04045?value/12.92:Math.pow((value+.055)/1.055,2.4);}
@@ -1476,7 +1482,7 @@ function hexInitAnchorNav(){
       originalParent.insertBefore(nav,originalNext);
     }
     fixedStart=homePanel
-      ?nav.getBoundingClientRect().top+window.pageYOffset-getHexAnchorHeaderHeight()
+      ?homePanel.getBoundingClientRect().top+window.pageYOffset-getHexAnchorHeaderHeight()
       :nav.getBoundingClientRect().top+
         window.pageYOffset+nav.offsetHeight-36-getHexAnchorHeaderHeight()-mobileAdjust;
     updateHexAnchorNav();
@@ -1494,6 +1500,7 @@ function hexInitAnchorNav(){
       }
 
       if(!nav.classList.contains('is-fixed')){
+        nav.classList.remove('is-welcome-popping');
         placeholder.style.height=nav.offsetHeight+'px';
         placeholder.classList.add('is-active');
         document.body.appendChild(nav);
@@ -1805,10 +1812,22 @@ function hexInitAnchorNav(){
     refreshAnchorScrollbar();
   });
   var welcomeEndRefreshFrame=0;
+  var welcomeEndWasComplete=false;
+  nav.addEventListener('animationend',function(event){
+    if(event.target===nav&&event.animationName==='hex-home-anchor-pop'){
+      nav.classList.remove('is-welcome-popping');
+    }
+  });
   function syncWelcomeEndAnchor(){
     if(!homePanel)return;
     var state=window.hexWelcomeAnchorState||{};
     var complete=!!state.complete;
+    if(!complete){
+      nav.classList.remove('is-welcome-popping');
+    }else if(!welcomeEndWasComplete&&!nav.classList.contains('is-fixed')){
+      nav.classList.add('is-welcome-popping');
+    }
+    welcomeEndWasComplete=complete;
     homePanel.classList.toggle('is-welcome-end-hidden',!complete);
     nav.classList.toggle('is-welcome-end-hidden',!complete);
     var height=homePanel.getBoundingClientRect().height;
