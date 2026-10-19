@@ -1469,6 +1469,7 @@ function hexInitAnchorNav(){
     homePanel.style.setProperty('--hex-home-anchor-hover',ink==='#fff'?'#c8a874':'#4a7fd0');
   }
   function refreshHexAnchorNav(){
+    if(welcomeLandingHold)return;
     syncHomeAnchorBackground();
     if(anchorTouching){anchorRefreshPending=true;return;}
     anchorShapeCache=new WeakMap();
@@ -1496,6 +1497,7 @@ function hexInitAnchorNav(){
     updateHexAnchorNav();
   }
   function updateHexAnchorNav(){
+    if(welcomeLandingHold)return;
     if(anchorTouching)return;
     var scrollTop=
       window.pageYOffset||
@@ -1828,10 +1830,7 @@ function hexInitAnchorNav(){
     welcomeLandingHold=null;
     document.documentElement.classList.remove('hex-home-anchor-landing-hold');
     if(!hold)return;
-    if(hold.lenis){
-      hold.lenis.scrollTo(hold.top,{immediate:true,force:true});
-      if(hold.resume)hold.lenis.start();
-    }else{window.scrollTo({top:hold.top,behavior:'instant'});}
+    if(hold.lenis&&hold.resume)hold.lenis.start();
   }
   function holdWelcomeLanding(pop){
     if(!welcomeLandingHold){
@@ -1839,10 +1838,7 @@ function hexInitAnchorNav(){
       welcomeLandingHold={top:window.pageYOffset,lenis:lenis||null,
         resume:!!(lenis&&!lenis.isStopped)};
       document.documentElement.classList.add('hex-home-anchor-landing-hold');
-      if(lenis){
-        lenis.scrollTo(welcomeLandingHold.top,{immediate:true,force:true});
-        lenis.stop();
-      }
+      if(lenis)lenis.stop();
     }
     clearTimeout(welcomeLandingTimer);
     var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1858,13 +1854,9 @@ function hexInitAnchorNav(){
   window.addEventListener('wheel',guardWelcomeLandingInput,{passive:false,capture:true});
   window.addEventListener('touchmove',guardWelcomeLandingInput,{passive:false,capture:true});
   window.addEventListener('keydown',guardWelcomeLandingInput,{capture:true});
-  window.addEventListener('scroll',function(){
-    if(welcomeLandingHold&&Math.abs(window.pageYOffset-welcomeLandingHold.top)>.5){
-      window.scrollTo({top:welcomeLandingHold.top,behavior:'instant'});
-    }
-  },{passive:true});
   nav.addEventListener('click',releaseWelcomeLandingHold,true);
   window.addEventListener('pagehide',releaseWelcomeLandingHold);
+  window.addEventListener('hex:viewport-resize',releaseWelcomeLandingHold);
   document.addEventListener('hex:top-returned',releaseWelcomeLandingHold);
   document.addEventListener('hex:home-anchor-bottom-landed',function(){holdWelcomeLanding(false);});
   document.addEventListener('hex:home-anchor-bottom-snapped',function(){
@@ -1888,6 +1880,7 @@ function hexInitAnchorNav(){
     if(event.target===nav&&event.animationName==='hex-home-anchor-pop')releaseWelcomeLandingHold();
   });
   function syncWelcomeEndAnchor(){
+    if(welcomeLandingHold)return;
     if(!homePanel)return;
     var state=window.hexWelcomeAnchorState||{};
     var complete=!!state.complete;
@@ -15288,8 +15281,8 @@ hexReady(function(){
       if(Math.abs(scrollPosition()-snapDestination)>3){
         snapTimer=setTimeout(settleSnap,80);return;
       }
-      notifyWelcomeAnchorSnap();
-      snapActive=false;setSnapInputLock(false);clearTimeout(snapSafetyTimer);return;
+      snapActive=false;setSnapInputLock(false);clearTimeout(snapSafetyTimer);
+      notifyWelcomeAnchorSnap();return;
     }
     if(!snapPending||!snapGesture||snapGesture.touching)return;
     snapPending=false;
@@ -15318,8 +15311,8 @@ hexReady(function(){
       snapLenis.scrollTo(target,{duration:.75,lock:false,easing:function(t){return 1-Math.pow(1-t,3);},
         onComplete:function(){
           if(run!==snapRunId)return;
-          notifyWelcomeAnchorSnap();
           snapActive=false;snapLenis=null;setSnapInputLock(false);clearTimeout(snapSafetyTimer);
+          notifyWelcomeAnchorSnap();
         }});
     }else{
       // SPおよびLenisなしの環境はブラウザのsmooth scrollで着地する。
@@ -15369,6 +15362,11 @@ hexReady(function(){
     snapPending=true;scheduleSnap();
   }
   function onSnapWheel(event){
+    if(document.documentElement.classList.contains('hex-home-anchor-landing-hold')){
+      if(event.cancelable)event.preventDefault();
+      if(event.stopImmediatePropagation)event.stopImmediatePropagation();
+      return;
+    }
     if(homeFoundedSection()){
       refreshHomeSnapRanges();
       if(event.ctrlKey||event.shiftKey||Math.abs(event.deltaY)<1||

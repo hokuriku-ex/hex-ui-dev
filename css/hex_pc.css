@@ -10870,8 +10870,14 @@ html body .hex-home-anchor-panel .hex-home-anchor-nav.hex-anchor-nav:not(.is-fix
   .hex-home-anchor-panel > .hex-home-anchor-nav.is-welcome-popping:not(.is-fixed){animation:none;}
 }
 
-/* ナビ着地の待機中も縦スクロールバーを残す。 */
+/* ナビ着地中はブラウザ側もスクロール停止。ガターを常時確保し、幅を変えない。 */
 @media(min-width:769px){
+  html:has(.hex-hero-wrap){scrollbar-gutter:stable;}
   html.hex-home-anchor-landing-hold,
-  html.lenis.lenis-stopped.hex-home-anchor-landing-hold{overflow-y:scroll!important;}
+  html.lenis.lenis-stopped.hex-home-anchor-landing-hold{
+    overflow-y:hidden!important;
+    scrollbar-gutter:stable!important;
+    scroll-behavior:auto!important;
+    overscroll-behavior-y:none;
+  }
 }
