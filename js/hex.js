@@ -9697,6 +9697,15 @@ function hexCreateTikTokSvg(){
   svg.appendChild(circle);
   return svg;
 }
+/* トップページの戻り先は、ナビを含むWELCOME完了位置。 */
+function hexPageTopWelcomeTarget(){
+  if(!document.getElementById('gc_auto_body_home'))return null;
+  var state=window.hexWelcomeAnchorState;
+  if(!state||!Number.isFinite(state.end))return null;
+  var viewport=typeof window.hexViewportHeight==='function'
+    ?window.hexViewportHeight():window.innerHeight;
+  return Math.max(0,state.end-viewport-1);
+}
 function hexCreatePageTopButton(){
   if(document.querySelector('.hex-page-top'))return;
   var button=document.createElement('a');
@@ -9710,6 +9719,16 @@ function hexCreatePageTopButton(){
   button.addEventListener('click',function(e){
     e.preventDefault();
 
+    var welcomeTarget=hexPageTopWelcomeTarget();
+    var target=welcomeTarget===null?0:welcomeTarget;
+    if(window.hexOverlapAnchor&&window.hexOverlapAnchor.cancelSnap){
+      window.hexOverlapAnchor.cancelSnap();
+    }
+    if(welcomeTarget!==null&&window.hexHero){
+      if(window.hexHero.cancelWelcomeDotNavigation)window.hexHero.cancelWelcomeDotNavigation();
+      if(window.hexHero.releaseWelcomeBodyHold)window.hexHero.releaseWelcomeBodyHold();
+    }
+
     /*
      * PCでは進行中のLenis慣性をその場で上書きし、
      * 停止を待たずに上方向への移動を開始する。
@@ -9718,7 +9737,7 @@ function hexCreatePageTopButton(){
       window.hexMotion&&
       typeof window.hexMotion.scrollTo==='function'
     ){
-      window.hexMotion.scrollTo(0,{
+      window.hexMotion.scrollTo(target,{
         duration:1.05,
         force:true
       });
@@ -9726,21 +9745,28 @@ function hexCreatePageTopButton(){
     }
 
     window.scrollTo({
-      top:0,
+      top:target,
       behavior:'smooth'
     });
   });
   document.body.appendChild(button);
   hexTogglePageTopButton(button);
+  ['hex:hero-layout-updated','hex:home-overlap-measured','hex:opening-finished'].forEach(function(name){
+    document.addEventListener(name,function(){hexTogglePageTopButton(button);});
+  });
+  window.addEventListener('hex:viewport-resize',function(){hexTogglePageTopButton(button);});
   window.addEventListener('scroll',function(){
     hexTogglePageTopButton(button);
   });
 }
 function hexTogglePageTopButton(button){
   var isVisible=(' '+button.className+' ').indexOf(' is-visible ')!==-1;
-  if(window.scrollY>300&&!isVisible){
+  var target=hexPageTopWelcomeTarget();
+  var isHome=!!document.getElementById('gc_auto_body_home');
+  var shouldShow=isHome?target!==null&&window.scrollY>target+2:window.scrollY>300;
+  if(shouldShow&&!isVisible){
     button.className+=' is-visible';
-  }else if(window.scrollY<=300&&isVisible){
+  }else if(!shouldShow&&isVisible){
     button.className=button.className.replace(/\bis-visible\b/g,'').replace(/\s+/g,' ').replace(/^\s+|\s+$/g,'');
   }
 }
