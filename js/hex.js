@@ -356,6 +356,18 @@ const HOME_DISPLAY_SECTIONS=[
   HOME_SECTIONS.MOVIE
 ];
 
+/* トップページオーバーラップ対象
+   登録したセクションの上部を、直前の表示コンテンツへ重ねる。
+   配列は対象指定用。重なる順番はHTMLの並び順に従う。
+   お問い合わせ・フッターは登録不要で、従来どおり個別に重ねる。 */
+const HOME_OVERLAP_SECTIONS=[
+  HOME_SECTIONS.SERVICE,
+  HOME_SECTIONS.PICKUP,
+  HOME_SECTIONS.NEWS_SECTION,
+  HOME_SECTIONS.BANNER,
+  HOME_SECTIONS.RECRUIT
+];
+
 /* スマホ左右余白対象 */
 const HOME_PADDING_SECTIONS=[
   HOME_SECTIONS.WELCOME,
@@ -15508,13 +15520,16 @@ hexReady(function(){
   function homeOverlapSections(){
     var founded=homeFoundedSection();
     if(!founded)return [];
+    /* 非対象セクションも残し、実際の直前コンテンツを背面に選ぶ。 */
     var sections=[];
-    for(var i=5;i<=17;i++){
-      // お知らせのタブ用データ枠は、初期化前でも独立した境界にしない。
-      if(i===9||i===10)continue;
-      var node=document.getElementById('gc_auto_frame_home_'+i);
-      if(node)sections.push(node);
-    }
+    Object.keys(HOME_SECTIONS).forEach(function(key){
+      var sectionId=HOME_SECTIONS[key];
+      // タブ用データと固定フッターは独立した本文境界にしない。
+      if(sectionId===HOME_SECTIONS.NEWS||sectionId===HOME_SECTIONS.BLOG||
+        sectionId===HOME_SECTIONS.FIXED_FOOTER)return;
+      var node=document.getElementById(sectionId);
+      if(node&&sections.indexOf(node)===-1)sections.push(node);
+    });
     var footer=document.querySelector('.gc_auto_frame_footer');
     if(footer&&sections.indexOf(footer)===-1)sections.push(footer);
     return sections.filter(function(node){
@@ -15526,18 +15541,21 @@ hexReady(function(){
         style.position!=='fixed'&&node.getBoundingClientRect().height>0;
     }).sort(function(a,b){return a.compareDocumentPosition(b)&4?-1:1;});
   }
+  function isHomeOverlapTarget(section){
+    if(!section)return false;
+    /* お問い合わせ・フッターは従来どおり個別に常時対象とする。 */
+    if(section.id===HOME_SECTIONS.CONTACT||section.id===HOME_SECTIONS.FOOTER||
+      section.matches('.gc_auto_frame_footer'))return true;
+    return typeof HOME_OVERLAP_SECTIONS!=='undefined'&&
+      HOME_OVERLAP_SECTIONS.indexOf(section.id)!==-1;
+  }
   function scanHome(){
     var sections=homeOverlapSections();
     var founded=homeFoundedSection();
     sections.forEach(function(front,index){
-      /* 創業→初めての方へは通常表示。サービスの進入から重なりを再開する。 */
+      if(!isHomeOverlapTarget(front))return;
       var back=index?sections[index-1]:founded;
       if(!back)return;
-      if(front.id===HOME_SECTIONS.ABOUT||front.id===HOME_SECTIONS.FIRST||
-        back.id===HOME_SECTIONS.ABOUT)return;
-      /* 初めての方への冒頭に帯があっても、末尾のサービス進入は対象にする。 */
-      if(front.querySelector('.hex-hashtag-banner')||
-        (back.id!==HOME_SECTIONS.FIRST&&back.querySelector('.hex-hashtag-banner')))return;
       var marker=front._hexHomeRiseMarker;
       if(!marker){
         marker=document.createElement('div');
@@ -15548,8 +15566,8 @@ hexReady(function(){
         front._hexHomeRiseMarker=marker;
       }
       if(marker._hexRiseEntry)return;
-      var entry={marker:marker,back:index?sections[index-1]:founded,front:front,
-        blocks:[],start:0,home:true,foundedEnd:!index};
+      var entry={marker:marker,back:back,front:front,
+        blocks:[],start:0,home:true,foundedEnd:back===founded};
       marker._hexRiseEntry=entry;entries.push(entry);
       front.classList.add('hex-home-overlap-front');
       // 明示範囲にはその形状を使用。外側の固定角丸を二重に重ねない。
@@ -15798,8 +15816,7 @@ hexReady(function(){
       to:Math.max(0,Math.min(maximumScroll,box.bottom+scroll-window.hexViewportHeight())),home:true};
   }
   function homeSnapRange(entry,scroll,header,maximumScroll){
-    if(window.innerWidth<=768||!entry.home||typeof HOME_SECTIONS==='undefined'||
-      (!entry.foundedEnd&&!/^gc_auto_frame_home_(?:[5-9]|1[0-7])$/.test(entry.back.id)))return null;
+    if(window.innerWidth<=768||!entry.home||!isHomeOverlapTarget(entry.front))return null;
     // stickyを自然な配置へ戻してから、次の天端一つで両方の停止点を決める。
     // 距離は最大でも画面高さ−ヘッダー。離れたセクションへ飛ばない。
     var boundary=entry.marker.getBoundingClientRect().top+scroll;
