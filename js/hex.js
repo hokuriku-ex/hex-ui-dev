@@ -81,119 +81,32 @@
   }
 })();
 
-/* スマホの高さはタッチ開始から慣性スクロール・UI伸縮の安定まで保持する。 */
+/* 通常の画面寸法を使用。タッチ中の高さ保持・停止待ち・解除時の一括更新は行わない。 */
 (function(){
   'use strict';
-  var root=document.documentElement,visual=window.visualViewport;
-  // 実機調整用。スクロールと高さが連続して安定する時間／指を離した後の最低待機時間。
-  var VIEWPORT_SETTLE_QUIET_MS=350;
-  var VIEWPORT_RELEASE_GRACE_MS=450;
-  var VIEWPORT_SETTLE_POLL_MS=80;
-  var frozenHeight=0,touching=false,timer=0,frame=0,forcePending=false;
-  var knownWidth=window.innerWidth;
-  var emittedWidth=knownWidth,emittedHeight=rawHeight();
-  var lastScrollAt=0,lastHeightAt=0,releasedAt=0;
-  var sampleY=scrollY(),sampleHeight=rawHeight(),sampleVisible=visibleHeight();
-  function mobile(){return window.matchMedia('(max-width:768px)').matches;}
-  function rawHeight(){return Math.max(1,window.innerHeight||root.clientHeight||1);}
-  function visibleHeight(){return visual&&visual.height>0?visual.height:rawHeight();}
-  function scrollY(){return window.scrollY||window.pageYOffset||0;}
-  function editing(){
-    var active=document.activeElement;
-    return !!(active&&(active.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)));
-  }
-  function normalScale(){return !visual||Math.abs((visual.scale||1)-1)<.01;}
-  window.hexViewportHeight=function(){return mobile()&&frozenHeight?frozenHeight:rawHeight();};
-  window.hexViewportIsHeld=function(){return !!(mobile()&&frozenHeight);};
+  var root=document.documentElement;
+  var frame=0,forcePending=false;
+  function height(){return Math.max(1,window.innerHeight||root.clientHeight||1);}
+  var emittedWidth=window.innerWidth,emittedHeight=height();
+  window.hexViewportHeight=height;
+  /* 既存の呼び出し側との互換用。画面高さは保持しない。 */
+  window.hexViewportIsHeld=function(){return false;};
   function notify(force){
     forcePending=forcePending||!!force;
     if(frame)return;
     frame=window.requestAnimationFrame(function(){
       frame=0;
-      // 操作前に予約されていた高さ更新も、保持中は流さない。
-      if(frozenHeight){forcePending=false;return;}
-      var width=window.innerWidth,height=rawHeight();
-      var changed=width!==emittedWidth||Math.abs(height-emittedHeight)>.5;
+      var width=window.innerWidth,currentHeight=height();
+      var changed=width!==emittedWidth||Math.abs(currentHeight-emittedHeight)>.5;
       var forced=forcePending;forcePending=false;
       if(!changed&&!forced)return;
-      emittedWidth=width;emittedHeight=height;
+      emittedWidth=width;emittedHeight=currentHeight;
       window.dispatchEvent(new Event('hex:viewport-resize'));
     });
   }
-  function release(force){
-    var wasFrozen=!!frozenHeight;
-    window.clearTimeout(timer);timer=0;
-    frozenHeight=0;touching=false;
-    root.style.removeProperty('--hex-viewport-height');
-    // 保持中に待機した再計測も、ここで一度まとめて再開する。
-    notify(!!force||wasFrozen);
-  }
-  function sample(now){
-    var y=scrollY(),height=rawHeight(),visible=visibleHeight();
-    if(Math.abs(y-sampleY)>.5){lastScrollAt=now;sampleY=y;}
-    if(Math.abs(height-sampleHeight)>.5||Math.abs(visible-sampleVisible)>.5){
-      lastHeightAt=now;sampleHeight=height;sampleVisible=visible;
-    }
-  }
-  function queueSettle(){
-    window.clearTimeout(timer);timer=0;
-    if(frozenHeight&&!touching)timer=window.setTimeout(checkSettle,VIEWPORT_SETTLE_POLL_MS);
-  }
-  function checkSettle(){
-    timer=0;
-    if(!frozenHeight||touching)return;
-    if(!mobile()||editing()||!normalScale()||window.innerWidth!==knownWidth){release(true);return;}
-    var now=Date.now();sample(now);
-    if(now-releasedAt>=VIEWPORT_RELEASE_GRACE_MS&&
-      now-lastScrollAt>=VIEWPORT_SETTLE_QUIET_MS&&
-      now-lastHeightAt>=VIEWPORT_SETTLE_QUIET_MS){release(false);}
-    else queueSettle();
-  }
-  function onResize(){
-    var width=window.innerWidth;
-    if(width!==knownWidth){knownWidth=width;release(true);return;}
-    if(!mobile()||editing()||!normalScale()){release(true);return;}
-    if(frozenHeight){lastHeightAt=Date.now();sample(lastHeightAt);queueSettle();return;}
-    notify(false);
-  }
-  window.addEventListener('touchstart',function(event){
-    if(!mobile()||editing()||!normalScale()||event.touches.length!==1){release(false);return;}
-    window.clearTimeout(timer);timer=0;
-    touching=true;knownWidth=window.innerWidth;
-    // 慣性中に次の操作が始まった場合も、保持を途切れさせない。
-    if(!frozenHeight){
-      frozenHeight=rawHeight();
-      root.style.setProperty('--hex-viewport-height',frozenHeight+'px');
-    }
-    var now=Date.now();lastScrollAt=now;lastHeightAt=now;
-    sampleY=scrollY();sampleHeight=rawHeight();sampleVisible=visibleHeight();
-  },{passive:true,capture:true});
-  window.addEventListener('touchmove',function(event){
-    if(frozenHeight&&(event.touches.length!==1||!normalScale()))release(true);
-  },{passive:true,capture:true});
-  function finishTouch(event){
-    if(event.touches&&event.touches.length)return;
-    if(!frozenHeight)return;
-    touching=false;releasedAt=Date.now();sample(releasedAt);queueSettle();
-  }
-  window.addEventListener('touchend',finishTouch,{passive:true,capture:true});
-  window.addEventListener('touchcancel',finishTouch,{passive:true,capture:true});
-  function onScroll(){
-    if(!frozenHeight)return;
-    lastScrollAt=Date.now();sample(lastScrollAt);queueSettle();
-  }
-  // ネイティブスクロールと演出の更新は止めず、終了の判定だけに利用する。
-  window.addEventListener('scroll',onScroll,{passive:true});
-  if(visual)visual.addEventListener('scroll',onScroll,{passive:true});
-  // scrollendは終了の手掛かり。UI高さが遅れて変わる場合に備え、直ちには解除しない。
-  document.addEventListener('scrollend',function(){if(frozenHeight&&!touching)queueSettle();},{passive:true});
-  window.addEventListener('resize',onResize,{passive:true});
-  if(visual)visual.addEventListener('resize',onResize,{passive:true});
-  window.addEventListener('orientationchange',function(){release(true);},{passive:true});
-  window.addEventListener('pageshow',function(){knownWidth=window.innerWidth;release(true);},{passive:true});
-  document.addEventListener('visibilitychange',function(){if(document.hidden)release(true);});
-  document.addEventListener('focusin',function(){if(editing())release(true);},true);
-  document.addEventListener('focusout',function(){notify(true);},true);
+  window.addEventListener('resize',function(){notify(false);},{passive:true});
+  window.addEventListener('orientationchange',function(){notify(true);},{passive:true});
+  window.addEventListener('pageshow',function(){notify(true);},{passive:true});
 })();
 
 /* 背景の柄は画面に固定し、形状レイヤーだけを通常レイアウトで動かす。
@@ -15298,6 +15211,8 @@ hexReady(function(){
     if(distance<1||Math.abs(scrollPosition()-snapOrigin)>=distance*.5)setSnapInputLock(false);
   }
   function snapEnabled(){
+    /* SPはページ種別を問わず、オーバーラップ着地の自動スナップを行わない。 */
+    if(window.innerWidth<=768)return false;
     // トップのPCはWELCOME末尾ナビと、創業の次以降の境界で自動着地。SPは手動を維持。
     if(homeFoundedSection()&&(window.innerWidth<=768||
       !snapRanges.some(function(range){return range.home;})))return false;
