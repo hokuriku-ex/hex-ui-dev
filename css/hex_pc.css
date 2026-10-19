@@ -10869,3 +10869,9 @@ html body .hex-home-anchor-panel .hex-home-anchor-nav.hex-anchor-nav:not(.is-fix
 @media(prefers-reduced-motion:reduce){
   .hex-home-anchor-panel > .hex-home-anchor-nav.is-welcome-popping:not(.is-fixed){animation:none;}
 }
+
+/* ナビ着地の待機中も縦スクロールバーを残す。 */
+@media(min-width:769px){
+  html.hex-home-anchor-landing-hold,
+  html.lenis.lenis-stopped.hex-home-anchor-landing-hold{overflow-y:scroll!important;}
+}
