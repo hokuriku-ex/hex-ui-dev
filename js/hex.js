@@ -14574,6 +14574,10 @@ hexReady(function(){
   function hashtagEdgeColor(section,last){
     if(!section)return '#fafafa';
     function solid(value){return value&&value!=='transparent'&&!/^rgba\([^)]*,\s*0(?:\.0+)?\s*\)$/.test(value);}
+    if(section.matches('.hex-bg-range')){
+      var own=getComputedStyle(section).getPropertyValue('--hex-bg-range-color').trim();
+      if(solid(own))return own;
+    }
     var ranges=Array.from(section.querySelectorAll('.hex-bg-range')).filter(function(range){
       return getComputedStyle(range).display!=='none'&&range.getBoundingClientRect().height>0;
     });
@@ -14600,18 +14604,25 @@ hexReady(function(){
       if(surface.display!=='none'&&solid(surface.backgroundColor))return surface.backgroundColor;
     }
     for(var parent=section.parentElement;parent;parent=parent.parentElement){
-      var background=getComputedStyle(parent).backgroundColor;
+      var parentStyle=getComputedStyle(parent);
+      var rangeColor=parent.matches('.hex-bg-range')?parentStyle.getPropertyValue('--hex-bg-range-color').trim():'';
+      if(solid(rangeColor))return rangeColor;
+      var background=parentStyle.backgroundColor;
       if(solid(background))return background;
     }
     return '#fafafa';
   }
-  function previousHashtagHomeSection(owner){
-    var candidates=Array.from(document.querySelectorAll('[id^="gc_auto_frame_home_"]')).filter(function(node){
-      return /^gc_auto_frame_home_\d+$/.test(node.id)&&node!==owner&&
-        !node.contains(owner)&&(node.compareDocumentPosition(owner)&4)&&
-        getComputedStyle(node).display!=='none'&&node.getBoundingClientRect().height>0;
-    });
-    return candidates[candidates.length-1]||null;
+  function hashtagNeighbor(stage,direction){
+    /* HTML配置位置から前後を探す。セクションや帯そのものは移動しない。 */
+    for(var branch=stage;branch&&branch!==document.body;branch=branch.parentElement){
+      for(var node=branch[direction];node;node=node[direction]){
+        if(node.matches('script,style,link,template,.hex-hashtag-source,.hex-bg-start,.hex-bg-end,.hex-rise-start,.hex-rise-veil'))continue;
+        var style=getComputedStyle(node);
+        if(style.display==='none'||style.visibility==='hidden'||style.position==='fixed'||node.getBoundingClientRect().height<=0)continue;
+        return node;
+      }
+    }
+    return null;
   }
   function initializeHexHashtags(){
     var source=document.querySelector('.hex-hashtag-source');
@@ -14639,18 +14650,13 @@ hexReady(function(){
         speed:Math.min(200,Math.max(20,Number(entry.getAttribute('data-speed'))||
           defaultSpeeds[index]))});
     });
-    /* 帯をCMSセクションから独立させ、前後のオーバーラップに含めない。 */
-    var owner=source.closest('[id^="gc_auto_frame_home_"]');
-    if(owner){
-      stage.classList.add('hex-hashtag-standalone');
-      owner._hexHashtagLeadingStage=stage;
-      var boundary=owner._hexHomeRiseMarker||owner.closest('.hex-rise-home-runway')||owner;
-      boundary.parentNode.insertBefore(stage,boundary);
-    }else{source.parentNode.insertBefore(stage,source);}
+    /* HTMLを置いた位置にそのまま生成し、別セクションへ移動しない。 */
+    stage.classList.add('hex-hashtag-standalone');
+    source.parentNode.insertBefore(stage,source);
     source.hidden=true;
     function syncTriangleColors(){
-      var previous=owner?previousHashtagHomeSection(owner):stage.previousElementSibling;
-      var next=owner||source.parentElement;
+      var previous=hashtagNeighbor(stage,'previousElementSibling');
+      var next=hashtagNeighbor(stage,'nextElementSibling');
       var before=hashtagEdgeColor(previous,true);
       var after=hashtagEdgeColor(next,false);
       if(stage.style.getPropertyValue('--hex-hashtag-before-bg')!==before){
@@ -15524,10 +15530,13 @@ hexReady(function(){
     var sections=homeOverlapSections();
     var founded=homeFoundedSection();
     sections.forEach(function(front,index){
-      /* 独立した斜め文字の前後は通常フローでつなぎ、重ねない。 */
-      if(front._hexHashtagLeadingStage)return;
-      // 創業全体を、下端が画面下に揃う時点から最初の切り替え区間だけ固定する。
-      if(!index&&(!founded||front.id!==HOME_SECTIONS.FIRST))return;
+      /* 創業と初めての方へは、前面にも固定する背面にも登録しない。 */
+      var back=index?sections[index-1]:founded;
+      if(!back)return;
+      if(front.id===HOME_SECTIONS.ABOUT||front.id===HOME_SECTIONS.FIRST||
+        back.id===HOME_SECTIONS.ABOUT||back.id===HOME_SECTIONS.FIRST)return;
+      /* 斜め文字を含む区間も、セクションごとの固定対象から除外する。 */
+      if(front.querySelector('.hex-hashtag-banner')||back.querySelector('.hex-hashtag-banner'))return;
       var marker=front._hexHomeRiseMarker;
       if(!marker){
         marker=document.createElement('div');
