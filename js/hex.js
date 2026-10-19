@@ -864,6 +864,14 @@ hexLoad(function(){
     hexInitAnchorNav();
   },200);
 });
+/* スナップ着地の演出を待つ間は、通常表示を先に出さない。 */
+function hexSetWelcomeAnchorPopPending(pending){
+  window.hexWelcomeAnchorState=window.hexWelcomeAnchorState||{};
+  window.hexWelcomeAnchorState.popPending=!!pending;
+  if(window.hexHomeAnchorNav&&window.hexHomeAnchorNav.syncWelcomeEnd){
+    window.hexHomeAnchorNav.syncWelcomeEnd();
+  }
+}
 /* トップのナビ背景：CMS外枠ではなく次セクションの先頭範囲を優先する。 */
 function hexHomeAnchorBackgroundColor(section){
   if(!section)return '#fafafa';
@@ -1813,11 +1821,14 @@ function hexInitAnchorNav(){
   });
   var welcomeEndRefreshFrame=0;
   document.addEventListener('hex:home-anchor-bottom-snapped',function(){
-    if(!homePanel||nav.classList.contains('is-fixed')||
-      nav.classList.contains('is-welcome-end-hidden'))return;
+    if(!homePanel||nav.classList.contains('is-fixed'))return;
+    window.hexWelcomeAnchorState=window.hexWelcomeAnchorState||{};
+    window.hexWelcomeAnchorState.complete=true;
+    window.hexWelcomeAnchorState.popPending=false;
     nav.classList.remove('is-welcome-popping');
     void nav.offsetWidth;
     nav.classList.add('is-welcome-popping');
+    syncWelcomeEndAnchor();
   });
   nav.addEventListener('animationend',function(event){
     if(event.target===nav&&event.animationName==='hex-home-anchor-pop'){
@@ -1829,8 +1840,9 @@ function hexInitAnchorNav(){
     var state=window.hexWelcomeAnchorState||{};
     var complete=!!state.complete;
     if(!complete){nav.classList.remove('is-welcome-popping');}
-    homePanel.classList.toggle('is-welcome-end-hidden',!complete);
-    nav.classList.toggle('is-welcome-end-hidden',!complete);
+    var hidden=!complete||!!state.popPending;
+    homePanel.classList.toggle('is-welcome-end-hidden',hidden);
+    nav.classList.toggle('is-welcome-end-hidden',hidden);
     var height=homePanel.getBoundingClientRect().height;
     if(height<=0)return;
     /* 固定前の帯（固定後は高さ保持枠）の実寸をWELCOMEの予約領域にする。 */
@@ -3854,6 +3866,7 @@ hexReady(function(){
     }
 
     function cancelWelcomeAuto(){
+      if(welcomeAutoPhase==='body')hexSetWelcomeAnchorPopPending(false);
       window.clearTimeout(welcomeAutoTimer);welcomeAutoTimer=0;
       window.cancelAnimationFrame(welcomeAutoFrame);welcomeAutoFrame=0;
       welcomeAutoPhase='';
@@ -3904,6 +3917,7 @@ hexReady(function(){
       stopSpCircleScroll();
       welcomeBodyForced=false;
       welcomeAutoPhase='body';
+      hexSetWelcomeAnchorPopPending(true);
       var from=window.pageYOffset,startedAt=null;
       function advance(now){
         welcomeAutoFrame=0;
@@ -3919,13 +3933,14 @@ hexReady(function(){
         updateScrollEffects();
         if(progress<1){welcomeAutoFrame=window.requestAnimationFrame(advance);}
         else{
+          welcomeAutoPhase='';
           cancelWelcomeAuto();
           /* ヒーローからの自動進行も、画面下端への着地でだけピョコン表示する。 */
           var anchorPanel=window.hexHomeAnchorNav&&window.hexHomeAnchorNav.panel;
           if(anchorPanel&&Math.abs(anchorPanel.getBoundingClientRect().bottom-
             window.hexViewportHeight())<=3){
             document.dispatchEvent(new Event('hex:home-anchor-bottom-snapped'));
-          }
+          }else{hexSetWelcomeAnchorPopPending(false);}
         }
       }
       welcomeAutoFrame=window.requestAnimationFrame(advance);
@@ -15195,9 +15210,10 @@ hexReady(function(){
     welcomeAnchorSnapTarget=null;
     if(target!==null&&Math.abs(scrollPosition()-target)<=3){
       document.dispatchEvent(new Event('hex:home-anchor-bottom-snapped'));
-    }
+    }else if(target!==null){hexSetWelcomeAnchorPopPending(false);}
   }
   function cancelSnap(stopAnimation){
+    if(welcomeAnchorSnapTarget!==null)hexSetWelcomeAnchorPopPending(false);
     welcomeAnchorSnapTarget=null;
     clearTimeout(snapTimer);clearTimeout(snapSafetyTimer);
     snapTimer=0;snapPending=false;snapGesture=null;
@@ -15231,6 +15247,7 @@ hexReady(function(){
     welcomeAnchorSnapTarget=snapGesture.travel>0&&snapRanges.some(function(range){
       return range.welcomeAnchorEntrance&&Math.abs(range.to-target)<1;
     })?target:null;
+    if(welcomeAnchorSnapTarget!==null)hexSetWelcomeAnchorPopPending(true);
     if(homeFoundedSection())homeWheelConsumed=true;
     snapActive=true;
     snapOrigin=position;snapDestination=target;
@@ -15251,6 +15268,7 @@ hexReady(function(){
     }
     snapSafetyTimer=setTimeout(function(){
       if(run===snapRunId){
+        if(welcomeAnchorSnapTarget!==null)hexSetWelcomeAnchorPopPending(false);
         welcomeAnchorSnapTarget=null;
         if(snapLenis)snapLenis.scrollTo(scrollPosition(),{immediate:true,force:true});
         snapActive=false;snapLenis=null;setSnapInputLock(false);
