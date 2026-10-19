@@ -14586,41 +14586,44 @@ hexReady(function(){
   function hashtagEdgeColor(section,last){
     if(!section)return '#fafafa';
     function solid(value){return value&&value!=='transparent'&&!/^rgba\([^)]*,\s*0(?:\.0+)?\s*\)$/.test(value);}
-    if(section.matches('.hex-bg-range')){
-      var own=getComputedStyle(section).getPropertyValue('--hex-bg-range-color').trim();
-      if(solid(own))return own;
+    function edge(node){
+      if(node.matches('script,style,link,template,.hex-hashtag-source,.hex-hashtag-banner,.hex-bg-start,.hex-bg-end,.hex-rise-start,.hex-rise-veil'))return null;
+      var style=getComputedStyle(node);
+      if(style.display==='none'||style.visibility==='hidden')return null;
+      if(node.matches('.hex-bg-range')){
+        var range=style.getPropertyValue('--hex-bg-range-color').trim();
+        if(solid(range))return range;
+      }
+      /* 共通範囲がある場合だけ、その境界側を優先。無関係な子カードは参照しない。 */
+      var ranges=Array.from(node.querySelectorAll('.hex-bg-range')).filter(function(item){
+        return getComputedStyle(item).display!=='none'&&item.getBoundingClientRect().height>0;
+      });
+      if(ranges.length){
+        var boundary=ranges[last?ranges.length-1:0];
+        var color=getComputedStyle(boundary).getPropertyValue('--hex-bg-range-color').trim();
+        if(solid(color))return color;
+      }
+      /* 外側から継承された次セクションの変数を色の根拠にしない。 */
+      if(solid(style.backgroundColor))return style.backgroundColor;
+      var children=Array.from(node.children);
+      if(last)children.reverse();
+      for(var i=0;i<children.length;i++){
+        var child=children[i];
+        if(child.getBoundingClientRect().height<=0)continue;
+        var found=edge(child);
+        if(found)return found;
+      }
+      return null;
     }
-    var ranges=Array.from(section.querySelectorAll('.hex-bg-range')).filter(function(range){
-      return getComputedStyle(range).display!=='none'&&range.getBoundingClientRect().height>0;
-    });
-    if(ranges.length){
-      var edge=ranges[last?ranges.length-1:0];
-      var edgeStyle=getComputedStyle(edge);
-      var color=edgeStyle.getPropertyValue('--hex-bg-range-color').trim();
-      if(solid(color))return color;
-      if(solid(edgeStyle.backgroundColor))return edgeStyle.backgroundColor;
-    }
-    var markers=Array.from(section.querySelectorAll('.hex-bg-start[data-bg-color]'));
-    if(markers.length){
-      var marker=markers[last?markers.length-1:0];
-      if(solid((marker.dataset.bgColor||'').trim()))return marker.dataset.bgColor.trim();
-    }
-    var style=getComputedStyle(section);
-    var specified=style.getPropertyValue(last?'--hex-home-range-end-bg':'--hex-home-section-bg').trim();
-    if(solid(specified))return specified;
-    if(solid(style.backgroundColor))return style.backgroundColor;
-    var surfaces=Array.from(section.querySelectorAll('.background_color,.backgroundcolor_auto,.backgroundcolor_white'));
-    if(last)surfaces.reverse();
-    for(var i=0;i<surfaces.length;i++){
-      var surface=getComputedStyle(surfaces[i]);
-      if(surface.display!=='none'&&solid(surface.backgroundColor))return surface.backgroundColor;
-    }
+    var color=edge(section);
+    if(color)return color;
     for(var parent=section.parentElement;parent;parent=parent.parentElement){
-      var parentStyle=getComputedStyle(parent);
-      var rangeColor=parent.matches('.hex-bg-range')?parentStyle.getPropertyValue('--hex-bg-range-color').trim():'';
-      if(solid(rangeColor))return rangeColor;
-      var background=parentStyle.backgroundColor;
-      if(solid(background))return background;
+      var style=getComputedStyle(parent);
+      if(parent.matches('.hex-bg-range')){
+        color=style.getPropertyValue('--hex-bg-range-color').trim();
+        if(solid(color))return color;
+      }
+      if(solid(style.backgroundColor))return style.backgroundColor;
     }
     return '#fafafa';
   }
@@ -14630,7 +14633,7 @@ hexReady(function(){
       for(var node=branch[direction];node;node=node[direction]){
         if(node.matches('script,style,link,template,.hex-hashtag-source,.hex-hashtag-banner,.hex-bg-start,.hex-bg-end,.hex-rise-start,.hex-rise-veil'))continue;
         var style=getComputedStyle(node);
-        if(style.display==='none'||style.visibility==='hidden'||style.position==='fixed'||node.getBoundingClientRect().height<=0)continue;
+        if(style.display==='none'||style.visibility==='hidden'||node.getBoundingClientRect().height<=0)continue;
         return node;
       }
     }
@@ -15509,7 +15512,7 @@ hexReady(function(){
         if(node.matches('script,style,link,template,.hex-rise-start,.hex-rise-veil,.pin-spacer'))continue;
         if(node.matches('header,.bg_headermenu')||node.querySelector('header,.bg_headermenu,.hex-page-hero')||node.matches('.hex-page-hero'))continue;
         var style=getComputedStyle(node);
-        if(style.display==='none'||style.position==='fixed'||node.getBoundingClientRect().height<=0)continue;
+        if(style.display==='none'||node.getBoundingClientRect().height<=0)continue;
         if(blocks.indexOf(node)===-1)blocks.push(node);
       }
     }
@@ -15881,7 +15884,7 @@ hexReady(function(){
         }
         if(node.matches('script,style,link,template,.hex-rise-start,.hex-rise-veil,header,.bg_headermenu')||node.querySelector('.hex-page-hero,header,.bg_headermenu'))return;
         var style=getComputedStyle(node);
-        if(style.display==='none'||style.position==='fixed'||node.getBoundingClientRect().height<=0)return;
+        if(style.display==='none'||node.getBoundingClientRect().height<=0)return;
         if(blocks.indexOf(node)===-1)blocks.push(node);
       }
       previousContents(entry).forEach(collect);entry.blocks=blocks;
