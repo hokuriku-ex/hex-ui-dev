@@ -15530,13 +15530,14 @@ hexReady(function(){
     var sections=homeOverlapSections();
     var founded=homeFoundedSection();
     sections.forEach(function(front,index){
-      /* 創業と初めての方へは、前面にも固定する背面にも登録しない。 */
+      /* 創業→初めての方へは通常表示。サービスの進入から重なりを再開する。 */
       var back=index?sections[index-1]:founded;
       if(!back)return;
       if(front.id===HOME_SECTIONS.ABOUT||front.id===HOME_SECTIONS.FIRST||
-        back.id===HOME_SECTIONS.ABOUT||back.id===HOME_SECTIONS.FIRST)return;
-      /* 斜め文字を含む区間も、セクションごとの固定対象から除外する。 */
-      if(front.querySelector('.hex-hashtag-banner')||back.querySelector('.hex-hashtag-banner'))return;
+        back.id===HOME_SECTIONS.ABOUT)return;
+      /* 初めての方への冒頭に帯があっても、末尾のサービス進入は対象にする。 */
+      if(front.querySelector('.hex-hashtag-banner')||
+        (back.id!==HOME_SECTIONS.FIRST&&back.querySelector('.hex-hashtag-banner')))return;
       var marker=front._hexHomeRiseMarker;
       if(!marker){
         marker=document.createElement('div');
