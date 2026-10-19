@@ -10881,3 +10881,32 @@ html body .hex-home-anchor-panel .hex-home-anchor-nav.hex-anchor-nav:not(.is-fix
     overscroll-behavior-y:none;
   }
 }
+
+/* 共通ボタンの配色・装飾を維持した均等カラム配置 */
+.hex-button-columns{
+  display:flex;
+  justify-content:center;
+  align-items:stretch;
+  gap:20px;
+  width:100%;
+  max-width:100%;
+  margin:0 auto 20px;
+  box-sizing:border-box;
+}
+.hex-button-columns > .hex-button-wrap{
+  flex:1 1 0;
+  min-width:0;
+  width:auto!important;
+  margin:0;
+}
+@media screen and (max-width:768px){
+  .hex-button-columns{
+    flex-direction:column;
+    gap:16px;
+    margin-bottom:16px;
+  }
+  .hex-button-columns > .hex-button-wrap{
+    flex:0 0 auto;
+    width:100%!important;
+  }
+}
