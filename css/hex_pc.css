@@ -9356,7 +9356,7 @@ html.hex-opening-finishing
   overflow-wrap:anywhere;
 }
 
-/* WELCOMEと創業の間：右上がりの5行ハッシュタグ */
+/* 採用情報の前：独立した右上がりの5行ハッシュタグ */
 .hex-hashtag-banner{
   --hex-hashtag-row-height:clamp(54px,5vw,80px);
   position:relative;
@@ -9381,19 +9381,32 @@ html.hex-opening-finishing
   transform:translateY(-50%) rotate(-10deg);
   transform-origin:center;
 }
-/* 一番上の斜め帯より上は透明、最下段より下は紺にする。 */
+/* 左上は直前の末尾背景、右下は直後の先頭背景で塗り分ける。 */
 .hex-hashtag-banner{
-  background:transparent;
+  background:var(--hex-hashtag-before-bg,#fafafa);
 }
+.hex-hashtag-banner.hex-hashtag-standalone{
+  position:relative;
+  z-index:2;
+  flex:none;
+  clear:both;
+}
+.hex-hashtag-tilt::before,
 .hex-hashtag-tilt::after{
   content:"";
   position:absolute;
-  top:calc(100% - 2px);
   left:-100vw;
   right:-100vw;
-  height:calc(200vh + 2px);
-  background:#1f2774;
+  height:calc(200vh + 200vw);
   pointer-events:none;
+}
+.hex-hashtag-tilt::before{
+  bottom:calc(100% - 1px);
+  background:var(--hex-hashtag-before-bg,#fafafa);
+}
+.hex-hashtag-tilt::after{
+  top:calc(100% - 1px);
+  background:var(--hex-hashtag-after-bg,#fafafa);
 }
 .hex-hashtag-row{
   height:var(--hex-hashtag-row-height);

@@ -14571,6 +14571,48 @@ hexReady(function(){
 ======================================= */
 (function(){
   'use strict';
+  function hashtagEdgeColor(section,last){
+    if(!section)return '#fafafa';
+    function solid(value){return value&&value!=='transparent'&&!/^rgba\([^)]*,\s*0(?:\.0+)?\s*\)$/.test(value);}
+    var ranges=Array.from(section.querySelectorAll('.hex-bg-range')).filter(function(range){
+      return getComputedStyle(range).display!=='none'&&range.getBoundingClientRect().height>0;
+    });
+    if(ranges.length){
+      var edge=ranges[last?ranges.length-1:0];
+      var edgeStyle=getComputedStyle(edge);
+      var color=edgeStyle.getPropertyValue('--hex-bg-range-color').trim();
+      if(solid(color))return color;
+      if(solid(edgeStyle.backgroundColor))return edgeStyle.backgroundColor;
+    }
+    var markers=Array.from(section.querySelectorAll('.hex-bg-start[data-bg-color]'));
+    if(markers.length){
+      var marker=markers[last?markers.length-1:0];
+      if(solid((marker.dataset.bgColor||'').trim()))return marker.dataset.bgColor.trim();
+    }
+    var style=getComputedStyle(section);
+    var specified=style.getPropertyValue(last?'--hex-home-range-end-bg':'--hex-home-section-bg').trim();
+    if(solid(specified))return specified;
+    if(solid(style.backgroundColor))return style.backgroundColor;
+    var surfaces=Array.from(section.querySelectorAll('.background_color,.backgroundcolor_auto,.backgroundcolor_white'));
+    if(last)surfaces.reverse();
+    for(var i=0;i<surfaces.length;i++){
+      var surface=getComputedStyle(surfaces[i]);
+      if(surface.display!=='none'&&solid(surface.backgroundColor))return surface.backgroundColor;
+    }
+    for(var parent=section.parentElement;parent;parent=parent.parentElement){
+      var background=getComputedStyle(parent).backgroundColor;
+      if(solid(background))return background;
+    }
+    return '#fafafa';
+  }
+  function previousHashtagHomeSection(owner){
+    var candidates=Array.from(document.querySelectorAll('[id^="gc_auto_frame_home_"]')).filter(function(node){
+      return /^gc_auto_frame_home_\d+$/.test(node.id)&&node!==owner&&
+        !node.contains(owner)&&(node.compareDocumentPosition(owner)&4)&&
+        getComputedStyle(node).display!=='none'&&node.getBoundingClientRect().height>0;
+    });
+    return candidates[candidates.length-1]||null;
+  }
   function initializeHexHashtags(){
     var source=document.querySelector('.hex-hashtag-source');
     if(!source||document.querySelector('.hex-hashtag-banner')){return;}
@@ -14597,9 +14639,32 @@ hexReady(function(){
         speed:Math.min(200,Math.max(20,Number(entry.getAttribute('data-speed'))||
           defaultSpeeds[index]))});
     });
-    /* HTMLの文言ブロックと同じ位置に表示し、固定やセクション移動を行わない。 */
-    source.parentNode.insertBefore(stage,source);
+    /* 帯をCMSセクションから独立させ、前後のオーバーラップに含めない。 */
+    var owner=source.closest('[id^="gc_auto_frame_home_"]');
+    if(owner){
+      stage.classList.add('hex-hashtag-standalone');
+      owner._hexHashtagLeadingStage=stage;
+      var boundary=owner._hexHomeRiseMarker||owner.closest('.hex-rise-home-runway')||owner;
+      boundary.parentNode.insertBefore(stage,boundary);
+    }else{source.parentNode.insertBefore(stage,source);}
     source.hidden=true;
+    function syncTriangleColors(){
+      var previous=owner?previousHashtagHomeSection(owner):stage.previousElementSibling;
+      var next=owner||source.parentElement;
+      var before=hashtagEdgeColor(previous,true);
+      var after=hashtagEdgeColor(next,false);
+      if(stage.style.getPropertyValue('--hex-hashtag-before-bg')!==before){
+        stage.style.setProperty('--hex-hashtag-before-bg',before);
+      }
+      if(stage.style.getPropertyValue('--hex-hashtag-after-bg')!==after){
+        stage.style.setProperty('--hex-hashtag-after-bg',after);
+      }
+    }
+    syncTriangleColors();
+    window.addEventListener('load',syncTriangleColors,{once:true});
+    window.addEventListener('hex:viewport-resize',syncTriangleColors,{passive:true});
+    document.addEventListener('hex:home-overlap-measured',syncTriangleColors);
+
     var inView=false;
     var reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
     function syncPause(){
@@ -15459,6 +15524,8 @@ hexReady(function(){
     var sections=homeOverlapSections();
     var founded=homeFoundedSection();
     sections.forEach(function(front,index){
+      /* 独立した斜め文字の前後は通常フローでつなぎ、重ねない。 */
+      if(front._hexHashtagLeadingStage)return;
       // 創業全体を、下端が画面下に揃う時点から最初の切り替え区間だけ固定する。
       if(!index&&(!founded||front.id!==HOME_SECTIONS.FIRST))return;
       var marker=front._hexHomeRiseMarker;
