@@ -15632,8 +15632,6 @@ hexReady(function(){
     }
   };
   function sectionCoverColor(node){
-    // 創業の最終背景は紺色。外側の交互背景グレーより優先する。
-    if(node===homeFoundedSection())return '#1f2774';
     if(node.classList.contains('hex-home-has-bg-range')){
       return getComputedStyle(node).getPropertyValue('--hex-home-range-end-bg').trim()||'#fff';
     }
@@ -15659,11 +15657,10 @@ hexReady(function(){
     var spacer=spacers.length?spacers[spacers.length-1]:null;
     var range=spacer&&spacer.closest('.hex-bg-range');
     var color=sectionCoverColor(range||(ranges.length?ranges[ranges.length-1]:node));
-    if(node===homeFoundedSection())color='#1f2774';
     if(spacer){
       // HTML/CSSで明示された色は尊重。自動補完した値は毎回の取得元にしない。
       var specified=getComputedStyle(spacer).getPropertyValue('--hex-overlap-spacer-bg').trim();
-      if(!spacer._hexOverlapSpacerAutoColor&&specified&&specified!=='transparent'&&node!==homeFoundedSection()){
+      if(!spacer._hexOverlapSpacerAutoColor&&specified&&specified!=='transparent'){
         var painted=getComputedStyle(spacer,'::before').backgroundColor;
         if(painted&&painted!=='transparent'&&painted!=='rgba(0, 0, 0, 0)')color=painted;
       }else{
