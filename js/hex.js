@@ -3918,7 +3918,15 @@ hexReady(function(){
         }else{window.scrollTo({top:position,left:0,behavior:'instant'});}
         updateScrollEffects();
         if(progress<1){welcomeAutoFrame=window.requestAnimationFrame(advance);}
-        else{cancelWelcomeAuto();}
+        else{
+          cancelWelcomeAuto();
+          /* ヒーローからの自動進行も、画面下端への着地でだけピョコン表示する。 */
+          var anchorPanel=window.hexHomeAnchorNav&&window.hexHomeAnchorNav.panel;
+          if(anchorPanel&&Math.abs(anchorPanel.getBoundingClientRect().bottom-
+            window.hexViewportHeight())<=3){
+            document.dispatchEvent(new Event('hex:home-anchor-bottom-snapped'));
+          }
+        }
       }
       welcomeAutoFrame=window.requestAnimationFrame(advance);
     }
