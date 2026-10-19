@@ -14628,10 +14628,11 @@ hexReady(function(){
     return '#fafafa';
   }
   function hashtagNeighbor(stage,direction){
-    /* HTML配置位置から前後を探す。セクションや帯そのものは移動しない。 */
+    /* CMSの背景専用レイヤーは本文ではないため、空でも高さがあっても除外する。
+       HTML配置位置から前後を探し、セクションや帯そのものは移動しない。 */
     for(var branch=stage;branch&&branch!==document.body;branch=branch.parentElement){
       for(var node=branch[direction];node;node=node[direction]){
-        if(node.matches('script,style,link,template,.hex-hashtag-source,.hex-hashtag-banner,.hex-bg-start,.hex-bg-end,.hex-rise-start,.hex-rise-veil'))continue;
+        if(node.matches('script,style,link,template,.hex-hashtag-source,.hex-hashtag-banner,.hex-bg-start,.hex-bg-end,.hex-rise-start,.hex-rise-veil,.background_color'))continue;
         var style=getComputedStyle(node);
         if(style.display==='none'||style.visibility==='hidden'||node.getBoundingClientRect().height<=0)continue;
         return node;
