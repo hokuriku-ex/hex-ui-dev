@@ -1812,7 +1812,13 @@ function hexInitAnchorNav(){
     refreshAnchorScrollbar();
   });
   var welcomeEndRefreshFrame=0;
-  var welcomeEndWasComplete=false;
+  document.addEventListener('hex:home-anchor-bottom-snapped',function(){
+    if(!homePanel||nav.classList.contains('is-fixed')||
+      nav.classList.contains('is-welcome-end-hidden'))return;
+    nav.classList.remove('is-welcome-popping');
+    void nav.offsetWidth;
+    nav.classList.add('is-welcome-popping');
+  });
   nav.addEventListener('animationend',function(event){
     if(event.target===nav&&event.animationName==='hex-home-anchor-pop'){
       nav.classList.remove('is-welcome-popping');
@@ -1822,12 +1828,7 @@ function hexInitAnchorNav(){
     if(!homePanel)return;
     var state=window.hexWelcomeAnchorState||{};
     var complete=!!state.complete;
-    if(!complete){
-      nav.classList.remove('is-welcome-popping');
-    }else if(!welcomeEndWasComplete&&!nav.classList.contains('is-fixed')){
-      nav.classList.add('is-welcome-popping');
-    }
-    welcomeEndWasComplete=complete;
+    if(!complete){nav.classList.remove('is-welcome-popping');}
     homePanel.classList.toggle('is-welcome-end-hidden',!complete);
     nav.classList.toggle('is-welcome-end-hidden',!complete);
     var height=homePanel.getBoundingClientRect().height;
@@ -15128,6 +15129,7 @@ hexReady(function(){
   var snapInputLocked=false,snapOrigin=0,snapDestination=0;
   var homeWheelLast=0,homeWheelDirection=0,homeWheelConsumed=false;
   var snapHeaderHeight=80;
+  var welcomeAnchorSnapTarget=null;
   function setSnapInputLock(locked){
     snapInputLocked=locked;
     document.documentElement.classList.toggle('hex-overlap-snap-animating',locked);
@@ -15138,7 +15140,7 @@ hexReady(function(){
     if(distance<1||Math.abs(scrollPosition()-snapOrigin)>=distance*.5)setSnapInputLock(false);
   }
   function snapEnabled(){
-    // トップのPCは創業の次以降の境界だけに自動着地を適用。SPは手動を維持。
+    // トップのPCはWELCOME末尾ナビと、創業の次以降の境界で自動着地。SPは手動を維持。
     if(homeFoundedSection()&&(window.innerWidth<=768||
       !snapRanges.some(function(range){return range.home;})))return false;
     if(reduced&&reduced.matches)return false;
@@ -15156,7 +15158,11 @@ hexReady(function(){
     for(var node=target;node&&node!==document.body;node=node.parentElement){
       var style=getComputedStyle(node);
       // 下層タイトルの固定レイヤーはページ内容。固定UIとして除外しない。
-      if(style.position==='fixed'&&!node.matches('.hex-page-hero-main,.hex-page-hero-decor'))return true;
+      var welcomeCopy=node.matches('.hex-v2-welcome-copy-stage')&&snapRanges.some(function(range){
+        var position=scrollPosition();
+        return range.welcomeAnchor&&position>=range.from-2&&position<=range.to+2;
+      });
+      if(style.position==='fixed'&&!node.matches('.hex-page-hero-main,.hex-page-hero-decor')&&!welcomeCopy)return true;
       if(/auto|scroll/.test(style.overflowY)&&node.scrollHeight>node.clientHeight+1)return true;
       if(/auto|scroll/.test(style.overflowX)&&node.scrollWidth>node.clientWidth+1)return true;
     }
@@ -15176,7 +15182,15 @@ hexReady(function(){
     if(deliberate||flick)return gesture.travel>0?range.to:range.from;
     return progress>=.5?range.to:range.from;
   }
+  function notifyWelcomeAnchorSnap(){
+    var target=welcomeAnchorSnapTarget;
+    welcomeAnchorSnapTarget=null;
+    if(target!==null&&Math.abs(scrollPosition()-target)<=3){
+      document.dispatchEvent(new Event('hex:home-anchor-bottom-snapped'));
+    }
+  }
   function cancelSnap(stopAnimation){
+    welcomeAnchorSnapTarget=null;
     clearTimeout(snapTimer);clearTimeout(snapSafetyTimer);
     snapTimer=0;snapPending=false;snapGesture=null;
     setSnapInputLock(false);snapBlockedTouch=false;
@@ -15192,6 +15206,10 @@ hexReady(function(){
     if(snapActive){
       // Lenisによる着地完了はonCompleteで判定し、途中のscrollendでは解除しない。
       if(snapLenis)return;
+      if(Math.abs(scrollPosition()-snapDestination)>3){
+        snapTimer=setTimeout(settleSnap,80);return;
+      }
+      notifyWelcomeAnchorSnap();
       snapActive=false;setSnapInputLock(false);clearTimeout(snapSafetyTimer);return;
     }
     if(!snapPending||!snapGesture||snapGesture.touching)return;
@@ -15202,6 +15220,9 @@ hexReady(function(){
     if(Math.abs(position-snapGesture.scrollStart)<3)return;
     var target=chooseSnapTarget(snapRanges,position,snapGesture,window.hexViewportHeight());
     if(target===null)return;
+    welcomeAnchorSnapTarget=snapRanges.some(function(range){
+      return range.welcomeAnchor&&Math.abs(range.from-target)<1;
+    })?target:null;
     if(homeFoundedSection())homeWheelConsumed=true;
     snapActive=true;
     snapOrigin=position;snapDestination=target;
@@ -15213,6 +15234,7 @@ hexReady(function(){
       snapLenis.scrollTo(target,{duration:.75,lock:false,easing:function(t){return 1-Math.pow(1-t,3);},
         onComplete:function(){
           if(run!==snapRunId)return;
+          notifyWelcomeAnchorSnap();
           snapActive=false;snapLenis=null;setSnapInputLock(false);clearTimeout(snapSafetyTimer);
         }});
     }else{
@@ -15221,6 +15243,7 @@ hexReady(function(){
     }
     snapSafetyTimer=setTimeout(function(){
       if(run===snapRunId){
+        welcomeAnchorSnapTarget=null;
         if(snapLenis)snapLenis.scrollTo(scrollPosition(),{immediate:true,force:true});
         snapActive=false;snapLenis=null;setSnapInputLock(false);
       }
@@ -15659,12 +15682,25 @@ hexReady(function(){
     return {from:Math.max(0,Math.min(maximumScroll,boundary-window.hexViewportHeight())),
       to:Math.max(0,Math.min(maximumScroll,boundary-sectionLandingOffset(entry.front,header))),home:true};
   }
+  function welcomeAnchorSnapRange(scroll,header,maximumScroll){
+    if(window.innerWidth<=768)return null;
+    var panel=window.hexHomeAnchorNav&&window.hexHomeAnchorNav.panel;
+    if(!panel)return null;
+    var box=panel.getBoundingClientRect();
+    if(box.height<=0)return null;
+    var viewport=window.hexViewportHeight();
+    var from=Math.max(0,Math.min(maximumScroll,box.bottom+scroll-viewport));
+    var to=Math.max(0,Math.min(maximumScroll,box.top+scroll-header));
+    return to-from>24?{from:from,to:to,home:true,welcomeAnchor:true}:null;
+  }
   function refreshHomeSnapRanges(){
     if(!homeFoundedSection())return;
     var scroll=scrollPosition(),header=snapHeaderHeight;
     var maximumScroll=Math.max(0,Math.max(document.documentElement.scrollHeight,
       document.body.scrollHeight)-window.hexViewportHeight());
     snapRanges=[];
+    var welcomeRange=welcomeAnchorSnapRange(scroll,header,maximumScroll);
+    if(welcomeRange)snapRanges.push(welcomeRange);
     entries.forEach(function(entry){
       var reveal=homeAnchorRevealRange(entry,scroll,maximumScroll);
       var content=homeSnapRange(entry,scroll,header,maximumScroll);
