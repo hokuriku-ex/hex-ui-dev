@@ -15220,8 +15220,8 @@ hexReady(function(){
     if(Math.abs(position-snapGesture.scrollStart)<3)return;
     var target=chooseSnapTarget(snapRanges,position,snapGesture,window.hexViewportHeight());
     if(target===null)return;
-    welcomeAnchorSnapTarget=snapRanges.some(function(range){
-      return range.welcomeAnchor&&Math.abs(range.from-target)<1;
+    welcomeAnchorSnapTarget=snapGesture.travel>0&&snapRanges.some(function(range){
+      return range.welcomeAnchorEntrance&&Math.abs(range.to-target)<1;
     })?target:null;
     if(homeFoundedSection())homeWheelConsumed=true;
     snapActive=true;
@@ -15682,6 +15682,17 @@ hexReady(function(){
     return {from:Math.max(0,Math.min(maximumScroll,boundary-window.hexViewportHeight())),
       to:Math.max(0,Math.min(maximumScroll,boundary-sectionLandingOffset(entry.front,header))),home:true};
   }
+  function welcomeAnchorEntranceRange(scroll,maximumScroll){
+    if(window.innerWidth<=768)return null;
+    var panel=window.hexHomeAnchorNav&&window.hexHomeAnchorNav.panel;
+    if(!panel)return null;
+    var box=panel.getBoundingClientRect();
+    if(box.height<=0)return null;
+    var viewport=window.hexViewportHeight();
+    var from=Math.max(0,Math.min(maximumScroll,box.top+scroll-viewport));
+    var to=Math.max(0,Math.min(maximumScroll,box.bottom+scroll-viewport));
+    return to-from>24?{from:from,to:to,home:true,welcomeAnchor:true,welcomeAnchorEntrance:true}:null;
+  }
   function welcomeAnchorSnapRange(scroll,header,maximumScroll){
     if(window.innerWidth<=768)return null;
     var panel=window.hexHomeAnchorNav&&window.hexHomeAnchorNav.panel;
@@ -15699,6 +15710,8 @@ hexReady(function(){
     var maximumScroll=Math.max(0,Math.max(document.documentElement.scrollHeight,
       document.body.scrollHeight)-window.hexViewportHeight());
     snapRanges=[];
+    var welcomeEntrance=welcomeAnchorEntranceRange(scroll,maximumScroll);
+    if(welcomeEntrance)snapRanges.push(welcomeEntrance);
     var welcomeRange=welcomeAnchorSnapRange(scroll,header,maximumScroll);
     if(welcomeRange)snapRanges.push(welcomeRange);
     entries.forEach(function(entry){
