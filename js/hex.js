@@ -14628,7 +14628,7 @@ hexReady(function(){
     /* HTML配置位置から前後を探す。セクションや帯そのものは移動しない。 */
     for(var branch=stage;branch&&branch!==document.body;branch=branch.parentElement){
       for(var node=branch[direction];node;node=node[direction]){
-        if(node.matches('script,style,link,template,.hex-hashtag-source,.hex-bg-start,.hex-bg-end,.hex-rise-start,.hex-rise-veil'))continue;
+        if(node.matches('script,style,link,template,.hex-hashtag-source,.hex-hashtag-banner,.hex-bg-start,.hex-bg-end,.hex-rise-start,.hex-rise-veil'))continue;
         var style=getComputedStyle(node);
         if(style.display==='none'||style.visibility==='hidden'||style.position==='fixed'||node.getBoundingClientRect().height<=0)continue;
         return node;
@@ -14636,9 +14636,8 @@ hexReady(function(){
     }
     return null;
   }
-  function initializeHexHashtags(){
-    var source=document.querySelector('.hex-hashtag-source');
-    if(!source||document.querySelector('.hex-hashtag-banner')){return;}
+  function initializeHexHashtagSource(source){
+    if(!source||(source._hexHashtagStage&&source._hexHashtagStage.parentNode)){return;}
     var entries=Array.prototype.slice.call(source.querySelectorAll('p'),0,5);
     if(entries.length!==5){return;}
     var stage=document.createElement('div');
@@ -14665,6 +14664,7 @@ hexReady(function(){
     /* HTMLを置いた位置にそのまま生成し、別セクションへ移動しない。 */
     stage.classList.add('hex-hashtag-standalone');
     source.parentNode.insertBefore(stage,source);
+    source._hexHashtagStage=stage;
     source.hidden=true;
     function syncTriangleColors(){
       var previous=hashtagNeighbor(stage,'previousElementSibling');
@@ -14690,6 +14690,7 @@ hexReady(function(){
     }
     var lastWidth=0;
     function rebuild(force){
+      syncTriangleColors();
       var width=stage.clientWidth;
       if(!width||(!force&&width===lastWidth)){return;}
       lastWidth=width;
@@ -14743,6 +14744,9 @@ hexReady(function(){
     document.dispatchEvent(new CustomEvent("hex:hero-layout-updated"));
     /* 挿入した帯の高さを既存のスクロール位置計算にも反映する。 */
     if(window.ScrollTrigger){window.ScrollTrigger.refresh();}
+  }
+  function initializeHexHashtags(){
+    document.querySelectorAll('.hex-hashtag-source').forEach(initializeHexHashtagSource);
   }
   if(document.readyState==='loading'){
     document.addEventListener('DOMContentLoaded',initializeHexHashtags);
