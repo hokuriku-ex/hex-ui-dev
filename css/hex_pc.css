@@ -10852,22 +10852,9 @@ html body .hex-home-anchor-panel .hex-home-anchor-nav.hex-anchor-nav:not(.is-fix
   color:var(--hex-home-anchor-hover,#4a7fd0)!important;
 }
 
-/* WELCOMEの末尾ナビ：画面下から少し跳ねて着地する。 */
-.hex-home-anchor-panel > .hex-home-anchor-nav.is-welcome-popping:not(.is-fixed){
-  animation:hex-home-anchor-pop .65s both;
-  transition:none;
-}
+/* 固定表示中も元の高さ保持枠を次セクションの背景色で埋める。 */
 .hex-home-anchor-panel > .hex-anchor-nav-placeholder.is-active{
   background:var(--hex-home-anchor-bg,#fafafa);
-}
-@keyframes hex-home-anchor-pop{
-  0%{transform:translate3d(0,calc(100% + 24px),0);opacity:0;animation-timing-function:cubic-bezier(.16,1,.3,1);}
-  62%{transform:translate3d(0,-10px,0);opacity:1;animation-timing-function:ease-in-out;}
-  82%{transform:translate3d(0,3px,0);opacity:1;animation-timing-function:ease-out;}
-  100%{transform:translate3d(0,0,0);opacity:1;}
-}
-@media(prefers-reduced-motion:reduce){
-  .hex-home-anchor-panel > .hex-home-anchor-nav.is-welcome-popping:not(.is-fixed){animation:none;}
 }
 
 /* ナビ着地中はブラウザ側もスクロール停止。ガターを常時確保し、幅を変えない。 */
