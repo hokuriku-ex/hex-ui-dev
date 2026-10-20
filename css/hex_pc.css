@@ -10593,6 +10593,8 @@ html body .hex-home-has-bg-range,
 html body .hex-home-has-bg-range :is(.background_color,.backgroundcolor_auto,.backgroundcolor_white,.backgroundcolor_footercolor,.gc_auto_frame_spotitem_basewidth){
   background:transparent!important;
 }
+/* オーバーラップ対象外でも、上端の波形や車をCMS外枠で切り取らない。 */
+html body .hex-home-has-bg-range,
 html body .hex-home-has-bg-range :is(.gc_auto_frame_spotitem,.gc_auto_frame_spotitem_box,.gc_auto_frame_spotitem_body){
   overflow:visible!important;
 }
