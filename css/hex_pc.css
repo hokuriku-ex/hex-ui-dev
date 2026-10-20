@@ -9382,6 +9382,10 @@ html.hex-opening-finishing
 /* 左上は直前の末尾背景、右下は直後の先頭背景で塗り分ける。 */
 .hex-hashtag-banner{
   background:var(--hex-hashtag-before-bg,#fafafa);
+  /* 境界の端数描画を覆う。上は前セクション色、下は次セクション色。 */
+  box-shadow:
+    0 -1px 0 var(--hex-hashtag-before-bg,#fafafa),
+    0 1px 0 var(--hex-hashtag-after-bg,#fafafa);
 }
 .hex-hashtag-banner.hex-hashtag-standalone{
   position:relative;
