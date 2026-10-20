@@ -12752,17 +12752,17 @@ hexLoad(function(){
     return desktopWidth&&!touchDevice;
   }
 
-  function isPreventTarget(target){
-    if(!target||target.nodeType!==1||!target.closest){
-      return false;
-    }
-
-    return !!target.closest(
-      '.hex-anchor-nav-list,'+
+  function isPreventTarget(target,event){
+    if(!target||target.nodeType!==1||!target.closest)return false;
+    if(target.closest(
       '.hex-calendar-modal-dialog,'+
       '#gc_auto_frame_lp_form_dialog,'+
       '[data-lenis-prevent]'
-    );
+    ))return true;
+    if(!target.closest('.hex-anchor-nav-list'))return false;
+    /* ナビ上の縦ホイールもページのLenisへ渡す。横操作だけナビ内へ残す。 */
+    return !event||event.type!=='wheel'||event.shiftKey||
+      Math.abs(event.deltaX||0)>Math.abs(event.deltaY||0);
   }
 
   function initializeMotion(){
@@ -12930,7 +12930,7 @@ hexLoad(function(){
           }
 
           return !isPreventTarget(
-            event&&event.target
+            event&&event.target,event
           );
         }
       });
