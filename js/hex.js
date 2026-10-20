@@ -15323,7 +15323,7 @@ hexReady(function(){
       var welcomeCopy=node.matches('.hex-v2-welcome-copy-stage')&&snapRanges.some(function(range){
         var position=scrollPosition();
         return range.welcomeAnchor&&(range.welcomeAnchorEntrance
-          ?position<=range.to+2:position>=range.from-2&&position<=range.to+2);
+          ?position<=range.to+2:position>=range.from-2);
       });
       if(style.position==='fixed'&&!node.matches('.hex-page-hero-main,.hex-page-hero-decor')&&!welcomeCopy)return true;
       if(/auto|scroll/.test(style.overflowY)&&node.scrollHeight>node.clientHeight+1)return true;
@@ -15339,6 +15339,14 @@ hexReady(function(){
           position>=item.from-2;
       });
       if(entrance)return entrance.to;
+    }
+    /* 逆方向も、固定ナビから下端へ戻る区間を越えても停止点を保持する。 */
+    if(gesture.kind==='wheel'&&gesture.travel<0){
+      var returning=ranges.find(function(item){
+        return item.welcomeAnchor&&!item.welcomeAnchorEntrance&&
+          gesture.scrollStart>item.from+2&&position<=item.to+2;
+      });
+      if(returning)return returning.from;
     }
     var range=null;
     for(var i=0;i<ranges.length;i++){
@@ -15495,15 +15503,20 @@ hexReady(function(){
     var position=scrollPosition();
     var wheelDistance=event.deltaY*(event.deltaMode===1?16:
       event.deltaMode===2?window.hexViewportHeight():1);
-    var entrance=event.deltaY>0&&snapRanges.find(function(range){
-      return range.welcomeAnchorEntrance&&position<range.to-2&&
-        position+Math.max(0,wheelDistance)>=range.from-2;
+    var landingRange=snapRanges.find(function(range){
+      if(!range.welcomeAnchor)return false;
+      if(event.deltaY>0){
+        return range.welcomeAnchorEntrance&&position<range.to-2&&
+          position+Math.max(0,wheelDistance)>=range.from-2;
+      }
+      return !range.welcomeAnchorEntrance&&position>range.from+2&&
+        position+Math.min(0,wheelDistance)<=range.to+2;
     });
-    if(entrance&&event.cancelable){
+    if(landingRange&&event.cancelable){
       event.preventDefault();
       if(event.stopImmediatePropagation)event.stopImmediatePropagation();
       snapGesture.travel=event.deltaY;
-      snapGesture.welcomeBottomTarget=entrance.to;
+      snapGesture.welcomeBottomTarget=event.deltaY>0?landingRange.to:landingRange.from;
       snapPending=true;
       settleSnap();
       return;
