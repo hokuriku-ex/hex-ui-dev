@@ -253,7 +253,15 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
   function prepare(){
     document.querySelectorAll('.hex-hero-wrap img[src]').forEach(function(image){
       var url=resolve(image.getAttribute('src'));
-      if(url)image.setAttribute('src',url);
+      // 表示だけでなくCanvas/WebGL合成にも使うため、URL指定より先にCORSを設定する。
+      if(!url){
+        var current=image.getAttribute('src')||'';
+        if(current.indexOf(imageRoot)===0)url=current;
+      }
+      if(url){
+        if(image.crossOrigin!=='anonymous')image.crossOrigin='anonymous';
+        if(image.getAttribute('src')!==url)image.setAttribute('src',url);
+      }
     });
     document.querySelectorAll('.hex-hero-wrap [style]').forEach(function(node){
       var background=node.style.getPropertyValue('background-image');
