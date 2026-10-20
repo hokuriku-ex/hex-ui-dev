@@ -739,19 +739,20 @@ hexReady(function(){
 /* =======================================
    URLアンカー補正
 ======================================= */
-hexLoad(function(){
+hexReady(function(){
   var hash=location.hash;
   var anchor='';
   var offset=160;
   var count=0;
 
-  if(!hash)return;
+  var incomingPage=!!(window.hexPageTransition&&window.hexPageTransition.incoming);
+  if(!hash&&!incomingPage)return;
 
   try{anchor=decodeURIComponent(hash.replace('#',''));}
   catch(error){anchor=hash.replace('#','');}
 
-  /* data-anchor="top"は要素IDを探さず、導入文スキップ後の最上部へ戻す。 */
-  if(anchor==='top'){
+  /* アンカーなしの内部遷移は先頭へ。topは以前の指定との互換用。 */
+  if(anchor==='top'||!anchor&&incomingPage){
     function showPageTop(){
       if(document.querySelector('.hex-page-hero[aria-busy="true"]')){
         setTimeout(showPageTop,100);
@@ -762,6 +763,7 @@ hexLoad(function(){
       }else{
         window.scrollTo({top:0,left:0,behavior:'instant'});
       }
+      if(window.hexPageTransition)window.hexPageTransition.anchorReady=true;
     }
     showPageTop();
     return;
@@ -796,8 +798,9 @@ hexLoad(function(){
 
     window.scrollTo({
       top:top,
-      behavior:'smooth'
+      behavior:window.hexPageTransition&&window.hexPageTransition.incoming?'instant':'smooth'
     });
+    if(window.hexPageTransition)window.hexPageTransition.anchorReady=true;
   }
 
   setTimeout(scrollToAnchor,500);
@@ -1222,6 +1225,8 @@ function hexInitAnchorNav(){
       window.matchMedia(
         '(prefers-reduced-motion:reduce)'
       ).matches;
+    /* 元画面の下で移動を終え、丸演出中にスクロールを続けない。 */
+    if(window.hexPageTransition&&window.hexPageTransition.incoming)reducedMotion=true;
 
     if(
       window.hexMotion&&
@@ -1666,7 +1671,11 @@ function hexInitAnchorNav(){
   /* 別ページからのアンカー移動を補正 */
   function correctHashAnchorPosition(){
     if(location.hash==='#top')return;
-    if(!hashAnchorTarget||hashAnchorStarted)return;
+    if(!hashAnchorTarget){
+      if(window.hexPageTransition)window.hexPageTransition.anchorReady=true;
+      return;
+    }
+    if(hashAnchorStarted)return;
 
     hashAnchorStarted=true;
     currentAnchorTarget=hashAnchorTarget;
@@ -1727,6 +1736,7 @@ function hexInitAnchorNav(){
         requestAnimationFrame(function(){
           updateHexAnchorNav();
           scrollToAnchorTarget(hashAnchorTarget);
+          if(window.hexPageTransition)window.hexPageTransition.anchorReady=true;
         });
       });
     }
@@ -2092,6 +2102,7 @@ hexLoad(function(){
     var url=window.hexBuildUrl(link);
     if(!url)return;
     link.href=url;
+    link.dataset.hexPageTransition=(link.dataset.type||'internal')==='internal'?'true':'false';
   });
 });
 
@@ -2646,6 +2657,8 @@ window.hexIconClass=function(hexType){
   return hexType==='external'?'fa-solid fa-arrow-up-right-from-square':'fa-solid fa-arrow-right';
 };
 window.hexSetExternal=function(hexAnchor,hexType){
+  /* 共通パーツの内部遷移を明示する。data-anchorの有無には依存しない。 */
+  hexAnchor.dataset.hexPageTransition=hexType==='internal'?'true':'false';
   if(hexType==='external'){
     hexAnchor.target='_blank';
     hexAnchor.rel='noopener';
@@ -15102,9 +15115,12 @@ hexReady(function(){
     var contents=hero.querySelector(':scope > .contents');
     var heading=hero.querySelector('.bg_text h1');
     if(!contents||!heading)return;
-    /* 共通内部リンクのdata-anchorはURLのハッシュとして引き継がれる。 */
-    var skipIntro=!!window.location.hash.replace(/^#/,'').trim();
+    var handoff=window.hexPageTransition;
+    /* 遷移演出は共通パーツの内部リンクで判定。アンカーは移動位置だけに使う。 */
+    var waitForHandoff=!!(handoff&&handoff.incoming);
+    var skipIntro=waitForHandoff;
     hero.classList.add('hex-page-hero');
+    /* 共通内部リンクでは元画面を保持し、それ以外では従来の導入文で準備を待つ。 */
     hero.classList.add('is-hero-loading');
     hero.setAttribute('aria-busy','true');
     var unlockScroll=lockIntroScroll(hero);
@@ -15124,6 +15140,15 @@ hexReady(function(){
     main.setAttribute('inert','');
     var nav=contents.querySelector('.hex-anchor-nav');
     if(nav)nav.setAttribute('inert','');
+    function finishHandoffPage(){
+      hero.classList.remove('is-hero-loading','is-hero-revealing');
+      hero.classList.add('is-hero-ready');
+      hero.setAttribute('aria-busy','false');
+      main.removeAttribute('inert');
+      if(nav)nav.removeAttribute('inert');
+      unlockScroll();layout();
+    }
+    if(waitForHandoff)handoff.forceReady=finishHandoffPage;
     // 開幕と同じSCROLL表示。アンカーがないページだけ、下端に表示する。
     var scrollCue=document.createElement('div');
     scrollCue.className='hex-opening-scroll-cue hex-page-hero-scroll-cue';
@@ -15240,7 +15265,7 @@ hexReady(function(){
     window.addEventListener('scroll',syncHeroCover,{passive:true});
     function queueLayout(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(layout);}
     layout();
-    // 通常は導入文を最低2秒表示。アンカー付き遷移は待機を省く。
+    // 通常は導入文を最低2秒表示。共通内部リンクの遷移は固定待機を省く。
     var introReady=intro&&!skipIntro?new Promise(function(resolve){
       requestAnimationFrame(function(){setTimeout(resolve,2000);});
     }):Promise.resolve();
@@ -15278,6 +15303,7 @@ hexReady(function(){
       window.dispatchEvent(new Event('resize'));
     });
     Promise.all([introReady,titleReady,decorReady,document.fonts?document.fonts.ready:Promise.resolve()]).then(function(){
+      if(waitForHandoff){finishHandoffPage();return;}
       // 欠番しかない場合も、従来色のタイトルで表示を完了する。
       if(intro)intro.setAttribute('aria-hidden','true');
       var layers=[contents,decor];
@@ -15300,11 +15326,11 @@ hexReady(function(){
         unlockScroll();
         layout();
       }
-      if(!reduced&&!skipIntro)clip('circle(1px at 50% 50%)');
+      if(!reduced)clip('circle(1px at 50% 50%)');
       hero.classList.remove('is-hero-loading');
       hero.classList.add('is-hero-ready');
       layout();
-      if(reduced||skipIntro){finishReveal();return;}
+      if(reduced){finishReveal();return;}
       hero.classList.add('is-hero-revealing');
       var started=null;
       function revealFrame(now){
