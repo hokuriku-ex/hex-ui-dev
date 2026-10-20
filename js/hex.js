@@ -747,15 +747,37 @@ hexLoad(function(){
 
   if(!hash)return;
 
+  try{anchor=decodeURIComponent(hash.replace('#',''));}
+  catch(error){anchor=hash.replace('#','');}
+
+  /* data-anchor="top"は要素IDを探さず、導入文スキップ後の最上部へ戻す。 */
+  if(anchor==='top'){
+    function showPageTop(){
+      if(document.querySelector('.hex-page-hero[aria-busy="true"]')){
+        setTimeout(showPageTop,100);
+        return;
+      }
+      if(window.hexMotion&&typeof window.hexMotion.scrollTo==='function'){
+        window.hexMotion.scrollTo(0,{immediate:true,force:true});
+      }else{
+        window.scrollTo({top:0,left:0,behavior:'instant'});
+      }
+    }
+    showPageTop();
+    return;
+  }
+
   /* 共通アンカーナビがあるページは、ナビ側のLenis処理へ任せる */
   if(document.querySelector('.hex-anchor-source'))return;
-
-  anchor=decodeURIComponent(hash.replace('#',''));
 
   function scrollToAnchor(){
     var target=null;
     var top=0;
 
+    if(document.querySelector('.hex-page-hero[aria-busy="true"]')){
+      setTimeout(scrollToAnchor,100);
+      return;
+    }
     target=document.getElementById(anchor);
 
     if(!target){
@@ -1643,6 +1665,7 @@ function hexInitAnchorNav(){
   }
   /* 別ページからのアンカー移動を補正 */
   function correctHashAnchorPosition(){
+    if(location.hash==='#top')return;
     if(!hashAnchorTarget||hashAnchorStarted)return;
 
     hashAnchorStarted=true;
@@ -1651,6 +1674,11 @@ function hexInitAnchorNav(){
     var layoutWaitCount=0;
 
     function waitForDynamicLayout(){
+      /* 導入文を省く場合も、タイトル画像・フォントの寸法確定後に移動する。 */
+      if(document.querySelector('.hex-page-hero[aria-busy="true"]')){
+        window.setTimeout(waitForDynamicLayout,100);
+        return;
+      }
       var staffArea=document.getElementById('hex-staff-area');
       var targetAfterStaff=
         staffArea&&
@@ -15074,6 +15102,8 @@ hexReady(function(){
     var contents=hero.querySelector(':scope > .contents');
     var heading=hero.querySelector('.bg_text h1');
     if(!contents||!heading)return;
+    /* 共通内部リンクのdata-anchorはURLのハッシュとして引き継がれる。 */
+    var skipIntro=!!window.location.hash.replace(/^#/,'').trim();
     hero.classList.add('hex-page-hero');
     hero.classList.add('is-hero-loading');
     hero.setAttribute('aria-busy','true');
@@ -15083,7 +15113,8 @@ hexReady(function(){
     if(intro){
       contents.appendChild(intro);
       intro.classList.add('hex-page-hero-loading-intro');
-      intro.setAttribute('aria-hidden','false');
+      intro.setAttribute('aria-hidden',skipIntro?'true':'false');
+      if(skipIntro)intro.style.setProperty('display','none','important');
     }
     var main=document.createElement('div');main.className='hex-page-hero-main';
     Array.from(contents.children).forEach(function(child){
@@ -15209,8 +15240,8 @@ hexReady(function(){
     window.addEventListener('scroll',syncHeroCover,{passive:true});
     function queueLayout(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(layout);}
     layout();
-    // 初回描画から導入文を最低3秒表示。画像の準備とは並行して待つ。
-    var introReady=intro?new Promise(function(resolve){
+    // 通常は導入文を最低2秒表示。アンカー付き遷移は待機を省く。
+    var introReady=intro&&!skipIntro?new Promise(function(resolve){
       requestAnimationFrame(function(){setTimeout(resolve,2000);});
     }):Promise.resolve();
     window.addEventListener('load',queueLayout,{once:true});
@@ -15269,11 +15300,11 @@ hexReady(function(){
         unlockScroll();
         layout();
       }
-      if(!reduced)clip('circle(1px at 50% 50%)');
+      if(!reduced&&!skipIntro)clip('circle(1px at 50% 50%)');
       hero.classList.remove('is-hero-loading');
       hero.classList.add('is-hero-ready');
       layout();
-      if(reduced){finishReveal();return;}
+      if(reduced||skipIntro){finishReveal();return;}
       hero.classList.add('is-hero-revealing');
       var started=null;
       function revealFrame(now){
