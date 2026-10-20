@@ -9322,14 +9322,14 @@ hexReady(function(){
       var maximumTimer;
       var loaderFinished=false;
 
-      loader.className="hex-simple-loader";
+      loader.className="hex-simple-loader is-loading-phase";
       progress.className="hex-simple-loader-inner";
       label.className="hex-simple-loader-label";
       bar.className="hex-simple-loader-bar";
       label.textContent="LOADING";
 
       if(logoStory){
-        loader.classList.add("has-logo-animation","is-logo-phase");
+        loader.classList.add("has-logo-animation");
         logoStory.classList.add("hex-simple-loader-logo");
         logoStory.setAttribute("viewBox","0 0 1000 560");
         if(
@@ -9381,13 +9381,64 @@ hexReady(function(){
         loaderFinished=true;
         window.clearTimeout(maximumTimer);
         var remaining=Math.max(700-(Date.now()-started),0);
-        later(function(){
+        later(function(){playLogo(resolve);},remaining);
+      }
+
+      function revealOpening(resolve){
+        if(cancelled){return;}
+        if(scenes[0]){
+          scenes[0].classList.add("is-v2-current");
+          scenes[0].setAttribute("aria-hidden","false");
+        }
+        var mask="radial-gradient(circle at 50% 50%,transparent 0px,#000 1px)";
+        var supportsMask=window.CSS&&typeof window.CSS.supports==="function"&&(
+          window.CSS.supports("mask-image",mask)||
+          window.CSS.supports("-webkit-mask-image",mask)
+        );
+        function complete(){
+          restoreLogo();
+          if(loader.parentNode){loader.remove();}
+          resolve();
+        }
+        if(!supportsMask){
           loader.classList.add("is-complete");
-          later(function(){
-            if(loader.parentNode){loader.remove();}
-            resolve();
-          },460);
-        },remaining);
+          later(complete,460);
+          return;
+        }
+        var radius=Math.hypot(window.innerWidth/2,window.innerHeight/2)+4;
+        var revealStarted=null;
+        loader.classList.add("is-circle-revealing");
+        function frame(now){
+          if(cancelled){return;}
+          if(revealStarted===null){revealStarted=now;}
+          var progress=Math.min(1,(now-revealStarted)/1100);
+          var eased=progress<.5
+            ?4*progress*progress*progress
+            :1-Math.pow(-2*progress+2,3)/2;
+          var currentRadius=radius*eased;
+          var image="radial-gradient(circle at 50% 50%,transparent "+
+            currentRadius+"px,#000 "+(currentRadius+1)+"px)";
+          loader.style.setProperty("mask-image",image);
+          loader.style.setProperty("-webkit-mask-image",image);
+          if(progress<1){window.requestAnimationFrame(frame);}
+          else{complete();}
+        }
+        window.requestAnimationFrame(frame);
+      }
+
+      function playLogo(resolve){
+        if(cancelled){return;}
+        loader.classList.remove("is-loading-phase");
+        loader.classList.add("is-logo-phase");
+        if(!logoStory){revealOpening(resolve);return;}
+        /* 読み込み完了後、ロゴの初期描画を終えてから1回だけ再生する。 */
+        window.requestAnimationFrame(function(){
+          window.requestAnimationFrame(function(){
+            if(cancelled){return;}
+            logoStory.classList.add("is-playing");
+            later(function(){revealOpening(resolve);},2350);
+          });
+        });
       }
 
       return new Promise(function(resolve){
@@ -9427,25 +9478,7 @@ hexReady(function(){
           });
         }
 
-        if(!logoStory){
-          startResourceLoading();
-          return;
-        }
-
-        /* 初期描画を終えてから再生し、実際の開始時刻を基準にロゴを消す。 */
-        window.requestAnimationFrame(function(){
-          window.requestAnimationFrame(function(){
-            if(cancelled){return;}
-            logoStory.classList.add("is-playing");
-            later(function(){
-              loader.classList.add("is-logo-hiding");
-              later(function(){
-                restoreLogo();
-                startResourceLoading();
-              },320);
-            },2350);
-          });
-        });
+        startResourceLoading();
       });
     }
 

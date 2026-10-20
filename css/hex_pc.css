@@ -8957,6 +8957,8 @@ html.hex-opening-finishing
 .hex-simple-loader-logo .hex-logo-front-right-layer use,
 .hex-simple-loader-logo use[href="#hex-logo-front-right-path"]{fill:#fff!important;color:#fff!important;opacity:1!important}
 .hex-simple-loader-logo .hex-logo-company-name{opacity:0}
+.hex-simple-loader.has-logo-animation.is-loading-phase .hex-simple-loader-logo{opacity:0;visibility:hidden}
+.hex-simple-loader.is-circle-revealing{transition:none}
 .hex-simple-loader-logo.is-playing .hex-logo-front-left-mask-path{animation:hex-loader-logo-draw-stable .27s cubic-bezier(.45,0,.25,1) .25s forwards!important}
 .hex-simple-loader-logo.is-playing .hex-logo-front-center-mask-path{animation:hex-loader-logo-draw-stable .26s cubic-bezier(.45,0,.25,1) .38s forwards!important}
 .hex-simple-loader-logo.is-playing .hex-logo-front-right-clip-rect{animation:hex-loader-logo-right .27s cubic-bezier(.45,0,.25,1) .56s forwards!important}
