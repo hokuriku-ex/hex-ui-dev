@@ -234,6 +234,42 @@ const HEX_URLS={
 /* 現在の環境 */
 const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
 
+/* トップヒーロー：ファイル名だけの画像指定を、読み込んだJSと同じ環境へ向ける。 */
+(function(){
+  'use strict';
+  var ownScript=document.currentScript;
+  var base=HEX_IS_PRODUCTION
+    ?'https://hokuriku-ex.github.io/hex-ui/'
+    :'https://hokuriku-ex.github.io/hex-ui-dev/';
+  if(ownScript&&ownScript.src){
+    try{base=new URL('../',ownScript.src).href;}catch(error){}
+  }
+  var imageRoot=new URL('images/top-hero/',base).href;
+  function resolve(file){
+    file=(file||'').trim();
+    if(!/^[^/\\?#]+\.(?:avif|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i.test(file))return null;
+    return new URL(file,imageRoot).href;
+  }
+  function prepare(){
+    document.querySelectorAll('.hex-hero-wrap img[src]').forEach(function(image){
+      var url=resolve(image.getAttribute('src'));
+      if(url)image.setAttribute('src',url);
+    });
+    document.querySelectorAll('.hex-hero-wrap [style]').forEach(function(node){
+      var background=node.style.getPropertyValue('background-image');
+      var updated=background.replace(/url\(\s*(['"]?)(.*?)\1\s*\)/gi,function(match,quote,file){
+        var url=resolve(file);
+        return url?'url("'+url+'")':match;
+      });
+      if(updated!==background){
+        node.style.setProperty('background-image',updated,node.style.getPropertyPriority('background-image'));
+      }
+    });
+  }
+  prepare();
+  if(document.readyState==='loading')hexReady(prepare);
+})();
+
 /* トップページセクション */
 const HOME_SECTIONS={
   HOPWEB:'gc_auto_frame_home_0', /* 標準ヒーロー画像(非表示) */
