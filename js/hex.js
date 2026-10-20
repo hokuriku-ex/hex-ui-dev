@@ -15322,7 +15322,8 @@ hexReady(function(){
       // 下層タイトルの固定レイヤーはページ内容。固定UIとして除外しない。
       var welcomeCopy=node.matches('.hex-v2-welcome-copy-stage')&&snapRanges.some(function(range){
         var position=scrollPosition();
-        return range.welcomeAnchor&&position>=range.from-2&&position<=range.to+2;
+        return range.welcomeAnchor&&(range.welcomeAnchorEntrance
+          ?position<=range.to+2:position>=range.from-2&&position<=range.to+2);
       });
       if(style.position==='fixed'&&!node.matches('.hex-page-hero-main,.hex-page-hero-decor')&&!welcomeCopy)return true;
       if(/auto|scroll/.test(style.overflowY)&&node.scrollHeight>node.clientHeight+1)return true;
@@ -15331,6 +15332,14 @@ hexReady(function(){
     return false;
   }
   function chooseSnapTarget(ranges,position,gesture,viewport){
+    /* 下方向の大きな操作でWELCOME下端区間を飛び越えても停止点を見失わない。 */
+    if(gesture.kind==='wheel'&&gesture.travel>0){
+      var entrance=ranges.find(function(item){
+        return item.welcomeAnchorEntrance&&gesture.scrollStart<item.to-2&&
+          position>=item.from-2;
+      });
+      if(entrance)return entrance.to;
+    }
     var range=null;
     for(var i=0;i<ranges.length;i++){
       if(position>ranges[i].from+2&&position<ranges[i].to-2){range=ranges[i];break;}
@@ -15379,8 +15388,11 @@ hexReady(function(){
     refreshHomeSnapRanges();
     if(!snapEnabled())return;
     var position=scrollPosition();
-    if(Math.abs(position-snapGesture.scrollStart)<3)return;
-    var target=chooseSnapTarget(snapRanges,position,snapGesture,window.hexViewportHeight());
+    var capturedTarget=snapGesture.welcomeBottomTarget;
+    if(capturedTarget==null&&Math.abs(position-snapGesture.scrollStart)<3)return;
+    var target=capturedTarget==null
+      ?chooseSnapTarget(snapRanges,position,snapGesture,window.hexViewportHeight())
+      :capturedTarget;
     if(target===null)return;
     welcomeAnchorSnapTarget=snapRanges.some(function(range){
       return range.welcomeAnchor&&(range.welcomeAnchorEntrance
@@ -15478,6 +15490,23 @@ hexReady(function(){
     if(Math.abs(event.deltaY)<1||Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
     if(!snapGesture||snapGesture.kind!=='wheel'||!snapPending){
       snapGesture={kind:'wheel',touching:false,scrollStart:scrollPosition(),travel:0,velocity:0};
+    }
+    /* WELCOME下端だけは入力を先取りし、慣性が着地点を越える前にLenisへ渡す。 */
+    var position=scrollPosition();
+    var wheelDistance=event.deltaY*(event.deltaMode===1?16:
+      event.deltaMode===2?window.hexViewportHeight():1);
+    var entrance=event.deltaY>0&&snapRanges.find(function(range){
+      return range.welcomeAnchorEntrance&&position<range.to-2&&
+        position+Math.max(0,wheelDistance)>=range.from-2;
+    });
+    if(entrance&&event.cancelable){
+      event.preventDefault();
+      if(event.stopImmediatePropagation)event.stopImmediatePropagation();
+      snapGesture.travel=event.deltaY;
+      snapGesture.welcomeBottomTarget=entrance.to;
+      snapPending=true;
+      settleSnap();
+      return;
     }
     // 連続したホイールイベントは1操作として扱う。方向変更は最後の入力を優先。
     snapGesture.travel=event.deltaY;
