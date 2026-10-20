@@ -1822,15 +1822,25 @@ function hexInitAnchorNav(){
   var welcomeEndRefreshFrame=0;
   var welcomeLandingHold=null;
   var welcomeLandingTimer=0;
-  function releaseWelcomeLandingHold(){
+  var welcomeWheelTail=false,welcomeWheelLastBlocked=0;
+  function releaseWelcomeLandingHold(preserveWheelTail){
+    if(preserveWheelTail!==true)welcomeWheelTail=false;
     clearTimeout(welcomeLandingTimer);welcomeLandingTimer=0;
     var hold=welcomeLandingHold;
     welcomeLandingHold=null;
     document.documentElement.classList.remove('hex-home-anchor-landing-hold');
     if(!hold)return;
+    if(window.hexOverlapAnchor&&window.hexOverlapAnchor.clearWheelGesture){
+      window.hexOverlapAnchor.clearWheelGesture();
+    }
     if(hold.lenis&&hold.resume)hold.lenis.start();
   }
   function holdWelcomeLanding(){
+    if(welcomeLandingHold)return;
+    welcomeWheelTail=false;
+    if(window.hexOverlapAnchor&&window.hexOverlapAnchor.clearWheelGesture){
+      window.hexOverlapAnchor.clearWheelGesture();
+    }
     if(!welcomeLandingHold){
       var lenis=window.hexMotion&&window.hexMotion.lenis;
       welcomeLandingHold={top:window.pageYOffset,lenis:lenis||null,
@@ -1840,9 +1850,23 @@ function hexInitAnchorNav(){
     }
     clearTimeout(welcomeLandingTimer);
     /* 着地時の慣性を止め、短い待機後に通常スクロールへ戻す。 */
-    welcomeLandingTimer=setTimeout(releaseWelcomeLandingHold,500);
+    welcomeLandingTimer=setTimeout(function(){releaseWelcomeLandingHold(true);},500);
   }
   function guardWelcomeLandingInput(event){
+    /* 固定中から続く同じホイール操作は、短い無入力区間を挟むまで次操作にしない。 */
+    if(event.type==='wheel'){
+      var now=Date.now();
+      if(!welcomeLandingHold&&welcomeWheelTail){
+        if(now-welcomeWheelLastBlocked<140){
+          welcomeWheelLastBlocked=now;
+          if(event.cancelable)event.preventDefault();
+          event.stopImmediatePropagation();
+          return;
+        }
+        welcomeWheelTail=false;
+      }
+      if(welcomeLandingHold){welcomeWheelTail=true;welcomeWheelLastBlocked=now;}
+    }
     if(!welcomeLandingHold)return;
     if(event.type==='keydown'&&!/^(ArrowDown|ArrowUp|PageDown|PageUp|Home|End| )$/.test(event.key))return;
     if(event.cancelable)event.preventDefault();
@@ -15706,6 +15730,12 @@ hexReady(function(){
   }
   window.hexOverlapAnchor={
     cancelSnap:function(){cancelSnap(true);},
+    clearWheelGesture:function(){
+      if(snapActive)return;
+      clearTimeout(snapTimer);snapTimer=0;
+      snapPending=false;snapGesture=null;
+      homeWheelConsumed=false;homeWheelLast=0;homeWheelDirection=0;
+    },
     shapeClearance:function(target){
       // 内側のCMS枠だけで探索を終えず、固定されるセクションまで確認する。
       var section=target.closest('.hex-bg-range');

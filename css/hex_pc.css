@@ -10864,12 +10864,12 @@ html body .hex-home-anchor-panel .hex-home-anchor-nav.hex-anchor-nav:not(.is-fix
   background:var(--hex-home-anchor-bg,#fafafa);
 }
 
-/* ナビ着地中はブラウザ側もスクロール停止。ガターを常時確保し、幅を変えない。 */
+/* PCの着地待機中もスクロールバーを維持。入力とLenisを停止し、幅の再配置を避ける。 */
 @media(min-width:769px){
   html:has(.hex-hero-wrap){scrollbar-gutter:stable;}
   html.hex-home-anchor-landing-hold,
   html.lenis.lenis-stopped.hex-home-anchor-landing-hold{
-    overflow-y:hidden!important;
+    overflow-y:scroll!important;
     scrollbar-gutter:stable!important;
     scroll-behavior:auto!important;
     overscroll-behavior-y:none;
