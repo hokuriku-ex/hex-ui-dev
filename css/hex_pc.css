@@ -8957,23 +8957,33 @@ html.hex-opening-finishing
 .hex-simple-loader-logo .hex-logo-front-right-layer use,
 .hex-simple-loader-logo use[href="#hex-logo-front-right-path"]{fill:#fff!important;color:#fff!important;opacity:1!important}
 .hex-simple-loader-logo .hex-logo-company-name{opacity:0}
-.hex-simple-loader-logo.is-playing .hex-logo-front-left-mask-path{animation:hex-loader-logo-draw .72s linear 0s forwards!important}
-.hex-simple-loader-logo.is-playing .hex-logo-front-center-mask-path{animation:hex-loader-logo-draw .72s linear .08s forwards!important}
-.hex-simple-loader-logo.is-playing .hex-logo-front-right-clip-rect{animation:hex-loader-logo-right .7s linear .16s forwards!important}
-.hex-simple-loader-logo.is-playing .hex-logo-back-arm-mask-path{animation:hex-loader-logo-draw .72s linear .24s forwards!important}
-.hex-simple-loader-logo.is-playing :is(.hex-logo-back-hand,.hex-logo-company-name){animation:hex-loader-logo-fade .5s cubic-bezier(.4,0,.2,1) .52s forwards!important}
+.hex-simple-loader-logo.is-playing .hex-logo-front-left-mask-path{animation:hex-loader-logo-draw-stable .27s cubic-bezier(.45,0,.25,1) .25s forwards!important}
+.hex-simple-loader-logo.is-playing .hex-logo-front-center-mask-path{animation:hex-loader-logo-draw-stable .26s cubic-bezier(.45,0,.25,1) .38s forwards!important}
+.hex-simple-loader-logo.is-playing .hex-logo-front-right-clip-rect{animation:hex-loader-logo-right .27s cubic-bezier(.45,0,.25,1) .56s forwards!important}
+.hex-simple-loader-logo.is-playing .hex-logo-back-arm-mask-path{animation:hex-loader-logo-draw .30s cubic-bezier(.45,0,.25,1) .74s forwards!important}
+.hex-simple-loader-logo.is-playing :is(.hex-logo-back-hand,.hex-logo-company-name){animation:hex-loader-logo-fade .48s cubic-bezier(.22,.9,.35,1.35) 1.13s forwards!important}
 .hex-simple-loader.is-logo-hiding .hex-simple-loader-logo{opacity:0}
 .hex-simple-loader.has-logo-animation:not(.is-loading-phase) :is(.hex-simple-loader-label,.hex-simple-loader-bar){opacity:0;visibility:hidden}
 .hex-simple-loader.has-logo-animation.is-loading-phase .hex-simple-loader-label{top:calc(50% - 12px);opacity:1;visibility:visible}
 .hex-simple-loader.has-logo-animation.is-loading-phase .hex-simple-loader-bar{top:calc(50% + 14px);opacity:1;visibility:visible}
-@keyframes hex-loader-logo-draw{to{stroke-dashoffset:0;opacity:1}}
+/* 2026-09-18版と同じ描画速度・順序・ポップ動作。 */
+@keyframes hex-loader-logo-draw{
+  0%{opacity:0;stroke-dashoffset:var(--hex-logo-arm-length)}
+  1%{opacity:1;stroke-dashoffset:var(--hex-logo-arm-length)}
+  100%{opacity:1;stroke-dashoffset:0}
+}
+@keyframes hex-loader-logo-draw-stable{
+  from{stroke-dashoffset:1}
+  to{stroke-dashoffset:0}
+}
 @keyframes hex-loader-logo-right{
   from{transform:translateX(140px) scaleX(0)}
   to{transform:translateX(140px) scaleX(1)}
 }
 @keyframes hex-loader-logo-fade{
-  from{opacity:0;transform:translate3d(0,-10px,0)}
-  to{opacity:1;transform:translate3d(0,0,0)}
+  0%{opacity:0;transform:translateY(-15px)}
+  72%{opacity:1;transform:translateY(5px)}
+  100%{opacity:1;transform:translateY(0)}
 }
 
 .hex-hero-wrap{height:var(--hex-viewport-height,100dvh)!important;min-height:var(--hex-viewport-height,100dvh)!important}

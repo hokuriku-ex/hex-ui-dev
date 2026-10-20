@@ -8022,9 +8022,9 @@ hexReady(function(){
               '<rect x="-20" y="40" width="78" height="72" fill="#000" />'+
               '<path class="hex-logo-front-left-mask-path" '+
                 'pathLength="1" '+
-                'd="M24 52 C-12 63 -10 79 25.988 91.762 C35 95 45 97 55 98" '+
+                'd="M10 52 L17.386 55.094 C-4 64 -4 79 25.988 91.762 C35 95 45 97 55 98" '+
                 'fill="none" stroke="#fff" stroke-width="40" '+
-                'stroke-linecap="butt" stroke-linejoin="round" />'+
+                'stroke-linecap="square" stroke-linejoin="round" />'+
             '</mask>'+ 
             '<mask id="hex-logo-front-center-mask" maskUnits="userSpaceOnUse" '+
               'x="48" y="76" width="82" height="32">'+
@@ -9443,7 +9443,7 @@ hexReady(function(){
                 restoreLogo();
                 startResourceLoading();
               },320);
-            },1270);
+            },2350);
           });
         });
       });
