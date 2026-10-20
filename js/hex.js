@@ -1991,6 +1991,9 @@ function hexInitAnchorNav(){
     window.hexWelcomeAnchorState=window.hexWelcomeAnchorState||{};
     window.hexWelcomeAnchorState.complete=true;
     syncWelcomeEndAnchor();
+  });
+  document.addEventListener('hex:home-anchor-header-landed',function(){
+    if(!homePanel)return;
     holdWelcomeLanding();
   });
   function syncWelcomeEndAnchor(){
@@ -4110,7 +4113,7 @@ hexReady(function(){
         else{
           welcomeAutoPhase='';
           cancelWelcomeAuto();
-          /* 自動進行の画面下端着地も、手動スナップと同じ短い待機に揃える。 */
+          /* 画面下端ではナビを表示し、待機はヘッダー下端への着地後に行う。 */
           var anchorPanel=window.hexHomeAnchorNav&&window.hexHomeAnchorNav.panel;
           if(anchorPanel&&Math.abs(anchorPanel.getBoundingClientRect().bottom-
             window.hexViewportHeight())<=3){
@@ -15562,7 +15565,7 @@ hexReady(function(){
   var snapInputLocked=false,snapOrigin=0,snapDestination=0;
   var homeWheelLast=0,homeWheelDirection=0,homeWheelConsumed=false;
   var snapHeaderHeight=80;
-  var welcomeAnchorSnapTarget=null;
+  var welcomeAnchorSnapLanding=null;
   function setSnapInputLock(locked){
     snapInputLocked=locked;
     document.documentElement.classList.toggle('hex-overlap-snap-animating',locked);
@@ -15647,14 +15650,15 @@ hexReady(function(){
     return progress>=.5?range.to:range.from;
   }
   function notifyWelcomeAnchorSnap(){
-    var target=welcomeAnchorSnapTarget;
-    welcomeAnchorSnapTarget=null;
-    if(target!==null&&Math.abs(scrollPosition()-target)<=3){
-      document.dispatchEvent(new Event('hex:home-anchor-bottom-landed'));
+    var landing=welcomeAnchorSnapLanding;
+    welcomeAnchorSnapLanding=null;
+    if(landing&&Math.abs(scrollPosition()-landing.target)<=3){
+      document.dispatchEvent(new Event(landing.atHeader
+        ?'hex:home-anchor-header-landed':'hex:home-anchor-bottom-landed'));
     }
   }
   function cancelSnap(stopAnimation){
-    welcomeAnchorSnapTarget=null;
+    welcomeAnchorSnapLanding=null;
     clearTimeout(snapTimer);clearTimeout(snapSafetyTimer);
     snapTimer=0;snapPending=false;snapGesture=null;
     setSnapInputLock(false);snapBlockedTouch=false;
@@ -15687,10 +15691,14 @@ hexReady(function(){
       ?chooseSnapTarget(snapRanges,position,snapGesture,window.hexViewportHeight())
       :capturedTarget;
     if(target===null)return;
-    welcomeAnchorSnapTarget=snapRanges.some(function(range){
+    var welcomeRange=snapRanges.find(function(range){
       return range.welcomeAnchor&&(range.welcomeAnchorEntrance
-        ?Math.abs(range.to-target)<1:Math.abs(range.from-target)<1);
-    })?target:null;
+        ?Math.abs(range.to-target)<1
+        :Math.abs(range.from-target)<1||Math.abs(range.to-target)<1);
+    });
+    // 下端着地は表示だけ。上端着地で初めて0.5秒の待機を開始する。
+    welcomeAnchorSnapLanding=welcomeRange?{target:target,
+      atHeader:!welcomeRange.welcomeAnchorEntrance&&Math.abs(welcomeRange.to-target)<1}:null;
     if(homeFoundedSection())homeWheelConsumed=true;
     snapActive=true;
     snapOrigin=position;snapDestination=target;
@@ -15711,7 +15719,7 @@ hexReady(function(){
     }
     snapSafetyTimer=setTimeout(function(){
       if(run===snapRunId){
-            welcomeAnchorSnapTarget=null;
+        welcomeAnchorSnapLanding=null;
         if(snapLenis)snapLenis.scrollTo(scrollPosition(),{immediate:true,force:true});
         snapActive=false;snapLenis=null;setSnapInputLock(false);
       }
@@ -16212,8 +16220,9 @@ hexReady(function(){
     var box=panel.getBoundingClientRect();
     if(box.height<=0)return null;
     var viewport=window.hexViewportHeight();
-    var from=Math.max(0,Math.min(maximumScroll,box.bottom+scroll-viewport));
-    var to=Math.max(0,Math.min(maximumScroll,box.bottom+scroll-header));
+    var bottom=hexAnchorVisualBottom(panel)+scroll;
+    var from=Math.max(0,Math.min(maximumScroll,bottom-viewport));
+    var to=Math.max(0,Math.min(maximumScroll,bottom-header));
     return to-from>24?{from:from,to:to,home:true,welcomeAnchor:true}:null;
   }
   function refreshHomeSnapRanges(){
