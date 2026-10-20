@@ -1994,7 +1994,7 @@ function hexInitAnchorNav(){
     holdWelcomeLanding();
   });
   document.addEventListener('hex:home-anchor-header-landed',function(){
-    if(!homePanel)return;
+    if(!homePanel||!anchorStickyEnabled)return;
     holdWelcomeLanding();
   });
   function syncWelcomeEndAnchor(){
