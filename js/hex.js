@@ -1827,7 +1827,7 @@ function hexInitAnchorNav(){
     }
     clearTimeout(welcomeLandingTimer);
     /* 着地時の慣性を止め、短い待機後に通常スクロールへ戻す。 */
-    welcomeLandingTimer=setTimeout(releaseWelcomeLandingHold,180);
+    welcomeLandingTimer=setTimeout(releaseWelcomeLandingHold,1000);
   }
   function guardWelcomeLandingInput(event){
     if(!welcomeLandingHold)return;
