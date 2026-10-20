@@ -3220,7 +3220,10 @@ hexReady(function(){
       return element.getBoundingClientRect().top+window.pageYOffset;
     }
 
+    var spHistoryBody=false,spHistoryRestoring=false;
     function setHeroPageLock(locked){
+      /* 本文の復帰中・WELCOME以降では、遅れて完了したHero処理で再ロックしない。 */
+      if(isSp()&&(welcomeActive||spHistoryBody||spHistoryRestoring))locked=false;
       document.documentElement.classList.toggle(
         "hex-hero-manual-lock",
         !!locked
@@ -3351,6 +3354,9 @@ hexReady(function(){
       var run;
       var started=0;
 
+      if(isSp()&&(welcomeActive||spHistoryBody||spHistoryRestoring)){
+        autoZoomPending=false;cancelAutoZoom(true);return;
+      }
       if(document.documentElement.classList.contains('hex-opening-lock')){
         autoZoomPending=true;
         return;
@@ -3414,6 +3420,9 @@ hexReady(function(){
     }
 
     function scheduleAutoZoom(delay){
+      if(isSp()&&(welcomeActive||spHistoryBody||spHistoryRestoring)){
+        autoZoomPending=false;cancelAutoZoom(true);return;
+      }
       autoZoomPending=true;
       autoZoomPendingDelay=Math.max(0,delay||0);
       interactionLocked=true;
@@ -3822,6 +3831,8 @@ hexReady(function(){
     }
 
     function resetHero(withFade){
+      /* Safariの履歴復元中の一時的な位置変化を、上方向の手動スクロールと扱わない。 */
+      if(isSp()&&(spHistoryBody||spHistoryRestoring))return;
       var returningFromWelcome=welcomeActive;
       stopWelcomeReverseSnap();
       cancelWelcomeAuto();
@@ -4182,6 +4193,7 @@ hexReady(function(){
     }
 
     function updateScrollEffects(){
+      if(isSp()&&spHistoryRestoring){scrollQueued=false;return;}
       var scrollY=window.pageYOffset;
       var movingUp=scrollY<lastScrollY;
       var heroTop=documentTop(hero);
@@ -5159,6 +5171,45 @@ hexReady(function(){
     };
 
     window.addEventListener("scroll",onWelcomeScroll,{passive:true,capture:true});
+    function restoreSpHistoryBody(){
+      welcomeActive=true;
+      stopWelcomeReverseSnap();
+      stopSpCircleScroll();
+      cancelWelcomeAuto();
+      autoZoomPending=false;
+      cancelAutoZoom(true);
+      welcomeDotPending=false;
+      window.clearTimeout(welcomeDotTimer);welcomeDotTimer=0;
+      window.cancelAnimationFrame(welcomeBodyFrame);welcomeBodyFrame=0;
+      activePointers.clear();pinch.active=false;dragging=false;
+      mouseFollow.active=false;spFollow.active=false;spTap.pointerId=null;
+      if(webglStage)webglStage.classList.remove('is-dragging','is-pinching');
+      if(welcomeWrap)welcomeWrap.classList.add('is-v2-active');
+      setHeroPageLock(false);
+      /* 共有ドットとキャッチのタイマーも、既存の離脱処理で停止する。 */
+      document.dispatchEvent(new Event('hex:hero-departed'));
+      lastScrollY=window.pageYOffset;
+    }
+    window.addEventListener('pagehide',function(){
+      if(!isSp())return;
+      spHistoryBody=welcomeActive||window.pageYOffset>documentTop(hero)+2;
+      if(!spHistoryBody)return;
+      spHistoryRestoring=true;
+      restoreSpHistoryBody();
+    });
+    window.addEventListener('pageshow',function(event){
+      if(!event.persisted)return;
+      if(!isSp()){spHistoryBody=false;spHistoryRestoring=false;return;}
+      if(!spHistoryBody&&window.pageYOffset<=documentTop(hero)+2)return;
+      spHistoryRestoring=true;
+      restoreSpHistoryBody();
+      /* 復元直後のresize・scrollを通過してから通常の位置同期へ戻す。 */
+      requestAnimationFrame(function(){requestAnimationFrame(function(){
+        restoreSpHistoryBody();
+        spHistoryBody=false;spHistoryRestoring=false;
+        queueScrollEffects();
+      });});
+    });
     window.addEventListener("touchmove",onWelcomeTouchMove,{passive:false,capture:true});
     window.addEventListener("wheel",onWelcomeWheel,{passive:false,capture:true});
     window.addEventListener("keydown",onWelcomeKeyDown,{capture:true});
