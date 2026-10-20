@@ -4228,7 +4228,8 @@ hexReady(function(){
       }
     }
 
-    /* WELCOME末尾のナビ上端がヘッダー下へ届く位置で通常配置に戻す。 */
+    /* ナビ下端がヘッダー下へ抜けるまではWELCOMEの固定を維持する。
+       上端到達で解除すると、スナップ途中の再配置でナビが一度止まって見える。 */
     function getWelcomeReleaseTravel(travelMetrics,welcomeTop){
       if(isSp()){return travelMetrics.travel;}
       var boundary=document.querySelector('.hex-home-anchor-panel')||
@@ -4237,7 +4238,7 @@ hexReady(function(){
       var header=parseFloat(getComputedStyle(document.documentElement)
         .getPropertyValue('--header_height'))||80;
       return Math.max(travelMetrics.travel,
-        window.pageYOffset+boundary.getBoundingClientRect().top-header-welcomeTop);
+        window.pageYOffset+hexAnchorVisualBottom(boundary)-header-welcomeTop);
     }
 
     function updateScrollEffects(){
