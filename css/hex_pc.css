@@ -10598,6 +10598,14 @@ html body .hex-home-has-bg-range,
 html body .hex-home-has-bg-range :is(.gc_auto_frame_spotitem,.gc_auto_frame_spotitem_box,.gc_auto_frame_spotitem_body){
   overflow:visible!important;
 }
+/* 通常配置の上端形状の隙間を、直前のセクションの背景色で補完する。 */
+.hex-home-bg-range > .hex-home-shape-fill{
+  display:block;position:absolute!important;z-index:-2!important;
+  top:0!important;left:50%;width:100vw;
+  height:calc(var(--hex-bg-upper-depth,0px) + 1px);
+  margin:0!important;padding:0!important;border:0!important;
+  transform:translateX(-50%);pointer-events:none;
+}
 /* 外側の余白は最後の範囲色、範囲内の余白はその範囲色を使用する。 */
 html body .hex-home-has-bg-range .hex-overlap-spacer{
   --hex-overlap-spacer-bg:var(--hex-home-range-end-bg,#fff)!important;

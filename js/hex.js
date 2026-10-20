@@ -16081,6 +16081,31 @@ hexReady(function(){
     var duration=Math.max(0,end-start);
     return {top:top-start,height:height+duration,tail:duration,start:start};
   }
+  function syncHomeShapeBackgrounds(){
+    var founded=homeFoundedSection();
+    if(!founded)return;
+    var sections=[founded].concat(homeOverlapSections());
+    sections.forEach(function(section,index){
+      var previousRange=null;
+      section.querySelectorAll('.hex-home-bg-range').forEach(function(range){
+        var fill=range.querySelector(':scope > .hex-home-shape-fill');
+        var back=previousRange||(index?sections[index-1]:null);
+        // オーバーラップ中は背面の実コンテンツを見せ、通常配置だけ色で補完する。
+        var needed=back&&range.classList.contains('hex-bg-decoration-start')&&
+          (previousRange||!isHomeOverlapTarget(section));
+        if(needed){
+          if(!fill){
+            fill=document.createElement('div');
+            fill.className='hex-home-shape-fill hex-motion-auto-off';
+            fill.setAttribute('aria-hidden','true');
+            range.insertBefore(fill,range.firstChild);
+          }
+          fill.style.backgroundColor=previousRange?sectionCoverColor(back):sectionEndColor(back);
+        }else if(fill){fill.remove();}
+        previousRange=range;
+      });
+    });
+  }
   function syncOverlapCorners(entry){
     var front=entry.front;
     // 全トップ境界と下層の問い合わせ・フッターに共通の補完を適用。
@@ -16140,6 +16165,7 @@ hexReady(function(){
     window.hexPrepareFixedBackgroundLayer(layer);
   }
   window.hexSyncOverlapCornerImages=function(){
+    syncHomeShapeBackgrounds();
     entries.forEach(syncOverlapCorners);
     if(window.hexPrepareFixedBackgroundImages)window.hexPrepareFixedBackgroundImages();
   };
@@ -16273,6 +16299,7 @@ hexReady(function(){
   function measure(){
     measureFrame=0;
     if(homeFoundedSection())scanHome();
+    syncHomeShapeBackgrounds();
     var scroll=scrollPosition();
     entries.forEach(function(entry){entry.start=homeEntryStart(entry,scroll);});
     entries.sort(function(a,b){return a.start-b.start;});
