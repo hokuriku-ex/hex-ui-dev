@@ -15350,10 +15350,15 @@ hexReady(function(){
     if(document.documentElement.matches('.hex-opening-lock,.hex-hero-manual-lock,.hex-page-intro-scroll-lock,.hex-calendar-modal-open,.lenis-stopped'))return false;
     return getComputedStyle(document.body).position!=='fixed';
   }
-  function snapExcluded(target){
+  function snapExcluded(target,event){
     if(!target||target.nodeType!==1)return true;
-    if(target.closest('input,textarea,select,iframe,canvas,[contenteditable="true"],[data-lenis-prevent],.hex-anchor-nav,.hex-gallery,.hex-webgl-stage'))return true;
-    // ナビ等の内部スクロールや、固定UIの操作はページスナップに使わない。
+    if(target.closest('input,textarea,select,iframe,canvas,[contenteditable="true"],[data-lenis-prevent],.hex-gallery,.hex-webgl-stage'))return true;
+    var anchorNav=target.closest('.hex-anchor-nav');
+    var navVerticalWheel=!!(anchorNav&&window.innerWidth>768&&event&&
+      event.type==='wheel'&&!event.shiftKey&&Math.abs(event.deltaY||0)>0&&
+      Math.abs(event.deltaY||0)>=Math.abs(event.deltaX||0));
+    if(anchorNav&&!navVerticalWheel)return true;
+    // ナビ上の縦ホイールは固定ナビ・横スクロール枠を通してページスナップへ渡す。
     for(var node=target;node&&node!==document.body;node=node.parentElement){
       var style=getComputedStyle(node);
       // 下層タイトルの固定レイヤーはページ内容。固定UIとして除外しない。
@@ -15362,9 +15367,10 @@ hexReady(function(){
         return range.welcomeAnchor&&(range.welcomeAnchorEntrance
           ?position<=range.to+2:position>=range.from-2);
       });
-      if(style.position==='fixed'&&!node.matches('.hex-page-hero-main,.hex-page-hero-decor')&&!welcomeCopy)return true;
+      if(style.position==='fixed'&&!node.matches('.hex-page-hero-main,.hex-page-hero-decor')&&!welcomeCopy&&!(navVerticalWheel&&node===anchorNav))return true;
       if(/auto|scroll/.test(style.overflowY)&&node.scrollHeight>node.clientHeight+1)return true;
-      if(/auto|scroll/.test(style.overflowX)&&node.scrollWidth>node.clientWidth+1)return true;
+      if(/auto|scroll/.test(style.overflowX)&&node.scrollWidth>node.clientWidth+1&&
+        !(navVerticalWheel&&(node===anchorNav||node.closest('.hex-anchor-nav')===anchorNav)))return true;
     }
     return false;
   }
@@ -15482,7 +15488,7 @@ hexReady(function(){
   function onSnapTouchStart(event){
     if(snapInputLocked){snapBlockedTouch=true;return;}
     cancelSnap(true);
-    if(window.innerWidth>768||!snapEnabled()||event.touches.length!==1||snapExcluded(event.target))return;
+    if(window.innerWidth>768||!snapEnabled()||event.touches.length!==1||snapExcluded(event.target,event))return;
     var touch=event.touches[0];
     snapGesture={touching:true,x:touch.clientX,y:touch.clientY,lastY:touch.clientY,
       lastTime:Date.now(),velocity:0,travel:0,vertical:false,scrollStart:scrollPosition(),scrollLast:scrollPosition()};
@@ -15518,7 +15524,7 @@ hexReady(function(){
     if(homeFoundedSection()){
       refreshHomeSnapRanges();
       if(event.ctrlKey||event.shiftKey||Math.abs(event.deltaY)<1||
-        Math.abs(event.deltaX)>Math.abs(event.deltaY)||snapExcluded(event.target))return;
+        Math.abs(event.deltaX)>Math.abs(event.deltaY)||snapExcluded(event.target,event))return;
       var direction=event.deltaY>0?1:-1,now=Date.now();
       var continuation=homeWheelConsumed&&direction===homeWheelDirection&&now-homeWheelLast<300;
       homeWheelLast=now;homeWheelDirection=direction;
@@ -15537,7 +15543,7 @@ hexReady(function(){
     }
     if(snapActive)cancelSnap(true);
     if(window.innerWidth<=768||event.ctrlKey||event.shiftKey||event.defaultPrevented||
-      !snapEnabled()||snapExcluded(event.target))return;
+      !snapEnabled()||snapExcluded(event.target,event))return;
     if(Math.abs(event.deltaY)<1||Math.abs(event.deltaX)>Math.abs(event.deltaY))return;
     if(!snapGesture||snapGesture.kind!=='wheel'||!snapPending){
       snapGesture={kind:'wheel',touching:false,scrollStart:scrollPosition(),travel:0,velocity:0};
