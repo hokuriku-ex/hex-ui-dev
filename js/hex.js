@@ -8547,8 +8547,9 @@ hexReady(function(){
       var sceneIndex;
       if(!scene){return;}
       sceneIndex=scenes.indexOf(scene);
+      var imageAlreadyRevealed=scene.classList.contains("is-v2-loader-image-ready");
       scene.classList.remove("is-v2-entered");
-      if(sceneIndex>=0&&sceneIndex<5){
+      if(sceneIndex>=0&&sceneIndex<5&&!imageAlreadyRevealed){
         scene.classList.remove("is-v2-image-entered");
       }
       void scene.offsetWidth;
@@ -8556,6 +8557,7 @@ hexReady(function(){
       if(sceneIndex>=0&&sceneIndex<5){
         scene.classList.add("is-v2-image-entered");
       }
+      scene.classList.remove("is-v2-loader-image-ready");
 
       if(scene===introStage||scene===messageStage){
         introMain=scene.querySelector(".hex-opening-intro-main");
@@ -9387,7 +9389,9 @@ hexReady(function(){
       function revealOpening(resolve){
         if(cancelled){return;}
         if(scenes[0]){
-          scenes[0].classList.add("is-v2-current");
+          scenes[0].classList.add(
+            "is-v2-current","is-v2-image-entered","is-v2-loader-image-ready"
+          );
           scenes[0].setAttribute("aria-hidden","false");
         }
         var mask="radial-gradient(circle at 50% 50%,transparent 0px,#000 1px)";

@@ -8905,6 +8905,8 @@ html.hex-opening-finishing
 /* 初回画像だけ、SKIP後のヒーローと同じ強さ・速度でフェード表示する */
 .hex-opening.is-curtain-sequence .hex-opening-intro-stage .hex-opening-intro-photo{opacity:0!important}
 .hex-opening.is-curtain-sequence .hex-opening-intro-stage.is-v2-image-entered .hex-opening-intro-photo{opacity:1!important;transition:opacity .9s ease,transform 1.2s cubic-bezier(.22,.8,.3,1) .08s!important}
+/* 丸広がりの内側では初回画像を最初から表示し、開幕へ連続させる。 */
+.hex-opening.is-curtain-sequence :is(.hex-opening-intro-stage,.hex-opening-slide).is-v2-loader-image-ready :is(.hex-opening-intro-photo,.hex-opening-slide-image){opacity:1!important;transform:scale(1)!important;transition:none!important}
 .hex-opening.is-curtain-sequence :is(.hex-opening-intro-catch,.hex-opening-message-first,.hex-opening-message-final,.hex-opening-logo-stage){opacity:0;transform:translate3d(52px,0,0)!important}
 .hex-opening.is-curtain-sequence .is-v2-entered :is(.hex-opening-intro-catch,.hex-opening-message-first,.hex-opening-message-final,.hex-opening-logo-stage){opacity:1;transform:translate3d(0,0,0)!important;transition:opacity .72s ease .56s,transform .82s cubic-bezier(.22,.8,.3,1) .56s!important}
 .hex-opening.is-curtain-sequence :is(.hex-opening-message-first,.hex-opening-message-final){transform:translate(calc(-50% + 52px),-50%)!important}
