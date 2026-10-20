@@ -1991,6 +1991,7 @@ function hexInitAnchorNav(){
     window.hexWelcomeAnchorState=window.hexWelcomeAnchorState||{};
     window.hexWelcomeAnchorState.complete=true;
     syncWelcomeEndAnchor();
+    holdWelcomeLanding();
   });
   document.addEventListener('hex:home-anchor-header-landed',function(){
     if(!homePanel)return;
@@ -4113,7 +4114,7 @@ hexReady(function(){
         else{
           welcomeAutoPhase='';
           cancelWelcomeAuto();
-          /* 画面下端ではナビを表示し、待機はヘッダー下端への着地後に行う。 */
+          /* 自動進行の画面下端着地も、手動スナップと同じ0.5秒の待機に揃える。 */
           var anchorPanel=window.hexHomeAnchorNav&&window.hexHomeAnchorNav.panel;
           if(anchorPanel&&Math.abs(anchorPanel.getBoundingClientRect().bottom-
             window.hexViewportHeight())<=3){
@@ -15696,7 +15697,7 @@ hexReady(function(){
         ?Math.abs(range.to-target)<1
         :Math.abs(range.from-target)<1||Math.abs(range.to-target)<1);
     });
-    // 下端着地は表示だけ。上端着地で初めて0.5秒の待機を開始する。
+    // 画面下端とヘッダー下端、それぞれの着地後に0.5秒待機する。
     welcomeAnchorSnapLanding=welcomeRange?{target:target,
       atHeader:!welcomeRange.welcomeAnchorEntrance&&Math.abs(welcomeRange.to-target)<1}:null;
     if(homeFoundedSection())homeWheelConsumed=true;
