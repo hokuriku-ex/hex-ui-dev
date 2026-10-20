@@ -9353,6 +9353,10 @@ html.hex-opening-finishing
 #gc_auto_frame_home_4 .gc_auto_frame_spotitem_body h3{
   color:#fff!important;
 }
+/* 英字の斜体が文字枠の左へ張り出す分を確保。ロール用の切り抜きは維持する。 */
+#gc_auto_frame_home_4 .hex-top-title-en{
+  padding-inline:.12em;
+}
 
 /* HTML配置位置で通常表示する、右上がりの5行ハッシュタグ */
 .hex-hashtag-banner{
