@@ -1460,8 +1460,9 @@ function hexInitAnchorNav(){
       // 固定中の再計測ではDOM・placeholder・表示演出を戻さない。
       // 元の位置は通常フローに残した高さ保持枠から取得する。
       fixedNavHeight=nav.getBoundingClientRect().height||fixedNavHeight||36;
-      fixedStart=placeholder.getBoundingClientRect().top+
-        window.pageYOffset-getHexAnchorHeaderHeight();
+      // 下層と同じく通常ナビの下端を固定ナビ下端（ヘッダー下＋36px）へ合わせる。
+      fixedStart=placeholder.getBoundingClientRect().bottom+
+        window.pageYOffset-36-getHexAnchorHeaderHeight();
       updateHexAnchorNav();
       return;
     }
@@ -1474,7 +1475,7 @@ function hexInitAnchorNav(){
       originalParent.insertBefore(nav,originalNext);
     }
     fixedStart=homePanel
-      ?homePanel.getBoundingClientRect().top+window.pageYOffset-getHexAnchorHeaderHeight()
+      ?homePanel.getBoundingClientRect().bottom+window.pageYOffset-36-getHexAnchorHeaderHeight()
       :nav.getBoundingClientRect().top+
         window.pageYOffset+nav.offsetHeight-36-getHexAnchorHeaderHeight()-mobileAdjust;
     updateHexAnchorNav();
@@ -1827,7 +1828,7 @@ function hexInitAnchorNav(){
     }
     clearTimeout(welcomeLandingTimer);
     /* 着地時の慣性を止め、短い待機後に通常スクロールへ戻す。 */
-    welcomeLandingTimer=setTimeout(releaseWelcomeLandingHold,1000);
+    welcomeLandingTimer=setTimeout(releaseWelcomeLandingHold,500);
   }
   function guardWelcomeLandingInput(event){
     if(!welcomeLandingHold)return;
@@ -15919,7 +15920,7 @@ hexReady(function(){
     if(box.height<=0)return null;
     var viewport=window.hexViewportHeight();
     var from=Math.max(0,Math.min(maximumScroll,box.bottom+scroll-viewport));
-    var to=Math.max(0,Math.min(maximumScroll,box.top+scroll-header));
+    var to=Math.max(0,Math.min(maximumScroll,box.bottom+scroll-header-36));
     return to-from>24?{from:from,to:to,home:true,welcomeAnchor:true}:null;
   }
   function refreshHomeSnapRanges(){
