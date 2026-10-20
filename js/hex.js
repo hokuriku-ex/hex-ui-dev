@@ -7344,8 +7344,32 @@ function hexLoadAllAlphaVideos(scope){
 /* =======================================
    開幕アニメーション
 ======================================= */
+/* DOM準備後も、読み込んだJSと同じ環境のopeningフォルダを参照する。 */
+const HEX_OPENING_IMAGE_ROOT=(function(){
+  var ownScript=document.currentScript;
+  var base=HEX_IS_PRODUCTION
+    ?'https://hokuriku-ex.github.io/hex-ui/'
+    :'https://hokuriku-ex.github.io/hex-ui-dev/';
+  if(ownScript&&ownScript.src){
+    try{base=new URL('../',ownScript.src).href;}catch(error){}
+  }
+  return new URL('images/opening/',base).href;
+})();
 hexReady(function(){
   "use strict";
+
+  /* ファイル名だけの指定を補完し、URL・パス指定はそのまま使う。 */
+  function resolveOpeningImage(file){
+    file=(file||'').trim();
+    if(!/^[^/\\?#]+\.(?:avif|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i.test(file))return file;
+    return new URL(file,HEX_OPENING_IMAGE_ROOT).href;
+  }
+
+  function openingIntroImageSrc(image){
+    var file=image.getAttribute('src')||image.getAttribute('data-src')||'';
+    var resolved=resolveOpeningImage(file);
+    return resolved!==file.trim()?resolved:(image.currentSrc||resolved);
+  }
 
   /* 閲覧済み記録はlocalStorage、リプレイ要求はタブ内だけのsessionStorage。 */
   var STORAGE_KEY="hex_top_opening_viewed";
@@ -7610,8 +7634,8 @@ hexReady(function(){
     }
 
     sources.forEach(function(source){
-      var pcSrc=(source.getAttribute("data-pc-image")||"").trim();
-      var spSrc=(source.getAttribute("data-sp-image")||"").trim();
+      var pcSrc=resolveOpeningImage(source.getAttribute("data-pc-image"));
+      var spSrc=resolveOpeningImage(source.getAttribute("data-sp-image"));
       var title=source.getAttribute("data-title")||"";
 
       pcSrc=pcSrc||spSrc;
@@ -7743,12 +7767,8 @@ hexReady(function(){
     spImage=spImage||pcImage;
 
     data={
-      pcSrc:pcImage.currentSrc||
-        pcImage.getAttribute("src")||
-        pcImage.getAttribute("data-src")||"",
-      spSrc:spImage.currentSrc||
-        spImage.getAttribute("src")||
-        spImage.getAttribute("data-src")||"",
+      pcSrc:openingIntroImageSrc(pcImage),
+      spSrc:openingIntroImageSrc(spImage),
       alt:pcImage.getAttribute("alt")||"",
       pcPosition:pcImage.getAttribute("data-position")||"center",
       spPosition:spImage.getAttribute("data-position")||"center",
