@@ -15376,6 +15376,12 @@ hexReady(function(){
           position>=item.from-2;
       });
       if(entrance)return entrance.to;
+      var headerRange=ranges.find(function(item){
+        return item.welcomeAnchor&&!item.welcomeAnchorEntrance&&
+          gesture.scrollStart>=item.from-2&&gesture.scrollStart<item.to-2&&
+          position>=item.from-2;
+      });
+      if(headerRange)return headerRange.to;
     }
     /* 逆方向も、固定ナビから下端へ戻る区間を越えても停止点を保持する。 */
     if(gesture.kind==='wheel'&&gesture.travel<0){
@@ -15390,7 +15396,6 @@ hexReady(function(){
       if(position>ranges[i].from+2&&position<ranges[i].to-2){range=ranges[i];break;}
     }
     if(!range)return null;
-    if(range.welcomeBottomOnly&&gesture.travel>0)return null;
     // PCは切り替え区間でのホイール1操作から、その方向の停止点へ進む。
     if(gesture.kind==='wheel')return gesture.travel>0?range.to:range.from;
     var progress=(position-range.from)/(range.to-range.from);
@@ -15544,8 +15549,11 @@ hexReady(function(){
     var landingRange=snapRanges.find(function(range){
       if(!range.welcomeAnchor)return false;
       if(event.deltaY>0){
-        return range.welcomeAnchorEntrance&&position<range.to-2&&
-          position+Math.max(0,wheelDistance)>=range.from-2;
+        if(range.welcomeAnchorEntrance){
+          return position<range.to-2&&position+Math.max(0,wheelDistance)>=range.from-2;
+        }
+        /* 下端着地の次の操作では、ナビ下端＝ヘッダー下端へ移動する。 */
+        return position>=range.from-2&&position<range.to-2;
       }
       return !range.welcomeAnchorEntrance&&position>range.from+2&&
         position+Math.min(0,wheelDistance)<=range.to+2;
@@ -15961,11 +15969,10 @@ hexReady(function(){
     if(!panel)return null;
     var box=panel.getBoundingClientRect();
     if(box.height<=0)return null;
-    var bottomOnly=window.hexHomeAnchorNav.stickyEnabled===false;
     var viewport=window.hexViewportHeight();
     var from=Math.max(0,Math.min(maximumScroll,box.bottom+scroll-viewport));
-    var to=Math.max(0,Math.min(maximumScroll,box.bottom+scroll-header-(bottomOnly?0:36)));
-    return to-from>24?{from:from,to:to,home:true,welcomeAnchor:true,welcomeBottomOnly:bottomOnly}:null;
+    var to=Math.max(0,Math.min(maximumScroll,box.bottom+scroll-header));
+    return to-from>24?{from:from,to:to,home:true,welcomeAnchor:true}:null;
   }
   function refreshHomeSnapRanges(){
     if(!homeFoundedSection())return;
