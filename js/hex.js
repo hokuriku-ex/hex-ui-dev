@@ -315,15 +315,25 @@ const HOME_DISPLAY_SECTIONS=[
 
 /* トップページオーバーラップ対象
    登録したセクションの上部を、直前の表示コンテンツへ重ねる。
-   配列は対象指定用。重なる順番はHTMLの並び順に従う。
+   PCは769px以上、SPは768px以下。端末ごとの配列で対象を指定する。
+   重なる順番はHTMLの並び順に従う。
    お問い合わせ・フッターは登録不要で、従来どおり個別に重ねる。 */
-const HOME_OVERLAP_SECTIONS=[
-  HOME_SECTIONS.SERVICE,
-  HOME_SECTIONS.PICKUP,
-  HOME_SECTIONS.NEWS_SECTION,
-  HOME_SECTIONS.BANNER,
-  HOME_SECTIONS.RECRUIT
-];
+const HOME_OVERLAP_SECTIONS={
+  PC:[
+    HOME_SECTIONS.SERVICE,
+    HOME_SECTIONS.PICKUP,
+    HOME_SECTIONS.NEWS_SECTION,
+    HOME_SECTIONS.BANNER,
+    HOME_SECTIONS.RECRUIT
+  ],
+  SP:[
+    HOME_SECTIONS.SERVICE,
+    HOME_SECTIONS.PICKUP,
+    HOME_SECTIONS.NEWS_SECTION,
+    HOME_SECTIONS.BANNER,
+    HOME_SECTIONS.RECRUIT
+  ]
+};
 
 /* スマホ左右余白対象 */
 const HOME_PADDING_SECTIONS=[
@@ -15924,12 +15934,31 @@ hexReady(function(){
     /* お問い合わせ・フッターは従来どおり個別に常時対象とする。 */
     if(section.id===HOME_SECTIONS.CONTACT||section.id===HOME_SECTIONS.FOOTER||
       section.matches('.gc_auto_frame_footer'))return true;
-    return typeof HOME_OVERLAP_SECTIONS!=='undefined'&&
-      HOME_OVERLAP_SECTIONS.indexOf(section.id)!==-1;
+    if(typeof HOME_OVERLAP_SECTIONS==='undefined')return false;
+    var targets=HOME_OVERLAP_SECTIONS[window.innerWidth<=768?'SP':'PC'];
+    return Array.isArray(targets)&&targets.indexOf(section.id)!==-1;
   }
   function scanHome(){
     var sections=homeOverlapSections();
     var founded=homeFoundedSection();
+    // PC/SPをまたぐ幅変更では、対象外になった境界と装飾を取り除く。
+    var removed=false;
+    entries=entries.filter(function(entry){
+      if(!entry.home||isHomeOverlapTarget(entry.front))return true;
+      if(sizeObserver)sizeObserver.unobserve(entry.front);
+      entry.marker.remove();delete entry.front._hexHomeRiseMarker;
+      entry.front.classList.remove('hex-home-overlap-front');
+      if(entry.addedRound)entry.front.classList.remove('hex-bg-round-top');
+      if(entry.front._hexOverlapCornerFill){
+        entry.front._hexOverlapCornerFill.remove();delete entry.front._hexOverlapCornerFill;
+      }
+      removed=true;return false;
+    });
+    if(removed){
+      cancelSnap(true);
+      document.querySelectorAll('.hex-rise-front-layer').forEach(function(node){node.classList.remove('hex-rise-front-layer');});
+      entries.forEach(raiseFollowing);
+    }
     sections.forEach(function(front,index){
       if(!isHomeOverlapTarget(front))return;
       var back=index?sections[index-1]:founded;
@@ -15949,7 +15978,8 @@ hexReady(function(){
       marker._hexRiseEntry=entry;entries.push(entry);
       front.classList.add('hex-home-overlap-front');
       // 明示範囲にはその形状を使用。外側の固定角丸を二重に重ねない。
-      if(!front.classList.contains('hex-home-has-bg-range'))front.classList.add('hex-bg-round-top');
+      entry.addedRound=!front.classList.contains('hex-home-has-bg-range')&&!front.classList.contains('hex-bg-round-top');
+      if(entry.addedRound)front.classList.add('hex-bg-round-top');
       prepareFlow(front);prepareFlow(entry.back);raiseFollowing(entry);
       if(sizeObserver)sizeObserver.observe(front);
     });
@@ -16246,6 +16276,7 @@ hexReady(function(){
   }
   function measure(){
     measureFrame=0;
+    if(homeFoundedSection())scanHome();
     var scroll=scrollPosition();
     entries.forEach(function(entry){entry.start=homeEntryStart(entry,scroll);});
     entries.sort(function(a,b){return a.start-b.start;});
@@ -16267,6 +16298,13 @@ hexReady(function(){
     var candidates=[];
     entries.forEach(function(entry){entry.blocks.forEach(function(node){if(candidates.indexOf(node)===-1)candidates.push(node);});});
     candidates=candidates.filter(function(node){return !candidates.some(function(parent){return parent!==node&&parent.contains(node);});});
+    // 対象から外れた背面コンテンツは、sticky用の枠も解除して通常配置へ戻す。
+    managed=managed.filter(function(item){
+      if(candidates.indexOf(item.node)!==-1)return true;
+      if(sizeObserver)sizeObserver.unobserve(item.sticky);
+      if(item.runway.parentNode)item.runway.parentNode.insertBefore(item.node,item.runway);
+      item.runway.remove();return false;
+    });
     candidates.forEach(function(node){if(!managed.some(function(item){return item.node===node;}))managed.push(createItem(node));});
     // まず伸長分を除いた元の高さへ戻し、自然な文書座標で計測する。
     managed.forEach(function(item){item.runway.style.height='auto';item.runway.style.marginBottom='0px';item.sticky.style.position='relative';item.sticky.style.top='auto';});
