@@ -1912,17 +1912,16 @@ function hexInitAnchorNav(){
     holdWelcomeLanding();
   });
   function syncWelcomeEndAnchor(){
-    if(deferAnchorRemeasure())return;
-    if(welcomeLandingHold)return;
     if(!homePanel)return;
+    if(window.innerWidth>768&&welcomeLandingHold)return;
     var state=window.hexWelcomeAnchorState||{};
-    /* SPの戻り先は既存の終端-1px。本文進捗の丸め差で帯を隠さない。 */
-    var atSpEnd=window.innerWidth<=768&&Number.isFinite(state.end)&&
-      (window.pageYOffset||0)+window.hexViewportHeight()>=state.end-2;
-    var complete=!!state.complete||atSpEnd;
-    var hidden=!complete;
+    /* SPは元の配置で先に表示して待機。本文完了時のフェードを待たせない。 */
+    var hidden=window.innerWidth>768&&!state.complete;
     homePanel.classList.toggle('is-welcome-end-hidden',hidden);
     nav.classList.toggle('is-welcome-end-hidden',hidden);
+    /* 表示準備と寸法の再計算を分け、SPの再計算は停止後のままにする。 */
+    if(deferAnchorRemeasure())return;
+    if(welcomeLandingHold)return;
     var panelRect=homePanel.getBoundingClientRect();
     var height=hexAnchorVisualBottom(homePanel)-panelRect.top;
     if(height<=0)return;
@@ -1937,7 +1936,8 @@ function hexInitAnchorNav(){
     /* ナビを含むWELCOME全体の下端を、自動進行終点の画面下端へ揃える。 */
     var margin=parseFloat(homePanel.style.getPropertyValue('margin-top'))||0;
     var naturalTop=homePanel.getBoundingClientRect().top+window.pageYOffset-margin;
-    var nextMargin=Math.round((state.end-height-naturalTop)*10)/10;
+    var scrollbarInset=nav.classList.contains('has-anchor-scrollbar')?1:0;
+    var nextMargin=Math.round((state.end-height-naturalTop-scrollbarInset)*10)/10;
     if(Math.abs(nextMargin-margin)<.5)return;
     homePanel.style.setProperty('margin-top',nextMargin+'px','important');
     if(!welcomeEndRefreshFrame){
