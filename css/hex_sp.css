@@ -1442,8 +1442,7 @@
 ======================================= */
 @media screen and (max-width:768px){
   #gc_auto_frame_home_4{
-    --hex-founded-vw:min(1vw,16px);
-    --hex-founded-content-width:min(100vw - 32px, 1600px);
+    --hex-founded-content-width:100vw;
   }
   .hex-founded-marquee{
     margin-bottom:32px;
