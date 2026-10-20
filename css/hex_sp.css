@@ -2641,10 +2641,15 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
   .hex-v2-welcome-copy-stage{
     position:absolute!important;
-    right:16px!important;
-    left:16px!important;
+    right:0!important;
+    left:0!important;
     width:auto!important;
     max-width:none;
+    padding-bottom:clamp(
+      64px,
+      calc(7.8431vw + 35.76px),
+      96px
+    )!important;
   }
   .hex-v2-welcome-copy-stage .hex-welcome-copy{
     width:100%!important;
