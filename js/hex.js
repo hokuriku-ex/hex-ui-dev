@@ -840,10 +840,25 @@ function hexPrepareHomeAnchorNav(source){
   panel.appendChild(source);
   return panel;
 }
+/* 端末別指定 > 共通指定 > 既定値(true)。SP境界は既存演出と同じ768px。 */
+function hexAnchorStickyEnabled(source){
+  var value=source.getAttribute(window.innerWidth<=768?'data-sticky-sp':'data-sticky-pc');
+  if(value===null||!value.trim())value=source.getAttribute('data-sticky');
+  return String(value||'true').trim().toLowerCase()!=='false';
+}
+/* スクロールバーがナビ外へ出る設定でも、描画される最下端を測る。 */
+function hexAnchorVisualBottom(element){
+  var bottom=element.getBoundingClientRect().bottom;
+  var bar=element.querySelector('.hex-anchor-scrollbar.is-visible');
+  if(bar&&getComputedStyle(bar).display!=='none'){
+    bottom=Math.max(bottom,bar.getBoundingClientRect().bottom);
+  }
+  return bottom;
+}
 function hexInitAnchorNav(){
   var source=document.querySelector('.hex-anchor-source');
   if(!source||source._hexAnchorNav)return;
-  var anchorStickyEnabled=String(source.getAttribute('data-sticky')||'true').trim().toLowerCase()!=='false';
+  var anchorStickyEnabled=hexAnchorStickyEnabled(source);
   var homePanel=hexPrepareHomeAnchorNav(source);
   var text=source.textContent||'';
   if(!text)return;
@@ -1395,7 +1410,7 @@ function hexInitAnchorNav(){
     var height;
 
     if(wasFixed){
-      height=nav.getBoundingClientRect().height;
+      height=hexAnchorVisualBottom(nav)-nav.getBoundingClientRect().top;
       fixedNavHeight=height||fixedNavHeight||36;
       return fixedNavHeight;
     }
@@ -1410,7 +1425,7 @@ function hexInitAnchorNav(){
      */
     nav.classList.add('is-fixed');
 
-    height=nav.getBoundingClientRect().height;
+    height=hexAnchorVisualBottom(nav)-nav.getBoundingClientRect().top;
 
     nav.classList.remove('is-fixed');
 
@@ -1456,6 +1471,16 @@ function hexInitAnchorNav(){
   function refreshHexAnchorNav(){
     if(deferAnchorRemeasure())return;
     if(welcomeLandingHold)return;
+    var nextStickyEnabled=hexAnchorStickyEnabled(source);
+    if(nextStickyEnabled!==anchorStickyEnabled){
+      clearFixedAnchorAnimation();
+      anchorStickyEnabled=nextStickyEnabled;
+      nav.dataset.sticky=anchorStickyEnabled?'true':'false';
+      fixedNavHeight=0;
+      if(homePanel&&window.hexHomeAnchorNav){
+        window.hexHomeAnchorNav.stickyEnabled=anchorStickyEnabled;
+      }
+    }
     syncHomeAnchorBackground();
     if(!anchorStickyEnabled){
       fixedNavHeight=0;fixedStart=Infinity;
@@ -1470,10 +1495,10 @@ function hexInitAnchorNav(){
     if(homePanel&&nav.classList.contains('is-fixed')){
       // 固定中の再計測ではDOM・placeholder・表示演出を戻さない。
       // 元の位置は通常フローに残した高さ保持枠から取得する。
-      fixedNavHeight=nav.getBoundingClientRect().height||fixedNavHeight||36;
-      // 下層と同じく通常ナビの下端を固定ナビ下端（ヘッダー下＋36px）へ合わせる。
+      fixedNavHeight=hexAnchorVisualBottom(nav)-nav.getBoundingClientRect().top||fixedNavHeight||36;
+      // 通常ナビの描画下端を、バーを含む固定ナビの実寸下端へ合わせる。
       fixedStart=placeholder.getBoundingClientRect().bottom+
-        window.pageYOffset-36-getHexAnchorHeaderHeight();
+        window.pageYOffset-getHexAnchorFixedHeight()-getHexAnchorHeaderHeight();
       updateHexAnchorNav();
       return;
     }
@@ -1485,10 +1510,9 @@ function hexInitAnchorNav(){
     if(nav.parentNode!==originalParent){
       originalParent.insertBefore(nav,originalNext);
     }
-    fixedStart=homePanel
-      ?homePanel.getBoundingClientRect().bottom+window.pageYOffset-36-getHexAnchorHeaderHeight()
-      :nav.getBoundingClientRect().top+
-        window.pageYOffset+nav.offsetHeight-36-getHexAnchorHeaderHeight()-mobileAdjust;
+    var normalBottom=hexAnchorVisualBottom(homePanel||nav);
+    fixedStart=normalBottom+window.pageYOffset-getHexAnchorFixedHeight()-
+      getHexAnchorHeaderHeight()-mobileAdjust;
     updateHexAnchorNav();
   }
   function updateHexAnchorNav(){
@@ -1506,7 +1530,7 @@ function hexInitAnchorNav(){
       }
 
       if(!nav.classList.contains('is-fixed')){
-        placeholder.style.height=nav.offsetHeight+'px';
+        placeholder.style.height=(hexAnchorVisualBottom(nav)-nav.getBoundingClientRect().top)+'px';
         placeholder.classList.add('is-active');
         document.body.appendChild(nav);
         nav.classList.add('is-fixed');
@@ -1818,6 +1842,7 @@ function hexInitAnchorNav(){
   window.addEventListener('hex:viewport-resize',function(){
     refreshHexAnchorNav();
     refreshAnchorScrollbar();
+    syncWelcomeEndAnchor();
   });
   var welcomeEndRefreshFrame=0;
   var welcomeLandingHold=null;
@@ -1891,11 +1916,15 @@ function hexInitAnchorNav(){
     if(welcomeLandingHold)return;
     if(!homePanel)return;
     var state=window.hexWelcomeAnchorState||{};
-    var complete=!!state.complete;
+    /* SPの戻り先は既存の終端-1px。本文進捗の丸め差で帯を隠さない。 */
+    var atSpEnd=window.innerWidth<=768&&Number.isFinite(state.end)&&
+      (window.pageYOffset||0)+window.hexViewportHeight()>=state.end-2;
+    var complete=!!state.complete||atSpEnd;
     var hidden=!complete;
     homePanel.classList.toggle('is-welcome-end-hidden',hidden);
     nav.classList.toggle('is-welcome-end-hidden',hidden);
-    var height=homePanel.getBoundingClientRect().height;
+    var panelRect=homePanel.getBoundingClientRect();
+    var height=hexAnchorVisualBottom(homePanel)-panelRect.top;
     if(height<=0)return;
     /* 固定前の帯（固定後は高さ保持枠）の実寸をWELCOMEの予約領域にする。 */
     window.hexWelcomeAnchorState=state;
