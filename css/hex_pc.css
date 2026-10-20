@@ -6926,13 +6926,7 @@ html body
   transform:translateX(-50%);
 }
 
-/* 選ばれる理由：背景色・上カーブは共通背景パーツに任せる。 */
-.post_index_contents > .content:has(.hex-reasons-section){
-  padding-top:80px;
-  padding-bottom:80px;
-  color:#fff;
-}
-/* タイトル */
+/* 選ばれる理由 */
 .hex-reasons-section{
   position:relative;
   display:flex;

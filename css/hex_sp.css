@@ -2006,10 +2006,6 @@
 
 /* 選ばれる理由 */
 @media screen and (max-width:768px){
-  .post_index_contents > .content:has(.hex-reasons-section){
-    padding-top:80px;
-    padding-bottom:80px;
-  }
   .hex-reasons-section{
     gap:14px;
   }
