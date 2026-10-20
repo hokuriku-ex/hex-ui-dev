@@ -1298,6 +1298,71 @@ function hexInitAnchorNav(){
   var fixedNavHeight=0;
   var originalParent=nav.parentNode;
   var originalNext=nav.nextSibling;
+
+  /* SPの高さ変更時だけ、ナビの再計測をスクロール・UI伸縮の安定後にまとめる。
+     ページ全体の高さや通常スクロールの固定判定は保持しない。 */
+  var anchorResizeQuietMs=250;
+  var anchorResizeTimer=0,anchorResizeWaiting=false,anchorResizeLastMotion=0;
+  var anchorViewport=window.visualViewport;
+  var anchorResizeWidth=window.innerWidth,anchorResizeHeight=window.innerHeight;
+  var anchorResizeVisible=anchorViewport?anchorViewport.height:window.innerHeight;
+  function scheduleAnchorResize(){
+    window.clearTimeout(anchorResizeTimer);
+    anchorResizeTimer=window.setTimeout(finishAnchorResize,anchorResizeQuietMs);
+  }
+  function observeAnchorViewport(){
+    var width=window.innerWidth,height=window.innerHeight;
+    var visible=anchorViewport?anchorViewport.height:height;
+    var widthChanged=width!==anchorResizeWidth;
+    var heightChanged=Math.abs(height-anchorResizeHeight)>.5||
+      Math.abs(visible-anchorResizeVisible)>.5;
+    anchorResizeWidth=width;anchorResizeHeight=height;anchorResizeVisible=visible;
+    if(width>768||widthChanged){
+      window.clearTimeout(anchorResizeTimer);anchorResizeTimer=0;
+      anchorResizeWaiting=false;
+      return false;
+    }
+    if(heightChanged){
+      anchorResizeWaiting=true;anchorResizeLastMotion=Date.now();
+      scheduleAnchorResize();
+    }
+    return anchorResizeWaiting;
+  }
+  function deferAnchorRemeasure(){
+    return observeAnchorViewport();
+  }
+  function finishAnchorResize(){
+    anchorResizeTimer=0;
+    observeAnchorViewport();
+    if(!anchorResizeWaiting)return;
+    if(anchorTouching||welcomeLandingHold||Date.now()-anchorResizeLastMotion<anchorResizeQuietMs){
+      scheduleAnchorResize();return;
+    }
+    requestAnimationFrame(function(){
+      observeAnchorViewport();
+      if(!anchorResizeWaiting)return;
+      if(anchorTouching||welcomeLandingHold||Date.now()-anchorResizeLastMotion<anchorResizeQuietMs){
+        scheduleAnchorResize();return;
+      }
+      window.clearTimeout(anchorResizeTimer);anchorResizeTimer=0;
+      anchorResizeWaiting=false;anchorRefreshPending=false;
+      syncWelcomeEndAnchor();
+      refreshHexAnchorNav();
+      refreshAnchorScrollbar();
+    });
+  }
+  function onAnchorViewportResize(){observeAnchorViewport();}
+  function onAnchorViewportScroll(){
+    observeAnchorViewport();
+    if(!anchorResizeWaiting)return;
+    anchorResizeLastMotion=Date.now();scheduleAnchorResize();
+  }
+  window.addEventListener('resize',onAnchorViewportResize,{passive:true});
+  window.addEventListener('scroll',onAnchorViewportScroll,{passive:true});
+  if(anchorViewport){
+    anchorViewport.addEventListener('resize',onAnchorViewportResize,{passive:true});
+    anchorViewport.addEventListener('scroll',onAnchorViewportScroll,{passive:true});
+  }
   function getHexAnchorHeaderHeight(){
     var propertyName=
       window.innerWidth<=768
@@ -1386,6 +1451,7 @@ function hexInitAnchorNav(){
     homePanel.style.setProperty('--hex-home-anchor-hover',ink==='#fff'?'#c8a874':'#4a7fd0');
   }
   function refreshHexAnchorNav(){
+    if(deferAnchorRemeasure())return;
     if(welcomeLandingHold)return;
     syncHomeAnchorBackground();
     if(anchorTouching){anchorRefreshPending=true;return;}
@@ -1613,6 +1679,7 @@ function hexInitAnchorNav(){
   nav.appendChild(anchorScrollbar);
 
   function syncAnchorScrollbar(){
+    if(deferAnchorRemeasure())return;
     if(anchorTouching)return;
     if(!anchorList)return;
 
@@ -1676,8 +1743,10 @@ function hexInitAnchorNav(){
     }
   }
   function refreshAnchorScrollbar(){
+    if(deferAnchorRemeasure())return;
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
+        if(deferAnchorRemeasure())return;
         syncAnchorScrollbar();
       });
     });
@@ -1781,6 +1850,7 @@ function hexInitAnchorNav(){
     holdWelcomeLanding();
   });
   function syncWelcomeEndAnchor(){
+    if(deferAnchorRemeasure())return;
     if(welcomeLandingHold)return;
     if(!homePanel)return;
     var state=window.hexWelcomeAnchorState||{};
