@@ -9349,6 +9349,10 @@ html.hex-opening-finishing
   max-width:100%;
   overflow-wrap:anywhere;
 }
+/* 創業セクションの説明見出し。H2は共通タイトル演出を使用する。 */
+#gc_auto_frame_home_4 .gc_auto_frame_spotitem_body h3{
+  color:#fff!important;
+}
 
 /* HTML配置位置で通常表示する、右上がりの5行ハッシュタグ */
 .hex-hashtag-banner{
