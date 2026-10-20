@@ -6139,7 +6139,7 @@ hexReady(function(){
           item.classList.remove('has-audience-hover');
         }
       });
-      if(window.ScrollTrigger){window.ScrollTrigger.refresh();}
+      if(window.innerWidth>768&&window.ScrollTrigger){window.ScrollTrigger.refresh();}
     }
     syncAudienceHoverLayout();
     if(hoverLayout.addEventListener){
@@ -12732,6 +12732,7 @@ hexLoad(function(){
     var gsap=window.gsap;
     var ScrollTrigger=window.ScrollTrigger;
     var LenisConstructor=window.Lenis;
+    var normalSp=window.innerWidth<=768;
     var useLenis=shouldUseLenis();
     var lenis=null;
     var autoRevealRootSelector=[
@@ -12845,7 +12846,7 @@ hexLoad(function(){
 
     if(
       !gsap||
-      !ScrollTrigger||
+      (!normalSp&&!ScrollTrigger)||
       (useLenis&&!LenisConstructor)||
       window.hexMotion
     ){
@@ -12853,8 +12854,10 @@ hexLoad(function(){
       return;
     }
 
-    gsap.registerPlugin(ScrollTrigger);
-    ScrollTrigger.config({autoRefreshEvents:'visibilitychange,DOMContentLoaded,load'});
+    if(!normalSp){
+      gsap.registerPlugin(ScrollTrigger);
+      ScrollTrigger.config({autoRefreshEvents:'visibilitychange,DOMContentLoaded,load'});
+    }
     window.addEventListener('hex:viewport-resize',function(){scheduleRefresh();},{passive:true});
 
     /*
@@ -12914,6 +12917,7 @@ hexLoad(function(){
     }
 
     function scheduleRefresh(delay){
+      if(normalSp)return;
       window.clearTimeout(refreshTimer);
 
       refreshTimer=window.setTimeout(function(){
@@ -13461,6 +13465,7 @@ hexLoad(function(){
     }
 
     function setupTopTitleRollTarget(target){
+      if(normalSp)return;
       if(target.dataset.hexTitleRollReady){return;}
       var isFoundedTitle=target.classList.contains('hex-founded-title');
       var english=(isFoundedTitle?target.textContent:(target.getAttribute('data-en')||'')).trim();
@@ -13724,6 +13729,16 @@ hexLoad(function(){
           years--;
         }
         foundedYear.textContent=String(Math.max(0,years));
+      }
+      if(normalSp){
+        if(section){
+          section.querySelectorAll('.hex-founded-marquee-copy,.hex-founded-marquee')
+            .forEach(function(element){element.hidden=true;});
+          section.querySelectorAll('.hex-company-card .hex-card').forEach(function(card){
+            card.classList.add('is-card-visible','is-count-complete');
+          });
+        }
+        return;
       }
       var cardWrap=section&&section.querySelector('.hex-company-card');
       var foundedMessage=section&&section.querySelector('.hex-founded-message');
@@ -14242,7 +14257,7 @@ hexLoad(function(){
 
       }
 
-      if(isReducedMotion()){
+      if(normalSp||isReducedMotion()){
         revealWithoutMotion(
           reveals.concat(
             staggers,
@@ -14272,7 +14287,7 @@ hexLoad(function(){
       lenis:lenis,
       usesLenis:!!lenis,
       gsap:gsap,
-      ScrollTrigger:ScrollTrigger,
+      ScrollTrigger:normalSp?null:ScrollTrigger,
       refresh:function(scope){
         setupMotionTargets(scope||document);
       },
@@ -14280,7 +14295,7 @@ hexLoad(function(){
         if(lenis){
           lenis.resize();
         }
-        ScrollTrigger.refresh();
+        if(!normalSp)ScrollTrigger.refresh();
       },
       scrollTo:function(target,options){
         var settings=options||{};
@@ -14397,6 +14412,10 @@ hexLoad(function(){
         return !!window.gsap;
       },
       function(){
+        if(window.innerWidth<=768){
+          waitForDomCompletion(initializeMotion);
+          return;
+        }
         loadLibrary(
           SCROLL_TRIGGER_URL,
           function(){
@@ -14756,7 +14775,7 @@ hexReady(function(){
     syncPause();
     document.dispatchEvent(new CustomEvent("hex:hero-layout-updated"));
     /* 挿入した帯の高さを既存のスクロール位置計算にも反映する。 */
-    if(window.ScrollTrigger){window.ScrollTrigger.refresh();}
+    if(window.innerWidth>768&&window.ScrollTrigger){window.ScrollTrigger.refresh();}
   }
   function initializeHexHashtags(){
     document.querySelectorAll('.hex-hashtag-source').forEach(initializeHexHashtagSource);
