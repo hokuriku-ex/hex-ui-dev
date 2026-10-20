@@ -9357,14 +9357,6 @@ hexReady(function(){
       }
       document.body.appendChild(loader);
 
-      if(logoStory){
-        window.requestAnimationFrame(function(){
-          window.requestAnimationFrame(function(){
-            logoStory.classList.add("is-playing");
-          });
-        });
-      }
-
       function setProgress(value){
         loader.style.setProperty("--hex-loader-progress",String(value));
       }
@@ -9440,14 +9432,20 @@ hexReady(function(){
           return;
         }
 
-        /* ロゴ完成後に消してから、初めて通常ローディングを開始する。 */
-        later(function(){
-          loader.classList.add("is-logo-hiding");
-          later(function(){
-            restoreLogo();
-            startResourceLoading();
-          },320);
-        },1400);
+        /* 初期描画を終えてから再生し、実際の開始時刻を基準にロゴを消す。 */
+        window.requestAnimationFrame(function(){
+          window.requestAnimationFrame(function(){
+            if(cancelled){return;}
+            logoStory.classList.add("is-playing");
+            later(function(){
+              loader.classList.add("is-logo-hiding");
+              later(function(){
+                restoreLogo();
+                startResourceLoading();
+              },320);
+            },1650);
+          });
+        });
       });
     }
 
