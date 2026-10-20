@@ -1441,6 +1441,10 @@
    トップページ：ウェルカム→私たちについて切り替え
 ======================================= */
 @media screen and (max-width:768px){
+  #gc_auto_frame_home_4{
+    --hex-founded-vw:min(1vw,16px);
+    --hex-founded-content-width:min(100vw - 32px, 1600px);
+  }
   .hex-founded-marquee{
     margin-bottom:32px;
     padding:28px 0 0;

@@ -9335,7 +9335,7 @@ html.hex-opening-finishing
 /* 創業セクション：既存の本文幅と文字サイズを維持 */
 #gc_auto_frame_home_4{
   --hex-founded-vw:min(1vw,16px);
-  --hex-founded-content-width:calc(min(100vw - 48px,1600px));
+  --hex-founded-content-width:min(100vw - 48px, 1600px);
 }
 #gc_auto_frame_home_4 .gc_auto_frame_spotitem_basewidth{
   width:100%!important;
