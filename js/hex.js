@@ -15968,7 +15968,15 @@ hexReady(function(){
         front.parentNode.insertBefore(marker,front);
         front._hexHomeRiseMarker=marker;
       }
-      if(marker._hexRiseEntry)return;
+      if(marker._hexRiseEntry){
+        // カレンダー非表示・施工エリア移動後も、表示中の直前セクションを背面に使う。
+        var existing=marker._hexRiseEntry;
+        if(existing.back!==back){
+          existing.back=back;existing.foundedEnd=back===founded;
+          prepareFlow(back);raiseFollowing(existing);
+        }
+        return;
+      }
       var entry={marker:marker,back:back,front:front,
         blocks:[],start:0,home:true,foundedEnd:back===founded};
       marker._hexRiseEntry=entry;entries.push(entry);
