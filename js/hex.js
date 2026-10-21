@@ -14876,6 +14876,7 @@ hexReady(function(){
 /* =======================================
    HTML配置位置で表示：5行の斜めハッシュタグ（自動ループ）
    HTML: .hex-hashtag-source 内に文言をp要素で5行登録。
+   data-overlap="true"で直前のコンテンツへオーバーラップする。
 ======================================= */
 (function(){
   'use strict';
@@ -14963,6 +14964,10 @@ hexReady(function(){
     });
     /* HTMLを置いた位置にそのまま生成し、別セクションへ移動しない。 */
     stage.classList.add('hex-hashtag-standalone');
+    if(String(source.getAttribute('data-overlap')).trim().toLowerCase()==='true'){
+      stage.classList.add('hex-hashtag-overlap');
+      stage._hexHashtagOverlapBack=function(){return hashtagNeighbor(stage,'previousElementSibling');};
+    }
     source.parentNode.insertBefore(stage,source);
     source._hexHashtagStage=stage;
     source.hidden=true;
@@ -15895,7 +15900,7 @@ hexReady(function(){
   }
   function previousContents(entry){
     // トップはCMSのセクション単位で、直前の一つだけを固定する。
-    if(entry.home)return [entry.back];
+    if(entry.home||entry.hashtag)return [entry.back];
     var blocks=[];
     for(var branch=entry.front;branch&&branch!==document.body;branch=branch.parentElement){
       for(var sibling=branch.previousElementSibling;sibling;sibling=sibling.previousElementSibling){
@@ -16320,6 +16325,7 @@ hexReady(function(){
   }
   function measure(){
     measureFrame=0;
+    scanHashtagOverlaps();
     if(homeFoundedSection())scanHome();
     syncHomeShapeBackgrounds();
     var scroll=scrollPosition();
@@ -16451,7 +16457,28 @@ hexReady(function(){
       if(sizeObserver)sizeObserver.observe(front);
     });
   }
+  function scanHashtagOverlaps(){
+    document.querySelectorAll('.hex-hashtag-banner.hex-hashtag-overlap').forEach(function(front){
+      var back=front._hexHashtagOverlapBack&&front._hexHashtagOverlapBack();
+      if(!back)return;
+      back=originalNode(back);
+      if(back===front||back.contains(front))return;
+      var existing=entries.find(function(entry){return entry.front===front;});
+      if(existing){existing.back=back;return;}
+      var marker=document.createElement('div');
+      marker.className='hex-rise-start';marker.setAttribute('aria-hidden','true');
+      front.parentNode.insertBefore(marker,front);
+      var entry={marker:marker,back:back,front:front,blocks:[],start:0,hashtag:true};
+      marker._hexRiseEntry=entry;entries.push(entry);
+      prepareFlow(front);prepareFlow(back);raiseFollowing(entry);
+      // トップの背面固定枠（z-index:95）より前に、帯を含むCMS枠を置く。
+      var homeFrame=front.closest('[id^="gc_auto_frame_home_"]');
+      if(homeFrame)homeFrame.classList.add('hex-hashtag-overlap-layer');
+      if(sizeObserver)sizeObserver.observe(front);
+    });
+  }
   function scan(){
+    scanHashtagOverlaps();
     if(homeFoundedSection()){
       // stickyの再計測で、ブラウザのアンカー補正が遠方へ移動させるのを防ぐ。
       document.documentElement.style.overflowAnchor='none';

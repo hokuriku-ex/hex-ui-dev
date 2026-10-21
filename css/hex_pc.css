@@ -9417,6 +9417,11 @@ html.hex-opening-finishing
   flex:none;
   clear:both;
 }
+/* 明示した帯だけ、共通の背面固定コンテンツより前へ重ねる。 */
+.hex-hashtag-banner.hex-hashtag-overlap,
+.hex-hashtag-overlap-layer{
+  position:relative;z-index:95!important;
+}
 .hex-hashtag-tilt::before,
 .hex-hashtag-tilt::after{
   content:"";
