@@ -247,6 +247,8 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
   var imageRoot=new URL('images/top-hero/',base).href;
   function resolve(file){
     file=(file||'').trim();
+    // Keep the existing six image basenames; only the format changes.
+    file=file.replace(/^((?:left|right)_bottom0[1-3])\.png(?=[?#]|$)/i,'$1.webp');
     if(!/^[^/\\?#]+\.(?:avif|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i.test(file))return null;
     return new URL(file,imageRoot).href;
   }

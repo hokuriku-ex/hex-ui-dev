@@ -8,7 +8,17 @@ Generated with the built-in ImageGen tool, using the user's temporary hero illus
 - `left_bottom02.png` / `right_bottom02.png`: groundcover and low shrubs.
 - `left_bottom03.png` / `right_bottom03.png`: medium and tall deciduous trees.
 
-The existing six filenames are retained. All assets use a transparent 1536 x 1024 PNG canvas. Right-hand files contain the horizontally mirrored artwork. Existing CSS positioning, stacking, reveal timing and JavaScript filename resolution are restored; layout balancing will be handled separately after the image replacement.
+The six basenames are retained, with `.webp` replacing `.png` for the active assets. All assets use a transparent 1536 x 1024 canvas and lossless WebP encoding. Right-hand files contain horizontally mirrored artwork. Existing CSS positioning, stacking and reveal timing are retained; layout balancing will be handled separately after the image replacement. The URL resolver changes only these six legacy PNG extensions to WebP.
+
+## Revised artwork
+
+Edited with the built-in ImageGen tool using each original layer as its edit target. Final assets are `left_bottom01.webp` through `left_bottom03.webp`, and their mirrored `right_bottom01.webp` through `right_bottom03.webp` counterparts.
+
+- Moss: preserve the mound silhouette and transparent canvas; replace all three colored regions with the darkest existing green as one flat uniform fill. No internal curves, highlights or shading.
+- Understory: preserve the flat leaf shapes and cluster arrangement; use brighter, more saturated spring greens and yellow-greens with a few dark accents. Reduce planting height by about 25 percent, keeping the same width and bottom baseline.
+- Trees: preserve the green palette, scalloped foliage and branching brown trunks. Remove the smallest sapling, leaving three trees. Swap the largest and second-largest positions: medium left, largest middle, smallest right. Reduce size differences; overlap neighboring foliage, with largest behind medium behind smallest. Lean toward the inner edge of the left corner at varied gentle angles.
+
+Final targeted tree prompt: Conservative final correction to this same three-tree flat botanical illustration. Preserve exact foliage palette, simple scalloped shape style, brown branching trunks, THREE trees and their order (medium on left, largest in middle, smallest on right). Increase the rightmost tree height about 25 percent so its height is about 75 percent of the largest, and make its leaves overlap the middle tree leaves slightly. Show all trees gently leaning to the RIGHT (toward the inner edge of a LEFT corner website illustration), with differing angles: left tree 10 degrees, middle tree 4 degrees, right tree 8 degrees. Do not space them in a tidy row. Largest behind medium behind smallest. Keep roots near the same bottom baseline, entire artwork inside canvas with at least 60 pixels transparent margin above foliage. No ground, no shrubs, no additional objects, real transparent background. Same 1536x1024 canvas. Do not redesign.
 
 ## Final generation prompts
 
