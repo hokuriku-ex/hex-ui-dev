@@ -10539,6 +10539,36 @@ html.hex-overlap-snap-animating{
   border-top-left-radius:var(--hex-bg-round-radius)!important;
   border-top-right-radius:var(--hex-bg-round-radius)!important;
 }
+/* 問い合わせは上向きカーブ、フッターは小波。オーバーラップの固定枠は維持する。 */
+.hex-overlap-shaped-front{
+  border-radius:0!important;background:var(--hex-overlap-surface,#fff)!important;
+  padding-top:var(--hex-bg-upper-depth)!important;
+}
+.hex-overlap-shaped-front.hex-bg-curve-top,
+.hex-overlap-shaped-front.hex-bg-curve-top + .hex-rise-veil{
+  --hex-bg-upper-depth:var(--hex-curve-depth);
+  -webkit-mask-image:var(--hex-curve-top-mask),linear-gradient(#000,#000);
+  mask-image:var(--hex-curve-top-mask),linear-gradient(#000,#000);
+}
+.hex-overlap-shaped-front.hex-bg-wave-small,
+.hex-overlap-shaped-front.hex-bg-wave-small + .hex-rise-veil{
+  --hex-bg-upper-depth:var(--hex-wave-small-depth);
+  -webkit-mask-image:var(--hex-wave-top-mask),linear-gradient(#000,#000);
+  mask-image:var(--hex-wave-top-mask),linear-gradient(#000,#000);
+}
+.hex-overlap-shaped-front,
+.hex-overlap-shaped-front + .hex-rise-veil{
+  -webkit-mask-size:100% var(--hex-bg-upper-depth),100% calc(100% - var(--hex-bg-upper-depth) + 1px);
+  mask-size:100% var(--hex-bg-upper-depth),100% calc(100% - var(--hex-bg-upper-depth) + 1px);
+  -webkit-mask-position:0 top,0 bottom;mask-position:0 top,0 bottom;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+}
+.hex-overlap-shaped-front.hex-bg-wave-small,
+.hex-overlap-shaped-front.hex-bg-wave-small + .hex-rise-veil{
+  -webkit-mask-size:var(--hex-wave-small-width) var(--hex-bg-upper-depth),100% calc(100% - var(--hex-bg-upper-depth) + 1px);
+  mask-size:var(--hex-wave-small-width) var(--hex-bg-upper-depth),100% calc(100% - var(--hex-bg-upper-depth) + 1px);
+  -webkit-mask-repeat:repeat-x,no-repeat;mask-repeat:repeat-x,no-repeat;
+}
 /* 角丸フッターの外側だけを、直前セクションの色で補う。 */
 .hex-overlap-corner-fill{
   position:absolute;top:0;left:50%;width:100vw;height:var(--hex-bg-round-radius);

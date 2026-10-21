@@ -15981,6 +15981,7 @@ hexReady(function(){
       if(!isHomeOverlapTarget(front))return;
       var back=index?sections[index-1]:founded;
       if(!back)return;
+      applySharedOverlapShape(front);
       var marker=front._hexHomeRiseMarker;
       if(!marker){
         marker=document.createElement('div');
@@ -16004,7 +16005,7 @@ hexReady(function(){
       marker._hexRiseEntry=entry;entries.push(entry);
       front.classList.add('hex-home-overlap-front');
       // 明示範囲にはその形状を使用。外側の固定角丸を二重に重ねない。
-      entry.addedRound=!front.classList.contains('hex-home-has-bg-range')&&!front.classList.contains('hex-bg-round-top');
+      entry.addedRound=!front.classList.contains('hex-overlap-shaped-front')&&!front.classList.contains('hex-home-has-bg-range')&&!front.classList.contains('hex-bg-round-top');
       if(entry.addedRound)front.classList.add('hex-bg-round-top');
       prepareFlow(front);prepareFlow(entry.back);raiseFollowing(entry);
       if(sizeObserver)sizeObserver.observe(front);
@@ -16028,7 +16029,7 @@ hexReady(function(){
     var homeNav=home&&!ignoreNav&&window.hexHomeAnchorNav;
     var navHeight=homeNav?homeNav.fixedHeight():0;
     var base=header+navHeight+(home?16:0);
-    var edge=node.matches('.hex-bg-range,.hex-home-overlap-front.hex-bg-round-top,.hex-overlap-round-front.hex-bg-round-top')?node:node.querySelector('.hex-bg-range');
+    var edge=node.matches('.hex-bg-range,.hex-overlap-shaped-front,.hex-home-overlap-front.hex-bg-round-top,.hex-overlap-round-front.hex-bg-round-top')?node:node.querySelector('.hex-bg-range');
     if(!edge)return base;
     var value=getComputedStyle(edge).getPropertyValue('--hex-bg-upper-depth').trim();
     if(!value)return base;
@@ -16427,6 +16428,17 @@ hexReady(function(){
     if(delay){measureTimer=setTimeout(queueMeasure,delay);return;}
     if(!measureFrame)measureFrame=requestAnimationFrame(measure);
   }
+  function applySharedOverlapShape(front){
+    var footer=front.matches('.gc_auto_frame_footer,.hex-footer-frame')||front.id===HOME_SECTIONS.FOOTER;
+    var contact=front.id===HOME_SECTIONS.CONTACT||front.matches('.hex-contact-section')||front.querySelector('.hex-contact-section');
+    if(!footer&&!contact)return false;
+    var surface=sectionCoverColor(front);
+    front.classList.remove('hex-bg-round-top','hex-bg-curve-top','hex-bg-wave-small');
+    front.classList.add('hex-overlap-shaped-front',footer?'hex-bg-wave-small':'hex-bg-curve-top');
+    front.style.setProperty('--hex-overlap-surface',surface);
+    if(front._hexOverlapCornerFill){front._hexOverlapCornerFill.remove();delete front._hexOverlapCornerFill;}
+    return true;
+  }
   function scanSharedRoundSections(){
     var fronts=[];
     document.querySelectorAll('.hex-contact-section,.gc_auto_frame_footer').forEach(function(content){
@@ -16440,9 +16452,10 @@ hexReady(function(){
       if(front&&fronts.indexOf(front)===-1)fronts.push(front);
     });
     fronts.forEach(function(front){
-      front.classList.add('hex-overlap-round-front','hex-bg-round-top');
+      front.classList.add('hex-overlap-round-front');
+      if(!applySharedOverlapShape(front))front.classList.add('hex-bg-round-top');
       front.querySelectorAll('.gc_auto_frame_footer,.hex-footer-frame').forEach(function(footer){
-        footer.classList.add('hex-overlap-round-front','hex-bg-round-top');
+        footer.classList.add('hex-overlap-round-front');applySharedOverlapShape(footer);
       });
       if(entries.some(function(entry){return entry.front===front;}))return;
       var existing=front.querySelector('.hex-rise-start');
