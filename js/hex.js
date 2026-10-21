@@ -15323,6 +15323,19 @@ hexReady(function(){
     photo.appendChild(track);
     decor.appendChild(photo);hero.insertBefore(decor,hero.firstChild);
     var resizeFrame=0, titleRatio=1,layoutObserver=null,observedNav=null;
+    var pageViewportWidth=0;
+    function syncPageViewportHeight(){
+      var width=window.innerWidth;
+      if(width<=768){
+        // アドレスバー伸縮による高さ変更は保持し、幅変更時だけ取り直す。
+        if(width!==pageViewportWidth){
+          hero.style.setProperty('--hex-viewport-height',window.hexViewportHeight()+'px');
+        }
+      }else{
+        hero.style.removeProperty('--hex-viewport-height');
+      }
+      pageViewportWidth=width;
+    }
     function fitTitle(){
       var style=getComputedStyle(heading,'::after');
       var text=style.content;
@@ -15357,6 +15370,7 @@ hexReady(function(){
       measure.remove();
     }
     function layout(){
+      syncPageViewportHeight();
       // ナビはload後に生成されるため、初期化時の参照を固定しない。
       var currentNav=contents.querySelector('.hex-anchor-nav');
       if(currentNav)nav=currentNav;

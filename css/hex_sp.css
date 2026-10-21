@@ -2754,6 +2754,11 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     --hex-page-header:var(--header_height_smartphone,clamp(64px,20vw,80px));
     align-items:flex-end!important;
   }
+  /* SPの固定背景もタイトルが保持する高さを使い、アドレスバー伸縮に追従させない。 */
+  .pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-decor{
+    height:calc(var(--hex-viewport-height,100svh) - var(--hex-page-header));
+    bottom:auto;
+  }
   .pagetitle_type.pagetitle_type4.hex-page-hero > .contents{
     margin:0!important;padding:0!important;
   }
