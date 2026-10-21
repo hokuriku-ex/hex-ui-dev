@@ -8927,7 +8927,7 @@ html.hex-opening-finishing
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(2){background-color:#5a74b6!important}
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(3){background-color:#7789b9!important}
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(4){background-color:#97a5c9!important}
-.hex-opening-hero-preview.hex-v2-opening-preview{position:fixed!important;top:var(--header_height,80px)!important;right:0!important;bottom:0!important;left:0!important;width:100vw!important;height:auto!important;overflow:hidden!important;background:#38B6FF!important;z-index:9!important}
+.hex-opening-hero-preview.hex-v2-opening-preview{position:fixed!important;top:var(--header_height,80px)!important;right:0!important;bottom:0!important;left:0!important;width:100vw!important;height:auto!important;overflow:hidden!important;background:#A0D8EF!important;z-index:9!important}
 .hex-opening-hero-preview.hex-v2-opening-preview .hex-opening-hero-preview-image{position:absolute!important;top:0!important;right:auto!important;bottom:auto!important;left:0!important;z-index:3!important;display:block!important;width:var(--hex-preview-image-width,100%)!important;height:var(--hex-preview-image-height,100%)!important;max-width:none!important;object-fit:fill!important;transform:var(--hex-preview-image-transform,none)!important;transform-origin:top left!important}
 .hex-opening.is-curtain-sequence .is-v2-logo-playing :is(.hex-logo-front-left-mask-path,.hex-logo-front-center-mask-path,.hex-logo-back-arm-mask-path){animation:hex-v2-logo-draw .9s cubic-bezier(.22,.8,.3,1) forwards!important}
 .hex-opening.is-curtain-sequence .is-v2-logo-playing :is(.hex-logo-back-hand,.hex-logo-company-name){animation:hex-v2-logo-fade .62s ease .5s forwards!important}
@@ -9027,7 +9027,7 @@ html.hex-opening-finishing
 /* 画像より背面で、濃淡２色の青い雲PNGを個別に漂わせる。 */
 .hex-hero,
 .hex-v2-handoff{
-  background:#38B6FF;
+  background:#A0D8EF;
 }
 .hex-cloud-layer{
   position:absolute;
