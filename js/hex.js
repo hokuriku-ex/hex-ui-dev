@@ -247,9 +247,6 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
   var imageRoot=new URL('images/top-hero/',base).href;
   function resolve(file){
     file=(file||'').trim();
-    // 既存HTMLの左右各3枚を、共通の植栽3レイヤーへ差し替える。右側はCSSで反転。
-    var garden=/(?:^|\/)(?:left|right)_bottom0([1-3])\.png(?:[?#].*)?$/i.exec(file);
-    if(garden)file=['garden-moss.webp','garden-understory.webp','garden-trees.webp'][Number(garden[1])-1];
     if(!/^[^/\\?#]+\.(?:avif|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i.test(file))return null;
     return new URL(file,imageRoot).href;
   }

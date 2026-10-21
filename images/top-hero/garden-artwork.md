@@ -4,11 +4,11 @@ Generated with the built-in ImageGen tool, using the user's temporary hero illus
 
 ## Assets
 
-- `garden-moss.webp`: moss mound, replaces `left_bottom01.png` / `right_bottom01.png`.
-- `garden-understory.webp`: groundcover and low shrubs, replaces `left_bottom02.png` / `right_bottom02.png`.
-- `garden-trees.webp`: medium and tall deciduous trees, replaces `left_bottom03.png` / `right_bottom03.png`.
+- `left_bottom01.png` / `right_bottom01.png`: moss mound.
+- `left_bottom02.png` / `right_bottom02.png`: groundcover and low shrubs.
+- `left_bottom03.png` / `right_bottom03.png`: medium and tall deciduous trees.
 
-All three assets have the same transparent 1536 x 1024 canvas. WebP encoding is lossless. The right-hand instances use CSS horizontal reflection. Original placeholder files remain available. Layer order: mound, trees, understory. The existing HTML and reveal timing remain supported.
+The existing six filenames are retained. All assets use a transparent 1536 x 1024 PNG canvas. Right-hand files contain the horizontally mirrored artwork. Existing CSS positioning, stacking, reveal timing and JavaScript filename resolution are restored; layout balancing will be handled separately after the image replacement.
 
 ## Final generation prompts
 
