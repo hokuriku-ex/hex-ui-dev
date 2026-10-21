@@ -285,7 +285,7 @@ const HOME_SECTIONS={
   HERO:'gc_auto_frame_home_2', /* オリジナルヒーロー画像 */
   WELCOME:'gc_auto_frame_home_3', /* Welcomeメッセージ */
   ABOUT:'gc_auto_frame_home_4', /* 私たちについて */
-  FIRST:'gc_auto_frame_home_5', /* 初めての方へ */
+  FIRST:'gc_auto_frame_home_5', /* ご依頼の流れ */
   SERVICE:'gc_auto_frame_home_6', /* サービス案内 */
   PICKUP:'gc_auto_frame_home_7', /* 注目アイテム */
   NEWS_SECTION:'gc_auto_frame_home_8', /* お知らせセクション */
@@ -320,13 +320,16 @@ const HOME_DISPLAY_SECTIONS=[
    お問い合わせ・フッターは登録不要で、従来どおり個別に重ねる。 */
 const HOME_OVERLAP_SECTIONS={
   PC:[
+    HOME_SECTIONS.FIRST,
     HOME_SECTIONS.RECRUIT
   ],
   SP:[
+    HOME_SECTIONS.FIRST,
     HOME_SECTIONS.SERVICE,
     HOME_SECTIONS.PICKUP,
     HOME_SECTIONS.NEWS_SECTION,
     HOME_SECTIONS.BANNER,
+    HOME_SECTIONS.MOVIE,
     HOME_SECTIONS.RECRUIT
   ]
 };
