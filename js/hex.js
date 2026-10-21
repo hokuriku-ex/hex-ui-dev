@@ -3787,8 +3787,8 @@ hexReady(function(){
         heroEllipse.style.transform="translate3d("+ellipseX+"px,"+ellipseY+"px,0)";
       }
       if(bottomIllustrations){
-        /* 台座と同じ画像座標を使い、左右端・倍率・横移動を揃える。 */
-        var baseWidth=metrics.imageWidth*metrics.scale;
+        /* 初期倍率の幅を維持し、ズームによるイラストの拡大縮小を防ぐ。 */
+        var baseWidth=metrics.imageWidth*metrics.baseScale*HERO_ZOOM_MIN;
         var baseX=(metrics.width-baseWidth)/2-state.x*metrics.scale;
         if(bottomIllustrations.style.width!==baseWidth+"px"){
           bottomIllustrations.style.width=baseWidth+"px";
