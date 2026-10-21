@@ -2609,7 +2609,7 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
   .hex-simple-loader-logo{
     width:min(360px,88vw);
-    transform:translate(-50%,-62%);
+    transform:translate(-50%,-50%);
   }
 
   .hex-simple-loader.has-logo-animation.is-loading-phase .hex-simple-loader-label{top:calc(50% - 12px)}

@@ -8959,7 +8959,7 @@ html.hex-opening-finishing
 .hex-opening-hero-preview.hex-v2-opening-preview.is-v2-circle-reveal{z-index:11!important;opacity:1!important;visibility:visible!important;will-change:clip-path,-webkit-clip-path}
 
 /* ローディング内で1回だけ再生するロゴアニメーション */
-.hex-simple-loader-logo{position:absolute;top:50%;left:50%;z-index:2;width:min(520px,72vw);height:auto;color:#fff;overflow:visible;opacity:1;transform:translate3d(-50%,-56%,0);will-change:opacity;isolation:isolate;transition:opacity .32s ease}
+.hex-simple-loader-logo{position:absolute;top:50%;left:50%;z-index:2;width:min(520px,72vw);height:auto;color:#fff;overflow:visible;opacity:1;transform:translate3d(-50%,-50%,0);will-change:opacity;isolation:isolate;transition:opacity .32s ease}
 .hex-simple-loader-logo .hex-logo-build,.hex-simple-loader-logo .hex-logo-company-name{fill:#fff!important}
 .hex-simple-loader-logo .hex-logo-front-right-layer,
 .hex-simple-loader-logo .hex-logo-front-right-layer use,
