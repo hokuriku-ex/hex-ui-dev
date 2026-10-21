@@ -1123,9 +1123,9 @@ a.hex-text-link[target="_blank"]::after{
 /* トップページオーバーラップ用スペーサー */
 .hex-overlap-spacer.hex-home-overlap-spacer{
   padding-top:clamp(
-    96px,
-    calc(7.4246vw + 38.90px),
-    128px
+    120px,
+    calc(9.2807vw + 48.63px),
+    160px
   )!important;
   clear:both;
 }
