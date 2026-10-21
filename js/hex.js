@@ -3789,7 +3789,7 @@ hexReady(function(){
       if(bottomIllustrations){
         /* 初期倍率の幅を維持し、ズームによるイラストの拡大縮小を防ぐ。 */
         var baseWidth=metrics.imageWidth*metrics.baseScale*HERO_ZOOM_MIN;
-        var panX=state.x*metrics.scale;
+        var panX=state.x*metrics.baseScale*HERO_ZOOM_MIN;
         var baseX=(metrics.width-baseWidth)/2-panX;
         if(bottomIllustrations.style.width!==baseWidth+"px"){
           bottomIllustrations.style.width=baseWidth+"px";
@@ -3798,11 +3798,12 @@ hexReady(function(){
           });
         }
         bottomIllustrations.style.transform="translate3d("+baseX+"px,0,0)";
-        /* 横移動は03を100%、02を60%、01を35%にして奥行きを付ける。 */
-        bottomIllustrations.style.setProperty("--hex-bottom-moss-parallax-x",panX*.65+"px");
-        bottomIllustrations.style.setProperty("--hex-bottom-screen-left",(-baseX-panX*.6)+"px");
+        /* 100%表示時の座標を基準に、01→02→03の順で追従を抑える。 */
+        bottomIllustrations.style.setProperty("--hex-bottom-moss-parallax-x",panX*.25+"px");
+        bottomIllustrations.style.setProperty("--hex-bottom-tree-parallax-x",panX*.75+"px");
+        bottomIllustrations.style.setProperty("--hex-bottom-screen-left",(-baseX-panX*.5)+"px");
         bottomIllustrations.style.setProperty("--hex-bottom-screen-right",
-          (baseX+baseWidth-metrics.width+panX*.6)+"px");
+          (baseX+baseWidth-metrics.width+panX*.5)+"px");
       }
       updateBottomIllustrations();
       updateWelcomeButton();
@@ -9181,7 +9182,7 @@ hexReady(function(){
       if(liveBottomArt&&previewBottomArt&&liveBottomArt.style.width){
         previewBottomArt.style.width=liveBottomArt.style.width;
         previewBottomArt.style.transform=liveBottomArt.style.transform;
-        ["--hex-bottom-screen-left","--hex-bottom-screen-right","--hex-bottom-moss-parallax-x"].forEach(function(name){
+        ["--hex-bottom-screen-left","--hex-bottom-screen-right","--hex-bottom-moss-parallax-x","--hex-bottom-tree-parallax-x"].forEach(function(name){
           previewBottomArt.style.setProperty(name,liveBottomArt.style.getPropertyValue(name));
         });
       }
