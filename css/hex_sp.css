@@ -257,6 +257,11 @@
       (var(--hex-viewport-height,100dvh) - var(--header_height_smartphone, clamp(64px, 20vw, 80px))) / 2
     )!important;
   }
+  .hex-overlap-spacer.hex-home-overlap-spacer{
+    padding-top:calc(
+      (var(--hex-viewport-height,100dvh) - var(--header_height_smartphone, clamp(64px, 20vw, 80px))) / 2
+    )!important;
+  }
 }
 
 /* =======================================
