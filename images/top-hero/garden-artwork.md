@@ -4,9 +4,9 @@ Generated with the built-in ImageGen tool, using the user's temporary hero illus
 
 ## Assets
 
-- `left_bottom01.png` / `right_bottom01.png`: moss mound.
-- `left_bottom02.png` / `right_bottom02.png`: groundcover and low shrubs.
-- `left_bottom03.png` / `right_bottom03.png`: medium and tall deciduous trees.
+- `left_bottom01.webp` / `right_bottom01.webp`: moss mound.
+- `left_bottom02.webp` / `right_bottom02.webp`: groundcover and low shrubs.
+- `left_bottom03.webp` / `right_bottom03.webp`: medium and tall deciduous trees.
 
 The six basenames are retained, with `.webp` replacing `.png` for the active assets. All assets use a transparent 1536 x 1024 canvas and lossless WebP encoding. Right-hand files contain horizontally mirrored artwork. Existing CSS positioning, stacking and reveal timing are retained; layout balancing will be handled separately after the image replacement. The URL resolver changes only these six legacy PNG extensions to WebP.
 
