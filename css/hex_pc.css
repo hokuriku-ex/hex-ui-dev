@@ -10658,6 +10658,11 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
 .hex-bg-range.hex-bg-decoration-start:not(.hex-bg-empty){
   padding-top:var(--hex-bg-upper-depth,0px)!important;
 }
+/* 既存の下余白が終わった後に下端形状を配置し、本文へ重ねない。
+   下端▼は外側のmargin-bottomで26pxを確保済み。 */
+.hex-bg-range.hex-bg-has-lower-decoration:not(.hex-bg-empty):not(.hex-bg-lower-arrow){
+  padding-bottom:var(--hex-bg-lower-depth,0px)!important;
+}
 /* 旧カーブ用の本文持ち上げを解除。背景画像レイヤーの座標は維持する。 */
 .hex-bg-range.hex-bg-curve-top.hex-bg-decoration-start > :not(.hex-bg-patterns-layer){
   top:0;
