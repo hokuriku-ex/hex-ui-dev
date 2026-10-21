@@ -3801,6 +3801,9 @@ hexReady(function(){
         /* 100%表示時の座標を基準に、01→02→03の順で追従を抑える。 */
         bottomIllustrations.style.setProperty("--hex-bottom-moss-parallax-x",panX*.25+"px");
         bottomIllustrations.style.setProperty("--hex-bottom-tree-parallax-x",panX*.75+"px");
+        /* 左右のドラッグ限界で、対応する02の外側端が画面端に揃う。 */
+        bottomIllustrations.style.setProperty("--hex-bottom-edge-inset",
+          (metrics.maxX*metrics.baseScale*HERO_ZOOM_MIN*.5)+"px");
         bottomIllustrations.style.setProperty("--hex-bottom-screen-left",(-baseX-panX*.5)+"px");
         bottomIllustrations.style.setProperty("--hex-bottom-screen-right",
           (baseX+baseWidth-metrics.width+panX*.5)+"px");
@@ -9182,7 +9185,7 @@ hexReady(function(){
       if(liveBottomArt&&previewBottomArt&&liveBottomArt.style.width){
         previewBottomArt.style.width=liveBottomArt.style.width;
         previewBottomArt.style.transform=liveBottomArt.style.transform;
-        ["--hex-bottom-screen-left","--hex-bottom-screen-right","--hex-bottom-moss-parallax-x","--hex-bottom-tree-parallax-x"].forEach(function(name){
+        ["--hex-bottom-screen-left","--hex-bottom-screen-right","--hex-bottom-moss-parallax-x","--hex-bottom-tree-parallax-x","--hex-bottom-edge-inset"].forEach(function(name){
           previewBottomArt.style.setProperty(name,liveBottomArt.style.getPropertyValue(name));
         });
       }
