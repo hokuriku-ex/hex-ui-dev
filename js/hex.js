@@ -3732,16 +3732,10 @@ hexReady(function(){
           bottomArtTravel.set(image,height);
         }
         var local=clamp((progress-start)/(end-start),0,1);
-        /* 段階ごとに少しだけ行き過ぎて戻る動き。自動ループは行わない。 */
-        var eased=local===0?0:(local===1?1:
-          1+2.70158*Math.pow(local-1,3)+1.70158*Math.pow(local-1,2));
+        /* 下から表示位置まで伸び、行き過ぎずに止まる。 */
+        var eased=1-Math.pow(1-local,3);
         var offset=Math.round((1-eased)*(height*rise+24)*10)/10+"px";
-        /* 跳ね上がりの最大値だけ着地点を下げ、下端に隙間を作らない。 */
-        var bounceBuffer=Math.ceil((height*rise+24)*.101+2)+"px";
         var opacity=String(Math.round(clamp(local*4,0,1)*1000)/1000);
-        if(image.style.getPropertyValue("--hex-bottom-bounce-buffer")!==bounceBuffer){
-          image.style.setProperty("--hex-bottom-bounce-buffer",bounceBuffer);
-        }
         if(image.style.getPropertyValue("--hex-bottom-offset")!==offset){
           image.style.setProperty("--hex-bottom-offset",offset);
         }
@@ -3803,6 +3797,10 @@ hexReady(function(){
           });
         }
         bottomIllustrations.style.transform="translate3d("+baseX+"px,0,0)";
+        /* 02は横探索中も画面の左右端に合わせる。 */
+        bottomIllustrations.style.setProperty("--hex-bottom-screen-left",-baseX+"px");
+        bottomIllustrations.style.setProperty("--hex-bottom-screen-right",
+          (baseX+baseWidth-metrics.width)+"px");
       }
       updateBottomIllustrations();
       updateWelcomeButton();
@@ -9181,6 +9179,9 @@ hexReady(function(){
       if(liveBottomArt&&previewBottomArt&&liveBottomArt.style.width){
         previewBottomArt.style.width=liveBottomArt.style.width;
         previewBottomArt.style.transform=liveBottomArt.style.transform;
+        ["--hex-bottom-screen-left","--hex-bottom-screen-right"].forEach(function(name){
+          previewBottomArt.style.setProperty(name,liveBottomArt.style.getPropertyValue(name));
+        });
       }
       hero.querySelectorAll(".hex-cloud").forEach(function(cloud){
         var cloudType=Array.from(cloud.classList).filter(function(name){
@@ -9197,8 +9198,6 @@ hexReady(function(){
         if(!target){return;}
         target.style.setProperty("--hex-bottom-offset",
           image.style.getPropertyValue("--hex-bottom-offset"));
-        target.style.setProperty("--hex-bottom-bounce-buffer",
-          image.style.getPropertyValue("--hex-bottom-bounce-buffer"));
         target.style.setProperty("--hex-bottom-opacity",
           image.style.getPropertyValue("--hex-bottom-opacity"));
       });

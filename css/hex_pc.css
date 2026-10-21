@@ -9129,23 +9129,24 @@ html.hex-opening-finishing
   max-width:none;
   left:var(--hex-bottom-left,auto);
   right:var(--hex-bottom-right,auto);
-  bottom:calc(var(--hex-bottom-y,0px) - var(--hex-bottom-bounce-buffer,0px));
+  bottom:var(--hex-bottom-y,0px);
   opacity:var(--hex-bottom-opacity,0);
-  transform:translate3d(0,var(--hex-bottom-offset,110%),0);
+  transform:translate3d(0,var(--hex-bottom-offset,110%),0) rotate(var(--hex-bottom-rotate,0deg));
+  transform-origin:50% 100%;
   will-change:transform,opacity;
   pointer-events:none;
 }
 /* 幅と左右端からの距離は台座画像の描画幅に対する割合。start/end は縦探索の進行率。 */
 /* 01の実描画高277px（透過余白を除く）を基準に、42cqw × 277/1536で上移動量を計算。 */
-.hex-hero-bottom-img--l1{z-index:1;--hex-bottom-width:42%;--hex-bottom-left:-2%;--hex-bottom-y:-10px;--hex-bottom-start:.09;--hex-bottom-end:.52;--hex-bottom-rise:1.03;}
-.hex-hero-bottom-img--l2{z-index:3;--hex-bottom-width:24%;--hex-bottom-left:-3%;--hex-bottom-y:calc(-13px + 7.57421875cqw / 3);--hex-bottom-start:.22;--hex-bottom-end:.76;--hex-bottom-rise:1.08;}
-.hex-hero-bottom-img--l3{z-index:2;--hex-bottom-width:31%;--hex-bottom-left:-6%;--hex-bottom-y:calc(-12px + 7.57421875cqw * 2 / 3);--hex-bottom-start:.34;--hex-bottom-end:.95;--hex-bottom-rise:1.05;}
-.hex-hero-bottom-img--r1{z-index:1;--hex-bottom-width:42%;--hex-bottom-right:-2%;--hex-bottom-y:-10px;--hex-bottom-start:.14;--hex-bottom-end:.57;--hex-bottom-rise:1.03;}
-.hex-hero-bottom-img--r2{z-index:3;--hex-bottom-width:24%;--hex-bottom-right:-3%;--hex-bottom-y:calc(-13px + 7.57421875cqw / 3);--hex-bottom-start:.26;--hex-bottom-end:.80;--hex-bottom-rise:1.08;}
-.hex-hero-bottom-img--r3{z-index:2;--hex-bottom-width:31%;--hex-bottom-right:-6%;--hex-bottom-y:calc(-12px + 7.57421875cqw * 2 / 3);--hex-bottom-start:.39;--hex-bottom-end:.98;--hex-bottom-rise:1.05;}
-.hex-hero.is-v2-fallback .hex-hero-bottom-img{opacity:1!important;transform:none!important;}
+.hex-hero-bottom-img--l1{z-index:1;--hex-bottom-width:42%;--hex-bottom-left:-2%;--hex-bottom-y:0px;--hex-bottom-start:.09;--hex-bottom-end:.52;--hex-bottom-rise:1.03;}
+.hex-hero-bottom-img--l2{z-index:3;--hex-bottom-width:24%;--hex-bottom-left:var(--hex-bottom-screen-left,calc((100% - 100vw) / 2));--hex-bottom-y:calc(-13px + 7.57421875cqw / 3);--hex-bottom-start:.22;--hex-bottom-end:.76;--hex-bottom-rise:1.08;}
+.hex-hero-bottom-img--l3{z-index:2;--hex-bottom-width:31%;--hex-bottom-left:-6%;--hex-bottom-y:calc(-12px + 7.57421875cqw * 2 / 3);--hex-bottom-start:.34;--hex-bottom-end:.95;--hex-bottom-rise:1.05;--hex-bottom-rotate:5deg;}
+.hex-hero-bottom-img--r1{z-index:1;--hex-bottom-width:42%;--hex-bottom-right:-2%;--hex-bottom-y:0px;--hex-bottom-start:.14;--hex-bottom-end:.57;--hex-bottom-rise:1.03;}
+.hex-hero-bottom-img--r2{z-index:3;--hex-bottom-width:24%;--hex-bottom-right:var(--hex-bottom-screen-right,calc((100% - 100vw) / 2));--hex-bottom-y:calc(-13px + 7.57421875cqw / 3);--hex-bottom-start:.26;--hex-bottom-end:.80;--hex-bottom-rise:1.08;}
+.hex-hero-bottom-img--r3{z-index:2;--hex-bottom-width:31%;--hex-bottom-right:-6%;--hex-bottom-y:calc(-12px + 7.57421875cqw * 2 / 3);--hex-bottom-start:.39;--hex-bottom-end:.98;--hex-bottom-rise:1.05;--hex-bottom-rotate:-5deg;}
+.hex-hero.is-v2-fallback .hex-hero-bottom-img{opacity:1!important;transform:rotate(var(--hex-bottom-rotate,0deg))!important;}
 @media (prefers-reduced-motion:reduce){
-  .hex-hero-bottom-img{opacity:1!important;transform:none!important;will-change:auto;}
+  .hex-hero-bottom-img{opacity:1!important;transform:rotate(var(--hex-bottom-rotate,0deg))!important;will-change:auto;}
 }
 /* 透過した建物・台座は雲の上に置く。 */
 .hex-hero>.hex-hero-scene{z-index:3;}
