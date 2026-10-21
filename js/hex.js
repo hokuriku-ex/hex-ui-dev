@@ -3789,7 +3789,8 @@ hexReady(function(){
       if(bottomIllustrations){
         /* 初期倍率の幅を維持し、ズームによるイラストの拡大縮小を防ぐ。 */
         var baseWidth=metrics.imageWidth*metrics.baseScale*HERO_ZOOM_MIN;
-        var baseX=(metrics.width-baseWidth)/2-state.x*metrics.scale;
+        var panX=state.x*metrics.scale;
+        var baseX=(metrics.width-baseWidth)/2-panX;
         if(bottomIllustrations.style.width!==baseWidth+"px"){
           bottomIllustrations.style.width=baseWidth+"px";
           bottomImages.forEach(function(image){
@@ -3797,10 +3798,11 @@ hexReady(function(){
           });
         }
         bottomIllustrations.style.transform="translate3d("+baseX+"px,0,0)";
-        /* 02は横探索中も画面の左右端に合わせる。 */
-        bottomIllustrations.style.setProperty("--hex-bottom-screen-left",-baseX+"px");
+        /* 横移動は03を100%、02を60%、01を35%にして奥行きを付ける。 */
+        bottomIllustrations.style.setProperty("--hex-bottom-moss-parallax-x",panX*.65+"px");
+        bottomIllustrations.style.setProperty("--hex-bottom-screen-left",(-baseX-panX*.6)+"px");
         bottomIllustrations.style.setProperty("--hex-bottom-screen-right",
-          (baseX+baseWidth-metrics.width)+"px");
+          (baseX+baseWidth-metrics.width+panX*.6)+"px");
       }
       updateBottomIllustrations();
       updateWelcomeButton();
@@ -9179,7 +9181,7 @@ hexReady(function(){
       if(liveBottomArt&&previewBottomArt&&liveBottomArt.style.width){
         previewBottomArt.style.width=liveBottomArt.style.width;
         previewBottomArt.style.transform=liveBottomArt.style.transform;
-        ["--hex-bottom-screen-left","--hex-bottom-screen-right"].forEach(function(name){
+        ["--hex-bottom-screen-left","--hex-bottom-screen-right","--hex-bottom-moss-parallax-x"].forEach(function(name){
           previewBottomArt.style.setProperty(name,liveBottomArt.style.getPropertyValue(name));
         });
       }
