@@ -2129,9 +2129,6 @@ div[hex-sp]{
   inset:0;
   z-index:10;
 }
-.hex-card:has(.hex-card-title-link[href]):hover{
-  border-color:#c8a874;
-}
 .hex-card:has(.hex-card-title-link[href]):hover .hex-card-title-link,
 .hex-card:has(.hex-card-title-link[href]):hover .hex-link-detail,
 .hex-card:has(.hex-card-title-link[href]):hover .hex-link-icon{
