@@ -3798,15 +3798,15 @@ hexReady(function(){
           });
         }
         bottomIllustrations.style.transform="translate3d("+baseX+"px,0,0)";
-        /* 100%表示時の座標を基準に、01→02→03の順で追従を抑える。 */
+        /* 100%表示時を基準に、01と03は75%、02は50%追従する。 */
         bottomIllustrations.style.setProperty("--hex-bottom-moss-parallax-x",-panX*.25+"px");
+        var mossEdgeInset=metrics.maxX*metrics.baseScale*HERO_ZOOM_MIN*.75;
         bottomIllustrations.style.setProperty("--hex-bottom-moss-edge-inset",
-          (metrics.maxX*metrics.baseScale*HERO_ZOOM_MIN*.75)+"px");
-        bottomIllustrations.style.setProperty("--hex-bottom-tree-parallax-x",panX*.25+"px");
-        /* 03は25%追従。内側10度の回転で外側端が入る分も補正する。 */
+          mossEdgeInset+"px");
+        /* 03の透過余白を除く外側端は、10度回転後に幅の約20.94%内側。
+           この余白を補正し、ドラッグ限界で絵の端をさらに10px外へ出す。 */
         bottomIllustrations.style.setProperty("--hex-bottom-tree-edge-inset",
-          (metrics.maxX*metrics.baseScale*HERO_ZOOM_MIN*.25+
-            baseWidth*.31*(1-Math.cos(Math.PI/18))/2)+"px");
+          (mossEdgeInset+baseWidth*.31*.20940020624058428+10)+"px");
         /* 左右のドラッグ限界で、対応する02の外側端が画面端に揃う。 */
         bottomIllustrations.style.setProperty("--hex-bottom-edge-inset",
           (metrics.maxX*metrics.baseScale*HERO_ZOOM_MIN*.5)+"px");
@@ -9191,7 +9191,7 @@ hexReady(function(){
       if(liveBottomArt&&previewBottomArt&&liveBottomArt.style.width){
         previewBottomArt.style.width=liveBottomArt.style.width;
         previewBottomArt.style.transform=liveBottomArt.style.transform;
-        ["--hex-bottom-screen-left","--hex-bottom-screen-right","--hex-bottom-moss-parallax-x","--hex-bottom-tree-parallax-x","--hex-bottom-edge-inset","--hex-bottom-moss-edge-inset","--hex-bottom-tree-edge-inset"].forEach(function(name){
+        ["--hex-bottom-screen-left","--hex-bottom-screen-right","--hex-bottom-moss-parallax-x","--hex-bottom-edge-inset","--hex-bottom-moss-edge-inset","--hex-bottom-tree-edge-inset"].forEach(function(name){
           previewBottomArt.style.setProperty(name,liveBottomArt.style.getPropertyValue(name));
         });
       }
