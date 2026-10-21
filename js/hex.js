@@ -3984,6 +3984,7 @@ hexReady(function(){
       renderer.render(scene,camera);
       snapshot=document.createElement("div");
       snapshot.className="hex-v2-handoff";
+      snapshot.style.visibility="hidden";
       snapshot.setAttribute("aria-hidden","true");
       /* 楕円と各雲の見た目・重なり順を固定して丸演出へ渡す。 */
       cloudLayers.forEach(function(layer,index){
@@ -4159,7 +4160,7 @@ hexReady(function(){
       }
     });
 
-    function beginWelcome(autoBody){
+    async function beginWelcome(autoBody){
       var target;
       var handoff;
       if(welcomeActive||!welcomeWrap){return;}
@@ -4170,17 +4171,33 @@ hexReady(function(){
       welcomeActive=true;
       state.vx=0;
       state.vy=0;
-      setHeroPageLock(false);
       updateWelcomeButton();
       createWelcomeStage();
       measureWelcome();
       handoff=captureCurrentFrame();
+      if(handoff){
+        /* 複製画像のデコード前に元ヒーローを隠すと、雲・植栽が一瞬抜ける。 */
+        await Promise.all(Array.from(handoff.querySelectorAll("img")).map(function(image){
+          image.loading="eager";
+          return typeof image.decode==="function"
+            ?image.decode().catch(function(){})
+            :Promise.resolve();
+        }));
+        if(!welcomeActive||snapshot!==handoff||!handoff.isConnected){return;}
+        handoff.style.visibility="visible";
+        /* 複製側を先に描画してから元の表示を切り替え、スクロールを始める。 */
+        await new Promise(function(resolve){
+          window.requestAnimationFrame(function(){window.requestAnimationFrame(resolve);});
+        });
+        if(!welcomeActive||snapshot!==handoff||!handoff.isConnected){return;}
+      }
       /*
        * 丸演出は現在フレームの複製だけを見せる。
        * 複製に成功した場合に限り元ヒーローを隠すことで、
        * WELCOMEへの移動中に同じ画像が背面を上へ流れるのを防ぐ。
        */
       if(handoff){hero.classList.add("is-welcome-transition");}
+      setHeroPageLock(false);
       welcomeWrap.classList.add("is-v2-active");
       updateScrollEffects();
 
