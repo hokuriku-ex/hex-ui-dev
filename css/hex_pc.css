@@ -9439,6 +9439,14 @@ html.hex-opening-finishing
   top:calc(100% - 1px);
   background:var(--hex-hashtag-after-bg,#fafafa);
 }
+/* オーバーラップ時は左上から背面コンテンツを見せ、右下の次背景だけ残す。 */
+.hex-hashtag-banner.hex-hashtag-overlap{
+  background:transparent;
+  box-shadow:0 1px 0 var(--hex-hashtag-after-bg,#fafafa);
+}
+.hex-hashtag-overlap > .hex-hashtag-tilt::before{
+  background:transparent;
+}
 .hex-hashtag-row{
   height:var(--hex-hashtag-row-height);
   margin:0!important;
