@@ -4890,6 +4890,36 @@ html body
 .hex-hero-character--pruning{--hex-sprite-x:53%;--hex-sprite-bottom:38%;--hex-sprite-width:10%;}
 .hex-hero-character--aluminum{--hex-sprite-x:65%;--hex-sprite-bottom:39%;--hex-sprite-width:10%;}
 
+/* 新構成：直下の各画像をHTML順に重ねる。同寸法画像と個別配置を分ける。 */
+.hex-hero .hex-hero-scene > .hex-hero-layer{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  max-width:none;
+  object-fit:cover;
+  object-position:center top;
+  pointer-events:none;
+}
+.hex-hero-sprite{
+  position:absolute;
+  left:var(--hex-sprite-x,0%);
+  bottom:var(--hex-sprite-bottom,0%);
+  display:block;
+  width:var(--hex-sprite-width,10%);
+  height:auto;
+  max-width:none;
+  pointer-events:none;
+}
+/* 樹木・下草の初期位置。各画像またはHTMLのstyleで個別調整可能。 */
+.hex-hero-sprite--tree01{--hex-sprite-x:15%;--hex-sprite-bottom:38%;--hex-sprite-width:12%;}
+.hex-hero-sprite--underplant01{--hex-sprite-x:13%;--hex-sprite-bottom:33%;--hex-sprite-width:16%;}
+.hex-hero-sprite--tree02{--hex-sprite-x:48%;--hex-sprite-bottom:40%;--hex-sprite-width:12%;}
+.hex-hero-sprite--underplant02{--hex-sprite-x:46%;--hex-sprite-bottom:35%;--hex-sprite-width:16%;}
+.hex-hero-sprite--tree03{--hex-sprite-x:69%;--hex-sprite-bottom:32%;--hex-sprite-width:12%;}
+.hex-hero-sprite--underplant03{--hex-sprite-x:67%;--hex-sprite-bottom:27%;--hex-sprite-width:16%;}
+
 /* ヒーローを含む上位要素の切り抜きを解除 */
 .bg_post_index:has(.hex-hero-wrap),
 .post_index:has(.hex-hero-wrap),

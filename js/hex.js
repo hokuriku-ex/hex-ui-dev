@@ -4944,7 +4944,7 @@ hexReady(function(){
       if(!context){return false;}
       context.clearRect(0,0,textureCanvas.width,textureCanvas.height);
       context.drawImage(image,0,0,textureCanvas.width,textureCanvas.height);
-      /* 台座 → 家 → 外構 → 家族・職人の順で合成する。 */
+      /* 台座の上にHTMLの記載順で合成。同寸法レイヤーと個別配置画像に対応。 */
       heroLayerImages.forEach(function(layer){
         var style;
         var x;
@@ -4952,7 +4952,8 @@ hexReady(function(){
         var width;
         var height;
         if(!layer.complete||!layer.naturalWidth){return;}
-        if(!layer.classList.contains("hex-hero-character")){
+        if(!layer.classList.contains("hex-hero-character")&&
+          !layer.classList.contains("hex-hero-sprite")){
           context.drawImage(layer,0,0,textureCanvas.width,textureCanvas.height);
           return;
         }
@@ -5057,7 +5058,10 @@ hexReady(function(){
       if(!activeHero||!sourceImage){createFallback();return;}
       heroLayerImages=Array.from(activeHero.querySelectorAll(
         ".hex-hero-house-layer img,.hex-hero-exterior-layer img,"+
-        ".hex-hero-characters .hex-hero-character"
+        ".hex-hero-characters .hex-hero-character,"+
+        ".hex-hero-scene > .hex-hero-layer,"+
+        ".hex-hero-scene > .hex-hero-sprite,"+
+        ".hex-hero-scene > .hex-hero-character"
       ));
       heroLayerImages.forEach(function(layer){
         layer.addEventListener("load",function(){
