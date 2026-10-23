@@ -4823,6 +4823,16 @@ html body
   overflow:visible!important;
 }
 
+/* 台座・図面・建物・外構だけを縮小。個別配置の樹木・下草・人物は対象外。 */
+.hex-hero{--hex-hero-base-layer-scale:.8;}
+.hex-hero .hex-hero-bg img,
+.hex-hero .hex-hero-house-layer > img,
+.hex-hero .hex-hero-exterior-layer > img,
+.hex-hero .hex-hero-scene > .hex-hero-layer{
+  transform:scale(var(--hex-hero-base-layer-scale,1));
+  transform-origin:center center;
+}
+
 /* 背景・職人・前景をまとめて縦移動 */
 .hex-hero-scene{
   position:absolute!important;

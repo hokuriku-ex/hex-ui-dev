@@ -4933,6 +4933,11 @@ hexReady(function(){
       var maxTextureSize=4096;
       var scale;
       var context;
+      var baseLayerScale;
+      var baseLayerWidth;
+      var baseLayerHeight;
+      var baseLayerX;
+      var baseLayerY;
 
       if(!naturalWidth||!naturalHeight||!window.THREE){return false;}
 
@@ -4942,8 +4947,14 @@ hexReady(function(){
       textureCanvas.height=Math.max(1,Math.round(naturalHeight*scale));
       context=textureCanvas.getContext("2d",{alpha:true});
       if(!context){return false;}
+      baseLayerScale=parseFloat(getComputedStyle(activeHero).getPropertyValue("--hex-hero-base-layer-scale"));
+      if(!Number.isFinite(baseLayerScale)||baseLayerScale<=0){baseLayerScale=1;}
+      baseLayerWidth=textureCanvas.width*baseLayerScale;
+      baseLayerHeight=textureCanvas.height*baseLayerScale;
+      baseLayerX=(textureCanvas.width-baseLayerWidth)/2;
+      baseLayerY=(textureCanvas.height-baseLayerHeight)/2;
       context.clearRect(0,0,textureCanvas.width,textureCanvas.height);
-      context.drawImage(image,0,0,textureCanvas.width,textureCanvas.height);
+      context.drawImage(image,baseLayerX,baseLayerY,baseLayerWidth,baseLayerHeight);
       /* 台座の上にHTMLの記載順で合成。同寸法レイヤーと個別配置画像に対応。 */
       heroLayerImages.forEach(function(layer){
         var style;
@@ -4954,7 +4965,7 @@ hexReady(function(){
         if(!layer.complete||!layer.naturalWidth){return;}
         if(!layer.classList.contains("hex-hero-character")&&
           !layer.classList.contains("hex-hero-sprite")){
-          context.drawImage(layer,0,0,textureCanvas.width,textureCanvas.height);
+          context.drawImage(layer,baseLayerX,baseLayerY,baseLayerWidth,baseLayerHeight);
           return;
         }
         style=getComputedStyle(layer);
