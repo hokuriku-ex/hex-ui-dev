@@ -3009,7 +3009,9 @@ hexReady(function(){
 
   var THREE_URL="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js";
   var HERO_ZOOM_MIN=1;
-  var HERO_ZOOM_AUTO=1.2;
+  /* 初回演出だけ90%から開始。手動操作の範囲は100～200%。 */
+  var HERO_ZOOM_INTRO_START=.9;
+  var HERO_ZOOM_AUTO=1;
   var HERO_ZOOM_MAX=2;
   /* 台座の縦移動を1とした楕円の追従率（上端の初期位置は維持）。 */
   var HERO_ELLIPSE_VERTICAL_FOLLOW=.85;
@@ -3118,7 +3120,7 @@ hexReady(function(){
     var renderFrameId=0;
     var snapshot=null;
     var snapshotCanvas=null;
-    var state={x:0,y:0,vx:0,vy:0,zoom:HERO_ZOOM_MIN};
+    var state={x:0,y:0,vx:0,vy:0,zoom:HERO_ZOOM_INTRO_START};
     var metrics={
       width:1,
       height:1,
@@ -3361,7 +3363,7 @@ hexReady(function(){
     }
 
     function updateZoomMetrics(){
-      var zoom=clamp(state.zoom,HERO_ZOOM_MIN,HERO_ZOOM_MAX);
+      var zoom=clamp(state.zoom,reduced?HERO_ZOOM_MIN:HERO_ZOOM_INTRO_START,HERO_ZOOM_MAX);
       var visibleWidth;
       var visibleHeight;
 
@@ -3426,7 +3428,7 @@ hexReady(function(){
       state.y=0;
       state.vx=0;
       state.vy=0;
-      state.zoom=HERO_ZOOM_MIN;
+      state.zoom=HERO_ZOOM_INTRO_START;
       mouseFollow.active=false;
       mouseFollow.armed=false;
       mouseFollow.holdRect=null;
@@ -3457,8 +3459,8 @@ hexReady(function(){
           eased=progress<.5
             ?4*progress*progress*progress
             :1-Math.pow(-2*progress+2,3)/2;
-          state.zoom=HERO_ZOOM_MIN+
-            (HERO_ZOOM_AUTO-HERO_ZOOM_MIN)*eased;
+          state.zoom=HERO_ZOOM_INTRO_START+
+            (HERO_ZOOM_AUTO-HERO_ZOOM_INTRO_START)*eased;
           updateZoomMetrics();
           /* 上端合わせから画像中央へ、ズーム完了と同時に移動を終える。 */
           state.y=metrics.maxY*(1-eased);
@@ -3924,7 +3926,7 @@ hexReady(function(){
       state.y=0;
       state.vx=0;
       state.vy=0;
-      state.zoom=HERO_ZOOM_MIN;
+      state.zoom=HERO_ZOOM_INTRO_START;
       hero.classList.remove("is-exploring","is-welcome-transition");
       if(webglStage){webglStage.classList.remove("is-dragging","is-pinching");}
       if(snapshot){snapshot.remove();snapshot=null;snapshotCanvas=null;}
