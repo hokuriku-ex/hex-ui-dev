@@ -68,3 +68,15 @@ Use case: precise-object-edit. Edit the attached navy kneeling blocklayer sprite
 ### Mother clothing refinement
 
 Precise local clothing edit of the attached terracotta family sprite. Change only the mother's trousers at image-left, in the seat/hips area directly below her waistband. The current seat is still tightly molded into two prominent rounded buttocks. Replace that with loose draped trouser fabric: a relaxed straight silhouette from waist over the hips, soft vertical folds falling toward the thighs, no visible central buttock cleft, no two spherical lobes, no stretched fabric. Modest natural everyday loose trousers. Keep the same trouser color, waistband height, wide trouser legs, mother pose and all other family members absolutely unchanged. Do not change the faces, baby, hands, shoes, overall layout or materials. Transparent background, complete four-person family, no ground or shadows.
+
+## Navy hammer handle and equal rendered heights
+
+The hammer handle in block.webp was recolored with the built-in image_gen tool. Latest block asset: 1161 x 1000 pixels. Hammer head remains metallic.
+
+All six CSS character widths are calculated from their actual WebP aspect ratios, keeping sakan at 10% of scene width. Thus each rendered height is 10 / 1.388 = 7.204611% of scene width. Position and bottom offsets remain unchanged. The same width values are consumed by the canvas compositor and character hit testing, so visual and interaction bounds stay consistent. Assets remain 1000 pixels tall. Widths must be recalculated if asset aspect ratios change.
+
+Final edit prompt:
+
+Precise local color edit. Attached navy kneeling blocklayer sprite is the edit target. Change ONLY the light brown WOODEN HANDLE/SHAFT of the hammer to navy blue matching the mannequin's workwear, including the small visible end below the gripping hand. Retain handle shading and form. The dark metallic hammer HEAD stays unchanged. Preserve every other pixel/detail as closely as possible: exact pose, hands, extended empty left palm, right hand grip, body, helmet, navy clothing, camera angle, composition and proportions. No block, no new objects. True transparent background, clean alpha, no ground, no glow. Complete fullbody sprite.
+
+The hero image resolver now maps the six legacy bare PNG filenames to these WebP files. The example HTML also uses WebP character filenames.
