@@ -80,3 +80,11 @@ Final edit prompt:
 Precise local color edit. Attached navy kneeling blocklayer sprite is the edit target. Change ONLY the light brown WOODEN HANDLE/SHAFT of the hammer to navy blue matching the mannequin's workwear, including the small visible end below the gripping hand. Retain handle shading and form. The dark metallic hammer HEAD stays unchanged. Preserve every other pixel/detail as closely as possible: exact pose, hands, extended empty left palm, right hand grip, body, helmet, navy clothing, camera angle, composition and proportions. No block, no new objects. True transparent background, clean alpha, no ground, no glow. Complete fullbody sprite.
 
 The hero image resolver now maps the six legacy bare PNG filenames to these WebP files. The example HTML also uses WebP character filenames.
+
+## Supervisor face and pointing direction toward viewer
+
+Built-in image_gen edit, then alpha crop and proportional resize to 1000 pixels high. Supervisor CSS width adjusted proportionally to the new aspect ratio to retain its previous rendered height. Other character placement settings were preserved.
+
+Final prompt:
+
+Use case: precise-object-edit. Attached navy miniature construction supervisor is the edit target. Keep original standing body, legs, feet, clothing, helmet, plan sheet held at waist, uniform navy color, elevated camera and matte mannequin style unchanged. Rotate only the head/face and the extended pointing RIGHT arm/hand direction about 45 degrees TOWARD THE VIEWER relative to their current image-right sideways direction. Head should look diagonally forward toward camera-right, showing more of the face/front of helmet rather than the back. The right index fingertip must point in the SAME diagonal forward-camera-right direction, with natural forearm foreshortening; do not merely point upward in the image. Preserve recognizable extended arm pointing gesture and standing stance; body stays in original orientation. Keep mannequin face simple and featureless, do not add human eyes or realistic skin. Left hand continues to hold plans at waist. Complete full body and finger tip, no clipping. True transparent background; no ground, no cast shadow, no halo, no backdrop. Tight minimal transparent margins.
