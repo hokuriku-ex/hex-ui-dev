@@ -4898,7 +4898,7 @@ html body
 .hex-hero-character--block{--hex-sprite-x:38.4%;--hex-sprite-bottom:42.7%;--hex-sprite-width:5%;}
 .hex-hero-character--sakan{--hex-sprite-x:61%;--hex-sprite-bottom:40%;--hex-sprite-width:6%;}
 .hex-hero-character--pruning{--hex-sprite-x:50.5%;--hex-sprite-bottom:41.5%;--hex-sprite-width:4%;}
-.hex-hero-character--aluminum{--hex-sprite-x:71%;--hex-sprite-bottom:44%;--hex-sprite-width:2.7%;}
+.hex-hero-character--aluminum{--hex-sprite-x:71%;--hex-sprite-bottom:44%;--hex-sprite-width:2.6%;}
 
 /* 新構成：直下の各画像をHTML順に重ねる。同寸法画像と個別配置を分ける。 */
 .hex-hero .hex-hero-scene > .hex-hero-layer{
