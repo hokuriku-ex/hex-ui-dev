@@ -3231,6 +3231,7 @@ hexReady(function(){
       ?Array.from(bottomIllustrations.querySelectorAll(".hex-hero-bottom-img"))
       :[];
     var bottomArtTravel=new WeakMap();
+    var bottomIntroProgress=0;
     bottomImages.forEach(function(image){
       image.addEventListener("load",function(){
         bottomArtTravel.set(image,image.offsetHeight);
@@ -3427,6 +3428,7 @@ hexReady(function(){
       }
       autoZoomPending=false;
       cancelAutoZoom(false);
+      bottomIntroProgress=0;
       state.x=0;
       state.y=0;
       state.vx=0;
@@ -3443,6 +3445,8 @@ hexReady(function(){
       setCamera();
 
       if(reduced||!renderer||!camera){
+        bottomIntroProgress=1;
+        updateBottomIllustrations();
         interactionLocked=false;
         return;
       }
@@ -3462,6 +3466,7 @@ hexReady(function(){
           eased=progress<.5
             ?4*progress*progress*progress
             :1-Math.pow(-2*progress+2,3)/2;
+          bottomIntroProgress=eased;
           state.zoom=HERO_ZOOM_INTRO_START+
             (HERO_ZOOM_AUTO-HERO_ZOOM_INTRO_START)*eased;
           updateZoomMetrics();
@@ -3722,7 +3727,7 @@ hexReady(function(){
       if(!bottomImages.length){return;}
       var progress=reduced?1:(metrics.maxY>1
         ?clamp((metrics.maxY-state.y)/metrics.maxY,0,1)
-        :(ready?1:0));
+        :bottomIntroProgress);
       bottomImages.forEach(function(image){
         var style=getComputedStyle(image);
         var start=parseFloat(style.getPropertyValue("--hex-bottom-start"));
@@ -3925,6 +3930,7 @@ hexReady(function(){
       mouseFollow.holdRect=null;
       spTap.pointerId=null;
       spFollow.active=false;
+      bottomIntroProgress=0;
       state.x=0;
       state.y=0;
       state.vx=0;
