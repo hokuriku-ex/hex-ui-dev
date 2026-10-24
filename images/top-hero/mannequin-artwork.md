@@ -34,7 +34,7 @@ Target: the NAVY BLUE SITE SUPERVISOR at left-center, around x552 y521 in the 16
 
 Target: ONLY the TERRACOTTA/SALMON-COLORED FAMILY GROUP at foreground-left, around x420 y625 in the 1672x941 reference. It consists of the mother on the left holding a baby, the tall father in the middle, and the standing child on the right. Preserve the exact four-person grouping (two adults, one baby being held, one standing child), poses, arm and leg placement, spacing, back/three-quarter viewing directions, proportions and uniform terracotta/salmon miniature mannequin color. Do not change colors to blue. No tools or extra people. Remove the ground patch, shadows, house, platform and all other scene objects; only the complete family group with transparent gaps between figures remains.
 
-## Supervisor targeted correction
+## Supervisor selected version
 
-Edit target: attached navy supervisor mannequin cutout. Make only one change: move the architectural drawing from the bent LEFT hand at waist to the extended RIGHT hand pointing to image right. Keep both arms in exactly their existing positions; right hand grips the paper edge instead of pointing a bare index finger, paper extends downward from the right hand. The left hand at waist is empty. Preserve figure, pose, camera, navy color, silhouette, clothing, scale and lighting. True transparent background, no glow, no halo, no ground, no shadows outside the figure. Complete full-body sprite.
+On 2026-10-24 the user selected the original generated supervisor, pointing with one hand and holding the plan at the waist. Source: `C:/Users/desig/Desktop/exec-dd7d2054-da4f-440a-a35b-00dcfd8f77d8.png`. Converted directly to lossless WebP with the same alpha crop procedure; no new generation or pose edits.
 
