@@ -16578,6 +16578,16 @@ hexReady(function(){
       if(sizeObserver)sizeObserver.observe(front);
     });
   }
+  function raiseHashtagOverlap(entry){
+    prepareFlow(entry.front);prepareFlow(entry.back);raiseFollowing(entry);
+    /* 帯自身のz-indexだけでは親のstacking contextを越えられない。
+       前セクションと共通の祖先に着くまで、下層ページのCMS枠も前面へ。 */
+    for(var branch=entry.front;branch&&branch!==document.body&&
+      !branch.contains(entry.back);branch=branch.parentElement){
+      if(getComputedStyle(branch).position==='fixed')break;
+      branch.classList.add('hex-hashtag-overlap-layer');
+    }
+  }
   function scanHashtagOverlaps(){
     document.querySelectorAll('.hex-hashtag-banner.hex-hashtag-overlap').forEach(function(front){
       var back=front._hexHashtagOverlapBack&&front._hexHashtagOverlapBack();
@@ -16585,16 +16595,13 @@ hexReady(function(){
       back=originalNode(back);
       if(back===front||back.contains(front))return;
       var existing=entries.find(function(entry){return entry.front===front;});
-      if(existing){existing.back=back;return;}
+      if(existing){existing.back=back;raiseHashtagOverlap(existing);return;}
       var marker=document.createElement('div');
       marker.className='hex-rise-start';marker.setAttribute('aria-hidden','true');
       front.parentNode.insertBefore(marker,front);
       var entry={marker:marker,back:back,front:front,blocks:[],start:0,hashtag:true};
       marker._hexRiseEntry=entry;entries.push(entry);
-      prepareFlow(front);prepareFlow(back);raiseFollowing(entry);
-      // トップの背面固定枠（z-index:95）より前に、帯を含むCMS枠を置く。
-      var homeFrame=front.closest('[id^="gc_auto_frame_home_"]');
-      if(homeFrame)homeFrame.classList.add('hex-hashtag-overlap-layer');
+      raiseHashtagOverlap(entry);
       if(sizeObserver)sizeObserver.observe(front);
     });
   }
