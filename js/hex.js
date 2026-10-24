@@ -3119,6 +3119,8 @@ hexReady(function(){
     var texture=null;
     var textureCanvas=null;
     var renderFrameId=0;
+    var heroDevStyleSignature=null;
+    var heroDevStyleCheckedAt=0;
     var snapshot=null;
     var snapshotCanvas=null;
     var state={x:0,y:0,vx:0,vy:0,zoom:HERO_ZOOM_INTRO_START};
@@ -4893,8 +4895,38 @@ hexReady(function(){
       }
     }
 
+    /* 開発環境：DevToolsのStyles編集を検知し、カメラを動かさず合成だけ更新。 */
+    function syncHeroDevStyles(now){
+      if(HEX_IS_PRODUCTION||document.hidden||!ready||!textureCanvas||
+        !activeHero||!sourceImage||!sourceImage.naturalWidth){return;}
+      if(now-heroDevStyleCheckedAt<150){return;}
+      heroDevStyleCheckedAt=now;
+      var values=[getComputedStyle(activeHero).getPropertyValue(
+        "--hex-hero-base-layer-scale"
+      ).trim()];
+      heroLayerImages.forEach(function(layer){
+        if(!layer.classList.contains("hex-hero-character")&&
+          !layer.classList.contains("hex-hero-sprite")){return;}
+        var style=getComputedStyle(layer);
+        values.push(
+          style.getPropertyValue("--hex-sprite-x").trim(),
+          style.getPropertyValue("--hex-sprite-bottom").trim(),
+          style.getPropertyValue("--hex-sprite-width").trim()
+        );
+      });
+      var signature=JSON.stringify(values);
+      if(signature===heroDevStyleSignature){return;}
+      if(heroDevStyleSignature!==null){
+        updateTextureSource(sourceImage);
+        /* カーソル判定で保持していた旧配置の範囲も破棄。 */
+        mouseFollow.holdRect=null;
+      }
+      heroDevStyleSignature=signature;
+    }
+
     function renderLoop(){
       if(renderer&&camera&&scene){
+        if(!HEX_IS_PRODUCTION){syncHeroDevStyles(performance.now());}
         if(!dragging&&!pinch.active&&!autoZooming&&!welcomeActive){
           if(HERO_MOUSE_FOLLOW_ENABLED&&mouseFollow.active&&!isSp()){
             state.x+=(metrics.maxX*mouseFollow.nx-state.x)*
@@ -5025,6 +5057,8 @@ hexReady(function(){
     function destroyThree(){
       window.cancelAnimationFrame(renderFrameId);
       renderFrameId=0;
+      heroDevStyleSignature=null;
+      heroDevStyleCheckedAt=0;
       if(webglStage){
         webglStage.removeEventListener("pointerdown",onPointerDown);
         webglStage.removeEventListener("pointermove",onPointerMove);

@@ -42,3 +42,9 @@ HTMLの記載順で合成するため、順番を変更すると重なり順も�
 - `--hex-sprite-width`：画像の表示幅（台座の幅に対する％）
 
 縦横比を保って表示します。樹木・下草は人物の操作判定の対象にはなりません。
+
+## Chrome開発ツールでのリアルタイム調整
+
+開発サイトでは、Elementsで対象の `.hex-hero-character` または `.hex-hero-sprite` を選び、Stylesの `--hex-sprite-x`・`--hex-sprite-bottom`・`--hex-sprite-width` を数値の％で変更すると、約150ms以内を目安にCanvasへ反映されます。クラスのCSSルールと要素のstyle属性、どちらの編集にも対応します。ドラッグ・ズーム位置は維持します。本番サイトでは監視せず、非表示タブでも確認を停止します。
+
+左官職人は `.hex-hero-character--sakan`、ほかは `family`・`supervisor`・`block`・`pruning`・`aluminum` です。再読み込みで編集は元に戻るため、確定値は `css/hex_pc.css` へ保存してください。
