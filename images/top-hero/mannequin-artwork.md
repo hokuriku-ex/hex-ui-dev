@@ -42,3 +42,29 @@ On 2026-10-24 the user selected the original generated supervisor, pointing with
 ## Approximate common figure scale
 
 Sakan kept at 1330 x 958 pixels. Proportional pixel resizing only, with poses and alpha retained. Factors relative to the previous files: aluminum 1.40, pruning 1.25, sakan 1.00, block 1.00, supervisor 1.30, family 1.75. The preview now shows all assets at the same 20% pixel scale, rather than fitting each asset to its cell.
+
+## 2026-10-24: height 1000 px and local revisions
+
+Latest request supersedes the earlier approximate figure scale. All six tightly cropped assets are now exactly 1000 pixels tall, with widths calculated proportionally. Alpha and visible pixels on black/white were verified after lossless WebP encoding. No website layout references changed.
+
+Built-in image_gen edits: pruning shears requested at 150% linear size; blocklayer left palm presses empty air and right hand holds a raised hammer, with no block; mother has looser naturally draped trousers around hips and seat. Other three assets were only resized.
+
+### pruning
+
+Use case: precise-object-edit. The attached mannequin sprite is the edit target. Preserve exact camera angle, orientation, navy/terracotta colors, material, lighting, full body and all details except the explicitly requested local change. True transparent alpha background; no backdrop, no ground, no cast shadow or glow; tight framing with complete extremities. Change only the existing pruning shears: enlarge the entire shears to 150% of its current linear size, pivoting around the same grip position in the hand. Keep hand, arm and body pose unchanged. The enlarged metal blades and handle must remain recognizable as pruning shears.
+
+### block
+
+Use case: precise-object-edit. The attached mannequin sprite is the edit target. Preserve exact camera angle, orientation, navy/terracotta colors, material, lighting, full body and all details except the explicitly requested local change. True transparent alpha background; no backdrop, no ground, no cast shadow or glow; tight framing with complete extremities. Modify only the task performed by the kneeling blocklayer. The hand currently holding the floating concrete block at image-right is anatomically the LEFT hand. Remove that floating held block. Put a concrete masonry block down at working ground level in front of the worker at image-right, without showing a ground plane. LEFT hand presses firmly on the TOP of this resting block to steady it (not gripping or lifting it). RIGHT hand, which is currently low in the image foreground, now holds a small masonry hammer raised above the block, poised to strike DOWN onto the top of the block. Clearly show a wooden hammer handle and compact metal hammer head directly above the block, no motion lines. Adjust only forearms/hands as required. Keep the original kneeling legs, torso, helmet, navy color, view angle and overall stance. Only one resting block; no floating blocks or wall.
+
+### family
+
+Use case: precise-object-edit. The attached mannequin sprite is the edit target. Preserve exact camera angle, orientation, navy/terracotta colors, material, lighting, full body and all details except the explicitly requested local change. True transparent alpha background; no backdrop, no ground, no cast shadow or glow; tight framing with complete extremities. Change only the MOTHER's clothing around her hips and seat, at image-left holding the baby. Make her trousers naturally loose-fitting around the seat and hips, with gentle fabric drape and subtle folds, avoiding a tight or accentuated buttock outline and center crease. Keep a natural modest relaxed silhouette; do not exaggerate width. Preserve her pose holding the baby and preserve all four family members, spacing, proportions, heads, hands, feet and uniform terracotta color. Father, baby and standing child stay exactly as in the input.
+
+### Block removal follow-up
+
+Use case: precise-object-edit. Edit the attached navy kneeling blocklayer sprite. Remove ONLY the gray concrete block under the extended LEFT palm at lower image-right. Leave empty transparent air where that block was. Keep the LEFT hand and all fingers in exactly their current flat pressing-down pose and location as if steadying an invisible block. Keep the RIGHT hand holding the raised wooden-handled hammer, hammer angle, arms, torso, legs, helmet, colors and all other details exactly unchanged. NO block, NO support, NO wall, NO ground plane, NO shadow. Full body transparent-background sprite with clean alpha.
+
+### Mother clothing refinement
+
+Precise local clothing edit of the attached terracotta family sprite. Change only the mother's trousers at image-left, in the seat/hips area directly below her waistband. The current seat is still tightly molded into two prominent rounded buttocks. Replace that with loose draped trouser fabric: a relaxed straight silhouette from waist over the hips, soft vertical folds falling toward the thighs, no visible central buttock cleft, no two spherical lobes, no stretched fabric. Modest natural everyday loose trousers. Keep the same trouser color, waistband height, wide trouser legs, mother pose and all other family members absolutely unchanged. Do not change the faces, baby, hands, shoes, overall layout or materials. Transparent background, complete four-person family, no ground or shadows.
