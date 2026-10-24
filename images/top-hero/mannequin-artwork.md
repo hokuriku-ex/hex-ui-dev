@@ -4,7 +4,7 @@ Source: `C:/Users/desig/Desktop/HPコンテンツ/ヒーロー画像/2.png`
 
 Created with the built-in image_gen tool (background-extraction edit). These are AI-derived cutouts; they are not pixel-exact extractions of the source. Original colors, poses, and orientation were requested as invariants. Tools were added as specified. No website layout or image references were changed.
 
-Final assets: `aluminum.webp`, `pruning.webp`, `sakan.webp`, `block.webp`, `supervisor.webp`, `family.webp` in this directory. Lossless WebP; native generated resolution; crop bounds use alpha > 1 plus 2 pixels of padding, retaining original alpha inside the crop. Alpha and appearance on black and white backgrounds were checked after conversion.
+Final assets: `aluminum.webp`, `pruning.webp`, `sakan.webp`, `block.webp`, `supervisor.webp`, `family.webp` in this directory. Lossless WebP; sizes normalized approximately to the sakan worker on 2026-10-24; crop bounds use alpha > 1 plus 2 pixels of padding, retaining original alpha inside the crop. Alpha and appearance on black and white backgrounds were checked after conversion.
 
 ## Common prompt
 
@@ -38,3 +38,7 @@ Target: ONLY the TERRACOTTA/SALMON-COLORED FAMILY GROUP at foreground-left, arou
 
 On 2026-10-24 the user selected the original generated supervisor, pointing with one hand and holding the plan at the waist. Source: `C:/Users/desig/Desktop/exec-dd7d2054-da4f-440a-a35b-00dcfd8f77d8.png`. Converted directly to lossless WebP with the same alpha crop procedure; no new generation or pose edits.
 
+
+## Approximate common figure scale
+
+Sakan kept at 1330 x 958 pixels. Proportional pixel resizing only, with poses and alpha retained. Factors relative to the previous files: aluminum 1.40, pruning 1.25, sakan 1.00, block 1.00, supervisor 1.30, family 1.75. The preview now shows all assets at the same 20% pixel scale, rather than fitting each asset to its cell.
