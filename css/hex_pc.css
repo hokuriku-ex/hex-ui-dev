@@ -4893,12 +4893,12 @@ html body
   height:auto;
   max-width:none;
 }
-.hex-hero-character--family{--hex-sprite-x:20%;--hex-sprite-bottom:24%;--hex-sprite-width:6.714697%;}
-.hex-hero-character--supervisor{--hex-sprite-x:29%;--hex-sprite-bottom:36%;--hex-sprite-width:4.329971%;}
-.hex-hero-character--block{--hex-sprite-x:35%;--hex-sprite-bottom:33%;--hex-sprite-width:8.364553%;}
-.hex-hero-character--sakan{--hex-sprite-x:57%;--hex-sprite-bottom:27%;--hex-sprite-width:10.000000%;}
-.hex-hero-character--pruning{--hex-sprite-x:53%;--hex-sprite-bottom:38%;--hex-sprite-width:4.121037%;}
-.hex-hero-character--aluminum{--hex-sprite-x:65%;--hex-sprite-bottom:39%;--hex-sprite-width:2.572046%;}
+.hex-hero-character--family{--hex-sprite-x:33%;--hex-sprite-bottom:23%;--hex-sprite-width:8.8%;}
+.hex-hero-character--supervisor{--hex-sprite-x:32%;--hex-sprite-bottom:45%;--hex-sprite-width:4%;}
+.hex-hero-character--block{--hex-sprite-x:38.4%;--hex-sprite-bottom:42.7%;--hex-sprite-width:5%;}
+.hex-hero-character--sakan{--hex-sprite-x:61%;--hex-sprite-bottom:40%;--hex-sprite-width:6%;}
+.hex-hero-character--pruning{--hex-sprite-x:50.5%;--hex-sprite-bottom:41.5%;--hex-sprite-width:4%;}
+.hex-hero-character--aluminum{--hex-sprite-x:71.3%;--hex-sprite-bottom:44%;--hex-sprite-width:2.6%;}
 
 /* 新構成：直下の各画像をHTML順に重ねる。同寸法画像と個別配置を分ける。 */
 .hex-hero .hex-hero-scene > .hex-hero-layer{
