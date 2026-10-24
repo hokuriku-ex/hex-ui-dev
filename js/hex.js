@@ -15140,6 +15140,8 @@ hexReady(function(){
     document.addEventListener('visibilitychange',syncPause);
     if(reduced.addEventListener){reduced.addEventListener('change',syncPause);}
     syncPause();
+    /* Lenis/ScrollTriggerのrefreshに依存せず、生成後の帯を重なり対象へ登録。 */
+    document.dispatchEvent(new CustomEvent('hex:hashtag-ready',{detail:{stage:stage}}));
     document.dispatchEvent(new CustomEvent("hex:hero-layout-updated"));
     /* 挿入した帯の高さを既存のスクロール位置計算にも反映する。 */
     if(window.innerWidth>768&&window.ScrollTrigger){window.ScrollTrigger.refresh();}
@@ -15147,9 +15149,21 @@ hexReady(function(){
   function initializeHexHashtags(){
     document.querySelectorAll('.hex-hashtag-source').forEach(initializeHexHashtagSource);
   }
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',initializeHexHashtags);
-  }else{initializeHexHashtags();}
+  hexReady(function(){
+    initializeHexHashtags();
+    /* CMSが本文を後から挿入する実機でも、最初のDOMContentLoadedだけに依存しない。 */
+    var queued=false;
+    new MutationObserver(function(records){
+      var added=records.some(function(record){return Array.from(record.addedNodes).some(function(node){
+        return node.nodeType===1&&(node.matches('.hex-hashtag-source')||node.querySelector('.hex-hashtag-source'));
+      });});
+      if(added&&!queued){
+        queued=true;
+        requestAnimationFrame(function(){queued=false;initializeHexHashtags();});
+      }
+    }).observe(document.body,{childList:true,subtree:true});
+  });
+  hexLoad(initializeHexHashtags);
 })();
 
 
@@ -16606,6 +16620,7 @@ hexReady(function(){
     });
     queueMeasure();
   }
+  document.addEventListener('hex:hashtag-ready',scan);
   hexReady(scan);hexLoad(scan);
   hexReady(function(){
     window.addEventListener('scroll',function(){
