@@ -4612,7 +4612,7 @@ hexReady(function(){
     }
 
     /* 透過PNGの画素で人物を探し、合成画像上の人物の中心を返す。 */
-    function getHeroCharacterAt(clientX,clientY){
+    function getHeroCharacterAt(clientX,clientY,excludeFamily){
       if(!ready||interactionLocked||welcomeActive||!webglStage||
         !metrics.scale){return null;}
       var rect=webglStage.getBoundingClientRect();
@@ -4625,6 +4625,7 @@ hexReady(function(){
       for(var i=heroLayerImages.length-1;i>=0;i-=1){
         var layer=heroLayerImages[i];
         if(!layer.classList.contains("hex-hero-character")||
+          (excludeFamily&&layer.classList.contains("hex-hero-character--family"))||
           !layer.complete||!layer.naturalWidth){continue;}
         var style=getComputedStyle(layer);
         var x=parseFloat(style.getPropertyValue("--hex-sprite-x"));
@@ -4653,7 +4654,7 @@ hexReady(function(){
       if(mouseFollow.active&&hold&&
         clientX>=hold.left&&clientX<=hold.right&&
         clientY>=hold.top&&clientY<=hold.bottom){return true;}
-      return !!getHeroCharacterAt(clientX,clientY);
+      return !!getHeroCharacterAt(clientX,clientY,true);
     }
 
     function updateMouseFollow(event){
@@ -4693,7 +4694,9 @@ hexReady(function(){
       imageY=metrics.imageHeight/2-state.y+
         (event.clientY-rect.top-rect.height/2)/Math.max(metrics.scale,.001);
       characters=heroLayerImages.filter(function(layer){
-        return layer.classList.contains("hex-hero-character");
+        /* 家族は表示・SPタップ対象を維持し、PCマウス追従からだけ除外。 */
+        return layer.classList.contains("hex-hero-character")&&
+          !layer.classList.contains("hex-hero-character--family");
       });
       for(i=characters.length-1;i>=0;i-=1){
         var layer=characters[i];
