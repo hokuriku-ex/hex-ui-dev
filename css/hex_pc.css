@@ -9094,6 +9094,18 @@ html.hex-opening-finishing
   pointer-events:none;
   will-change:transform;
 }
+/* 縦移動で画像の下端が画面内へ入っても、同色の面を下へ続ける。
+   WELCOMEへ複製した楕円にも適用し、上端の曲線・画像サイズは変えない。 */
+.hex-hero-ellipse::after{
+  content:"";
+  position:absolute;
+  top:calc(100% - 1px);
+  left:0;
+  width:100%;
+  height:100vh;
+  background:var(--hex-hero-ellipse-color,#F3F0EB);
+  pointer-events:none;
+}
 .hex-cloud-layer--front{z-index:2;}
 .hex-cloud{
   position:absolute;
