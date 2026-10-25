@@ -3021,12 +3021,10 @@ hexReady(function(){
   var HERO_CLOUD_BACK_VERTICAL_FOLLOW=.20;
   var HERO_AUTO_ZOOM_WAIT=300;
   var HERO_AUTO_ZOOM_DURATION=1500;
-  /* true: 職人に反応した画像内座標へ寄せる。家族は対象外。 */
-  var HERO_MOUSE_FOLLOW_ENABLED=true;
-  var HERO_MOUSE_FOLLOW_EASE=.075;
+  var HERO_SP_FOLLOW_EASE=.075;
+  var HERO_CHARACTER_FOCUS_DURATION=1000;
+  var HERO_CHARACTER_CLICK_MAX_MOVE=6;
   var HERO_SP_TAP_MAX_MOVE=12;
-  /* 追従開始時のキャラクター位置を基準に、画面上で判定を維持する余白。 */
-  var HERO_MOUSE_FOLLOW_HOLD_PADDING=64;
   /* WELCOME本文の表示に必要なスクロール量。2なら従来の約2倍。 */
   var WELCOME_BODY_SCROLL_SCALE=2;
   var WELCOME_BODY_AUTO_DURATION=900;
@@ -3156,15 +3154,10 @@ hexReady(function(){
       anchorY:0,
       rect:null
     };
-    var mouseFollow={
-      active:false,
-      armed:false,
-      holdRect:null,
-      startX:0,
-      startY:0,
-      targetX:0,
-      targetY:0,
-      alphaCanvases:new WeakMap()
+    var characterAlphaCanvases=new WeakMap();
+    var mouseTap={pointerId:null,x:0,y:0,moved:false,character:null};
+    var characterFocus={
+      active:false,started:0,fromX:0,fromY:0,fromZoom:1,targetX:0,targetY:0
     };
     var spTap={pointerId:null,x:0,y:0,hit:false,targetX:0,targetY:0};
     var spFollow={active:false,targetX:0,targetY:0};
@@ -3405,6 +3398,7 @@ hexReady(function(){
     }
 
     function cancelAutoZoom(unlock){
+      cancelCharacterFocus();
       autoZoomRun+=1;
       window.clearTimeout(autoZoomTimer);
       window.cancelAnimationFrame(autoZoomFrame);
@@ -3434,9 +3428,6 @@ hexReady(function(){
       state.vx=0;
       state.vy=0;
       state.zoom=HERO_ZOOM_INTRO_START;
-      mouseFollow.active=false;
-      mouseFollow.armed=false;
-      mouseFollow.holdRect=null;
       spTap.pointerId=null;
       spFollow.active=false;
       updateZoomMetrics();
@@ -3925,9 +3916,6 @@ hexReady(function(){
       activePointers.clear();
       pinch.active=false;
       dragging=false;
-      mouseFollow.active=false;
-      mouseFollow.armed=false;
-      mouseFollow.holdRect=null;
       spTap.pointerId=null;
       spFollow.active=false;
       bottomIntroProgress=0;
@@ -4492,9 +4480,8 @@ hexReady(function(){
       event.preventDefault();
       if(interactionLocked){return;}
 
+      cancelCharacterFocus();
       beginExplore();
-      mouseFollow.active=false;
-      mouseFollow.holdRect=null;
       zoomDelta=Math.abs(event.deltaY)>=Math.abs(event.deltaX)
         ?event.deltaY
         :event.deltaX;
@@ -4589,7 +4576,7 @@ hexReady(function(){
     }
 
     function pointerHitsCharacter(layer,u,v){
-      var cached=mouseFollow.alphaCanvases.get(layer);
+      var cached=characterAlphaCanvases.get(layer);
       var canvas;
       var context;
       if(cached===undefined){
@@ -4602,7 +4589,7 @@ hexReady(function(){
           context.drawImage(layer,0,0,canvas.width,canvas.height);
           cached=canvas;
         }catch(error){cached=null;}
-        mouseFollow.alphaCanvases.set(layer,cached);
+        characterAlphaCanvases.set(layer,cached);
       }
       if(!cached){return true;}
       try{
@@ -4612,7 +4599,7 @@ hexReady(function(){
           Math.min(cached.height-1,Math.floor(v*cached.height)),1,1
         ).data[3]>20;
       }catch(error){
-        mouseFollow.alphaCanvases.set(layer,null);
+        characterAlphaCanvases.set(layer,null);
         return true;
       }
     }
@@ -4652,107 +4639,9 @@ hexReady(function(){
       return null;
     }
 
-    /* PCカーソル判定は移動開始時の保持範囲も使う。 */
+    /* PCのClick表示とクリック対象は、家族を除く同じ透過画素判定を使う。 */
     function isHeroCharacterAt(clientX,clientY){
-      if(!ready||interactionLocked||welcomeActive||!webglStage||
-        !metrics.scale){return false;}
-      var hold=mouseFollow.holdRect;
-      if(mouseFollow.active&&hold&&
-        clientX>=hold.left&&clientX<=hold.right&&
-        clientY>=hold.top&&clientY<=hold.bottom){return true;}
       return !!getHeroCharacterAt(clientX,clientY,true);
-    }
-
-    function updateMouseFollow(event){
-      var rect;
-      var imageX;
-      var imageY;
-      var characters;
-      var i;
-      if(!HERO_MOUSE_FOLLOW_ENABLED||event.pointerType!=="mouse"||
-        isSp()||interactionLocked||welcomeActive||pinch.active){return;}
-      rect=webglStage.getBoundingClientRect();
-      if(mouseFollow.active&&mouseFollow.holdRect){
-        var hold=mouseFollow.holdRect;
-        if(event.clientX>=hold.left&&event.clientX<=hold.right&&
-          event.clientY>=hold.top&&event.clientY<=hold.bottom){
-          /* 反応時の目標を保持し、画面上のマウス位置から再計算しない。 */
-          return;
-        }
-      }
-      mouseFollow.active=false;
-      mouseFollow.holdRect=null;
-      if(!mouseFollow.armed){
-        mouseFollow.armed=true;
-        mouseFollow.startX=event.clientX;
-        mouseFollow.startY=event.clientY;
-        return;
-      }
-      if(!explored&&Math.hypot(
-        event.clientX-mouseFollow.startX,
-        event.clientY-mouseFollow.startY
-      )<6){return;}
-      imageX=metrics.imageWidth/2+state.x+
-        (event.clientX-rect.left-rect.width/2)/Math.max(metrics.scale,.001);
-      imageY=metrics.imageHeight/2-state.y+
-        (event.clientY-rect.top-rect.height/2)/Math.max(metrics.scale,.001);
-      characters=heroLayerImages.filter(function(layer){
-        /* 家族は表示・SPタップ対象を維持し、PCマウス追従からだけ除外。 */
-        return layer.classList.contains("hex-hero-character")&&
-          !layer.classList.contains("hex-hero-character--family");
-      });
-      for(i=characters.length-1;i>=0;i-=1){
-        var layer=characters[i];
-        var style;
-        var x;
-        var bottom;
-        var width;
-        var height;
-        var y;
-        if(!layer.complete||!layer.naturalWidth){continue;}
-        style=getComputedStyle(layer);
-        x=parseFloat(style.getPropertyValue("--hex-sprite-x"));
-        bottom=parseFloat(style.getPropertyValue("--hex-sprite-bottom"));
-        width=parseFloat(style.getPropertyValue("--hex-sprite-width"));
-        if(!Number.isFinite(x)||!Number.isFinite(bottom)||
-          !Number.isFinite(width)||width<=0){continue;}
-        x=metrics.imageWidth*x/100;
-        bottom=metrics.imageHeight*bottom/100;
-        width=metrics.imageWidth*width/100;
-        height=width*layer.naturalHeight/layer.naturalWidth;
-        y=metrics.imageHeight-bottom-height;
-        if(imageX<x||imageX>=x+width||imageY<y||imageY>=y+height||
-          !pointerHitsCharacter(layer,(imageX-x)/width,(imageY-y)/height)){
-          continue;
-        }
-        /* カメラが動いても判定領域は画面上の開始位置から移動させない。 */
-        var left=rect.left+rect.width/2+
-          (x-metrics.imageWidth/2-state.x)*metrics.scale;
-        var top=rect.top+rect.height/2+
-          (y-metrics.imageHeight/2+state.y)*metrics.scale;
-        mouseFollow.holdRect={
-          left:left-HERO_MOUSE_FOLLOW_HOLD_PADDING,
-          top:top-HERO_MOUSE_FOLLOW_HOLD_PADDING,
-          right:left+width*metrics.scale+HERO_MOUSE_FOLLOW_HOLD_PADDING,
-          bottom:top+height*metrics.scale+HERO_MOUSE_FOLLOW_HOLD_PADDING
-        };
-        /* 反応した画像内の一点を中央へ。ズーム倍率で移動先を増幅しない。 */
-        mouseFollow.targetX=clamp(imageX-metrics.imageWidth/2,
-          -metrics.maxX,metrics.maxX);
-        mouseFollow.targetY=clamp(metrics.imageHeight/2-imageY,
-          -metrics.maxY,metrics.maxY);
-        mouseFollow.active=true;
-        beginExplore();
-        state.vx=0;
-        state.vy=0;
-        return;
-      }
-    }
-
-    function onPointerLeave(){
-      mouseFollow.active=false;
-      mouseFollow.armed=false;
-      mouseFollow.holdRect=null;
     }
 
     function onPointerDown(event){
@@ -4760,10 +4649,15 @@ hexReady(function(){
       event.preventDefault();
       if(interactionLocked){return;}
 
+      cancelCharacterFocus();
       beginExplore();
-      mouseFollow.active=false;
-      mouseFollow.armed=false;
-      mouseFollow.holdRect=null;
+      if(event.pointerType==="mouse"&&!isSp()){
+        mouseTap.pointerId=event.pointerId;
+        mouseTap.x=event.clientX;
+        mouseTap.y=event.clientY;
+        mouseTap.moved=false;
+        mouseTap.character=getHeroCharacterAt(event.clientX,event.clientY,true);
+      }
 
       if(event.pointerType==="touch"){
         var character=isSp()
@@ -4800,6 +4694,12 @@ hexReady(function(){
       var now;
       var elapsed;
 
+      if(event.pointerType==="mouse"&&event.pointerId===mouseTap.pointerId&&
+        Math.hypot(event.clientX-mouseTap.x,event.clientY-mouseTap.y)>
+          HERO_CHARACTER_CLICK_MAX_MOVE){
+        mouseTap.moved=true;
+      }
+
       if(event.pointerType==="touch"&&event.pointerId===spTap.pointerId&&
         Math.hypot(event.clientX-spTap.x,event.clientY-spTap.y)>
           HERO_SP_TAP_MAX_MOVE){
@@ -4820,10 +4720,7 @@ hexReady(function(){
         return;
       }
 
-      if(!dragging){
-        updateMouseFollow(event);
-        return;
-      }
+      if(!dragging){return;}
       if(event.pointerId!==dragStart.pointerId){return;}
       dx=event.clientX-dragStart.x;
       dy=event.clientY-dragStart.y;
@@ -4885,10 +4782,18 @@ hexReady(function(){
         webglStage.classList.remove("is-dragging");
       }
 
-      if(event.pointerType==="mouse"){
-        mouseFollow.active=false;
-        mouseFollow.armed=false;
-        mouseFollow.holdRect=null;
+
+      if(event.pointerType==="mouse"&&event.pointerId===mouseTap.pointerId){
+        var clicked=event.type==="pointerup"&&!mouseTap.moved&&
+          Math.hypot(event.clientX-mouseTap.x,event.clientY-mouseTap.y)<=
+            HERO_CHARACTER_CLICK_MAX_MOVE;
+        var character=clicked?mouseTap.character:null;
+        mouseTap.pointerId=null;
+        mouseTap.character=null;
+        if(clicked){state.vx=0;state.vy=0;}
+        if(character&&!interactionLocked&&!welcomeActive){
+          startCharacterFocus(character);
+        }
       }
 
       try{
@@ -4923,35 +4828,61 @@ hexReady(function(){
       if(signature===heroDevStyleSignature){return;}
       if(heroDevStyleSignature!==null){
         updateTextureSource(sourceImage);
-        /* カーソル判定で保持していた旧配置の範囲も破棄。 */
-        mouseFollow.holdRect=null;
       }
       heroDevStyleSignature=signature;
     }
 
-    function advanceMouseFollow(){
-      var targetX=clamp(mouseFollow.targetX,-metrics.maxX,metrics.maxX);
-      var targetY=clamp(mouseFollow.targetY,-metrics.maxY,metrics.maxY);
-      state.x+=(targetX-state.x)*HERO_MOUSE_FOLLOW_EASE;
-      state.y+=(targetY-state.y)*HERO_MOUSE_FOLLOW_EASE;
-      /* 目標で停止させ、細かな残移動も次の慣性移動へ渡さない。 */
-      if(Math.abs(targetX-state.x)*metrics.scale<.1){state.x=targetX;}
-      if(Math.abs(targetY-state.y)*metrics.scale<.1){state.y=targetY;}
+    function cancelCharacterFocus(){
+      characterFocus.active=false;
+      mouseTap.pointerId=null;
+      mouseTap.character=null;
+    }
+
+    function startCharacterFocus(character){
+      cancelAutoZoom(true);
+      spFollow.active=false;
+      characterFocus.started=performance.now();
+      characterFocus.fromX=state.x;
+      characterFocus.fromY=state.y;
+      characterFocus.fromZoom=state.zoom;
+      characterFocus.targetX=character.x-metrics.imageWidth/2;
+      characterFocus.targetY=metrics.imageHeight/2-character.y;
+      characterFocus.active=true;
       state.vx=0;
       state.vy=0;
+      if(reduced){
+        advanceCharacterFocus(characterFocus.started+HERO_CHARACTER_FOCUS_DURATION);
+        setCamera();
+      }
+    }
+
+    function advanceCharacterFocus(now){
+      var progress=clamp((now-characterFocus.started)/HERO_CHARACTER_FOCUS_DURATION,0,1);
+      var eased=1-Math.pow(1-progress,3);
+      var maxX=Math.max((metrics.imageWidth-metrics.baseVisibleWidth/HERO_ZOOM_MAX)/2,0);
+      var maxY=Math.max((metrics.imageHeight-metrics.baseVisibleHeight/HERO_ZOOM_MAX)/2,0);
+      var targetX=clamp(characterFocus.targetX,-maxX,maxX);
+      var targetY=clamp(characterFocus.targetY,-maxY,maxY);
+      state.zoom=characterFocus.fromZoom+(HERO_ZOOM_MAX-characterFocus.fromZoom)*eased;
+      updateZoomMetrics();
+      state.x=characterFocus.fromX+(targetX-characterFocus.fromX)*eased;
+      state.y=characterFocus.fromY+(targetY-characterFocus.fromY)*eased;
+      state.vx=0;
+      state.vy=0;
+      if(progress>=1){characterFocus.active=false;}
     }
 
     function renderLoop(){
       if(renderer&&camera&&scene){
         if(!HEX_IS_PRODUCTION){syncHeroDevStyles(performance.now());}
         if(!dragging&&!pinch.active&&!autoZooming&&!welcomeActive){
-          if(HERO_MOUSE_FOLLOW_ENABLED&&mouseFollow.active&&!isSp()){
-            advanceMouseFollow();
+          if(characterFocus.active){
+            advanceCharacterFocus(performance.now());
           }else if(spFollow.active&&isSp()){
             state.x+=(spFollow.targetX-state.x)*
-              HERO_MOUSE_FOLLOW_EASE;
+              HERO_SP_FOLLOW_EASE;
             state.y+=(spFollow.targetY-state.y)*
-              HERO_MOUSE_FOLLOW_EASE;
+              HERO_SP_FOLLOW_EASE;
             state.vx=0;
             state.vy=0;
           }else{
@@ -5067,6 +4998,8 @@ hexReady(function(){
     }
 
     function destroyThree(){
+      cancelCharacterFocus();
+      mouseTap.pointerId=null;
       window.cancelAnimationFrame(renderFrameId);
       renderFrameId=0;
       heroDevStyleSignature=null;
@@ -5074,8 +5007,7 @@ hexReady(function(){
       if(webglStage){
         webglStage.removeEventListener("pointerdown",onPointerDown);
         webglStage.removeEventListener("pointermove",onPointerMove);
-        webglStage.removeEventListener("pointerleave",onPointerLeave);
-        webglStage.removeEventListener("pointerup",endPointer);
+          webglStage.removeEventListener("pointerup",endPointer);
         webglStage.removeEventListener("pointercancel",endPointer);
         webglStage.removeEventListener("lostpointercapture",endPointer);
       }
@@ -5125,7 +5057,7 @@ hexReady(function(){
       ));
       heroLayerImages.forEach(function(layer){
         layer.addEventListener("load",function(){
-          mouseFollow.alphaCanvases.delete(layer);
+          characterAlphaCanvases.delete(layer);
           if(textureCanvas&&sourceImage&&sourceImage.naturalWidth){
             updateTextureSource(sourceImage);
           }
@@ -5169,7 +5101,6 @@ hexReady(function(){
 
           webglStage.addEventListener("pointerdown",onPointerDown);
           webglStage.addEventListener("pointermove",onPointerMove);
-          webglStage.addEventListener("pointerleave",onPointerLeave);
           webglStage.addEventListener("pointerup",endPointer);
           webglStage.addEventListener("pointercancel",endPointer);
           webglStage.addEventListener("lostpointercapture",endPointer);
@@ -5333,7 +5264,6 @@ hexReady(function(){
       window.clearTimeout(welcomeDotTimer);welcomeDotTimer=0;
       window.cancelAnimationFrame(welcomeBodyFrame);welcomeBodyFrame=0;
       activePointers.clear();pinch.active=false;dragging=false;
-      mouseFollow.active=false;spFollow.active=false;spTap.pointerId=null;
       if(webglStage)webglStage.classList.remove('is-dragging','is-pinching');
       if(welcomeWrap)welcomeWrap.classList.add('is-v2-active');
       setHeroPageLock(false);
@@ -14816,7 +14746,7 @@ hexLoad(function(){
   hexLoad(loadMotionLibraries);
 })();
 
-/* 追従カーソル: 通常／Drag／View／Click／Home。クリック機能は追加しない。 */
+/* カスタムカーソル。ヒーローは通常の丸、職人だけClick表示。 */
 hexReady(function(){
   var enabled=window.matchMedia(
     '(min-width:769px) and (hover:hover) and (pointer:fine) and '+
@@ -14852,7 +14782,7 @@ hexReady(function(){
     /* 別ページ扱いの動画iframeには親のマウス座標が届かない。 */
     if(element.tagName==='IFRAME'){hide();return;}
     var stage=element.closest('.hex-webgl-stage');
-    if(dragHeld&&stage){setMode('drag');return;}
+    if(dragHeld&&stage){setMode('normal');return;}
     /* CMSのロゴは画像や親要素に遷移処理を持つ場合がある。 */
     if(element.closest('.headermenu_type8 .headermenu_logo')){
       setMode('home');return;
@@ -14898,9 +14828,9 @@ hexReady(function(){
     }
     if(stage&&window.hexHero&&window.hexHero.isCharacterAt&&
       window.hexHero.isCharacterAt(targetX,targetY)){
-      setMode('view');return;
+      setMode('click');return;
     }
-    setMode(stage?'drag':'normal');
+    setMode('normal');
   }
 
   function animate(now){
