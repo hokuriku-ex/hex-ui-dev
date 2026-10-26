@@ -3021,7 +3021,6 @@ hexReady(function(){
   var HERO_CLOUD_BACK_VERTICAL_FOLLOW=.20;
   var HERO_AUTO_ZOOM_WAIT=300;
   var HERO_AUTO_ZOOM_DURATION=1500;
-  var HERO_SP_FOLLOW_EASE=.075;
   var HERO_CHARACTER_FOCUS_DURATION=1050;
   var HERO_CHARACTER_CLICK_MAX_MOVE=6;
   var HERO_SP_TAP_MAX_MOVE=12;
@@ -3163,7 +3162,6 @@ hexReady(function(){
     };
     var characterFocusMask=null;
     var spTap={pointerId:null,x:0,y:0,hit:false,character:null};
-    var spFollow={active:false,targetX:0,targetY:0};
     var interactionLocked=true;
     var autoZooming=false;
     var autoZoomPending=false;
@@ -3444,7 +3442,6 @@ hexReady(function(){
       state.vy=0;
       state.zoom=HERO_ZOOM_INTRO_START;
       spTap.pointerId=null;
-      spFollow.active=false;
       updateZoomMetrics();
       /* 最初の画像表示は高さ中央ではなく画像の上端に揃える。 */
       state.y=metrics.maxY;
@@ -3934,7 +3931,6 @@ hexReady(function(){
       pinch.active=false;
       dragging=false;
       spTap.pointerId=null;
-      spFollow.active=false;
       bottomIntroProgress=0;
       state.x=0;
       state.y=0;
@@ -4546,7 +4542,6 @@ hexReady(function(){
       dragging=false;
       spTap.pointerId=null;
       spTap.hit=false;
-      spFollow.active=false;
       state.vx=0;
       state.vy=0;
       webglStage.classList.remove("is-dragging");
@@ -4675,7 +4670,6 @@ hexReady(function(){
       if(event.pointerType==="touch"){
         var character=isSp()
           ?getHeroCharacterAt(event.clientX,event.clientY,true):null;
-        spFollow.active=false;
         spTap.pointerId=event.pointerId;
         spTap.x=event.clientX;
         spTap.y=event.clientY;
@@ -4866,7 +4860,6 @@ hexReady(function(){
     function startCharacterFocus(character){
       if(characterFocus.maskVisible){return;}
       cancelAutoZoom(true);
-      spFollow.active=false;
       characterFocus.started=performance.now();
       characterFocus.fromX=state.x;
       characterFocus.fromY=state.y;
@@ -4975,13 +4968,6 @@ hexReady(function(){
         if(!dragging&&!pinch.active&&!autoZooming&&!welcomeActive){
           if(characterFocus.active){
             advanceCharacterFocus(performance.now());
-          }else if(spFollow.active&&isSp()){
-            state.x+=(spFollow.targetX-state.x)*
-              HERO_SP_FOLLOW_EASE;
-            state.y+=(spFollow.targetY-state.y)*
-              HERO_SP_FOLLOW_EASE;
-            state.vx=0;
-            state.vy=0;
           }else{
             state.x+=state.vx;
             state.y+=state.vy;
