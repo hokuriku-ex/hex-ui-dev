@@ -3346,30 +3346,40 @@ hexReady(function(){
         '<span>WELCOME</span><i aria-hidden="true"></i>';
       welcomeButton.addEventListener("click",function(event){
         event.preventDefault();
-        if(!welcomeButton.classList.contains("is-visible")){return;}
+        if(!welcomeButton.classList.contains("is-visible")||welcomeButton.disabled){return;}
+        if(characterFocus.maskVisible){
+          startCharacterFocusReturn();
+          return;
+        }
         beginWelcome(true);
       });
       sticky.appendChild(welcomeButton);
     }
 
     function updateWelcomeButton(){
+      var isBack=characterFocus.maskVisible;
       var visible=!!(
         welcomeButton&&
         ready&&
-        hero.classList.contains("is-intro-complete")&&
-        !hero.classList.contains("is-intro-departed")&&
+        (isBack||(hero.classList.contains("is-intro-complete")&&
+          !hero.classList.contains("is-intro-departed")))&&
         !welcomeActive&&
         !document.documentElement.classList.contains("hex-opening-lock")
       );
 
       if(!welcomeButton){return;}
 
+      /* 同じボタンを切り替えるため、PC/SPとも位置・サイズはWELCOMEと共通。 */
+      welcomeButton.classList.toggle("is-back",isBack);
+      welcomeButton.querySelector("span").textContent=isBack?"BACK":"WELCOME";
+      welcomeButton.setAttribute("aria-label",isBack?"全画面のヒーロー探索へ戻る":"WELCOMEへ進む");
+      welcomeButton.disabled=isBack&&characterFocus.returning;
+      welcomeButton.tabIndex=visible&&!welcomeButton.disabled?0:-1;
       /* 自動進行終了後からWELCOMEへ進むまで表示。 */
       if(visible===welcomeButtonVisible){return;}
       welcomeButtonVisible=visible;
       welcomeButton.classList.toggle("is-visible",visible);
       welcomeButton.setAttribute("aria-hidden",visible?"false":"true");
-      welcomeButton.tabIndex=visible?0:-1;
     }
 
     function updateZoomMetrics(){
@@ -4855,6 +4865,7 @@ hexReady(function(){
         characterFocus.maskVisible=false;
         document.documentElement.classList.remove("hex-character-focus-active");
         if(characterFocusMask){characterFocusMask.style.display="none";}
+        updateWelcomeButton();
       }
     }
 
@@ -4876,6 +4887,7 @@ hexReady(function(){
       state.vx=0;
       state.vy=0;
       updateCharacterFocusMask();
+      updateWelcomeButton();
       if(reduced){
         advanceCharacterFocus(characterFocus.started+HERO_CHARACTER_FOCUS_DURATION);
         setCamera();
@@ -4898,6 +4910,7 @@ hexReady(function(){
       dragStart.pointerId=null;
       if(webglStage){webglStage.classList.remove("is-dragging","is-pinching");}
       state.vx=0;state.vy=0;
+      updateWelcomeButton();
       if(reduced){
         advanceCharacterFocus(characterFocus.started+WELCOME_REVERSE_DURATION);
         setCamera();
