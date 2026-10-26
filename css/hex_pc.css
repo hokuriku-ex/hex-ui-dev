@@ -9258,7 +9258,7 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
 .hex-v2-welcome-copy-stage .hex-welcome-final-copy *{color:#1f2774!important;text-shadow:none!important;-webkit-text-stroke:0!important}
 
 /* 人物紹介のCMS登録用HTML。通常のページの高さには含めない。 */
-:is(.hex-supervisor-wrap,.hex-block-wrap,.hex-sakan-wrap,.hex-pruning-wrap,.hex-aluminum-wrap){display:none!important;}
+:is(.hex-supervisor-wrap,.hex-block-wrap,.hex-sakan-wrap,.hex-pruning-wrap,.hex-aluminum-wrap,.hex-family-wrap){display:none!important;}
 /* WELCOMEの書式・横位置を共有し、人物の丸が完成してから表示する。 */
 .hex-v2-welcome-copy-stage.hex-character-copy-stage{
   position:absolute!important;

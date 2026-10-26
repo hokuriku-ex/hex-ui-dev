@@ -4639,7 +4639,7 @@ hexReady(function(){
     }
 
     /* 透過PNGの画素で人物を探し、合成画像上の人物の中心を返す。 */
-    function getHeroCharacterAt(clientX,clientY,excludeFamily){
+    function getHeroCharacterAt(clientX,clientY){
       if(!ready||interactionLocked||welcomeActive||!webglStage||
         !metrics.scale){return null;}
       var rect=webglStage.getBoundingClientRect();
@@ -4655,7 +4655,6 @@ hexReady(function(){
       for(var i=heroLayerImages.length-1;i>=0;i-=1){
         var layer=heroLayerImages[i];
         if(!layer.classList.contains("hex-hero-character")||
-          (excludeFamily&&layer.classList.contains("hex-hero-character--family"))||
           !layer.complete||!layer.naturalWidth){continue;}
         var style=getComputedStyle(layer);
         var x=parseFloat(style.getPropertyValue("--hex-sprite-x"));
@@ -4670,7 +4669,7 @@ hexReady(function(){
         var y=metrics.imageHeight-bottom-height;
         if(imageX>=x&&imageX<x+width&&imageY>=y&&imageY<y+height&&
           pointerHitsCharacter(layer,(imageX-x)/width,(imageY-y)/height)){
-          var kind=["supervisor","block","sakan","pruning","aluminum"].find(function(name){
+          var kind=["supervisor","block","sakan","pruning","aluminum","family"].find(function(name){
             return layer.classList.contains("hex-hero-character--"+name);
           });
           return {x:x+width/2,y:y+height/2,kind:kind};
@@ -4679,9 +4678,9 @@ hexReady(function(){
       return null;
     }
 
-    /* PCのClick表示とクリック対象は、家族を除く同じ透過画素判定を使う。 */
+    /* PCのClick表示とクリック対象は、同じ透過画素判定を使う。 */
     function isHeroCharacterAt(clientX,clientY){
-      return !!getHeroCharacterAt(clientX,clientY,true);
+      return !!getHeroCharacterAt(clientX,clientY);
     }
 
     function onPointerDown(event){
@@ -4697,12 +4696,12 @@ hexReady(function(){
         mouseTap.x=event.clientX;
         mouseTap.y=event.clientY;
         mouseTap.moved=false;
-        mouseTap.character=getHeroCharacterAt(event.clientX,event.clientY,true);
+        mouseTap.character=getHeroCharacterAt(event.clientX,event.clientY);
       }
 
       if(event.pointerType==="touch"){
         /* DevToolsのタッチ模擬やPCのタッチ画面でも、幅に関係なく判定する。 */
-        var character=getHeroCharacterAt(event.clientX,event.clientY,true);
+        var character=getHeroCharacterAt(event.clientX,event.clientY);
         spTap.pointerId=event.pointerId;
         spTap.x=event.clientX;
         spTap.y=event.clientY;
@@ -13326,6 +13325,7 @@ hexLoad(function(){
       '.hex-sakan-wrap',
       '.hex-pruning-wrap',
       '.hex-aluminum-wrap',
+      '.hex-family-wrap',
       /* WELCOMEの丸画像・コピーは既存の受け渡し演出を優先 */
       '.hex-welcome-wrap .hex-opening-copy-source',
       '.hex-welcome-wrap .hex-handoff-copy',
