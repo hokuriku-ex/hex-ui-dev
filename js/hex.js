@@ -3161,6 +3161,11 @@ hexReady(function(){
       circleX:0,circleY:0,circleRadius:0
     };
     var characterFocusMask=null;
+    var characterCopyStage=null;
+    var characterCopyChars=[];
+    var characterCopyShownAt=0;
+    var characterCopyBodyAt=0;
+    var characterCopyVisible=false;
     var spTap={pointerId:null,x:0,y:0,hit:false,character:null};
     var interactionLocked=true;
     var autoZooming=false;
@@ -3597,13 +3602,20 @@ hexReady(function(){
 
     function prepareWelcomeBody(){
       var body=welcomeContents&&welcomeContents.querySelector(".text");
+      if(!body||welcomeBodyChars.length){return;}
+      welcomeBodyChars=prepareCopyBody(body);
+    }
+
+    /* WELCOMEと人物紹介で、改行を維持した同じ文字表示を使う。 */
+    function prepareCopyBody(body){
+      var characters=[];
       var walker;
       var nodes=[];
       var node;
       var segments;
       var fragment;
       var span;
-      if(!body||welcomeBodyChars.length){return;}
+      if(!body){return characters;}
       walker=document.createTreeWalker(body,NodeFilter.SHOW_TEXT);
       while((node=walker.nextNode())){nodes.push(node);}
       nodes.forEach(function(textNode){
@@ -3622,10 +3634,11 @@ hexReady(function(){
           span.className="hex-v2-body-char";
           span.textContent=character;
           fragment.appendChild(span);
-          welcomeBodyChars.push(span);
+          characters.push(span);
         });
         textNode.parentNode.replaceChild(fragment,textNode);
       });
+      return characters;
     }
 
     function onWelcomeScroll(){
@@ -3642,9 +3655,13 @@ hexReady(function(){
       if(window.hexHomeAnchorNav&&window.hexHomeAnchorNav.syncWelcomeEnd){
         window.hexHomeAnchorNav.syncWelcomeEnd();
       }
-      var totalDuration=.8+Math.max(0,welcomeBodyChars.length-1)*.02;
+      renderCopyBody(welcomeBodyChars,progress);
+    }
+
+    function renderCopyBody(characters,progress){
+      var totalDuration=.8+Math.max(0,characters.length-1)*.02;
       var time=progress*totalDuration;
-      welcomeBodyChars.forEach(function(character,index){
+      characters.forEach(function(character,index){
         var local=reduced?1
           :clamp((time-index*.02)/.8,0,1);
         /* 本文の移動は親要素の自然なスクロールだけに任せる。 */
@@ -3841,6 +3858,7 @@ hexReady(function(){
       updateBottomIllustrations();
       updateWelcomeButton();
       updateCharacterFocusMask();
+      updateCharacterCopy(performance.now());
     }
 
     function resizeRenderer(){
@@ -4481,6 +4499,7 @@ hexReady(function(){
       ){
         return;
       }
+      if(event.target&&event.target.closest(".hex-character-copy-stage")){return;}
       if(handledWheelEvents&&handledWheelEvents.has(event)){return;}
       if(handledWheelEvents){handledWheelEvents.add(event);}
       if(Math.abs(event.deltaX)+Math.abs(event.deltaY)<2){return;}
@@ -4651,7 +4670,10 @@ hexReady(function(){
         var y=metrics.imageHeight-bottom-height;
         if(imageX>=x&&imageX<x+width&&imageY>=y&&imageY<y+height&&
           pointerHitsCharacter(layer,(imageX-x)/width,(imageY-y)/height)){
-          return {x:x+width/2,y:y+height/2};
+          var kind=["supervisor","block","sakan","pruning","aluminum"].find(function(name){
+            return layer.classList.contains("hex-hero-character--"+name);
+          });
+          return {x:x+width/2,y:y+height/2,kind:kind};
         }
       }
       return null;
@@ -4856,6 +4878,81 @@ hexReady(function(){
       heroDevStyleSignature=signature;
     }
 
+    /* CMS登録用HTMLは元の位置で非表示にし、選択した人物だけ探索画面へ複製する。 */
+    function prepareCharacterCopy(kind){
+      clearCharacterCopy();
+      if(!kind||!sticky){return;}
+      var source=document.querySelector(".hex-"+kind+"-wrap");
+      if(!source){return;}
+      characterCopyStage=document.createElement("div");
+      characterCopyStage.className="hex-v2-welcome-copy-stage hex-character-copy-stage welcome hex-motion-auto-off";
+      characterCopyStage.setAttribute("role","region");
+      characterCopyStage.setAttribute("aria-label","人物紹介");
+      characterCopyStage.setAttribute("aria-hidden","true");
+      var copy=source.querySelector(".hex-opening-copy-source,.hex-welcome-copy");
+      var contents=source.querySelector(".welcome_contents");
+      if(copy){
+        copy=copy.cloneNode(true);
+        copy.classList.add("hex-handoff-copy","hex-welcome-copy","hex-welcome-final-copy","is-copy-active");
+        characterCopyStage.appendChild(copy);
+      }
+      if(contents){characterCopyStage.appendChild(contents.cloneNode(true));}
+      sticky.appendChild(characterCopyStage);
+      characterCopyChars=prepareCopyBody(characterCopyStage.querySelector(".text"));
+      renderCopyBody(characterCopyChars,0);
+      characterCopyStage.dispatchEvent(new CustomEvent("hex:character-copy-prepare",{bubbles:true}));
+    }
+
+    function clearCharacterCopy(){
+      if(characterCopyStage){
+        characterCopyStage.dispatchEvent(new CustomEvent("hex:character-copy-reset",{bubbles:true}));
+        characterCopyStage.remove();
+      }
+      characterCopyStage=null;
+      characterCopyChars=[];
+      characterCopyShownAt=0;
+      characterCopyBodyAt=0;
+      characterCopyVisible=false;
+    }
+
+    function updateCharacterCopy(now){
+      if(!characterCopyStage){return;}
+      if(characterFocus.returning||!characterFocus.maskVisible){
+        characterCopyStage.classList.remove("is-visible");
+        characterCopyStage.setAttribute("aria-hidden","true");
+        return;
+      }
+      var circle=getWelcomeCircleGeometry(1);
+      var stageHeight=characterCopyStage.scrollHeight;
+      var top=(isSp()
+        ?circle.y+circle.radius+24
+        :Math.max(16,circle.y-stageHeight*.5))+"px";
+      var maxHeight=Math.max(1,metrics.height-parseFloat(top)-88)+"px";
+      if(characterCopyStage.style.top!==top){characterCopyStage.style.top=top;}
+      if(characterCopyStage.style.maxHeight!==maxHeight){characterCopyStage.style.maxHeight=maxHeight;}
+      if(characterFocus.rawProgress<.999){return;}
+      if(!characterCopyVisible){
+        characterCopyVisible=true;
+        characterCopyShownAt=now;
+        characterCopyStage.classList.add("is-visible");
+        characterCopyStage.setAttribute("aria-hidden","false");
+        characterCopyStage.dispatchEvent(new CustomEvent("hex:character-copy-show",{bubbles:true}));
+      }
+      /* サブタイトル開始と同期。演出ライブラリ未使用時にも本文を表示する。 */
+      if(!characterCopyBodyAt&&now-characterCopyShownAt>=(reduced?0:1200)){
+        characterCopyBodyAt=now;
+      }
+      if(characterCopyBodyAt){
+        renderCopyBody(characterCopyChars,reduced?1:clamp((now-characterCopyBodyAt)/1000,0,1));
+      }
+    }
+
+    document.addEventListener("hex:character-subtitle-start",function(event){
+      if(characterCopyStage&&characterCopyStage.contains(event.target)&&!characterCopyBodyAt){
+        characterCopyBodyAt=performance.now();
+      }
+    });
+
     function cancelCharacterFocus(keepMask){
       characterFocus.active=false;
       characterFocus.returning=false;
@@ -4863,6 +4960,7 @@ hexReady(function(){
       mouseTap.character=null;
       if(!keepMask){
         characterFocus.maskVisible=false;
+        clearCharacterCopy();
         document.documentElement.classList.remove("hex-character-focus-active");
         if(characterFocusMask){characterFocusMask.style.display="none";}
         updateWelcomeButton();
@@ -4872,6 +4970,7 @@ hexReady(function(){
     function startCharacterFocus(character){
       if(characterFocus.maskVisible){return;}
       cancelAutoZoom(true);
+      prepareCharacterCopy(character.kind);
       characterFocus.started=performance.now();
       characterFocus.fromX=state.x;
       characterFocus.fromY=state.y;
@@ -4911,6 +5010,7 @@ hexReady(function(){
       if(webglStage){webglStage.classList.remove("is-dragging","is-pinching");}
       state.vx=0;state.vy=0;
       updateWelcomeButton();
+      updateCharacterCopy(performance.now());
       if(reduced){
         advanceCharacterFocus(characterFocus.started+WELCOME_REVERSE_DURATION);
         setCamera();
@@ -13220,6 +13320,11 @@ hexLoad(function(){
       '.pagetitle_type',
       '.hex-opening',
       '.hex-hero-wrap',
+      '.hex-supervisor-wrap',
+      '.hex-block-wrap',
+      '.hex-sakan-wrap',
+      '.hex-pruning-wrap',
+      '.hex-aluminum-wrap',
       /* WELCOMEの丸画像・コピーは既存の受け渡し演出を優先 */
       '.hex-welcome-wrap .hex-opening-copy-source',
       '.hex-welcome-wrap .hex-handoff-copy',
@@ -14073,6 +14178,9 @@ hexLoad(function(){
                 ease:'back.out(2.3)',
                 overwrite:'auto',
                 onStart:function(){
+                  if(main.closest('.hex-character-copy-stage')){
+                    main.dispatchEvent(new Event('hex:character-subtitle-start',{bubbles:true}));
+                  }
                   if(main.closest('.hex-welcome-wrap')){
                     main.dispatchEvent(new Event('hex:welcome-subtitle-start',{bubbles:true}));
                   }
@@ -14459,6 +14567,20 @@ hexLoad(function(){
     }
 
     function setupHeroAndWelcomeCatchRolls(){
+      var characterRolls=new WeakMap();
+      document.addEventListener('hex:character-copy-prepare',function(event){
+        var stage=event.target;
+        var roll=createCatchRoll(stage.querySelector('.hex-opening-main'));
+        if(roll){characterRolls.set(stage,roll);}
+      });
+      document.addEventListener('hex:character-copy-show',function(event){
+        var roll=characterRolls.get(event.target);
+        if(roll&&!isReducedMotion()){roll.play();}
+      });
+      document.addEventListener('hex:character-copy-reset',function(event){
+        var roll=characterRolls.get(event.target);
+        if(roll){roll.reset();characterRolls.delete(event.target);}
+      });
       var heroCatch=document.querySelector('.hex-hero-catch');
       var heroMain=heroCatch
         ?heroCatch.querySelector(

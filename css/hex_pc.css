@@ -9257,6 +9257,33 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
 .hex-v2-welcome-copy-stage .hex-welcome-final-copy,
 .hex-v2-welcome-copy-stage .hex-welcome-final-copy *{color:#1f2774!important;text-shadow:none!important;-webkit-text-stroke:0!important}
 
+/* 人物紹介のCMS登録用HTML。通常のページの高さには含めない。 */
+:is(.hex-supervisor-wrap,.hex-block-wrap,.hex-sakan-wrap,.hex-pruning-wrap,.hex-aluminum-wrap){display:none!important;}
+/* WELCOMEの書式・横位置を共有し、人物の丸が完成してから表示する。 */
+.hex-v2-welcome-copy-stage.hex-character-copy-stage{
+  position:absolute!important;
+  z-index:11;
+  margin:0!important;
+  padding:0!important;
+  background:transparent!important;
+  overflow:auto;
+  overscroll-behavior:contain;
+  touch-action:pan-y;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+.hex-character-copy-stage.is-visible{opacity:1;visibility:visible;pointer-events:auto;}
+.hex-character-copy-stage .title:empty{display:none!important;}
+.hex-character-copy-stage .hex-v2-body-char{opacity:0;}
+@media screen and (max-width:768px){
+  .hex-v2-welcome-copy-stage.hex-character-copy-stage{
+    right:0!important;left:0!important;width:auto!important;
+    max-width:none;
+  }
+  .hex-character-copy-stage .hex-welcome-copy{margin-bottom:28px!important;text-align:center!important;}
+}
+
 @media (prefers-reduced-motion:reduce){
   .hex-opening.is-curtain-sequence *,
   .hex-webgl-stage,
