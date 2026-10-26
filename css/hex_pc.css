@@ -9266,13 +9266,16 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
   margin:0!important;
   padding:0!important;
   background:transparent!important;
-  overflow:auto;
+  overflow-x:hidden;
+  overflow-y:auto;
+  scrollbar-width:none;
   overscroll-behavior:contain;
   touch-action:pan-y;
   opacity:0;
   visibility:hidden;
   pointer-events:none;
 }
+.hex-character-copy-stage::-webkit-scrollbar{display:none;}
 .hex-character-copy-stage.is-visible{opacity:1;visibility:visible;pointer-events:auto;}
 .hex-character-copy-stage .title:empty{display:none!important;}
 .hex-character-copy-stage .hex-v2-body-char{opacity:0;}
