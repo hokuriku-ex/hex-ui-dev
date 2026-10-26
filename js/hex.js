@@ -4701,8 +4701,8 @@ hexReady(function(){
       }
 
       if(event.pointerType==="touch"){
-        var character=isSp()
-          ?getHeroCharacterAt(event.clientX,event.clientY,true):null;
+        /* DevToolsのタッチ模擬やPCのタッチ画面でも、幅に関係なく判定する。 */
+        var character=getHeroCharacterAt(event.clientX,event.clientY,true);
         spTap.pointerId=event.pointerId;
         spTap.x=event.clientX;
         spTap.y=event.clientY;
@@ -4790,7 +4790,7 @@ hexReady(function(){
 
       if(event.pointerType==="touch"&&event.pointerId===spTap.pointerId){
         if(event.type==="pointerup"&&spTap.hit&&!pinch.active&&
-          activePointers.size===1&&!interactionLocked&&isSp()&&
+          activePointers.size===1&&!interactionLocked&&
           Math.hypot(event.clientX-spTap.x,event.clientY-spTap.y)<=
             HERO_SP_TAP_MAX_MOVE){
           tappedCharacter=spTap.character;
