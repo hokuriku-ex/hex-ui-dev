@@ -9050,6 +9050,13 @@ html.hex-opening-finishing
   fill:#fff;pointer-events:none;
 }
 .hex-character-focus-mask > path{fill:#fff!important;}
+/* 人物の丸表示中は探索用UIを隠し、逆再生の完了後に元の表示状態へ戻す。 */
+html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-replay,.hex-hero-welcome-button){
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  transition:none!important;
+}
 .hex-hero.is-v2-active>.hex-hero-scene{opacity:0!important;visibility:hidden!important}
 .hex-hero-catch{z-index:5!important;transition:opacity .52s ease,visibility 0s linear 0s!important}
 .hex-hero-wrap.is-v2-ready .hex-hero-catch{pointer-events:none!important;user-select:none}

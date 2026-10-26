@@ -4853,6 +4853,7 @@ hexReady(function(){
       mouseTap.character=null;
       if(!keepMask){
         characterFocus.maskVisible=false;
+        document.documentElement.classList.remove("hex-character-focus-active");
         if(characterFocusMask){characterFocusMask.style.display="none";}
       }
     }
@@ -4868,6 +4869,7 @@ hexReady(function(){
       characterFocus.targetY=metrics.imageHeight/2-character.y;
       characterFocus.active=true;
       characterFocus.maskVisible=true;
+      document.documentElement.classList.add("hex-character-focus-active");
       characterFocus.progress=0;
       characterFocus.rawProgress=0;
       characterFocus.returning=false;
