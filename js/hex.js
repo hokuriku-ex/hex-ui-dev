@@ -4941,6 +4941,8 @@ hexReady(function(){
         characterFocusMask.setAttribute("preserveAspectRatio","none");
         var path=document.createElementNS("http://www.w3.org/2000/svg","path");
         path.setAttribute("fill-rule","evenodd");
+        path.setAttribute("fill","#fff");
+        path.style.setProperty("fill","#fff","important");
         characterFocusMask.appendChild(path);
         heroSection.appendChild(characterFocusMask);
       }
