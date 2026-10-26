@@ -4691,7 +4691,8 @@ hexReady(function(){
 
       if(!characterFocus.maskVisible){cancelCharacterFocus(true);}
       beginExplore();
-      if(event.pointerType==="mouse"&&!isSp()){
+      /* DevToolsのドッキングなどでSP幅でも、マウスクリックは受け付ける。 */
+      if(event.pointerType==="mouse"){
         mouseTap.pointerId=event.pointerId;
         mouseTap.x=event.clientX;
         mouseTap.y=event.clientY;
