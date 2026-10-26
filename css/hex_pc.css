@@ -9278,6 +9278,8 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
 .hex-character-copy-stage::-webkit-scrollbar{display:none;}
 .hex-character-copy-stage.is-visible{opacity:1;visibility:visible;pointer-events:auto;}
 .hex-character-copy-stage .title:empty{display:none!important;}
+.hex-character-copy-stage .welcome_contents{padding-inline:0!important;}
+.hex-character-copy-stage .welcome_contents .text{display:block;width:100%;box-sizing:border-box;}
 .hex-character-copy-stage .hex-v2-body-char{opacity:0;}
 @media screen and (max-width:768px){
   .hex-v2-welcome-copy-stage.hex-character-copy-stage{
