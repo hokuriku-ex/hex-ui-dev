@@ -3022,7 +3022,7 @@ hexReady(function(){
   var HERO_AUTO_ZOOM_WAIT=300;
   var HERO_AUTO_ZOOM_DURATION=1500;
   var HERO_SP_FOLLOW_EASE=.075;
-  var HERO_CHARACTER_FOCUS_DURATION=1000;
+  var HERO_CHARACTER_FOCUS_DURATION=1050;
   var HERO_CHARACTER_CLICK_MAX_MOVE=6;
   var HERO_SP_TAP_MAX_MOVE=12;
   /* WELCOME本文の表示に必要なスクロール量。2なら従来の約2倍。 */
@@ -3158,7 +3158,8 @@ hexReady(function(){
     var mouseTap={pointerId:null,x:0,y:0,moved:false,character:null};
     var characterFocus={
       active:false,started:0,fromX:0,fromY:0,fromZoom:1,targetX:0,targetY:0,
-      maskVisible:false,progress:0,fromRadius:null,circleX:0,circleY:0,circleRadius:0
+      maskVisible:false,progress:0,rawProgress:0,returning:false,returnFrom:0,
+      circleX:0,circleY:0,circleRadius:0
     };
     var characterFocusMask=null;
     var spTap={pointerId:null,x:0,y:0,hit:false,targetX:0,targetY:0};
@@ -3262,6 +3263,18 @@ hexReady(function(){
         Math.max(1,getWelcomeContentHeight()*.5-16)
       );
     }
+    /* WELCOMEと人物フォーカスで、丸の軌道・サイズ・位置を共有する。 */
+    function getWelcomeCircleGeometry(progress){
+      var targetRadius=isSp()?getSpCircleRadius():getPcCircleRadius();
+      var startRadius=Math.hypot(window.innerWidth,window.hexViewportHeight());
+      var startY=metrics.height*.5;
+      return {
+        radius:startRadius+(targetRadius-startRadius)*progress,
+        x:window.innerWidth*.5+(window.innerWidth*(isSp()?.5:.27)-window.innerWidth*.5)*progress,
+        y:startY+((isSp()?targetRadius+16:getWelcomeContentHeight()*.5)-startY)*progress
+      };
+    }
+
     function getSpStageTop(trackCircle){
       var headerTop=activeHero
         ?parseFloat(getComputedStyle(activeHero).marginTop)
@@ -3752,8 +3765,9 @@ hexReady(function(){
       var nextX;
       var nextY;
       if(!camera){return;}
-      nextX=clamp(state.x,-metrics.maxX,metrics.maxX);
-      nextY=clamp(state.y,-metrics.maxY,metrics.maxY);
+      /* 丸表示中は人物を左側の丸の中央へ置くため、通常の探索範囲で制限しない。 */
+      nextX=characterFocus.maskVisible?state.x:clamp(state.x,-metrics.maxX,metrics.maxX);
+      nextY=characterFocus.maskVisible?state.y:clamp(state.y,-metrics.maxY,metrics.maxY);
       if(nextX!==state.x){state.vx=0;}
       if(nextY!==state.y){state.vy=0;}
       state.x=nextX;
@@ -4289,13 +4303,6 @@ hexReady(function(){
       var welcomeTop=welcomeWrap?documentTop(welcomeWrap):heroTop+window.hexViewportHeight();
       var travelMetrics;
       var circleProgress;
-      var startRadius;
-      var targetRadius;
-      var radius;
-      var startX;
-      var targetX;
-      var x;
-      var y;
 
       scrollQueued=false;
       lastScrollY=scrollY;
@@ -4333,18 +4340,10 @@ hexReady(function(){
         syncSnapshotLayer(false);
         startWelcomeReverseSnap();
       }
-      startRadius=Math.hypot(window.innerWidth,window.hexViewportHeight());
-      targetRadius=isSp()?getSpCircleRadius():getPcCircleRadius();
-      radius=startRadius+(targetRadius-startRadius)*circleProgress;
-      startX=window.innerWidth*.5;
-      targetX=window.innerWidth*(isSp()?.5:.27);
-      x=startX+(targetX-startX)*circleProgress;
-      y=isSp()
-        ?metrics.height*.5+
-          (targetRadius+16-metrics.height*.5)*circleProgress
-        :metrics.height*.5+(getWelcomeContentHeight()*.5-metrics.height*.5)*circleProgress;
-      snapshot.style.clipPath="circle("+radius+"px at "+x+"px "+y+"px)";
-      snapshot.style.webkitClipPath="circle("+radius+"px at "+x+"px "+y+"px)";
+      var circle=getWelcomeCircleGeometry(circleProgress);
+      var clip="circle("+circle.radius+"px at "+circle.x+"px "+circle.y+"px)";
+      snapshot.style.clipPath=clip;
+      snapshot.style.webkitClipPath=clip;
 
       travelMetrics=measureWelcome();
 
@@ -4483,6 +4482,10 @@ hexReady(function(){
       event.preventDefault();
       if(interactionLocked){return;}
 
+      if(characterFocus.maskVisible){
+        startCharacterFocusReturn();
+        return;
+      }
       cancelCharacterFocus();
       beginExplore();
       zoomDelta=Math.abs(event.deltaY)>=Math.abs(event.deltaX)
@@ -4653,9 +4656,9 @@ hexReady(function(){
     function onPointerDown(event){
       if(!ready||welcomeActive||event.button>0){return;}
       event.preventDefault();
-      if(interactionLocked){return;}
+      if(interactionLocked||characterFocus.returning){return;}
 
-      cancelCharacterFocus(true);
+      if(!characterFocus.maskVisible){cancelCharacterFocus(true);}
       beginExplore();
       if(event.pointerType==="mouse"&&!isSp()){
         mouseTap.pointerId=event.pointerId;
@@ -4704,8 +4707,10 @@ hexReady(function(){
         Math.hypot(event.clientX-mouseTap.x,event.clientY-mouseTap.y)>
           HERO_CHARACTER_CLICK_MAX_MOVE){
         mouseTap.moved=true;
-        characterFocus.maskVisible=false;
-        if(characterFocusMask){characterFocusMask.style.display="none";}
+        if(characterFocus.maskVisible){
+          startCharacterFocusReturn();
+          return;
+        }
       }
 
       if(event.pointerType==="touch"&&event.pointerId===spTap.pointerId&&
@@ -4842,6 +4847,7 @@ hexReady(function(){
 
     function cancelCharacterFocus(keepMask){
       characterFocus.active=false;
+      characterFocus.returning=false;
       mouseTap.pointerId=null;
       mouseTap.character=null;
       if(!keepMask){
@@ -4851,7 +4857,7 @@ hexReady(function(){
     }
 
     function startCharacterFocus(character){
-      var fromRadius=characterFocus.maskVisible?characterFocus.circleRadius:null;
+      if(characterFocus.maskVisible){return;}
       cancelAutoZoom(true);
       spFollow.active=false;
       characterFocus.started=performance.now();
@@ -4863,7 +4869,8 @@ hexReady(function(){
       characterFocus.active=true;
       characterFocus.maskVisible=true;
       characterFocus.progress=0;
-      characterFocus.fromRadius=fromRadius;
+      characterFocus.rawProgress=0;
+      characterFocus.returning=false;
       state.vx=0;
       state.vy=0;
       updateCharacterFocusMask();
@@ -4873,36 +4880,57 @@ hexReady(function(){
       }
     }
 
+    function startCharacterFocusReturn(){
+      if(!characterFocus.maskVisible||characterFocus.returning){return;}
+      characterFocus.returning=true;
+      characterFocus.returnFrom=characterFocus.rawProgress;
+      characterFocus.started=performance.now();
+      characterFocus.active=true;
+      mouseTap.pointerId=null;
+      mouseTap.character=null;
+      dragging=false;
+      dragStart.pointerId=null;
+      if(webglStage){webglStage.classList.remove("is-dragging");}
+      state.vx=0;state.vy=0;
+      if(reduced){
+        advanceCharacterFocus(characterFocus.started+WELCOME_REVERSE_DURATION);
+        setCamera();
+      }
+    }
+
     function advanceCharacterFocus(now){
-      var progress=clamp((now-characterFocus.started)/HERO_CHARACTER_FOCUS_DURATION,0,1);
-      var eased=1-Math.pow(1-progress,3);
+      var duration=characterFocus.returning?WELCOME_REVERSE_DURATION:HERO_CHARACTER_FOCUS_DURATION;
+      var progress=reduced?1:clamp((now-characterFocus.started)/duration,0,1);
+      /* 復帰時はWELCOMEと同じ減速で、生の進行率を巻き戻す。 */
+      var raw=characterFocus.returning
+        ?characterFocus.returnFrom*Math.pow(1-progress,3):progress;
+      var eased=raw*raw*(3-2*raw);
+      characterFocus.rawProgress=raw;
       characterFocus.progress=eased;
-      var maxX=Math.max((metrics.imageWidth-metrics.baseVisibleWidth/HERO_ZOOM_MAX)/2,0);
-      var maxY=Math.max((metrics.imageHeight-metrics.baseVisibleHeight/HERO_ZOOM_MAX)/2,0);
-      var targetX=clamp(characterFocus.targetX,-maxX,maxX);
-      var targetY=clamp(characterFocus.targetY,-maxY,maxY);
+      var circle=getWelcomeCircleGeometry(1);
+      var scale=metrics.baseScale*HERO_ZOOM_MAX;
+      var targetX=characterFocus.targetX+(metrics.width*.5-circle.x)/scale;
+      var targetY=characterFocus.targetY+(circle.y-metrics.height*.5)/scale;
       state.zoom=characterFocus.fromZoom+(HERO_ZOOM_MAX-characterFocus.fromZoom)*eased;
       updateZoomMetrics();
       state.x=characterFocus.fromX+(targetX-characterFocus.fromX)*eased;
       state.y=characterFocus.fromY+(targetY-characterFocus.fromY)*eased;
       state.vx=0;
       state.vy=0;
-      if(progress>=1){characterFocus.active=false;}
+      if(progress>=1){
+        if(characterFocus.returning){cancelCharacterFocus();}
+        else{characterFocus.active=false;}
+      }
     }
 
-    /* 円の外側だけを同色で覆い、人物・雲・植栽をまとめて丸く見せる。
+    /* 円の外側だけを白で覆い、WELCOMEと同じ丸の窓を描く。
        入力面は切り抜かず、円の外からでもドラッグで探索へ戻れる。 */
     function updateCharacterFocusMask(){
       if(!characterFocus.maskVisible||!heroSection){return;}
       if(isSp()){cancelCharacterFocus();return;}
       var width=metrics.width,height=metrics.height;
-      var x=width/2+(characterFocus.targetX-state.x)*metrics.scale;
-      var y=height/2+(state.y-characterFocus.targetY)*metrics.scale;
-      var startRadius=characterFocus.fromRadius===null
-        ?Math.hypot(Math.max(x,width-x),Math.max(y,height-y))+2
-        :characterFocus.fromRadius;
-      var targetRadius=getPcCircleRadius();
-      var radius=startRadius+(targetRadius-startRadius)*characterFocus.progress;
+      var circle=getWelcomeCircleGeometry(characterFocus.progress);
+      var x=circle.x,y=circle.y,radius=circle.radius;
       characterFocus.circleX=x;
       characterFocus.circleY=y;
       characterFocus.circleRadius=radius;
