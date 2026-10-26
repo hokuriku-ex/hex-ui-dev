@@ -7,8 +7,8 @@ CMSのヒーローHTMLは `examples/hero-layers.html` を使用します。画�
 1. `plinth.png`（台座）
 2. `drawing.png`（図面）
 3. `tree01.png`（樹木1）
-4. `underplant01.png`（下草1）
-5. `house.png`（建物）
+4. `house.png`（建物）
+5. `underplant01.png`（下草1）
 6. `exterior.png`（外構）
 7. `tree02.png`（樹木2）
 8. `underplant02.png`（下草2）
@@ -21,7 +21,7 @@ CMSのヒーローHTMLは `examples/hero-layers.html` を使用します。画�
 15. `supervisor.png`（現場監督）
 16. `family.png`（家族）
 
-HTMLの記載順で合成するため、順番を変更すると重なり順も変わります。
+原則としてHTMLの記載順で合成します。建物と下草1は、旧HTMLでも建物→下草1の順になるようJSで補正します。
 
 ## 画像の作り方
 

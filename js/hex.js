@@ -5253,6 +5253,18 @@ hexReady(function(){
         ".hex-hero-scene > .hex-hero-sprite,"+
         ".hex-hero-scene > .hex-hero-character"
       ));
+      /* CMSに旧順序のHTMLが残っていても、建物の手前に下草1を合成する。 */
+      var houseIndex=heroLayerImages.findIndex(function(layer){
+        return layer.matches(".hex-hero-house,.hex-hero-house-layer > img");
+      });
+      var underplantIndex=heroLayerImages.findIndex(function(layer){
+        return layer.classList.contains("hex-hero-sprite--underplant01");
+      });
+      if(houseIndex>underplantIndex&&underplantIndex>=0){
+        var houseImage=heroLayerImages[houseIndex];
+        heroLayerImages[houseIndex]=heroLayerImages[underplantIndex];
+        heroLayerImages[underplantIndex]=houseImage;
+      }
       heroLayerImages.forEach(function(layer){
         layer.addEventListener("load",function(){
           characterAlphaCanvases.delete(layer);
