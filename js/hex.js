@@ -3157,8 +3157,10 @@ hexReady(function(){
     var characterAlphaCanvases=new WeakMap();
     var mouseTap={pointerId:null,x:0,y:0,moved:false,character:null};
     var characterFocus={
-      active:false,started:0,fromX:0,fromY:0,fromZoom:1,targetX:0,targetY:0
+      active:false,started:0,fromX:0,fromY:0,fromZoom:1,targetX:0,targetY:0,
+      maskVisible:false,progress:0,fromRadius:null,circleX:0,circleY:0,circleRadius:0
     };
+    var characterFocusMask=null;
     var spTap={pointerId:null,x:0,y:0,hit:false,targetX:0,targetY:0};
     var spFollow={active:false,targetX:0,targetY:0};
     var interactionLocked=true;
@@ -3817,6 +3819,7 @@ hexReady(function(){
       }
       updateBottomIllustrations();
       updateWelcomeButton();
+      updateCharacterFocusMask();
     }
 
     function resizeRenderer(){
@@ -4611,6 +4614,9 @@ hexReady(function(){
       var rect=webglStage.getBoundingClientRect();
       if(clientX<rect.left||clientX>=rect.right||
         clientY<rect.top||clientY>=rect.bottom){return null;}
+      if(characterFocus.maskVisible&&Math.hypot(
+        clientX-rect.left-characterFocus.circleX,
+        clientY-rect.top-characterFocus.circleY)>characterFocus.circleRadius){return null;}
       var imageX=metrics.imageWidth/2+state.x+
         (clientX-rect.left-rect.width/2)/metrics.scale;
       var imageY=metrics.imageHeight/2-state.y+
@@ -4649,7 +4655,7 @@ hexReady(function(){
       event.preventDefault();
       if(interactionLocked){return;}
 
-      cancelCharacterFocus();
+      cancelCharacterFocus(true);
       beginExplore();
       if(event.pointerType==="mouse"&&!isSp()){
         mouseTap.pointerId=event.pointerId;
@@ -4698,6 +4704,8 @@ hexReady(function(){
         Math.hypot(event.clientX-mouseTap.x,event.clientY-mouseTap.y)>
           HERO_CHARACTER_CLICK_MAX_MOVE){
         mouseTap.moved=true;
+        characterFocus.maskVisible=false;
+        if(characterFocusMask){characterFocusMask.style.display="none";}
       }
 
       if(event.pointerType==="touch"&&event.pointerId===spTap.pointerId&&
@@ -4832,13 +4840,18 @@ hexReady(function(){
       heroDevStyleSignature=signature;
     }
 
-    function cancelCharacterFocus(){
+    function cancelCharacterFocus(keepMask){
       characterFocus.active=false;
       mouseTap.pointerId=null;
       mouseTap.character=null;
+      if(!keepMask){
+        characterFocus.maskVisible=false;
+        if(characterFocusMask){characterFocusMask.style.display="none";}
+      }
     }
 
     function startCharacterFocus(character){
+      var fromRadius=characterFocus.maskVisible?characterFocus.circleRadius:null;
       cancelAutoZoom(true);
       spFollow.active=false;
       characterFocus.started=performance.now();
@@ -4848,8 +4861,12 @@ hexReady(function(){
       characterFocus.targetX=character.x-metrics.imageWidth/2;
       characterFocus.targetY=metrics.imageHeight/2-character.y;
       characterFocus.active=true;
+      characterFocus.maskVisible=true;
+      characterFocus.progress=0;
+      characterFocus.fromRadius=fromRadius;
       state.vx=0;
       state.vy=0;
+      updateCharacterFocusMask();
       if(reduced){
         advanceCharacterFocus(characterFocus.started+HERO_CHARACTER_FOCUS_DURATION);
         setCamera();
@@ -4859,6 +4876,7 @@ hexReady(function(){
     function advanceCharacterFocus(now){
       var progress=clamp((now-characterFocus.started)/HERO_CHARACTER_FOCUS_DURATION,0,1);
       var eased=1-Math.pow(1-progress,3);
+      characterFocus.progress=eased;
       var maxX=Math.max((metrics.imageWidth-metrics.baseVisibleWidth/HERO_ZOOM_MAX)/2,0);
       var maxY=Math.max((metrics.imageHeight-metrics.baseVisibleHeight/HERO_ZOOM_MAX)/2,0);
       var targetX=clamp(characterFocus.targetX,-maxX,maxX);
@@ -4870,6 +4888,45 @@ hexReady(function(){
       state.vx=0;
       state.vy=0;
       if(progress>=1){characterFocus.active=false;}
+    }
+
+    /* 円の外側だけを同色で覆い、人物・雲・植栽をまとめて丸く見せる。
+       入力面は切り抜かず、円の外からでもドラッグで探索へ戻れる。 */
+    function updateCharacterFocusMask(){
+      if(!characterFocus.maskVisible||!heroSection){return;}
+      if(isSp()){cancelCharacterFocus();return;}
+      var width=metrics.width,height=metrics.height;
+      var x=width/2+(characterFocus.targetX-state.x)*metrics.scale;
+      var y=height/2+(state.y-characterFocus.targetY)*metrics.scale;
+      var startRadius=characterFocus.fromRadius===null
+        ?Math.hypot(Math.max(x,width-x),Math.max(y,height-y))+2
+        :characterFocus.fromRadius;
+      var targetRadius=getPcCircleRadius();
+      var radius=startRadius+(targetRadius-startRadius)*characterFocus.progress;
+      characterFocus.circleX=x;
+      characterFocus.circleY=y;
+      characterFocus.circleRadius=radius;
+      if(!characterFocusMask){
+        characterFocusMask=document.createElementNS("http://www.w3.org/2000/svg","svg");
+        characterFocusMask.setAttribute("class","hex-character-focus-mask");
+        characterFocusMask.setAttribute("aria-hidden","true");
+        characterFocusMask.setAttribute("preserveAspectRatio","none");
+        var path=document.createElementNS("http://www.w3.org/2000/svg","path");
+        path.setAttribute("fill-rule","evenodd");
+        characterFocusMask.appendChild(path);
+        heroSection.appendChild(characterFocusMask);
+      }
+      characterFocusMask.style.display="block";
+      var viewBox="0 0 "+width+" "+height;
+      if(characterFocusMask.getAttribute("viewBox")!==viewBox){
+        characterFocusMask.setAttribute("viewBox",viewBox);
+      }
+      var d="M0 0H"+width+"V"+height+"H0Z M"+(x-radius)+" "+y+
+        "a"+radius+" "+radius+" 0 1 0 "+(radius*2)+" 0a"+
+        radius+" "+radius+" 0 1 0 "+(-radius*2)+" 0Z";
+      if(characterFocusMask.firstChild.getAttribute("d")!==d){
+        characterFocusMask.firstChild.setAttribute("d",d);
+      }
     }
 
     function renderLoop(){

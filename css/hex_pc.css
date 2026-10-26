@@ -9044,6 +9044,11 @@ html.hex-opening-finishing
 .hex-webgl-stage.is-resetting{animation:hex-v2-hero-reset .7s ease both}
 @keyframes hex-v2-hero-reset{from{opacity:.15}to{opacity:1}}
 .hex-webgl-stage canvas{display:block;width:100%!important;height:100%!important}
+.hex-character-focus-mask{
+  position:absolute;inset:0;z-index:6;
+  display:none;width:100%;height:100%;overflow:hidden;
+  fill:var(--hex-hero-focus-surface,#F3F0EB);pointer-events:none;
+}
 .hex-hero.is-v2-active>.hex-hero-scene{opacity:0!important;visibility:hidden!important}
 .hex-hero-catch{z-index:5!important;transition:opacity .52s ease,visibility 0s linear 0s!important}
 .hex-hero-wrap.is-v2-ready .hex-hero-catch{pointer-events:none!important;user-select:none}
