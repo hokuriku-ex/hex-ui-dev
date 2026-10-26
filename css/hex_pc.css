@@ -9096,7 +9096,7 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
 .hex-hero>.hex-cloud-layer .hex-cloud--in-front-of-ellipse{z-index:2;}
 .hex-hero-ellipse{
   position:absolute;
-  top:0;
+  top:200px;
   left:0;
   z-index:1;
   width:100%;
