@@ -3162,7 +3162,7 @@ hexReady(function(){
       circleX:0,circleY:0,circleRadius:0
     };
     var characterFocusMask=null;
-    var spTap={pointerId:null,x:0,y:0,hit:false,targetX:0,targetY:0};
+    var spTap={pointerId:null,x:0,y:0,hit:false,character:null};
     var spFollow={active:false,targetX:0,targetY:0};
     var interactionLocked=true;
     var autoZooming=false;
@@ -4524,6 +4524,10 @@ hexReady(function(){
       var dy;
 
       if(points.length<2){return;}
+      if(characterFocus.maskVisible){
+        startCharacterFocusReturn();
+        return;
+      }
       first=points[0];
       second=points[1];
       midpointX=(first.x+second.x)/2;
@@ -4670,16 +4674,13 @@ hexReady(function(){
 
       if(event.pointerType==="touch"){
         var character=isSp()
-          ?getHeroCharacterAt(event.clientX,event.clientY):null;
+          ?getHeroCharacterAt(event.clientX,event.clientY,true):null;
         spFollow.active=false;
         spTap.pointerId=event.pointerId;
         spTap.x=event.clientX;
         spTap.y=event.clientY;
         spTap.hit=!!character;
-        if(character){
-          spTap.targetX=character.x-metrics.imageWidth/2;
-          spTap.targetY=metrics.imageHeight/2-character.y;
-        }
+        spTap.character=character;
         activePointers.set(event.pointerId,{
           id:event.pointerId,
           x:event.clientX,
@@ -4717,6 +4718,10 @@ hexReady(function(){
         Math.hypot(event.clientX-spTap.x,event.clientY-spTap.y)>
           HERO_SP_TAP_MAX_MOVE){
         spTap.hit=false;
+        if(characterFocus.maskVisible){
+          startCharacterFocusReturn();
+          return;
+        }
       }
 
       if(event.pointerType==="touch"&&activePointers.has(event.pointerId)){
@@ -4754,20 +4759,20 @@ hexReady(function(){
 
     function endPointer(event){
       var remaining;
+      var tappedCharacter=null;
 
       if(event.pointerType==="touch"&&event.pointerId===spTap.pointerId){
         if(event.type==="pointerup"&&spTap.hit&&!pinch.active&&
           activePointers.size===1&&!interactionLocked&&isSp()&&
           Math.hypot(event.clientX-spTap.x,event.clientY-spTap.y)<=
             HERO_SP_TAP_MAX_MOVE){
-          spFollow.targetX=clamp(spTap.targetX,-metrics.maxX,metrics.maxX);
-          spFollow.targetY=clamp(spTap.targetY,-metrics.maxY,metrics.maxY);
-          spFollow.active=true;
+          tappedCharacter=spTap.character;
           state.vx=0;
           state.vy=0;
         }
         spTap.pointerId=null;
         spTap.hit=false;
+        spTap.character=null;
       }
 
       if(event.pointerType==="touch"){
@@ -4808,6 +4813,8 @@ hexReady(function(){
           startCharacterFocus(character);
         }
       }
+
+      if(tappedCharacter){startCharacterFocus(tappedCharacter);}
 
       try{
         if(webglStage.hasPointerCapture(event.pointerId)){
@@ -4888,9 +4895,13 @@ hexReady(function(){
       characterFocus.active=true;
       mouseTap.pointerId=null;
       mouseTap.character=null;
+      spTap.pointerId=null;
+      spTap.hit=false;
+      spTap.character=null;
       dragging=false;
+      pinch.active=false;
       dragStart.pointerId=null;
-      if(webglStage){webglStage.classList.remove("is-dragging");}
+      if(webglStage){webglStage.classList.remove("is-dragging","is-pinching");}
       state.vx=0;state.vy=0;
       if(reduced){
         advanceCharacterFocus(characterFocus.started+WELCOME_REVERSE_DURATION);
@@ -4927,7 +4938,6 @@ hexReady(function(){
        入力面は切り抜かず、円の外からでもドラッグで探索へ戻れる。 */
     function updateCharacterFocusMask(){
       if(!characterFocus.maskVisible||!heroSection){return;}
-      if(isSp()){cancelCharacterFocus();return;}
       var width=metrics.width,height=metrics.height;
       var circle=getWelcomeCircleGeometry(characterFocus.progress);
       var x=circle.x,y=circle.y,radius=circle.radius;
