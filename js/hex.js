@@ -3817,7 +3817,10 @@ hexReady(function(){
       });
       if(heroEllipse){
         /* 上端位置を保ち、縦移動は台座より少し控えめに追従する。 */
-        var ellipseWidth=metrics.imageWidth*metrics.scale;
+        var ellipseSourceWidth=metrics.imageWidth*metrics.scale;
+        /* 初回90%からのズーム中も、パン位置を含めて画面左右を覆う。 */
+        var ellipseWidth=Math.max(ellipseSourceWidth,
+          metrics.width+2*Math.abs(state.x*metrics.scale)+4);
         var ellipseHeight=metrics.imageHeight*metrics.scale;
         var ellipseX=(metrics.width-ellipseWidth)/2-state.x*metrics.scale;
         var ellipseY=(metrics.height-ellipseHeight)/2+
@@ -3826,6 +3829,10 @@ hexReady(function(){
         heroEllipse.style.width=ellipseWidth+"px";
         heroEllipse.style.height=ellipseHeight+"px";
         heroEllipse.style.transform="translate3d("+ellipseX+"px,"+ellipseY+"px,0)";
+        /* 開幕プレビューの建物には、楕円の補完幅を適用しない。 */
+        heroEllipse.style.setProperty("--hex-ellipse-source-width",ellipseSourceWidth+"px");
+        heroEllipse.style.setProperty("--hex-ellipse-source-transform","translate3d("+
+          ((metrics.width-ellipseSourceWidth)/2-state.x*metrics.scale)+"px,"+ellipseY+"px,0)");
       }
       if(bottomIllustrations){
         /* 初期倍率の幅を維持し、ズームによるイラストの拡大縮小を防ぐ。 */
@@ -9377,10 +9384,10 @@ hexReady(function(){
       }
       if(ellipse){
         var previewEllipse=preview.querySelector(".hex-hero-ellipse");
-        previewEllipse.style.width=imageWidth*scale+"px";
+        var previewEllipseWidth=Math.max(imageWidth*scale,width+4);
+        previewEllipse.style.width=previewEllipseWidth+"px";
         previewEllipse.style.height=imageHeight*scale+"px";
-        previewEllipse.style.transform=preview.style.getPropertyValue(
-          "--hex-preview-image-transform");
+        previewEllipse.style.transform="translate3d("+(width-previewEllipseWidth)/2+"px,0,0)";
       }
       opening._hexOpeningHeroPreview=preview;
       return preview;
@@ -9401,9 +9408,11 @@ hexReady(function(){
         previewEllipse.style.width=liveEllipse.style.width;
         previewEllipse.style.height=liveEllipse.style.height;
         previewEllipse.style.transform=liveEllipse.style.transform;
-        preview.style.setProperty("--hex-preview-image-width",liveEllipse.style.width);
+        preview.style.setProperty("--hex-preview-image-width",
+          liveEllipse.style.getPropertyValue("--hex-ellipse-source-width")||liveEllipse.style.width);
         preview.style.setProperty("--hex-preview-image-height",liveEllipse.style.height);
-        preview.style.setProperty("--hex-preview-image-transform",liveEllipse.style.transform);
+        preview.style.setProperty("--hex-preview-image-transform",
+          liveEllipse.style.getPropertyValue("--hex-ellipse-source-transform")||liveEllipse.style.transform);
       }
       if(!hero){return;}
       var liveBottomArt=hero.querySelector(".hex-hero-bottom-illustrations");
