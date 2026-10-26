@@ -9283,7 +9283,8 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
 .hex-character-copy-stage .hex-v2-body-char{opacity:0;}
 @media screen and (min-width:769px){
   /* 左揃えのまま、行全体ではなく文字幅の中心から均等に拡大する。 */
-  .hex-character-copy-stage .hex-opening-sub{
+  .hex-character-copy-stage .hex-opening-sub,
+  .hex-welcome-wrap .hex-v2-welcome-copy-stage .hex-opening-sub{
     width:fit-content;
     max-width:100%;
     transform-origin:50% 100%;
