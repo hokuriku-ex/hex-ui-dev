@@ -1,31 +1,32 @@
-# ヒーローの16レイヤー
+# ヒーローの17レイヤー
 
 CMSのヒーローHTMLは `examples/hero-layers.html` を使用します。画像は `images/top-hero/` に保存してください。CSS・JSは旧HTMLにも対応します。
 
 ## 奥から手前への重なり順
 
-1. `plinth.png`（台座）
-2. `drawing.png`（図面）
-3. `tree01.png`（樹木1）
-4. `house.png`（建物）
-5. `underplant01.png`（下草1）
-6. `underplant02.png`（下草2）
-7. `exterior.png`（外構）
-8. `tree02.png`（樹木2）
-9. `tree03.png`（樹木3）
-10. `underplant03.png`（下草3）
-11. `aluminum.png`（アルミ施工職人）
-12. `pruning.png`（剪定職人）
-13. `sakan.png`（左官職人）
-14. `block.png`（ブロック職人）
-15. `supervisor.png`（現場監督）
-16. `family.png`（家族）
+1. `plinth.webp`（台座：非表示・寸法基準）
+2. `drawing.webp`（図面）
+3. `exterior01.webp`（外構1：追加）
+4. `tree01.webp`（樹木1）
+5. `house.webp`（建物）
+6. `underplant01.webp`（下草1）
+7. `underplant02.webp`（下草2）
+8. `exterior02.webp`（外構2：従来の外構）
+9. `tree02.webp`（樹木2）
+10. `tree03.webp`（樹木3）
+11. `underplant03.webp`（下草3）
+12. `aluminum.webp`（アルミ施工職人）
+13. `pruning.webp`（剪定職人）
+14. `sakan.webp`（左官職人）
+15. `block.webp`（ブロック職人）
+16. `supervisor.webp`（現場監督）
+17. `family.webp`（家族）
 
 原則としてHTMLの記載順で合成します。旧HTMLでも建物→下草1→下草2の順になるようJSで補正します。
 
 ## 画像の作り方
 
-- `plinth.png` を基準に、`drawing.png`・`house.png`・`exterior.png` は同じ画像寸法・構図で出力します。台座以外は必要部分のみ残した透過PNGにします。
+- `plinth.png` を基準に、`drawing.png`・`house.png`・`exterior02.webp` は同じ画像寸法・構図で出力します。台座以外は必要部分のみ残した透過PNGにします。
 - `tree01～03.png`・`underplant01～03.png`・人物6枚は、単体の透過PNGを使います。位置・サイズは個別に指定します。
 - 樹木・下草のCSS位置は画像追加前の仮配置です。完成画像を置いてからバランスを調整します。
 - `exterior_sub.png`・`exterior_main.png`・`block_worker.png`・`tree.png`・`carport.png` は今回の最終構成には含めません。
@@ -52,3 +53,9 @@ CMSのヒーローHTMLは `examples/hero-layers.html` を使用します。画�
 開発サイトでは、Elementsで対象の `.hex-hero-character` または `.hex-hero-sprite` を選び、Stylesの `--hex-sprite-x`・`--hex-sprite-bottom`・`--hex-sprite-width` を数値の％で変更すると、約150ms以内を目安にCanvasへ反映されます。クラスのCSSルールと要素のstyle属性、どちらの編集にも対応します。ドラッグ・ズーム位置は維持します。本番サイトでは監視せず、非表示タブでも確認を停止します。
 
 左官職人は `.hex-hero-character--sakan`、ほかは `family`・`supervisor`・`block`・`pruning`・`aluminum` です。再読み込みで編集は元に戻るため、確定値は `css/hex_pc.css` へ保存してください。
+
+## 外構の2枚構成
+
+従来の画像は内容を変えず exterior02.webp に変更しています。exterior01.webp は図面の直後に追加します。どちらも台座と同じ画像寸法・構図を使います。新しい外構1の画像は未提供のため、現在の exterior01.webp は3000×1854の完全透明な仮画像です。完成画像で差し替えてください。
+
+改行なしの登録用HTMLは examples/hero-layers-inline.html です。旧ファイル名 exterior.png / exterior.webp はJSで exterior02.webp に読み替えます。

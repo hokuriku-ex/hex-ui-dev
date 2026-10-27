@@ -250,7 +250,8 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
     // Keep the existing six image basenames; only the format changes.
     file=file.replace(/^((?:left|right)_bottom0[1-3])\.png(?=[?#]|$)/i,'$1.webp');
     file=file.replace(/^(aluminum|pruning|sakan|block|supervisor|family)\.png(?=[?#]|$)/i,'$1.webp');
-    file=file.replace(/^(house|drawing|exterior|tree0[1-3]|underplant0[1-3])\.png(?=[?#]|$)/i,'$1.webp');
+    file=file.replace(/^exterior\.(?:png|webp)(?=[?#]|$)/i,'exterior02.webp');
+    file=file.replace(/^(house|drawing|exterior0[12]|tree0[1-3]|underplant0[1-3])\.png(?=[?#]|$)/i,'$1.webp');
     if(!/^[^/\\?#]+\.(?:avif|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i.test(file))return null;
     return new URL(file,imageRoot).href;
   }
