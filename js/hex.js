@@ -5272,6 +5272,20 @@ hexReady(function(){
         heroLayerImages[houseIndex]=heroLayerImages[underplantIndex];
         heroLayerImages[underplantIndex]=houseImage;
       }
+      /* 下草2は下草1の直後へ移し、外構より奥に合成する。 */
+      var underplant02Index=heroLayerImages.findIndex(function(layer){
+        return layer.classList.contains("hex-hero-sprite--underplant02");
+      });
+      underplantIndex=heroLayerImages.findIndex(function(layer){
+        return layer.classList.contains("hex-hero-sprite--underplant01");
+      });
+      if(underplantIndex>=0&&underplant02Index>=0&&underplant02Index!==underplantIndex+1){
+        var underplant02Image=heroLayerImages.splice(underplant02Index,1)[0];
+        underplantIndex=heroLayerImages.findIndex(function(layer){
+          return layer.classList.contains("hex-hero-sprite--underplant01");
+        });
+        heroLayerImages.splice(underplantIndex+1,0,underplant02Image);
+      }
       heroLayerImages.forEach(function(layer){
         layer.addEventListener("load",function(){
           characterAlphaCanvases.delete(layer);
