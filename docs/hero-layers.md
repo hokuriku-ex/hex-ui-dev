@@ -73,3 +73,5 @@ exterior01.webp は図面の直後、exterior02.webp は従来の外構の位置
 表示タイミングは従来のWELCOMEボタンと共通です。開幕・ヒーローの初期演出中、WELCOME移行後、人物の丸表示中は非表示です。先頭項目はWELCOMEの見出し検索に依存せず丸演出を開始し、２項目目以降は従来の見出しアンカーへ移動します。端末別の `data-sticky-pc`・`data-sticky-sp` 指定も引き続き読み取ります。
 
 背景面は元アーチの頂点の高さで水平にしています。背景面とbottom画像の接点は同じ座標から計算し、ズーム・縦ドラッグ・WELCOMEへの複製時にも揃えます。
+
+トップのナビ元HTMLは `.hex-home-anchor-source` を使用し、下層の `.hex-anchor-source` と区別します。トップの通常表示は `.hex-home-anchor-nav:not(.is-fixed)` の専用CSSで紺背景（#1f2774）・白文字に設定しています。固定後は共通の白背景・紺文字です。

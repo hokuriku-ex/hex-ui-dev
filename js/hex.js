@@ -829,7 +829,7 @@ hexReady(function(){
   }
 
   /* 共通アンカーナビがあるページは、ナビ側のLenis処理へ任せる */
-  if(document.querySelector('.hex-anchor-source'))return;
+  if(document.querySelector('.hex-home-anchor-source,.hex-anchor-source'))return;
 
   function scrollToAnchor(){
     var target=null;
@@ -934,10 +934,10 @@ function hexAnchorVisualBottom(element){
   return bottom;
 }
 function hexInitAnchorNav(){
-  var source=document.querySelector('.hex-anchor-source');
+  var source=document.querySelector('.hex-home-anchor-source')||document.querySelector('.hex-anchor-source');
   if(!source||source._hexAnchorNav)return;
   var anchorStickyEnabled=hexAnchorStickyEnabled(source);
-  var homePanel=hexPrepareHomeAnchorNav(source);
+  var homePanel=source.classList.contains('hex-home-anchor-source')?hexPrepareHomeAnchorNav(source):null;
   var text=source.textContent||'';
   if(!text)return;
   var titles=text.split('|').map(function(item){
@@ -1531,9 +1531,9 @@ function hexInitAnchorNav(){
   function syncHomeAnchorBackground(){
     if(!homePanel)return;
     if(homePanel.classList.contains('is-hero-anchor')){
-      homePanel.style.setProperty('--hex-home-anchor-bg','#F3F0EB');
-      homePanel.style.setProperty('--hex-home-anchor-ink','#1f2774');
-      homePanel.style.setProperty('--hex-home-anchor-hover','#4a7fd0');
+      homePanel.style.setProperty('--hex-home-anchor-bg','#1f2774');
+      homePanel.style.setProperty('--hex-home-anchor-ink','#fff');
+      homePanel.style.setProperty('--hex-home-anchor-hover','#c8a874');
       return;
     }
     var next=document.getElementById(HOME_SECTIONS.ABOUT);
@@ -13424,6 +13424,7 @@ hexLoad(function(){
       '#gc_auto_frame_home_4 .hex-center-title',
       '#gc_auto_frame_home_4 .hex-company-card',
       '.hex-anchor-source',
+      '.hex-home-anchor-source',
       '.hex-anchor-nav',
       '.hex-anchor-nav-placeholder',
       '.hex-calendar-modal-dialog',
@@ -15652,7 +15653,7 @@ hexReady(function(){
     }
     var main=document.createElement('div');main.className='hex-page-hero-main';
     Array.from(contents.children).forEach(function(child){
-      if(child!==intro&&!child.matches('.hex-anchor-source,.hex-anchor-nav,.hex-anchor-nav-placeholder'))main.appendChild(child);
+      if(child!==intro&&!child.matches('.hex-anchor-source,.hex-home-anchor-source,.hex-anchor-nav,.hex-anchor-nav-placeholder'))main.appendChild(child);
     });
     contents.insertBefore(main,contents.firstChild);
     main.setAttribute('inert','');

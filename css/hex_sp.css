@@ -344,13 +344,13 @@
     display:none;
   }
   /* 初期表示：SECTION番号／タイトル／アイコン */
-  .hex-anchor-nav:not(.is-fixed)
+  .hex-anchor-nav:where(:not(.hex-home-anchor-nav)):not(.is-fixed)
   .hex-anchor-nav-list{
     align-items:stretch;
     padding-right:16px;
     padding-left:16px;
   }
-  .hex-anchor-nav:not(.is-fixed)
+  .hex-anchor-nav:where(:not(.hex-home-anchor-nav)):not(.is-fixed)
   .hex-anchor-nav-link{
     flex:0 0 auto;
     min-width:150px!important;
@@ -2932,4 +2932,23 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     font-size:inherit!important;line-height:inherit!important;overflow:visible!important;
   }
   .hex-title-fit-one-line .hex-catch-roll-mobile-capitalize{text-transform:none!important;}
+}
+
+/* トップ専用：SPの通常表示は横スクロール。 */
+@media(max-width:768px){
+  /* 初期表示：SECTION番号／タイトル／アイコン */
+  .hex-home-anchor-nav:not(.is-fixed)
+  .hex-anchor-nav-list{
+    align-items:stretch;
+    padding-right:16px;
+    padding-left:16px;
+  }
+  .hex-home-anchor-nav:not(.is-fixed)
+  .hex-anchor-nav-link{
+    flex:0 0 auto;
+    min-width:150px!important;
+    padding:14px 24px!important;
+    font-size:15px!important;
+    white-space:nowrap!important;
+  }
 }
