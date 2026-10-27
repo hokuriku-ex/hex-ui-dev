@@ -56,6 +56,6 @@ CMSのヒーローHTMLは `examples/hero-layers.html` を使用します。画�
 
 ## 外構の2枚構成
 
-従来の画像は内容を変えず exterior02.webp に変更しています。exterior01.webp は図面の直後に追加します。どちらも台座と同じ画像寸法・構図を使います。新しい外構1の画像は未提供のため、現在の exterior01.webp は3000×1854の完全透明な仮画像です。完成画像で差し替えてください。
+exterior01.webp は図面の直後、exterior02.webp は従来の外構の位置に表示します。どちらも提供された3000×1854の透過PNGを、寸法・余白を維持してロスレスWebPへ変換したものです。
 
 改行なしの登録用HTMLは examples/hero-layers-inline.html です。旧ファイル名 exterior.png / exterior.webp はJSで exterior02.webp に読み替えます。
