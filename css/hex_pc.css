@@ -6682,10 +6682,6 @@ html body
   background-repeat:no-repeat;
   background-color:transparent;
 }
-.hex-staff-card.is-noimage .hex-staff-photo{
-  filter:grayscale(100%) brightness(.9);
-  opacity:.75;
-}
 .hex-staff-body{
   position:relative;
   padding:18px 0 0;
