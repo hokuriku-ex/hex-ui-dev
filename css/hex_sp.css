@@ -2936,7 +2936,7 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
 
 /* トップ専用：SPの通常表示は横スクロール。 */
 @media(max-width:768px){
-  /* 初期表示：SECTION番号／タイトル／アイコン */
+  /* 初期表示：タイトル／アイコン */
   .hex-home-anchor-nav:not(.is-fixed)
   .hex-anchor-nav-list{
     align-items:stretch;

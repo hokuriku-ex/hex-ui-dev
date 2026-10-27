@@ -11134,7 +11134,7 @@ html.hex-character-focus-active .hex-home-anchor-panel.is-hero-anchor,
   color:#fff;
   background:#1f2774!important;
 }
-/* 初期表示：SECTION番号／タイトル／下向きアイコン */
+/* 初期表示：タイトル／下向きアイコン */
 .hex-home-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-list{
   justify-content:center;
@@ -11179,21 +11179,11 @@ html.hex-character-focus-active .hex-home-anchor-panel.is-hero-anchor,
 .hex-anchor-nav-link:last-child{
   border-right:1px solid rgba(255,255,255,.45)!important;
 }
-/* SECTION.01から自動採番 */
+/* 番号の行と、その行に伴うflexの間隔をなくして高さを詰める。 */
 .hex-home-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-link::before{
-  content:"SECTION." counter(hex-anchor-number, decimal-leading-zero);
-  position:static;
-  display:block;
-  color:#fff;
-  font-family:var(--hex-font-italic)!important;
-  font-size:12px;
-  font-weight:400;
-  font-style:italic;
-  line-height:1;
-  letter-spacing:.12em;
-  transform:none;
-  transition:color .3s ease;
+  content:none;
+  display:none;
 }
 /* タイトル下の下向きアイコン */
 .hex-home-anchor-nav:not(.is-fixed)
