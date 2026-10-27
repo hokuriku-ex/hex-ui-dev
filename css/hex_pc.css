@@ -4856,6 +4856,7 @@ html body
 
 /* 背景画像 */
 .hex-hero .hex-hero-bg img{
+  visibility:hidden!important; /* 台座は寸法基準として保持し、描画だけ隠す。 */
   display:block!important;
   width:100%!important;
   height:100%!important;

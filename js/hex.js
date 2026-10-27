@@ -5137,8 +5137,8 @@ hexReady(function(){
       baseLayerX=(textureCanvas.width-baseLayerWidth)/2;
       baseLayerY=(textureCanvas.height-baseLayerHeight)/2;
       context.clearRect(0,0,textureCanvas.width,textureCanvas.height);
-      context.drawImage(image,baseLayerX,baseLayerY,baseLayerWidth,baseLayerHeight);
-      /* 台座の上にHTMLの記載順で合成。同寸法レイヤーと個別配置画像に対応。 */
+      /* 台座は寸法の基準としてのみ使い、画像自体は描画しない。
+         図面以降の合成位置・サイズはそのまま維持する。 */
       heroLayerImages.forEach(function(layer){
         var style;
         var x;
@@ -9361,6 +9361,8 @@ hexReady(function(){
         previewImage.src=composite.src;
         preview.dataset.hexCompositeVersion=String(composite.version);
       }
+      /* 合成前の代替画像として台座だけが表示されるのも防ぐ。 */
+      if(!composite){previewImage.style.visibility="hidden";}
       preview.appendChild(previewImage);
       var bottomArt=activeHero.querySelector(".hex-hero-bottom-illustrations");
       if(bottomArt){preview.appendChild(bottomArt.cloneNode(true));}
@@ -9401,7 +9403,10 @@ hexReady(function(){
         window.hexHero.getCompositePreview();
       if(composite&&preview.dataset.hexCompositeVersion!==String(composite.version)){
         var previewImage=preview.querySelector(".hex-opening-hero-preview-image");
-        if(previewImage){previewImage.src=composite.src;}
+        if(previewImage){
+          previewImage.src=composite.src;
+          previewImage.style.removeProperty("visibility");
+        }
         preview.dataset.hexCompositeVersion=String(composite.version);
       }
       if(liveEllipse&&previewEllipse&&liveEllipse.style.width){
