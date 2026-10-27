@@ -4924,12 +4924,12 @@ html body
   pointer-events:none;
 }
 /* 樹木・下草の初期位置。各画像またはHTMLのstyleで個別調整可能。 */
-.hex-hero-sprite--tree01{--hex-sprite-x:15%;--hex-sprite-bottom:38%;--hex-sprite-width:12%;}
-.hex-hero-sprite--underplant01{--hex-sprite-x:13%;--hex-sprite-bottom:33%;--hex-sprite-width:16%;}
-.hex-hero-sprite--tree02{--hex-sprite-x:48%;--hex-sprite-bottom:40%;--hex-sprite-width:12%;}
-.hex-hero-sprite--underplant02{--hex-sprite-x:46%;--hex-sprite-bottom:35%;--hex-sprite-width:16%;}
-.hex-hero-sprite--tree03{--hex-sprite-x:69%;--hex-sprite-bottom:32%;--hex-sprite-width:12%;}
-.hex-hero-sprite--underplant03{--hex-sprite-x:67%;--hex-sprite-bottom:27%;--hex-sprite-width:16%;}
+.hex-hero-sprite--tree01{--hex-sprite-x:61.57333333%;--hex-sprite-bottom:52.54584682%;--hex-sprite-width:7.22666667%;}
+.hex-hero-sprite--underplant01{--hex-sprite-x:60.77333333%;--hex-sprite-bottom:48.87810140%;--hex-sprite-width:22.00000000%;}
+.hex-hero-sprite--tree02{--hex-sprite-x:22.37333333%;--hex-sprite-bottom:46.72060410%;--hex-sprite-width:8.64000000%;}
+.hex-hero-sprite--underplant02{--hex-sprite-x:24.16000000%;--hex-sprite-bottom:45.77130529%;--hex-sprite-width:5.89333333%;}
+.hex-hero-sprite--tree03{--hex-sprite-x:45.97333333%;--hex-sprite-bottom:43.91585761%;--hex-sprite-width:7.97333333%;}
+.hex-hero-sprite--underplant03{--hex-sprite-x:40.40000000%;--hex-sprite-bottom:39.55771305%;--hex-sprite-width:14.45333333%;}
 
 /* ヒーローを含む上位要素の切り抜きを解除 */
 .bg_post_index:has(.hex-hero-wrap),

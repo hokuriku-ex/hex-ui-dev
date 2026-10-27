@@ -32,6 +32,10 @@ CMSのヒーローHTMLは `examples/hero-layers.html` を使用します。画�
 
 ## 個別配置の変更例
 
+樹木・下草の配信用画像は `tree01～03.webp`・`underplant01～03.webp` です。元の3000×1854画像から透明余白だけを切り詰め、台座と同じ位置に重なるよう、基準倍率0.8を含めたCSSの配置・幅を設定しています。元画像内の切り抜き座標は `docs/hero-sprite-layout.json` に記録しています。以後は人物と同じ `--hex-sprite-x`・`--hex-sprite-bottom`・`--hex-sprite-width` で調整できます。
+
+建物・図面・外構は3000×1854の余白を維持したWebPです。CMSのPNGファイル名指定はJSで対応するWebPに読み替えます。
+
 ```html
 <img class="hex-hero-sprite hex-hero-sprite--tree01" src="tree01.png" alt=""
   style="--hex-sprite-x:15%;--hex-sprite-bottom:38%;--hex-sprite-width:12%;">
