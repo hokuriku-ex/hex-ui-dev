@@ -4833,6 +4833,11 @@ html body
   transform-origin:center center;
 }
 
+/* 図面だけ100%表示時に100px下げる。台座は非表示の寸法基準。 */
+.hex-hero .hex-hero-scene > .hex-hero-drawing{
+  transform:translateY(100px) scale(var(--hex-hero-base-layer-scale,1));
+}
+
 /* 背景・職人・前景をまとめて縦移動 */
 .hex-hero-scene{
   position:absolute!important;
@@ -8965,7 +8970,7 @@ html.hex-opening-finishing
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(3){background-color:#7789b9!important}
 .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i:nth-child(4){background-color:#97a5c9!important}
 .hex-opening-hero-preview.hex-v2-opening-preview{position:fixed!important;top:var(--header_height,80px)!important;right:0!important;bottom:0!important;left:0!important;width:100vw!important;height:auto!important;overflow:hidden!important;background:#A0D8EF!important;z-index:9!important}
-.hex-opening-hero-preview.hex-v2-opening-preview .hex-opening-hero-preview-image{position:absolute!important;top:0!important;right:auto!important;bottom:auto!important;left:0!important;z-index:3!important;display:block!important;width:var(--hex-preview-image-width,100%)!important;height:var(--hex-preview-image-height,100%)!important;max-width:none!important;object-fit:fill!important;transform:var(--hex-preview-image-transform,none)!important;transform-origin:top left!important}
+.hex-opening-hero-preview.hex-v2-opening-preview .hex-opening-hero-preview-image{position:absolute!important;top:0!important;right:auto!important;bottom:auto!important;left:0!important;z-index:4!important;display:block!important;width:var(--hex-preview-image-width,100%)!important;height:var(--hex-preview-image-height,100%)!important;max-width:none!important;object-fit:fill!important;transform:var(--hex-preview-image-transform,none)!important;transform-origin:top left!important}
 .hex-opening.is-curtain-sequence .is-v2-logo-playing :is(.hex-logo-front-left-mask-path,.hex-logo-front-center-mask-path,.hex-logo-back-arm-mask-path){animation:hex-v2-logo-draw .9s cubic-bezier(.22,.8,.3,1) forwards!important}
 .hex-opening.is-curtain-sequence .is-v2-logo-playing :is(.hex-logo-back-hand,.hex-logo-company-name){animation:hex-v2-logo-fade .62s ease .5s forwards!important}
 .hex-opening.is-curtain-sequence .hex-opening-brand-stage .hex-opening-message-final{top:clamp(38px,7vh,72px)!important;transform:translate(calc(-50% + 52px),0)!important}
@@ -9064,7 +9069,9 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
 /* WELCOME移行中は固定した丸スナップショットだけを表示する */
 .hex-hero-wrap.is-welcome-transition .hex-hero{opacity:0!important;visibility:hidden!important;transition:none!important}
 .hex-hero-wrap.is-welcome-transition .hex-hero-welcome-button{opacity:0!important;visibility:hidden!important;transform:translate3d(-50%,14px,0)!important;transition:none!important;pointer-events:none!important}
-.hex-hero-welcome-button{position:absolute;right:auto;bottom:max(24px,calc(env(safe-area-inset-bottom,0px) + 16px));left:50%;z-index:12;display:inline-flex;align-items:center;justify-content:center;gap:12px;min-width:164px;min-height:48px;padding:10px 24px;border:1px solid rgba(255,255,255,.9);border-radius:999px;background:rgba(31,39,116,.88);box-shadow:0 8px 28px rgba(15,24,72,.24);color:#fff;font-family:var(--hex-font-gothic);font-size:14px;font-weight:700;line-height:1;letter-spacing:.12em;opacity:0;visibility:hidden;transform:translate3d(-50%,14px,0);transition:opacity .38s ease,transform .45s cubic-bezier(.22,.8,.3,1),visibility 0s linear .45s;pointer-events:none;cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.hex-hero-welcome-button{position:absolute;right:auto;top:calc(var(--header_height,80px) + 16px);bottom:auto;left:50%;z-index:12;display:inline-flex;align-items:center;justify-content:center;gap:12px;min-width:164px;min-height:48px;padding:10px 24px;border:1px solid rgba(255,255,255,.9);border-radius:999px;background:rgba(31,39,116,.88);box-shadow:0 8px 28px rgba(15,24,72,.24);color:#fff;font-family:var(--hex-font-gothic);font-size:14px;font-weight:700;line-height:1;letter-spacing:.12em;opacity:0;visibility:hidden;transform:translate3d(-50%,14px,0);transition:opacity .38s ease,transform .45s cubic-bezier(.22,.8,.3,1),visibility 0s linear .45s;pointer-events:none;cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.hex-hero-welcome-button.is-back{top:auto;bottom:max(24px,calc(env(safe-area-inset-bottom,0px) + 16px));}
+@media(max-width:768px){.hex-hero-welcome-button:not(.is-back){top:calc(var(--header_height_smartphone,var(--header_height,80px)) + 16px);}}
 .hex-hero-welcome-button i{position:relative;display:block;width:9px;height:9px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg)}
 .hex-hero-welcome-button.is-back i{transform:translateY(2px) rotate(225deg);}
 .hex-hero-welcome-button.is-visible{opacity:1;visibility:visible;transform:translate3d(-50%,0,0);transition-delay:0s;pointer-events:auto}
@@ -9087,15 +9094,15 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
   overflow:hidden;
   pointer-events:none;
 }
-/* 青い空 → 奥の雲 → ベージュの楕円 → 手前の雲 → 建物。 */
+/* 空 → 上の雲４枚 → 下の雲２枚 → 左右の植栽６枚 → 楕円 → 建物。 */
 .hex-cloud-layer--behind{z-index:0;}
 .hex-hero>.hex-cloud-layer .hex-cloud--behind-ellipse{z-index:0;}
 .hex-hero>.hex-cloud-layer .hex-cloud--in-front-of-ellipse{z-index:2;}
 .hex-hero-ellipse{
   position:absolute;
-  top:100px;
+  top:0;
   left:0;
-  z-index:1;
+  z-index:3;
   width:100%;
   height:100%;
   background-position:left top;
@@ -9117,7 +9124,7 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
   background:var(--hex-hero-ellipse-color,#F3F0EB);
   pointer-events:none;
 }
-.hex-cloud-layer--front{z-index:2;}
+.hex-cloud-layer--front{z-index:1;}
 .hex-cloud{
   position:absolute;
   display:block;
@@ -9179,7 +9186,7 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
   bottom:0;
   left:0;
   width:100%;
-  z-index:5;
+  z-index:2;
   overflow:visible;
   transform:translate3d(0,0,0);
   pointer-events:none;
@@ -9192,7 +9199,7 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
   max-width:none;
   left:var(--hex-bottom-left,auto);
   right:var(--hex-bottom-right,auto);
-  bottom:var(--hex-bottom-y,0px);
+  bottom:50%;
   opacity:var(--hex-bottom-opacity,0);
   transform:translate3d(var(--hex-bottom-offset-x,0px),var(--hex-bottom-offset,110%),0) rotate(var(--hex-bottom-rotate,0deg));
   transform-origin:50% 100%;
@@ -9212,9 +9219,9 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
   .hex-hero-bottom-img{opacity:1!important;transform:translateX(var(--hex-bottom-offset-x,0px)) rotate(var(--hex-bottom-rotate,0deg))!important;will-change:auto;}
 }
 /* 透過した建物・台座は雲の上に置く。 */
-.hex-hero>.hex-hero-scene{z-index:3;}
-.hex-webgl-stage{z-index:4;}
-.hex-v2-handoff canvas{position:relative;z-index:4;}
+.hex-hero>.hex-hero-scene{z-index:4;}
+.hex-webgl-stage{z-index:5;}
+.hex-v2-handoff canvas{position:relative;z-index:5;}
 @media (max-width:768px){
   .hex-cloud--1{top:3%;left:-65px;width:180px;}
   .hex-cloud--2{top:19%;left:10%;width:110px;}

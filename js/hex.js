@@ -3016,8 +3016,8 @@ hexReady(function(){
   var HERO_ZOOM_INTRO_START=.9;
   var HERO_ZOOM_AUTO=1;
   var HERO_ZOOM_MAX=2;
-  /* 台座の縦移動を1とした楕円の追従率（上端の初期位置は維持）。 */
-  var HERO_ELLIPSE_VERTICAL_FOLLOW=.85;
+  /* 台座・図面の基準位置を100%表示時に下げる距離（px）。 */
+  var HERO_BASE_OFFSET_Y=100;
   /* 楕円より手前の雲２枚と奥の雲４枚の縦追従率。 */
   var HERO_CLOUD_FRONT_VERTICAL_FOLLOW=.70;
   var HERO_CLOUD_BACK_VERTICAL_FOLLOW=.20;
@@ -3818,23 +3818,22 @@ hexReady(function(){
         }
       });
       if(heroEllipse){
-        /* 上端位置を保ち、縦移動は台座より少し控えめに追従する。 */
+        /* 図面と同じ画像座標・倍率で楕円を固定する。 */
         var ellipseSourceWidth=metrics.imageWidth*metrics.scale;
         /* 初回90%からのズーム中も、パン位置を含めて画面左右を覆う。 */
         var ellipseWidth=Math.max(ellipseSourceWidth,
           metrics.width+2*Math.abs(state.x*metrics.scale)+4);
         var ellipseHeight=metrics.imageHeight*metrics.scale;
         var ellipseX=(metrics.width-ellipseWidth)/2-state.x*metrics.scale;
-        var ellipseY=(metrics.height-ellipseHeight)/2+
-          metrics.maxY*metrics.scale+
-          (state.y-metrics.maxY)*metrics.scale*HERO_ELLIPSE_VERTICAL_FOLLOW;
+        var sourceY=(metrics.height-ellipseHeight)/2+state.y*metrics.scale;
+        var ellipseY=sourceY+HERO_BASE_OFFSET_Y*metrics.scale/metrics.baseScale;
         heroEllipse.style.width=ellipseWidth+"px";
         heroEllipse.style.height=ellipseHeight+"px";
         heroEllipse.style.transform="translate3d("+ellipseX+"px,"+ellipseY+"px,0)";
         /* 開幕プレビューの建物には、楕円の補完幅を適用しない。 */
         heroEllipse.style.setProperty("--hex-ellipse-source-width",ellipseSourceWidth+"px");
         heroEllipse.style.setProperty("--hex-ellipse-source-transform","translate3d("+
-          ((metrics.width-ellipseSourceWidth)/2-state.x*metrics.scale)+"px,"+ellipseY+"px,0)");
+          ((metrics.width-ellipseSourceWidth)/2-state.x*metrics.scale)+"px,"+sourceY+"px,0)");
       }
       if(bottomIllustrations){
         /* 初期倍率の幅を維持し、ズームによるイラストの拡大縮小を防ぐ。 */
@@ -5150,7 +5149,9 @@ hexReady(function(){
         if(!layer.complete||!layer.naturalWidth){return;}
         if(!layer.classList.contains("hex-hero-character")&&
           !layer.classList.contains("hex-hero-sprite")){
-          context.drawImage(layer,baseLayerX,baseLayerY,baseLayerWidth,baseLayerHeight);
+          var layerOffsetY=layer.classList.contains("hex-hero-drawing")
+            ?HERO_BASE_OFFSET_Y/(metrics.baseScale||1)*scale:0;
+          context.drawImage(layer,baseLayerX,baseLayerY+layerOffsetY,baseLayerWidth,baseLayerHeight);
           return;
         }
         style=getComputedStyle(layer);
