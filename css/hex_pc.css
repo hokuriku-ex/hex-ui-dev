@@ -9223,11 +9223,11 @@ body > .hex-v2-handoff{z-index:198;}
   pointer-events:none;
 }
 /* 幅と左右端からの距離は台座画像の描画幅に対する割合。start/end は縦探索の進行率。 */
-/* 01の実描画高277px（透過余白を除く）を基準に、42cqw × 277/1536で上移動量を計算。 */
-.hex-hero-bottom-img--l1{z-index:1;--hex-bottom-width:42%;--hex-bottom-left:calc(var(--hex-bottom-screen-left,calc((100% - 100vw) / 2)) - var(--hex-bottom-moss-edge-inset,0px));--hex-bottom-y:-10px;--hex-bottom-start:.09;--hex-bottom-end:.52;--hex-bottom-rise:1.03;--hex-bottom-offset-x:var(--hex-bottom-moss-parallax-x,0px);}
+/* 01は横幅を従来の4/3に拡大。2048×1024pxの画像に合わせ、高さは維持する。 */
+.hex-hero-bottom-img--l1{z-index:1;--hex-bottom-width:56%;--hex-bottom-left:calc(var(--hex-bottom-screen-left,calc((100% - 100vw) / 2)) - var(--hex-bottom-moss-edge-inset,0px));--hex-bottom-y:-10px;--hex-bottom-start:.09;--hex-bottom-end:.52;--hex-bottom-rise:1.03;--hex-bottom-offset-x:var(--hex-bottom-moss-parallax-x,0px);}
 .hex-hero-bottom-img--l2{z-index:3;--hex-bottom-width:24%;--hex-bottom-left:calc(var(--hex-bottom-screen-left,calc((100% - 100vw) / 2)) - var(--hex-bottom-edge-inset,0px));--hex-bottom-y:-10px;--hex-bottom-start:.22;--hex-bottom-end:.76;--hex-bottom-rise:1.08;}
 .hex-hero-bottom-img--l3{z-index:2;--hex-bottom-width:31%;--hex-bottom-left:calc(var(--hex-bottom-screen-left,calc((100% - 100vw) / 2)) - var(--hex-bottom-tree-edge-inset,0px));--hex-bottom-y:calc((-12px + 7.57421875cqw * 2 / 3) / 2);--hex-bottom-start:.34;--hex-bottom-end:.95;--hex-bottom-rise:1.05;--hex-bottom-rotate:10deg;--hex-bottom-offset-x:var(--hex-bottom-moss-parallax-x,0px);}
-.hex-hero-bottom-img--r1{z-index:1;--hex-bottom-width:42%;--hex-bottom-right:calc(var(--hex-bottom-screen-right,calc((100% - 100vw) / 2)) - var(--hex-bottom-moss-edge-inset,0px));--hex-bottom-y:-10px;--hex-bottom-start:.09;--hex-bottom-end:.52;--hex-bottom-rise:1.03;--hex-bottom-offset-x:var(--hex-bottom-moss-parallax-x,0px);}
+.hex-hero-bottom-img--r1{z-index:1;--hex-bottom-width:56%;--hex-bottom-right:calc(var(--hex-bottom-screen-right,calc((100% - 100vw) / 2)) - var(--hex-bottom-moss-edge-inset,0px));--hex-bottom-y:-10px;--hex-bottom-start:.09;--hex-bottom-end:.52;--hex-bottom-rise:1.03;--hex-bottom-offset-x:var(--hex-bottom-moss-parallax-x,0px);}
 .hex-hero-bottom-img--r2{z-index:3;--hex-bottom-width:24%;--hex-bottom-right:calc(var(--hex-bottom-screen-right,calc((100% - 100vw) / 2)) - var(--hex-bottom-edge-inset,0px));--hex-bottom-y:-10px;--hex-bottom-start:.22;--hex-bottom-end:.76;--hex-bottom-rise:1.08;}
 .hex-hero-bottom-img--r3{z-index:2;--hex-bottom-width:31%;--hex-bottom-right:calc(var(--hex-bottom-screen-right,calc((100% - 100vw) / 2)) - var(--hex-bottom-tree-edge-inset,0px));--hex-bottom-y:calc((-12px + 7.57421875cqw * 2 / 3) / 2);--hex-bottom-start:.34;--hex-bottom-end:.95;--hex-bottom-rise:1.05;--hex-bottom-rotate:-10deg;--hex-bottom-offset-x:var(--hex-bottom-moss-parallax-x,0px);}
 /* 苔山01は位置・z-indexを維持し、初回から下端合わせで表示する。 */
