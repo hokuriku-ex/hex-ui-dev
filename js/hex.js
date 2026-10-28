@@ -5480,6 +5480,28 @@ hexReady(function(){
           document.documentElement.classList.contains('hex-opening-lock'))return;
         beginWelcome(true);
       },
+      returnToHero:function(){
+        cancelWelcomeAuto();
+        stopSpCircleScroll();
+        welcomeDotPending=false;
+        window.clearTimeout(welcomeDotTimer);welcomeDotTimer=0;
+        welcomeBodyForced=false;
+        if(window.hexOverlapAnchor&&window.hexOverlapAnchor.cancelSnap){
+          window.hexOverlapAnchor.cancelSnap();
+        }
+        /* 上方向スクロールと同じ経路で丸を拡大し、resetHeroへ戻す。 */
+        if(welcomeActive&&snapshot&&welcomeWrap&&
+          window.pageYOffset<=documentTop(welcomeWrap)){
+          startWelcomeReverseSnap();
+          return;
+        }
+        var target=Math.max(0,documentTop(hero));
+        if(window.hexMotion&&typeof window.hexMotion.scrollTo==='function'){
+          window.hexMotion.scrollTo(target,{duration:1.05,force:true});
+        }else{
+          window.scrollTo({top:target,behavior:reduced?'instant':'smooth'});
+        }
+      },
       leaveForAnchor:function(){
         cancelAutoZoom(true);
         heroAnchorDeparted=true;
@@ -9950,12 +9972,7 @@ hexReady(function(){
 
     var replayRequested=isReplayRequested();
     clearReplayRequest();
-    var heroRestartRequested=false;
-    try{
-      heroRestartRequested=sessionStorage.getItem('hex_top_hero_restart')==='1';
-      sessionStorage.removeItem('hex_top_hero_restart');
-    }catch(error){}
-    var directHero=heroRestartRequested||isReducedMotion()||
+    var directHero=isReducedMotion()||
       (!FORCE_PLAY&&!replayRequested&&hasViewedOpening());
 
 
@@ -10327,11 +10344,9 @@ function hexCreatePageTopButton(){
   button.addEventListener('click',function(e){
     e.preventDefault();
 
-    if(document.getElementById('gc_auto_body_home')){
-      /* 開幕を再生せず、読み込み直したヒーローの先頭から開始する。 */
-      try{sessionStorage.setItem('hex_top_hero_restart','1');}catch(error){}
-      if('scrollRestoration' in window.history)window.history.scrollRestoration='manual';
-      window.location.reload();
+    if(document.getElementById('gc_auto_body_home')&&
+      window.hexHero&&window.hexHero.returnToHero){
+      window.hexHero.returnToHero();
       return;
     }
     var target=0;
