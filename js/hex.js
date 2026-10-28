@@ -4325,8 +4325,8 @@ hexReady(function(){
       if(handoff){hero.classList.add("is-welcome-transition");}
       setHeroPageLock(false);
       welcomeWrap.classList.add("is-v2-active");
-      if(skipScroll&&welcomeStage&&welcomeStageTop===null){
-        /* 通過中に高さが縮んでアンカー着地点がずれないよう、完成位置で先に計測する。 */
+      if(welcomeStage&&welcomeStageTop===null){
+        /* 丸画像を表示する前に本文の完成位置と後続コンテンツの高さを確定する。 */
         var preparedMetrics=measureWelcome();
         if(isSp()){
           welcomeStageTop=getSpStageTop(false);
@@ -4341,6 +4341,13 @@ hexReady(function(){
         measureWelcome();
       }
       updateScrollEffects();
+      /* スクロール終了を待たず、外側の固定枠と表示演出の座標も同期する。 */
+      if(window.hexOverlapAnchor&&window.hexOverlapAnchor.refreshLayout){
+        window.hexOverlapAnchor.refreshLayout();
+      }
+      if(window.hexMotion&&window.hexMotion.refreshLayout){
+        window.hexMotion.refreshLayout();
+      }
 
       /* 通常アンカーはWELCOMEを準備した後、呼び出し側の移動先へ進む。 */
       if(skipScroll)return;
