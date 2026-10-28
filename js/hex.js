@@ -3857,8 +3857,9 @@ hexReady(function(){
         var ellipseX=(metrics.width-ellipseWidth)/2-state.x*metrics.scale;
         var sourceY=(metrics.height-sourceHeight)/2+
           state.y*metrics.scale;
-        var ellipseY=sourceY+(sourceHeight-ellipseHeight)/2;
-        /* SVG内の水平上端を読み替えずに、植栽の下端と同じ座標へ揃える。 */
+        /* SVGの水平上端を模型グループの中央へ置く。模型側の位置は変えない。 */
+        var ellipseY=sourceY+sourceHeight/2-ellipseHeight*HERO_LAYOUT_ANCHOR_Y;
+        /* 植栽の下端もSVGの水平上端へ揃える。 */
         var flatTop=ellipseY+ellipseHeight*HERO_LAYOUT_ANCHOR_Y;
         if(bottomIllustrations){
           bottomIllustrations.style.setProperty('--hex-bottom-baseline',(metrics.height-flatTop)+'px');
@@ -9464,7 +9465,7 @@ hexReady(function(){
         previewEllipse.style.width=previewEllipseWidth+"px";
         previewEllipse.style.height=imageHeight*scale*previewLayerScale+"px";
         previewEllipse.style.transform="translate3d("+(width-previewEllipseWidth)/2+"px,"+
-          (imageHeight*scale*(1-previewLayerScale)/2)+"px,0)";
+          (height/2-imageHeight*scale*previewLayerScale*(250.94686585/941))+"px,0)";
       }
       opening._hexOpeningHeroPreview=preview;
       return preview;
