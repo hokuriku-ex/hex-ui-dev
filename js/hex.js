@@ -9950,7 +9950,12 @@ hexReady(function(){
 
     var replayRequested=isReplayRequested();
     clearReplayRequest();
-    var directHero=isReducedMotion()||
+    var heroRestartRequested=false;
+    try{
+      heroRestartRequested=sessionStorage.getItem('hex_top_hero_restart')==='1';
+      sessionStorage.removeItem('hex_top_hero_restart');
+    }catch(error){}
+    var directHero=heroRestartRequested||isReducedMotion()||
       (!FORCE_PLAY&&!replayRequested&&hasViewedOpening());
 
 
@@ -10309,15 +10314,6 @@ function hexCreateTikTokSvg(){
   svg.appendChild(circle);
   return svg;
 }
-/* トップページの戻り先は、ナビを含むWELCOME完了位置。 */
-function hexPageTopWelcomeTarget(){
-  if(!document.getElementById('gc_auto_body_home'))return null;
-  var state=window.hexWelcomeAnchorState;
-  if(!state||!Number.isFinite(state.end))return null;
-  var viewport=typeof window.hexViewportHeight==='function'
-    ?window.hexViewportHeight():window.innerHeight;
-  return Math.max(0,state.end-viewport-1);
-}
 function hexCreatePageTopButton(){
   if(document.querySelector('.hex-page-top'))return;
   var button=document.createElement('a');
@@ -10331,14 +10327,16 @@ function hexCreatePageTopButton(){
   button.addEventListener('click',function(e){
     e.preventDefault();
 
-    var welcomeTarget=hexPageTopWelcomeTarget();
-    var target=welcomeTarget===null?0:welcomeTarget;
+    if(document.getElementById('gc_auto_body_home')){
+      /* 開幕を再生せず、読み込み直したヒーローの先頭から開始する。 */
+      try{sessionStorage.setItem('hex_top_hero_restart','1');}catch(error){}
+      if('scrollRestoration' in window.history)window.history.scrollRestoration='manual';
+      window.location.reload();
+      return;
+    }
+    var target=0;
     if(window.hexOverlapAnchor&&window.hexOverlapAnchor.cancelSnap){
       window.hexOverlapAnchor.cancelSnap();
-    }
-    if(welcomeTarget!==null&&window.hexHero){
-      if(window.hexHero.cancelWelcomeDotNavigation)window.hexHero.cancelWelcomeDotNavigation();
-      if(window.hexHero.releaseWelcomeBodyHold)window.hexHero.releaseWelcomeBodyHold();
     }
 
     /*
@@ -10373,9 +10371,13 @@ function hexCreatePageTopButton(){
 }
 function hexTogglePageTopButton(button){
   var isVisible=(' '+button.className+' ').indexOf(' is-visible ')!==-1;
-  var target=hexPageTopWelcomeTarget();
   var isHome=!!document.getElementById('gc_auto_body_home');
-  var shouldShow=isHome?target!==null&&window.scrollY>target+2:window.scrollY>300;
+  var hero=isHome?document.querySelector('.hex-hero-wrap'):null;
+  var header=parseFloat(getComputedStyle(document.documentElement)
+    .getPropertyValue(window.innerWidth<=768?'--header_height_smartphone':'--header_height'))||80;
+  var shouldShow=isHome?!!hero&&hero.getBoundingClientRect().bottom<=header:window.scrollY>300;
+  button.setAttribute('aria-hidden',shouldShow?'false':'true');
+  button.tabIndex=shouldShow?0:-1;
   if(shouldShow&&!isVisible){
     button.className+=' is-visible';
   }else if(!shouldShow&&isVisible){
