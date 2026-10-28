@@ -15024,8 +15024,7 @@ hexLoad(function(){
 
     document.addEventListener(
       'hex:welcome-exit-ready',
-      refreshAfterTopLayoutChange,
-      {once:true}
+      refreshAfterTopLayoutChange
     );
 
     /* フェードと見出しは下層ページと同じ初期化経路を使う */
