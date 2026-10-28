@@ -3030,9 +3030,8 @@ hexReady(function(){
   var HERO_ZOOM_INTRO_START=.9;
   var HERO_ZOOM_AUTO=1;
   var HERO_ZOOM_MAX=2;
-  /* SVGの水平上端と模型で共有する、元画像内の縦基準点。 */
+  /* SVG画像内の水平上端。画面上の固定位置ではなく画像内の割合。 */
   var HERO_LAYOUT_ANCHOR_Y=250.94686585/941;
-  var HERO_LAYOUT_REFERENCE_OVERSCAN=1.1;
   /* 楕円より手前の雲２枚と奥の雲４枚の縦追従率。 */
   var HERO_CLOUD_FRONT_VERTICAL_FOLLOW=.70;
   var HERO_CLOUD_BACK_VERTICAL_FOLLOW=.20;
@@ -3145,7 +3144,6 @@ hexReady(function(){
       imageHeight:1,
       baseScale:1,
       baseLayerScale:1,
-      layoutOffsetY:0,
       baseVisibleWidth:1,
       baseVisibleHeight:1,
       scale:1,
@@ -3829,7 +3827,7 @@ hexReady(function(){
       state.x=nextX;
       state.y=nextY;
       camera.position.x=state.x;
-      camera.position.y=state.y+metrics.layoutOffsetY;
+      camera.position.y=state.y;
       camera.updateMatrixWorld();
       /* 最初の雲の位置を保ち、縦だけ手前・奥ごとに追従率を変える。 */
       clouds.forEach(function(cloud){
@@ -3858,7 +3856,7 @@ hexReady(function(){
         var ellipseHeight=sourceHeight*layerScale;
         var ellipseX=(metrics.width-ellipseWidth)/2-state.x*metrics.scale;
         var sourceY=(metrics.height-sourceHeight)/2+
-          (state.y+metrics.layoutOffsetY)*metrics.scale;
+          state.y*metrics.scale;
         var ellipseY=sourceY+(sourceHeight-ellipseHeight)/2;
         /* SVG内の水平上端を読み替えずに、植栽の下端と同じ座標へ揃える。 */
         var flatTop=ellipseY+ellipseHeight*HERO_LAYOUT_ANCHOR_Y;
@@ -3941,14 +3939,9 @@ hexReady(function(){
       metrics.imageWidth=imageWidth;
       metrics.imageHeight=imageHeight;
       metrics.baseScale=coverScale;
-      /* 横幅で画像が拡大しても、共通基準点の高さは変えない。
-         高さだけで求めた倍率を配置用に使い、表示倍率とは分離する。 */
-      var referenceScale=height/imageHeight*HERO_LAYOUT_REFERENCE_OVERSCAN;
+      /* 模型とSVGは画像の中央を共通基準にし、上下へ均等に拡大する。 */
       var baseLayerScale=parseFloat(getComputedStyle(activeHero).getPropertyValue('--hex-hero-base-layer-scale'));
       metrics.baseLayerScale=Number.isFinite(baseLayerScale)&&baseLayerScale>0?baseLayerScale:1;
-      var layoutAnchor=(1-metrics.baseLayerScale)/2+metrics.baseLayerScale*HERO_LAYOUT_ANCHOR_Y;
-      metrics.layoutOffsetY=(layoutAnchor-.5)*imageHeight*
-        (referenceScale/coverScale-1);
       metrics.baseVisibleWidth=visibleWidth;
       metrics.baseVisibleHeight=visibleHeight;
 
@@ -4710,7 +4703,7 @@ hexReady(function(){
         clientY-rect.top-characterFocus.circleY)>characterFocus.circleRadius){return null;}
       var imageX=metrics.imageWidth/2+state.x+
         (clientX-rect.left-rect.width/2)/metrics.scale;
-      var imageY=metrics.imageHeight/2-state.y-metrics.layoutOffsetY+
+      var imageY=metrics.imageHeight/2-state.y+
         (clientY-rect.top-rect.height/2)/metrics.scale;
       for(var i=heroLayerImages.length-1;i>=0;i-=1){
         var layer=heroLayerImages[i];
@@ -5089,8 +5082,7 @@ hexReady(function(){
       var circle=getWelcomeCircleGeometry(1);
       var scale=metrics.baseScale*HERO_ZOOM_MAX;
       var targetX=characterFocus.targetX+(metrics.width*.5-circle.x)/scale;
-      var targetY=characterFocus.targetY-metrics.layoutOffsetY+
-        (circle.y-metrics.height*.5)/scale;
+      var targetY=characterFocus.targetY+(circle.y-metrics.height*.5)/scale;
       state.zoom=characterFocus.fromZoom+(HERO_ZOOM_MAX-characterFocus.fromZoom)*eased;
       updateZoomMetrics();
       state.x=characterFocus.fromX+(targetX-characterFocus.fromX)*eased;
