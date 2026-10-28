@@ -3929,8 +3929,6 @@ hexReady(function(){
         /* 植栽の下端もSVGの水平上端へ揃える。 */
         var flatTop=ellipseY+ellipseHeight*HERO_LAYOUT_ANCHOR_Y;
         if(boundaryIllustrations){
-          boundaryIllustrations.style.setProperty('--hex-boundary-span',
-            (baseWidth*.56)+'px');
           boundaryIllustrations.style.setProperty('--hex-boundary-top',flatTop+'px');
         }
         if(bottomIllustrations){
@@ -3964,6 +3962,8 @@ hexReady(function(){
           mossEdgeInset+"px");
         if(boundaryIllustrations){
           /* 01の画面上の外端位置と75%の横追従を、そのまま04へ共有する。 */
+          boundaryIllustrations.style.setProperty('--hex-boundary-width',
+            (baseWidth*.56)+'px');
           boundaryIllustrations.style.setProperty('--hex-boundary-left',
             (-mossEdgeInset-panX*.75)+'px');
           boundaryIllustrations.style.setProperty('--hex-boundary-right',
@@ -9644,7 +9644,7 @@ hexReady(function(){
       var liveBoundary=hero.querySelector('.hex-hero-boundary-illustrations');
       var previewBoundary=preview.querySelector('.hex-hero-boundary-illustrations');
       if(liveBoundary&&previewBoundary){
-        ['--hex-boundary-top','--hex-boundary-left','--hex-boundary-right','--hex-boundary-span'].forEach(function(name){
+        ['--hex-boundary-top','--hex-boundary-left','--hex-boundary-right','--hex-boundary-width'].forEach(function(name){
           previewBoundary.style.setProperty(name,liveBoundary.style.getPropertyValue(name));
         });
       }

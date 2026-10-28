@@ -1,5 +1,13 @@
 # bottom04生成記録
 
+## 内側への画像延長
+
+4811×380pxに拡張。既存2172×380pxの絵を右端に画素を維持して保持し、built-in image_genで生成した延長部（植物のない左側）を取り出し、2639pxの追加領域へサイズ調整して接続。左右のWebPは同一で、左は従来どおりCSS反転。下草の元の画素と、画面上の位置・倍率を保持。CSS疑似要素の延長は削除。
+
+延長部の生成プロンプト:
+
+Edit target: the supplied transparent bottom04 garden strip. Extend ONLY its moss ground to the INNER LEFT. Preserve all existing plant clumps, flowers, colors, shapes, sizes and positions RELATIVE TO THE RIGHT EDGE, unchanged. Output a very wide transparent canvas, total width 4811 and height 380: original 2172x380 artwork occupies the RIGHTMOST 2172px at its original size, with 2639px added to the LEFT. Do not stretch or resize any plants. The left added area contains NO plants. Continue the same dark green moss band #306A52 from original left edge into the added left area: perfectly straight horizontal top at y252 throughout, lower contour smoothly tapers upward toward the far new LEFT edge to meet the top line. Existing plants remain in front of moss and their bases visible. Preserve the original right-hand artwork and original outer right edge. Transparent above and below entire silhouette, no background, shadow, text, border, glow or additional foliage. A clean flat botanical asset, no creative redesign. This extended source will be mirrored for the left side; do not mirror now.
+
 Built-in image_genを使用。参照はleft_bottom01.webp（苔山の色）とleft_bottom02.webp（フラットな下草の描き方）。生成PNGは元の保存先に保持し、透明余白を整理してWebP品質94で保存。左右のファイル内容は同じで、表示時に左をCSS反転する。
 
 出力:
