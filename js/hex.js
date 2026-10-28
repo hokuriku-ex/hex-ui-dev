@@ -247,8 +247,8 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
   var imageRoot=new URL('images/top-hero/',base).href;
   function resolve(file){
     file=(file||'').trim();
-    // Keep the existing six image basenames; only the format changes.
-    file=file.replace(/^((?:left|right)_bottom0[1-3])\.png(?=[?#]|$)/i,'$1.webp');
+    // Keep the image basenames; only the format changes.
+    file=file.replace(/^((?:left|right)_bottom0[1-4])\.png(?=[?#]|$)/i,'$1.webp');
     file=file.replace(/^(aluminum|pruning|sakan|block|supervisor|family)\.png(?=[?#]|$)/i,'$1.webp');
     file=file.replace(/^exterior\.(?:png|webp)(?=[?#]|$)/i,'exterior02.webp');
     file=file.replace(/^(house|drawing|exterior0[12]|tree0[1-3]|underplant0[1-3])\.png(?=[?#]|$)/i,'$1.webp');
@@ -256,6 +256,22 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
     return new URL(file,imageRoot).href;
   }
   function prepare(){
+    /* 境界の前景は独立した固定レイヤー。既存bottom01〜03の並びには加えない。 */
+    document.querySelectorAll('.hex-hero-wrap .hex-hero').forEach(function(section){
+      if(section.querySelector(':scope > .hex-hero-boundary-illustrations'))return;
+      var layer=document.createElement('div');
+      layer.className='hex-hero-boundary-illustrations';
+      layer.setAttribute('aria-hidden','true');
+      ['left','right'].forEach(function(side){
+        var image=document.createElement('img');
+        image.className='hex-hero-boundary-img hex-hero-boundary-img--'+side;
+        image.alt='';
+        image.crossOrigin='anonymous';
+        image.src=new URL(side+'_bottom04.webp',imageRoot).href;
+        layer.appendChild(image);
+      });
+      section.insertBefore(layer,section.querySelector(':scope > .hex-hero-scene'));
+    });
     document.querySelectorAll('.hex-hero-wrap img[src]').forEach(function(image){
       var url=resolve(image.getAttribute('src'));
       // 表示だけでなくCanvas/WebGL合成にも使うため、URL指定より先にCORSを設定する。
@@ -3274,6 +3290,8 @@ hexReady(function(){
     },[]);
     var bottomIllustrations=hero.querySelector(
       ".hex-hero > .hex-hero-bottom-illustrations");
+    var boundaryIllustrations=hero.querySelector(
+      ".hex-hero > .hex-hero-boundary-illustrations");
     var bottomImages=bottomIllustrations
       ?Array.from(bottomIllustrations.querySelectorAll(".hex-hero-bottom-img"))
       :[];
@@ -3915,6 +3933,9 @@ hexReady(function(){
         var ellipseY=sourceY+sourceHeight/2-ellipseHeight*HERO_LAYOUT_ANCHOR_Y;
         /* 植栽の下端もSVGの水平上端へ揃える。 */
         var flatTop=ellipseY+ellipseHeight*HERO_LAYOUT_ANCHOR_Y;
+        if(boundaryIllustrations){
+          boundaryIllustrations.style.setProperty('--hex-boundary-top',flatTop+'px');
+        }
         if(bottomIllustrations){
           bottomIllustrations.style.setProperty('--hex-bottom-baseline',(metrics.height-flatTop)+'px');
         }
@@ -4162,6 +4183,9 @@ hexReady(function(){
       snapshot.appendChild(snapshotCanvas);
       if(bottomIllustrations){
         snapshot.appendChild(bottomIllustrations.cloneNode(true));
+      }
+      if(boundaryIllustrations){
+        snapshot.appendChild(boundaryIllustrations.cloneNode(true));
       }
       document.body.appendChild(snapshot);
       if(!isSp()){
@@ -9551,9 +9575,13 @@ hexReady(function(){
       preview.appendChild(previewImage);
       var bottomArt=activeHero.querySelector(".hex-hero-bottom-illustrations");
       if(bottomArt){preview.appendChild(bottomArt.cloneNode(true));}
+      var boundaryArt=activeHero.querySelector('.hex-hero-boundary-illustrations');
+      if(boundaryArt){preview.insertBefore(boundaryArt.cloneNode(true),previewImage);}
       document.body.appendChild(preview);
       width=preview.clientWidth||window.innerWidth;
       height=preview.clientHeight||window.hexViewportHeight();
+      var previewBoundary=preview.querySelector('.hex-hero-boundary-illustrations');
+      if(previewBoundary){previewBoundary.style.setProperty('--hex-boundary-top',(height/2)+'px');}
       imageWidth=sourceImage.naturalWidth||1672;
       imageHeight=sourceImage.naturalHeight||941;
       scale=Math.max(width/imageWidth,height/imageHeight)*
@@ -9609,6 +9637,12 @@ hexReady(function(){
           liveEllipse.style.getPropertyValue("--hex-ellipse-source-transform")||liveEllipse.style.transform);
       }
       if(!hero){return;}
+      var liveBoundary=hero.querySelector('.hex-hero-boundary-illustrations');
+      var previewBoundary=preview.querySelector('.hex-hero-boundary-illustrations');
+      if(liveBoundary&&previewBoundary){
+        previewBoundary.style.setProperty('--hex-boundary-top',
+          liveBoundary.style.getPropertyValue('--hex-boundary-top'));
+      }
       var liveBottomArt=hero.querySelector(".hex-hero-bottom-illustrations");
       var previewBottomArt=preview.querySelector(
         ".hex-hero-bottom-illustrations");
