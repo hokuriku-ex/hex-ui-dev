@@ -1563,35 +1563,10 @@ function hexInitAnchorNav(){
   }
   function syncHomeAnchorBackground(){
     if(!homePanel)return;
-    if(homePanel.classList.contains('is-hero-anchor')){
-      homePanel.style.setProperty('--hex-home-anchor-bg','#1f2774');
-      homePanel.style.setProperty('--hex-home-anchor-ink','#fff');
-      homePanel.style.setProperty('--hex-home-anchor-hover','#c8a874');
-      return;
-    }
-    var next=document.getElementById(HOME_SECTIONS.ABOUT);
-    var color=hexHomeAnchorBackgroundColor(next);
-    if(homePanel.style.getPropertyValue('--hex-home-anchor-bg')!==color){
-      homePanel.style.setProperty('--hex-home-anchor-bg',color);
-    }
-    /* 濃い背景でも文字を読めるように、通常表示だけ白／紺を選ぶ。 */
-    var colorProbe=document.createElement('span');
-    colorProbe.style.cssText='display:none;';
-    colorProbe.style.color=color;
-    homePanel.appendChild(colorProbe);
-    var resolvedColor=getComputedStyle(colorProbe).color;
-    colorProbe.remove();
-    var rgb=resolvedColor.match(/^rgba?\(\s*([\d.]+)[, ]+([\d.]+)[, ]+([\d.]+)/);
-    var ink='#1f2774';
-    if(rgb){
-      function linear(value){value=Number(value)/255;return value<=.04045?value/12.92:Math.pow((value+.055)/1.055,2.4);}
-      function luminance(r,g,b){return .2126*linear(r)+.7152*linear(g)+.0722*linear(b);}
-      var light=luminance(rgb[1],rgb[2],rgb[3]);
-      var navy=luminance(31,39,116);
-      if(1.05/(light+.05)>(Math.max(light,navy)+.05)/(Math.min(light,navy)+.05))ink='#fff';
-    }
-    homePanel.style.setProperty('--hex-home-anchor-ink',ink);
-    homePanel.style.setProperty('--hex-home-anchor-hover',ink==='#fff'?'#c8a874':'#4a7fd0');
+    /* 通常表示は透過背景・紺文字。固定表示の共通CSSには適用しない。 */
+    homePanel.style.setProperty('--hex-home-anchor-bg','transparent');
+    homePanel.style.setProperty('--hex-home-anchor-ink','#1f2774');
+    homePanel.style.setProperty('--hex-home-anchor-hover','#c8a874');
   }
   function refreshHexAnchorNav(){
     if(deferAnchorRemeasure())return;

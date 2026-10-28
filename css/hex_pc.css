@@ -11173,10 +11173,10 @@ html.hex-character-focus-active .hex-home-anchor-panel.is-hero-anchor,
 
 /* トップ専用：通常表示。固定後の白背景・紺文字は共通CSSを使用。 */
 .hex-home-anchor-nav:not(.is-fixed){
-  color:#fff;
-  background:#1f2774!important;
+  color:#1f2774;
+  background:transparent!important;
 }
-/* 初期表示：タイトル／下向きアイコン */
+/* 初期表示：SECTION番号／タイトル／下向きアイコン */
 .hex-home-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-list{
   justify-content:center;
@@ -11210,22 +11210,25 @@ html.hex-character-focus-active .hex-home-anchor-panel.is-hero-anchor,
   gap:8px;
   min-width:150px!important;
   padding:14px 28px!important;
-  color:#fff!important;
+  color:#1f2774!important;
   line-height:1.4!important;
   /* 各項目の左側の縦線 */
   border:none!important;
-  border-left:1px solid rgba(255,255,255,.45)!important;
+  border-left:1px solid #203459!important;
 }
 /* 最後の右側にも縦線 */
 .hex-home-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-link:last-child{
-  border-right:1px solid rgba(255,255,255,.45)!important;
+  border-right:1px solid #203459!important;
 }
-/* 番号の行と、その行に伴うflexの間隔をなくして高さを詰める。 */
+/* 下層ページと同じSECTION番号。 */
 .hex-home-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-link::before{
-  content:none;
-  display:none;
+  content:"SECTION." counter(hex-anchor-number, decimal-leading-zero);
+  position:static;display:block;color:#c8a874;
+  font-family:var(--hex-font-italic)!important;font-size:12px;
+  font-weight:400;font-style:italic;line-height:1;letter-spacing:.12em;
+  transform:none;transition:color .3s ease;
 }
 /* タイトル下の下向きアイコン */
 .hex-home-anchor-nav:not(.is-fixed)
@@ -11233,7 +11236,7 @@ html.hex-character-focus-active .hex-home-anchor-panel.is-hero-anchor,
   content:"\f107";
   position:static;
   display:block;
-  color:#fff;
+  color:#1f2774;
   font-family:"Font Awesome 6 Free";
   font-size:12px;
   font-weight:900;
@@ -11249,7 +11252,7 @@ a.hex-anchor-nav-link,
 .linktext_color_basecolor2
 .hex-home-anchor-nav:not(.is-fixed)
 a.hex-anchor-nav-link{
-  color:#fff!important;
+  color:#1f2774!important;
 }
 
 /* cccホバー・アクティブ */
@@ -11290,7 +11293,7 @@ a.hex-anchor-nav-link.is-active::after{
   font-family:inherit;cursor:pointer;text-decoration:none!important;
 }
 .hex-home-anchor-nav:not(.is-fixed) button.hex-anchor-nav-link::after{
-  color:#fff;
+  color:#1f2774;
 }
 .hex-home-anchor-nav:not(.is-fixed) button.hex-anchor-nav-link:is(:hover,:focus,.is-active),
 .hex-home-anchor-nav:not(.is-fixed) button.hex-anchor-nav-link:is(:hover,:focus,.is-active)::after{
