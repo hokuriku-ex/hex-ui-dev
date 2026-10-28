@@ -4373,7 +4373,8 @@ hexReady(function(){
       }
       wrapRect=welcomeWrap.getBoundingClientRect();
       /* アンカーで終端を飛び越えても、通常スクロールと同じWELCOME内の位置へ置く。 */
-      snapshot.style.setProperty("--hex-v2-release-top",(rect.top+releaseTravel)+"px");
+      var releaseTop=isSp()?rect.top-wrapRect.top:rect.top+releaseTravel;
+      snapshot.style.setProperty("--hex-v2-release-top",releaseTop+"px");
       snapshot.style.setProperty("--hex-v2-release-left",(rect.left-wrapRect.left)+"px");
       welcomeWrap.insertBefore(snapshot,welcomeWrap.firstChild);
       snapshot.classList.add("is-released");
