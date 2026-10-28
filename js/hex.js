@@ -4361,7 +4361,7 @@ hexReady(function(){
       }
     }
 
-    function releaseSnapshot(){
+    function releaseSnapshot(releaseTravel){
       var rect;
       var wrapRect;
       if(!snapshot||released||!welcomeWrap){return;}
@@ -4372,7 +4372,8 @@ hexReady(function(){
         snapshot.style.height=rect.height+"px";
       }
       wrapRect=welcomeWrap.getBoundingClientRect();
-      snapshot.style.setProperty("--hex-v2-release-top",(rect.top-wrapRect.top)+"px");
+      /* アンカーで終端を飛び越えても、通常スクロールと同じWELCOME内の位置へ置く。 */
+      snapshot.style.setProperty("--hex-v2-release-top",(rect.top+releaseTravel)+"px");
       snapshot.style.setProperty("--hex-v2-release-left",(rect.left-wrapRect.left)+"px");
       welcomeWrap.insertBefore(snapshot,welcomeWrap.firstChild);
       snapshot.classList.add("is-released");
@@ -4560,7 +4561,7 @@ hexReady(function(){
 
       if((isSp()&&circleProgress>=.999)||
         (!isSp()&&scrollY-welcomeTop>=welcomeReleaseTravel)){
-        releaseSnapshot();
+        releaseSnapshot(isSp()?0:welcomeReleaseTravel);
       }else if(released){
         refixSnapshot();
       }
