@@ -9075,6 +9075,9 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
 @media (hover:hover){.hex-hero-welcome-button:hover{background:#fff;color:#1f2774}}
 
 .hex-v2-handoff{position:fixed;top:var(--header_height,80px);right:0;bottom:0;left:0;z-index:92;overflow:hidden;pointer-events:none;clip-path:circle(150vmax at 50% 50%);will-change:clip-path}
+/* 丸への移行中はWELCOMEの白背景(z-index:93)より前に置く。
+   丸が完成してWELCOME内へ移した後は、既存の子レイヤー指定へ戻る。 */
+body > .hex-v2-handoff{z-index:94;}
 .hex-v2-handoff canvas{display:block;width:100%;height:100%}
 .hex-v2-handoff.is-released{position:absolute;top:var(--hex-v2-release-top,0)!important;right:auto!important;bottom:auto!important;left:var(--hex-v2-release-left,0)!important;z-index:1;width:100vw;height:calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))}
 

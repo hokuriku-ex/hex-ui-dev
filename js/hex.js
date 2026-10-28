@@ -4380,10 +4380,14 @@ hexReady(function(){
       }
     }
 
-    /* ナビ下端がヘッダー下へ抜けるまではWELCOMEの固定を維持する。
-       上端到達で解除すると、スナップ途中の再配置でナビが一度止まって見える。 */
+    /* ヒーローへナビを移した構成では、WELCOME自身の終端で固定を解除する。 */
     function getWelcomeReleaseTravel(travelMetrics,welcomeTop){
-      if(isSp()){return travelMetrics.travel;}
+      var homeNav=window.hexHomeAnchorNav;
+      if(isSp()||(homeNav&&homeNav.panel&&
+        homeNav.panel.classList.contains('is-hero-anchor'))){
+        return travelMetrics.travel;
+      }
+      /* 旧配置だけ、ナビがヘッダー下を通過するまで固定を維持する。 */
       var boundary=document.querySelector('.hex-home-anchor-panel:not(.is-hero-anchor)')||
         document.getElementById(HOME_SECTIONS.ABOUT);
       if(!boundary){return travelMetrics.travel;}
