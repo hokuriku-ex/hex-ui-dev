@@ -1347,15 +1347,21 @@ function hexInitAnchorNav(){
     if(!target.id){
       target.id='hex-anchor-'+title.replace(/\s+/g,'-').replace(/[^\w\-ぁ-んァ-ヶ一-龯]/g,'');
     }
-    var link=document.createElement('a');
+    var link=document.createElement(welcomeEntry?'button':'a');
     link.className='hex-anchor-nav-link';
-    link.href='#'+target.id;
+    if(welcomeEntry){
+      link.type='button';
+      link.classList.add('hex-home-welcome-trigger');
+    }else{
+      link.href='#'+target.id;
+    }
     link.textContent=title;
 
     link.addEventListener('click',function(e){
       e.preventDefault();
 
       if(welcomeEntry){
+        e.stopPropagation();
         if(window.hexHero&&window.hexHero.openWelcome)window.hexHero.openWelcome();
         return;
       }

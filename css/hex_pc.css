@@ -11258,3 +11258,19 @@ a.hex-anchor-nav-link:focus::after,
 a.hex-anchor-nav-link.is-active::after{
   color:#c8a874;
 }
+
+/* 「ようこそ」は通常アンカーではなく丸演出専用のナビ内ボタン。 */
+.hex-home-anchor-nav button.hex-anchor-nav-link{
+  appearance:none;-webkit-appearance:none;
+  font-family:inherit;cursor:pointer;text-decoration:none!important;
+}
+.hex-home-anchor-nav:not(.is-fixed) button.hex-anchor-nav-link::after{
+  color:#fff;
+}
+.hex-home-anchor-nav:not(.is-fixed) button.hex-anchor-nav-link:is(:hover,:focus,.is-active),
+.hex-home-anchor-nav:not(.is-fixed) button.hex-anchor-nav-link:is(:hover,:focus,.is-active)::after{
+  color:#c8a874!important;
+}
+.hex-home-anchor-nav.is-fixed button.hex-anchor-nav-link:is(:hover,:focus,.is-active){
+  color:#4a7fd0!important;
+}
