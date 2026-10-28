@@ -9135,37 +9135,37 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
 }
 /* 速度・開始時点・距離を少しずつずらし、６枚を独立して動かす。 */
 .hex-cloud--1{
-  top:9%;left:2%;width:clamp(230px,22vw,360px);
+  top:9%;left:2%;width:clamp(230px,calc(var(--hex-hero-decoration-height,calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))) * .4),360px);
   --hex-cloud-start-x:-24px;--hex-cloud-start-y:-5px;
   --hex-cloud-dx:24px;--hex-cloud-dy:5px;
   animation-duration:7.2s;animation-delay:-1.7s;
 }
 .hex-cloud--2{
-  top:21%;left:22%;width:clamp(140px,12vw,210px);
+  top:21%;left:22%;width:clamp(140px,calc(var(--hex-hero-decoration-height,calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))) * .22),210px);
   --hex-cloud-start-x:-18px;--hex-cloud-start-y:3px;
   --hex-cloud-dx:20px;--hex-cloud-dy:-4px;
   animation-duration:11.3s;animation-delay:-4.4s;
 }
 .hex-cloud--3{
-  top:32%;left:8%;width:clamp(190px,18vw,300px);
+  top:32%;left:8%;width:clamp(190px,calc(var(--hex-hero-decoration-height,calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))) * .33),300px);
   --hex-cloud-start-x:30px;--hex-cloud-start-y:-7px;
   --hex-cloud-dx:-30px;--hex-cloud-dy:7px;
   animation-duration:9.4s;animation-delay:-5.2s;
 }
 .hex-cloud--4{
-  top:4%;right:-2%;width:clamp(230px,22vw,360px);
+  top:4%;right:-2%;width:clamp(230px,calc(var(--hex-hero-decoration-height,calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))) * .4),360px);
   --hex-cloud-start-x:22px;--hex-cloud-start-y:4px;
   --hex-cloud-dx:-22px;--hex-cloud-dy:-4px;
   animation-duration:8.1s;animation-delay:-3.8s;
 }
 .hex-cloud--5{
-  top:20%;right:22%;width:clamp(140px,12vw,210px);
+  top:20%;right:22%;width:clamp(140px,calc(var(--hex-hero-decoration-height,calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))) * .22),210px);
   --hex-cloud-start-x:23px;--hex-cloud-start-y:-4px;
   --hex-cloud-dx:-19px;--hex-cloud-dy:5px;
   animation-duration:8.7s;animation-delay:-6.6s;
 }
 .hex-cloud--6{
-  top:34%;right:6%;width:clamp(190px,18vw,300px);
+  top:34%;right:6%;width:clamp(190px,calc(var(--hex-hero-decoration-height,calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))) * .33),300px);
   --hex-cloud-start-x:-27px;--hex-cloud-start-y:6px;
   --hex-cloud-dx:27px;--hex-cloud-dy:-6px;
   animation-duration:10.6s;animation-delay:-8.1s;
@@ -9174,7 +9174,7 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
   from{transform:translate3d(calc(var(--hex-cloud-start-x) + var(--hex-cloud-parallax-x,0px)),calc(var(--hex-cloud-start-y) + var(--hex-cloud-parallax-y,0px)),0);}
   to{transform:translate3d(calc(var(--hex-cloud-dx) + var(--hex-cloud-parallax-x,0px)),calc(var(--hex-cloud-dy) + var(--hex-cloud-parallax-y,0px)),0);}
 }
-/* 左右下の透過イラストはHTMLで６枚指定し、縦探索の進行に連動させる。 */
+/* 左右の透過イラスト６枚。サイズは表示高、登場演出は初回のみ。 */
 .hex-hero-bottom-illustrations{
   position:absolute;
   container-type:inline-size;
@@ -9219,12 +9219,12 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
 .hex-webgl-stage{z-index:5;}
 .hex-v2-handoff canvas{position:relative;z-index:5;}
 @media (max-width:768px){
-  .hex-cloud--1{top:3%;left:-65px;width:180px;}
-  .hex-cloud--2{top:19%;left:10%;width:110px;}
-  .hex-cloud--3{top:39%;left:-45px;width:150px;}
-  .hex-cloud--4{top:2%;right:-68px;width:150px;}
-  .hex-cloud--5{top:14%;right:13%;width:105px;}
-  .hex-cloud--6{top:45%;right:-40px;width:140px;}
+  .hex-cloud--1{top:3%;left:-65px;}
+  .hex-cloud--2{top:19%;left:10%;}
+  .hex-cloud--3{top:39%;left:-45px;}
+  .hex-cloud--4{top:2%;right:-68px;}
+  .hex-cloud--5{top:14%;right:13%;}
+  .hex-cloud--6{top:45%;right:-40px;}
 }
 @media (prefers-reduced-motion:reduce){
   .hex-cloud{animation:none;transform:translate3d(var(--hex-cloud-parallax-x,0px),var(--hex-cloud-parallax-y,0px),0);will-change:auto;}

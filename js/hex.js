@@ -3249,6 +3249,7 @@ hexReady(function(){
       :[];
     var bottomArtTravel=new WeakMap();
     var bottomIntroProgress=0;
+    var bottomIntroComplete=false;
     bottomImages.forEach(function(image){
       image.addEventListener("load",function(){
         bottomArtTravel.set(image,image.offsetHeight);
@@ -3785,9 +3786,9 @@ hexReady(function(){
 
     function updateBottomIllustrations(){
       if(!bottomImages.length){return;}
-      var progress=reduced?1:(metrics.maxY>1
-        ?clamp((metrics.maxY-state.y)/metrics.maxY,0,1)
-        :bottomIntroProgress);
+      /* 初回の自動演出だけで表示し、以後のドラッグ・ズーム・復帰では再生しない。 */
+      var progress=reduced||bottomIntroComplete?1:clamp(bottomIntroProgress,0,1);
+      if(progress>=1){bottomIntroComplete=true;}
       bottomImages.forEach(function(image){
         var style=getComputedStyle(image);
         var start=parseFloat(style.getPropertyValue("--hex-bottom-start"));
@@ -3874,8 +3875,8 @@ hexReady(function(){
           ((metrics.width-ellipseSourceWidth)/2-state.x*metrics.scale)+"px,"+sourceY+"px,0)");
       }
       if(bottomIllustrations){
-        /* 初期倍率の幅を維持し、ズームによるイラストの拡大縮小を防ぐ。 */
-        var baseWidth=metrics.imageWidth*metrics.baseScale*HERO_ZOOM_MIN;
+        /* 表示高だけからサイズを決め、画面幅・手動ズームには連動させない。 */
+        var baseWidth=metrics.imageWidth*(metrics.height/metrics.imageHeight)*1.1;
         var panX=state.x*metrics.baseScale*HERO_ZOOM_MIN;
         var baseX=(metrics.width-baseWidth)/2-panX;
         if(bottomIllustrations.style.width!==baseWidth+"px"){
@@ -3937,6 +3938,7 @@ hexReady(function(){
 
       metrics.width=width;
       metrics.height=height;
+      document.documentElement.style.setProperty("--hex-hero-decoration-height",height+"px");
       metrics.imageWidth=imageWidth;
       metrics.imageHeight=imageHeight;
       metrics.baseScale=coverScale;
@@ -9454,9 +9456,10 @@ hexReady(function(){
       if(bottomArt){
         var previewBottomArt=preview.querySelector(
           ".hex-hero-bottom-illustrations");
-        previewBottomArt.style.width=imageWidth*scale+"px";
+        var previewArtWidth=imageWidth*(height/imageHeight)*1.1;
+        previewBottomArt.style.width=previewArtWidth+"px";
         previewBottomArt.style.transform="translate3d("+
-          (width-imageWidth*scale)/2+"px,0,0)";
+          (width-previewArtWidth)/2+"px,0,0)";
       }
       if(ellipse){
         var previewEllipse=preview.querySelector(".hex-hero-ellipse");
