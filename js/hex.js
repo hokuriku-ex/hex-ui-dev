@@ -15029,6 +15029,8 @@ hexLoad(function(){
 
     [
       'hex:hero-layout-updated',
+      /* 手動操作時は停止後にオーバーラップの配置が確定する。 */
+      'hex:home-overlap-measured',
       'hex:opening-finished'
     ].forEach(function(eventName){
       document.addEventListener(
