@@ -4360,6 +4360,8 @@ hexReady(function(){
         }
       }
       welcomeWrap.classList.add("is-v2-complete");
+      /* WELCOMEの高さ・固定解除後の座標で後続の表示開始位置を再計測する。 */
+      document.dispatchEvent(new Event("hex:welcome-exit-ready"));
     }
 
     function refixSnapshot(toBody){
