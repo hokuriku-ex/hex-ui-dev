@@ -3030,8 +3030,6 @@ hexReady(function(){
   var HERO_ZOOM_INTRO_START=.9;
   var HERO_ZOOM_AUTO=1;
   var HERO_ZOOM_MAX=2;
-  /* 背景面の位置。従来の100pxからさらに100px下げる（100%表示基準）。 */
-  var HERO_BACKGROUND_OFFSET_Y=200;
   /* SVGの水平上端と模型で共有する、元画像内の縦基準点。 */
   var HERO_LAYOUT_ANCHOR_Y=250.94686585/941;
   var HERO_LAYOUT_REFERENCE_OVERSCAN=1.1;
@@ -3146,6 +3144,7 @@ hexReady(function(){
       imageWidth:1,
       imageHeight:1,
       baseScale:1,
+      baseLayerScale:1,
       layoutOffsetY:0,
       baseVisibleWidth:1,
       baseVisibleHeight:1,
@@ -3849,16 +3848,18 @@ hexReady(function(){
         }
       });
       if(heroEllipse){
-        /* 図面と同じカメラに固定し、背景面だけ下方向のオフセットを加える。 */
+        /* SVGも図面・建物・外構と同じ倍率で、元画像の中央に配置する。 */
         var ellipseSourceWidth=metrics.imageWidth*metrics.scale;
+        var sourceHeight=metrics.imageHeight*metrics.scale;
+        var layerScale=metrics.baseLayerScale;
         /* 初回90%からのズーム中も、パン位置を含めて画面左右を覆う。 */
-        var ellipseWidth=Math.max(ellipseSourceWidth,
+        var ellipseWidth=Math.max(ellipseSourceWidth*layerScale,
           metrics.width+2*Math.abs(state.x*metrics.scale)+4);
-        var ellipseHeight=metrics.imageHeight*metrics.scale;
+        var ellipseHeight=sourceHeight*layerScale;
         var ellipseX=(metrics.width-ellipseWidth)/2-state.x*metrics.scale;
-        var sourceY=(metrics.height-ellipseHeight)/2+
+        var sourceY=(metrics.height-sourceHeight)/2+
           (state.y+metrics.layoutOffsetY)*metrics.scale;
-        var ellipseY=sourceY+HERO_BACKGROUND_OFFSET_Y*metrics.scale/metrics.baseScale;
+        var ellipseY=sourceY+(sourceHeight-ellipseHeight)/2;
         /* SVG内の水平上端を読み替えずに、植栽の下端と同じ座標へ揃える。 */
         var flatTop=ellipseY+ellipseHeight*HERO_LAYOUT_ANCHOR_Y;
         if(bottomIllustrations){
@@ -3869,6 +3870,7 @@ hexReady(function(){
         heroEllipse.style.transform="translate3d("+ellipseX+"px,"+ellipseY+"px,0)";
         /* 開幕プレビューの建物には、楕円の補完幅を適用しない。 */
         heroEllipse.style.setProperty("--hex-ellipse-source-width",ellipseSourceWidth+"px");
+        heroEllipse.style.setProperty("--hex-ellipse-source-height",sourceHeight+"px");
         heroEllipse.style.setProperty("--hex-ellipse-source-transform","translate3d("+
           ((metrics.width-ellipseSourceWidth)/2-state.x*metrics.scale)+"px,"+sourceY+"px,0)");
       }
@@ -3942,7 +3944,10 @@ hexReady(function(){
       /* 横幅で画像が拡大しても、共通基準点の高さは変えない。
          高さだけで求めた倍率を配置用に使い、表示倍率とは分離する。 */
       var referenceScale=height/imageHeight*HERO_LAYOUT_REFERENCE_OVERSCAN;
-      metrics.layoutOffsetY=(HERO_LAYOUT_ANCHOR_Y-.5)*imageHeight*
+      var baseLayerScale=parseFloat(getComputedStyle(activeHero).getPropertyValue('--hex-hero-base-layer-scale'));
+      metrics.baseLayerScale=Number.isFinite(baseLayerScale)&&baseLayerScale>0?baseLayerScale:1;
+      var layoutAnchor=(1-metrics.baseLayerScale)/2+metrics.baseLayerScale*HERO_LAYOUT_ANCHOR_Y;
+      metrics.layoutOffsetY=(layoutAnchor-.5)*imageHeight*
         (referenceScale/coverScale-1);
       metrics.baseVisibleWidth=visibleWidth;
       metrics.baseVisibleHeight=visibleHeight;
@@ -9462,10 +9467,12 @@ hexReady(function(){
       }
       if(ellipse){
         var previewEllipse=preview.querySelector(".hex-hero-ellipse");
-        var previewEllipseWidth=Math.max(imageWidth*scale,width+4);
+        var previewLayerScale=parseFloat(getComputedStyle(activeHero).getPropertyValue('--hex-hero-base-layer-scale'))||1;
+        var previewEllipseWidth=Math.max(imageWidth*scale*previewLayerScale,width+4);
         previewEllipse.style.width=previewEllipseWidth+"px";
-        previewEllipse.style.height=imageHeight*scale+"px";
-        previewEllipse.style.transform="translate3d("+(width-previewEllipseWidth)/2+"px,0,0)";
+        previewEllipse.style.height=imageHeight*scale*previewLayerScale+"px";
+        previewEllipse.style.transform="translate3d("+(width-previewEllipseWidth)/2+"px,"+
+          (imageHeight*scale*(1-previewLayerScale)/2)+"px,0)";
       }
       opening._hexOpeningHeroPreview=preview;
       return preview;
@@ -9491,7 +9498,8 @@ hexReady(function(){
         previewEllipse.style.transform=liveEllipse.style.transform;
         preview.style.setProperty("--hex-preview-image-width",
           liveEllipse.style.getPropertyValue("--hex-ellipse-source-width")||liveEllipse.style.width);
-        preview.style.setProperty("--hex-preview-image-height",liveEllipse.style.height);
+        preview.style.setProperty("--hex-preview-image-height",
+          liveEllipse.style.getPropertyValue("--hex-ellipse-source-height")||liveEllipse.style.height);
         preview.style.setProperty("--hex-preview-image-transform",
           liveEllipse.style.getPropertyValue("--hex-ellipse-source-transform")||liveEllipse.style.transform);
       }
