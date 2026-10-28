@@ -9251,10 +9251,28 @@ body > .hex-v2-handoff{z-index:198;}
 .hex-hero-boundary-illustrations{
   position:absolute;inset:0;z-index:4;pointer-events:none;
   --hex-boundary-width:calc(var(--hex-hero-decoration-height,100dvh) * .45);
+  --hex-boundary-span:calc(var(--hex-hero-decoration-height,100dvh) * .996763754);
+}
+/* 下草の画像幅・位置を保ち、内側へ苔だけを01と同じ幅まで補う。 */
+.hex-hero-boundary-illustrations::before,
+.hex-hero-boundary-illustrations::after{
+  content:"";position:absolute;
+  top:calc(var(--hex-boundary-top,50%) - 2px);
+  width:max(0px,calc(var(--hex-boundary-span) - var(--hex-boundary-width) + 3px));
+  height:calc(var(--hex-boundary-width) * 128 / 2172);
+  background:#306a52;
+  border-bottom-right-radius:100% 100%;
+}
+.hex-hero-boundary-illustrations::before{
+  left:calc(var(--hex-boundary-left,0px) + var(--hex-boundary-width) - 3px);
+}
+.hex-hero-boundary-illustrations::after{
+  right:calc(var(--hex-boundary-right,0px) + var(--hex-boundary-width) - 3px);
+  transform:scaleX(-1);
 }
 .hex-hero-boundary-img{
   position:absolute;display:block;
-  top:calc(var(--hex-boundary-top,50%) - var(--hex-boundary-width) * 0.1160220994 - 1px);
+  top:calc(var(--hex-boundary-top,50%) - var(--hex-boundary-width) * 0.1160220994 - 2px);
   width:var(--hex-boundary-width);height:auto;max-width:none;
   opacity:1;pointer-events:none;
 }
