@@ -253,7 +253,7 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
     file=file.replace(/^exterior\.(?:png|webp)(?=[?#]|$)/i,'exterior02.webp');
     file=file.replace(/^(house|drawing|exterior0[12]|tree0[1-3]|underplant0[1-3])\.png(?=[?#]|$)/i,'$1.webp');
     /* 同名の短い旧画像がキャッシュに残っていても、延長版を読み込む。 */
-    if(/^(?:left|right)_bottom04\.webp$/i.test(file))file+='?v=20261028-wide';
+    if(/^(?:left|right)_bottom04\.webp$/i.test(file))file+='?v=20261029-oriented';
     if(!/^[^/\\?#]+\.(?:avif|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i.test(file))return null;
     return new URL(file,imageRoot).href;
   }
