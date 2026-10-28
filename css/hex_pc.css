@@ -9210,6 +9210,11 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
 .hex-hero-bottom-img--r1{z-index:1;--hex-bottom-width:42%;--hex-bottom-right:calc(var(--hex-bottom-screen-right,calc((100% - 100vw) / 2)) - var(--hex-bottom-moss-edge-inset,0px));--hex-bottom-y:-10px;--hex-bottom-start:.09;--hex-bottom-end:.52;--hex-bottom-rise:1.03;--hex-bottom-offset-x:var(--hex-bottom-moss-parallax-x,0px);}
 .hex-hero-bottom-img--r2{z-index:3;--hex-bottom-width:24%;--hex-bottom-right:calc(var(--hex-bottom-screen-right,calc((100% - 100vw) / 2)) - var(--hex-bottom-edge-inset,0px));--hex-bottom-y:-10px;--hex-bottom-start:.22;--hex-bottom-end:.76;--hex-bottom-rise:1.08;}
 .hex-hero-bottom-img--r3{z-index:2;--hex-bottom-width:31%;--hex-bottom-right:calc(var(--hex-bottom-screen-right,calc((100% - 100vw) / 2)) - var(--hex-bottom-tree-edge-inset,0px));--hex-bottom-y:calc((-12px + 7.57421875cqw * 2 / 3) / 2);--hex-bottom-start:.34;--hex-bottom-end:.95;--hex-bottom-rise:1.05;--hex-bottom-rotate:-10deg;--hex-bottom-offset-x:var(--hex-bottom-moss-parallax-x,0px);}
+/* 左右の下草（02）だけ、共通の下端位置から20px下げる。 */
+.hex-hero-bottom-img--l2,
+.hex-hero-bottom-img--r2{
+  bottom:calc(var(--hex-bottom-baseline,50%) - 20px);
+}
 .hex-hero.is-v2-fallback .hex-hero-bottom-img{opacity:1!important;transform:translateX(var(--hex-bottom-offset-x,0px)) rotate(var(--hex-bottom-rotate,0deg))!important;}
 @media (prefers-reduced-motion:reduce){
   .hex-hero-bottom-img{opacity:1!important;transform:translateX(var(--hex-bottom-offset-x,0px)) rotate(var(--hex-bottom-rotate,0deg))!important;will-change:auto;}
