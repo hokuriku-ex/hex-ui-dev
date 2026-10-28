@@ -1357,7 +1357,7 @@ function hexInitAnchorNav(){
     }
     link.textContent=title;
 
-    link.addEventListener('click',function(e){
+    link.addEventListener('click',async function(e){
       e.preventDefault();
 
       if(welcomeEntry){
@@ -1365,7 +1365,9 @@ function hexInitAnchorNav(){
         if(window.hexHero&&window.hexHero.openWelcome)window.hexHero.openWelcome();
         return;
       }
-      if(homePanel&&window.hexHero&&window.hexHero.leaveForAnchor)window.hexHero.leaveForAnchor();
+      if(homePanel&&window.hexHero&&window.hexHero.leaveForAnchor){
+        await window.hexHero.leaveForAnchor();
+      }
       currentAnchorTarget=target;
       scrollToAnchorTarget(target);
     });
@@ -4280,7 +4282,7 @@ hexReady(function(){
       }
     });
 
-    async function beginWelcome(autoBody){
+    async function beginWelcome(autoBody,skipScroll){
       var target;
       var handoff;
       if(welcomeActive||!welcomeWrap){return;}
@@ -4321,6 +4323,8 @@ hexReady(function(){
       welcomeWrap.classList.add("is-v2-active");
       updateScrollEffects();
 
+      /* 通常アンカーはWELCOMEを準備した後、呼び出し側の移動先へ進む。 */
+      if(skipScroll)return;
       target=Math.max(documentTop(welcomeWrap),0);
       if(isSp()){
         scrollSpCircleTo(target);
@@ -5503,11 +5507,13 @@ hexReady(function(){
         }
       },
       leaveForAnchor:function(){
+        cancelWelcomeAuto();
         cancelAutoZoom(true);
         heroAnchorDeparted=true;
         setHeroPageLock(false);
         document.dispatchEvent(new Event('hex:hero-departed'));
         updateWelcomeButton();
+        if(!welcomeActive)return beginWelcome(false,true);
       },
       /* 初回表示前に、現在の寸法で一度描画まで完了させる。 */
       prepareDisplay:function(){
