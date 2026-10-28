@@ -9260,6 +9260,8 @@ body > .hex-v2-handoff{z-index:198;}
 }
 .hex-hero-boundary-img--left{left:calc(var(--hex-boundary-left,0px) - 2px);transform:scaleX(-1);}
 .hex-hero-boundary-img--right{right:calc(var(--hex-boundary-right,0px) - 2px);}
+/* CMS共通の画像幅制限で、SPだけ苔の画像が縮まないようにする。 */
+.hex-hero-boundary-illustrations > img.hex-hero-boundary-img{max-width:none!important;}
 @media (max-width:768px){
   .hex-cloud--1{top:3%;left:-65px;}
   .hex-cloud--2{top:19%;left:10%;}
