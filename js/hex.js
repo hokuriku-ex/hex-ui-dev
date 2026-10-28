@@ -4321,6 +4321,21 @@ hexReady(function(){
       if(handoff){hero.classList.add("is-welcome-transition");}
       setHeroPageLock(false);
       welcomeWrap.classList.add("is-v2-active");
+      if(skipScroll&&welcomeStage&&welcomeStageTop===null){
+        /* 通過中に高さが縮んでアンカー着地点がずれないよう、完成位置で先に計測する。 */
+        var preparedMetrics=measureWelcome();
+        if(isSp()){
+          welcomeStageTop=getSpStageTop(false);
+        }else{
+          var preparedImageTop=snapshot?snapshot.getBoundingClientRect().top:
+            window.hexViewportHeight()-getWelcomeContentHeight();
+          welcomeStageScreenTop=Math.round(preparedImageTop+
+            getWelcomeContentHeight()*.5-preparedMetrics.stageHeight*.5);
+          welcomeStageTop=welcomeStageScreenTop-
+            (documentTop(welcomePanel)-documentTop(welcomeWrap));
+        }
+        measureWelcome();
+      }
       updateScrollEffects();
 
       /* 通常アンカーはWELCOMEを準備した後、呼び出し側の移動先へ進む。 */
