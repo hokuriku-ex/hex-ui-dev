@@ -3423,7 +3423,10 @@ hexReady(function(){
 
       var anchor=window.hexHomeAnchorNav;
       if(anchor&&anchor.panel.classList.contains('is-hero-anchor')){
-        var navVisible=visible&&!isBack;
+        var navVisible=ready&&(bottomIntroComplete||
+          Number(anchor.panel.style.getPropertyValue('--hex-home-anchor-intro-opacity'))>0)&&
+          !hero.classList.contains('is-intro-departed')&&!welcomeActive&&!isBack&&
+          !document.documentElement.classList.contains('hex-opening-lock');
         anchor.panel.classList.toggle('is-welcome-end-hidden',!navVisible);
         anchor.nav.classList.toggle('is-welcome-end-hidden',!navVisible);
         anchor.panel.setAttribute('aria-hidden',navVisible?'false':'true');
@@ -3815,10 +3818,30 @@ hexReady(function(){
     }
 
     function updateBottomIllustrations(){
-      if(!bottomImages.length){return;}
       /* 初回の自動演出だけで表示し、以後のドラッグ・ズーム・復帰では再生しない。 */
       var progress=reduced||bottomIntroComplete?1:clamp(bottomIntroProgress,0,1);
       if(progress>=1){bottomIntroComplete=true;}
+      var anchor=window.hexHomeAnchorNav;
+      if(anchor&&anchor.panel.classList.contains('is-hero-anchor')){
+        /* 最初のbottom01と同じ開始・終了・せり上がりのカーブを共有する。 */
+        var reference=bottomImages[0]&&getComputedStyle(bottomImages[0]);
+        var navStart=reference?parseFloat(reference.getPropertyValue('--hex-bottom-start')):.09;
+        var navEnd=reference?parseFloat(reference.getPropertyValue('--hex-bottom-end')):.52;
+        var navRise=reference?parseFloat(reference.getPropertyValue('--hex-bottom-rise')):1.03;
+        if(!Number.isFinite(navStart))navStart=.09;
+        if(!Number.isFinite(navEnd)||navEnd<=navStart)navEnd=.52;
+        if(!Number.isFinite(navRise)||navRise<=0)navRise=1.03;
+        var navLocal=clamp((progress-navStart)/(navEnd-navStart),0,1);
+        var navEased=1-Math.pow(1-navLocal,3);
+        var navOffset=((1-navEased)*(anchor.panel.offsetHeight*navRise+24))+'px';
+        var navOpacity=String(clamp(navLocal*4,0,1));
+        if(anchor.panel.style.getPropertyValue('--hex-home-anchor-intro-offset')!==navOffset){
+          anchor.panel.style.setProperty('--hex-home-anchor-intro-offset',navOffset);
+        }
+        if(anchor.panel.style.getPropertyValue('--hex-home-anchor-intro-opacity')!==navOpacity){
+          anchor.panel.style.setProperty('--hex-home-anchor-intro-opacity',navOpacity);
+        }
+      }
       bottomImages.forEach(function(image){
         var style=getComputedStyle(image);
         var start=parseFloat(style.getPropertyValue("--hex-bottom-start"));

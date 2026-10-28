@@ -11140,8 +11140,14 @@ html body .hex-home-anchor-panel.is-hero-anchor{
 html body .hex-home-anchor-panel.is-hero-anchor > .hex-home-anchor-nav:not(.is-fixed){
   width:100%;margin:0!important;
 }
+/* bottom01の進行値で下から現れる。固定ナビの座標系にはtransformを作らない。 */
+html body .hex-home-anchor-panel.is-hero-anchor:not(:has(> .hex-home-anchor-nav.is-fixed)){
+  transform:translateY(var(--hex-home-anchor-intro-offset,calc(103% + 24px)));
+  opacity:var(--hex-home-anchor-intro-opacity,0);
+  transition:none;
+}
+.hex-home-anchor-panel.is-hero-anchor > .hex-home-anchor-nav{transition:none;}
 html.hex-character-focus-active .hex-home-anchor-panel.is-hero-anchor,
-.hex-hero-wrap:not(.is-intro-complete) .hex-home-anchor-panel.is-hero-anchor,
 .hex-hero-wrap.is-intro-departed .hex-home-anchor-panel.is-hero-anchor{
   opacity:0!important;visibility:hidden!important;pointer-events:none!important;
 }
