@@ -9133,6 +9133,23 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
   animation-direction:alternate;
   will-change:transform;
 }
+/* 雲の輪郭だけを伸縮し、ドットの半径・ピッチはCSS pxで維持する。 */
+.hex-cloud--fixed-dots{
+  --hex-cloud-dot-color:#6886de;
+  background-image:
+    radial-gradient(circle,var(--hex-cloud-dot-color) 0 var(--hex-cloud-dot-radius),transparent calc(var(--hex-cloud-dot-radius) + .18px)),
+    radial-gradient(circle,var(--hex-cloud-dot-color) 0 var(--hex-cloud-dot-radius),transparent calc(var(--hex-cloud-dot-radius) + .18px));
+  background-size:var(--hex-cloud-dot-pitch) var(--hex-cloud-dot-pitch);
+  background-position:0 0,calc(var(--hex-cloud-dot-pitch) / 2) calc(var(--hex-cloud-dot-pitch) / 2);
+  background-repeat:repeat;
+  mask-size:contain;
+  mask-position:center;
+  mask-repeat:no-repeat;
+  mask-mode:alpha;
+  -webkit-mask-size:contain;
+  -webkit-mask-position:center;
+  -webkit-mask-repeat:no-repeat;
+}
 /* 速度・開始時点・距離を少しずつずらし、６枚を独立して動かす。 */
 .hex-cloud--1{
   top:9%;left:2%;width:clamp(230px,calc(var(--hex-hero-decoration-height,calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))) * .4),360px);

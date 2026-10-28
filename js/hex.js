@@ -266,6 +266,24 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
       if(url){
         if(image.crossOrigin!=='anonymous')image.crossOrigin='anonymous';
         if(image.getAttribute('src')!==url)image.setAttribute('src',url);
+        /* ドット雲は輪郭マスクと固定pxの模様に分け、粒・間隔を拡縮しない。 */
+        var dottedCloud=url.match(/\/(left_cloud02|right_cloud03)\.svg(?:[?#]|$)/i);
+        if(dottedCloud&&image.classList.contains('hex-cloud')){
+          var cloud=document.createElement('span');
+          Array.from(image.attributes).forEach(function(attribute){
+            if(!/^(src|alt|crossorigin|loading|decoding)$/i.test(attribute.name)){
+              cloud.setAttribute(attribute.name,attribute.value);
+            }
+          });
+          cloud.classList.add('hex-cloud--fixed-dots');
+          cloud.setAttribute('aria-hidden','true');
+          cloud.style.setProperty('--hex-cloud-dot-pitch',dottedCloud[1].toLowerCase()==='left_cloud02'?'2.6px':'6.4px');
+          cloud.style.setProperty('--hex-cloud-dot-radius',dottedCloud[1].toLowerCase()==='left_cloud02'?'.37px':'.9px');
+          var maskUrl=new URL(dottedCloud[1]+'-mask.svg',imageRoot).href;
+          cloud.style.maskImage='url("'+maskUrl+'")';
+          cloud.style.webkitMaskImage='url("'+maskUrl+'")';
+          image.replaceWith(cloud);
+        }
       }
     });
     document.querySelectorAll('.hex-hero-wrap [style]').forEach(function(node){
