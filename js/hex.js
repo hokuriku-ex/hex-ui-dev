@@ -3861,6 +3861,16 @@ hexReady(function(){
         }
       }
       bottomImages.forEach(function(image){
+        /* 苔山01は初回から表示し、02・03だけ登場演出を続ける。 */
+        if(image.matches('.hex-hero-bottom-img--l1,.hex-hero-bottom-img--r1')){
+          if(image.style.getPropertyValue('--hex-bottom-offset')!=='0px'){
+            image.style.setProperty('--hex-bottom-offset','0px');
+          }
+          if(image.style.getPropertyValue('--hex-bottom-opacity')!=='1'){
+            image.style.setProperty('--hex-bottom-opacity','1');
+          }
+          return;
+        }
         var style=getComputedStyle(image);
         var start=parseFloat(style.getPropertyValue("--hex-bottom-start"));
         var end=parseFloat(style.getPropertyValue("--hex-bottom-end"));
@@ -3965,6 +3975,13 @@ hexReady(function(){
         var mossEdgeInset=metrics.maxX*metrics.baseScale*HERO_ZOOM_MIN*.75;
         bottomIllustrations.style.setProperty("--hex-bottom-moss-edge-inset",
           mossEdgeInset+"px");
+        if(boundaryIllustrations){
+          /* 01の画面上の外端位置と75%の横追従を、そのまま04へ共有する。 */
+          boundaryIllustrations.style.setProperty('--hex-boundary-left',
+            (-mossEdgeInset-panX*.75)+'px');
+          boundaryIllustrations.style.setProperty('--hex-boundary-right',
+            (-mossEdgeInset+panX*.75)+'px');
+        }
         /* 03の透過余白を除く外側端は、10度回転後に幅の約20.94%内側。
            この余白を補正し、ドラッグ限界で絵の端をさらに10px外へ出す。 */
         bottomIllustrations.style.setProperty("--hex-bottom-tree-edge-inset",
@@ -9640,8 +9657,9 @@ hexReady(function(){
       var liveBoundary=hero.querySelector('.hex-hero-boundary-illustrations');
       var previewBoundary=preview.querySelector('.hex-hero-boundary-illustrations');
       if(liveBoundary&&previewBoundary){
-        previewBoundary.style.setProperty('--hex-boundary-top',
-          liveBoundary.style.getPropertyValue('--hex-boundary-top'));
+        ['--hex-boundary-top','--hex-boundary-left','--hex-boundary-right'].forEach(function(name){
+          previewBoundary.style.setProperty(name,liveBoundary.style.getPropertyValue(name));
+        });
       }
       var liveBottomArt=hero.querySelector(".hex-hero-bottom-illustrations");
       var previewBottomArt=preview.querySelector(

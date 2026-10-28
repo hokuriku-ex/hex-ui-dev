@@ -9230,6 +9230,10 @@ body > .hex-v2-handoff{z-index:198;}
 .hex-hero-bottom-img--r1{z-index:1;--hex-bottom-width:42%;--hex-bottom-right:calc(var(--hex-bottom-screen-right,calc((100% - 100vw) / 2)) - var(--hex-bottom-moss-edge-inset,0px));--hex-bottom-y:-10px;--hex-bottom-start:.09;--hex-bottom-end:.52;--hex-bottom-rise:1.03;--hex-bottom-offset-x:var(--hex-bottom-moss-parallax-x,0px);}
 .hex-hero-bottom-img--r2{z-index:3;--hex-bottom-width:24%;--hex-bottom-right:calc(var(--hex-bottom-screen-right,calc((100% - 100vw) / 2)) - var(--hex-bottom-edge-inset,0px));--hex-bottom-y:-10px;--hex-bottom-start:.22;--hex-bottom-end:.76;--hex-bottom-rise:1.08;}
 .hex-hero-bottom-img--r3{z-index:2;--hex-bottom-width:31%;--hex-bottom-right:calc(var(--hex-bottom-screen-right,calc((100% - 100vw) / 2)) - var(--hex-bottom-tree-edge-inset,0px));--hex-bottom-y:calc((-12px + 7.57421875cqw * 2 / 3) / 2);--hex-bottom-start:.34;--hex-bottom-end:.95;--hex-bottom-rise:1.05;--hex-bottom-rotate:-10deg;--hex-bottom-offset-x:var(--hex-bottom-moss-parallax-x,0px);}
+/* 苔山01は位置・z-indexを維持し、初回から下端合わせで表示する。 */
+.hex-hero-bottom-img--l1,.hex-hero-bottom-img--r1{
+  opacity:1;transform:translate3d(var(--hex-bottom-offset-x,0px),0,0);
+}
 /* 左右の下草（02）だけ、共通の下端位置から15px下げる。 */
 .hex-hero-bottom-img--l2,
 .hex-hero-bottom-img--r2{
@@ -9243,19 +9247,19 @@ body > .hex-v2-handoff{z-index:198;}
 .hex-hero>.hex-hero-scene{z-index:4;}
 .hex-webgl-stage{z-index:5;}
 .hex-v2-handoff canvas{position:relative;z-index:5;}
-/* bottom04は水平背景の手前、模型の背面。初回登場・ドラッグ・ズームでは変形しない。 */
+/* bottom04は水平背景の手前、模型の背面。常時表示で、横追従は01と共有。 */
 .hex-hero-boundary-illustrations{
   position:absolute;inset:0;z-index:4;pointer-events:none;
-  --hex-boundary-width:calc(var(--hex-hero-decoration-height,100dvh) * .55);
+  --hex-boundary-width:calc(var(--hex-hero-decoration-height,100dvh) * .45);
 }
 .hex-hero-boundary-img{
   position:absolute;display:block;
-  top:calc(var(--hex-boundary-top,50%) - var(--hex-boundary-width) * .205);
+  top:calc(var(--hex-boundary-top,50%) - var(--hex-boundary-width) * 0.1160220994);
   width:var(--hex-boundary-width);height:auto;max-width:none;
   opacity:1;pointer-events:none;
 }
-.hex-hero-boundary-img--left{left:-2px;transform:scaleX(-1);}
-.hex-hero-boundary-img--right{right:-2px;}
+.hex-hero-boundary-img--left{left:calc(var(--hex-boundary-left,0px) - 2px);transform:scaleX(-1);}
+.hex-hero-boundary-img--right{right:calc(var(--hex-boundary-right,0px) - 2px);}
 @media (max-width:768px){
   .hex-cloud--1{top:3%;left:-65px;}
   .hex-cloud--2{top:19%;left:10%;}
