@@ -1367,6 +1367,10 @@ function hexInitAnchorNav(){
       }
       if(homePanel&&window.hexHero&&window.hexHero.leaveForAnchor){
         await window.hexHero.leaveForAnchor();
+        /* WELCOMEの高さ変更を外側のsticky枠にも反映してから着地点を読む。 */
+        if(window.hexOverlapAnchor&&window.hexOverlapAnchor.refreshLayout){
+          window.hexOverlapAnchor.refreshLayout();
+        }
       }
       currentAnchorTarget=target;
       scrollToAnchorTarget(target);
@@ -16482,6 +16486,7 @@ hexReady(function(){
   }
   window.hexOverlapAnchor={
     cancelSnap:function(){cancelSnap(true);},
+    refreshLayout:function(){measure();},
     clearWheelGesture:function(){
       if(snapActive)return;
       clearTimeout(snapTimer);snapTimer=0;
