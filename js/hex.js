@@ -256,22 +256,7 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
     return new URL(file,imageRoot).href;
   }
   function prepare(){
-    /* 境界の前景は独立した固定レイヤー。既存bottom01〜03の並びには加えない。 */
-    document.querySelectorAll('.hex-hero-wrap .hex-hero').forEach(function(section){
-      if(section.querySelector(':scope > .hex-hero-boundary-illustrations'))return;
-      var layer=document.createElement('div');
-      layer.className='hex-hero-boundary-illustrations';
-      layer.setAttribute('aria-hidden','true');
-      ['left','right'].forEach(function(side){
-        var image=document.createElement('img');
-        image.className='hex-hero-boundary-img hex-hero-boundary-img--'+side;
-        image.alt='';
-        image.crossOrigin='anonymous';
-        image.src=new URL(side+'_bottom04.webp',imageRoot).href;
-        layer.appendChild(image);
-      });
-      section.insertBefore(layer,section.querySelector(':scope > .hex-hero-scene'));
-    });
+    /* bottom04もHTMLに記載された画像だけを読み込む。 */
     document.querySelectorAll('.hex-hero-wrap img[src]').forEach(function(image){
       var url=resolve(image.getAttribute('src'));
       // 表示だけでなくCanvas/WebGL合成にも使うため、URL指定より先にCORSを設定する。
