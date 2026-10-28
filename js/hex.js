@@ -3030,8 +3030,8 @@ hexReady(function(){
   var HERO_ZOOM_INTRO_START=.9;
   var HERO_ZOOM_AUTO=1;
   var HERO_ZOOM_MAX=2;
-  /* 背景面とbottom画像の共通位置（100%表示基準、下方向に300px）。 */
-  var HERO_BACKGROUND_OFFSET_Y=300;
+  /* 背景面の位置。従来の100pxからさらに100px下げる（100%表示基準）。 */
+  var HERO_BACKGROUND_OFFSET_Y=200;
   /* 楕円より手前の雲２枚と奥の雲４枚の縦追従率。 */
   var HERO_CLOUD_FRONT_VERTICAL_FOLLOW=.70;
   var HERO_CLOUD_BACK_VERTICAL_FOLLOW=.20;
