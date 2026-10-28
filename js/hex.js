@@ -268,6 +268,10 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
       }
       if(url){
         if(image.crossOrigin!=='anonymous')image.crossOrigin='anonymous';
+        /* 最初の模型表示に必要な大きいレイヤーを優先する。 */
+        if(image.matches('.hex-hero-scene .hex-hero-layer')){
+          image.fetchPriority='high';
+        }
         if(image.getAttribute('src')!==url)image.setAttribute('src',url);
         /* ドット雲は輪郭マスクと固定pxの模様に分け、粒・間隔を拡縮しない。 */
         var dottedCloud=url.match(/\/(left_cloud02|right_cloud03)\.svg(?:[?#]|$)/i);
@@ -3131,6 +3135,7 @@ hexReady(function(){
     var sourceImage=null;
     var heroLayerImages=[];
     var heroLayerVersion=0;
+    var heroTextureUpdateFrame=0;
     var heroLayerPreviewCache=null;
     var webglStage=null;
     var renderer=null;
@@ -5343,6 +5348,8 @@ hexReady(function(){
 
     function destroyThree(){
       cancelCharacterFocus();
+      window.cancelAnimationFrame(heroTextureUpdateFrame);
+      heroTextureUpdateFrame=0;
       mouseTap.pointerId=null;
       window.cancelAnimationFrame(renderFrameId);
       renderFrameId=0;
@@ -5425,12 +5432,20 @@ hexReady(function(){
         });
         heroLayerImages.splice(underplantIndex+1,0,underplant02Image);
       }
-      heroLayerImages.forEach(function(layer){
-        layer.addEventListener("load",function(){
-          characterAlphaCanvases.delete(layer);
+      /* 同時に届いた画像は、次の描画フレームで一度だけ合成する。 */
+      function queueLayerTextureUpdate(){
+        if(heroTextureUpdateFrame||!textureCanvas||!sourceImage||!sourceImage.naturalWidth)return;
+        heroTextureUpdateFrame=window.requestAnimationFrame(function(){
+          heroTextureUpdateFrame=0;
           if(textureCanvas&&sourceImage&&sourceImage.naturalWidth){
             updateTextureSource(sourceImage);
           }
+        });
+      }
+      heroLayerImages.forEach(function(layer){
+        layer.addEventListener("load",function(){
+          characterAlphaCanvases.delete(layer);
+          queueLayerTextureUpdate();
         });
       });
 
@@ -9749,25 +9764,35 @@ hexReady(function(){
 
     function preload(url){
       return new Promise(function(resolve){
-        var image=new Image();
+        /* 表示用のCORS画像を再利用し、別モードでの二重取得を避ける。 */
+        var existing=Array.prototype.find.call(document.images,function(item){
+          return (item.currentSrc||item.src)===url;
+        });
+        var image=existing||new Image();
         var settled=false;
 
         function complete(){
           if(settled){return;}
           settled=true;
+          image.removeEventListener('load',loaded);
+          image.removeEventListener('error',complete);
           resolve();
         }
 
-        image.onload=function(){
+        function loaded(){
           if(typeof image.decode==="function"){
             image.decode().then(complete).catch(complete);
           }else{
             complete();
           }
-        };
-        image.onerror=resolve;
-        image.src=url;
-        if(image.complete&&image.naturalWidth){image.onload();}
+        }
+        image.addEventListener('load',loaded,{once:true});
+        image.addEventListener('error',complete,{once:true});
+        if(!existing)image.src=url;
+        if(image.complete){
+          if(image.naturalWidth)loaded();
+          else complete();
+        }
       });
     }
 
@@ -15192,6 +15217,24 @@ hexLoad(function(){
   }else{
     hexReady(startMotionPreparation);
   }
+  /* 全画像のload待ちと並行して取得し、初期化時の直列通信を省く。
+     初期化そのものは従来どおりload後に行い、CMSの完成待ちは維持する。 */
+  hexReady(function(){
+    if(!document.querySelector('.hex-hero-wrap'))return;
+    var urls=[GSAP_URL];
+    if(window.innerWidth>768){
+      urls.push(SCROLL_TRIGGER_URL);
+      if(shouldUseLenis())urls.push(LENIS_URL);
+    }
+    urls.forEach(function(url){
+      if(Array.prototype.some.call(document.querySelectorAll('link[rel="preload"]'),function(link){
+        return link.href===url&&link.as==='script';
+      }))return;
+      var link=document.createElement('link');
+      link.rel='preload';link.as='script';link.href=url;
+      document.head.appendChild(link);
+    });
+  });
   hexLoad(loadMotionLibraries);
 })();
 
