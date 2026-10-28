@@ -3030,8 +3030,8 @@ hexReady(function(){
   var HERO_ZOOM_INTRO_START=.9;
   var HERO_ZOOM_AUTO=1;
   var HERO_ZOOM_MAX=2;
-  /* 台座・図面の基準位置を100%表示時に下げる距離（px）。 */
-  var HERO_BASE_OFFSET_Y=100;
+  /* 背景面の位置。従来の100pxからさらに100px下げる（100%表示基準）。 */
+  var HERO_BACKGROUND_OFFSET_Y=200;
   /* 楕円より手前の雲２枚と奥の雲４枚の縦追従率。 */
   var HERO_CLOUD_FRONT_VERTICAL_FOLLOW=.70;
   var HERO_CLOUD_BACK_VERTICAL_FOLLOW=.20;
@@ -3845,7 +3845,7 @@ hexReady(function(){
         }
       });
       if(heroEllipse){
-        /* 図面と同じ画像座標・倍率で楕円を固定する。 */
+        /* 図面と同じカメラに固定し、背景面だけ下方向のオフセットを加える。 */
         var ellipseSourceWidth=metrics.imageWidth*metrics.scale;
         /* 初回90%からのズーム中も、パン位置を含めて画面左右を覆う。 */
         var ellipseWidth=Math.max(ellipseSourceWidth,
@@ -3853,7 +3853,7 @@ hexReady(function(){
         var ellipseHeight=metrics.imageHeight*metrics.scale;
         var ellipseX=(metrics.width-ellipseWidth)/2-state.x*metrics.scale;
         var sourceY=(metrics.height-ellipseHeight)/2+state.y*metrics.scale;
-        var ellipseY=sourceY+HERO_BASE_OFFSET_Y*metrics.scale/metrics.baseScale;
+        var ellipseY=sourceY+HERO_BACKGROUND_OFFSET_Y*metrics.scale/metrics.baseScale;
         /* 元アーチの頂点を水平な上端にし、植栽の下端も同じ座標へ揃える。 */
         var flatTop=ellipseY+ellipseHeight*(250.94686585/941);
         heroEllipse.style.setProperty('--hex-ellipse-flat-start',(250.94686585/941*100)+'%');
@@ -5183,9 +5183,7 @@ hexReady(function(){
         if(!layer.complete||!layer.naturalWidth){return;}
         if(!layer.classList.contains("hex-hero-character")&&
           !layer.classList.contains("hex-hero-sprite")){
-          var layerOffsetY=layer.classList.contains("hex-hero-drawing")
-            ?HERO_BASE_OFFSET_Y/(metrics.baseScale||1)*scale:0;
-          context.drawImage(layer,baseLayerX,baseLayerY+layerOffsetY,baseLayerWidth,baseLayerHeight);
+          context.drawImage(layer,baseLayerX,baseLayerY,baseLayerWidth,baseLayerHeight);
           return;
         }
         style=getComputedStyle(layer);

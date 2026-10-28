@@ -4834,11 +4834,6 @@ html body
   transform-origin:center center;
 }
 
-/* 図面だけ100%表示時に100px下げる。台座は非表示の寸法基準。 */
-.hex-hero .hex-hero-scene > .hex-hero-drawing{
-  transform:translateY(100px) scale(var(--hex-hero-base-layer-scale,1));
-}
-
 /* 背景・職人・前景をまとめて縦移動 */
 .hex-hero-scene{
   position:absolute!important;
