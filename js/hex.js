@@ -3032,6 +3032,9 @@ hexReady(function(){
   var HERO_ZOOM_MAX=2;
   /* 背景面の位置。従来の100pxからさらに100px下げる（100%表示基準）。 */
   var HERO_BACKGROUND_OFFSET_Y=200;
+  /* SVGの水平上端と模型で共有する、元画像内の縦基準点。 */
+  var HERO_LAYOUT_ANCHOR_Y=250.94686585/941;
+  var HERO_LAYOUT_REFERENCE_OVERSCAN=1.1;
   /* 楕円より手前の雲２枚と奥の雲４枚の縦追従率。 */
   var HERO_CLOUD_FRONT_VERTICAL_FOLLOW=.70;
   var HERO_CLOUD_BACK_VERTICAL_FOLLOW=.20;
@@ -3143,6 +3146,7 @@ hexReady(function(){
       imageWidth:1,
       imageHeight:1,
       baseScale:1,
+      layoutOffsetY:0,
       baseVisibleWidth:1,
       baseVisibleHeight:1,
       scale:1,
@@ -3826,7 +3830,7 @@ hexReady(function(){
       state.x=nextX;
       state.y=nextY;
       camera.position.x=state.x;
-      camera.position.y=state.y;
+      camera.position.y=state.y+metrics.layoutOffsetY;
       camera.updateMatrixWorld();
       /* 最初の雲の位置を保ち、縦だけ手前・奥ごとに追従率を変える。 */
       clouds.forEach(function(cloud){
@@ -3852,11 +3856,11 @@ hexReady(function(){
           metrics.width+2*Math.abs(state.x*metrics.scale)+4);
         var ellipseHeight=metrics.imageHeight*metrics.scale;
         var ellipseX=(metrics.width-ellipseWidth)/2-state.x*metrics.scale;
-        var sourceY=(metrics.height-ellipseHeight)/2+state.y*metrics.scale;
+        var sourceY=(metrics.height-ellipseHeight)/2+
+          (state.y+metrics.layoutOffsetY)*metrics.scale;
         var ellipseY=sourceY+HERO_BACKGROUND_OFFSET_Y*metrics.scale/metrics.baseScale;
-        /* 元アーチの頂点を水平な上端にし、植栽の下端も同じ座標へ揃える。 */
-        var flatTop=ellipseY+ellipseHeight*(250.94686585/941);
-        heroEllipse.style.setProperty('--hex-ellipse-flat-start',(250.94686585/941*100)+'%');
+        /* SVG内の水平上端を読み替えずに、植栽の下端と同じ座標へ揃える。 */
+        var flatTop=ellipseY+ellipseHeight*HERO_LAYOUT_ANCHOR_Y;
         if(bottomIllustrations){
           bottomIllustrations.style.setProperty('--hex-bottom-baseline',(metrics.height-flatTop)+'px');
         }
@@ -3920,6 +3924,7 @@ hexReady(function(){
         return;
       }
 
+      var previousScale=metrics.scale;
       width=Math.max(activeHero.clientWidth,1);
       height=Math.max(activeHero.clientHeight,1);
       imageWidth=sourceImage.naturalWidth||1920;
@@ -3934,6 +3939,11 @@ hexReady(function(){
       metrics.imageWidth=imageWidth;
       metrics.imageHeight=imageHeight;
       metrics.baseScale=coverScale;
+      /* 横幅で画像が拡大しても、共通基準点の高さは変えない。
+         高さだけで求めた倍率を配置用に使い、表示倍率とは分離する。 */
+      var referenceScale=height/imageHeight*HERO_LAYOUT_REFERENCE_OVERSCAN;
+      metrics.layoutOffsetY=(HERO_LAYOUT_ANCHOR_Y-.5)*imageHeight*
+        (referenceScale/coverScale-1);
       metrics.baseVisibleWidth=visibleWidth;
       metrics.baseVisibleHeight=visibleHeight;
 
@@ -3944,6 +3954,9 @@ hexReady(function(){
       camera.near=.1;
       camera.far=10;
       updateZoomMetrics();
+      if(ready&&!characterFocus.maskVisible&&previousScale>0){
+        state.y*=previousScale/metrics.scale;
+      }
       if(!ready&&!welcomeActive){state.y=metrics.maxY;}
 
       renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
@@ -4692,7 +4705,7 @@ hexReady(function(){
         clientY-rect.top-characterFocus.circleY)>characterFocus.circleRadius){return null;}
       var imageX=metrics.imageWidth/2+state.x+
         (clientX-rect.left-rect.width/2)/metrics.scale;
-      var imageY=metrics.imageHeight/2-state.y+
+      var imageY=metrics.imageHeight/2-state.y-metrics.layoutOffsetY+
         (clientY-rect.top-rect.height/2)/metrics.scale;
       for(var i=heroLayerImages.length-1;i>=0;i-=1){
         var layer=heroLayerImages[i];
@@ -5071,7 +5084,8 @@ hexReady(function(){
       var circle=getWelcomeCircleGeometry(1);
       var scale=metrics.baseScale*HERO_ZOOM_MAX;
       var targetX=characterFocus.targetX+(metrics.width*.5-circle.x)/scale;
-      var targetY=characterFocus.targetY+(circle.y-metrics.height*.5)/scale;
+      var targetY=characterFocus.targetY-metrics.layoutOffsetY+
+        (circle.y-metrics.height*.5)/scale;
       state.zoom=characterFocus.fromZoom+(HERO_ZOOM_MAX-characterFocus.fromZoom)*eased;
       updateZoomMetrics();
       state.x=characterFocus.fromX+(targetX-characterFocus.fromX)*eased;

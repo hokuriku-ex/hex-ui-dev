@@ -11105,10 +11105,7 @@ html body .hex-home-anchor-panel .hex-home-anchor-nav.hex-anchor-nav:not(.is-fix
   }
 }
 
-/* ヒーローの背景面：元アーチの頂点の高さを水平な上端にする。 */
-.hex-hero-ellipse{
-  background-image:linear-gradient(to bottom,transparent 0 var(--hex-ellipse-flat-start,26.6681047662%),var(--hex-hero-ellipse-color,#F3F0EB) var(--hex-ellipse-flat-start,26.6681047662%) 100%)!important;
-}
+/* ヒーローの背景面はellipse.svgの水平形状をそのまま表示する。 */
 /* 独立WELCOMEは廃止。BACKのみ従来どおり使用する。 */
 .hex-hero-welcome-button:not(.is-back){display:none!important;}
 html body .hex-home-anchor-panel.is-hero-anchor{
