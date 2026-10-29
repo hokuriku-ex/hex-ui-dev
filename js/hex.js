@@ -6857,7 +6857,7 @@ function setupCardCarousel(grid){
     var width=viewport.clientWidth;
     if(!width)return;
     var cardWidth=mobile.matches?width:Math.min(460,width*.40);
-    var step=mobile.matches?width:cardWidth*.82;
+    var step=mobile.matches?width+32:cardWidth*.82;
     grid.style.setProperty('--hex-carousel-card-width',cardWidth+'px');
     var height=0;
     slides.forEach(function(slide,i){
@@ -6926,21 +6926,24 @@ function setupCardCarousel(grid){
     var now=performance.now();
     drag.samples.push({x:event.clientX,time:now});
     drag.samples=drag.samples.filter(function(sample){return now-sample.time<=120;});
-    position=drag.start-drag.dx/dragStep();
+    var travel=drag.dx/dragStep();
+    if(mobile.matches)travel=Math.max(-1,Math.min(1,travel));
+    position=drag.start-travel;
     layout();
   });
   function dragStep(){
-    return mobile.matches?viewport.clientWidth:Math.min(460,viewport.clientWidth*.40)*.82;
+    return mobile.matches?viewport.clientWidth+32:Math.min(460,viewport.clientWidth*.40)*.82;
   }
   function settle(target,velocity){
     window.cancelAnimationFrame(motion);motion=0;
     var start=position,startTime=performance.now();
-    var duration=reduced.matches?0:Math.min(1100,500+Math.abs(velocity)*160+
+    var duration=reduced.matches?0:mobile.matches?280:Math.min(1100,500+Math.abs(velocity)*160+
       Math.max(0,Math.abs(target-start)-1)*120);
     function tick(now){
       var progress=duration?Math.min(1,(now-startTime)/duration):1;
       // 速く進み始め、摩擦でゆっくり止まる。最後は必ず中央に揃える。
-      position=start+(target-start)*(1-Math.pow(1-progress,3));
+      var easing=mobile.matches?progress*progress*(3-2*progress):1-Math.pow(1-progress,3);
+      position=start+(target-start)*easing;
       layout();
       if(progress<1)motion=window.requestAnimationFrame(tick);
       else{motion=0;show(target);}
@@ -6959,9 +6962,19 @@ function setupCardCarousel(grid){
       var velocity=performance.now()-last.time<100&&last.time>first.time?
         (last.x-first.x)/(last.time-first.time):0;
       velocity=Math.max(-3,Math.min(3,velocity));
-      var projected=position-(reduced.matches?0:velocity*240/dragStep());
-      var target=event.type==='pointerup'?Math.round(projected):Math.round(position);
-      target=Math.max(Math.round(position)-3,Math.min(Math.round(position)+3,target));
+      var target;
+      if(mobile.matches){
+        // SPは速度による送りを行わず、距離だけで隣の1枚へ切り替える。
+        velocity=0;
+        target=Math.round(gesture.start);
+        if(event.type==='pointerup'&&Math.abs(gesture.dx)>=40){
+          target+=gesture.dx<0?1:-1;
+        }
+      }else{
+        var projected=position-(reduced.matches?0:velocity*240/dragStep());
+        target=event.type==='pointerup'?Math.round(projected):Math.round(position);
+        target=Math.max(Math.round(position)-3,Math.min(Math.round(position)+3,target));
+      }
       settle(target,velocity);
       window.setTimeout(function(){suppressClick=false;},0);
     }else show(Math.round(position));
