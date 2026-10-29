@@ -8738,7 +8738,18 @@ hexReady(function(){
       root.classList.add('hex-direct-hero-fade-ready');
       root.classList.remove('hex-hero-display-wait','hex-hero-return-preparing');
       document.dispatchEvent(new Event('hex:hero-display-ready'));
-      /* 共通演出は従来のload後の初期化を維持する。表示だけを先行させる。 */
+      /* コピーはヒーローと一緒に開始し、ページ全体のloadを待たない。 */
+      function waitForCatch(){
+        if(!isReducedMotion()&&
+          !(window.hexPrepareHeroCatch&&window.hexPrepareHeroCatch())&&
+          !root.classList.contains('hex-motion-load-error')){
+          window.requestAnimationFrame(waitForCatch);
+          return;
+        }
+        showHeroCatch(180);
+      }
+      waitForCatch();
+      /* 操作開始と後続コンテンツの準備は従来のタイミングを維持する。 */
       var wasInert=hero.inert;
       hero.inert=true;
       function waitForIntro(){
@@ -8749,7 +8760,6 @@ hexReady(function(){
           return;
         }
         hero.inert=wasInert;
-        showHeroCatch(180);
       }
       window.requestAnimationFrame(waitForIntro);
       window.setTimeout(function(){
@@ -13502,6 +13512,188 @@ hexLoad(function(){
       Math.abs(event.deltaX||0)>Math.abs(event.deltaY||0);
   }
 
+  /* ヒーロー・WELCOMEキャッチ用の1文字ロールアップ */
+  function createCatchRoll(main){
+    var gsap=window.gsap;
+    var textValue;
+    var spBreakIndex=-1;
+    var spUppercaseIndex=-1;
+    var chars=[];
+    var tween=null;
+    var subtitle=main&&main.parentElement
+      ?main.parentElement.querySelector('.hex-opening-sub')
+      :null;
+
+    if(!main||main.dataset.hexCatchRollReady==='1'){
+      return null;
+    }
+
+    textValue=(main.textContent||'').trim();
+
+    if(!textValue){
+      return null;
+    }
+
+    if(main.closest('.hex-hero-catch')&&
+      textValue==='Build Your Everyday.'){
+      spBreakIndex='Build Your'.length;
+    }else if(main.closest('.hex-welcome-wrap')&&
+      /^With your dreams\.$/i.test(textValue)){
+      spBreakIndex='With your'.length;
+      spUppercaseIndex=spBreakIndex+1;
+    }else if(main.closest('.hex-opening-intro-stage')&&/^What Shall We Draw\?$/i.test(textValue)){
+      spBreakIndex='What Shall'.length;
+    }else if(main.closest('.hex-opening-message-stage')&&/^Draw Your Everyday With$/i.test(textValue)){
+      spBreakIndex='Draw Your'.length;
+    }
+
+    main.textContent='';
+    main.dataset.hexCatchRollReady='1';
+    main.classList.add('has-hex-catch-roll');
+    if(spBreakIndex!==-1){main.classList.add('hex-sp-two-line-catch');}
+    if(subtitle){
+      subtitle.classList.add('has-hex-sub-pop');
+    }
+
+    Array.from(textValue).forEach(function(character,index){
+      var span=document.createElement('span');
+
+      span.className='hex-catch-roll-char';
+      if(index===spBreakIndex){
+        span.classList.add('hex-catch-roll-mobile-break');
+      }
+      if(index===spUppercaseIndex){
+        span.classList.add('hex-catch-roll-mobile-capitalize');
+      }
+      span.textContent=character===' '?'\u00a0':character;
+      main.appendChild(span);
+      chars.push(span);
+    });
+
+    if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
+
+    function reset(){
+      if(tween){
+        tween.kill();
+        tween=null;
+      }
+
+      gsap.set(chars,{
+        autoAlpha:0,
+        yPercent:100,
+        rotation:45,
+        transformOrigin:'50% 100%'
+      });
+      if(subtitle&&!isReducedMotion()){
+        gsap.killTweensOf(subtitle);
+        gsap.set(subtitle,{autoAlpha:0,y:16,scale:.9});
+      }
+    }
+
+    function play(){
+      if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
+      reset();
+
+      tween=gsap.to(chars,{
+        autoAlpha:1,
+        yPercent:0,
+        rotation:0,
+        duration:.5,
+        stagger:(.07*5/6),
+        ease:'power3.out',
+        overwrite:'auto',
+        onStart:function(){
+          if(subtitle){
+            gsap.to(subtitle,{
+              autoAlpha:1,
+              y:0,
+              scale:1,
+              delay:(.5+(chars.length-1)*(.07*5/6))/2,
+              duration:(.55*5/6),
+              ease:'back.out(2.3)',
+              overwrite:'auto',
+              onStart:function(){
+                if(main.closest('.hex-character-copy-stage')){
+                  main.dispatchEvent(new Event('hex:character-subtitle-start',{bubbles:true}));
+                }
+                if(main.closest('.hex-welcome-wrap')){
+                  main.dispatchEvent(new Event('hex:welcome-subtitle-start',{bubbles:true}));
+                }
+              }
+            });
+          }
+        },
+        onComplete:function(){
+          tween=null;
+          gsap.set(chars,{
+            clearProps:'transform,opacity,visibility,willChange'
+          });
+        }
+      });
+    }
+
+    if(isReducedMotion()){
+      gsap.set(chars,{
+        autoAlpha:1,
+        yPercent:0,
+        rotation:0
+      });
+      if(subtitle){
+        gsap.set(subtitle,{clearProps:'opacity,visibility,transform'});
+      }
+    }else{
+      reset();
+    }
+
+    return{
+      play:play,
+      reset:reset
+    };
+  }
+
+  var heroCatchRollPrepared=false;
+  function setupHeroCatchRoll(){
+    if(heroCatchRollPrepared){return true;}
+    if(!window.gsap){return false;}
+    var heroCatch=document.querySelector('.hex-hero-catch');
+    var heroMain=heroCatch&&heroCatch.querySelector('.hex-handoff-copy .hex-opening-main');
+    var heroRoll=createCatchRoll(heroMain);
+    heroCatchRollPrepared=true;
+    if(isReducedMotion()){return true;}
+    if(heroCatch&&heroRoll){
+      var heroPlayed=false;
+
+      function syncHeroCatch(){
+        if(
+          !heroPlayed&&
+          heroCatch.classList.contains('is-catch-visible')
+        ){
+          heroPlayed=true;
+          heroRoll.play();
+        }
+      }
+
+      new MutationObserver(syncHeroCatch).observe(
+        heroCatch,
+        {
+          attributes:true,
+          attributeFilter:['class']
+        }
+      );
+
+      ['hex:top-returned','hex:hero-intro-reset'].forEach(function(name){
+        document.addEventListener(name,function(){
+          heroPlayed=false;
+          heroRoll.reset();
+        });
+      });
+
+      syncHeroCatch();
+    }
+
+    return true;
+  }
+
   function initializeMotion(){
     var gsap=window.gsap;
     var ScrollTrigger=window.ScrollTrigger;
@@ -14361,144 +14553,6 @@ hexLoad(function(){
       });
     }
 
-    /* ヒーロー・WELCOMEキャッチ用の1文字ロールアップ */
-    function createCatchRoll(main){
-      var textValue;
-      var spBreakIndex=-1;
-      var spUppercaseIndex=-1;
-      var chars=[];
-      var tween=null;
-      var subtitle=main&&main.parentElement
-        ?main.parentElement.querySelector('.hex-opening-sub')
-        :null;
-
-      if(!main||main.dataset.hexCatchRollReady==='1'){
-        return null;
-      }
-
-      textValue=(main.textContent||'').trim();
-
-      if(!textValue){
-        return null;
-      }
-
-      if(main.closest('.hex-hero-catch')&&
-        textValue==='Build Your Everyday.'){
-        spBreakIndex='Build Your'.length;
-      }else if(main.closest('.hex-welcome-wrap')&&
-        /^With your dreams\.$/i.test(textValue)){
-        spBreakIndex='With your'.length;
-        spUppercaseIndex=spBreakIndex+1;
-      }else if(main.closest('.hex-opening-intro-stage')&&/^What Shall We Draw\?$/i.test(textValue)){
-        spBreakIndex='What Shall'.length;
-      }else if(main.closest('.hex-opening-message-stage')&&/^Draw Your Everyday With$/i.test(textValue)){
-        spBreakIndex='Draw Your'.length;
-      }
-
-      main.textContent='';
-      main.dataset.hexCatchRollReady='1';
-      main.classList.add('has-hex-catch-roll');
-      if(spBreakIndex!==-1){main.classList.add('hex-sp-two-line-catch');}
-      if(subtitle){
-        subtitle.classList.add('has-hex-sub-pop');
-      }
-
-      Array.from(textValue).forEach(function(character,index){
-        var span=document.createElement('span');
-
-        span.className='hex-catch-roll-char';
-        if(index===spBreakIndex){
-          span.classList.add('hex-catch-roll-mobile-break');
-        }
-        if(index===spUppercaseIndex){
-          span.classList.add('hex-catch-roll-mobile-capitalize');
-        }
-        span.textContent=character===' '?'\u00a0':character;
-        main.appendChild(span);
-        chars.push(span);
-      });
-
-      if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
-
-      function reset(){
-        if(tween){
-          tween.kill();
-          tween=null;
-        }
-
-        gsap.set(chars,{
-          autoAlpha:0,
-          yPercent:100,
-          rotation:45,
-          transformOrigin:'50% 100%'
-        });
-        if(subtitle&&!isReducedMotion()){
-          gsap.killTweensOf(subtitle);
-          gsap.set(subtitle,{autoAlpha:0,y:16,scale:.9});
-        }
-      }
-
-      function play(){
-        if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
-        reset();
-
-        tween=gsap.to(chars,{
-          autoAlpha:1,
-          yPercent:0,
-          rotation:0,
-          duration:.5,
-          stagger:(.07*5/6),
-          ease:'power3.out',
-          overwrite:'auto',
-          onStart:function(){
-            if(subtitle){
-              gsap.to(subtitle,{
-                autoAlpha:1,
-                y:0,
-                scale:1,
-                delay:(.5+(chars.length-1)*(.07*5/6))/2,
-                duration:(.55*5/6),
-                ease:'back.out(2.3)',
-                overwrite:'auto',
-                onStart:function(){
-                  if(main.closest('.hex-character-copy-stage')){
-                    main.dispatchEvent(new Event('hex:character-subtitle-start',{bubbles:true}));
-                  }
-                  if(main.closest('.hex-welcome-wrap')){
-                    main.dispatchEvent(new Event('hex:welcome-subtitle-start',{bubbles:true}));
-                  }
-                }
-              });
-            }
-          },
-          onComplete:function(){
-            tween=null;
-            gsap.set(chars,{
-              clearProps:'transform,opacity,visibility,willChange'
-            });
-          }
-        });
-      }
-
-      if(isReducedMotion()){
-        gsap.set(chars,{
-          autoAlpha:1,
-          yPercent:0,
-          rotation:0
-        });
-        if(subtitle){
-          gsap.set(subtitle,{clearProps:'opacity,visibility,transform'});
-        }
-      }else{
-        reset();
-      }
-
-      return{
-        play:play,
-        reset:reset
-      };
-    }
-
     function setupFoundedMotion(){
       var section=document.getElementById(HOME_SECTIONS.ABOUT);
       var title=section&&section.querySelector('.hex-center-title');
@@ -14864,13 +14918,7 @@ hexLoad(function(){
         var roll=characterRolls.get(event.target);
         if(roll){roll.reset();characterRolls.delete(event.target);}
       });
-      var heroCatch=document.querySelector('.hex-hero-catch');
-      var heroMain=heroCatch
-        ?heroCatch.querySelector(
-          '.hex-handoff-copy .hex-opening-main'
-        )
-        :null;
-      var heroRoll=createCatchRoll(heroMain);
+      setupHeroCatchRoll();
       var welcomeCopy=document.querySelector(
         '.hex-opening-copy-source.hex-welcome-copy,'+
         '.hex-welcome-wrap .hex-opening-copy-source'
@@ -14882,37 +14930,6 @@ hexLoad(function(){
 
       if(isReducedMotion()){
         return;
-      }
-
-      if(heroCatch&&heroRoll){
-        var heroPlayed=false;
-
-        function syncHeroCatch(){
-          if(
-            !heroPlayed&&
-            heroCatch.classList.contains('is-catch-visible')
-          ){
-            heroPlayed=true;
-            heroRoll.play();
-          }
-        }
-
-        new MutationObserver(syncHeroCatch).observe(
-          heroCatch,
-          {
-            attributes:true,
-            attributeFilter:['class']
-          }
-        );
-
-        ['hex:top-returned','hex:hero-intro-reset'].forEach(function(name){
-          document.addEventListener(name,function(){
-            heroPlayed=false;
-            heroRoll.reset();
-          });
-        });
-
-        syncHeroCatch();
       }
 
       if(!welcomeCopy||!welcomeRoll){
@@ -15247,10 +15264,16 @@ hexLoad(function(){
   }else{
     hexReady(startMotionPreparation);
   }
-  /* 全画像のload待ちと並行して取得し、初期化時の直列通信を省く。
-     初期化そのものは従来どおりload後に行い、CMSの完成待ちは維持する。 */
+  /* キャッチは先に準備し、スクロール演出の初期化は従来どおりload後に行う。 */
   hexReady(function(){
     if(!document.querySelector('.hex-hero-wrap'))return;
+    /* キャッチだけはGSAP単体で準備でき、CMS全体の完成待ちは不要。 */
+    window.hexPrepareHeroCatch=setupHeroCatchRoll;
+    loadLibrary(GSAP_URL,function(){return !!window.gsap;},function(){
+      window.hexCreateCatchRoll=createCatchRoll;
+      setupHeroCatchRoll();
+      document.dispatchEvent(new Event('hex:catch-roll-ready'));
+    });
     var urls=[GSAP_URL];
     if(window.innerWidth>768){
       urls.push(SCROLL_TRIGGER_URL);
