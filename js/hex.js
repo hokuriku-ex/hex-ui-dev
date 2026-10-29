@@ -6776,7 +6776,8 @@ hexReady(function(){
         grid.appendChild(card);
       });
       gridStartBlock.parentNode.insertBefore(grid,gridStartBlock);
-      if(gridStart.dataset.slider==='true')setupCardCarousel(grid);
+      if(gridStart.dataset.slider==='vertical')setupCardStack(grid);
+      else if(gridStart.dataset.slider==='true')setupCardCarousel(grid);
       syncAllCardSlides();
       var removeBlock=gridStartBlock;
       while(removeBlock){
@@ -6788,6 +6789,71 @@ hexReady(function(){
     });
   });
 });
+
+/* 共通カード：縦スクロールで順番に重なり、末尾で固定を解除する。 */
+function setupCardStack(grid){
+  if(grid.dataset.slider==='vertical')return;
+  var cards=Array.from(grid.children);
+  if(!cards.length)return;
+  grid.dataset.slider='vertical';
+  grid.classList.add('hex-card-stack','hex-motion-auto-off');
+  var slides=cards.map(function(card,index){
+    var slide=document.createElement('div');
+    slide.className='hex-card-stack-slide';
+    slide.style.zIndex=String(index+1);
+    grid.appendChild(slide);slide.appendChild(card);
+    return slide;
+  });
+  // Keep CMS ancestors from becoming independent scroll containers.
+  for(var parent=grid.parentElement;parent&&parent!==document.body;parent=parent.parentElement){
+    if(parent.matches('.gc_auto_body,.content,.content_body,.hex-bg-range,[id^="gc_auto_frame_"],'+
+      '.gc_auto_frame_spotitem,.gc_auto_frame_spotitem_basewidth,.gc_auto_frame_spotitem_box,.gc_auto_frame_spotitem_body')){
+      parent.classList.add('hex-rise-flow-root');
+    }
+  }
+  var frame=0;
+  var probe=document.createElement('span');
+  probe.style.cssText='position:fixed;visibility:hidden;pointer-events:none;width:0;';
+  function layout(){
+    frame=0;
+    if(!grid.isConnected)return;
+    var maxHeight=0;
+    cards.forEach(function(card){maxHeight=Math.max(maxHeight,card.getBoundingClientRect().height);});
+    var nav=document.querySelector('.hex-anchor-nav[data-sticky="true"]');
+    var navHeight=nav?(nav.classList.contains('is-fixed')?nav.offsetHeight:36):0;
+    if(window.hexHomeAnchorNav){
+      navHeight=window.hexHomeAnchorNav.stickyEnabled?window.hexHomeAnchorNav.fixedHeight():0;
+    }
+    var header=window.innerWidth<=768?'--header_height_smartphone':'--header_height';
+    probe.style.height='var('+header+',80px)';
+    document.body.appendChild(probe);
+    var headerHeight=probe.getBoundingClientRect().height;probe.remove();
+    // Tall cards scroll fully into view before pinning; no inner scroll area.
+    var top=Math.min(headerHeight+navHeight+24,(window.hexViewportHeight?window.hexViewportHeight():window.innerHeight)-maxHeight-24);
+    grid.style.setProperty('--hex-card-stack-height',Math.ceil(maxHeight)+'px');
+    grid.style.setProperty('--hex-card-stack-top',Math.round(top)+'px');
+    // An opaque surface hides earlier cards, including cards with transparent backgrounds.
+    var surface='';
+    for(var owner=grid;owner&&owner!==document.documentElement;owner=owner.parentElement){
+      var style=getComputedStyle(owner);
+      var color=style.backgroundColor;
+      if(color&&color!=='transparent'&&!/^rgba\([^)]*,\s*0(?:\.0+)?\s*\)$/.test(color)){surface=color;break;}
+      var range=style.getPropertyValue('--hex-bg-range-color').trim();
+      if(range){surface=range;break;}
+    }
+    grid.style.setProperty('--hex-card-stack-auto-surface',surface||'#fafafa');
+  }
+  function queue(){if(!frame)frame=requestAnimationFrame(layout);}
+  if(window.ResizeObserver){
+    var observer=new ResizeObserver(queue);
+    cards.forEach(function(card){observer.observe(card);});
+  }
+  grid.addEventListener('load',queue,true);
+  window.addEventListener('hex:viewport-resize',queue,{passive:true});
+  window.addEventListener('resize',queue,{passive:true});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(queue);
+  layout();
+}
 
 /* 共通カード：data-slider="true" のときだけ中央拡大カルーセルにする。 */
 function setupCardCarousel(grid){

@@ -11404,3 +11404,20 @@ a.hex-anchor-nav-link.is-active::after{
 .hex-home-anchor-nav.is-fixed button.hex-anchor-nav-link:is(:hover,:focus,.is-active){
   color:#4a7fd0!important;
 }
+
+/* 縦カード：ページのスクロールだけで積み重なり、最後のカードで抜ける。 */
+.hex-card-grid.hex-card-stack{
+  display:block!important;
+  width:100%;max-width:var(--hex-card-stack-width,var(--hex_small_width,1000px));
+  margin-inline:auto;overflow:visible!important;isolation:isolate;
+}
+.hex-card-stack > .hex-card-stack-slide{
+  position:sticky;top:var(--hex-card-stack-top,120px);
+  min-height:var(--hex-card-stack-height,0px);
+  padding-bottom:24px;box-sizing:content-box;
+  background:var(--hex-card-stack-surface,var(--hex-card-stack-auto-surface,#fafafa));
+}
+.hex-card-stack-slide > .hex-card{width:100%;box-sizing:border-box;}
+@media(prefers-reduced-motion:reduce){
+  .hex-card-stack > .hex-card-stack-slide{position:relative;top:auto;min-height:0;}
+}
