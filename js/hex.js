@@ -1567,8 +1567,8 @@ function hexInitAnchorNav(){
     if(!homePanel)return;
     /* 通常表示は透過背景・紺文字。固定表示の共通CSSには適用しない。 */
     homePanel.style.setProperty('--hex-home-anchor-bg','transparent');
-    homePanel.style.setProperty('--hex-home-anchor-ink','#1f2774');
-    homePanel.style.setProperty('--hex-home-anchor-hover','#c8a874');
+    homePanel.style.setProperty('--hex-home-anchor-ink','#265ab0');
+    homePanel.style.setProperty('--hex-home-anchor-hover','#f7d04f');
   }
   function refreshHexAnchorNav(){
     if(deferAnchorRemeasure())return;
@@ -10300,7 +10300,7 @@ hexReady(function(){
               window.btoa(
                 window.atob(
                   logoCompanyHref.slice("data:image/svg+xml;base64,".length)
-                ).replace(/#1f2774/gi,"#ffffff")
+                ).replace(/#(?:1f2774|265ab0)/gi,"#ffffff")
               );
           }catch(error){
             logoCompanyWhiteHref=logoCompanyHref;
@@ -15260,7 +15260,7 @@ hexLoad(function(){
             if(number){
               gsap.killTweensOf(number);
               number.textContent='0';
-              gsap.set(number,{color:'#1f2774'});
+              gsap.set(number,{color:'#265ab0'});
             }
           });
         }
@@ -15282,7 +15282,7 @@ hexLoad(function(){
             parseInt(number.textContent,10)||0
           );
           number.textContent='0';
-          gsap.set(number,{color:'#1f2774'});
+          gsap.set(number,{color:'#265ab0'});
         }
       });
 
@@ -15320,7 +15320,7 @@ hexLoad(function(){
                   onComplete:function(){
                     number.textContent=String(target);
                     card.classList.add('is-count-complete');
-                    gsap.to(number,{color:'#c8a874',duration:.5});
+                    gsap.to(number,{color:'#f7d04f',duration:.5});
                   }
                 });
               }
@@ -17088,7 +17088,7 @@ hexReady(function(){
       return getComputedStyle(node).getPropertyValue('--hex-home-range-end-bg').trim()||'#fff';
     }
     // トップの背景指定を、CMSの外側に残る白い背景より優先する。
-    if(node.classList.contains('hex-home-bg-gray'))return getComputedStyle(node).getPropertyValue('--hex-home-section-bg').trim()||'#f3f0eb';
+    if(node.classList.contains('hex-home-bg-gray'))return getComputedStyle(node).getPropertyValue('--hex-home-section-bg').trim()||'#f7f1e1';
     if(node.classList.contains('hex-home-bg-white'))return getComputedStyle(node).getPropertyValue('--hex-home-section-bg').trim()||'#fff';
     var candidates=Array.from(node.querySelectorAll('.hex-bg-range,.background_color,.gc_auto_frame_spotitem_basewidth')).concat([node]);
     for(var i=0;i<candidates.length;i++){
