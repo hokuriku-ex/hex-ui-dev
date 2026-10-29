@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>共通カードスライダー 表示例</title>
+  <link rel="stylesheet" href="../css/hex_pc.css">
+  <link rel="stylesheet" href="../css/hex_sp.css">
+  <style>
+    body{margin:0;background:#f5f4f0;color:#203459;font:16px/1.7 sans-serif;}
+    main{max-width:1400px;margin:auto;padding:48px 16px;}
+    h1,h2,p.demo-note{text-align:center;}
+    h2{margin-top:48px;}
+    .demo-art{display:block;width:100%;aspect-ratio:16/10;background:linear-gradient(140deg,#203459,#66818b);border-radius:3px;}
+    .demo-art::after{content:attr(data-number);display:grid;place-items:center;height:100%;font-size:70px;color:#fff;}
+  </style>
+  <script defer src="../js/hex.js"></script>
+</head>
+<body>
+<main>
+  <h1>共通カードスライダー</h1>
+  <p class="demo-note">矢印・ドット・左右キー・ドラッグで切り替え。スマホは中央のカードのみ表示。</p>
+  <section id="demo-slider"><h2>6枚のカード</h2></section>
+  <section id="demo-single"><h2>1枚の場合</h2></section>
+  <section id="demo-grid"><h2>通常グリッド（フラグなし）</h2></section>
+</main>
+<script>
+  // CMSのブロック構造を再現した入力例。
+  var sequence=0;
+  function block(parent,html){
+    var item=document.createElement('div');
+    item.id='PageLayoutViewList_demo_'+(++sequence);
+    item.innerHTML=html;
+    parent.appendChild(item);
+  }
+  function example(id,count,slider){
+    var parent=document.getElementById(id);
+    block(parent,'<div class="hex-card-grid4-start"'+(slider?' data-slider="true"':'')+'></div>');
+    for(var i=1;i<=count;i++){
+      block(parent,'<div class="hex-card-start" data-title="カード '+i+'" data-text="カードの本文です。指定したカードのデザインを保ったまま表示します。'+(i%2?'':'説明が長いカードでも、スライダーの高さを確保します。')+'" data-url="#sample-'+i+'" data-type="internal"></div>');
+      block(parent,'<img alt="サンプル '+i+'" src="data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300"><rect width="480" height="300" fill="'+(i%2?'#66818b':'#c8a874')+'"/><text x="240" y="175" text-anchor="middle" fill="white" font-size="80">'+i+'</text></svg>')+'">');
+      block(parent,'<div class="hex-card-end"></div>');
+    }
+    block(parent,'<div class="hex-card-grid4-end"></div>');
+  }
+  example('demo-slider',6,true);
+  example('demo-single',1,true);
+  example('demo-grid',4,false);
+</script>
+</body>
+</html>

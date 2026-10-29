@@ -6743,6 +6743,7 @@ hexReady(function(){
         grid.appendChild(card);
       });
       gridStartBlock.parentNode.insertBefore(grid,gridStartBlock);
+      if(gridStart.dataset.slider==='true')setupCardCarousel(grid);
       syncAllCardSlides();
       var removeBlock=gridStartBlock;
       while(removeBlock){
@@ -6754,6 +6755,156 @@ hexReady(function(){
     });
   });
 });
+
+/* 共通カード：data-slider="true" のときだけ中央拡大カルーセルにする。 */
+function setupCardCarousel(grid){
+  var cards=Array.from(grid.children);
+  if(!cards.length)return;
+  grid.dataset.slider='true';
+  grid.classList.add('hex-card-carousel','hex-motion-auto-off');
+  grid.setAttribute('role','region');
+  grid.setAttribute('aria-roledescription','カルーセル');
+  grid.setAttribute('aria-label','カードスライダー');
+  var viewport=document.createElement('div');
+  viewport.className='hex-card-carousel-viewport';
+  grid.appendChild(viewport);
+  var slides=cards.map(function(card,index){
+    var slide=document.createElement('div');
+    slide.className='hex-card-carousel-slide';
+    slide.setAttribute('role','group');
+    slide.setAttribute('aria-roledescription','スライド');
+    slide.setAttribute('aria-label',(index+1)+' / '+cards.length);
+    slide.appendChild(card);
+    viewport.appendChild(slide);
+    return slide;
+  });
+  var index=0,offsets=[],drag=null,suppressClick=false,frame=0;
+  var mobile=window.matchMedia('(max-width:768px)');
+  var reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
+  var dots=document.createElement('div');
+  dots.className='hex-card-carousel-dots';
+  dots.setAttribute('role','group');
+  dots.setAttribute('aria-label','表示するカードを選択');
+  var dotButtons=cards.map(function(card,i){
+    var button=document.createElement('button');
+    button.type='button';
+    button.setAttribute('aria-label',(i+1)+'枚目のカードを表示');
+    button.addEventListener('click',function(){show(i);});
+    dots.appendChild(button);
+    return button;
+  });
+  function arrow(direction,label){
+    var button=document.createElement('button');
+    button.type='button';
+    button.className='hex-card-carousel-arrow is-'+direction;
+    button.setAttribute('aria-label',label);
+    button.addEventListener('click',function(){show(index+(direction==='prev'?-1:1));});
+    viewport.appendChild(button);
+    return button;
+  }
+  var prev=arrow('prev','前のカードを表示');
+  var next=arrow('next','次のカードを表示');
+  grid.appendChild(dots);
+  var status=document.createElement('span');
+  status.className='hex-card-carousel-status';
+  status.setAttribute('aria-live','polite');
+  status.setAttribute('aria-atomic','true');
+  grid.appendChild(status);
+  function layout(){
+    frame=0;
+    var width=viewport.clientWidth;
+    if(!width)return;
+    var cardWidth=mobile.matches?Math.max(0,width-104):Math.min(460,width*.40);
+    var step=mobile.matches?width:cardWidth*.82;
+    grid.style.setProperty('--hex-carousel-card-width',cardWidth+'px');
+    var height=0;
+    slides.forEach(function(slide,i){
+      var offset=(i-index+cards.length)%cards.length;
+      if(offset>cards.length/2)offset-=cards.length;
+      // 折り返すカードを中央の上を横切らせない。
+      var wraps=offsets[i]!==undefined&&Math.abs(offset-offsets[i])>1;
+      slide.style.transition=wraps?'none':'';
+      var x=mobile.matches?offset*step:
+        Math.sign(offset)*(offset===0?0:cardWidth*(.82+(Math.abs(offset)-1)*.64));
+      slide.style.setProperty('--hex-carousel-x',x+'px');
+      slide.style.setProperty('--hex-carousel-scale',offset===0?'1':'.58');
+      slide.style.zIndex=String(10-Math.abs(offset));
+      slide.classList.toggle('is-active',offset===0);
+      slide.classList.toggle('is-outside',Math.abs(offset)>2);
+      slide.inert=offset!==0;
+      slide.setAttribute('aria-hidden',String(offset!==0));
+      height=Math.max(height,slide.offsetHeight);
+      offsets[i]=offset;
+    });
+    viewport.style.height=(height+40)+'px';
+    dotButtons.forEach(function(button,i){button.setAttribute('aria-current',String(i===index));});
+    prev.hidden=next.hidden=dots.hidden=cards.length<2;
+    status.textContent=(index+1)+' / '+cards.length;
+  }
+  function show(value){
+    var old=index;
+    index=(value+cards.length)%cards.length;
+    if(slides[old].contains(document.activeElement))next.focus({preventScroll:true});
+    layout();
+    if(old!==index&&!reduced.matches&&slides[index].animate){
+      slides[index].firstElementChild.animate([
+        {transform:'scale(.96)'},{transform:'scale(1.035)',offset:.65},{transform:'scale(1)'}
+      ],{duration:520,easing:'cubic-bezier(.2,.7,.25,1)'});
+    }
+  }
+  viewport.addEventListener('keydown',function(event){
+    if(event.target.matches('input,textarea,select,[contenteditable]'))return;
+    if(event.key==='ArrowLeft'||event.key==='ArrowRight'){
+      event.preventDefault();show(index+(event.key==='ArrowLeft'?-1:1));
+    }
+  });
+  viewport.addEventListener('dragstart',function(event){event.preventDefault();});
+  viewport.addEventListener('pointerdown',function(event){
+    if(!event.isPrimary||event.button!==0||cards.length<2||event.target.closest('button'))return;
+    suppressClick=false;
+    drag={id:event.pointerId,x:event.clientX,y:event.clientY,dx:0,moved:false};
+  });
+  viewport.addEventListener('pointermove',function(event){
+    if(!drag||event.pointerId!==drag.id)return;
+    drag.dx=event.clientX-drag.x;
+    if(!drag.moved){
+      if(Math.abs(event.clientY-drag.y)>Math.abs(drag.dx)&&Math.abs(event.clientY-drag.y)>8){drag=null;return;}
+      if(Math.abs(drag.dx)<8)return;
+      drag.moved=true;
+      viewport.setPointerCapture(event.pointerId);
+      grid.classList.add('is-dragging');
+    }
+    event.preventDefault();
+    grid.style.setProperty('--hex-carousel-drag',Math.max(-120,Math.min(120,drag.dx))+'px');
+  });
+  function endDrag(event){
+    if(!drag||event.pointerId!==drag.id)return;
+    var gesture=drag;drag=null;
+    if(viewport.hasPointerCapture(event.pointerId))viewport.releasePointerCapture(event.pointerId);
+    grid.classList.remove('is-dragging');
+    grid.style.setProperty('--hex-carousel-drag','0px');
+    if(gesture.moved){
+      suppressClick=true;
+      if(event.type==='pointerup'&&Math.abs(gesture.dx)>40)show(index+(gesture.dx<0?1:-1));
+      window.setTimeout(function(){suppressClick=false;},0);
+    }
+  }
+  viewport.addEventListener('pointerup',endDrag);
+  viewport.addEventListener('pointercancel',endDrag);
+  viewport.addEventListener('lostpointercapture',endDrag);
+  viewport.addEventListener('click',function(event){
+    if(suppressClick){event.preventDefault();event.stopPropagation();}
+  },true);
+  function requestLayout(){if(!frame)frame=window.requestAnimationFrame(layout);}
+  if(window.ResizeObserver){
+    var observer=new ResizeObserver(requestLayout);
+    observer.observe(viewport);
+    cards.forEach(function(card){observer.observe(card);});
+  }else window.addEventListener('resize',requestLayout);
+  if(mobile.addEventListener)mobile.addEventListener('change',requestLayout);
+  viewport.addEventListener('load',requestLayout,true);
+  layout();
+}
 
 /* 専用カード2列：直前の見出しを対応するカードの上へ移す。 */
 hexReady(function(){

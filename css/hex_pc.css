@@ -2053,6 +2053,95 @@ div[hex-sp]{
   text-decoration:none!important;
 }
 
+/* 中央拡大カードスライダー。カード本体の装飾は既存クラスに任せる。 */
+.hex-card-grid.hex-card-carousel{
+  display:block;
+  --hex-carousel-card-width:40%;
+  --hex-carousel-drag:0px;
+}
+.hex-card-carousel-viewport{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  touch-action:pan-y pinch-zoom;
+  cursor:grab;
+}
+.hex-card-carousel-slide{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:var(--hex-carousel-card-width);
+  box-sizing:border-box;
+  transform:translate(-50%,-50%) translateX(calc(var(--hex-carousel-x) + var(--hex-carousel-drag))) scale(var(--hex-carousel-scale));
+  transition:transform .6s cubic-bezier(.22,.8,.25,1),opacity .3s;
+}
+.hex-card-carousel-slide > .hex-card{width:100%;margin:0;}
+.hex-card-carousel-slide.is-outside{opacity:0;pointer-events:none;}
+.hex-card-carousel.is-dragging .hex-card-carousel-slide{transition:none;}
+.hex-card-carousel.is-dragging .hex-card-carousel-viewport{cursor:grabbing;user-select:none;}
+.hex-card-carousel-arrow{
+  position:absolute;
+  top:50%;
+  z-index:20;
+  display:grid;
+  place-items:center;
+  width:52px;
+  height:52px;
+  padding:0;
+  border:1px solid #203459;
+  border-radius:50%;
+  background:#fff;
+  color:#203459;
+  transform:translate(-50%,-50%);
+  cursor:pointer;
+  transition:background .2s,color .2s;
+}
+.hex-card-carousel-arrow.is-prev{left:calc(50% - var(--hex-carousel-card-width)/2 - 12px);}
+.hex-card-carousel-arrow.is-next{left:calc(50% + var(--hex-carousel-card-width)/2 + 12px);}
+.hex-card-carousel-arrow::before{
+  content:"";
+  width:9px;
+  height:9px;
+  border-top:2px solid currentColor;
+  border-right:2px solid currentColor;
+  transform:rotate(45deg);
+}
+.hex-card-carousel-arrow.is-prev::before{transform:rotate(-135deg);}
+.hex-card-carousel-arrow:hover{background:#203459;color:#fff;}
+.hex-card-carousel-dots{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;margin-top:16px;}
+.hex-card-carousel-dots button{
+  display:grid;
+  place-items:center;
+  width:28px;
+  height:28px;
+  padding:0;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+}
+.hex-card-carousel-dots button::before{
+  content:"";
+  width:8px;
+  height:8px;
+  border:1px solid #203459;
+  border-radius:50%;
+  background:transparent;
+  transition:background .2s,transform .2s;
+}
+.hex-card-carousel-dots button[aria-current="true"]::before{background:#203459;transform:scale(1.25);}
+.hex-card-carousel :is(.hex-card-carousel-arrow,.hex-card-carousel-dots button):focus-visible{outline:2px solid #c8a874;outline-offset:3px;}
+.hex-card-carousel [hidden]{display:none;}
+.hex-card-carousel-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
+@media screen and (max-width:768px){
+  .hex-card-carousel-slide:not(.is-active){visibility:hidden;}
+  .hex-card-carousel-arrow{width:40px;height:40px;}
+  .hex-card-carousel-arrow.is-prev{left:24px;}
+  .hex-card-carousel-arrow.is-next{left:calc(100% - 24px);}
+}
+@media(prefers-reduced-motion:reduce){
+  .hex-card-carousel-slide,.hex-card-carousel-dots button::before{transition:none;}
+}
+
 /* カード */
 .hex-card-grid{
   display:grid;
