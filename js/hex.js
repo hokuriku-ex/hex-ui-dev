@@ -315,7 +315,7 @@ const HOME_SECTIONS={
   HERO:'gc_auto_frame_home_2', /* オリジナルヒーロー画像 */
   WELCOME:'gc_auto_frame_home_3', /* Welcomeメッセージ */
   ABOUT:'gc_auto_frame_home_4', /* 私たちについて */
-  FIRST:'gc_auto_frame_home_5', /* ご依頼の流れ */
+  PROCESS:'gc_auto_frame_home_5', /* ご依頼の流れ */
   SERVICE:'gc_auto_frame_home_6', /* サービス案内 */
   PICKUP:'gc_auto_frame_home_7', /* 注目アイテム */
   NEWS_SECTION:'gc_auto_frame_home_8', /* お知らせセクション */
@@ -335,7 +335,7 @@ const HOME_SECTIONS={
 const HOME_DISPLAY_SECTIONS=[
   HOME_SECTIONS.WELCOME,
   HOME_SECTIONS.ABOUT,
-  HOME_SECTIONS.FIRST,
+  HOME_SECTIONS.PROCESS,
   HOME_SECTIONS.SERVICE,
   HOME_SECTIONS.PICKUP,
   HOME_SECTIONS.NEWS_SECTION,
@@ -355,7 +355,7 @@ const HOME_OVERLAP_SECTIONS={
   ],
   SP:[
     HOME_SECTIONS.ABOUT,
-    HOME_SECTIONS.FIRST,
+    HOME_SECTIONS.PROCESS,
     HOME_SECTIONS.SERVICE,
     HOME_SECTIONS.PICKUP,
     HOME_SECTIONS.NEWS_SECTION,
@@ -369,7 +369,7 @@ const HOME_OVERLAP_SECTIONS={
 const HOME_PADDING_SECTIONS=[
   HOME_SECTIONS.WELCOME,
   HOME_SECTIONS.ABOUT,
-  HOME_SECTIONS.FIRST,
+  HOME_SECTIONS.PROCESS,
   HOME_SECTIONS.SERVICE,
   HOME_SECTIONS.PICKUP,
   HOME_SECTIONS.NEWS_SECTION,
