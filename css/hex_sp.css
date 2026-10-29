@@ -1495,9 +1495,12 @@
     visibility:visible!important;
     transform:none!important;
   }
+  /* オーバーラップの前面レイヤー指定を通常表示用リセットで消さない。 */
+  .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card):not(.hex-hashtag-overlap-layer):not(.hex-home-overlap-front){
+    z-index:auto!important;
+  }
   .gc_auto_frame_spotitem.gc_auto_frame_background:has(.hex-company-card){
     position:relative!important;
-    z-index:auto!important;
     min-height:0!important;
     opacity:1!important;
     visibility:visible!important;
