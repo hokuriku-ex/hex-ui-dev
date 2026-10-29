@@ -2130,7 +2130,10 @@ div[hex-sp]{
 }
 .hex-card-carousel-dots button[aria-current="true"]::before{background:#203459;transform:scale(1.25);}
 .hex-card-carousel :is(.hex-card-carousel-arrow,.hex-card-carousel-dots button):focus-visible{outline:2px solid #c8a874;outline-offset:3px;}
-.hex-card-carousel [hidden]{display:none;}
+.hex-card-carousel [hidden],
+.hex-card-carousel-viewport[hidden],
+.hex-card-carousel-dots[hidden],
+.hex-card-carousel-status[hidden]{display:none;}
 .hex-card-carousel-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
 @media screen and (max-width:768px){
   .hex-card-carousel-slide:not(.is-active){visibility:hidden;}

@@ -2,6 +2,8 @@
 
 開始タグに `data-slider="true"` を指定すると有効になります。省略・`false` の場合は従来のグリッドです。1〜6列の開始タグに対応します。
 
+PC（769px以上）ではカードが5枚以上あるときだけスライダーになります。4枚以下は通常のグリッド表示です。SP（768px以下）では枚数に関係なくスライダーになります。画面幅を変更した場合も自動で切り替わります。
+
 ```html
 <div class="hex-card-grid4-start" data-slider="true"></div>
 <!-- 既存の hex-card-start 〜 hex-card-end を必要な枚数配置 -->

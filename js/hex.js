@@ -6760,6 +6760,10 @@ hexReady(function(){
 function setupCardCarousel(grid){
   var cards=Array.from(grid.children);
   if(!cards.length)return;
+  var originalLabel=grid.getAttribute('aria-label');
+  var originalRole=grid.getAttribute('role');
+  var originalDescription=grid.getAttribute('aria-roledescription');
+  var originalMotionOff=grid.classList.contains('hex-motion-auto-off');
   grid.dataset.slider='true';
   grid.classList.add('hex-card-carousel','hex-motion-auto-off');
   grid.setAttribute('role','region');
@@ -6778,7 +6782,7 @@ function setupCardCarousel(grid){
     viewport.appendChild(slide);
     return slide;
   });
-  var index=0,position=0,offsets=[],drag=null,suppressClick=false,frame=0,motion=0;
+  var index=0,position=0,offsets=[],drag=null,suppressClick=false,frame=0,motion=0,enabled=true;
   var mobile=window.matchMedia('(max-width:768px)');
   var reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
   var dots=document.createElement('div');
@@ -6815,8 +6819,31 @@ function setupCardCarousel(grid){
   status.setAttribute('aria-live','polite');
   status.setAttribute('aria-atomic','true');
   grid.appendChild(status);
+  function syncMode(){
+    enabled=mobile.matches||cards.length>=5;
+    window.cancelAnimationFrame(motion);motion=0;
+    drag=null;
+    grid.classList.remove('is-dragging');
+    grid.classList.toggle('hex-card-carousel',enabled);
+    grid.classList.toggle('hex-motion-auto-off',enabled||originalMotionOff);
+    viewport.hidden=dots.hidden=status.hidden=!enabled;
+    ['role','aria-label','aria-roledescription'].forEach(function(name,i){
+      var value=enabled?['region','カードスライダー','カルーセル'][i]:
+        [originalRole,originalLabel,originalDescription][i];
+      if(value===null)grid.removeAttribute(name);
+      else grid.setAttribute(name,value);
+    });
+    cards.forEach(function(card,i){
+      if(enabled)slides[i].appendChild(card);
+      else grid.insertBefore(card,viewport);
+    });
+    position=index;
+    offsets=[];
+    if(enabled)layout();
+  }
   function layout(){
     frame=0;
+    if(!enabled)return;
     var width=viewport.clientWidth;
     if(!width)return;
     var cardWidth=mobile.matches?Math.max(0,width-104):Math.min(460,width*.40);
@@ -6940,9 +6967,10 @@ function setupCardCarousel(grid){
     observer.observe(viewport);
     cards.forEach(function(card){observer.observe(card);});
   }else window.addEventListener('resize',requestLayout);
-  if(mobile.addEventListener)mobile.addEventListener('change',requestLayout);
+  if(mobile.addEventListener)mobile.addEventListener('change',syncMode);
+  else mobile.addListener(syncMode);
   viewport.addEventListener('load',requestLayout,true);
-  layout();
+  syncMode();
 }
 
 /* 専用カード2列：直前の見出しを対応するカードの上へ移す。 */
