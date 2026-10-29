@@ -3274,7 +3274,7 @@ div[hex-sp]{
   line-height:1.5!important;
 }
 .headermenu_type8 .menu_sub .menu_inner:hover{
-  color:#1f2774!important;
+  color:#f7d04f!important;
   background:transparent!important;
 }
 .headermenu_type8 .menu_sub .menu_inner::before{
@@ -3293,7 +3293,7 @@ div[hex-sp]{
   bottom:0;
   width:0;
   height:1px;
-  background:#1f2774;
+  background:#f7d04f;
   transition:width .28s ease;
 }
 .headermenu_type8 .menu_sub .menu_inner:hover::after{
@@ -3325,7 +3325,7 @@ div[hex-sp]{
   left:50%;
   bottom:12px;
   transform:translateX(-50%);
-  color:#1f2774;
+  color:#f7d04f;
   font-family:"Font Awesome 6 Free";
   font-size:10px;
   font-weight:900;
