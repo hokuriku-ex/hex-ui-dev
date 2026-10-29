@@ -15914,9 +15914,14 @@ hexReady(function(){
     /* CMSが本文を後から挿入する実機でも、最初のDOMContentLoadedだけに依存しない。 */
     var queued=false;
     new MutationObserver(function(records){
-      var added=records.some(function(record){return Array.from(record.addedNodes).some(function(node){
-        return node.nodeType===1&&(node.matches('.hex-hashtag-source')||node.querySelector('.hex-hashtag-source'));
-      });});
+      var added=records.some(function(record){
+        // CMS may populate the five paragraphs after inserting an empty source.
+        var target=record.target.nodeType===1?record.target:record.target.parentElement;
+        if(target&&target.closest('.hex-hashtag-source'))return true;
+        return Array.from(record.addedNodes).some(function(node){
+          return node.nodeType===1&&(node.matches('.hex-hashtag-source')||node.querySelector('.hex-hashtag-source'));
+        });
+      });
       if(added&&!queued){
         queued=true;
         requestAnimationFrame(function(){queued=false;initializeHexHashtags();});
