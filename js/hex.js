@@ -17324,21 +17324,35 @@ hexReady(function(){
       branch.classList.add('hex-hashtag-overlap-layer');
     }
   }
+  function previousHashtagSection(section){
+    var item=managed.find(function(record){return record.node===section;});
+    for(var branch=item?item.runway:section;branch&&branch!==document.body;branch=branch.parentElement){
+      for(var node=branch.previousElementSibling;node;node=node.previousElementSibling){
+        var content=originalNode(node);
+        if(content.matches('script,style,link,template,.hex-rise-start,.hex-rise-veil,.background_color,.hex-bg-start,.hex-bg-end,.hex-hashtag-source,.hex-overlap-spacer'))continue;
+        var style=getComputedStyle(content);
+        // A hero transition may hide WELCOME before its layout is finalized.
+        if(style.display==='none'||style.position==='fixed'||content.getBoundingClientRect().height<=0)continue;
+        return content;
+      }
+    }
+    return null;
+  }
   function scanHashtagOverlaps(){
     document.querySelectorAll('.hex-hashtag-banner.hex-hashtag-overlap').forEach(function(band){
       var front=band;
       var back=band._hexHashtagOverlapBack&&band._hexHashtagOverlapBack();
-      // Keep the boundary outside the CMS section on SP. An internal marker
-      // splits ABOUT into separate sticky blocks and cannot pin WELCOME reliably.
-      var about=window.innerWidth<=768&&band.closest('#'+HOME_SECTIONS.ABOUT);
-      if(about){
-        front=about;
-        back=document.getElementById(HOME_SECTIONS.WELCOME)||back;
+      // On SP, use the containing section and its preceding content, not an
+      // internal CMS text wrapper. This also works outside the ABOUT section.
+      if(window.innerWidth<=768){
+        var section=band.closest('.gc_auto_frame_background[id^="gc_auto_frame_"],.gc_auto_frame_footer')||
+          band.closest('section,.hex-bg-range');
+        if(section){front=section;back=previousHashtagSection(section);}
       }
       if(!back)return;
       back=originalNode(back);
       if(back===front||back.contains(front))return;
-      var existing=entries.find(function(entry){return entry.band===band||entry.front===band;});
+      var existing=entries.find(function(entry){return entry.band===band||entry.front===band||(entry.hashtag&&entry.front===front);});
       var frontItem=managed.find(function(item){return item.node===front;});
       var boundary=frontItem?frontItem.runway:front;
       if(existing){
