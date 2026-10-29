@@ -676,9 +676,9 @@ a.hex-text-link:visited,
 a.hex-text-link *,
 a.hex-text-link:link *,
 a.hex-text-link:visited *{
-  color:#2a5bac!important;
+  color:#265ab0!important;
   text-decoration:underline!important;
-  text-decoration-color:#2a5bac!important;
+  text-decoration-color:#265ab0!important;
   text-decoration-thickness:1px;
   text-underline-offset:3px;
   transition:color .2s ease,text-decoration-color .2s ease,opacity .2s ease;
@@ -690,8 +690,8 @@ a.hex-text-link:hover *{
 }
 .bg_post_index .linktext_color_basecolor2 a.hex-text-link,
 .bg_post_index .linktext_color_basecolor2 a.hex-text-link *{
-  color:#2a5bac!important;
-  text-decoration-color:#2a5bac!important;
+  color:#265ab0!important;
+  text-decoration-color:#265ab0!important;
 }
 .bg_post_index .linktext_color_basecolor2 a.hex-text-link:hover,
 .bg_post_index .linktext_color_basecolor2 a.hex-text-link:hover *{
@@ -712,9 +712,9 @@ a.hex-text-link[target="_blank"]::after{
 
 /* 本文テキストリンク 内部リンク（既存記事内） */
 .gc_auto_frame_post_item_body a{
-  color:#2a5bac!important;
+  color:#265ab0!important;
   text-decoration:underline!important;
-  text-decoration-color:#2a5bac!important;
+  text-decoration-color:#265ab0!important;
   text-decoration-thickness:1px;
   text-underline-offset:3px;
   transition:color .2s ease,text-decoration-color .2s ease,opacity .2s ease;
@@ -871,7 +871,7 @@ a.hex-text-link[target="_blank"]::after{
 .gc_auto_frame_post_item_pager_prev_box:hover *,
 .gc_auto_frame_post_item_pager_next_box:hover,
 .gc_auto_frame_post_item_pager_next_box:hover *{
-  color:#2a5bac!important;
+  color:#265ab0!important;
   text-decoration:none!important;
 }
 .hex-detail-pager-empty{
@@ -3046,7 +3046,7 @@ div[hex-sp]{
   z-index:2;
   width:8px;
   height:8px;
-  background:#2a5bac;
+  background:#265ab0;
   border-radius:50%;
 }
 .hex-flow dl::after{
@@ -6020,7 +6020,7 @@ html body
   opacity:1;
 }
 .hex-home-news-tab:hover{
-  color:#2a5bac;
+  color:#265ab0;
   opacity:1;
 }
 .hex-home-news-list{
@@ -7283,13 +7283,13 @@ html body
 ======================================= */
 /* ハウスメーカー側 */
 .hex-flow-client .hex-flow-icon{
-  background:#2a5bac;
+  background:#265ab0;
 }
 .hex-flow-client .hex-flow-icon::after{
-  border-color:transparent transparent transparent #2a5bac;
+  border-color:transparent transparent transparent #265ab0;
 }
 .hex-flow-client dt{
-  color:#2a5bac;
+  color:#265ab0;
 }
 
 /* 行政審査 */
@@ -7734,7 +7734,7 @@ html body
 .gc_auto_frame_post_index_home_box_contents_cell_text_list:hover *,
 .gc_auto_frame_post_index_box_contents_cell_text_list:hover,
 .gc_auto_frame_post_index_box_contents_cell_text_list:hover *{
-  color:#2a5bac!important;
+  color:#265ab0!important;
   text-decoration:none!important;
   text-decoration-line:none!important;
   background-image:none!important;
@@ -7845,9 +7845,9 @@ html body
   transition:color .2s ease;
 }
 .hex-contact-nav .hex-contact-faq-link span{
-  color:#2a5bac!important;
+  color:#265ab0!important;
   font-weight:500;
-  border-bottom:1px solid #2a5bac;
+  border-bottom:1px solid #265ab0;
   padding-bottom:2px;
   transition:
     color .2s ease,
@@ -7855,7 +7855,7 @@ html body
 }
 .hex-contact-nav .hex-contact-faq-link i{
   margin-left:2px;
-  color:#2a5bac!important;
+  color:#265ab0!important;
   font-size:12px;
   transition:
     color .2s ease,
