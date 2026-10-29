@@ -3315,6 +3315,10 @@ div[hex-sp]{
 .headermenu_type8 .menu_sub .menu_inner:hover .hex-menu-icon{
   transform:translate(3px,-50%);
 }
+.headermenu_type8 .menu_group.menu_menu:hover,
+.headermenu_type8 .menu_group.menu_menu:focus-within{
+  color:#f7d04f!important;
+}
 
 /* 子メニュー展開アイコン */
 .headermenu_type8
