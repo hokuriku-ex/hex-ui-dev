@@ -6814,7 +6814,7 @@ function setupCardStack(grid){
     }
   }
   var section=grid.closest('.gc_auto_frame_background[id^="gc_auto_frame_"],.gc_auto_frame_footer')||grid.closest('section,.hex-bg-range');
-  var runway=null,scene=null,travel=0,step=0,pinStart=0,scrollFrame=0;
+  var runway=null,scene=null,travel=0,step=0,pinTop=0,scrollFrame=0;
   var reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
   // One scene owns the section; any additional stack keeps its native behavior.
   if(section&&!section.classList.contains('hex-card-stack-section')&&!section.closest('.hex-card-stack-scene')){
@@ -6857,7 +6857,7 @@ function setupCardStack(grid){
   function renderStack(){
     scrollFrame=0;
     if(!scene)return;
-    var progress=Math.max(0,Math.min(travel,(window.pageYOffset||0)-pinStart));
+    var progress=Math.max(0,Math.min(travel,pinTop-runway.getBoundingClientRect().top));
     slides.forEach(function(slide,index){
       var value=reduced.matches?'none':'translate3d(0,'+Math.max(0,index*step-progress)+'px,0)';
       if(slide.style.transform!==value)slide.style.transform=value;
@@ -6879,10 +6879,9 @@ function setupCardStack(grid){
     if(scene){
       step=height+24;travel=Math.max(0,cards.length-1)*step;
       var cardBottom=grid.getBoundingClientRect().top-scene.getBoundingClientRect().top+height;
-      var pinTop=viewportHeight-cardBottom;
+      pinTop=viewportHeight-cardBottom;
       scene.style.top=pinTop+'px';
       runway.style.height=(scene.offsetHeight+(reduced.matches?0:travel))+'px';
-      pinStart=runway.getBoundingClientRect().top+(window.pageYOffset||0)-pinTop;
       renderStack();
     }
     // An opaque surface hides earlier cards, including cards with transparent backgrounds.
@@ -6902,6 +6901,8 @@ function setupCardStack(grid){
     cards.forEach(function(card){observer.observe(card);});
     if(section)observer.observe(section);
   }
+  document.addEventListener('hex:home-overlap-measured',queue);
+  document.addEventListener('hex:hero-layout-updated',queue);
   grid.addEventListener('load',queue,true);
   window.addEventListener('hex:viewport-resize',queue,{passive:true});
   window.addEventListener('resize',queue,{passive:true});
@@ -16893,7 +16894,7 @@ hexReady(function(){
   }
   function previousContents(entry){
     // トップはCMSのセクション単位で、直前の一つだけを固定する。
-    if(entry.home||entry.hashtag)return [entry.back];
+    if(entry.home||entry.hashtag||entry.stack)return [entry.back];
     var blocks=[];
     for(var branch=entry.front;branch&&branch!==document.body;branch=branch.parentElement){
       for(var sibling=branch.previousElementSibling;sibling;sibling=sibling.previousElementSibling){
@@ -16952,7 +16953,7 @@ hexReady(function(){
     // PC/SPをまたぐ幅変更では、対象外になった境界と装飾を取り除く。
     var removed=false;
     entries=entries.filter(function(entry){
-      if(!entry.home||isHomeOverlapTarget(entry.front))return true;
+      if(entry.stack||!entry.home||isHomeOverlapTarget(entry.front))return true;
       if(sizeObserver)sizeObserver.unobserve(entry.front);
       entry.marker.remove();delete entry.front._hexHomeRiseMarker;
       entry.front.classList.remove('hex-home-overlap-front');
@@ -17220,7 +17221,7 @@ hexReady(function(){
         progress=(scroll-item.start)/Math.max(1,item.fadeEnd-item.start);
       }
       progress=Math.max(0,Math.min(1,progress));
-      var opacity=disabled?0:Math.round(progress*1000)/1000;
+      var opacity=disabled||item.stackHold?0:Math.round(progress*1000)/1000;
       return {item:item,opacity:opacity};
     });
     // 座標の読み取りを全て終えてから描画を更新する。
@@ -17260,6 +17261,8 @@ hexReady(function(){
     return null;
   }
   function homeEntryStart(entry,scroll){
+    var stack=entry.stack&&cardStackRange(entry,scroll);
+    if(stack)return stack.start;
     var panel=homeAnchorArchPanel(entry);
     return (panel||entry.marker).getBoundingClientRect().top+scroll-window.hexViewportHeight();
   }
@@ -17311,6 +17314,7 @@ hexReady(function(){
     measureFrame=0;
     scanHashtagOverlaps();
     if(homeFoundedSection())scanHome();
+    scanCardStackOverlaps();
     syncHomeShapeBackgrounds();
     var scroll=scrollPosition();
     entries.forEach(function(entry){entry.start=homeEntryStart(entry,scroll);});
@@ -17363,6 +17367,10 @@ hexReady(function(){
       var relevant=entries.filter(function(entry){return entry.blocks.indexOf(item.node)!==-1;});
       if(!relevant.length)return null;
       var start=relevant[0].start,end=relevant[relevant.length-1].marker.getBoundingClientRect().top+scroll;
+      var stackEntry=relevant.find(function(entry){return entry.stack;});
+      var stack=stackEntry&&cardStackRange(stackEntry,scroll);
+      if(stack){start=stack.start;end=stack.end;}
+      item.stackHold=!!stack;
       var top=item.runway.getBoundingClientRect().top+scroll,height=item.sticky.getBoundingClientRect().height;
       var g=geometry(top,height,start,end,sectionLandingOffset(item.node,header));
       item.fadeEnd=relevant[0].marker.getBoundingClientRect().top+scroll-sectionLandingOffset(relevant[0].front,header);
@@ -17462,6 +17470,28 @@ hexReady(function(){
     }
     return null;
   }
+  function cardStackRange(entry,scroll){
+    var scene=entry.front.querySelector('.hex-card-stack-scene');
+    var runway=scene&&scene.parentElement;
+    if(!scene||!runway)return null;
+    var top=parseFloat(scene.style.top)||0;
+    var start=runway.getBoundingClientRect().top+scroll-top;
+    return {start:start,end:start+Math.max(0,runway.offsetHeight-scene.offsetHeight)};
+  }
+  function scanCardStackOverlaps(){
+    document.querySelectorAll('.hex-card-stack-section').forEach(function(front){
+      var back=previousHashtagSection(front);
+      if(!back||back.contains(front))return;
+      var existing=entries.find(function(entry){return entry.front===front;});
+      if(existing){existing.stack=true;existing.back=back;return;}
+      var marker=document.createElement('div');marker.className='hex-rise-start';
+      marker.setAttribute('aria-hidden','true');front.parentNode.insertBefore(marker,front);
+      var entry={marker:marker,front:front,back:back,stack:true,blocks:[],start:0};
+      marker._hexRiseEntry=entry;entries.push(entry);
+      prepareFlow(front);prepareFlow(back);raiseFollowing(entry);
+      if(sizeObserver){sizeObserver.observe(front);sizeObserver.observe(back);}
+    });
+  }
   function scanHashtagOverlaps(){
     document.querySelectorAll('.hex-hashtag-banner.hex-hashtag-overlap').forEach(function(band){
       var front=band;
@@ -17505,9 +17535,10 @@ hexReady(function(){
       document.querySelectorAll('.hex-rise-start').forEach(function(marker){
         marker.textContent='';marker.setAttribute('aria-hidden','true');
       });
-      scanHome();queueMeasure();return;
+      scanHome();scanCardStackOverlaps();queueMeasure();return;
     }
     scanSharedRoundSections();
+    scanCardStackOverlaps();
     document.querySelectorAll('.hex-rise-start').forEach(function(marker){
       marker.textContent='';marker.setAttribute('aria-hidden','true');
       if(marker._hexRiseEntry)return;
