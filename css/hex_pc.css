@@ -1257,7 +1257,7 @@ div.NNAttached{
 }
 /* お客様の質問 */
 .kb_qanda_content .q_title{
-  background:#E8D575;
+  background:#f7d04f;
   color:#203459;
 }
 /* お客様：左の人物画像へ向くしっぽ */
@@ -1266,7 +1266,7 @@ div.NNAttached{
   bottom:18px;
   left:-15px;
   border-top:25px solid transparent;
-  border-left:25px solid #E8D575;
+  border-left:25px solid #f7d04f;
 }
 .kb_qanda_content .q_title::after{
   top:auto;
@@ -3789,7 +3789,7 @@ body,
 
 :root{
   --hex-opening-navy:#265ab0;
-  --hex-opening-gold:#e8d575;
+  --hex-opening-gold:#f7d04f;
   --hex-opening-white:#fff;
   --hex-hero-origin-x:50%;
   --hex-hero-origin-y:50%;
@@ -9487,7 +9487,7 @@ body > .hex-v2-handoff{z-index:198;}
   position:absolute;
   inset:0;
   border-radius:50%;
-  background:var(--hex-opening-gold,#e8d575);
+  background:var(--hex-opening-gold,#f7d04f);
   will-change:transform;
 }
 .hex-follow-cursor-label{
@@ -9568,7 +9568,7 @@ body > .hex-v2-handoff{z-index:198;}
 #gc_auto_frame_home_4 .hex-company-card .hex-number{
   grid-column:1;
   justify-self:end;
-  color:#E8D575!important;
+  color:#f7d04f!important;
   font-size:clamp(52px,calc(var(--hex-founded-vw, 1vw) * 5.3),76px)!important;
   line-height:.9;
   white-space:nowrap;
@@ -9964,7 +9964,7 @@ h2.hex-top-title.hex-audience-guide-title .hex-top-title-en{
 .hex-tiktok-play{position:absolute;z-index:1;top:50%;left:50%;display:grid;place-items:center;width:68px;height:68px;border:2px solid #fff;border-radius:50%;background:rgba(31,39,116,.7);transform:translate(-50%,-50%);}
 .hex-tiktok-play::before{content:"";display:block;width:0;height:0;margin-left:5px;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid #fff;}
 .hex-tiktok-play-label{position:absolute;bottom:24px;left:0;right:0;z-index:1;font-size:16px;letter-spacing:.08em;}
-.hex-tiktok-poster:focus-visible{outline:3px solid #e8d575;outline-offset:-5px;}
+.hex-tiktok-poster:focus-visible{outline:3px solid #f7d04f;outline-offset:-5px;}
 .hex-tiktok-frame{position:absolute;inset:0;display:block;width:100%!important;height:100%!important;margin:0!important;padding:0!important;border:0;}
 .hex-tiktok-screen.is-loaded .hex-tiktok-poster{display:none;}
 .hex-tiktok-status{position:absolute;left:8px;right:8px;bottom:12px;z-index:2;margin:0!important;padding:8px;background:rgba(31,39,116,.85);color:#fff!important;font-size:13px;text-align:center;pointer-events:none;}

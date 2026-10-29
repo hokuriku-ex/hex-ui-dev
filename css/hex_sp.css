@@ -408,7 +408,7 @@
     left:0;
     height:100%;
     min-width:32px;
-    background:#c8a874;
+    background:#f7d04f;
     transform:translateX(0);
     will-change:width,transform;
   }
@@ -426,7 +426,7 @@
   }
   .hex-anchor-nav.is-fixed.has-anchor-scrollbar
   .hex-anchor-scrollbar-thumb{
-    background:#c8a874;
+    background:#f7d04f;
   }
   /* スクロールバーがない場合：中央寄せ */
   .hex-anchor-nav:not(.has-anchor-scrollbar)
@@ -549,12 +549,12 @@
   .hex-button-wrap > .hex-btn-main.is-tap-active,
   .hex-banner-button > .hex-btn-main.is-tap-active{
     transform:translate3d(9px,9px,0);
-    border-color:#c8a874!important;
+    border-color:#f7d04f!important;
   }
   .hex-btn-main.is-tap-active .hex-btn-main-title,
   .hex-btn-main.is-tap-active .hex-btn-main-icon,
   .hex-btn-main.is-tap-active .hex-btn-main-icon i{
-    color:#c8a874!important;
+    color:#f7d04f!important;
   }
   .hex-btn-main.is-tap-active .hex-btn-main-icon{
     transform:translateX(3px);
@@ -1151,7 +1151,7 @@
     justify-content:center!important;
     width:44px!important;
     height:44px!important;
-    color:#1f2774!important;
+    color:#265ab0!important;
     text-decoration:none!important;
   }
   .bg_menu_button_popup .hex-menu-sns svg,
@@ -1161,7 +1161,7 @@
     justify-content:center!important;
     width:36px!important;
     height:36px!important;
-    color:#1f2774!important;
+    color:#265ab0!important;
     fill:currentColor!important;
   }
   .bg_menu_button_popup
@@ -1271,12 +1271,12 @@
     top:48px;
     bottom:auto;
     font-size:clamp(38px,12vw,58px);
-    -webkit-text-stroke:1.5px #1f2774;
+    -webkit-text-stroke:1.5px #265ab0;
     text-shadow:
-      1px 1px 0 #1f2774,
-      2px 2px 0 #1f2774,
-      3px 3px 0 #1f2774,
-      4px 4px 0 #1f2774;
+      1px 1px 0 #265ab0,
+      2px 2px 0 #265ab0,
+      3px 3px 0 #265ab0,
+      4px 4px 0 #265ab0;
   }
 
   /* スライド後キャッチコピー */
@@ -1681,7 +1681,7 @@
     content:none!important;
   }
   #gc_auto_body_company .publicinfo_company .content_title{
-    color:#1f2774!important;
+    color:#265ab0!important;
   }
   #gc_auto_body_company .hex-company-pair-name::before{
     display:none;
@@ -1834,7 +1834,7 @@
     left:0;
     top:0;
     z-index:2;
-    color:#1f2774;
+    color:#265ab0;
     font-size:34px;
     font-weight:800;
     line-height:1;
@@ -1917,10 +1917,10 @@
     width:30px;
     height:30px;
     margin:0;
-    border:1.5px solid #1f2774;
+    border:1.5px solid #265ab0;
     border-radius:50%;
     background:#fff;
-    color:#1f2774;
+    color:#265ab0;
     font-size:11px;
     line-height:1;
     cursor:pointer;
@@ -1932,7 +1932,7 @@
     transition:transform .25s ease;
   }
   .hex-staff-card.is-open .hex-staff-toggle{
-    background:#1f2774;
+    background:#265ab0;
     color:#fff;
   }
   .hex-staff-card.is-open .hex-staff-toggle i{
@@ -2262,15 +2262,15 @@
   #gc_auto_frame_lp_form_dialog
   .gc_auto_frame_lp_form_box_button_round.is-tap-active{
     transform:translate3d(9px,9px,0);
-    border-color:#c8a874!important;
-    color:#c8a874!important;
+    border-color:#f7d04f!important;
+    color:#f7d04f!important;
   }
   #form_lp_form_button.is-tap-active
   .gc_auto_frame_lp_form_box_button_text{
-    color:#c8a874!important;
+    color:#f7d04f!important;
   }
   #form_lp_form_button.is-tap-active::after{
-    color:#c8a874;
+    color:#f7d04f;
     transform:translateX(3px);
   }
   #gc_auto_frame_lp_form_dialog
@@ -2721,12 +2721,12 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
 
 @media screen and (max-width:768px){
   #gc_auto_frame_home_4 :is(p,h3).hex-founded-marquee-line{
-    -webkit-text-stroke:1.5px #1f2774;
+    -webkit-text-stroke:1.5px #265ab0;
     text-shadow:
-      1px 1px 0 #1f2774,
-      2px 2px 0 #1f2774,
-      3px 3px 0 #1f2774,
-      4px 4px 0 #1f2774;
+      1px 1px 0 #265ab0,
+      2px 2px 0 #265ab0,
+      3px 3px 0 #265ab0,
+      4px 4px 0 #265ab0;
   }
 }
 
