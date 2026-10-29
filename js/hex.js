@@ -16189,11 +16189,10 @@ hexReady(function(){
     if(distance<1||Math.abs(scrollPosition()-snapOrigin)>=distance*.5)setSnapInputLock(false);
   }
   function snapEnabled(){
+    /* 自動着地は下層ページのアンカーナビ区間だけに限定する。 */
+    if(!snapRanges.length||homeFoundedSection())return false;
     /* SPはページ種別を問わず、オーバーラップ着地の自動スナップを行わない。 */
     if(window.innerWidth<=768)return false;
-    // トップのPCはWELCOME末尾ナビと、創業の次以降の境界で自動着地。SPは手動を維持。
-    if(homeFoundedSection()&&(window.innerWidth<=768||
-      !snapRanges.some(function(range){return range.home;})))return false;
     if(reduced&&reduced.matches)return false;
     if(window.innerWidth<=768&&window.hexMotion&&window.hexMotion.usesLenis)return false;
     if(window.hexMotion&&window.hexMotion.lenis&&window.hexMotion.lenis.isStopped)return false;
@@ -16378,6 +16377,7 @@ hexReady(function(){
       if(event.stopImmediatePropagation)event.stopImmediatePropagation();
       return;
     }
+    if(!snapEnabled())return;
     if(homeFoundedSection()){
       refreshHomeSnapRanges();
       if(event.ctrlKey||event.shiftKey||Math.abs(event.deltaY)<1||
@@ -16830,6 +16830,8 @@ hexReady(function(){
   }
   function addTitleSnapRanges(ranges,scroll,header,maximumScroll){
     document.querySelectorAll('.pagetitle_type.pagetitle_type4.hex-page-hero').forEach(function(hero){
+      /* ナビのないタイトルや通常のオーバーラップ境界はスナップしない。 */
+      if(!hero.querySelector('.hex-anchor-nav:not(.hex-home-anchor-nav)'))return;
       var next=hero._hexNextSection;
       if(!next){
         var branch=hero.closest('[id^="gc_auto_frame_"],.gc_auto_frame_page_title')||hero;
@@ -16896,20 +16898,8 @@ hexReady(function(){
   }
   function refreshHomeSnapRanges(){
     if(!homeFoundedSection())return;
-    var scroll=scrollPosition(),header=snapHeaderHeight;
-    var maximumScroll=Math.max(0,Math.max(document.documentElement.scrollHeight,
-      document.body.scrollHeight)-window.hexViewportHeight());
+    /* トップページはオーバーラップ区間・ナビ区間とも自動着地を行わない。 */
     snapRanges=[];
-    var welcomeEntrance=welcomeAnchorEntranceRange(scroll,maximumScroll);
-    if(welcomeEntrance)snapRanges.push(welcomeEntrance);
-    var welcomeRange=welcomeAnchorSnapRange(scroll,header,maximumScroll);
-    if(welcomeRange)snapRanges.push(welcomeRange);
-    entries.forEach(function(entry){
-      var reveal=homeAnchorRevealRange(entry,scroll,maximumScroll);
-      var content=homeSnapRange(entry,scroll,header,maximumScroll);
-      if(reveal&&reveal.to-reveal.from>24)snapRanges.push(reveal);
-      if(content&&content.to-content.from>24)snapRanges.push(content);
-    });
   }
   function measure(){
     measureFrame=0;
@@ -16955,28 +16945,10 @@ hexReady(function(){
     entries.forEach(syncOverlapCorners);
     var documentBottom=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);
     var maximumScroll=Math.max(0,documentBottom-window.hexViewportHeight());
-    // 自然な文書座標で前の下端と次の開始位置を取得する。
-    // 本文途中には停止点を設けず、この二点の間だけ半自動にする。
-    snapRanges=entries.filter(function(entry){
-      if(entry.home)return false;
-      // 最初のタイトル境界は専用の自然なセクション上端で登録し、二重停止を避ける。
-      var back=originalNode(entry.back);
-      return !back.matches('.hex-page-hero')&&!back.querySelector('.hex-page-hero');
-    }).map(function(entry){
-      var back=originalNode(entry.back);
-      var bottom=back.getBoundingClientRect().bottom+scroll;
-      var nextTop=entry.marker.getBoundingClientRect().top+scroll;
-      return {from:Math.max(0,Math.min(maximumScroll,bottom-window.hexViewportHeight())),
-        to:Math.max(0,Math.min(maximumScroll,nextTop-sectionLandingOffset(entry.front,header)))};
-    });
-    entries.forEach(function(entry){
-      var reveal=homeAnchorRevealRange(entry,scroll,maximumScroll);
-      if(reveal)snapRanges.push(reveal);
-      var range=homeSnapRange(entry,scroll,header,maximumScroll);
-      if(range)snapRanges.push(range);
-    });
-    // 開始マーカーがないページでも、タイトル→次セクションは同じスナップを使う。
-    addTitleSnapRanges(snapRanges,scroll,header,maximumScroll);
+    /* オーバーラップの固定・フェードは維持し、自動着地の登録だけ外す。
+       下層ページのタイトル内アンカーナビのスナップは従来どおり残す。 */
+    snapRanges=[];
+    if(!homeFoundedSection())addTitleSnapRanges(snapRanges,scroll,header,maximumScroll);
     snapRanges=snapRanges.filter(function(range){return range.to-range.from>24;})
       .sort(function(a,b){return a.from-b.from||a.to-b.to;});
     var layouts=managed.map(function(item){
