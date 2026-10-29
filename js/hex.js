@@ -17370,7 +17370,7 @@ hexReady(function(){
       var stackEntry=relevant.find(function(entry){return entry.stack;});
       var stack=stackEntry&&cardStackRange(stackEntry,scroll);
       if(stack){start=stack.start;end=stack.end;}
-      item.stackHold=!!stack;
+      item.stackHold=!!stack&&!stack.entrance;
       var top=item.runway.getBoundingClientRect().top+scroll,height=item.sticky.getBoundingClientRect().height;
       var g=geometry(top,height,start,end,sectionLandingOffset(item.node,header));
       item.fadeEnd=relevant[0].marker.getBoundingClientRect().top+scroll-sectionLandingOffset(relevant[0].front,header);
@@ -17475,8 +17475,14 @@ hexReady(function(){
     var runway=scene&&scene.parentElement;
     if(!scene||!runway)return null;
     var top=parseFloat(scene.style.top)||0;
-    var start=runway.getBoundingClientRect().top+scroll-top;
-    return {start:start,end:start+Math.max(0,runway.offsetHeight-scene.offsetHeight)};
+    var cardStart=runway.getBoundingClientRect().top+scroll-top;
+    // Preserve the configured SP entrance overlap before the card hold begins.
+    var entrance=window.innerWidth<=768&&(
+      (entry.home&&isHomeOverlapTarget(entry.front))||entry.hashtag||entry.stackEntrance
+    );
+    var start=entrance?Math.min(cardStart,
+      entry.marker.getBoundingClientRect().top+scroll-window.hexViewportHeight()):cardStart;
+    return {start:start,end:cardStart+Math.max(0,runway.offsetHeight-scene.offsetHeight),entrance:!!entrance};
   }
   function scanCardStackOverlaps(){
     document.querySelectorAll('.hex-card-stack-section').forEach(function(front){
