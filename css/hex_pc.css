@@ -11440,3 +11440,10 @@ a.hex-anchor-nav-link.is-active::after{
 }
 
 .hex-card-stack-tail{position:relative;display:flow-root;}
+
+/* 分割した背景の後半は前半から連続し、入口の装飾を繰り返さない。 */
+.hex-card-stack-continuation::before,
+.hex-card-stack-continuation::after,
+.hex-card-stack-continuation > :is(.hex-home-shape-fill,.hex-bg-top-border,.hex-vehicle-track){display:none!important;}
+
+html body .hex-card-stack-continuation{background:var(--hex-bg-range-color,#fff)!important;}

@@ -6776,9 +6776,7 @@ hexReady(function(){
         grid.appendChild(card);
       });
       gridStartBlock.parentNode.insertBefore(grid,gridStartBlock);
-      if(gridStart.dataset.slider==='vertical')setupCardStack(grid);
-      else if(gridStart.dataset.slider==='true')setupCardCarousel(grid);
-      syncAllCardSlides();
+      var sliderMode=gridStart.dataset.slider;
       var removeBlock=gridStartBlock;
       while(removeBlock){
         var nextRemoveBlock=window.hexNextBlock(removeBlock);
@@ -6786,6 +6784,10 @@ hexReady(function(){
         if(removeBlock===gridEndBlock)break;
         removeBlock=nextRemoveBlock;
       }
+      // Finish removing CMS source blocks before splitting their ancestor wrappers.
+      if(sliderMode==='vertical')setupCardStack(grid);
+      else if(sliderMode==='true')setupCardCarousel(grid);
+      syncAllCardSlides();
     });
   });
 });
@@ -6817,12 +6819,30 @@ function setupCardStack(grid){
   // One scene owns the section; any additional stack keeps its native behavior.
   if(section&&!section.classList.contains('hex-card-stack-section')&&!section.closest('.hex-card-stack-scene')){
     runway=document.createElement('div');runway.className='hex-card-stack-runway';
-    scene=document.createElement('div');scene.className='hex-card-stack-scene';
+    scene=document.createElement('div');scene.className='hex-card-stack-scene hex-motion-auto-off';
     // Split after the grid, preserving nested CMS wrappers and existing nodes.
     // Only the prefix is pinned; trailing content stays after the runway in flow.
+    var splitAncestors=[];
+    for(var splitParent=grid.parentElement;splitParent&&splitParent!==section;splitParent=splitParent.parentElement){
+      splitAncestors.unshift(splitParent);
+    }
     var range=document.createRange();
     range.setStartAfter(grid);range.setEnd(section,section.childNodes.length);
     var trailing=range.extractContents();
+    // Partial wrapper clones are continuations, not new section entrances.
+    // Retain their surface, but do not repeat the top wave, border or decoration.
+    var continuation=trailing.firstElementChild;
+    splitAncestors.forEach(function(original){
+      if(!continuation)return;
+      if(original.classList.contains('hex-bg-range')){
+        continuation.classList.add('hex-card-stack-continuation');
+        continuation.removeAttribute('data-border-color');
+        Array.from(continuation.classList).forEach(function(name){
+          if(/^hex-bg-(?:wave|curve|round|slant|triangle|random|decoration|has-decoration)/.test(name))continuation.classList.remove(name);
+        });
+      }
+      continuation=continuation.firstElementChild;
+    });
     // Partial ancestor clones from Range must not duplicate live wrapper IDs.
     trailing.querySelectorAll('[id]').forEach(function(node){
       if(document.getElementById(node.id))node.removeAttribute('id');
