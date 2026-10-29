@@ -5255,8 +5255,16 @@ hexReady(function(){
       }
     }
 
+    // Skip GPU work while the hero is outside the viewport.
+    var heroRenderVisible=true;
+    if(window.IntersectionObserver){
+      var heroRenderObserver=new IntersectionObserver(function(changes){
+        heroRenderVisible=changes[changes.length-1].isIntersecting;
+      },{rootMargin:'100px 0px'});
+      heroRenderObserver.observe(hero);
+    }
     function renderLoop(){
-      if(renderer&&camera&&scene){
+      if(!document.hidden&&heroRenderVisible&&renderer&&camera&&scene){
         if(!HEX_IS_PRODUCTION){syncHeroDevStyles(performance.now());}
         if(!dragging&&!pinch.active&&!autoZooming&&!welcomeActive){
           if(characterFocus.active){
@@ -17095,7 +17103,6 @@ hexReady(function(){
       var item=record.item,opacity=record.opacity;
       if(item.opacity!==opacity){item.opacity=opacity;item.veil.style.opacity=String(opacity);}
     });
-    if(window.hexPrepareFixedBackgroundImages)window.hexPrepareFixedBackgroundImages();
   }
   var veilFrame=0;
   function queueVeils(){
@@ -17249,6 +17256,7 @@ hexReady(function(){
     // 自然な配置での一時計測値を、固定枠を設定した後の実座標へ更新する。
     refreshHomeSnapRanges();
     if(window.hexSyncHatchingVeils)window.hexSyncHatchingVeils();
+    if(window.hexPrepareFixedBackgroundImages)window.hexPrepareFixedBackgroundImages();
     updateVeils();
     if(window.hexHomeAnchorNav)document.dispatchEvent(new Event('hex:home-overlap-measured'));
   }
