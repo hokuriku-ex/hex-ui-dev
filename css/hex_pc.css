@@ -3277,6 +3277,9 @@ div[hex-sp]{
   color:#f7d04f!important;
   background:transparent!important;
 }
+.headermenu_type8 .menu_sub .menu_inner:hover .hex-menu-icon{
+  color:#f7d04f!important;
+}
 .headermenu_type8 .menu_sub .menu_inner::before{
   content:"";
   position:absolute;
