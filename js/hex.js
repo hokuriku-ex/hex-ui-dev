@@ -17406,8 +17406,8 @@ hexReady(function(){
     var contact=front.id===HOME_SECTIONS.CONTACT||front.matches('.hex-contact-section')||front.querySelector('.hex-contact-section');
     if(!footer&&!contact)return false;
     var surface=sectionCoverColor(front);
-    front.classList.remove('hex-bg-round-top','hex-bg-curve-top','hex-bg-wave-small');
-    front.classList.add('hex-overlap-shaped-front',footer?'hex-bg-wave-small':'hex-bg-curve-top');
+    front.classList.remove('hex-bg-round-top','hex-bg-curve-top','hex-bg-wave-small','hex-overlap-flat-front');
+    front.classList.add('hex-overlap-shaped-front',footer?'hex-overlap-flat-front':'hex-bg-curve-top');
     front.style.setProperty('--hex-overlap-surface',surface);
     if(front._hexOverlapCornerFill){front._hexOverlapCornerFill.remove();delete front._hexOverlapCornerFill;}
     return true;

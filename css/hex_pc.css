@@ -11447,3 +11447,11 @@ a.hex-anchor-nav-link.is-active::after{
 .hex-card-stack-continuation > :is(.hex-home-shape-fill,.hex-bg-top-border,.hex-vehicle-track){display:none!important;}
 
 html body .hex-card-stack-continuation{background:var(--hex-bg-range-color,#fff)!important;}
+
+/* フッター上端はフラット。形状用の高さと切り抜きを解除する。 */
+.hex-overlap-shaped-front.hex-overlap-flat-front,
+.hex-overlap-shaped-front.hex-overlap-flat-front + .hex-rise-veil{
+  --hex-bg-upper-depth:0px;
+  padding-top:0!important;
+  -webkit-mask-image:none!important;mask-image:none!important;
+}
