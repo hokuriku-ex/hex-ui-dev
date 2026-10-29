@@ -3168,7 +3168,7 @@ div[hex-sp]{
   justify-content:center;
   width:42px;
   height:42px;
-  color:#265ab0!important;
+  color:#1f2774!important;
   text-decoration:none!important;
   transition:opacity .25s ease;
 }
@@ -3183,7 +3183,7 @@ div[hex-sp]{
   width:32px!important;
   height:32px!important;
   fill:currentColor!important;
-  color:#265ab0!important;
+  color:#1f2774!important;
 }
 
 /* 画面幅が狭いPCではSNSアイコンを非表示 */
@@ -3244,7 +3244,7 @@ div[hex-sp]{
     )!important;
 }
 .headermenu_type8 .menu_group.menu_menu{
-  color:#203459;
+  color:#1f2774;
   font-weight:900;
   letter-spacing:.05em;
   transition:transform .2s ease;
@@ -3264,7 +3264,7 @@ div[hex-sp]{
 .headermenu_type8 .menu_sub .menu_inner{
   position:relative;
   display:block;
-  color:#203459!important;
+  color:#1f2774!important;
   background:transparent!important;
   text-align:left!important;
   border-bottom:none!important;
@@ -3274,7 +3274,7 @@ div[hex-sp]{
   line-height:1.5!important;
 }
 .headermenu_type8 .menu_sub .menu_inner:hover{
-  color:#203459!important;
+  color:#1f2774!important;
   background:transparent!important;
 }
 .headermenu_type8 .menu_sub .menu_inner::before{
@@ -3293,7 +3293,7 @@ div[hex-sp]{
   bottom:0;
   width:0;
   height:1px;
-  background:#203459;
+  background:#1f2774;
   transition:width .28s ease;
 }
 .headermenu_type8 .menu_sub .menu_inner:hover::after{
@@ -3306,7 +3306,7 @@ div[hex-sp]{
   transform:translateY(-50%);
   font-size:13px;
   line-height:1;
-  color:#203459;
+  color:#1f2774;
   transition:transform .2s ease;
 }
 .headermenu_type8 .menu_sub .menu_inner:hover .hex-menu-icon{
@@ -3325,7 +3325,7 @@ div[hex-sp]{
   left:50%;
   bottom:12px;
   transform:translateX(-50%);
-  color:#203459;
+  color:#1f2774;
   font-family:"Font Awesome 6 Free";
   font-size:10px;
   font-weight:900;
@@ -3373,7 +3373,7 @@ div[hex-sp]{
   font-size:17px;
 }
 .hex-header-hours{
-  color:#203459!important;
+  color:#1f2774!important;
   font-size:13px;
   font-weight:500;
   line-height:1.2;
