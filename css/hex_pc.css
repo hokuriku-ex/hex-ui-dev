@@ -3098,6 +3098,12 @@ div[hex-sp]{
   fill:#1f2774!important;
 }
 
+/* ハンバーガーメニュー閉じるボタン */
+.bg_contactbutton.hex-menu-open > .menu_button .bg_svg::before,
+.bg_contactbutton.hex-menu-open > .menu_button .bg_svg::after{
+  background:#1f2774!important;
+}
+
 /* 1201px以上のみハンバーガーメニュー非表示 */
 @media screen and (min-width:1201px){
   .contactbutton_type1 .menu_button,
