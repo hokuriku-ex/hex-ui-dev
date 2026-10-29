@@ -2743,7 +2743,7 @@ div[hex-sp]{
 /* 画像未登録時のバナーとピックアップギャラリー */
 .hex-banner.hex-banner-no-image{
   position:relative;
-  background:rgba(31,39,116,.9)!important;
+  background:rgba(38,90,176,.9)!important;
 }
 .hex-banner.hex-banner-no-image .hex-banner-image{
   min-height:clamp(240px, 30vw, 320px)!important;
@@ -3824,7 +3824,7 @@ body,
   min-width:76px;
   height:38px;
   padding:0 18px;
-  border:1px solid rgba(31,39,116,.3);
+  border:1px solid rgba(38,90,176,.3);
   border-radius:999px;
   background:rgba(255,255,255,.82);
   color:var(--hex-opening-navy);
@@ -4582,7 +4582,7 @@ body,
   background:linear-gradient(
     to bottom,
     var(--hex-opening-gold) 0 50%,
-    rgba(31,39,116,.25) 50% 100%
+    rgba(38,90,176,.25) 50% 100%
   );
 }
 
@@ -4770,7 +4770,7 @@ html:has(.hex-opening)
   min-width:104px;
   height:40px;
   padding:0 18px;
-  border:1px solid rgba(31,39,116,.3);
+  border:1px solid rgba(38,90,176,.3);
   border-radius:999px;
   background:rgba(255,255,255,.82);
   color:var(--hex-opening-navy);
@@ -8863,7 +8863,7 @@ body.hex-form-dialog-open{
 .hex-contact-faq-link span{
   color:#f7d04f;
   font-weight:500;
-  border-bottom:1px solid rgba(200,168,116,.6);
+  border-bottom:1px solid rgba(247,208,79,.6);
   padding-bottom:2px;
 }
 .hex-contact-faq-link i{
@@ -9167,7 +9167,7 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
 /* WELCOME移行中は固定した丸スナップショットだけを表示する */
 .hex-hero-wrap.is-welcome-transition .hex-hero{opacity:0!important;visibility:hidden!important;transition:none!important}
 .hex-hero-wrap.is-welcome-transition .hex-hero-welcome-button{opacity:0!important;visibility:hidden!important;transform:translate3d(-50%,14px,0)!important;transition:none!important;pointer-events:none!important}
-.hex-hero-welcome-button{position:absolute;right:auto;top:calc(var(--header_height,80px) + 16px);bottom:auto;left:50%;z-index:12;display:inline-flex;align-items:center;justify-content:center;gap:12px;min-width:164px;min-height:48px;padding:10px 24px;border:1px solid rgba(255,255,255,.9);border-radius:999px;background:rgba(31,39,116,.88);box-shadow:0 8px 28px rgba(15,24,72,.24);color:#fff;font-family:var(--hex-font-gothic);font-size:14px;font-weight:700;line-height:1;letter-spacing:.12em;opacity:0;visibility:hidden;transform:translate3d(-50%,14px,0);transition:opacity .38s ease,transform .45s cubic-bezier(.22,.8,.3,1),visibility 0s linear .45s;pointer-events:none;cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.hex-hero-welcome-button{position:absolute;right:auto;top:calc(var(--header_height,80px) + 16px);bottom:auto;left:50%;z-index:12;display:inline-flex;align-items:center;justify-content:center;gap:12px;min-width:164px;min-height:48px;padding:10px 24px;border:1px solid rgba(255,255,255,.9);border-radius:999px;background:rgba(38,90,176,.88);box-shadow:0 8px 28px rgba(15,24,72,.24);color:#fff;font-family:var(--hex-font-gothic);font-size:14px;font-weight:700;line-height:1;letter-spacing:.12em;opacity:0;visibility:hidden;transform:translate3d(-50%,14px,0);transition:opacity .38s ease,transform .45s cubic-bezier(.22,.8,.3,1),visibility 0s linear .45s;pointer-events:none;cursor:pointer;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
 .hex-hero-welcome-button.is-back{top:auto;bottom:max(24px,calc(env(safe-area-inset-bottom,0px) + 16px));}
 @media(max-width:768px){.hex-hero-welcome-button:not(.is-back){top:calc(var(--header_height_smartphone,var(--header_height,80px)) + 16px);}}
 .hex-hero-welcome-button i{position:relative;display:block;width:9px;height:9px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg)}
@@ -9961,13 +9961,13 @@ h2.hex-top-title.hex-audience-guide-title .hex-top-title-en{
 .hex-tiktok-poster{position:absolute;inset:0;display:block;width:100%;height:100%;margin:0!important;padding:0!important;border:0;border-radius:0;background:#265ab0;color:#fff;cursor:pointer;font:inherit;text-align:center;}
 .hex-tiktok-poster img{display:block;width:100%!important;height:100%!important;max-width:none!important;object-fit:cover;transition:transform .3s ease;}
 .hex-tiktok-poster::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(0,0,0,.5));pointer-events:none;}
-.hex-tiktok-play{position:absolute;z-index:1;top:50%;left:50%;display:grid;place-items:center;width:68px;height:68px;border:2px solid #fff;border-radius:50%;background:rgba(31,39,116,.7);transform:translate(-50%,-50%);}
+.hex-tiktok-play{position:absolute;z-index:1;top:50%;left:50%;display:grid;place-items:center;width:68px;height:68px;border:2px solid #fff;border-radius:50%;background:rgba(38,90,176,.7);transform:translate(-50%,-50%);}
 .hex-tiktok-play::before{content:"";display:block;width:0;height:0;margin-left:5px;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:16px solid #fff;}
 .hex-tiktok-play-label{position:absolute;bottom:24px;left:0;right:0;z-index:1;font-size:16px;letter-spacing:.08em;}
 .hex-tiktok-poster:focus-visible{outline:3px solid #f7d04f;outline-offset:-5px;}
 .hex-tiktok-frame{position:absolute;inset:0;display:block;width:100%!important;height:100%!important;margin:0!important;padding:0!important;border:0;}
 .hex-tiktok-screen.is-loaded .hex-tiktok-poster{display:none;}
-.hex-tiktok-status{position:absolute;left:8px;right:8px;bottom:12px;z-index:2;margin:0!important;padding:8px;background:rgba(31,39,116,.85);color:#fff!important;font-size:13px;text-align:center;pointer-events:none;}
+.hex-tiktok-status{position:absolute;left:8px;right:8px;bottom:12px;z-index:2;margin:0!important;padding:8px;background:rgba(38,90,176,.85);color:#fff!important;font-size:13px;text-align:center;pointer-events:none;}
 .hex-tiktok-status[hidden]{display:none!important;}
 .hex-tiktok-credit{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:12px;font-size:14px;}
 .hex-tiktok-credit a{color:#265ab0!important;text-decoration:underline;text-underline-offset:3px;}
@@ -10385,7 +10385,7 @@ body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
   transform:translateX(-50%);pointer-events:none;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-scroll-cue i{
-  background:linear-gradient(to bottom,var(--hex-opening-gold,#c5a66e) 0 50%,rgba(31,39,116,.25) 50% 100%);
+  background:linear-gradient(to bottom,var(--hex-opening-gold,#c5a66e) 0 50%,rgba(38,90,176,.25) 50% 100%);
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero.is-hero-loading .hex-page-hero-scroll-cue{
   visibility:hidden!important;
