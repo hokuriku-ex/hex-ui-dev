@@ -3359,7 +3359,7 @@ div[hex-sp]{
   display:flex;
   align-items:center;
   gap:7px;
-  color:#265ab0!important;
+  color:#1f2774!important;
   font-size:22px;
   font-weight:700;
   line-height:1.1;
@@ -3387,7 +3387,7 @@ div[hex-sp]{
   padding:0;
   border:0;
   background:transparent;
-  color:#265ab0!important;
+  color:#1f2774!important;
   font-size:40px;
   line-height:1;
   cursor:pointer;
