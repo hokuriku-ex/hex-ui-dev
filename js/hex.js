@@ -3314,6 +3314,11 @@ hexReady(function(){
       };
     }
 
+    function getSpWelcomeFixedOffset(){
+      var anchor=window.hexHomeAnchorNav;
+      return isSp()&&anchor&&anchor.stickyEnabled?anchor.fixedHeight():0;
+    }
+
     function getSpStageTop(trackCircle){
       var headerTop=activeHero
         ?parseFloat(getComputedStyle(activeHero).marginTop)
@@ -3326,7 +3331,7 @@ hexReady(function(){
         :0;
       var circleTop=trackCircle&&snapshot
         ?snapshot.getBoundingClientRect().top:headerTop;
-      return Math.round(circleTop+2*getSpCircleRadius()+40-panelTop);
+      return Math.round(circleTop+getSpWelcomeFixedOffset()+2*getSpCircleRadius()+40-panelTop);
     }
     function documentTop(element){
       return element.getBoundingClientRect().top+window.pageYOffset;
@@ -3709,6 +3714,9 @@ hexReady(function(){
     }
 
     function renderWelcomeBody(progress){
+      if(isSp()){
+        progress=reduced||welcomeBodyForced||welcomeWrap.classList.contains("is-sp-body-visible")?1:0;
+      }
       window.hexWelcomeAnchorState=window.hexWelcomeAnchorState||{};
       window.hexWelcomeAnchorState.complete=reduced||progress>=.999;
       if(window.hexHomeAnchorNav&&window.hexHomeAnchorNav.syncWelcomeEnd){
@@ -3748,7 +3756,9 @@ hexReady(function(){
 
     function updateWelcomeBody(circleDone,scrollProgress){
       /* 配置は固定し、本文の表示だけをWELCOME内のスクロール量で進める。 */
-      var target=welcomeBodyForced?1:(circleDone?scrollProgress:0);
+      var target=isSp()
+        ?(reduced||welcomeBodyForced||welcomeWrap.classList.contains("is-sp-body-visible")?1:0)
+        :(welcomeBodyForced?1:(circleDone?scrollProgress:0));
       if(!welcomeBodyChars.length){return;}
       /* 進行方向に関係なく現在のスクロール位置へ即座に同期する。 */
       window.cancelAnimationFrame(welcomeBodyFrame);
@@ -4114,6 +4124,7 @@ hexReady(function(){
       welcomeBodyTarget=0;
       welcomeBodyCompleted=false;
       welcomeBodyForced=false;
+      welcomeWrap&&welcomeWrap.classList.remove("is-sp-body-visible");
       renderWelcomeBody(0);
       welcomeBodyChars.forEach(function(character){
         character.style.opacity="0";
@@ -4325,6 +4336,11 @@ hexReady(function(){
 
     document.addEventListener('hex:welcome-subtitle-start',function(event){
       if(event.target&&event.target.closest('.hex-welcome-wrap')===welcomeWrap){
+        if(isSp()){
+          welcomeWrap.classList.add('is-sp-body-visible');
+          updateWelcomeBody(true,1);
+          return;
+        }
         startWelcomeBodyAuto();
       }
     });
@@ -4526,6 +4542,7 @@ hexReady(function(){
         startWelcomeReverseSnap();
       }
       var circle=getWelcomeCircleGeometry(circleProgress);
+      if(isSp()){circle.y+=getSpWelcomeFixedOffset()*circleProgress;}
       var clip="circle("+circle.radius+"px at "+circle.x+"px "+circle.y+"px)";
       snapshot.style.clipPath=clip;
       snapshot.style.webkitClipPath=clip;
