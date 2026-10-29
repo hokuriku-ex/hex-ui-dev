@@ -17327,25 +17327,34 @@ hexReady(function(){
     }
   }
   function scanHashtagOverlaps(){
-    document.querySelectorAll('.hex-hashtag-banner.hex-hashtag-overlap').forEach(function(front){
-      var back=front._hexHashtagOverlapBack&&front._hexHashtagOverlapBack();
-      // SP's first band covers WELCOME, whose layout is finalized after hero entry.
-      if(window.innerWidth<=768&&front.closest('#'+HOME_SECTIONS.ABOUT)){
+    document.querySelectorAll('.hex-hashtag-banner.hex-hashtag-overlap').forEach(function(band){
+      var front=band;
+      var back=band._hexHashtagOverlapBack&&band._hexHashtagOverlapBack();
+      // Keep the boundary outside the CMS section on SP. An internal marker
+      // splits ABOUT into separate sticky blocks and cannot pin WELCOME reliably.
+      var about=window.innerWidth<=768&&band.closest('#'+HOME_SECTIONS.ABOUT);
+      if(about){
+        front=about;
         back=document.getElementById(HOME_SECTIONS.WELCOME)||back;
       }
       if(!back)return;
       back=originalNode(back);
       if(back===front||back.contains(front))return;
-      var existing=entries.find(function(entry){return entry.front===front;});
+      var existing=entries.find(function(entry){return entry.band===band||entry.front===band;});
+      var frontItem=managed.find(function(item){return item.node===front;});
+      var boundary=frontItem?frontItem.runway:front;
       if(existing){
-        existing.back=back;
-        if(sizeObserver)sizeObserver.observe(back);
+        existing.band=band;existing.front=front;existing.back=back;
+        if(existing.marker.nextSibling!==boundary){
+          boundary.parentNode.insertBefore(existing.marker,boundary);
+        }
+        if(sizeObserver){sizeObserver.observe(front);sizeObserver.observe(back);}
         raiseHashtagOverlap(existing);return;
       }
       var marker=document.createElement('div');
       marker.className='hex-rise-start';marker.setAttribute('aria-hidden','true');
-      front.parentNode.insertBefore(marker,front);
-      var entry={marker:marker,back:back,front:front,blocks:[],start:0,hashtag:true};
+      boundary.parentNode.insertBefore(marker,boundary);
+      var entry={marker:marker,back:back,front:front,band:band,blocks:[],start:0,hashtag:true};
       marker._hexRiseEntry=entry;entries.push(entry);
       raiseHashtagOverlap(entry);
       if(sizeObserver){sizeObserver.observe(front);sizeObserver.observe(back);}
