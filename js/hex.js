@@ -6789,7 +6789,12 @@ function setupCardCarousel(grid){
     var button=document.createElement('button');
     button.type='button';
     button.setAttribute('aria-label',(i+1)+'枚目のカードを表示');
-    button.addEventListener('click',function(){show(i);});
+    button.addEventListener('click',function(){
+      // 循環する並びの近い側から、途中のカードも通って移動する。
+      var distance=((i-position)%cards.length+cards.length)%cards.length;
+      if(distance>cards.length/2)distance-=cards.length;
+      settle(position+distance,0);
+    });
     dots.appendChild(button);
     return button;
   });
@@ -6798,7 +6803,7 @@ function setupCardCarousel(grid){
     button.type='button';
     button.className='hex-card-carousel-arrow is-'+direction;
     button.setAttribute('aria-label',label);
-    button.addEventListener('click',function(){show(index+(direction==='prev'?-1:1));});
+    button.addEventListener('click',function(){settle(Math.round(position)+(direction==='prev'?-1:1),0);});
     viewport.appendChild(button);
     return button;
   }
@@ -6858,7 +6863,7 @@ function setupCardCarousel(grid){
   viewport.addEventListener('keydown',function(event){
     if(event.target.matches('input,textarea,select,[contenteditable]'))return;
     if(event.key==='ArrowLeft'||event.key==='ArrowRight'){
-      event.preventDefault();show(index+(event.key==='ArrowLeft'?-1:1));
+      event.preventDefault();settle(Math.round(position)+(event.key==='ArrowLeft'?-1:1),0);
     }
   });
   viewport.addEventListener('dragstart',function(event){event.preventDefault();});
@@ -6890,8 +6895,10 @@ function setupCardCarousel(grid){
     return mobile.matches?viewport.clientWidth:Math.min(460,viewport.clientWidth*.40)*.82;
   }
   function settle(target,velocity){
+    window.cancelAnimationFrame(motion);motion=0;
     var start=position,startTime=performance.now();
-    var duration=reduced.matches?0:Math.min(1100,500+Math.abs(velocity)*160);
+    var duration=reduced.matches?0:Math.min(1100,500+Math.abs(velocity)*160+
+      Math.max(0,Math.abs(target-start)-1)*120);
     function tick(now){
       var progress=duration?Math.min(1,(now-startTime)/duration):1;
       // 速く進み始め、摩擦でゆっくり止まる。最後は必ず中央に揃える。
