@@ -3597,14 +3597,14 @@ body.hex-calendar-modal-open{
   float:none!important;
   margin:0!important;
   padding:0!important;
-  background:#1f2774!important;
+  background:#203459!important;
 }
 
 .hex-footer-frame .background_color,
 .hex-footer-frame .backgroundcolor_auto,
 .hex-footer-frame .backgroundcolor_footercolor{
-  background:#1f2774!important;
-  background-color:#1f2774!important;
+  background:#203459!important;
+  background-color:#203459!important;
 }
 
 .hex-area-source{
