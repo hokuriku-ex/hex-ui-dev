@@ -3430,7 +3430,9 @@ hexReady(function(){
 
       /* 人物紹介のBACKボタンだけを従来の位置・サイズで使用する。 */
       welcomeButton.classList.toggle("is-back",isBack);
-      welcomeButton.querySelector("span").textContent=isBack?"BACK":"WELCOME";
+      var buttonLabel=welcomeButton.querySelector("span");
+      var buttonText=isBack?"BACK":"WELCOME";
+      if(buttonLabel.textContent!==buttonText){buttonLabel.textContent=buttonText;}
       welcomeButton.setAttribute("aria-label",isBack?"全画面のヒーロー探索へ戻る":"WELCOMEへ進む");
       welcomeButton.disabled=isBack&&characterFocus.returning;
       welcomeButton.tabIndex=visible&&!welcomeButton.disabled?0:-1;
@@ -3825,6 +3827,26 @@ hexReady(function(){
       var progress=reduced||bottomIntroComplete?1:clamp(bottomIntroProgress,0,1);
       if(progress>=1){bottomIntroComplete=true;}
       var anchor=window.hexHomeAnchorNav;
+      /* 登場完了後は寸法・CSSを読み直さず、確定した表示値を使う。 */
+      if(progress>=1){
+        if(anchor&&anchor.panel.classList.contains('is-hero-anchor')){
+          if(anchor.panel.style.getPropertyValue('--hex-home-anchor-intro-offset')!=='0px'){
+            anchor.panel.style.setProperty('--hex-home-anchor-intro-offset','0px');
+          }
+          if(anchor.panel.style.getPropertyValue('--hex-home-anchor-intro-opacity')!=='1'){
+            anchor.panel.style.setProperty('--hex-home-anchor-intro-opacity','1');
+          }
+        }
+        bottomImages.forEach(function(image){
+          if(image.style.getPropertyValue('--hex-bottom-offset')!=='0px'){
+            image.style.setProperty('--hex-bottom-offset','0px');
+          }
+          if(image.style.getPropertyValue('--hex-bottom-opacity')!=='1'){
+            image.style.setProperty('--hex-bottom-opacity','1');
+          }
+        });
+        return;
+      }
       if(anchor&&anchor.panel.classList.contains('is-hero-anchor')){
         /* 最初のbottom01と同じ開始・終了・せり上がりのカーブを共有する。 */
         var reference=bottomImages[0]&&getComputedStyle(bottomImages[0]);
@@ -5267,15 +5289,19 @@ hexReady(function(){
         if(!dragging&&!pinch.active&&!autoZooming&&!welcomeActive){
           if(characterFocus.active){
             advanceCharacterFocus(performance.now());
+            setCamera();
           }else{
+            var moving=state.vx!==0||state.vy!==0;
             state.x+=state.vx;
             state.y+=state.vy;
             state.vx*=.91;
             state.vy*=.91;
             if(Math.abs(state.vx)<.002){state.vx=0;}
             if(Math.abs(state.vy)<.002){state.vy=0;}
+            /* 停止中のカメラ・装飾更新を避け、人物本文の時間進行は維持する。 */
+            if(moving){setCamera();}
+            else if(characterCopyStage){updateCharacterCopy(performance.now());}
           }
-          setCamera();
         }
         try{
           renderer.render(scene,camera);
