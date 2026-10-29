@@ -6811,6 +6811,40 @@ function setupCardStack(grid){
       parent.classList.add('hex-rise-flow-root');
     }
   }
+  var section=grid.closest('.gc_auto_frame_background[id^="gc_auto_frame_"],.gc_auto_frame_footer')||grid.closest('section,.hex-bg-range');
+  var runway=null,scene=null,travel=0,step=0,pinStart=0,scrollFrame=0;
+  var reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
+  // One scene owns the section; any additional stack keeps its native behavior.
+  if(section&&!section.classList.contains('hex-card-stack-section')&&!section.closest('.hex-card-stack-scene')){
+    runway=document.createElement('div');runway.className='hex-card-stack-runway';
+    scene=document.createElement('div');scene.className='hex-card-stack-scene';
+    // Split after the grid, preserving nested CMS wrappers and existing nodes.
+    // Only the prefix is pinned; trailing content stays after the runway in flow.
+    var range=document.createRange();
+    range.setStartAfter(grid);range.setEnd(section,section.childNodes.length);
+    var trailing=range.extractContents();
+    // Partial ancestor clones from Range must not duplicate live wrapper IDs.
+    trailing.querySelectorAll('[id]').forEach(function(node){
+      if(document.getElementById(node.id))node.removeAttribute('id');
+    });
+    while(section.firstChild)scene.appendChild(section.firstChild);
+    runway.appendChild(scene);section.appendChild(runway);
+    var tail=document.createElement('div');tail.className='hex-card-stack-tail';
+    tail.appendChild(trailing);section.appendChild(tail);
+    section.classList.add('hex-card-stack-section');
+    grid.classList.add('is-section-scene');
+  }
+  function renderStack(){
+    scrollFrame=0;
+    if(!scene)return;
+    var progress=Math.max(0,Math.min(travel,(window.pageYOffset||0)-pinStart));
+    slides.forEach(function(slide,index){
+      var value=reduced.matches?'none':'translate3d(0,'+Math.max(0,index*step-progress)+'px,0)';
+      if(slide.style.transform!==value)slide.style.transform=value;
+    });
+  }
+  function queueScroll(){if(scene&&!scrollFrame)scrollFrame=requestAnimationFrame(renderStack);}
+  if(scene)window.addEventListener('scroll',queueScroll,{passive:true});
   var frame=0;
   function layout(){
     frame=0;
@@ -6822,6 +6856,15 @@ function setupCardStack(grid){
     var viewportHeight=window.hexViewportHeight?window.hexViewportHeight():window.innerHeight;
     grid.style.setProperty('--hex-card-stack-height',height+'px');
     grid.style.setProperty('--hex-card-stack-top',(viewportHeight-height)+'px');
+    if(scene){
+      step=height+24;travel=Math.max(0,cards.length-1)*step;
+      var cardBottom=grid.getBoundingClientRect().top-scene.getBoundingClientRect().top+height;
+      var pinTop=viewportHeight-cardBottom;
+      scene.style.top=pinTop+'px';
+      runway.style.height=(scene.offsetHeight+(reduced.matches?0:travel))+'px';
+      pinStart=runway.getBoundingClientRect().top+(window.pageYOffset||0)-pinTop;
+      renderStack();
+    }
     // An opaque surface hides earlier cards, including cards with transparent backgrounds.
     var surface='';
     for(var owner=grid;owner&&owner!==document.documentElement;owner=owner.parentElement){
@@ -6837,10 +6880,13 @@ function setupCardStack(grid){
   if(window.ResizeObserver){
     var observer=new ResizeObserver(queue);
     cards.forEach(function(card){observer.observe(card);});
+    if(section)observer.observe(section);
   }
   grid.addEventListener('load',queue,true);
   window.addEventListener('hex:viewport-resize',queue,{passive:true});
   window.addEventListener('resize',queue,{passive:true});
+  if(reduced.addEventListener)reduced.addEventListener('change',queue);
+  else reduced.addListener(queue);
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(queue);
   layout();
 }
@@ -17253,6 +17299,8 @@ hexReady(function(){
       var blocks=[];
       function collect(input){
         var node=originalNode(input);
+        // The vertical card scene already pins this entire section.
+        if(node.classList.contains('hex-card-stack-section')||node.closest('.hex-card-stack-scene'))return;
         if(node.contains(entry.marker))return;
         if(entries.some(function(other){return node.contains(other.marker);})){
           Array.from(node.children).forEach(collect);return;

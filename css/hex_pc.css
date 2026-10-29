@@ -11422,3 +11422,21 @@ a.hex-anchor-nav-link.is-active::after{
 @media(prefers-reduced-motion:reduce){
   .hex-card-stack > .hex-card-stack-slide{position:relative;top:auto;min-height:0;}
 }
+
+/* カードが重なる間は、所属セクションの見出し・背景も同じ位置に留める。 */
+.hex-card-stack-runway{position:relative;display:flow-root;overflow:visible!important;isolation:isolate;}
+.hex-card-stack-scene{position:sticky;display:flow-root;width:100%;}
+.hex-card-stack.is-section-scene{position:relative;height:var(--hex-card-stack-height);overflow:clip!important;}
+.hex-card-stack.is-section-scene > .hex-card-stack-slide{
+  position:absolute;top:0;left:0;width:100%;padding-bottom:0;
+}
+@media(prefers-reduced-motion:reduce){
+  .hex-card-stack-runway{height:auto!important;}
+  .hex-card-stack-scene{position:relative;top:auto!important;}
+  .hex-card-stack.is-section-scene{height:auto;overflow:visible!important;}
+  .hex-card-stack.is-section-scene > .hex-card-stack-slide{
+    position:relative;min-height:0;transform:none!important;padding-bottom:24px;
+  }
+}
+
+.hex-card-stack-tail{position:relative;display:flow-root;}
