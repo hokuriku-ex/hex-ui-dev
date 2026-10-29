@@ -9729,7 +9729,7 @@ body > .hex-v2-handoff{z-index:198;}
 .hex-hashtag-row:nth-child(even) .hex-hashtag-track{animation-direction:reverse;}
 .hex-hashtag-group{display:flex;flex:none;width:max-content;height:100%;}
 .hex-hashtag-phrase{display:block;flex:none;padding-right:.85em;}
-.hex-hashtag-banner.is-paused .hex-hashtag-track{animation-play-state:paused;}
+.hex-hashtag-banner.is-paused .hex-hashtag-track{animation-play-state:paused;will-change:auto;}
 @keyframes hex-hashtag-loop{
   from{transform:translate3d(0,0,0);}
   to{transform:translate3d(calc(-1 * var(--hex-hashtag-distance)),0,0);}

@@ -3908,6 +3908,7 @@ hexReady(function(){
       var nextX;
       var nextY;
       if(!camera){return;}
+      heroRenderDirty=true;
       /* 丸表示中は人物を左側の丸の中央へ置くため、通常の探索範囲で制限しない。 */
       nextX=characterFocus.maskVisible?state.x:clamp(state.x,-metrics.maxX,metrics.maxX);
       nextY=characterFocus.maskVisible?state.y:clamp(state.y,-metrics.maxY,metrics.maxY);
@@ -5277,6 +5278,7 @@ hexReady(function(){
 
     // Skip GPU work while the hero is outside the viewport.
     var heroRenderVisible=true;
+    var heroRenderDirty=true;
     if(window.IntersectionObserver){
       var heroRenderObserver=new IntersectionObserver(function(changes){
         heroRenderVisible=changes[changes.length-1].isIntersecting;
@@ -5303,11 +5305,16 @@ hexReady(function(){
             else if(characterCopyStage){updateCharacterCopy(performance.now());}
           }
         }
-        try{
-          renderer.render(scene,camera);
-        }catch(error){
-          createFallback();
-          return;
+        // The scene contains a static texture; CSS clouds and hover effects
+        // keep animating without redrawing an unchanged WebGL canvas.
+        if(heroRenderDirty){
+          try{
+            renderer.render(scene,camera);
+            heroRenderDirty=false;
+          }catch(error){
+            createFallback();
+            return;
+          }
         }
       }
       renderFrameId=window.requestAnimationFrame(renderLoop);
@@ -5372,6 +5379,7 @@ hexReady(function(){
       if(texture){
         texture.image=textureCanvas;
         texture.needsUpdate=true;
+        heroRenderDirty=true;
       }
       return true;
     }
@@ -15987,11 +15995,22 @@ hexReady(function(){
     window.addEventListener('hex:viewport-resize',syncTriangleColors,{passive:true});
     document.addEventListener('hex:home-overlap-measured',syncTriangleColors);
 
-    var inView=false;
     var reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
     function syncPause(){
+      // Overlap setup can move the band after the observer's last entry.
+      // Check its current position rather than keeping that stale entry.
+      var rect=stage.getBoundingClientRect();
+      var inView=rect.height>0&&rect.bottom>=-100&&rect.top<=window.innerHeight+100;
       stage.classList.toggle('is-paused',!inView||document.hidden||reduced.matches);
     }
+    var pauseFrame=0;
+    function queuePause(){
+      if(!pauseFrame)pauseFrame=requestAnimationFrame(function(){pauseFrame=0;syncPause();});
+    }
+    window.addEventListener('scroll',queuePause,{passive:true});
+    window.addEventListener('hex:viewport-resize',queuePause,{passive:true});
+    document.addEventListener('hex:home-overlap-measured',queuePause);
+    document.addEventListener('hex:hero-layout-updated',queuePause);
     var lastWidth=0;
     function rebuild(force){
       syncTriangleColors();
@@ -16038,12 +16057,9 @@ hexReady(function(){
       document.fonts.ready.then(function(){rebuild(true);});
     }
     if(window.IntersectionObserver){
-      var visibilityObserver=new IntersectionObserver(function(entries){
-        inView=entries[0].isIntersecting;
-        syncPause();
-      },{rootMargin:'100px'});
+      var visibilityObserver=new IntersectionObserver(syncPause,{rootMargin:'100px'});
       visibilityObserver.observe(stage);
-    }else{inView=true;}
+    }
     document.addEventListener('visibilitychange',syncPause);
     if(reduced.addEventListener){reduced.addEventListener('change',syncPause);}
     syncPause();
