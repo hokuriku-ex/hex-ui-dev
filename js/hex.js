@@ -6790,10 +6790,10 @@ function setupCardCarousel(grid){
     button.type='button';
     button.setAttribute('aria-label',(i+1)+'枚目のカードを表示');
     button.addEventListener('click',function(){
-      // 循環する並びの近い側から、途中のカードも通って移動する。
-      var distance=((i-position)%cards.length+cards.length)%cards.length;
-      if(distance>cards.length/2)distance-=cards.length;
-      settle(position+distance,0);
+      // ドットの左右順に合わせる。左を選んだら戻り、右なら先へ進む。
+      var nearest=Math.round(position);
+      var current=((nearest%cards.length)+cards.length)%cards.length;
+      settle(nearest+i-current,0);
     });
     dots.appendChild(button);
     return button;
