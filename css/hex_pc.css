@@ -3593,6 +3593,10 @@ body.hex-calendar-modal-open{
 /* フッター全体 */
 .hex-footer-frame{
   --hex-footer-space:clamp(96px,calc(7.4246vw + 38.90px),128px);
+  /* 通常配置でも、前セクションからはみ出す背景より前へ表示する。 */
+  position:relative;
+  z-index:95!important;
+  isolation:isolate;
   width:100%!important;
   float:none!important;
   margin:0!important;
