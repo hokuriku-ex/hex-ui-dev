@@ -3092,6 +3092,12 @@ div[hex-sp]{
   opacity:.75!important;
 }
 
+/* ハンバーガーメニュー */
+.contactbutton_none_menubutton_position .bg_svg svg,
+.contactbutton_none_menubutton_position .bg_svg svg path{
+  fill:#1f2774!important;
+}
+
 /* 1201px以上のみハンバーガーメニュー非表示 */
 @media screen and (min-width:1201px){
   .contactbutton_type1 .menu_button,
