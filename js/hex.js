@@ -1662,12 +1662,14 @@ function hexInitAnchorNav(){
           placeholder.classList.remove('is-active');
           placeholder.style.height='0px';
           originalParent.insertBefore(nav,originalNext);
+          nav.dispatchEvent(new Event('hex:anchor-fixed-change'));
           refreshAnchorScrollbar();
         });
       }
     }
     updateHexAnchorActive(scrollTop);
     if(fixedChanged){
+      nav.dispatchEvent(new Event('hex:anchor-fixed-change'));
       refreshAnchorScrollbar();
     }
   }
@@ -3413,9 +3415,11 @@ hexReady(function(){
           !hero.classList.contains('is-intro-departed')&&!welcomeActive&&!isBack&&
           !document.documentElement.classList.contains('hex-opening-lock');
         anchor.panel.classList.toggle('is-welcome-end-hidden',!navVisible);
-        anchor.nav.classList.toggle('is-welcome-end-hidden',!navVisible);
+        // The fixed nav lives in body and remains visible after the hero departs.
+        var fixedVisible=anchor.nav.classList.contains('is-fixed');
+        anchor.nav.classList.toggle('is-welcome-end-hidden',!(fixedVisible||navVisible));
         anchor.panel.setAttribute('aria-hidden',navVisible?'false':'true');
-        anchor.nav.inert=!navVisible;
+        anchor.nav.inert=!(fixedVisible||navVisible);
       }
       /* 独立WELCOMEボタンは使わず、人物紹介のBACKだけを表示する。 */
       visible=visible&&isBack;
@@ -3434,7 +3438,13 @@ hexReady(function(){
       welcomeButton.setAttribute("aria-hidden",visible?"false":"true");
     }
 
-    document.addEventListener('hex:home-anchor-ready',updateWelcomeButton);
+    document.addEventListener('hex:home-anchor-ready',function(){
+      window.hexHomeAnchorNav.nav.addEventListener('hex:anchor-fixed-change',updateWelcomeButton);
+      updateWelcomeButton();
+    });
+    if(window.hexHomeAnchorNav){
+      window.hexHomeAnchorNav.nav.addEventListener('hex:anchor-fixed-change',updateWelcomeButton);
+    }
 
     function updateZoomMetrics(){
       var zoom=clamp(state.zoom,reduced?HERO_ZOOM_MIN:HERO_ZOOM_INTRO_START,HERO_ZOOM_MAX);
