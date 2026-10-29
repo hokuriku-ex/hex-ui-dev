@@ -17329,18 +17329,26 @@ hexReady(function(){
   function scanHashtagOverlaps(){
     document.querySelectorAll('.hex-hashtag-banner.hex-hashtag-overlap').forEach(function(front){
       var back=front._hexHashtagOverlapBack&&front._hexHashtagOverlapBack();
+      // SP's first band covers WELCOME, whose layout is finalized after hero entry.
+      if(window.innerWidth<=768&&front.closest('#'+HOME_SECTIONS.ABOUT)){
+        back=document.getElementById(HOME_SECTIONS.WELCOME)||back;
+      }
       if(!back)return;
       back=originalNode(back);
       if(back===front||back.contains(front))return;
       var existing=entries.find(function(entry){return entry.front===front;});
-      if(existing){existing.back=back;raiseHashtagOverlap(existing);return;}
+      if(existing){
+        existing.back=back;
+        if(sizeObserver)sizeObserver.observe(back);
+        raiseHashtagOverlap(existing);return;
+      }
       var marker=document.createElement('div');
       marker.className='hex-rise-start';marker.setAttribute('aria-hidden','true');
       front.parentNode.insertBefore(marker,front);
       var entry={marker:marker,back:back,front:front,blocks:[],start:0,hashtag:true};
       marker._hexRiseEntry=entry;entries.push(entry);
       raiseHashtagOverlap(entry);
-      if(sizeObserver)sizeObserver.observe(front);
+      if(sizeObserver){sizeObserver.observe(front);sizeObserver.observe(back);}
     });
   }
   function scan(){
@@ -17399,6 +17407,8 @@ hexReady(function(){
       if(sizeObserver&&event.detail&&event.detail.panel)sizeObserver.observe(event.detail.panel);
       queueMeasure();
     });
+    document.addEventListener('hex:welcome-exit-ready',queueMeasure);
+    document.addEventListener('hex:hero-layout-updated',queueMeasure);
     window.addEventListener('hex:viewport-resize',queueMeasure,{passive:true});
     if(window.visualViewport)window.addEventListener('hex:viewport-resize',queueMeasure,{passive:true});
     new MutationObserver(function(records){
@@ -17410,7 +17420,10 @@ hexReady(function(){
     if(window.ResizeObserver){
       sizeObserver=new ResizeObserver(queueMeasure);
       if(homeFoundedSection()){
-        entries.forEach(function(entry){sizeObserver.observe(entry.front);});
+        entries.forEach(function(entry){
+          sizeObserver.observe(entry.front);
+          if(entry.hashtag)sizeObserver.observe(entry.back);
+        });
       }else{
         document.querySelectorAll('.content_body').forEach(function(node){sizeObserver.observe(node);});
       }
