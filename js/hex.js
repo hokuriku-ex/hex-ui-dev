@@ -15786,7 +15786,7 @@ hexReady(function(){
     var entries=Array.prototype.slice.call(source.querySelectorAll('p'),0,5);
     if(entries.length!==5){return;}
     var stage=document.createElement('div');
-    stage.className='hex-hashtag-banner hex-motion-auto-off';
+    stage.className='hex-hashtag-banner hex-motion-auto-off is-paused';
     stage.setAttribute('role','group');
     stage.setAttribute('aria-label','北陸エクステリアの暮らしと庭づくり');
     var tilt=document.createElement('div');
@@ -15850,8 +15850,10 @@ hexReady(function(){
         phrase.className='hex-hashtag-phrase';
         phrase.textContent=item.text;
         group.appendChild(phrase);
-        item.track.replaceChildren(group);
-        var phraseWidth=Math.max(phrase.getBoundingClientRect().width,1);
+        item.track.textContent='';
+        item.track.appendChild(group);
+        // Measure before rotation: the transformed bounding box includes the tilt.
+        var phraseWidth=Math.max(phrase.offsetWidth,1);
         /* 回転前の実幅に合わせて繰り返し、短い文言でも空白を作らない。 */
         var count=Math.max(1,Math.ceil((item.row.clientWidth+128)/phraseWidth));
         count=Math.min(200,count);

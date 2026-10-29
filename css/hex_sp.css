@@ -2952,3 +2952,15 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     white-space:nowrap!important;
   }
 }
+
+/* SPの斜め文字帯：背景の描画面積を帯の周辺に限定する。 */
+@media screen and (max-width:768px){
+  .hex-hashtag-banner{overflow:hidden;}
+  .hex-hashtag-tilt::before,
+  .hex-hashtag-tilt::after{
+    left:-80px;
+    right:-80px;
+    height:calc(var(--hex-hashtag-row-height) * 5 + 36vw + 160px);
+  }
+  .hex-hashtag-banner.is-paused .hex-hashtag-track{will-change:auto;}
+}
