@@ -11412,6 +11412,7 @@ a.hex-anchor-nav-link.is-active::after{
   margin-inline:auto;overflow:visible!important;isolation:isolate;
 }
 .hex-card-stack > .hex-card-stack-slide{
+  display:flex;align-items:flex-end;
   position:sticky;top:var(--hex-card-stack-top,120px);
   min-height:var(--hex-card-stack-height,0px);
   padding-bottom:24px;box-sizing:content-box;

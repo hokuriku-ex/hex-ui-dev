@@ -6812,26 +6812,16 @@ function setupCardStack(grid){
     }
   }
   var frame=0;
-  var probe=document.createElement('span');
-  probe.style.cssText='position:fixed;visibility:hidden;pointer-events:none;width:0;';
   function layout(){
     frame=0;
     if(!grid.isConnected)return;
     var maxHeight=0;
     cards.forEach(function(card){maxHeight=Math.max(maxHeight,card.getBoundingClientRect().height);});
-    var nav=document.querySelector('.hex-anchor-nav[data-sticky="true"]');
-    var navHeight=nav?(nav.classList.contains('is-fixed')?nav.offsetHeight:36):0;
-    if(window.hexHomeAnchorNav){
-      navHeight=window.hexHomeAnchorNav.stickyEnabled?window.hexHomeAnchorNav.fixedHeight():0;
-    }
-    var header=window.innerWidth<=768?'--header_height_smartphone':'--header_height';
-    probe.style.height='var('+header+',80px)';
-    document.body.appendChild(probe);
-    var headerHeight=probe.getBoundingClientRect().height;probe.remove();
-    // Tall cards scroll fully into view before pinning; no inner scroll area.
-    var top=Math.min(headerHeight+navHeight+24,(window.hexViewportHeight?window.hexViewportHeight():window.innerHeight)-maxHeight-24);
-    grid.style.setProperty('--hex-card-stack-height',Math.ceil(maxHeight)+'px');
-    grid.style.setProperty('--hex-card-stack-top',Math.round(top)+'px');
+    // Align card bottoms with the viewport, including cards of different heights.
+    var height=Math.ceil(maxHeight);
+    var viewportHeight=window.hexViewportHeight?window.hexViewportHeight():window.innerHeight;
+    grid.style.setProperty('--hex-card-stack-height',height+'px');
+    grid.style.setProperty('--hex-card-stack-top',(viewportHeight-height)+'px');
     // An opaque surface hides earlier cards, including cards with transparent backgrounds.
     var surface='';
     for(var owner=grid;owner&&owner!==document.documentElement;owner=owner.parentElement){
