@@ -347,7 +347,7 @@ const HOME_DISPLAY_SECTIONS=[
    登録したセクションの上部を、直前の表示コンテンツへ重ねる。
    PCは769px以上、SPは768px以下。端末ごとの配列で対象を指定する。
    重なる順番はHTMLの並び順に従う。
-   お問い合わせ・フッターは登録不要で、従来どおり個別に重ねる。 */
+   お問い合わせは登録不要で個別に重ねる。フッターは通常表示。 */
 const HOME_OVERLAP_SECTIONS={
   PC:[
     HOME_SECTIONS.ABOUT,
@@ -16982,9 +16982,10 @@ hexReady(function(){
   }
   function isHomeOverlapTarget(section){
     if(!section)return false;
-    /* お問い合わせ・フッターは従来どおり個別に常時対象とする。 */
-    if(section.id===HOME_SECTIONS.CONTACT||section.id===HOME_SECTIONS.FOOTER||
-      section.matches('.gc_auto_frame_footer'))return true;
+    /* フッターはお問い合わせの下へ通常の文書フローで配置する。 */
+    if(section.id===HOME_SECTIONS.FOOTER||section.matches('.gc_auto_frame_footer,.hex-footer-frame'))return false;
+    /* お問い合わせは従来どおり個別に常時対象とする。 */
+    if(section.id===HOME_SECTIONS.CONTACT)return true;
     if(typeof HOME_OVERLAP_SECTIONS==='undefined')return false;
     var targets=HOME_OVERLAP_SECTIONS[window.innerWidth<=768?'SP':'PC'];
     return Array.isArray(targets)&&targets.indexOf(section.id)!==-1;
@@ -17444,20 +17445,19 @@ hexReady(function(){
     if(!measureFrame)measureFrame=requestAnimationFrame(measure);
   }
   function applySharedOverlapShape(front){
-    var footer=front.matches('.gc_auto_frame_footer,.hex-footer-frame')||front.id===HOME_SECTIONS.FOOTER;
     var contact=front.id===HOME_SECTIONS.CONTACT||front.matches('.hex-contact-section')||front.querySelector('.hex-contact-section');
-    if(!footer&&!contact)return false;
+    if(!contact)return false;
     var surface=sectionCoverColor(front);
     front.classList.remove('hex-bg-round-top','hex-bg-curve-top','hex-bg-wave-small','hex-overlap-flat-front');
-    front.classList.add('hex-overlap-shaped-front',footer?'hex-overlap-flat-front':'hex-bg-curve-top');
+    front.classList.add('hex-overlap-shaped-front','hex-bg-curve-top');
     front.style.setProperty('--hex-overlap-surface',surface);
     if(front._hexOverlapCornerFill){front._hexOverlapCornerFill.remove();delete front._hexOverlapCornerFill;}
     return true;
   }
   function scanSharedRoundSections(){
     var fronts=[];
-    document.querySelectorAll('.hex-contact-section,.gc_auto_frame_footer').forEach(function(content){
-      var front=content.matches('.gc_auto_frame_footer')?content:content.closest('.hex-bg-range');
+    document.querySelectorAll('.hex-contact-section').forEach(function(content){
+      var front=content.closest('.hex-bg-range');
       if(!front){
         for(var parent=content.parentElement;parent&&parent!==document.body;parent=parent.parentElement){
           if(parent.matches('[id^="gc_auto_frame_"],.content')){front=parent;}
@@ -17469,9 +17469,6 @@ hexReady(function(){
     fronts.forEach(function(front){
       front.classList.add('hex-overlap-round-front');
       if(!applySharedOverlapShape(front))front.classList.add('hex-bg-round-top');
-      front.querySelectorAll('.gc_auto_frame_footer,.hex-footer-frame').forEach(function(footer){
-        footer.classList.add('hex-overlap-round-front');applySharedOverlapShape(footer);
-      });
       if(entries.some(function(entry){return entry.front===front;}))return;
       var existing=front.querySelector('.hex-rise-start');
       if(existing&&!existing._hexRiseEntry)return;
