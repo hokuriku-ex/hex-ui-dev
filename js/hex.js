@@ -6813,7 +6813,10 @@ function setupCardCarousel(grid){
   }
   var prev=arrow('prev','前のカードを表示');
   var next=arrow('next','次のカードを表示');
-  grid.appendChild(dots);
+  var controls=document.createElement('div');
+  controls.className='hex-card-carousel-controls';
+  controls.appendChild(dots);
+  grid.appendChild(controls);
   var status=document.createElement('span');
   status.className='hex-card-carousel-status';
   status.setAttribute('aria-live','polite');
@@ -6826,7 +6829,14 @@ function setupCardCarousel(grid){
     grid.classList.remove('is-dragging');
     grid.classList.toggle('hex-card-carousel',enabled);
     grid.classList.toggle('hex-motion-auto-off',enabled||originalMotionOff);
-    viewport.hidden=dots.hidden=status.hidden=!enabled;
+    viewport.hidden=controls.hidden=dots.hidden=status.hidden=!enabled;
+    if(mobile.matches){
+      controls.insertBefore(prev,dots);
+      controls.appendChild(next);
+    }else{
+      viewport.appendChild(prev);
+      viewport.appendChild(next);
+    }
     ['role','aria-label','aria-roledescription'].forEach(function(name,i){
       var value=enabled?['region','カードスライダー','カルーセル'][i]:
         [originalRole,originalLabel,originalDescription][i];
@@ -6846,7 +6856,7 @@ function setupCardCarousel(grid){
     if(!enabled)return;
     var width=viewport.clientWidth;
     if(!width)return;
-    var cardWidth=mobile.matches?Math.max(0,width-104):Math.min(460,width*.40);
+    var cardWidth=mobile.matches?width:Math.min(460,width*.40);
     var step=mobile.matches?width:cardWidth*.82;
     grid.style.setProperty('--hex-carousel-card-width',cardWidth+'px');
     var height=0;
@@ -6860,7 +6870,7 @@ function setupCardCarousel(grid){
         Math.sign(offset)*cardWidth*(Math.abs(offset)<=1?Math.abs(offset)*.82:
           .82+(Math.abs(offset)-1)*.64);
       slide.style.setProperty('--hex-carousel-x',x+'px');
-      slide.style.setProperty('--hex-carousel-scale',String(1-.42*Math.min(1,Math.abs(offset))));
+      slide.style.setProperty('--hex-carousel-scale',mobile.matches?'1':String(1-.42*Math.min(1,Math.abs(offset))));
       slide.style.zIndex=String(10-Math.round(Math.abs(offset)));
       slide.classList.toggle('is-active',Math.abs(offset)<.5);
       slide.classList.toggle('is-outside',Math.abs(offset)>2);
@@ -6869,9 +6879,10 @@ function setupCardCarousel(grid){
       height=Math.max(height,slide.offsetHeight);
       offsets[i]=offset;
     });
-    viewport.style.height=(height+40)+'px';
+    viewport.style.height=(height+(mobile.matches?0:40))+'px';
     dotButtons.forEach(function(button,i){button.setAttribute('aria-current',String(i===index));});
     prev.hidden=next.hidden=dots.hidden=cards.length<2;
+    controls.hidden=cards.length<2;
     status.textContent=(index+1)+' / '+cards.length;
   }
   function show(value){
@@ -6881,7 +6892,7 @@ function setupCardCarousel(grid){
     position=index;
     if(slides[old].contains(document.activeElement))next.focus({preventScroll:true});
     layout();
-    if(old!==index&&!reduced.matches&&slides[index].animate){
+    if(old!==index&&!mobile.matches&&!reduced.matches&&slides[index].animate){
       slides[index].firstElementChild.animate([
         {transform:'scale(.96)'},{transform:'scale(1.035)',offset:.65},{transform:'scale(1)'}
       ],{duration:520,easing:'cubic-bezier(.2,.7,.25,1)'});
@@ -6957,7 +6968,10 @@ function setupCardCarousel(grid){
   }
   viewport.addEventListener('pointerup',endDrag);
   viewport.addEventListener('pointercancel',endDrag);
-  viewport.addEventListener('lostpointercapture',endDrag);
+  viewport.addEventListener('lostpointercapture',function(event){
+    // タッチ開始要素からviewportへキャプチャを移した際のイベントは無視する。
+    if(event.target===viewport)endDrag(event);
+  });
   viewport.addEventListener('click',function(event){
     if(suppressClick){event.preventDefault();event.stopPropagation();}
   },true);
