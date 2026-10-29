@@ -3101,6 +3101,8 @@ div[hex-sp]{
 /* ハンバーガーメニュー閉じるボタン */
 .bg_contactbutton.hex-menu-open > .menu_button .bg_svg::before,
 .bg_contactbutton.hex-menu-open > .menu_button .bg_svg::after{
+  width:30px;
+  margin-left:-15px;
   background:#1f2774!important;
 }
 
