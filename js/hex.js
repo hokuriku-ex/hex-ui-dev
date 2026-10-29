@@ -8665,12 +8665,13 @@ hexReady(function(){
     var previousGeometry=null;
     var stableFrames=0;
     var alignedOnce=false;
+    var backgroundImage=null;
+    var backgroundUrl='';
 
     root.classList.add('hex-direct-hero-fade','hex-hero-display-wait');
     ensureHeroReady();
 
     function waitForDisplay(){
-      var cover=document.getElementById('hex-motion-preparation-cover');
       var motion=window.hexMotion;
       var api=window.hexHero;
       var headerHeight=parseFloat(getComputedStyle(root)
@@ -8679,9 +8680,20 @@ hexReady(function(){
       var rect;
       var geometry;
 
-      /* pageshowでの位置補正、演出登録、白カバーの解除を先に済ませる。 */
-      if(document.readyState!=='complete'||
-        root.classList.contains('hex-motion-preparing')||cover||
+      /* 後続セクションの画像・iframeは待たず、ヒーロー自身の画像を待つ。 */
+      var ellipse=hero.querySelector('.hex-hero-ellipse');
+      var background=ellipse&&/url\((['"]?)(.*?)\1\)/.exec(
+        getComputedStyle(ellipse).backgroundImage);
+      var nextBackgroundUrl=background&&background[2]||'';
+      if(nextBackgroundUrl!==backgroundUrl){
+        backgroundUrl=nextBackgroundUrl;
+        backgroundImage=backgroundUrl?new Image():null;
+        if(backgroundImage){backgroundImage.src=backgroundUrl;}
+      }
+      var imagesReady=Array.prototype.every.call(hero.querySelectorAll('img'),function(image){
+        return image.complete;
+      });
+      if(!imagesReady||(backgroundImage&&!backgroundImage.complete)||
         (document.fonts&&document.fonts.status==='loading')){
         window.requestAnimationFrame(waitForDisplay);
         return;
@@ -8713,18 +8725,33 @@ hexReady(function(){
         window.requestAnimationFrame(waitForDisplay);
         return;
       }
-      /* 安定した座標でもう一度描画してから、非表示を一度だけ解除。 */
+      /* 最後に届いたパーツも合成し、安定した座標で描画してから表示。 */
+      if(typeof api.refreshLayers==='function'){api.refreshLayers();}
       if(!api.prepareDisplay()){
         prepared=false;
         stableFrames=0;
         window.requestAnimationFrame(waitForDisplay);
         return;
       }
+      root.classList.add('hex-hero-first-frame-ready');
       showPendingPage();
       root.classList.add('hex-direct-hero-fade-ready');
       root.classList.remove('hex-hero-display-wait','hex-hero-return-preparing');
       document.dispatchEvent(new Event('hex:hero-display-ready'));
-      showHeroCatch(180);
+      /* 共通演出は従来のload後の初期化を維持する。表示だけを先行させる。 */
+      var wasInert=hero.inert;
+      hero.inert=true;
+      function waitForIntro(){
+        if(document.readyState!=='complete'||
+          root.classList.contains('hex-motion-preparing')||
+          document.getElementById('hex-motion-preparation-cover')){
+          window.requestAnimationFrame(waitForIntro);
+          return;
+        }
+        hero.inert=wasInert;
+        showHeroCatch(180);
+      }
+      window.requestAnimationFrame(waitForIntro);
       window.setTimeout(function(){
         root.classList.remove('hex-direct-hero-fade','hex-direct-hero-fade-ready');
       },DIRECT_HERO_FADE_DURATION+100);
@@ -13309,6 +13336,9 @@ hexLoad(function(){
         '}'+
         '#hex-motion-preparation-cover.is-ready{'+
           'opacity:0;pointer-events:none;'+
+        '}'+
+        'html.hex-hero-first-frame-ready #hex-motion-preparation-cover{'+
+          'display:none;'+
         '}'+
         '@media screen and (max-width:768px){'+
           '#hex-motion-preparation-cover{'+
