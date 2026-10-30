@@ -6928,6 +6928,11 @@ function setupCardStack(grid,mode){
     slides.forEach(function(slide,index){
       var motion=arrivals[index];
       var offset=motion?Math.max(0,motion.distance-Math.max(0,progress-motion.start)):0;
+      // Avoid fractional-device-pixel shimmer while Safari's inertia settles.
+      if(fromRight&&window.innerWidth<=768){
+        var pixelRatio=window.devicePixelRatio||1;
+        offset=Math.round(offset*pixelRatio)/pixelRatio;
+      }
       var value=reduced.matches?'none':fromRight
         ?'translate3d('+offset+'px,0,0)':'translate3d(0,'+offset+'px,0)';
       if(slide.style.transform!==value)slide.style.transform=value;
@@ -6958,12 +6963,12 @@ function setupCardStack(grid,mode){
     // Center the first card below the header; tall cards stop at the header edge.
     var firstTop=Math.max(headerHeight,(viewportHeight+headerHeight-firstHeight)/2);
     var stackHeight=Math.ceil(Math.max.apply(Math,cardHeights));
-    if(stacking)grid.style.setProperty('--hex-card-stack-height',stackHeight+'px');
+    if(stacking&&grid.style.getPropertyValue('--hex-card-stack-height')!==stackHeight+'px'){
+      grid.style.setProperty('--hex-card-stack-height',stackHeight+'px');
+    }
     // Grid1 shares a bottom-aligned frame; grid2-6 retain their natural grid slots.
     var gridTop=stacking?firstTop-(stackHeight-firstHeight):firstTop-cards[0].offsetTop;
     if(scene){
-      // Recompute from the natural scene height after viewport/card-size changes.
-      scene.style.minHeight='';
       var viewportWidth=document.documentElement.clientWidth||window.innerWidth;
       var gridLeft=grid.getBoundingClientRect().left;
       travel=0;
@@ -6985,15 +6990,19 @@ function setupCardStack(grid,mode){
       }
       var cardOffset=grid.getBoundingClientRect().top-scene.getBoundingClientRect().top;
       pinTop=gridTop-cardOffset;
-      scene.style.top=pinTop+'px';
+      var sceneTop=pinTop+'px';
+      if(scene.style.top!==sceneTop)scene.style.top=sceneTop;
       // The sticky scene must cover the screen even when its content ends above
       // the viewport bottom. Include this height in release/tail geometry.
-      if(fromRight&&window.innerWidth<=768&&!reduced.matches){
-        scene.style.minHeight=Math.max(0,viewportHeight-pinTop)+'px';
+      var minimumHeight=fromRight&&window.innerWidth<=768&&!reduced.matches
+        ?Math.max(0,viewportHeight-pinTop)+'px':'';
+      if(scene.style.minHeight!==minimumHeight)scene.style.minHeight=minimumHeight;
+      var backgroundStart=(cardOffset+grid.offsetHeight)+'px';
+      if(scene.style.getPropertyValue('--hex-card-stack-background-start')!==backgroundStart){
+        scene.style.setProperty('--hex-card-stack-background-start',backgroundStart);
       }
-      scene.style.setProperty('--hex-card-stack-background-start',
-        (cardOffset+grid.offsetHeight)+'px');
-      runway.style.height=(scene.offsetHeight+(reduced.matches?0:travel))+'px';
+      var runwayHeight=(scene.offsetHeight+(reduced.matches?0:travel))+'px';
+      if(runway.style.height!==runwayHeight)runway.style.height=runwayHeight;
       renderStack();
     }
     if(stacking||fromRight){
