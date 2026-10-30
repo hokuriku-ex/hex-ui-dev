@@ -5933,6 +5933,40 @@ html body
 .hex-service-grid .hex-link-detail{
   display:none!important;
 }
+@media(min-width:769px){
+  .hex-card-grid.hex-service-grid,
+  .hex-card-grid.hex-service-grid.hex-card-stack.is-section-scene{
+    position:relative;
+    width:100vw;
+    max-width:none!important;
+    left:calc(50% - 50vw);
+    margin-inline:0!important;
+  }
+  .hex-service-grid.hex-card-grid .hex-card{
+    display:grid;
+    width:100%;
+    max-width:none!important;
+    margin-inline:0!important;
+    padding:0;
+    gap:0;
+    align-items:center;
+  }
+  .hex-service-grid.hex-card-grid .hex-card.has-image{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  }
+  .hex-service-grid.hex-card-grid .hex-card.no-image{
+    grid-template-columns:1fr;
+  }
+  .hex-service-grid.hex-card-grid .hex-card-image{
+    width:100%;
+    min-width:0;
+    margin:0;
+  }
+  .hex-service-grid.hex-card-grid .hex-card-body{
+    width:100%;
+    box-sizing:border-box;
+  }
+}
 
 /* =======================================
    トップページ：注目アイテム
