@@ -10512,10 +10512,13 @@ html.hex-overlap-snap-animating{
 .hex-rise-runway{
   position:relative;z-index:1;display:block;overflow:visible!important;
   box-sizing:border-box;min-width:0;isolation:isolate;
+  /* 固定用の透明な余白で、後続セクションのリンクを遮らない。 */
+  pointer-events:none;
 }
 .hex-rise-sticky{
   position:sticky;display:flow-root;overflow:visible!important;
   width:100%;box-sizing:border-box;
+  pointer-events:auto;
 }
 /* 創業本体（z-index:94）より前へ重ね、以降はDOM順に重なる。 */
 .hex-rise-home-runway,.hex-home-overlap-front{z-index:95!important;}
