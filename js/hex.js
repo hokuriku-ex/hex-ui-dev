@@ -6902,7 +6902,7 @@ function setupCardStack(grid,mode){
     }
   }
   var section=grid.closest('.gc_auto_frame_background[id^="gc_auto_frame_"],.gc_auto_frame_footer')||grid.closest('section,.hex-bg-range');
-  var runway=null,scene=null,travel=0,arrivals=[],pinTop=0,scrollFrame=0;
+  var runway=null,scene=null,travel=0,cardTravel=0,arrivals=[],pinTop=0,scrollFrame=0;
   var layoutWidth=0,deferredLayout=false;
   var screenPinned=false;
   var continuationPairs=[],tail=null;
@@ -6993,6 +6993,11 @@ function setupCardStack(grid,mode){
     var minimumHeight=fromRight&&window.innerWidth<=768&&!reduced.matches
       ?Math.max(0,viewportHeight-pinTop)+'px':'';
     if(scene.style.minHeight!==minimumHeight)scene.style.minHeight=minimumHeight;
+    // PC vertical: keep the completed cards pinned while the following content
+    // enters from the screen bottom and reaches its normal place below them.
+    var tailTravel=!fromRight&&window.innerWidth>768&&!reduced.matches&&tail&&tail.offsetHeight>0
+      ?Math.max(0,viewportHeight-pinTop-scene.offsetHeight):0;
+    travel=cardTravel+tailTravel;
     var runwayHeight=(scene.offsetHeight+(reduced.matches?0:travel))+'px';
     if(runway.style.height!==runwayHeight)runway.style.height=runwayHeight;
   }
@@ -7066,6 +7071,7 @@ function setupCardStack(grid,mode){
       if(scene.style.getPropertyValue('--hex-card-stack-background-start')!==backgroundStart){
         scene.style.setProperty('--hex-card-stack-background-start',backgroundStart);
       }
+      cardTravel=travel;
       updateSceneExtent(viewportHeight);
       renderStack();
     }
