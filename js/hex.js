@@ -7200,7 +7200,7 @@ function setupCardCarousel(grid){
   var originalRole=grid.getAttribute('role');
   var originalDescription=grid.getAttribute('aria-roledescription');
   var originalMotionOff=grid.classList.contains('hex-motion-auto-off');
-  var originalStyle=grid.getAttribute('style'),destroyed=false,cardMotion=null;
+  var originalStyle=grid.getAttribute('style'),destroyed=false;
   grid.dataset.slider='normal';
   grid.classList.add('hex-card-carousel','hex-motion-auto-off');
   grid.setAttribute('role','region');
@@ -7334,12 +7334,6 @@ function setupCardCarousel(grid){
     position=index;
     if(slides[old].contains(document.activeElement))next.focus({preventScroll:true});
     layout();
-    if(old!==index&&!mobile.matches&&!reduced.matches&&slides[index].animate){
-      if(cardMotion)cardMotion.cancel();
-      cardMotion=slides[index].firstElementChild.animate([
-        {transform:'scale(.96)'},{transform:'scale(1.035)',offset:.65},{transform:'scale(1)'}
-      ],{duration:520,easing:'cubic-bezier(.2,.7,.25,1)'});
-    }
   }
   viewport.addEventListener('keydown',function(event){
     if(event.target.matches('input,textarea,select,[contenteditable]'))return;
@@ -7480,7 +7474,6 @@ function setupCardCarousel(grid){
   return function(){
     destroyed=true;
     cancelAnimationFrame(frame);cancelAnimationFrame(motion);
-    if(cardMotion)cardMotion.cancel();
     if(observer)observer.disconnect();
     window.removeEventListener('resize',requestLayout);
     if(mobile.removeEventListener)mobile.removeEventListener('change',syncMode);
