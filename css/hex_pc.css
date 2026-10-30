@@ -5930,7 +5930,7 @@ html body
 /* =======================================
    トップページ：サービス案内
 ======================================= */
-.hex-service-top-section .hex-link-detail{
+.hex-service-grid .hex-link-detail{
   display:none!important;
 }
 
