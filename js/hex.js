@@ -6926,7 +6926,9 @@ function setupCardStack(grid){
     grid.style.setProperty('--hex-card-stack-height',height+'px');
     grid.style.setProperty('--hex-card-stack-top',gridTop+'px');
     if(scene){
-      step=height+24;travel=Math.max(0,cards.length-1)*step;
+      // Keep the next card below the viewport when the preceding card settles.
+      step=Math.max(height+24,viewportHeight-gridTop);
+      travel=Math.max(0,cards.length-1)*step;
       var cardOffset=grid.getBoundingClientRect().top-scene.getBoundingClientRect().top;
       pinTop=gridTop-cardOffset;
       scene.style.top=pinTop+'px';

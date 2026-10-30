@@ -11451,7 +11451,8 @@ a.hex-anchor-nav-link.is-active::after{
 /* カードが重なる間は、所属セクションの見出し・背景も同じ位置に留める。 */
 .hex-card-stack-runway{position:relative;display:flow-root;overflow:visible!important;isolation:isolate;}
 .hex-card-stack-scene{position:sticky;display:flow-root;width:100%;}
-.hex-card-stack.is-section-scene{position:relative;height:var(--hex-card-stack-height);overflow:clip!important;}
+/* 後続カードは固定枠の外、画面下端から入るため切り抜かない。 */
+.hex-card-stack.is-section-scene{position:relative;height:var(--hex-card-stack-height);overflow:visible!important;}
 .hex-card-stack.is-section-scene > .hex-card-stack-slide{
   position:absolute;top:0;left:0;width:100%;padding-bottom:0;
 }
