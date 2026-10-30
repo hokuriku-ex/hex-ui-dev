@@ -17276,6 +17276,9 @@ hexReady(function(){
   }
   function isHomeOverlapTarget(section){
     if(!section)return false;
+    /* 明示した文字帯の重なりを優先し、同じセクションを自動登録しない。
+       PCの帯単位・SPのセクション単位とも、固定境界の二重登録を防ぐ。 */
+    if(section.querySelector('.hex-hashtag-banner.hex-hashtag-overlap'))return false;
     /* フッターはお問い合わせの下へ通常の文書フローで配置する。 */
     if(section.id===HOME_SECTIONS.FOOTER||section.matches('.gc_auto_frame_footer,.hex-footer-frame'))return false;
     /* お問い合わせは従来どおり個別に常時対象とする。 */
