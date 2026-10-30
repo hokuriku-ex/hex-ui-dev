@@ -17490,9 +17490,16 @@ hexReady(function(){
   }
   function homeEntryStart(entry,scroll){
     var stack=entry.stack&&cardStackRange(entry,scroll);
-    if(stack)return stack.start;
     var panel=homeAnchorArchPanel(entry);
-    return (panel||entry.marker).getBoundingClientRect().top+scroll-window.hexViewportHeight();
+    var start=stack?stack.start:
+      (panel||entry.marker).getBoundingClientRect().top+scroll-window.hexViewportHeight();
+    // Hand off only after the preceding section's own card sequence completes.
+    var back=originalNode(entry.back);
+    if(back&&back.classList.contains('hex-card-stack-section')){
+      var preceding=cardStackRange({front:back},scroll);
+      if(preceding)start=Math.max(start,preceding.end);
+    }
+    return start;
   }
   function homeAnchorRevealRange(entry,scroll,maximumScroll){
     if(window.innerWidth<=768)return null;
@@ -17551,8 +17558,9 @@ hexReady(function(){
       var blocks=[];
       function collect(input){
         var node=originalNode(input);
-        // The vertical card scene already pins this entire section.
-        if(node.classList.contains('hex-card-stack-section')||node.closest('.hex-card-stack-scene'))return;
+        // Inner scenes/cards own their pin. The whole section may still become
+        // the back layer of the NEXT overlap, after its card sequence has ended.
+        if(node.closest('.hex-card-stack-scene'))return;
         if(node.contains(entry.marker))return;
         if(entries.some(function(other){return node.contains(other.marker);})){
           Array.from(node.children).forEach(collect);return;
@@ -17597,7 +17605,7 @@ hexReady(function(){
       var start=relevant[0].start,end=relevant[relevant.length-1].marker.getBoundingClientRect().top+scroll;
       var stackEntry=relevant.find(function(entry){return entry.stack;});
       var stack=stackEntry&&cardStackRange(stackEntry,scroll);
-      if(stack){start=stack.start;end=stack.end;}
+      if(stack){start=Math.max(start,stack.start);end=Math.max(start,stack.end);}
       item.stackHold=!!stack&&!stack.entrance;
       var top=item.runway.getBoundingClientRect().top+scroll,height=item.sticky.getBoundingClientRect().height;
       var g=geometry(top,height,start,end,sectionLandingOffset(item.node,header));
