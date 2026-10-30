@@ -3221,6 +3221,9 @@ hexReady(function(){
     var characterCopyShownAt=0;
     var characterCopyBodyAt=0;
     var characterCopyVisible=false;
+    var characterCopyLayoutDirty=true;
+    var characterCopySizeObserver=null;
+    var characterCopyBodyComplete=false;
     var spTap={pointerId:null,x:0,y:0,hit:false,character:null};
     var interactionLocked=true;
     var autoZooming=false;
@@ -4095,6 +4098,7 @@ hexReady(function(){
 
       renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
       renderer.setSize(width,height,false);
+      characterCopyLayoutDirty=true;
       setCamera();
       bottomImages.forEach(function(image){
         bottomArtTravel.set(image,image.offsetHeight);
@@ -5082,6 +5086,8 @@ hexReady(function(){
     function syncHeroDevStyles(now){
       if(HEX_IS_PRODUCTION||document.hidden||!ready||!textureCanvas||
         !activeHero||!sourceImage||!sourceImage.naturalWidth){return;}
+      // Live CSS inspection can wait until the camera animation or drag ends.
+      if(characterFocus.active||autoZooming||dragging||pinch.active||state.vx||state.vy)return;
       if(now-heroDevStyleCheckedAt<150){return;}
       heroDevStyleCheckedAt=now;
       var values=[getComputedStyle(activeHero).getPropertyValue(
@@ -5128,9 +5134,17 @@ hexReady(function(){
       characterCopyChars=prepareCopyBody(characterCopyStage.querySelector(".text"));
       renderCopyBody(characterCopyChars,0);
       characterCopyStage.dispatchEvent(new CustomEvent("hex:character-copy-prepare",{bubbles:true}));
+      if(window.ResizeObserver){
+        characterCopySizeObserver=new ResizeObserver(function(){characterCopyLayoutDirty=true;});
+        characterCopySizeObserver.observe(characterCopyStage);
+        Array.from(characterCopyStage.children).forEach(function(child){
+          characterCopySizeObserver.observe(child);
+        });
+      }
     }
 
     function clearCharacterCopy(){
+      if(characterCopySizeObserver){characterCopySizeObserver.disconnect();characterCopySizeObserver=null;}
       if(characterCopyStage){
         characterCopyStage.dispatchEvent(new CustomEvent("hex:character-copy-reset",{bubbles:true}));
         characterCopyStage.remove();
@@ -5140,6 +5154,8 @@ hexReady(function(){
       characterCopyShownAt=0;
       characterCopyBodyAt=0;
       characterCopyVisible=false;
+      characterCopyLayoutDirty=true;
+      characterCopyBodyComplete=false;
     }
 
     function updateCharacterCopy(now){
@@ -5149,15 +5165,19 @@ hexReady(function(){
         characterCopyStage.setAttribute("aria-hidden","true");
         return;
       }
-      var circle=getWelcomeCircleGeometry(1);
-      var stageHeight=characterCopyStage.scrollHeight;
-      var top=(isSp()
-        ?circle.y+circle.radius+24
-        :Math.max(16,circle.y-stageHeight*.5))+"px";
-      var maxHeight=Math.max(1,metrics.height-parseFloat(top)-88)+"px";
-      if(characterCopyStage.style.top!==top){characterCopyStage.style.top=top;}
-      if(characterCopyStage.style.maxHeight!==maxHeight){characterCopyStage.style.maxHeight=maxHeight;}
       if(characterFocus.rawProgress<.999){return;}
+      // Camera/ellipse writes must not be followed by a forced layout each frame.
+      if(characterCopyLayoutDirty){
+        characterCopyLayoutDirty=false;
+        var circle=getWelcomeCircleGeometry(1);
+        var stageHeight=characterCopyStage.scrollHeight;
+        var top=(isSp()
+          ?circle.y+circle.radius+24
+          :Math.max(16,circle.y-stageHeight*.5))+"px";
+        var maxHeight=Math.max(1,metrics.height-parseFloat(top)-88)+"px";
+        if(characterCopyStage.style.top!==top){characterCopyStage.style.top=top;}
+        if(characterCopyStage.style.maxHeight!==maxHeight){characterCopyStage.style.maxHeight=maxHeight;}
+      }
       if(!characterCopyVisible){
         characterCopyVisible=true;
         characterCopyShownAt=now;
@@ -5169,8 +5189,10 @@ hexReady(function(){
       if(!characterCopyBodyAt&&now-characterCopyShownAt>=(reduced?0:1200)){
         characterCopyBodyAt=now;
       }
-      if(characterCopyBodyAt){
-        renderCopyBody(characterCopyChars,reduced?1:clamp((now-characterCopyBodyAt)/1000,0,1));
+      if(characterCopyBodyAt&&!characterCopyBodyComplete){
+        var bodyProgress=reduced?1:clamp((now-characterCopyBodyAt)/1000,0,1);
+        renderCopyBody(characterCopyChars,bodyProgress);
+        characterCopyBodyComplete=bodyProgress>=1;
       }
     }
 
