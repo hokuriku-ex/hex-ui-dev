@@ -7311,7 +7311,11 @@ function setupCardCarousel(grid){
       slide.style.setProperty('--hex-carousel-scale',mobile.matches?'1':String(1-.42*Math.min(1,Math.abs(offset))));
       slide.style.zIndex=String(10-Math.round(Math.abs(offset)));
       slide.classList.toggle('is-active',Math.abs(offset)<.5);
-      slide.classList.toggle('is-outside',Math.abs(offset)>2);
+      // PCは見切れたカードも表示し、画面外の余裕を越えてから非表示にする。
+      // 固定の「2枚分」で消すと、端へ入る途中でopacityの復帰が遅れる。
+      var outside=mobile.matches?Math.abs(offset)>2:
+        Math.abs(x)-cardWidth*.29>width/2+cardWidth*.25;
+      slide.classList.toggle('is-outside',outside);
       slide.inert=i!==index;
       slide.setAttribute('aria-hidden',String(i!==index));
       height=Math.max(height,slide.offsetHeight);
