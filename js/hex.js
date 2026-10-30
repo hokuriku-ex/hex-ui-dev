@@ -3049,7 +3049,8 @@ hexReady(function(){
   var HERO_CLOUD_BACK_VERTICAL_FOLLOW=.20;
   var HERO_AUTO_ZOOM_WAIT=300;
   var HERO_AUTO_ZOOM_DURATION=1500;
-  var HERO_CHARACTER_FOCUS_DURATION=1050;
+  var HERO_WELCOME_CIRCLE_DURATION_PC=1050;
+  var HERO_WELCOME_CIRCLE_DURATION_SP=1300;
   var HERO_CHARACTER_CLICK_MAX_MOVE=6;
   var HERO_SP_TAP_MAX_MOVE=12;
   /* WELCOME本文の表示に必要なスクロール量。2なら従来の約2倍。 */
@@ -3323,6 +3324,13 @@ hexReady(function(){
         Math.max(1,window.innerWidth*.27-16),
         Math.max(1,getWelcomeContentHeight()*.5-16)
       );
+    }
+    function getWelcomeCircleDuration(){
+      return isSp()?HERO_WELCOME_CIRCLE_DURATION_SP:HERO_WELCOME_CIRCLE_DURATION_PC;
+    }
+    function getWelcomeCircleProgress(progress){
+      var eased=progress*progress*(3-2*progress);
+      return isSp()?Math.pow(eased,1.18):eased;
     }
     /* WELCOMEと人物フォーカスで、丸の軌道・サイズ・位置を共有する。 */
     function getWelcomeCircleGeometry(progress){
@@ -4282,7 +4290,7 @@ hexReady(function(){
 
       function advance(now){
         if(startedAt===null){startedAt=now;}
-        var progress=clamp((now-startedAt)/1300,0,1);
+        var progress=clamp((now-startedAt)/getWelcomeCircleDuration(),0,1);
         window.scrollTo(0,from+distance*progress);
         if(progress<1){
           spCircleScrollFrame=window.requestAnimationFrame(advance);
@@ -4459,7 +4467,7 @@ hexReady(function(){
       if(isSp()){
         scrollSpCircleTo(target);
       }else if(window.hexMotion&&typeof window.hexMotion.scrollTo==="function"){
-        window.hexMotion.scrollTo(target,{duration:1.05,force:true});
+        window.hexMotion.scrollTo(target,{duration:getWelcomeCircleDuration()/1000,force:true});
       }else{
         window.scrollTo({top:target,behavior:reduced?"auto":"smooth"});
       }
@@ -4575,11 +4583,7 @@ hexReady(function(){
         (scrollY-heroTop)/Math.max(welcomeTop-heroTop,1),
         0,1
       );
-      circleProgress=circleProgress*circleProgress*(3-2*circleProgress);
-      if(isSp()){
-        /* 同じスクロール区間で、SPの丸の収束を少し穏やかにする。 */
-        circleProgress=Math.pow(circleProgress,1.18);
-      }
+      circleProgress=getWelcomeCircleProgress(circleProgress);
       /* 拡大する前に固定位置と親要素を確定し、途中配置を表示しない。 */
       if(movingUp&&circleProgress<.999){
         if(released){refixSnapshot(true);}
@@ -5211,7 +5215,7 @@ hexReady(function(){
       updateCharacterFocusMask();
       updateWelcomeButton();
       if(reduced){
-        advanceCharacterFocus(characterFocus.started+HERO_CHARACTER_FOCUS_DURATION);
+        advanceCharacterFocus(characterFocus.started+getWelcomeCircleDuration());
         setCamera();
       }
     }
@@ -5241,12 +5245,18 @@ hexReady(function(){
     }
 
     function advanceCharacterFocus(now){
-      var duration=characterFocus.returning?WELCOME_REVERSE_DURATION:HERO_CHARACTER_FOCUS_DURATION;
+      var duration=characterFocus.returning?WELCOME_REVERSE_DURATION:getWelcomeCircleDuration();
       var progress=reduced?1:clamp((now-characterFocus.started)/duration,0,1);
+      if(!characterFocus.returning&&!isSp()){
+        // WELCOMEへ移動するLenisの進行率を、人物選択時の丸にも適用する。
+        var lenis=window.hexMotion&&window.hexMotion.lenis;
+        var easing=lenis&&lenis.options&&lenis.options.easing;
+        if(typeof easing==='function')progress=clamp(easing(progress),0,1);
+      }
       /* 復帰時はWELCOMEと同じ減速で、生の進行率を巻き戻す。 */
       var raw=characterFocus.returning
         ?characterFocus.returnFrom*Math.pow(1-progress,3):progress;
-      var eased=raw*raw*(3-2*raw);
+      var eased=characterFocus.returning?raw*raw*(3-2*raw):getWelcomeCircleProgress(raw);
       characterFocus.rawProgress=raw;
       characterFocus.progress=eased;
       var circle=getWelcomeCircleGeometry(1);
