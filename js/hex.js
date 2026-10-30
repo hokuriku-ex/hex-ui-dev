@@ -3208,7 +3208,7 @@ hexReady(function(){
       anchorY:0,
       rect:null
     };
-    var characterAlphaCanvases=new WeakMap();
+    var characterAlphaPixels=new WeakMap();
     var heroCharacterBounds=[];
     var heroCharacterHitRect=null,heroCharacterHitScrollX=0,heroCharacterHitScrollY=0;
     var mouseTap={pointerId:null,x:0,y:0,moved:false,character:null};
@@ -4854,7 +4854,7 @@ hexReady(function(){
     }
 
     function pointerHitsCharacter(layer,u,v){
-      var cached=characterAlphaCanvases.get(layer);
+      var cached=characterAlphaPixels.get(layer);
       var canvas;
       var context;
       if(cached===undefined){
@@ -4868,7 +4868,7 @@ hexReady(function(){
           cached={width:canvas.width,height:canvas.height,
             data:context.getImageData(0,0,canvas.width,canvas.height).data};
         }catch(error){cached=null;}
-        characterAlphaCanvases.set(layer,cached);
+        characterAlphaPixels.set(layer,cached);
       }
       if(!cached){return true;}
       var pixelX=Math.max(0,Math.min(cached.width-1,Math.floor(u*cached.width)));
@@ -5404,6 +5404,7 @@ hexReady(function(){
       baseLayerY=(textureCanvas.height-baseLayerHeight)/2;
       context.clearRect(0,0,textureCanvas.width,textureCanvas.height);
       heroCharacterBounds=[];
+      heroCharacterHitRect=null;
       /* 台座は寸法の基準としてのみ使い、画像自体は描画しない。
          図面以降の合成位置・サイズはそのまま維持する。 */
       heroLayerImages.forEach(function(layer){
@@ -5579,7 +5580,7 @@ hexReady(function(){
       }
       heroLayerImages.forEach(function(layer){
         layer.addEventListener("load",function(){
-          characterAlphaCanvases.delete(layer);
+          characterAlphaPixels.delete(layer);
           queueLayerTextureUpdate();
         });
       });
