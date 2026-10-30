@@ -6879,6 +6879,7 @@ function setupCardStack(grid,mode){
   }
   var section=grid.closest('.gc_auto_frame_background[id^="gc_auto_frame_"],.gc_auto_frame_footer')||grid.closest('section,.hex-bg-range');
   var runway=null,scene=null,travel=0,arrivals=[],pinTop=0,scrollFrame=0;
+  var layoutWidth=0,deferredLayout=false;
   var continuationPairs=[],tail=null;
   var reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
   // One scene owns the section; any additional group keeps its normal grid.
@@ -6924,7 +6925,8 @@ function setupCardStack(grid,mode){
   function renderStack(){
     scrollFrame=0;
     if(destroyed||!scene)return;
-    var progress=Math.max(0,Math.min(travel,pinTop-runway.getBoundingClientRect().top));
+    var rawProgress=pinTop-runway.getBoundingClientRect().top;
+    var progress=Math.max(0,Math.min(travel,rawProgress));
     slides.forEach(function(slide,index){
       var motion=arrivals[index];
       var offset=motion?Math.max(0,motion.distance-Math.max(0,progress-motion.start)):0;
@@ -6937,13 +6939,37 @@ function setupCardStack(grid,mode){
         ?'translate3d('+offset+'px,0,0)':'translate3d(0,'+offset+'px,0)';
       if(slide.style.transform!==value)slide.style.transform=value;
     });
+    if(deferredLayout&&(rawProgress<0||rawProgress>travel)){
+      deferredLayout=false;queue();
+    }
   }
   function queueScroll(){if(scene&&!scrollFrame)scrollFrame=requestAnimationFrame(renderStack);}
   if(scene)window.addEventListener('scroll',queueScroll,{passive:true});
   var frame=0;
+  function updateSceneExtent(viewportHeight){
+    var minimumHeight=fromRight&&window.innerWidth<=768&&!reduced.matches
+      ?Math.max(0,viewportHeight-pinTop)+'px':'';
+    if(scene.style.minHeight!==minimumHeight)scene.style.minHeight=minimumHeight;
+    var runwayHeight=(scene.offsetHeight+(reduced.matches?0:travel))+'px';
+    if(runway.style.height!==runwayHeight)runway.style.height=runwayHeight;
+  }
   function layout(){
     frame=0;
     if(destroyed||!grid.isConnected)return;
+    var viewportHeight=window.hexViewportHeight?window.hexViewportHeight():window.innerHeight;
+    var viewportWidth=document.documentElement.clientWidth||window.innerWidth;
+    var rawProgress=scene?pinTop-runway.getBoundingClientRect().top:-1;
+    // Safari toolbar-height changes must not move the pin or recompute slide
+    // distances during horizontal motion. Width changes still rebuild normally.
+    if(scene&&fromRight&&window.innerWidth<=768&&!reduced.matches&&travel>0&&
+      layoutWidth===viewportWidth&&rawProgress>=0&&rawProgress<=travel){
+      deferredLayout=true;
+      updateSceneExtent(viewportHeight);
+      renderStack();
+      return;
+    }
+    deferredLayout=false;
+    layoutWidth=viewportWidth;
     var firstHeight=0;
     var cardHeights=[];
     cards.forEach(function(card,index){
@@ -6951,7 +6977,6 @@ function setupCardStack(grid,mode){
       if(index===0)firstHeight=cardHeight;
       cardHeights.push(cardHeight);
     });
-    var viewportHeight=window.hexViewportHeight?window.hexViewportHeight():window.innerHeight;
     // Resolve clamp()/calc() header heights through layout, including SP overrides.
     var headerProbe=document.createElement('div');
     headerProbe.style.cssText='position:fixed;top:0;left:0;width:0;padding:0;border:0;visibility:hidden;pointer-events:none;';
@@ -6969,7 +6994,6 @@ function setupCardStack(grid,mode){
     // Grid1 shares a bottom-aligned frame; grid2-6 retain their natural grid slots.
     var gridTop=stacking?firstTop-(stackHeight-firstHeight):firstTop-cards[0].offsetTop;
     if(scene){
-      var viewportWidth=document.documentElement.clientWidth||window.innerWidth;
       var gridLeft=grid.getBoundingClientRect().left;
       travel=0;
       if(stacking){
@@ -6994,15 +7018,11 @@ function setupCardStack(grid,mode){
       if(scene.style.top!==sceneTop)scene.style.top=sceneTop;
       // The sticky scene must cover the screen even when its content ends above
       // the viewport bottom. Include this height in release/tail geometry.
-      var minimumHeight=fromRight&&window.innerWidth<=768&&!reduced.matches
-        ?Math.max(0,viewportHeight-pinTop)+'px':'';
-      if(scene.style.minHeight!==minimumHeight)scene.style.minHeight=minimumHeight;
       var backgroundStart=(cardOffset+grid.offsetHeight)+'px';
       if(scene.style.getPropertyValue('--hex-card-stack-background-start')!==backgroundStart){
         scene.style.setProperty('--hex-card-stack-background-start',backgroundStart);
       }
-      var runwayHeight=(scene.offsetHeight+(reduced.matches?0:travel))+'px';
-      if(runway.style.height!==runwayHeight)runway.style.height=runwayHeight;
+      updateSceneExtent(viewportHeight);
       renderStack();
     }
     if(stacking||fromRight){
