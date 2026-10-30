@@ -11465,7 +11465,13 @@ a.hex-anchor-nav-link.is-active::after{
   .hex-card-stack-runway:has(> .hex-card-stack-horizontal){
     overflow-x:clip!important;overflow-y:visible!important;
   }
-  .hex-card-stack-scene.hex-card-stack-horizontal{overflow:visible;}
+  .hex-card-stack-scene.hex-card-stack-horizontal{
+    overflow:visible;
+    /* 高さを確保した固定枠の下部も、所属範囲の背景として描く。 */
+    background-image:linear-gradient(to bottom,
+      transparent var(--hex-card-stack-background-start,100%),
+      var(--hex-card-stack-background-color,transparent) var(--hex-card-stack-background-start,100%));
+  }
 }
 /* 後続カードは固定枠の外、画面下端から入るため切り抜かない。 */
 .hex-card-stack.is-section-scene{overflow:visible!important;}

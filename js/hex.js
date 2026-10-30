@@ -6962,6 +6962,8 @@ function setupCardStack(grid,mode){
     // Grid1 shares a bottom-aligned frame; grid2-6 retain their natural grid slots.
     var gridTop=stacking?firstTop-(stackHeight-firstHeight):firstTop-cards[0].offsetTop;
     if(scene){
+      // Recompute from the natural scene height after viewport/card-size changes.
+      scene.style.minHeight='';
       var viewportWidth=document.documentElement.clientWidth||window.innerWidth;
       var gridLeft=grid.getBoundingClientRect().left;
       travel=0;
@@ -6984,10 +6986,17 @@ function setupCardStack(grid,mode){
       var cardOffset=grid.getBoundingClientRect().top-scene.getBoundingClientRect().top;
       pinTop=gridTop-cardOffset;
       scene.style.top=pinTop+'px';
+      // The sticky scene must cover the screen even when its content ends above
+      // the viewport bottom. Include this height in release/tail geometry.
+      if(fromRight&&window.innerWidth<=768&&!reduced.matches){
+        scene.style.minHeight=Math.max(0,viewportHeight-pinTop)+'px';
+      }
+      scene.style.setProperty('--hex-card-stack-background-start',
+        (cardOffset+grid.offsetHeight)+'px');
       runway.style.height=(scene.offsetHeight+(reduced.matches?0:travel))+'px';
       renderStack();
     }
-    if(stacking){
+    if(stacking||fromRight){
       var surface='';
       for(var owner=grid;owner&&owner!==document.documentElement;owner=owner.parentElement){
         var style=getComputedStyle(owner),color=style.backgroundColor;
@@ -6996,6 +7005,7 @@ function setupCardStack(grid,mode){
         if(rangeColor){surface=rangeColor;break;}
       }
       grid.style.setProperty('--hex-card-stack-auto-surface',surface||'#fafafa');
+      if(scene)scene.style.setProperty('--hex-card-stack-background-color',surface||'#fafafa');
     }
   }
   function queue(){if(!destroyed&&!frame)frame=requestAnimationFrame(layout);}
