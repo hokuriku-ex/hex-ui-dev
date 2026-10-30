@@ -7294,7 +7294,7 @@ function setupCardCarousel(grid){
     if(destroyed||!enabled)return;
     var width=viewport.clientWidth;
     if(!width)return;
-    var cardWidth=mobile.matches?width:Math.min(460,width*.40);
+    var cardWidth=mobile.matches?width:width*.40;
     var step=mobile.matches?width+32:cardWidth*.82;
     grid.style.setProperty('--hex-carousel-card-width',cardWidth+'px');
     var height=0;
@@ -7406,7 +7406,7 @@ function setupCardCarousel(grid){
   viewport.addEventListener('touchend',finishTouch,{passive:true});
   viewport.addEventListener('touchcancel',finishTouch,{passive:true});
   function dragStep(){
-    return mobile.matches?viewport.clientWidth+32:Math.min(460,viewport.clientWidth*.40)*.82;
+    return mobile.matches?viewport.clientWidth+32:viewport.clientWidth*.40*.82;
   }
   function settle(target,velocity){
     window.cancelAnimationFrame(motion);motion=0;
