@@ -3209,6 +3209,8 @@ hexReady(function(){
       rect:null
     };
     var characterAlphaCanvases=new WeakMap();
+    var heroCharacterBounds=[];
+    var heroCharacterHitRect=null,heroCharacterHitScrollX=0,heroCharacterHitScrollY=0;
     var mouseTap={pointerId:null,x:0,y:0,moved:false,character:null};
     var characterFocus={
       active:false,started:0,fromX:0,fromY:0,fromZoom:1,targetX:0,targetY:0,
@@ -4106,6 +4108,7 @@ hexReady(function(){
 
       renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
       renderer.setSize(width,height,false);
+      heroCharacterHitRect=null;
       characterCopyLayoutDirty=true;
       setCamera();
       bottomImages.forEach(function(image){
@@ -4862,28 +4865,28 @@ hexReady(function(){
           canvas.height=Math.max(1,Math.round(layer.naturalHeight*ratio));
           context=canvas.getContext("2d",{willReadFrequently:true});
           context.drawImage(layer,0,0,canvas.width,canvas.height);
-          cached=canvas;
+          cached={width:canvas.width,height:canvas.height,
+            data:context.getImageData(0,0,canvas.width,canvas.height).data};
         }catch(error){cached=null;}
         characterAlphaCanvases.set(layer,cached);
       }
       if(!cached){return true;}
-      try{
-        context=cached.getContext("2d",{willReadFrequently:true});
-        return context.getImageData(
-          Math.min(cached.width-1,Math.floor(u*cached.width)),
-          Math.min(cached.height-1,Math.floor(v*cached.height)),1,1
-        ).data[3]>20;
-      }catch(error){
-        characterAlphaCanvases.set(layer,null);
-        return true;
-      }
+      var pixelX=Math.max(0,Math.min(cached.width-1,Math.floor(u*cached.width)));
+      var pixelY=Math.max(0,Math.min(cached.height-1,Math.floor(v*cached.height)));
+      return cached.data[(pixelY*cached.width+pixelX)*4+3]>20;
     }
 
     /* 透過PNGの画素で人物を探し、合成画像上の人物の中心を返す。 */
     function getHeroCharacterAt(clientX,clientY){
       if(!ready||interactionLocked||welcomeActive||!webglStage||
         !metrics.scale){return null;}
-      var rect=webglStage.getBoundingClientRect();
+      if(!heroCharacterHitRect||heroCharacterHitScrollX!==window.pageXOffset||
+        heroCharacterHitScrollY!==window.pageYOffset){
+        heroCharacterHitRect=webglStage.getBoundingClientRect();
+        heroCharacterHitScrollX=window.pageXOffset;
+        heroCharacterHitScrollY=window.pageYOffset;
+      }
+      var rect=heroCharacterHitRect;
       if(clientX<rect.left||clientX>=rect.right||
         clientY<rect.top||clientY>=rect.bottom){return null;}
       if(characterFocus.maskVisible&&Math.hypot(
@@ -4893,27 +4896,17 @@ hexReady(function(){
         (clientX-rect.left-rect.width/2)/metrics.scale;
       var imageY=metrics.imageHeight/2-state.y+
         (clientY-rect.top-rect.height/2)/metrics.scale;
-      for(var i=heroLayerImages.length-1;i>=0;i-=1){
-        var layer=heroLayerImages[i];
-        if(!layer.classList.contains("hex-hero-character")||
-          !layer.complete||!layer.naturalWidth){continue;}
-        var style=getComputedStyle(layer);
-        var x=parseFloat(style.getPropertyValue("--hex-sprite-x"));
-        var bottom=parseFloat(style.getPropertyValue("--hex-sprite-bottom"));
-        var width=parseFloat(style.getPropertyValue("--hex-sprite-width"));
-        if(!Number.isFinite(x)||!Number.isFinite(bottom)||
-          !Number.isFinite(width)||width<=0){continue;}
-        x=metrics.imageWidth*x/100;
-        bottom=metrics.imageHeight*bottom/100;
-        width=metrics.imageWidth*width/100;
-        var height=width*layer.naturalHeight/layer.naturalWidth;
+      for(var i=heroCharacterBounds.length-1;i>=0;i-=1){
+        var bounds=heroCharacterBounds[i],layer=bounds.layer;
+        if(!layer.complete||!layer.naturalWidth){continue;}
+        var x=metrics.imageWidth*bounds.x;
+        var bottom=metrics.imageHeight*bounds.bottom;
+        var width=metrics.imageWidth*bounds.width;
+        var height=width*bounds.aspect;
         var y=metrics.imageHeight-bottom-height;
         if(imageX>=x&&imageX<x+width&&imageY>=y&&imageY<y+height&&
           pointerHitsCharacter(layer,(imageX-x)/width,(imageY-y)/height)){
-          var kind=["supervisor","block","sakan","pruning","aluminum","family"].find(function(name){
-            return layer.classList.contains("hex-hero-character--"+name);
-          });
-          return {x:x+width/2,y:y+height/2,kind:kind};
+          return {x:x+width/2,y:y+height/2,kind:bounds.kind};
         }
       }
       return null;
@@ -5410,6 +5403,7 @@ hexReady(function(){
       baseLayerX=(textureCanvas.width-baseLayerWidth)/2;
       baseLayerY=(textureCanvas.height-baseLayerHeight)/2;
       context.clearRect(0,0,textureCanvas.width,textureCanvas.height);
+      heroCharacterBounds=[];
       /* 台座は寸法の基準としてのみ使い、画像自体は描画しない。
          図面以降の合成位置・サイズはそのまま維持する。 */
       heroLayerImages.forEach(function(layer){
@@ -5430,6 +5424,15 @@ hexReady(function(){
         width=parseFloat(style.getPropertyValue("--hex-sprite-width"));
         if(!Number.isFinite(x)||!Number.isFinite(bottom)||
           !Number.isFinite(width)||width<=0){return;}
+        if(layer.classList.contains("hex-hero-character")){
+          heroCharacterBounds.push({layer:layer,x:x/100,bottom:bottom/100,width:width/100,
+            aspect:layer.naturalHeight/layer.naturalWidth,
+            kind:["supervisor","block","sakan","pruning","aluminum","family"].find(function(name){
+              return layer.classList.contains("hex-hero-character--"+name);
+            })});
+          // Prepare the alpha pixels once, before cursor movement needs them.
+          pointerHitsCharacter(layer,0,0);
+        }
         x=textureCanvas.width*x/100;
         bottom=textureCanvas.height*bottom/100;
         width=textureCanvas.width*width/100;
@@ -5478,6 +5481,8 @@ hexReady(function(){
 
     function destroyThree(){
       cancelCharacterFocus();
+      heroCharacterBounds=[];
+      heroCharacterHitRect=null;
       window.cancelAnimationFrame(heroTextureUpdateFrame);
       heroTextureUpdateFrame=0;
       mouseTap.pointerId=null;
