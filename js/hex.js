@@ -6826,20 +6826,16 @@ hexReady(function(){
   });
 });
 
-/* 共通カード：縦スクロールで順番に重なり、末尾で固定を解除する。 */
+/* 共通カード：通常グリッドの各位置へ、縦スクロールで順番に収める。 */
 function setupCardStack(grid){
   if(grid.dataset.slider==='vertical')return;
   var cards=Array.from(grid.children);
   if(!cards.length)return;
   grid.dataset.slider='vertical';
   grid.classList.add('hex-card-stack','hex-motion-auto-off');
-  var slides=cards.map(function(card,index){
-    var slide=document.createElement('div');
-    slide.className='hex-card-stack-slide';
-    slide.style.zIndex=String(index+1);
-    grid.appendChild(slide);slide.appendChild(card);
-    return slide;
-  });
+  // Keep cards as direct grid children so all six layouts retain their normal sizes.
+  var slides=cards;
+  slides.forEach(function(card){card.classList.add('hex-card-stack-slide');});
   // Keep CMS ancestors from becoming independent scroll containers.
   for(var parent=grid.parentElement;parent&&parent!==document.body;parent=parent.parentElement){
     if(parent.matches('.gc_auto_body,.content,.content_body,.hex-bg-range,[id^="gc_auto_frame_"],'+
@@ -6848,9 +6844,9 @@ function setupCardStack(grid){
     }
   }
   var section=grid.closest('.gc_auto_frame_background[id^="gc_auto_frame_"],.gc_auto_frame_footer')||grid.closest('section,.hex-bg-range');
-  var runway=null,scene=null,travel=0,step=0,pinTop=0,scrollFrame=0;
+  var runway=null,scene=null,travel=0,arrivals=[],pinTop=0,scrollFrame=0;
   var reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
-  // One scene owns the section; any additional stack keeps its native behavior.
+  // One scene owns the section; any additional group keeps its normal grid.
   if(section&&!section.classList.contains('hex-card-stack-section')&&!section.closest('.hex-card-stack-scene')){
     runway=document.createElement('div');runway.className='hex-card-stack-runway';
     scene=document.createElement('div');scene.className='hex-card-stack-scene hex-motion-auto-off';
@@ -6893,7 +6889,9 @@ function setupCardStack(grid){
     if(!scene)return;
     var progress=Math.max(0,Math.min(travel,pinTop-runway.getBoundingClientRect().top));
     slides.forEach(function(slide,index){
-      var value=reduced.matches?'none':'translate3d(0,'+Math.max(0,index*step-progress)+'px,0)';
+      var motion=arrivals[index];
+      var offset=motion?Math.max(0,motion.distance-Math.max(0,progress-motion.start)):0;
+      var value=reduced.matches?'none':'translate3d(0,'+offset+'px,0)';
       if(slide.style.transform!==value)slide.style.transform=value;
     });
   }
@@ -6903,13 +6901,13 @@ function setupCardStack(grid){
   function layout(){
     frame=0;
     if(!grid.isConnected)return;
-    var maxHeight=0,firstHeight=0;
+    var firstHeight=0;
+    var cardHeights=[];
     cards.forEach(function(card,index){
       var cardHeight=card.getBoundingClientRect().height;
       if(index===0)firstHeight=cardHeight;
-      maxHeight=Math.max(maxHeight,cardHeight);
+      cardHeights.push(cardHeight);
     });
-    var height=Math.ceil(maxHeight);
     var viewportHeight=window.hexViewportHeight?window.hexViewportHeight():window.innerHeight;
     // Resolve clamp()/calc() header heights through layout, including SP overrides.
     var headerProbe=document.createElement('div');
@@ -6921,30 +6919,24 @@ function setupCardStack(grid){
     headerProbe.remove();
     // Center the first card below the header; tall cards stop at the header edge.
     var firstTop=Math.max(headerHeight,(viewportHeight+headerHeight-firstHeight)/2);
-    // Slides share the tallest card's frame and keep their existing bottom alignment.
-    var gridTop=firstTop-(height-firstHeight);
-    grid.style.setProperty('--hex-card-stack-height',height+'px');
-    grid.style.setProperty('--hex-card-stack-top',gridTop+'px');
+    // Measure natural grid slots, unaffected by each card's visual translation.
+    var gridTop=firstTop-cards[0].offsetTop;
     if(scene){
-      // Keep the next card below the viewport when the preceding card settles.
-      step=Math.max(height+24,viewportHeight-gridTop);
-      travel=Math.max(0,cards.length-1)*step;
+      travel=0;
+      arrivals=cards.map(function(card,index){
+        if(index===0)return {start:0,distance:0};
+        var distance=Math.max(cardHeights[index]+24,
+          viewportHeight-(gridTop+card.offsetTop));
+        var motion={start:travel,distance:distance};
+        travel+=distance;
+        return motion;
+      });
       var cardOffset=grid.getBoundingClientRect().top-scene.getBoundingClientRect().top;
       pinTop=gridTop-cardOffset;
       scene.style.top=pinTop+'px';
       runway.style.height=(scene.offsetHeight+(reduced.matches?0:travel))+'px';
       renderStack();
     }
-    // An opaque surface hides earlier cards, including cards with transparent backgrounds.
-    var surface='';
-    for(var owner=grid;owner&&owner!==document.documentElement;owner=owner.parentElement){
-      var style=getComputedStyle(owner);
-      var color=style.backgroundColor;
-      if(color&&color!=='transparent'&&!/^rgba\([^)]*,\s*0(?:\.0+)?\s*\)$/.test(color)){surface=color;break;}
-      var range=style.getPropertyValue('--hex-bg-range-color').trim();
-      if(range){surface=range;break;}
-    }
-    grid.style.setProperty('--hex-card-stack-auto-surface',surface||'#fafafa');
   }
   function queue(){if(!frame)frame=requestAnimationFrame(layout);}
   if(window.ResizeObserver){
