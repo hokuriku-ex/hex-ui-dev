@@ -9824,6 +9824,11 @@ body > .hex-v2-handoff{z-index:198;}
   flex:1;
   box-sizing:border-box;
 }
+/* PCだけ、左右のカード全体を外側へ少し傾ける。 */
+@media screen and (min-width:769px){
+  .hex-audience-grid > .hex-audience-item:first-child > .hex-card{rotate:-3deg;}
+  .hex-audience-grid > .hex-audience-item:last-child > .hex-card{rotate:3deg;}
+}
 @media screen and (max-width:768px){
   .hex-card-grid.hex-audience-grid{
     grid-template-columns:minmax(0,1fr)!important;
@@ -9849,27 +9854,11 @@ body > .hex-v2-handoff{z-index:198;}
     opacity:1;
     visibility:visible;
     pointer-events:none;
-    transition:opacity .3s ease,visibility .3s ease;
 }
 .hex-audience-item .hex-top-title-en,
 .hex-audience-item .hex-top-title[data-en]::after{
     font-size:clamp(32px,12cqi,80px)!important;
 }
-/* マウス操作のPCのみ、再生中は見出しを隠す。写真自体は常に表示する。 */
-@media screen and (min-width:769px) and (hover:hover) and (pointer:fine){
-  .hex-audience-item.is-audience-playing
-  .hex-card-image > h2.hex-top-title{
-    opacity:0;
-    visibility:hidden;
-  }
-}
-@media (prefers-reduced-motion:reduce){
-  .hex-audience-item.has-audience-hover .hex-card-image > img,
-  .hex-audience-item.has-audience-hover .hex-card-image > h2.hex-top-title{
-    transition:none;
-  }
-}
-
 /* お客様向けセクションの見出しは、すべての端末で表示 */
 h2.hex-top-title.hex-audience-guide-title{
   display:flex!important;
@@ -9887,10 +9876,6 @@ h2.hex-top-title.hex-audience-guide-title{
 
 /* SPのカード用英語見出し */
 @media screen and (max-width:768px){
-  .hex-audience-item .hex-card-image > h2.hex-top-title{
-    top:clamp(16px,5vw,32px);
-    transform:none;
-  }
   .hex-audience-grid h2.hex-audience-card-title[data-en]::after,
   .hex-audience-grid h2.hex-audience-card-title .hex-top-title-en{
     font-size:40px!important;
@@ -11433,19 +11418,23 @@ a.hex-anchor-nav-link.is-active::after{
 .hex-card-stack > .hex-card-stack-slide{
   position:relative;
 }
-/* grid1だけは1枚目の位置へ重ねる。grid2-6の通常配置には適用しない。 */
-.hex-card-grid1.hex-card-stack > .hex-card-stack-slide{display:contents;}
-.hex-card-grid1.hex-card-stack.is-section-scene{
+/* grid1とSPのお客様向け横移動だけ、1枚目の位置へ重ねる。 */
+:is(.hex-card-grid1,.hex-card-audience-stack).hex-card-stack > .hex-card-stack-slide{display:contents;}
+:is(.hex-card-grid1,.hex-card-audience-stack).hex-card-stack.is-section-scene{
   display:block!important;
-  width:100%;max-width:var(--hex-card-stack-width,var(--hex_small_width,1000px));
-  margin-inline:auto;height:var(--hex-card-stack-height);
+  height:var(--hex-card-stack-height);
 }
-.hex-card-grid1.hex-card-stack.is-section-scene > .hex-card-stack-slide{
+.hex-card-grid1.hex-card-stack.is-section-scene{
+  width:100%;max-width:var(--hex-card-stack-width,var(--hex_small_width,1000px));
+  margin-inline:auto;
+}
+:is(.hex-card-grid1,.hex-card-audience-stack).hex-card-stack.is-section-scene > .hex-card-stack-slide{
   display:flex;align-items:flex-end;
   position:absolute;top:0;left:0;width:100%;
   min-height:var(--hex-card-stack-height,0px);
   background:var(--hex-card-stack-surface,var(--hex-card-stack-auto-surface,#fafafa));
 }
+.hex-card-audience-stack > .hex-card-stack-slide > .hex-audience-item{width:100%;}
 
 /* カードが重なる間は、所属セクションの見出し・背景も同じ位置に留める。 */
 .hex-card-stack-runway{position:relative;display:flow-root;overflow:visible!important;isolation:isolate;}
@@ -11477,8 +11466,8 @@ a.hex-anchor-nav-link.is-active::after{
   .hex-card-stack.is-section-scene > .hex-card-stack-slide{
     transform:none!important;
   }
-  .hex-card-grid1.hex-card-stack.is-section-scene{display:grid!important;height:auto;}
-  .hex-card-grid1.hex-card-stack.is-section-scene > .hex-card-stack-slide{
+  :is(.hex-card-grid1,.hex-card-audience-stack).hex-card-stack.is-section-scene{display:grid!important;height:auto;}
+  :is(.hex-card-grid1,.hex-card-audience-stack).hex-card-stack.is-section-scene > .hex-card-stack-slide{
     display:contents;position:static;min-height:0;
   }
 }

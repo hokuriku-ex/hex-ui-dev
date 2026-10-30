@@ -6618,7 +6618,7 @@ hexReady(function(){
     }):null;
 
   function syncCardSlide(state){
-    if((slideReduced.matches||state.paused)&&state.index!==0){
+    if(slideReduced.matches&&state.index!==0){
       state.images[state.index].classList.remove('is-active');
       state.images[state.index].setAttribute('aria-hidden','true');
       state.images[0].classList.add('is-active');
@@ -6626,7 +6626,7 @@ hexReady(function(){
       state.index=0;
     }
     var playing=state.box.isConnected&&state.visible&&
-      !document.hidden&&!slideReduced.matches&&!state.paused;
+      !document.hidden&&!slideReduced.matches;
     if(!playing){
       window.clearInterval(state.timer);
       state.timer=0;
@@ -6639,7 +6639,7 @@ hexReady(function(){
 
   function advanceCardSlide(state){
     if(!state.box.isConnected){syncCardSlide(state);return;}
-    if(state.paused||slideReduced.matches||document.hidden||!state.visible)return;
+    if(slideReduced.matches||document.hidden||!state.visible)return;
     var next=(state.index+1)%state.images.length;
     /* 読み込みエラー画像を避け、未読込なら現在の画像を保つ。 */
     while(next!==state.index&&state.images[next].dataset.hexSlideFailed==='1'){
@@ -6654,7 +6654,7 @@ hexReady(function(){
     state.index=next;
   }
 
-  function setupCardSlide(box,interval,audience){
+  function setupCardSlide(box,interval){
     var images=Array.from(box.querySelectorAll('img'));
     if(images.length<2){return;}
     box.classList.add('has-slideshow');
@@ -6665,17 +6665,7 @@ hexReady(function(){
       image.addEventListener('error',function(){image.dataset.hexSlideFailed='1';});
     });
     var state={box:box,images:images,index:0,interval:interval,
-      visible:!slideObserver,timer:0,paused:!!audience&&window.matchMedia(
-        '(min-width:769px) and (hover:hover) and (pointer:fine)').matches};
-    if(audience){
-      box.addEventListener('hex:card-slide-control',function(event){
-        var wasPaused=state.paused;
-        state.paused=!!event.detail.paused;
-        // Start with the next loaded picture as the PC heading disappears.
-        if(wasPaused&&!state.paused)advanceCardSlide(state);
-        syncCardSlide(state);
-      });
-    }
+      visible:!slideObserver,timer:0};
     cardSlides.push(state);
     if(slideObserver){slideObserver.observe(box);}
     return state;
@@ -6779,7 +6769,7 @@ hexReady(function(){
             imageBox.appendChild(image);
           });
           card.appendChild(imageBox);
-          setupCardSlide(imageBox,cardData.slideInterval,grid.classList.contains('hex-audience-grid'));
+          setupCardSlide(imageBox,cardData.slideInterval);
         }
         if(cardData.title){
           if(cardData.url){
@@ -6847,6 +6837,7 @@ hexReady(function(){
         grid.appendChild(card);
       });
       gridStartBlock.parentNode.insertBefore(grid,gridStartBlock);
+      setupAudienceGrid(grid);
       var sliderModes={pc:gridStart.dataset.sliderPc,sp:gridStart.dataset.sliderSp};
       var removeBlock=gridStartBlock;
       while(removeBlock){
@@ -6865,7 +6856,7 @@ hexReady(function(){
 /* PC/SPの指定を切り替える。カード本体は作り直さず、各演出の枠だけ解除する。 */
 function setupResponsiveCardSlider(grid,modes){
   var mobile=window.matchMedia('(max-width:768px)');
-  var active=null,cleanup=null;
+  var active=null,activeAudienceStack=false,cleanup=null;
   ['pc','sp'].forEach(function(device){
     var value=modes[device];
     modes[device]=['normal','vertical','horizontal'].indexOf(value)!==-1?value:'';
@@ -6873,9 +6864,10 @@ function setupResponsiveCardSlider(grid,modes){
   });
   function sync(){
     var mode=modes[mobile.matches?'sp':'pc'];
-    if(mode===active)return;
+    var audienceStack=mobile.matches&&mode==='horizontal'&&grid.classList.contains('hex-audience-grid');
+    if(mode===active&&audienceStack===activeAudienceStack)return;
     if(cleanup)cleanup();
-    cleanup=null;active=mode;
+    cleanup=null;active=mode;activeAudienceStack=audienceStack;
     if(mode==='normal')cleanup=setupCardCarousel(grid);
     else if(mode)cleanup=setupCardStack(grid,mode);
     document.dispatchEvent(new Event('hex:card-slider-mode-changed'));
@@ -6897,8 +6889,10 @@ function setupCardStack(grid,mode){
   grid.dataset.slider=mode;
   var fromRight=mode==='horizontal';
   grid.classList.add('hex-card-stack','hex-motion-auto-off');
-  var stacking=grid.classList.contains('hex-card-grid1');
-  // Only grid1 uses a shared stack frame. Other layouts keep direct grid children.
+  var audienceStack=fromRight&&window.innerWidth<=768&&grid.classList.contains('hex-audience-grid');
+  var stacking=grid.classList.contains('hex-card-grid1')||audienceStack;
+  grid.classList.toggle('hex-card-audience-stack',audienceStack);
+  // SP audience horizontal shares one frame, keeping the grid's original width.
   var slides=cards.map(function(card,index){
     if(!stacking){card.classList.add('hex-card-stack-slide');return card;}
     var slide=document.createElement('div');
@@ -7144,7 +7138,7 @@ function setupCardStack(grid,mode){
       if(stacking){grid.insertBefore(card,slides[index]);slides[index].remove();}
       else card.classList.remove('hex-card-stack-slide');
     });
-    grid.classList.remove('hex-card-stack','is-section-scene');
+    grid.classList.remove('hex-card-stack','is-section-scene','hex-card-audience-stack');
     grid.classList.toggle('hex-motion-auto-off',originalMotionOff);
     if(originalStyle===null)grid.removeAttribute('style');else grid.setAttribute('style',originalStyle);
     delete grid.dataset.slider;
@@ -7454,8 +7448,8 @@ function setupCardCarousel(grid){
 }
 
 /* 専用カード2列：カード内タイトルの見出しを画像へ重ねる。 */
-hexReady(function(){
-  document.querySelectorAll('.hex-card-grid.hex-audience-grid').forEach(function(grid){
+function setupAudienceGrid(grid){
+    if(!grid.classList.contains('hex-audience-grid'))return;
     if(grid.dataset.hexAudienceReady==='1'){return;}
     var cards=Array.prototype.filter.call(grid.children,function(child){
       return child.classList.contains('hex-card');
@@ -7465,10 +7459,6 @@ hexReady(function(){
       return card.querySelector('.hex-card-title h2.hex-top-title');
     });
     if(!titles[0]||!titles[1]||cards.some(function(card){return !card.querySelector('.hex-card-image');})){return;}
-    var hoverLayout=window.matchMedia(
-      '(min-width:769px) and (hover:hover) and (pointer:fine)'
-    );
-    var syncCards=[];
     cards.forEach(function(card,index){
       var item=document.createElement('div');
       item.className='hex-audience-item';
@@ -7477,34 +7467,9 @@ hexReady(function(){
       item.appendChild(card);
       var image=card.querySelector('.hex-card-image');
       image.appendChild(titles[index]);
-      var hovered=card.matches(':hover'),focused=card.matches(':focus-within');
-      function sync(){
-        var playing=hoverLayout.matches&&(hovered||focused);
-        item.classList.toggle('has-audience-hover',hoverLayout.matches);
-        item.classList.toggle('is-audience-playing',playing);
-        image.dispatchEvent(new CustomEvent('hex:card-slide-control',{
-          detail:{paused:hoverLayout.matches&&!playing}
-        }));
-      }
-      card.addEventListener('mouseenter',function(){hovered=true;sync();});
-      card.addEventListener('mouseleave',function(){hovered=false;sync();});
-      card.addEventListener('focusin',function(){focused=true;sync();});
-      card.addEventListener('focusout',function(event){focused=card.contains(event.relatedTarget);sync();});
-      syncCards.push(sync);
     });
-    function syncAudienceHoverLayout(){
-      syncCards.forEach(function(sync){sync();});
-      if(window.innerWidth>768&&window.ScrollTrigger){window.ScrollTrigger.refresh();}
-    }
-    syncAudienceHoverLayout();
-    if(hoverLayout.addEventListener){
-      hoverLayout.addEventListener('change',syncAudienceHoverLayout);
-    }else if(hoverLayout.addListener){
-      hoverLayout.addListener(syncAudienceHoverLayout);
-    }
     grid.dataset.hexAudienceReady='1';
-  });
-});
+}
 
 /* =======================================
    Q&A記事アイコンをファイル記事から取得
