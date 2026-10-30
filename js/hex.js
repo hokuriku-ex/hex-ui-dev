@@ -6783,10 +6783,6 @@ hexReady(function(){
       if(cards.length===0)return;
       var grid=document.createElement('div');
       grid.className='hex-card-grid hex-card-grid'+col;
-      var serviceSection=document.getElementById(HOME_SECTIONS.SERVICE);
-      if(serviceSection&&serviceSection.contains(gridStart)){
-        grid.classList.add('hex-service-grid');
-      }
       Array.from(gridStart.classList).forEach(function(className){
         if(className!=='hex-card-grid'+col+'-start'){
           grid.classList.add(className);
