@@ -8543,9 +8543,6 @@ hexReady(function(){
   /* 常に表示true　本番公開時false */
   var FORCE_PLAY=false;
 
-  /* 滑らかさの切り分け用。trueに戻すと右側ドットナビを復元。 */
-  var OPENING_PROGRESS_NAV_ENABLED=false;
-
   /* SKIP時に開幕画面が消える時間 */
   var SKIP_FADE_DURATION=500;
   /* ドット1〜7の表示時間（ms）。0はその場面の自動進行・終了を停止。 */
@@ -9608,7 +9605,6 @@ hexReady(function(){
   }
 
   function createOpeningProgressNav(opening,sceneCount,heroDotIndex){
-    if(!OPENING_PROGRESS_NAV_ENABLED){return null;}
     var nav=document.createElement("nav");
 
     nav.className="hex-opening-progress-nav";
@@ -10734,7 +10730,7 @@ hexReady(function(){
 
       /* 画像5場面＋日本語キャッチ＋ヒーローの計7ドット。 */
       nav=sharedNav||createOpeningProgressNav(opening,scenes.length+1,scenes.length);
-      if(nav)Array.prototype.forEach.call(
+      Array.prototype.forEach.call(
         nav.querySelectorAll(".hex-progress-dot"),
         function(dot,dotIndex){
           if(dotIndex===scenes.length){
@@ -10749,7 +10745,7 @@ hexReady(function(){
       opening.querySelectorAll(".hex-opening-scroll-cue").forEach(function(item){item.remove();});
       cue=createOpeningScrollCue(opening);
 
-      if(nav)nav.onclick=function(event){
+      nav.onclick=function(event){
         var button=event.target.closest(".hex-progress-dot");
         if(!button){return;}
         var target=Number(button.getAttribute("data-scene-index"));
