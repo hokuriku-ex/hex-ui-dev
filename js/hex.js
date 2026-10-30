@@ -15747,7 +15747,16 @@ hexReady(function(){
   document.body.appendChild(cursor);
 
   var targetX=0,targetY=0,currentX=0,currentY=0;
-  var visible=false,dragHeld=false,frame=0,lastCheck=0;
+  var visible=false,dragHeld=false,frame=0,lastFrameTime=0,needsHitTest=false;
+
+  function queueCursor(){
+    if(visible&&!frame)frame=window.requestAnimationFrame(animate);
+  }
+  function queueHitTest(){
+    if(!visible)return;
+    needsHitTest=true;
+    queueCursor();
+  }
 
   function setMode(mode){
     if(cursor.dataset.mode===mode){return;}
@@ -15814,24 +15823,35 @@ hexReady(function(){
   }
 
   function animate(now){
-    if(!visible){frame=0;return;}
+    frame=0;
+    if(!visible)return;
+    /* 判定はマウスイベントごとではなく1フレームに一度、描画の前に行う。 */
+    if(needsHitTest){needsHitTest=false;classify();}
+    if(!visible)return;
+    var elapsed=lastFrameTime?Math.min(64,Math.max(0,now-lastFrameTime)):1000/60;
+    lastFrameTime=now;
     var dx=targetX-currentX,dy=targetY-currentY;
-    currentX+=dx*.2;
-    currentY+=dy*.2;
+    var distance=Math.hypot(dx,dy);
+    var settled=distance<.1;
+    /* 35msの時定数で追従。30/60/120Hzでも同じ時間でマウス位置へ近づける。 */
+    var follow=1-Math.exp(-elapsed/35);
+    currentX=settled?targetX:currentX+dx*follow;
+    currentY=settled?targetY:currentY+dy*follow;
     cursor.style.transform='translate3d('+currentX+'px,'+currentY+
       'px,0) translate(calc(-50% - var(--hex-follow-offset)),calc(-50% - var(--hex-follow-offset-y)))';
-    var stretch=1+Math.min(Math.hypot(dx,dy)*.0018,.17);
-    var angle=Math.atan2(dy,dx)*180/Math.PI;
+    var stretch=settled?1:1+Math.min(distance*.0018,.17);
+    var angle=settled?0:Math.atan2(dy,dx)*180/Math.PI;
     disc.style.transform='rotate('+angle+'deg) scale('+stretch+','+
       (1/stretch)+')';
-    if(now-lastCheck>=80){classify();lastCheck=now;}
-    if(!visible){frame=0;return;}
-    frame=window.requestAnimationFrame(animate);
+    if(!settled)queueCursor();
+    else lastFrameTime=0;
   }
 
   function hide(){
     visible=false;
     dragHeld=false;
+    lastFrameTime=0;
+    needsHitTest=false;
     cursor.classList.remove('is-visible');
     if(frame){window.cancelAnimationFrame(frame);frame=0;}
   }
@@ -15845,26 +15865,26 @@ hexReady(function(){
       currentX=targetX;
       currentY=targetY;
       cursor.classList.add('is-visible');
-      frame=window.requestAnimationFrame(animate);
     }
-    classify();
+    queueHitTest();
   },{passive:true});
   document.addEventListener('pointerdown',function(event){
     if(event.pointerType!=='mouse'){return;}
     dragHeld=!!event.target.closest('.hex-webgl-stage');
-    if(visible){classify();}
+    queueHitTest();
   },{passive:true});
   document.addEventListener('pointerup',function(){
     dragHeld=false;
-    if(visible){classify();}
+    queueHitTest();
   },{passive:true});
   document.addEventListener('pointercancel',function(){
     dragHeld=false;
-    if(visible){classify();}
+    queueHitTest();
   },{passive:true});
   document.addEventListener('pointerleave',hide,{passive:true});
   document.addEventListener('pointerover',function(event){
     if(event.target.tagName==='IFRAME'){hide();}
+    else queueHitTest();
   },{passive:true});
   document.addEventListener('pointerout',function(event){
     if(event.relatedTarget&&event.relatedTarget.tagName==='IFRAME'){
@@ -15875,6 +15895,8 @@ hexReady(function(){
     if(document.hidden){hide();}
   });
   window.addEventListener('blur',hide);
+  window.addEventListener('scroll',queueHitTest,{passive:true});
+  window.addEventListener('hex:viewport-resize',queueHitTest,{passive:true});
   enabled.addEventListener('change',function(){
     if(!enabled.matches){hide();}
   });
