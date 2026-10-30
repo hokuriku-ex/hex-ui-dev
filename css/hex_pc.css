@@ -11437,6 +11437,19 @@ a.hex-anchor-nav-link.is-active::after{
 .hex-card-stack > .hex-card-stack-slide{
   position:relative;
 }
+/* grid1だけは1枚目の位置へ重ねる。grid2-6の通常配置には適用しない。 */
+.hex-card-grid1.hex-card-stack > .hex-card-stack-slide{display:contents;}
+.hex-card-grid1.hex-card-stack.is-section-scene{
+  display:block!important;
+  width:100%;max-width:var(--hex-card-stack-width,var(--hex_small_width,1000px));
+  margin-inline:auto;height:var(--hex-card-stack-height);
+}
+.hex-card-grid1.hex-card-stack.is-section-scene > .hex-card-stack-slide{
+  display:flex;align-items:flex-end;
+  position:absolute;top:0;left:0;width:100%;
+  min-height:var(--hex-card-stack-height,0px);
+  background:var(--hex-card-stack-surface,var(--hex-card-stack-auto-surface,#fafafa));
+}
 
 /* カードが重なる間は、所属セクションの見出し・背景も同じ位置に留める。 */
 .hex-card-stack-runway{position:relative;display:flow-root;overflow:visible!important;isolation:isolate;}
@@ -11448,6 +11461,10 @@ a.hex-anchor-nav-link.is-active::after{
   .hex-card-stack-scene{position:relative;top:auto!important;}
   .hex-card-stack.is-section-scene > .hex-card-stack-slide{
     transform:none!important;
+  }
+  .hex-card-grid1.hex-card-stack.is-section-scene{display:grid!important;height:auto;}
+  .hex-card-grid1.hex-card-stack.is-section-scene > .hex-card-stack-slide{
+    display:contents;position:static;min-height:0;
   }
 }
 
