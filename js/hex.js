@@ -3105,6 +3105,30 @@ hexReady(function(){
       welcomeWrap.closest("#gc_auto_frame_home_3")||
       welcomeWrap.parentElement
     );
+    /* 固定演出用の高さを持つラッパーの後ろに置き、SPだけ末尾の余白を追加する。 */
+    if(welcomeWrap){
+      var welcomeSpacer=null;
+      var welcomeSpacerMedia=window.matchMedia("(max-width:768px)");
+      function syncWelcomeSpacer(){
+        if(welcomeSpacerMedia.matches){
+          if(welcomeSpacer)return;
+          welcomeSpacer=document.createElement("div");
+          welcomeSpacer.className="hex-overlap-spacer hex-home-overlap-spacer";
+          welcomeSpacer.setAttribute("aria-hidden","true");
+          welcomeSpacer.textContent="スペーサー";
+          welcomeWrap.insertAdjacentElement("afterend",welcomeSpacer);
+        }else if(welcomeSpacer){
+          welcomeSpacer.remove();
+          welcomeSpacer=null;
+        }
+      }
+      syncWelcomeSpacer();
+      if(welcomeSpacerMedia.addEventListener){
+        welcomeSpacerMedia.addEventListener("change",syncWelcomeSpacer);
+      }else{
+        welcomeSpacerMedia.addListener(syncWelcomeSpacer);
+      }
+    }
     var welcomeStage=null;
     var welcomeStageTop=null;
     var welcomeStageScreenTop=null;
