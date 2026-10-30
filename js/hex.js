@@ -6618,7 +6618,7 @@ hexReady(function(){
     }):null;
 
   function syncCardSlide(state){
-    if(slideReduced.matches&&state.index!==0){
+    if((slideReduced.matches||state.paused)&&state.index!==0){
       state.images[state.index].classList.remove('is-active');
       state.images[state.index].setAttribute('aria-hidden','true');
       state.images[0].classList.add('is-active');
@@ -6626,7 +6626,7 @@ hexReady(function(){
       state.index=0;
     }
     var playing=state.box.isConnected&&state.visible&&
-      !document.hidden&&!slideReduced.matches;
+      !document.hidden&&!slideReduced.matches&&!state.paused;
     if(!playing){
       window.clearInterval(state.timer);
       state.timer=0;
@@ -6634,8 +6634,12 @@ hexReady(function(){
       return;
     }
     if(state.timer){return;}
-    state.timer=window.setInterval(function(){
+    state.timer=window.setInterval(function(){advanceCardSlide(state);},state.interval);
+  }
+
+  function advanceCardSlide(state){
       if(!state.box.isConnected){syncCardSlide(state);return;}
+      if(state.paused||slideReduced.matches||document.hidden||!state.visible)return;
       var next=(state.index+1)%state.images.length;
       /* 読み込みエラー画像を避け、未読込なら現在の画像を保つ。 */
       while(next!==state.index&&state.images[next].dataset.hexSlideFailed==='1'){
@@ -6648,10 +6652,9 @@ hexReady(function(){
       image.classList.add('is-active');
       image.removeAttribute('aria-hidden');
       state.index=next;
-    },state.interval);
   }
 
-  function setupCardSlide(box,interval){
+  function setupCardSlide(box,interval,audience){
     var images=Array.from(box.querySelectorAll('img'));
     if(images.length<2){return;}
     box.classList.add('has-slideshow');
@@ -6662,7 +6665,17 @@ hexReady(function(){
       image.addEventListener('error',function(){image.dataset.hexSlideFailed='1';});
     });
     var state={box:box,images:images,index:0,interval:interval,
-      visible:!slideObserver,timer:0};
+      visible:!slideObserver,timer:0,paused:!!audience&&window.matchMedia(
+        '(min-width:769px) and (hover:hover) and (pointer:fine)').matches};
+    if(audience){
+      box.addEventListener('hex:card-slide-control',function(event){
+        var wasPaused=state.paused;
+        state.paused=!!event.detail.paused;
+        // Start with the next loaded picture as the PC heading disappears.
+        if(wasPaused&&!state.paused)advanceCardSlide(state);
+        syncCardSlide(state);
+      });
+    }
     cardSlides.push(state);
     if(slideObserver){slideObserver.observe(box);}
     return state;
@@ -6766,7 +6779,7 @@ hexReady(function(){
             imageBox.appendChild(image);
           });
           card.appendChild(imageBox);
-          setupCardSlide(imageBox,cardData.slideInterval);
+          setupCardSlide(imageBox,cardData.slideInterval,grid.classList.contains('hex-audience-grid'));
         }
         if(cardData.title){
           if(cardData.url){
@@ -7440,7 +7453,7 @@ function setupCardCarousel(grid){
   };
 }
 
-/* 専用カード2列：直前の見出しを対応するカードの上へ移す。 */
+/* 専用カード2列：カード内タイトルの見出しを画像へ重ねる。 */
 hexReady(function(){
   document.querySelectorAll('.hex-card-grid.hex-audience-grid').forEach(function(grid){
     if(grid.dataset.hexAudienceReady==='1'){return;}
@@ -7448,43 +7461,39 @@ hexReady(function(){
       return child.classList.contains('hex-card');
     });
     if(cards.length!==2){return;}
-    var container=grid.closest('.gc_auto_frame_spotitem_body')||grid.parentNode;
-    var labels=['Homeowners','Businesses'];
-    var titles=labels.map(function(label){
-      var candidates=Array.prototype.filter.call(
-        container.querySelectorAll('h2.hex-top-title[data-en="'+label+'"]'),
-        function(title){
-          return !title.closest('.hex-audience-item')&&
-            !!(title.compareDocumentPosition(grid)&Node.DOCUMENT_POSITION_FOLLOWING);
-        }
-      );
-      return candidates[candidates.length-1]||null;
+    var titles=cards.map(function(card){
+      return card.querySelector('.hex-card-title h2.hex-top-title');
     });
-    if(!titles[0]||!titles[1]){return;}
+    if(!titles[0]||!titles[1]||cards.some(function(card){return !card.querySelector('.hex-card-image');})){return;}
+    var hoverLayout=window.matchMedia(
+      '(min-width:769px) and (hover:hover) and (pointer:fine)'
+    );
+    var syncCards=[];
     cards.forEach(function(card,index){
       var item=document.createElement('div');
       item.className='hex-audience-item';
       grid.insertBefore(item,card);
       titles[index].classList.add('hex-audience-card-title','hex-motion-auto-off');
-      item.appendChild(titles[index]);
       item.appendChild(card);
+      var image=card.querySelector('.hex-card-image');
+      image.appendChild(titles[index]);
+      var hovered=card.matches(':hover'),focused=card.matches(':focus-within');
+      function sync(){
+        var playing=hoverLayout.matches&&(hovered||focused);
+        item.classList.toggle('has-audience-hover',hoverLayout.matches);
+        item.classList.toggle('is-audience-playing',playing);
+        image.dispatchEvent(new CustomEvent('hex:card-slide-control',{
+          detail:{paused:hoverLayout.matches&&!playing}
+        }));
+      }
+      card.addEventListener('mouseenter',function(){hovered=true;sync();});
+      card.addEventListener('mouseleave',function(){hovered=false;sync();});
+      card.addEventListener('focusin',function(){focused=true;sync();});
+      card.addEventListener('focusout',function(event){focused=card.contains(event.relatedTarget);sync();});
+      syncCards.push(sync);
     });
-    /* 幅だけでPCと判定せず、ホバーできる入力環境だけ画像内へ移動する。 */
-    var hoverLayout=window.matchMedia(
-      '(min-width:769px) and (hover:hover) and (pointer:fine)'
-    );
     function syncAudienceHoverLayout(){
-      cards.forEach(function(card,index){
-        var item=card.parentNode;
-        var image=card.querySelector('.hex-card-image');
-        if(hoverLayout.matches&&image){
-          image.appendChild(titles[index]);
-          item.classList.add('has-audience-hover');
-        }else{
-          item.insertBefore(titles[index],card);
-          item.classList.remove('has-audience-hover');
-        }
-      });
+      syncCards.forEach(function(sync){sync();});
       if(window.innerWidth>768&&window.ScrollTrigger){window.ScrollTrigger.refresh();}
     }
     syncAudienceHoverLayout();

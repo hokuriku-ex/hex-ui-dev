@@ -9803,7 +9803,7 @@ body > .hex-v2-handoff{z-index:198;}
   object-fit:cover;
 }
 
-/* 専用カード：PCはタイトル付き2列、SPはタイトルとカードを交互に表示 */
+/* 専用カード：PCは2列、SPは1列。カード内の見出しを写真に重ねる。 */
 .hex-card-grid.hex-audience-grid{
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
   align-items:stretch;
@@ -9831,13 +9831,11 @@ body > .hex-v2-handoff{z-index:198;}
   }
 }
 
-/* マウス操作のPCのみ：画像枠の中央見出しと写真をホバーで切り替える */
-@media screen and (min-width:769px) and (hover:hover) and (pointer:fine){
-  .hex-audience-item.has-audience-hover .hex-card-image{
+.hex-audience-item .hex-card-image{
     position:relative;
     container-type:inline-size;
-  }
-  .hex-audience-item.has-audience-hover .hex-card-image > h2.hex-top-title{
+}
+.hex-audience-item .hex-card-image > h2.hex-top-title{
     position:absolute;
     top:50%;
     left:0;
@@ -9852,20 +9850,14 @@ body > .hex-v2-handoff{z-index:198;}
     visibility:visible;
     pointer-events:none;
     transition:opacity .3s ease,visibility .3s ease;
-  }
-  .hex-audience-item.has-audience-hover .hex-top-title-en,
-  .hex-audience-item.has-audience-hover .hex-top-title[data-en]::after{
+}
+.hex-audience-item .hex-top-title-en,
+.hex-audience-item .hex-top-title[data-en]::after{
     font-size:clamp(32px,12cqi,80px)!important;
-  }
-  .hex-audience-item.has-audience-hover .hex-card-image > img{
-    opacity:0;
-    transition:opacity .3s ease;
-  }
-  .hex-audience-item.has-audience-hover .hex-card:is(:hover,:focus-within)
-  .hex-card-image > img{
-    opacity:1;
-  }
-  .hex-audience-item.has-audience-hover .hex-card:is(:hover,:focus-within)
+}
+/* マウス操作のPCのみ、再生中は見出しを隠す。写真自体は常に表示する。 */
+@media screen and (min-width:769px) and (hover:hover) and (pointer:fine){
+  .hex-audience-item.is-audience-playing
   .hex-card-image > h2.hex-top-title{
     opacity:0;
     visibility:hidden;
@@ -9883,18 +9875,22 @@ h2.hex-top-title.hex-audience-guide-title{
   display:flex!important;
 }
 
-/* カード用見出しは全端末共通：英語はゴールド、日本語は紺 */
+/* カード用見出しは全端末共通で白。 */
 .hex-audience-grid h2.hex-audience-card-title,
 .hex-audience-grid h2.hex-audience-card-title .hex-top-title-sub{
-  color:#265ab0!important;
+  color:#fff!important;
 }
 .hex-audience-grid h2.hex-audience-card-title[data-en]::after,
 .hex-audience-grid h2.hex-audience-card-title .hex-top-title-en{
-  color:#f7d04f!important;
+  color:#fff!important;
 }
 
 /* SPのカード用英語見出し */
 @media screen and (max-width:768px){
+  .hex-audience-item .hex-card-image > h2.hex-top-title{
+    top:clamp(16px,5vw,32px);
+    transform:none;
+  }
   .hex-audience-grid h2.hex-audience-card-title[data-en]::after,
   .hex-audience-grid h2.hex-audience-card-title .hex-top-title-en{
     font-size:40px!important;
