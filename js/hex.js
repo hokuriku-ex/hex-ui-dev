@@ -6878,7 +6878,7 @@ function setupCardStack(grid,mode){
     }
   }
   var section=grid.closest('.gc_auto_frame_background[id^="gc_auto_frame_"],.gc_auto_frame_footer')||grid.closest('section,.hex-bg-range');
-  var runway=null,scene=null,travel=0,arrivals=[],pinTop=0,scrollFrame=0,gapHeight=0;
+  var runway=null,scene=null,travel=0,arrivals=[],pinTop=0,scrollFrame=0;
   var continuationPairs=[],tail=null;
   var reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
   // One scene owns the section; any additional group keeps its normal grid.
@@ -6924,11 +6924,7 @@ function setupCardStack(grid,mode){
   function renderStack(){
     scrollFrame=0;
     if(destroyed||!scene)return;
-    var rawProgress=pinTop-runway.getBoundingClientRect().top;
-    var progress=Math.max(0,Math.min(travel,rawProgress));
-    // Cover the space below short cards only while the SP horizontal scene is pinned.
-    scene.classList.toggle('is-gap-filled',fromRight&&window.innerWidth<=768&&
-      !reduced.matches&&gapHeight>0&&rawProgress>=0&&rawProgress<travel);
+    var progress=Math.max(0,Math.min(travel,pinTop-runway.getBoundingClientRect().top));
     slides.forEach(function(slide,index){
       var motion=arrivals[index];
       var offset=motion?Math.max(0,motion.distance-Math.max(0,progress-motion.start)):0;
@@ -6988,15 +6984,10 @@ function setupCardStack(grid,mode){
       var cardOffset=grid.getBoundingClientRect().top-scene.getBoundingClientRect().top;
       pinTop=gridTop-cardOffset;
       scene.style.top=pinTop+'px';
-      var gapTop=cardOffset+grid.offsetHeight;
-      gapHeight=fromRight&&window.innerWidth<=768
-        ?Math.max(0,viewportHeight-(pinTop+gapTop)):0;
-      scene.style.setProperty('--hex-card-stack-gap-top',gapTop+'px');
-      scene.style.setProperty('--hex-card-stack-gap-height',gapHeight+'px');
       runway.style.height=(scene.offsetHeight+(reduced.matches?0:travel))+'px';
       renderStack();
     }
-    if(stacking||fromRight){
+    if(stacking){
       var surface='';
       for(var owner=grid;owner&&owner!==document.documentElement;owner=owner.parentElement){
         var style=getComputedStyle(owner),color=style.backgroundColor;
@@ -7005,7 +6996,6 @@ function setupCardStack(grid,mode){
         if(rangeColor){surface=rangeColor;break;}
       }
       grid.style.setProperty('--hex-card-stack-auto-surface',surface||'#fafafa');
-      if(scene)scene.style.setProperty('--hex-card-stack-gap-surface',surface||'#fafafa');
     }
   }
   function queue(){if(!destroyed&&!frame)frame=requestAnimationFrame(layout);}

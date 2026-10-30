@@ -11457,13 +11457,15 @@ a.hex-anchor-nav-link.is-active::after{
 /* 右側で待機するカードがページの横スクロールを作らないようにする。 */
 .hex-card-stack-scene.hex-card-stack-horizontal{overflow-x:clip;overflow-y:visible;}
 @media(max-width:768px){
-  .hex-card-stack-scene.hex-card-stack-horizontal.is-gap-filled::after{
-    content:"";position:absolute;
-    top:var(--hex-card-stack-gap-top);left:0;width:100%;
-    height:var(--hex-card-stack-gap-height);
-    background:var(--hex-card-stack-gap-surface,#fafafa);
-    pointer-events:none;
+  /* 前の固定セクション（z-index:95）にカード下端を覆わせない。 */
+  .hex-card-stack-section:has(.hex-card-stack-horizontal){
+    position:relative;z-index:95!important;isolation:isolate;
   }
+  /* 横方向の切り抜きは、sticky面ではなくスクロール距離を持つ外枠で行う。 */
+  .hex-card-stack-runway:has(> .hex-card-stack-horizontal){
+    overflow-x:clip!important;overflow-y:visible!important;
+  }
+  .hex-card-stack-scene.hex-card-stack-horizontal{overflow:visible;}
 }
 /* 後続カードは固定枠の外、画面下端から入るため切り抜かない。 */
 .hex-card-stack.is-section-scene{overflow:visible!important;}
