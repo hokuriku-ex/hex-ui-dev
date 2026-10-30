@@ -6903,17 +6903,32 @@ function setupCardStack(grid){
   function layout(){
     frame=0;
     if(!grid.isConnected)return;
-    var maxHeight=0;
-    cards.forEach(function(card){maxHeight=Math.max(maxHeight,card.getBoundingClientRect().height);});
-    // Align card bottoms with the viewport, including cards of different heights.
+    var maxHeight=0,firstHeight=0;
+    cards.forEach(function(card,index){
+      var cardHeight=card.getBoundingClientRect().height;
+      if(index===0)firstHeight=cardHeight;
+      maxHeight=Math.max(maxHeight,cardHeight);
+    });
     var height=Math.ceil(maxHeight);
     var viewportHeight=window.hexViewportHeight?window.hexViewportHeight():window.innerHeight;
+    // Resolve clamp()/calc() header heights through layout, including SP overrides.
+    var headerProbe=document.createElement('div');
+    headerProbe.style.cssText='position:fixed;top:0;left:0;width:0;padding:0;border:0;visibility:hidden;pointer-events:none;';
+    headerProbe.style.height=window.innerWidth<=768
+      ?'var(--header_height_smartphone,80px)':'var(--header_height,80px)';
+    document.body.appendChild(headerProbe);
+    var headerHeight=headerProbe.getBoundingClientRect().height||80;
+    headerProbe.remove();
+    // Center the first card below the header; tall cards stop at the header edge.
+    var firstTop=Math.max(headerHeight,(viewportHeight+headerHeight-firstHeight)/2);
+    // Slides share the tallest card's frame and keep their existing bottom alignment.
+    var gridTop=firstTop-(height-firstHeight);
     grid.style.setProperty('--hex-card-stack-height',height+'px');
-    grid.style.setProperty('--hex-card-stack-top',(viewportHeight-height)+'px');
+    grid.style.setProperty('--hex-card-stack-top',gridTop+'px');
     if(scene){
       step=height+24;travel=Math.max(0,cards.length-1)*step;
-      var cardBottom=grid.getBoundingClientRect().top-scene.getBoundingClientRect().top+height;
-      pinTop=viewportHeight-cardBottom;
+      var cardOffset=grid.getBoundingClientRect().top-scene.getBoundingClientRect().top;
+      pinTop=gridTop-cardOffset;
       scene.style.top=pinTop+'px';
       runway.style.height=(scene.offsetHeight+(reduced.matches?0:travel))+'px';
       renderStack();
