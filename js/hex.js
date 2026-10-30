@@ -15531,7 +15531,7 @@ hexLoad(function(){
               :0;
             var state={value:0};
             numberStates.push(state);
-            // 1枚目の開始は維持し、後続カードの表示間隔だけ従来の2/3へ短縮する。
+            // 1枚目の開始は維持し、後続カードは200ms間隔で表示する。
             cardTimers.push(window.setTimeout(function(){
               card.classList.add('is-card-visible');
               gsap.to(card,{
@@ -15557,7 +15557,7 @@ hexLoad(function(){
                   }
                 });
               }
-            },index*(400*2/3)));
+            },index*200));
           });
         }
       });
