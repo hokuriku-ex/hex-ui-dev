@@ -15833,8 +15833,8 @@ hexReady(function(){
     var dx=targetX-currentX,dy=targetY-currentY;
     var distance=Math.hypot(dx,dy);
     var settled=distance<.1;
-    /* 35msの時定数で追従。30/60/120Hzでも同じ時間でマウス位置へ近づける。 */
-    var follow=1-Math.exp(-elapsed/35);
+    /* 50msの時定数で少し遅れて追従。描画頻度によらず同じ追従感を保つ。 */
+    var follow=1-Math.exp(-elapsed/50);
     currentX=settled?targetX:currentX+dx*follow;
     currentY=settled?targetY:currentY+dy*follow;
     cursor.style.transform='translate3d('+currentX+'px,'+currentY+
