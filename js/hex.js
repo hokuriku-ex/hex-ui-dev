@@ -6880,6 +6880,7 @@ function setupCardStack(grid,mode){
   var section=grid.closest('.gc_auto_frame_background[id^="gc_auto_frame_"],.gc_auto_frame_footer')||grid.closest('section,.hex-bg-range');
   var runway=null,scene=null,travel=0,arrivals=[],pinTop=0,scrollFrame=0;
   var layoutWidth=0,deferredLayout=false;
+  var screenPinned=false;
   var continuationPairs=[],tail=null;
   var reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
   // One scene owns the section; any additional group keeps its normal grid.
@@ -6922,10 +6923,28 @@ function setupCardStack(grid,mode){
     section.classList.add('hex-card-stack-section');
     grid.classList.add('is-section-scene');
   }
+  function releaseScreenPin(){
+    if(!screenPinned)return;
+    screenPinned=false;
+    scene.style.position='';scene.style.left='';scene.style.width='';
+  }
+  function syncScreenPin(rawProgress){
+    var active=fromRight&&window.innerWidth<=768&&!reduced.matches&&
+      travel>0&&rawProgress>=0&&rawProgress<travel;
+    if(!active){releaseScreenPin();return;}
+    if(screenPinned)return;
+    // Pin the entire scene to the viewport during SP horizontal motion.
+    // The explicit runway height keeps its flow space and release boundary.
+    var box=runway.getBoundingClientRect();
+    scene.style.left=box.left+'px';scene.style.width=box.width+'px';
+    scene.style.position='fixed';
+    screenPinned=true;
+  }
   function renderStack(){
     scrollFrame=0;
     if(destroyed||!scene)return;
     var rawProgress=pinTop-runway.getBoundingClientRect().top;
+    syncScreenPin(rawProgress);
     var progress=Math.max(0,Math.min(travel,rawProgress));
     slides.forEach(function(slide,index){
       var motion=arrivals[index];
@@ -6970,6 +6989,7 @@ function setupCardStack(grid,mode){
     }
     deferredLayout=false;
     layoutWidth=viewportWidth;
+    releaseScreenPin();
     var firstHeight=0;
     var cardHeights=[];
     cards.forEach(function(card,index){
@@ -7054,6 +7074,7 @@ function setupCardStack(grid,mode){
   layout();
   return function(){
     destroyed=true;
+    releaseScreenPin();
     cancelAnimationFrame(frame);cancelAnimationFrame(scrollFrame);
     if(observer)observer.disconnect();
     window.removeEventListener('scroll',queueScroll);
