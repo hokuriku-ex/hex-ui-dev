@@ -9826,6 +9826,7 @@ body > .hex-v2-handoff{z-index:198;}
 }
 /* PCだけ、左右のカード全体を外側へ少し傾ける。 */
 @media screen and (min-width:769px){
+  .hex-card-grid.hex-audience-grid{padding-block:32px;}
   .hex-audience-grid > .hex-audience-item:first-child > .hex-card{rotate:-3deg;}
   .hex-audience-grid > .hex-audience-item:last-child > .hex-card{rotate:3deg;}
 }
