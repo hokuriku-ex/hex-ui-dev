@@ -1,11 +1,19 @@
 # 共通カードスライダー
 
-開始タグに `data-slider="normal"` を指定すると有効になります。省略・`false` の場合は従来のグリッドです。1〜6列の開始タグに対応します。
+開始タグの `data-slider-pc`（769px以上）と `data-slider-sp`（768px以下）で、それぞれの動きを指定します。値は `normal`・`vertical`・`horizontal` の3種類です。端末側の指定を省略・`false` にした場合は通常グリッドになります。1〜6列の開始タグに対応し、画面幅が境界をまたぐと演出も切り替わります。旧属性 `data-slider` は設定に使用しません。
+
+```html
+<div class="hex-card-grid1-start" data-slider-pc="vertical" data-slider-sp="horizontal"></div>
+<!-- PCは下から、SPは右から入る演出 -->
+<div class="hex-card-grid1-end"></div>
+```
+
+## 通常の横カルーセル
 
 PC（769px以上）ではカードが5枚以上あるときだけスライダーになります。4枚以下は通常のグリッド表示です。SP（768px以下）では枚数に関係なくスライダーになります。画面幅を変更した場合も自動で切り替わります。
 
 ```html
-<div class="hex-card-grid4-start" data-slider="normal"></div>
+<div class="hex-card-grid4-start" data-slider-pc="normal" data-slider-sp="normal"></div>
 <!-- 既存の hex-card-start 〜 hex-card-end を必要な枚数配置 -->
 <div class="hex-card-grid4-end"></div>
 ```
@@ -24,18 +32,18 @@ CMSでは開始タグ・各カード・終了タグを従来どおりそれぞ�
 
 ## スクロールでカードを順番に配置する
 
-開始タグに `data-slider="vertical"` を指定します。PC・SPともに有効です。
+画面下から入れる端末側の属性に `vertical` を指定します。
 
 ```html
-<div class="hex-card-grid1-start" data-slider="vertical"></div>
+<div class="hex-card-grid1-start" data-slider-pc="vertical" data-slider-sp="vertical"></div>
 <!-- 既存の hex-card-start ～ hex-card-end を必要な枚数配置 -->
 <div class="hex-card-grid1-end"></div>
 ```
 
-画面右端から入れる場合は `data-slider="horizontal"` を指定します。ページの縦スクロールで進む演出です。`data-slider="normal"` の横カルーセルとは別の機能です。
+画面右端から入れる端末側には `horizontal` を指定します。ページの縦スクロールで進む演出です。`normal` の横カルーセルとは別の機能です。
 
 ```html
-<div class="hex-card-grid1-start" data-slider="horizontal"></div>
+<div class="hex-card-grid1-start" data-slider-pc="horizontal" data-slider-sp="horizontal"></div>
 <!-- 既存の hex-card-start ～ hex-card-end を必要な枚数配置 -->
 <div class="hex-card-grid1-end"></div>
 ```
