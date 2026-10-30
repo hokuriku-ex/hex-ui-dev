@@ -9824,9 +9824,28 @@ body > .hex-v2-handoff{z-index:198;}
   flex:1;
   box-sizing:border-box;
 }
-/* PCだけ、カード全体を少し縮小して左右へ傾ける。 */
+/* PCだけ、実寸を90%相当に調整して左右へ傾ける。文字は拡縮しない。 */
 @media screen and (min-width:769px){
-  .hex-audience-item > .hex-card{scale:.9;}
+  .hex-audience-item > .hex-card{
+    width:90%;
+    margin-inline:auto;
+    padding:20px;
+  }
+  .hex-audience-grid .hex-card-image{margin-bottom:18px;}
+  .hex-audience-grid .hex-card-head{
+    margin-bottom:14px;
+    padding-bottom:16px;
+  }
+  .hex-audience-grid .hex-card-title{font-size:18px!important;}
+  .hex-audience-grid .hex-card-title-link{gap:9px;}
+  .hex-audience-grid .hex-card-text,
+  .hex-audience-grid .hex-card-title-link .hex-link-detail,
+  .hex-audience-grid .hex-card-title-link .hex-link-icon{font-size:14px!important;}
+  .hex-audience-grid h2.hex-audience-card-title{font-size:14px!important;}
+  .hex-audience-grid .hex-audience-item .hex-top-title-en,
+  .hex-audience-grid .hex-audience-item .hex-top-title[data-en]::after{
+    font-size:clamp(28.8px,12cqi,72px)!important;
+  }
   .hex-audience-grid > .hex-audience-item:first-child > .hex-card{rotate:-3deg;}
   .hex-audience-grid > .hex-audience-item:last-child > .hex-card{rotate:3deg;}
 }
