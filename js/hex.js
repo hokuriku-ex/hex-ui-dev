@@ -7260,32 +7260,67 @@ function setupCardCarousel(grid){
     }
   });
   viewport.addEventListener('dragstart',function(event){event.preventDefault();});
-  viewport.addEventListener('pointerdown',function(event){
-    if(!event.isPrimary||event.button!==0||cards.length<2||event.target.closest('button'))return;
+  function startDrag(id,x,y,touch){
     suppressClick=false;
     window.cancelAnimationFrame(motion);motion=0;
-    drag={id:event.pointerId,x:event.clientX,y:event.clientY,dx:0,moved:false,
-      start:position,samples:[{x:event.clientX,time:performance.now()}]};
-  });
-  viewport.addEventListener('pointermove',function(event){
-    if(!drag||event.pointerId!==drag.id)return;
-    drag.dx=event.clientX-drag.x;
+    drag={id:id,x:x,y:y,dx:0,moved:false,touch:touch,
+      start:position,samples:[{x:x,time:performance.now()}]};
+  }
+  function moveDrag(x,y,event){
+    if(!drag)return;
+    drag.dx=x-drag.x;
     if(!drag.moved){
-      if(Math.abs(event.clientY-drag.y)>Math.abs(drag.dx)&&Math.abs(event.clientY-drag.y)>8){drag=null;show(Math.round(position));return;}
-      if(Math.abs(drag.dx)<8)return;
+      var dx=Math.abs(drag.dx),dy=Math.abs(y-drag.y);
+      if(drag.touch){
+        // Allow a diagonal finger path; release only a clearly vertical gesture.
+        if(dy>=8&&dy>dx*1.5){drag=null;show(Math.round(position));return;}
+        if(dx<4||dy>dx*1.5)return;
+      }else{
+        if(dy>dx&&dy>8){drag=null;show(Math.round(position));return;}
+        if(dx<8)return;
+      }
       drag.moved=true;
-      viewport.setPointerCapture(event.pointerId);
+      if(!drag.touch)viewport.setPointerCapture(event.pointerId);
       grid.classList.add('is-dragging');
     }
-    event.preventDefault();
+    if(event.cancelable)event.preventDefault();
     var now=performance.now();
-    drag.samples.push({x:event.clientX,time:now});
+    drag.samples.push({x:x,time:now});
     drag.samples=drag.samples.filter(function(sample){return now-sample.time<=120;});
     var travel=drag.dx/dragStep();
     if(mobile.matches)travel=Math.max(-1,Math.min(1,travel));
     position=drag.start-travel;
     layout();
+  }
+  viewport.addEventListener('pointerdown',function(event){
+    if(mobile.matches&&event.pointerType==='touch')return;
+    if(!enabled||!event.isPrimary||event.button!==0||cards.length<2||event.target.closest('button'))return;
+    startDrag(event.pointerId,event.clientX,event.clientY,false);
   });
+  viewport.addEventListener('pointermove',function(event){
+    if(!drag||drag.touch||event.pointerId!==drag.id)return;
+    moveDrag(event.clientX,event.clientY,event);
+  });
+  // Safari needs a non-passive touchmove to cancel native vertical panning once
+  // horizontal intent is established. Pointer capture alone cannot do this.
+  viewport.addEventListener('touchstart',function(event){
+    if(!mobile.matches||!enabled||cards.length<2||event.touches.length!==1||event.target.closest('button'))return;
+    var touch=event.touches[0];
+    startDrag(touch.identifier,touch.clientX,touch.clientY,true);
+  },{passive:true});
+  viewport.addEventListener('touchmove',function(event){
+    if(!drag||!drag.touch)return;
+    if(event.touches.length!==1){finishTouch(event);return;}
+    var touch=event.touches[0];
+    if(touch.identifier===drag.id)moveDrag(touch.clientX,touch.clientY,event);
+  },{passive:false,capture:true});
+  function finishTouch(event){
+    if(!drag||!drag.touch)return;
+    if(event.type==='touchend'&&!Array.from(event.changedTouches).some(function(t){return t.identifier===drag.id;}))return;
+    endDrag({pointerId:drag.id,type:event.type==='touchend'?'pointerup':'pointercancel'});
+  }
+  viewport.addEventListener('touchend',finishTouch,{passive:true});
+  viewport.addEventListener('touchcancel',finishTouch,{passive:true});
   function dragStep(){
     return mobile.matches?viewport.clientWidth+32:Math.min(460,viewport.clientWidth*.40)*.82;
   }
@@ -7307,8 +7342,9 @@ function setupCardCarousel(grid){
   }
   function endDrag(event){
     if(!drag||event.pointerId!==drag.id)return;
+    if(drag.touch&&event.pointerType==='touch')return;
     var gesture=drag;drag=null;
-    if(viewport.hasPointerCapture(event.pointerId))viewport.releasePointerCapture(event.pointerId);
+    if(!gesture.touch&&viewport.hasPointerCapture(event.pointerId))viewport.releasePointerCapture(event.pointerId);
     grid.classList.remove('is-dragging');
     grid.style.setProperty('--hex-carousel-drag','0px');
     if(gesture.moved){
