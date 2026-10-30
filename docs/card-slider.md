@@ -31,6 +31,22 @@ CMSでは開始タグ・各カード・終了タグを従来どおりそれぞ�
 
 表示例：`examples/card-slider.html`（PC・SP、通常グリッドを比較できます）。
 
+## お客様向けの2枚のカード（hex-audience-grid）
+
+開始タグに `hex-audience-grid` を付け、2枚のカードそれぞれの `data-title` 内に見出しを記述します。カードの前に別置きしていた見出しは不要です。
+
+```html
+<div class="hex-card-grid2-start hex-audience-grid"></div>
+<div class="hex-card-start" data-title="<h2 class='hex-top-title hex-top-title-light' data-en='Homeowners'>個人のお客様</h2>外構工事をご検討中の方はこちら"></div>
+<!-- 画像・hex-card-end、続いてBusinessesのカードを従来どおり配置 -->
+<div class="hex-card-grid2-end"></div>
+```
+
+- `data-title` 内の `h2.hex-top-title` を各カードの画像枠へ移動し、後ろの案内文はカード本文側のタイトルとして残します。2枚とも見出しと画像が必要です。
+- PCのマウス操作では、通常は1枚目の写真と中央の白い見出しを表示します。ホバーまたはカード内のキーボード選択で見出しを隠し、次の読み込み済み画像から再生を開始します。操作が外れると1枚目と見出しへ戻ります。
+- SPでは白い見出しを画像上部中央に常時表示し、最初から画像を自動で切り替えます。ホバーできない端末でも常時再生します。
+- 画像間隔は通常カードと同じ `data-slide-interval`（ミリ秒、既定3000）を使います。画面外・非表示タブでは停止し、端末の「動きを減らす」設定では1枚目を表示します。
+
 ## スクロールでカードを順番に配置する
 
 画面下から入れる端末側の属性に `vertical` を指定します。

@@ -6638,20 +6638,20 @@ hexReady(function(){
   }
 
   function advanceCardSlide(state){
-      if(!state.box.isConnected){syncCardSlide(state);return;}
-      if(state.paused||slideReduced.matches||document.hidden||!state.visible)return;
-      var next=(state.index+1)%state.images.length;
-      /* 読み込みエラー画像を避け、未読込なら現在の画像を保つ。 */
-      while(next!==state.index&&state.images[next].dataset.hexSlideFailed==='1'){
-        next=(next+1)%state.images.length;
-      }
-      var image=state.images[next];
-      if(next===state.index||!image.complete||!image.naturalWidth){return;}
-      state.images[state.index].classList.remove('is-active');
-      state.images[state.index].setAttribute('aria-hidden','true');
-      image.classList.add('is-active');
-      image.removeAttribute('aria-hidden');
-      state.index=next;
+    if(!state.box.isConnected){syncCardSlide(state);return;}
+    if(state.paused||slideReduced.matches||document.hidden||!state.visible)return;
+    var next=(state.index+1)%state.images.length;
+    /* 読み込みエラー画像を避け、未読込なら現在の画像を保つ。 */
+    while(next!==state.index&&state.images[next].dataset.hexSlideFailed==='1'){
+      next=(next+1)%state.images.length;
+    }
+    var image=state.images[next];
+    if(next===state.index||!image.complete||!image.naturalWidth){return;}
+    state.images[state.index].classList.remove('is-active');
+    state.images[state.index].setAttribute('aria-hidden','true');
+    image.classList.add('is-active');
+    image.removeAttribute('aria-hidden');
+    state.index=next;
   }
 
   function setupCardSlide(box,interval,audience){
