@@ -6819,19 +6819,21 @@ hexReady(function(){
         removeBlock=nextRemoveBlock;
       }
       // Finish removing CMS source blocks before splitting their ancestor wrappers.
-      if(sliderMode==='vertical')setupCardStack(grid);
-      else if(sliderMode==='true')setupCardCarousel(grid);
+      if(sliderMode==='vertical'||sliderMode==='horizontal')setupCardStack(grid,sliderMode);
+      else if(sliderMode==='normal')setupCardCarousel(grid);
       syncAllCardSlides();
     });
   });
 });
 
 /* 共通カード：通常グリッドの各位置へ、縦スクロールで順番に収める。 */
-function setupCardStack(grid){
-  if(grid.dataset.slider==='vertical')return;
+function setupCardStack(grid,mode){
+  mode=mode==='horizontal'?'horizontal':'vertical';
+  if(grid.dataset.slider===mode)return;
   var cards=Array.from(grid.children);
   if(!cards.length)return;
-  grid.dataset.slider='vertical';
+  grid.dataset.slider=mode;
+  var fromRight=mode==='horizontal';
   grid.classList.add('hex-card-stack','hex-motion-auto-off');
   var stacking=grid.classList.contains('hex-card-grid1');
   // Only grid1 uses a shared stack frame. Other layouts keep direct grid children.
@@ -6857,6 +6859,7 @@ function setupCardStack(grid){
   if(section&&!section.classList.contains('hex-card-stack-section')&&!section.closest('.hex-card-stack-scene')){
     runway=document.createElement('div');runway.className='hex-card-stack-runway';
     scene=document.createElement('div');scene.className='hex-card-stack-scene hex-motion-auto-off';
+    if(fromRight)scene.classList.add('hex-card-stack-horizontal');
     // Split after the grid, preserving nested CMS wrappers and existing nodes.
     // Only the prefix is pinned; trailing content stays after the runway in flow.
     var splitAncestors=[];
@@ -6898,7 +6901,8 @@ function setupCardStack(grid){
     slides.forEach(function(slide,index){
       var motion=arrivals[index];
       var offset=motion?Math.max(0,motion.distance-Math.max(0,progress-motion.start)):0;
-      var value=reduced.matches?'none':'translate3d(0,'+offset+'px,0)';
+      var value=reduced.matches?'none':fromRight
+        ?'translate3d('+offset+'px,0,0)':'translate3d(0,'+offset+'px,0)';
       if(slide.style.transform!==value)slide.style.transform=value;
     });
   }
@@ -6931,16 +6935,20 @@ function setupCardStack(grid){
     // Grid1 shares a bottom-aligned frame; grid2-6 retain their natural grid slots.
     var gridTop=stacking?firstTop-(stackHeight-firstHeight):firstTop-cards[0].offsetTop;
     if(scene){
+      var viewportWidth=document.documentElement.clientWidth||window.innerWidth;
+      var gridLeft=grid.getBoundingClientRect().left;
       travel=0;
       if(stacking){
-        var step=Math.max(stackHeight+24,viewportHeight-gridTop);
+        var step=fromRight?Math.max(grid.offsetWidth+24,viewportWidth-gridLeft+1)
+          :Math.max(stackHeight+24,viewportHeight-gridTop);
         travel=Math.max(0,cards.length-1)*step;
         arrivals=cards.map(function(card,index){return {start:0,distance:index*step};});
       }else{
         arrivals=cards.map(function(card,index){
           if(index===0)return {start:0,distance:0};
-          var distance=Math.max(cardHeights[index]+24,
-            viewportHeight-(gridTop+card.offsetTop));
+          var distance=fromRight
+            ?Math.max(card.offsetWidth+24,viewportWidth-(gridLeft+card.offsetLeft)+1)
+            :Math.max(cardHeights[index]+24,viewportHeight-(gridTop+card.offsetTop));
           var motion={start:travel,distance:distance};
           travel+=distance;
           return motion;
@@ -6980,7 +6988,7 @@ function setupCardStack(grid){
   layout();
 }
 
-/* 共通カード：data-slider="true" のときだけ中央拡大カルーセルにする。 */
+/* 共通カード：data-slider="normal" で中央拡大カルーセル。 */
 function setupCardCarousel(grid){
   var cards=Array.from(grid.children);
   if(!cards.length)return;
@@ -6988,7 +6996,7 @@ function setupCardCarousel(grid){
   var originalRole=grid.getAttribute('role');
   var originalDescription=grid.getAttribute('aria-roledescription');
   var originalMotionOff=grid.classList.contains('hex-motion-auto-off');
-  grid.dataset.slider='true';
+  grid.dataset.slider='normal';
   grid.classList.add('hex-card-carousel','hex-motion-auto-off');
   grid.setAttribute('role','region');
   grid.setAttribute('aria-roledescription','カルーセル');

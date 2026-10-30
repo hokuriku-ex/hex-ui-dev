@@ -24,6 +24,7 @@
   <section id="demo-single"><h2>1枚の場合</h2></section>
   <section id="demo-four"><h2>4枚の場合（PCは通常表示・SPはスライダー）</h2></section>
   <section id="demo-vertical"><h2>縦スライド（通常グリッドへ順番に配置）</h2><p class="demo-note">通常表示のサイズを保ち、画面下から各配置先へ順番に収まります。最後のカードで固定が外れます。</p></section>
+  <section id="demo-scroll-horizontal"><h2>右から入るスクロール演出</h2><p class="demo-note">ページの縦スクロールに合わせ、後続カードが画面右から通常の配置先へ収まります。</p></section>
   <section id="demo-grid"><h2>通常グリッド（フラグなし）</h2></section>
 </main>
 <script>
@@ -37,7 +38,7 @@
   }
   function example(id,count,slider){
     var parent=document.getElementById(id);
-    block(parent,'<div class="hex-card-grid4-start"'+(slider?' data-slider="'+(slider===true?'true':slider)+'"':'')+'></div>');
+    block(parent,'<div class="hex-card-grid4-start"'+(slider?' data-slider="'+slider+'"':'')+'></div>');
     for(var i=1;i<=count;i++){
       block(parent,'<div class="hex-card-start" data-title="カード '+i+'" data-text="カードの本文です。指定したカードのデザインを保ったまま表示します。'+(i%2?'':'説明が長いカードでも、スライダーの高さを確保します。')+'" data-url="#sample-'+i+'" data-type="internal"></div>');
       block(parent,'<img alt="サンプル '+i+'" src="data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300"><rect width="480" height="300" fill="'+(i%2?'#66818b':'#c8a874')+'"/><text x="240" y="175" text-anchor="middle" fill="white" font-size="80">'+i+'</text></svg>')+'">');
@@ -45,10 +46,11 @@
     }
     block(parent,'<div class="hex-card-grid4-end"></div>');
   }
-  example('demo-slider',6,true);
-  example('demo-single',1,true);
-  example('demo-four',4,true);
+  example('demo-slider',6,'normal');
+  example('demo-single',1,'normal');
+  example('demo-four',4,'normal');
   example('demo-vertical',4,'vertical');
+  example('demo-scroll-horizontal',4,'horizontal');
   block(document.getElementById('demo-vertical'),'<p id="demo-vertical-after" class="demo-note">カードの後の本文です。固定せず、最後のカードに続いて流れます。</p>');
   example('demo-grid',4,false);
 </script>
