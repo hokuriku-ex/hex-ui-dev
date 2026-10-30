@@ -3331,6 +3331,14 @@ hexReady(function(){
     function getWelcomeCircleDuration(){
       return isSp()?HERO_WELCOME_CIRCLE_DURATION_SP:HERO_WELCOME_CIRCLE_DURATION_PC;
     }
+    function getWelcomeCircleScrollProgress(progress){
+      var lenis=window.hexMotion&&window.hexMotion.lenis;
+      var easing=lenis&&lenis.options&&lenis.options.easing;
+      // Lenis 1.3.26 supplies this default at scrollTo() time when duration is set.
+      // It may therefore be absent from lenis.options even during WELCOME motion.
+      return clamp(typeof easing==='function'?easing(progress)
+        :Math.min(1,1.001-Math.pow(2,-10*progress)),0,1);
+    }
     function getWelcomeCircleProgress(progress){
       var eased=progress*progress*(3-2*progress);
       return isSp()?Math.pow(eased,1.18):eased;
@@ -4471,7 +4479,9 @@ hexReady(function(){
       if(isSp()){
         scrollSpCircleTo(target);
       }else if(window.hexMotion&&typeof window.hexMotion.scrollTo==="function"){
-        window.hexMotion.scrollTo(target,{duration:getWelcomeCircleDuration()/1000,force:true});
+        window.hexMotion.scrollTo(target,{
+          duration:getWelcomeCircleDuration()/1000,easing:getWelcomeCircleScrollProgress,force:true
+        });
       }else{
         window.scrollTo({top:target,behavior:reduced?"auto":"smooth"});
       }
@@ -5270,10 +5280,7 @@ hexReady(function(){
       var duration=characterFocus.returning?WELCOME_REVERSE_DURATION:getWelcomeCircleDuration();
       var progress=reduced?1:clamp((now-characterFocus.started)/duration,0,1);
       if(!characterFocus.returning&&!isSp()){
-        // WELCOMEへ移動するLenisの進行率を、人物選択時の丸にも適用する。
-        var lenis=window.hexMotion&&window.hexMotion.lenis;
-        var easing=lenis&&lenis.options&&lenis.options.easing;
-        if(typeof easing==='function')progress=clamp(easing(progress),0,1);
+        progress=getWelcomeCircleScrollProgress(progress);
       }
       /* 復帰時はWELCOMEと同じ減速で、生の進行率を巻き戻す。 */
       var raw=characterFocus.returning
