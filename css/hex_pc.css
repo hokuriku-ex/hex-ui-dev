@@ -2059,6 +2059,15 @@ div[hex-sp]{
   --hex-carousel-card-width:40%;
   --hex-carousel-drag:0px;
 }
+@media(min-width:769px){
+  .hex-card-grid.hex-card-carousel[data-slider-pc="normal"]{
+    position:relative;
+    width:100vw;
+    max-width:none!important;
+    left:calc(50% - 50vw);
+    margin-inline:0!important;
+  }
+}
 .hex-card-carousel-viewport{
   position:relative;
   overflow:hidden;
