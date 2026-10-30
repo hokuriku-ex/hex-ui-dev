@@ -9675,6 +9675,7 @@ body > .hex-v2-handoff{z-index:198;}
   box-sizing:border-box;
   pointer-events:none;
   isolation:isolate;
+  contain:paint;
 }
 .hex-hashtag-tilt{
   position:absolute;
@@ -9707,9 +9708,9 @@ body > .hex-v2-handoff{z-index:198;}
 .hex-hashtag-tilt::after{
   content:"";
   position:absolute;
-  left:-100vw;
-  right:-100vw;
-  height:calc(200vh + 200vw);
+  left:-80px;
+  right:-80px;
+  height:calc(var(--hex-hashtag-row-height) * 5 + 36vw + 160px);
   pointer-events:none;
 }
 .hex-hashtag-tilt::before{

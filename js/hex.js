@@ -17276,9 +17276,6 @@ hexReady(function(){
   }
   function isHomeOverlapTarget(section){
     if(!section)return false;
-    /* 明示した文字帯の重なりを優先し、同じセクションを自動登録しない。
-       PCの帯単位・SPのセクション単位とも、固定境界の二重登録を防ぐ。 */
-    if(section.querySelector('.hex-hashtag-banner.hex-hashtag-overlap'))return false;
     /* フッターはお問い合わせの下へ通常の文書フローで配置する。 */
     if(section.id===HOME_SECTIONS.FOOTER||section.matches('.gc_auto_frame_footer,.hex-footer-frame'))return false;
     /* お問い合わせは従来どおり個別に常時対象とする。 */
@@ -17677,7 +17674,7 @@ hexReady(function(){
         if(entries.some(function(other){return node.contains(other.marker);})){
           Array.from(node.children).forEach(collect);return;
         }
-        if(node.matches('script,style,link,template,.hex-rise-start,.hex-rise-veil,header,.bg_headermenu')||node.querySelector('.hex-page-hero,header,.bg_headermenu'))return;
+        if(node.matches('script,style,link,template,.hex-rise-start,.hex-rise-veil,.background_color,header,.bg_headermenu')||node.querySelector('.hex-page-hero,header,.bg_headermenu'))return;
         var style=getComputedStyle(node);
         if(style.display==='none'||node.getBoundingClientRect().height<=0)return;
         if(blocks.indexOf(node)===-1)blocks.push(node);
