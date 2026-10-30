@@ -5594,7 +5594,9 @@ hexReady(function(){
           renderer=new THREE.WebGLRenderer({
             alpha:true,
             antialias:true,
-            preserveDrawingBuffer:true,
+            // Handoff capture renders and copies synchronously; retaining the
+            // drawing buffer between frames is unnecessary.
+            preserveDrawingBuffer:false,
             powerPreference:"high-performance"
           });
           if(renderer.getContext().isContextLost()){
