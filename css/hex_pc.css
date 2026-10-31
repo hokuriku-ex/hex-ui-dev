@@ -9990,6 +9990,18 @@ body > .hex-v2-handoff{z-index:198;}
     position:relative;
     container-type:inline-size;
 }
+/* お客様向けカードのみ、画像をクロスフェードで切り替える。 */
+.hex-audience-grid .hex-card-image.has-slideshow > img{
+  visibility:visible;
+  opacity:0;
+  transition:opacity .7s ease;
+}
+.hex-audience-grid .hex-card-image.has-slideshow > img.is-active{
+  opacity:1;
+}
+@media(prefers-reduced-motion:reduce){
+  .hex-audience-grid .hex-card-image.has-slideshow > img{transition:none;}
+}
 .hex-audience-item .hex-card-image > h2.hex-top-title{
     position:absolute;
     top:50%;
