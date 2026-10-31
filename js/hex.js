@@ -7261,6 +7261,18 @@ function setupCardCarousel(grid,mode){
     probe.appendChild(card);grid.parentElement.appendChild(probe);
     scrollCardWidth=card.getBoundingClientRect().width;
     probe.remove();
+    // 小さいカード・少ない枚数でも画面端まで途切れないだけの循環列を用意。
+    var required=Math.ceil((viewport.clientWidth+scrollCardWidth)/(scrollCardWidth+32))+2;
+    var count=Math.max(1,Math.ceil(required/cards.length))*cards.length;
+    while(slides.length>count)slides.pop().remove();
+    while(slides.length<count){
+      var copy=slides[slides.length%cards.length].cloneNode(true);
+      copy.removeAttribute('id');
+      copy.querySelectorAll('[id]').forEach(function(node){node.removeAttribute('id');});
+      copy.querySelectorAll('a,button,input,select,textarea,[tabindex]').forEach(function(node){node.setAttribute('tabindex','-1');});
+      bindAutoHover(copy);
+      viewport.appendChild(copy);slides.push(copy);
+    }
   }
   var autoFrame=0,autoTime=0,autoVisible=!window.IntersectionObserver,autoHovered=false;
   function stopAuto(){cancelAnimationFrame(autoFrame);autoFrame=0;autoTime=0;}
@@ -7270,17 +7282,18 @@ function setupCardCarousel(grid,mode){
     autoFrame=requestAnimationFrame(function tick(now){
       autoFrame=0;
       if(destroyed)return;
-      if(autoTime)position=(position+Math.min(64,now-autoTime)*.00012)%cards.length;
+      if(autoTime)position=(position+Math.min(64,now-autoTime)*.00012)%slides.length;
       autoTime=now;
       index=Math.round(position)%cards.length;
       layout();
       startAuto();
     });
   }
-  slides.forEach(function(slide){
+  function bindAutoHover(slide){
     slide.addEventListener('pointerenter',function(){autoHovered=true;stopAuto();});
     slide.addEventListener('pointerleave',function(){autoHovered=false;startAuto();});
-  });
+  }
+  slides.forEach(bindAutoHover);
   function autoFocus(){stopAuto();}
   function autoBlur(event){if(!grid.contains(event.relatedTarget))requestAnimationFrame(startAuto);}
   function autoVisibility(){stopAuto();startAuto();}
@@ -7369,8 +7382,9 @@ function setupCardCarousel(grid,mode){
     grid.style.setProperty('--hex-carousel-card-width',cardWidth+'px');
     var height=0;
     slides.forEach(function(slide,i){
-      var offset=((i-position)%cards.length+cards.length)%cards.length;
-      if(offset>cards.length/2)offset-=cards.length;
+      var loopCount=scrolling?slides.length:cards.length;
+      var offset=((i-position)%loopCount+loopCount)%loopCount;
+      if(offset>loopCount/2)offset-=loopCount;
       // 折り返すカードを中央の上を横切らせない。
       var wraps=offsets[i]!==undefined&&Math.abs(offset-offsets[i])>1;
       slide.style.transition=(scrolling||wraps||motion||drag)?'none':'';
@@ -7387,7 +7401,7 @@ function setupCardCarousel(grid,mode){
         Math.abs(x)-cardWidth*(scrolling?.5:.29)>width/2+cardWidth*.25;
       slide.classList.toggle('is-outside',outside);
       slide.inert=!scrolling&&i!==index;
-      slide.setAttribute('aria-hidden',String(!scrolling&&i!==index));
+      slide.setAttribute('aria-hidden',String(scrolling?i>=cards.length:i!==index));
       height=Math.max(height,slide.offsetHeight);
       offsets[i]=offset;
     });
