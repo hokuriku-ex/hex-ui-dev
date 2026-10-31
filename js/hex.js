@@ -6915,7 +6915,8 @@ function setupResponsiveCardSlider(grid,modes){
   var active=null,activeAudienceStack=false,cleanup=null;
   ['pc','sp'].forEach(function(device){
     var value=modes[device];
-    modes[device]=['normal','vertical','horizontal'].indexOf(value)!==-1?value:'';
+    var allowed=device==='pc'?['normal','vertical','horizontal','scroll']:['normal','vertical','horizontal'];
+    modes[device]=allowed.indexOf(value)!==-1?value:'';
     if(modes[device])grid.setAttribute('data-slider-'+device,modes[device]);
   });
   function sync(){
@@ -6924,7 +6925,7 @@ function setupResponsiveCardSlider(grid,modes){
     if(mode===active&&audienceStack===activeAudienceStack)return;
     if(cleanup)cleanup();
     cleanup=null;active=mode;activeAudienceStack=audienceStack;
-    if(mode==='normal')cleanup=setupCardCarousel(grid);
+    if(mode==='normal'||mode==='scroll')cleanup=setupCardCarousel(grid,mode);
     else if(mode)cleanup=setupCardStack(grid,mode);
     document.dispatchEvent(new Event('hex:card-slider-mode-changed'));
   }
@@ -7217,7 +7218,8 @@ function setupCardStack(grid,mode){
 }
 
 /* 共通カード：data-slider="normal" で中央拡大カルーセル。 */
-function setupCardCarousel(grid){
+function setupCardCarousel(grid,mode){
+  var scrolling=mode==='scroll';
   var cards=Array.from(grid.children);
   if(!cards.length)return;
   var originalLabel=grid.getAttribute('aria-label');
@@ -7225,7 +7227,8 @@ function setupCardCarousel(grid){
   var originalDescription=grid.getAttribute('aria-roledescription');
   var originalMotionOff=grid.classList.contains('hex-motion-auto-off');
   var originalStyle=grid.getAttribute('style'),destroyed=false;
-  grid.dataset.slider='normal';
+  grid.dataset.slider=scrolling?'scroll':'normal';
+  grid.classList.toggle('hex-card-carousel-scroll',scrolling);
   grid.classList.add('hex-card-carousel','hex-motion-auto-off');
   grid.setAttribute('role','region');
   grid.setAttribute('aria-roledescription','カルーセル');
@@ -7246,6 +7249,33 @@ function setupCardCarousel(grid){
   var index=0,position=0,offsets=[],drag=null,suppressClick=false,frame=0,motion=0,enabled=true;
   var mobile=window.matchMedia('(max-width:768px)');
   var reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
+  var autoFrame=0,autoTime=0,autoVisible=!window.IntersectionObserver,autoHovered=false;
+  function stopAuto(){cancelAnimationFrame(autoFrame);autoFrame=0;autoTime=0;}
+  function startAuto(){
+    if(!scrolling||destroyed||!enabled||cards.length<2||reduced.matches||document.hidden||
+      !autoVisible||autoHovered||grid.contains(document.activeElement)||autoFrame)return;
+    autoFrame=requestAnimationFrame(function tick(now){
+      autoFrame=0;
+      if(destroyed)return;
+      if(autoTime)position=(position+Math.min(64,now-autoTime)*.00008)%cards.length;
+      autoTime=now;
+      index=Math.round(position)%cards.length;
+      layout();
+      startAuto();
+    });
+  }
+  slides.forEach(function(slide){
+    slide.addEventListener('pointerenter',function(){autoHovered=true;stopAuto();});
+    slide.addEventListener('pointerleave',function(){autoHovered=false;startAuto();});
+  });
+  function autoFocus(){stopAuto();}
+  function autoBlur(event){if(!grid.contains(event.relatedTarget))requestAnimationFrame(startAuto);}
+  function autoVisibility(){stopAuto();startAuto();}
+  if(scrolling){
+    grid.addEventListener('focusin',autoFocus);grid.addEventListener('focusout',autoBlur);
+    document.addEventListener('visibilitychange',autoVisibility);
+    if(reduced.addEventListener)reduced.addEventListener('change',autoVisibility);
+  }
   var dots=document.createElement('div');
   dots.className='hex-card-carousel-dots';
   dots.setAttribute('role','group');
@@ -7282,10 +7312,11 @@ function setupCardCarousel(grid){
   status.className='hex-card-carousel-status';
   status.setAttribute('aria-live','polite');
   status.setAttribute('aria-atomic','true');
+  if(scrolling)status.removeAttribute('aria-live');
   grid.appendChild(status);
   function syncMode(){
     if(destroyed)return;
-    enabled=mobile.matches||cards.length>=5;
+    enabled=scrolling||mobile.matches||cards.length>=5;
     window.cancelAnimationFrame(motion);motion=0;
     drag=null;
     grid.classList.remove('is-dragging');
@@ -7312,6 +7343,7 @@ function setupCardCarousel(grid){
     position=index;
     offsets=[];
     if(enabled)layout();
+    startAuto();
   }
   function layout(){
     frame=0;
@@ -7327,7 +7359,7 @@ function setupCardCarousel(grid){
       if(offset>cards.length/2)offset-=cards.length;
       // 折り返すカードを中央の上を横切らせない。
       var wraps=offsets[i]!==undefined&&Math.abs(offset-offsets[i])>1;
-      slide.style.transition=(wraps||motion||drag)?'none':'';
+      slide.style.transition=(scrolling||wraps||motion||drag)?'none':'';
       var x=mobile.matches?offset*step:
         Math.sign(offset)*cardWidth*(Math.abs(offset)<=1?Math.abs(offset)*.82:
           .82+(Math.abs(offset)-1)*.64);
@@ -7340,8 +7372,8 @@ function setupCardCarousel(grid){
       var outside=mobile.matches?Math.abs(offset)>2:
         Math.abs(x)-cardWidth*.29>width/2+cardWidth*.25;
       slide.classList.toggle('is-outside',outside);
-      slide.inert=i!==index;
-      slide.setAttribute('aria-hidden',String(i!==index));
+      slide.inert=!scrolling&&i!==index;
+      slide.setAttribute('aria-hidden',String(!scrolling&&i!==index));
       height=Math.max(height,slide.offsetHeight);
       offsets[i]=offset;
     });
@@ -7360,6 +7392,7 @@ function setupCardCarousel(grid){
     layout();
   }
   viewport.addEventListener('keydown',function(event){
+    if(scrolling)return;
     if(event.target.matches('input,textarea,select,[contenteditable]'))return;
     if(event.key==='ArrowLeft'||event.key==='ArrowRight'){
       event.preventDefault();settle(Math.round(position)+(event.key==='ArrowLeft'?-1:1),0);
@@ -7399,6 +7432,7 @@ function setupCardCarousel(grid){
     layout();
   }
   viewport.addEventListener('pointerdown',function(event){
+    if(scrolling)return;
     if(mobile.matches&&event.pointerType==='touch')return;
     if(!enabled||!event.isPrimary||event.button!==0||cards.length<2||event.target.closest('button'))return;
     startDrag(event.pointerId,event.clientX,event.clientY,false);
@@ -7494,9 +7528,21 @@ function setupCardCarousel(grid){
   if(mobile.addEventListener)mobile.addEventListener('change',syncMode);
   else mobile.addListener(syncMode);
   viewport.addEventListener('load',requestLayout,true);
+  var autoObserver=null;
+  if(scrolling&&window.IntersectionObserver){
+    autoObserver=new IntersectionObserver(function(changes){
+      autoVisible=changes[0].isIntersecting;stopAuto();startAuto();
+    });
+    autoObserver.observe(viewport);
+  }
   syncMode();
   return function(){
     destroyed=true;
+    stopAuto();
+    if(autoObserver)autoObserver.disconnect();
+    grid.removeEventListener('focusin',autoFocus);grid.removeEventListener('focusout',autoBlur);
+    document.removeEventListener('visibilitychange',autoVisibility);
+    if(reduced.removeEventListener)reduced.removeEventListener('change',autoVisibility);
     cancelAnimationFrame(frame);cancelAnimationFrame(motion);
     if(observer)observer.disconnect();
     window.removeEventListener('resize',requestLayout);
@@ -7504,7 +7550,7 @@ function setupCardCarousel(grid){
     else mobile.removeListener(syncMode);
     cards.forEach(function(card){grid.insertBefore(card,viewport);});
     viewport.remove();controls.remove();status.remove();
-    grid.classList.remove('hex-card-carousel','is-dragging');
+    grid.classList.remove('hex-card-carousel','hex-card-carousel-scroll','is-dragging');
     grid.classList.toggle('hex-motion-auto-off',originalMotionOff);
     ['role','aria-label','aria-roledescription'].forEach(function(name,i){
       var value=[originalRole,originalLabel,originalDescription][i];

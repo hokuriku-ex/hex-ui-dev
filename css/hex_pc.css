@@ -2062,7 +2062,7 @@ div[hex-sp]{
   --hex-carousel-drag:0px;
 }
 @media(min-width:769px){
-  .hex-card-grid.hex-card-carousel[data-slider-pc="normal"]{
+  .hex-card-grid.hex-card-carousel:is([data-slider-pc="normal"],[data-slider-pc="scroll"]){
     position:relative;
     width:100vw;
     max-width:none!important;
@@ -2090,6 +2090,10 @@ div[hex-sp]{
 .hex-card-carousel-slide.is-outside{opacity:0;pointer-events:none;}
 .hex-card-carousel.is-dragging .hex-card-carousel-slide{transition:none;}
 .hex-card-carousel.is-dragging .hex-card-carousel-viewport{cursor:grabbing;user-select:none;}
+.hex-card-carousel-scroll :is(.hex-card-carousel-controls,.hex-card-carousel-arrow,.hex-card-carousel-status){display:none!important;}
+.hex-card-carousel-scroll .hex-card-carousel-viewport{cursor:default;}
+.hex-card-carousel-scroll .hex-card-carousel-slide > *{transition:translate .25s ease;}
+.hex-card-carousel-scroll .hex-card-carousel-slide:is(:hover,:focus-within) > *{translate:0 -8px;}
 .hex-card-carousel-arrow{
   position:absolute;
   top:50%;
