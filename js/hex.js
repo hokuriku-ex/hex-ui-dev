@@ -7220,6 +7220,7 @@ function setupCardStack(grid,mode){
 /* 共通カード：data-slider="normal" で中央拡大カルーセル。 */
 function setupCardCarousel(grid,mode){
   var scrolling=mode==='scroll';
+  var originalGridClass=grid.className,scrollCardWidth=0;
   var cards=Array.from(grid.children);
   if(!cards.length)return;
   var originalLabel=grid.getAttribute('aria-label');
@@ -7249,6 +7250,18 @@ function setupCardCarousel(grid,mode){
   var index=0,position=0,offsets=[],drag=null,suppressClick=false,frame=0,motion=0,enabled=true;
   var mobile=window.matchMedia('(max-width:768px)');
   var reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
+  function measureScrollCard(){
+    if(!scrolling)return;
+    // スライダー化前と同じ親幅・列数で、通常グリッドのカード幅を計測。
+    var probe=document.createElement('div');
+    probe.className=originalGridClass;
+    probe.style.cssText=(originalStyle||'')+';position:absolute;visibility:hidden;pointer-events:none;';
+    probe.style.width=grid.parentElement.clientWidth+'px';
+    var card=document.createElement('div');card.className=cards[0].className;
+    probe.appendChild(card);grid.parentElement.appendChild(probe);
+    scrollCardWidth=card.getBoundingClientRect().width;
+    probe.remove();
+  }
   var autoFrame=0,autoTime=0,autoVisible=!window.IntersectionObserver,autoHovered=false;
   function stopAuto(){cancelAnimationFrame(autoFrame);autoFrame=0;autoTime=0;}
   function startAuto(){
@@ -7342,6 +7355,7 @@ function setupCardCarousel(grid,mode){
     });
     position=index;
     offsets=[];
+    measureScrollCard();
     if(enabled)layout();
     startAuto();
   }
@@ -7350,7 +7364,7 @@ function setupCardCarousel(grid,mode){
     if(destroyed||!enabled)return;
     var width=viewport.clientWidth;
     if(!width)return;
-    var cardWidth=mobile.matches?width:width*.40;
+    var cardWidth=scrolling&&scrollCardWidth?scrollCardWidth:mobile.matches?width:width*.40;
     var step=mobile.matches?width+32:cardWidth*.82;
     grid.style.setProperty('--hex-carousel-card-width',cardWidth+'px');
     var height=0;
@@ -7519,7 +7533,9 @@ function setupCardCarousel(grid,mode){
   viewport.addEventListener('click',function(event){
     if(suppressClick){event.preventDefault();event.stopPropagation();}
   },true);
-  function requestLayout(){if(!destroyed&&!frame)frame=window.requestAnimationFrame(layout);}
+  function requestLayout(){
+    if(!destroyed&&!frame)frame=window.requestAnimationFrame(function(){measureScrollCard();layout();});
+  }
   if(window.ResizeObserver){
     var observer=new ResizeObserver(requestLayout);
     observer.observe(viewport);
