@@ -350,8 +350,7 @@ const HOME_DISPLAY_SECTIONS=[
    お問い合わせは登録不要で個別に重ねる。フッターは通常表示。 */
 const HOME_OVERLAP_SECTIONS={
   PC:[
-    HOME_SECTIONS.ABOUT,
-    HOME_SECTIONS.RECRUIT
+    HOME_SECTIONS.ABOUT
   ],
   SP:[
     HOME_SECTIONS.PROCESS,
