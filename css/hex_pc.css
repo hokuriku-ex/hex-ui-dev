@@ -5949,7 +5949,7 @@ html body
     margin-inline:0!important;
     padding:0;
     gap:0;
-    align-items:center;
+    align-items:stretch;
   }
   .hex-service-grid.hex-card-grid .hex-card.has-image{
     grid-template-columns:minmax(0,1fr) minmax(0,1fr);
@@ -5965,6 +5965,9 @@ html body
   .hex-service-grid.hex-card-grid .hex-card-body{
     width:100%;
     box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
   }
 }
 
