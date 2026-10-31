@@ -16404,7 +16404,7 @@ hexReady(function(){
   document.addEventListener('click',function(event){
     if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
     var menu=event.target.closest&&event.target.closest('.headermenu_type8,#gc_auto_frame_header_object_smartphone_hum_pupup');
-    if(!menu||event.target.closest('.menu-external'))return;
+    if(!menu||event.target.closest('.menu-external,.headermenu_logo'))return;
     var source=event.target.closest('a[href],[onclick]');
     if(!source||!menu.contains(source))return;
     var url='';
@@ -16441,7 +16441,7 @@ hexReady(function(){
   document.addEventListener('click',function(event){
     if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
     var link=event.target.closest&&event.target.closest('a[href]');
-    if(!link||link.hasAttribute('download')||(link.target&&link.target!=='_self'))return;
+    if(!link||event.target.closest('.headermenu_logo')||link.hasAttribute('download')||(link.target&&link.target!=='_self'))return;
     var internal=link.dataset.hexPageTransition==='true'||
       link.dataset.shortname&&link.dataset.pagetype&&(link.dataset.type||'internal')==='internal';
     if(!internal||link.dataset.type==='external'||(link.rel&&link.rel.split(/\s+/).indexOf('external')!==-1))return;
