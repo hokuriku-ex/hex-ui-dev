@@ -7278,14 +7278,14 @@ function setupCardCarousel(grid,mode){
   function stopAuto(){cancelAnimationFrame(autoFrame);autoFrame=0;autoTime=0;}
   function startAuto(){
     if(!scrolling||destroyed||!enabled||cards.length<2||reduced.matches||document.hidden||
-      !autoVisible||autoHovered||
+      !autoVisible||autoHovered||drag||
       (grid.contains(document.activeElement)&&document.activeElement.matches(':focus-visible'))||autoFrame)return;
     autoFrame=requestAnimationFrame(function tick(now){
       autoFrame=0;
       if(destroyed)return;
       if(autoTime)position=(position+Math.min(64,now-autoTime)*.00012)%slides.length;
       autoTime=now;
-      index=Math.round(position)%cards.length;
+      index=((Math.round(position)%cards.length)+cards.length)%cards.length;
       layout();
       startAuto();
     });
@@ -7434,6 +7434,7 @@ function setupCardCarousel(grid,mode){
   viewport.addEventListener('dragstart',function(event){event.preventDefault();});
   function startDrag(id,x,y,touch){
     suppressClick=false;
+    if(scrolling)stopAuto();
     window.cancelAnimationFrame(motion);motion=0;
     drag={id:id,x:x,y:y,dx:0,moved:false,touch:touch,
       start:position,samples:[{x:x,time:performance.now()}]};
@@ -7465,7 +7466,6 @@ function setupCardCarousel(grid,mode){
     layout();
   }
   viewport.addEventListener('pointerdown',function(event){
-    if(scrolling)return;
     if(mobile.matches&&event.pointerType==='touch')return;
     if(!enabled||!event.isPrimary||event.button!==0||cards.length<2||event.target.closest('button'))return;
     startDrag(event.pointerId,event.clientX,event.clientY,false);
@@ -7495,6 +7495,7 @@ function setupCardCarousel(grid,mode){
   viewport.addEventListener('touchend',finishTouch,{passive:true});
   viewport.addEventListener('touchcancel',finishTouch,{passive:true});
   function dragStep(){
+    if(scrolling)return (scrollCardWidth||viewport.clientWidth*.40)+32;
     return mobile.matches?viewport.clientWidth+32:viewport.clientWidth*.40*.82;
   }
   function settle(target,velocity){
@@ -7520,6 +7521,17 @@ function setupCardCarousel(grid,mode){
     if(!gesture.touch&&viewport.hasPointerCapture(event.pointerId))viewport.releasePointerCapture(event.pointerId);
     grid.classList.remove('is-dragging');
     grid.style.setProperty('--hex-carousel-drag','0px');
+    if(scrolling){
+      // 自動送りはドラッグを離した位置から再開し、中央へのスナップは行わない。
+      position=((position%slides.length)+slides.length)%slides.length;
+      if(gesture.moved){
+        suppressClick=true;
+        window.setTimeout(function(){suppressClick=false;},0);
+      }
+      autoHovered=!!viewport.querySelector('.hex-card-carousel-slide:hover');
+      layout();startAuto();
+      return;
+    }
     if(gesture.moved){
       suppressClick=true;
       var first=gesture.samples[0],last=gesture.samples[gesture.samples.length-1];

@@ -2091,7 +2091,8 @@ div[hex-sp]{
 .hex-card-carousel.is-dragging .hex-card-carousel-slide{transition:none;}
 .hex-card-carousel.is-dragging .hex-card-carousel-viewport{cursor:grabbing;user-select:none;}
 .hex-card-carousel-scroll :is(.hex-card-carousel-controls,.hex-card-carousel-arrow,.hex-card-carousel-status){display:none!important;}
-.hex-card-carousel-scroll .hex-card-carousel-viewport{cursor:default;}
+.hex-card-carousel-scroll .hex-card-carousel-viewport{cursor:grab;}
+.hex-card-carousel-scroll.is-dragging .hex-card-carousel-viewport{cursor:grabbing;}
 .hex-card-carousel-scroll .hex-card-carousel-slide > *{transition:translate .25s ease;}
 .hex-card-carousel-scroll .hex-card-carousel-slide:is(:hover,:has(:focus-visible)) > *{
   translate:0 -8px;
