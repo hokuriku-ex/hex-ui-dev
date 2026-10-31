@@ -9601,6 +9601,18 @@ body > .hex-v2-handoff{z-index:198;}
 }
 
 /* ドットナビと同じ黄色のマウス追従カーソル。画面色は変更しない。 */
+.hex-page-yellow-cover{
+  position:fixed;
+  right:0;bottom:0;left:0;
+  z-index:2147482099;
+  background:#f7d04f;
+  pointer-events:auto;
+  touch-action:none;
+}
+html.hex-page-yellow-covering .hex-follow-cursor{
+  visibility:hidden!important;
+  opacity:0!important;
+}
 .hex-follow-cursor{
   --hex-follow-size:18px;
   --hex-follow-offset:4px;

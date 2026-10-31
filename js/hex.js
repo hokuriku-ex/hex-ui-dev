@@ -16287,7 +16287,9 @@ hexReady(function(){
     if(frame){window.cancelAnimationFrame(frame);frame=0;}
   }
 
+  document.addEventListener('hex:page-cover-start',hide);
   document.addEventListener('pointermove',function(event){
+    if(document.documentElement.classList.contains('hex-page-yellow-covering')){hide();return;}
     if(event.pointerType!=='mouse'||!enabled.matches){hide();return;}
     targetX=event.clientX;
     targetY=event.clientY;
@@ -16330,6 +16332,77 @@ hexReady(function(){
   window.addEventListener('hex:viewport-resize',queueHitTest,{passive:true});
   enabled.addEventListener('change',function(){
     if(!enabled.matches){hide();}
+  });
+});
+
+/* ページ遷移：クリック位置の黄色からヘッダー下を覆い、既存の丸開きへ渡す。 */
+hexReady(function(){
+  var root=document.documentElement,cover=null,animation=null,sequence=0,recovery=0;
+  var stoppedLenis=null;
+  function cleanup(){
+    sequence+=1;clearTimeout(recovery);
+    if(animation){animation.cancel();animation=null;}
+    if(cover){cover.remove();cover=null;}
+    root.classList.remove('hex-page-yellow-covering');
+    if(stoppedLenis){stoppedLenis.start();stoppedLenis=null;}
+  }
+  window.addEventListener('pageshow',function(event){if(event.persisted)cleanup();});
+  // 管理画面headの既存リスナーが遷移先を保存した後に処理する（captureにしない）。
+  document.addEventListener('click',function(event){
+    if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+    var link=event.target.closest&&event.target.closest('a[href]');
+    if(!link||link.hasAttribute('download')||(link.target&&link.target!=='_self'))return;
+    var internal=link.dataset.hexPageTransition==='true'||
+      link.dataset.shortname&&link.dataset.pagetype&&(link.dataset.type||'internal')==='internal';
+    if(!internal||link.dataset.type==='external'||(link.rel&&link.rel.split(/\s+/).indexOf('external')!==-1))return;
+    var url;
+    try{url=new URL(link.href,location.href);}catch(error){return;}
+    if(url.origin!==location.origin||!/^https?:$/.test(url.protocol)||
+      url.pathname===location.pathname&&url.search===location.search)return;
+    if(cover){event.preventDefault();return;}
+    if(!window.hexPageTransition||root.classList.contains('hex-page-handoff-active')||
+      window.matchMedia('(prefers-reduced-motion:reduce)').matches||!Element.prototype.animate)return;
+    // 既存のページ間View Transitionが有効なリンクだけを対象にする。
+    try{
+      var saved=JSON.parse(sessionStorage.getItem('hex-page-transition-v1')||'null');
+      if(!saved||saved.url!==url.href||Date.now()-saved.time>45000)return;
+    }catch(error){return;}
+    var probe=document.createElement('div');
+    probe.style.cssText='position:fixed;visibility:hidden;pointer-events:none;width:0;';
+    probe.style.height=window.innerWidth<=768?'var(--header_height_smartphone,80px)':'var(--header_height,80px)';
+    document.body.appendChild(probe);
+    var top=probe.getBoundingClientRect().height;probe.remove();
+    var width=document.documentElement.clientWidth,height=Math.max(1,window.innerHeight-top);
+    var rect=link.getBoundingClientRect();
+    var x=event.detail?event.clientX:Math.max(0,Math.min(width,rect.left+rect.width/2));
+    var y=(event.detail?event.clientY:rect.top+rect.height/2)-top;
+    var cursor=document.querySelector('.hex-follow-cursor.is-visible');
+    var radius=cursor?Math.max(9,cursor.getBoundingClientRect().width/2):9;
+    var end=Math.ceil(Math.max(Math.hypot(x,y),Math.hypot(width-x,y),
+      Math.hypot(x,height-y),Math.hypot(width-x,height-y)))+2;
+    event.preventDefault();
+    cover=document.createElement('div');cover.className='hex-page-yellow-cover';
+    cover.setAttribute('aria-hidden','true');cover.style.top=top+'px';
+    var origin=' at '+x+'px '+y+'px)';
+    cover.style.clipPath='circle('+radius+'px'+origin;
+    document.body.appendChild(cover);
+    root.classList.add('hex-page-yellow-covering');
+    document.dispatchEvent(new Event('hex:page-cover-start'));
+    var lenis=window.hexMotion&&window.hexMotion.lenis;
+    if(lenis&&!lenis.isStopped){stoppedLenis=lenis;lenis.stop();}
+    var run=++sequence;
+    try{
+      animation=cover.animate([
+        {clipPath:'circle('+radius+'px'+origin},
+        {clipPath:'circle('+end+'px'+origin}
+      ],{duration:650,easing:'cubic-bezier(.65,0,.35,1)',fill:'forwards'});
+      animation.finished.then(function(){
+        if(run!==sequence)return;
+        // 黄色で覆われた旧ページのスナップショットから、head側の丸開きへ接続。
+        location.assign(url.href);
+        recovery=setTimeout(cleanup,20000);
+      }).catch(function(){if(run===sequence){cleanup();location.assign(url.href);}});
+    }catch(error){cleanup();location.assign(url.href);}
   });
 });
 
