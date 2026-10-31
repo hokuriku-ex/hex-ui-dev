@@ -2956,6 +2956,32 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
 }
 
+/* サービス専用カード：SPはgrid2と同じ枠・画像上／本文下のデザイン。 */
+@media screen and (max-width:768px){
+  .hex-service-grid .hex-card{
+    display:block!important;
+    width:100%;
+    max-width:none!important;
+    margin-inline:0!important;
+    padding:18px;
+    background:#fff;
+    border:2px solid #203459;
+    border-radius:6px;
+  }
+  .hex-service-grid .hex-card.dark{
+    background:transparent;
+    border-color:rgba(255,255,255,.75);
+  }
+  .hex-service-grid .hex-card-image{
+    margin-bottom:20px;
+  }
+  .hex-service-grid .hex-card-body{
+    padding:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+  }
+}
+
 /* SPでは背景範囲に指定した重機イラストを非表示。 */
 @media screen and (max-width:768px){
   .hex-bg-range[data-bg-vehicle] > .hex-vehicle-track,
