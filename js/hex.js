@@ -7314,6 +7314,7 @@ function setupCardCarousel(grid,mode){
   var dotButtons=cards.map(function(card,i){
     var button=document.createElement('button');
     button.type='button';
+    button.className='hex-progress-dot';
     button.setAttribute('aria-label',(i+1)+'枚目のカードを表示');
     button.addEventListener('click',function(){
       // ドットの左右順に合わせる。左を選んだら戻り、右なら先へ進む。
@@ -7411,7 +7412,11 @@ function setupCardCarousel(grid,mode){
       offsets[i]=offset;
     });
     viewport.style.height=(height+(mobile.matches?0:40))+'px';
-    dotButtons.forEach(function(button,i){button.setAttribute('aria-current',String(i===index));});
+    dotButtons.forEach(function(button,i){
+      button.setAttribute('aria-current',String(i===index));
+      button.classList.toggle('is-current',i===index);
+      button.classList.toggle('is-passed',i<index);
+    });
     prev.hidden=next.hidden=dots.hidden=cards.length<2;
     controls.hidden=cards.length<2;
     status.textContent=(index+1)+' / '+cards.length;
