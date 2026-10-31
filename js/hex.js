@@ -6884,6 +6884,12 @@ hexReady(function(){
         grid.appendChild(card);
       });
       gridStartBlock.parentNode.insertBefore(grid,gridStartBlock);
+      if(grid.classList.contains('hex-service-grid')){
+        Array.from(grid.children).forEach(function(card,index){
+          card.setAttribute('data-service-progress',(index+1)+' / '+cards.length);
+          card.querySelector('.hex-card-body').setAttribute('data-service-number',String(index+1).padStart(2,'0'));
+        });
+      }
       setupAudienceGrid(grid);
       var sliderModes={pc:gridStart.dataset.sliderPc,sp:gridStart.dataset.sliderSp};
       var removeBlock=gridStartBlock;
