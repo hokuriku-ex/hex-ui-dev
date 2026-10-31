@@ -16362,12 +16362,13 @@ hexReady(function(){
 
 /* ページ遷移：クリック位置の黄色からヘッダー下を覆い、既存の丸開きへ渡す。 */
 hexReady(function(){
-  var root=document.documentElement,cover=null,animation=null,sequence=0,recovery=0;
+  var root=document.documentElement,cover=null,animation=null,sequence=0,recovery=0,warmLink=null;
   var stoppedLenis=null;
   function cleanup(){
     sequence+=1;clearTimeout(recovery);
     if(animation){animation.cancel();animation=null;}
     if(cover){cover.remove();cover=null;}
+    if(warmLink){warmLink.remove();warmLink=null;}
     root.classList.remove('hex-page-yellow-covering');
     if(stoppedLenis){stoppedLenis.start();stoppedLenis=null;}
   }
@@ -16406,6 +16407,11 @@ hexReady(function(){
     var end=Math.ceil(Math.max(Math.hypot(x,y),Math.hypot(width-x,y),
       Math.hypot(x,height-y),Math.hypot(width-x,height-y)))+2;
     event.preventDefault();
+    // 丸が広がる間に遷移先を先行取得する。取得完了を待って遷移することはしない。
+    warmLink=document.createElement('link');
+    warmLink.rel='prefetch';warmLink.as='document';warmLink.href=url.href;
+    warmLink.setAttribute('fetchpriority','high');
+    document.head.appendChild(warmLink);
     cover=document.createElement('div');cover.className='hex-page-yellow-cover';
     cover.setAttribute('aria-hidden','true');cover.style.top=top+'px';
     var origin=' at '+x+'px '+y+'px)';
