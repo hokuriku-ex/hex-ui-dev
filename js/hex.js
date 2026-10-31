@@ -7,6 +7,7 @@
     sessionStorage.removeItem('hex-header-intro-v1');
     if(headerIntro&&headerIntro.url===location.href&&Date.now()-headerIntro.time<45000&&handoff.incoming){
       handoff.headerIntro=true;
+      handoff.introDisplayedAt=Number(headerIntro.displayedAt)||0;
       document.documentElement.classList.add('hex-header-intro-handoff');
     }
   }catch(error){}
@@ -16391,6 +16392,27 @@ hexReady(function(){
 hexReady(function(){
   var root=document.documentElement,cover=null,animation=null,sequence=0,recovery=0,warmLink=null;
   var stoppedLenis=null;
+  function prepareHeaderIntro(url){
+    var controller=new AbortController();
+    var timeout=setTimeout(function(){controller.abort();},5000);
+    return fetch(url,{credentials:'same-origin',signal:controller.signal}).then(function(response){
+      if(!response.ok)throw new Error('intro response');
+      return response.text();
+    }).then(function(html){
+      var page=new DOMParser().parseFromString(html,'text/html');
+      var intro=page.querySelector('.hex-intro');
+      if(!intro)return null;
+      intro= document.importNode(intro,true);
+      intro.querySelectorAll('script,style,link,iframe,object,embed').forEach(function(node){node.remove();});
+      [intro].concat(Array.from(intro.querySelectorAll('*'))).forEach(function(node){
+        Array.from(node.attributes).forEach(function(attr){
+          if(attr.name==='id'||/^on/i.test(attr.name))node.removeAttribute(attr.name);
+        });
+      });
+      intro.classList.add('hex-page-yellow-intro');
+      return intro;
+    }).catch(function(){return null;}).finally(function(){clearTimeout(timeout);});
+  }
   function cleanup(){
     sequence+=1;clearTimeout(recovery);
     if(animation){animation.cancel();animation=null;}
@@ -16422,14 +16444,16 @@ hexReady(function(){
     }
     if(!url)return;
     var destination=new URL(url,location.href);
+    var samePage=destination.pathname===location.pathname&&destination.search===location.search;
     if(destination.origin!==location.origin||!/^https?:$/.test(destination.protocol)||
-      destination.pathname===location.pathname&&destination.search===location.search)return;
+      samePage&&(destination.hash||!document.querySelector('.hex-page-hero.is-hero-ready .hex-page-hero-loading-intro')))return;
     event.preventDefault();event.stopImmediatePropagation();
     if(menu.id==='gc_auto_frame_header_object_smartphone_hum_pupup'){
       var close=menu.querySelector('.closebutton');if(close)close.click();
     }
     var proxy=document.createElement('a');proxy.href=destination.href;
     proxy.dataset.hexPageTransition='true';proxy.dataset.hexHeaderIntro='true';
+    if(samePage)proxy.dataset.hexReplayIntro='true';
     proxy.style.display='none';document.body.appendChild(proxy);
     var box=source.getBoundingClientRect();
     proxy.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,button:0,detail:1,
@@ -16447,15 +16471,16 @@ hexReady(function(){
     if(!internal||link.dataset.type==='external'||(link.rel&&link.rel.split(/\s+/).indexOf('external')!==-1))return;
     var url;
     try{url=new URL(link.href,location.href);}catch(error){return;}
+    var replayIntro=link.dataset.hexReplayIntro==='true';
     if(url.origin!==location.origin||!/^https?:$/.test(url.protocol)||
-      url.pathname===location.pathname&&url.search===location.search)return;
+      !replayIntro&&url.pathname===location.pathname&&url.search===location.search)return;
     if(cover){event.preventDefault();return;}
     if(!window.hexPageTransition||root.classList.contains('hex-page-handoff-active')||
       window.matchMedia('(prefers-reduced-motion:reduce)').matches||!Element.prototype.animate)return;
     // 既存のページ間View Transitionが有効なリンクだけを対象にする。
     try{
       var saved=JSON.parse(sessionStorage.getItem('hex-page-transition-v1')||'null');
-      if(!saved||saved.url!==url.href||Date.now()-saved.time>45000)return;
+      if(!replayIntro&&(!saved||saved.url!==url.href||Date.now()-saved.time>45000))return;
     }catch(error){return;}
     var probe=document.createElement('div');
     probe.style.cssText='position:fixed;visibility:hidden;pointer-events:none;width:0;';
@@ -16472,15 +16497,19 @@ hexReady(function(){
       Math.hypot(x,height-y),Math.hypot(width-x,height-y)))+2;
     event.preventDefault();
     try{
-      if(link.dataset.hexHeaderIntro==='true'){
+      if(!replayIntro&&link.dataset.hexHeaderIntro==='true'){
         sessionStorage.setItem('hex-header-intro-v1',JSON.stringify({url:url.href,time:Date.now()}));
       }else sessionStorage.removeItem('hex-header-intro-v1');
     }catch(error){}
-    // 丸が広がる間に遷移先を先行取得する。取得完了を待って遷移することはしない。
-    warmLink=document.createElement('link');
-    warmLink.rel='prefetch';warmLink.as='document';warmLink.href=url.href;
-    warmLink.setAttribute('fetchpriority','high');
-    document.head.appendChild(warmLink);
+    // メニューは導入文を先に配置し、丸が広がり切ったフレームで表示する。
+    var preparedIntro=!replayIntro&&link.dataset.hexHeaderIntro==='true'
+      ?prepareHeaderIntro(url.href):Promise.resolve(null);
+    if(link.dataset.hexHeaderIntro!=='true'){
+      warmLink=document.createElement('link');
+      warmLink.rel='prefetch';warmLink.as='document';warmLink.href=url.href;
+      warmLink.setAttribute('fetchpriority','high');
+      document.head.appendChild(warmLink);
+    }
     cover=document.createElement('div');cover.className='hex-page-yellow-cover';
     cover.setAttribute('aria-hidden','true');cover.style.top=top+'px';
     var origin=' at '+x+'px '+y+'px)';
@@ -16491,6 +16520,9 @@ hexReady(function(){
     var lenis=window.hexMotion&&window.hexMotion.lenis;
     if(lenis&&!lenis.isStopped){stoppedLenis=lenis;lenis.stop();}
     var run=++sequence;
+    preparedIntro.then(function(introPreview){
+      if(run!==sequence)return;
+      if(introPreview)cover.appendChild(introPreview);
     try{
       animation=cover.animate([
         {clipPath:'circle('+radius+'px'+origin},
@@ -16498,11 +16530,25 @@ hexReady(function(){
       ],{duration:650,easing:'cubic-bezier(.65,0,.35,1)',fill:'forwards'});
       animation.finished.then(function(){
         if(run!==sequence)return;
+        if(replayIntro){
+          cleanup();
+          document.dispatchEvent(new Event('hex:replay-page-intro'));
+          return;
+        }
+        if(introPreview){
+          cover.classList.add('is-intro-visible');
+          try{sessionStorage.setItem('hex-header-intro-v1',JSON.stringify({
+            url:url.href,time:Date.now(),displayedAt:Date.now()
+          }));}catch(error){}
+        }
         // 黄色で覆われた旧ページのスナップショットから、head側の丸開きへ接続。
-        location.assign(url.href);
+        requestAnimationFrame(function(){requestAnimationFrame(function(){
+          if(run===sequence)location.assign(url.href);
+        });});
         recovery=setTimeout(cleanup,20000);
       }).catch(function(){if(run===sequence){cleanup();location.assign(url.href);}});
     }catch(error){cleanup();location.assign(url.href);}
+    });
   });
 });
 
@@ -17118,7 +17164,10 @@ hexReady(function(){
     }
     // 通常は導入文を最低2秒表示。共通内部リンクの遷移は固定待機を省く。
     var introReady=intro&&!skipIntro?new Promise(function(resolve){
-      function beginIntro(){requestAnimationFrame(function(){setTimeout(resolve,2000);});}
+      function beginIntro(){requestAnimationFrame(function(){
+        var displayedAt=headerIntro&&handoff.introDisplayedAt;
+        setTimeout(resolve,displayedAt?Math.max(0,2000-(Date.now()-displayedAt)):2000);
+      });}
       if(headerIntro&&document.documentElement.classList.contains('hex-page-handoff-active')&&
         !document.documentElement.classList.contains('hex-header-intro-ready')){
         var handoffObserver=new MutationObserver(function(){
@@ -17162,8 +17211,8 @@ hexReady(function(){
       }
       window.dispatchEvent(new Event('resize'));
     });
-    Promise.all([introReady,titleReady,decorReady,document.fonts?document.fonts.ready:Promise.resolve()]).then(function(){
-      if(waitForHandoff){finishHandoffPage();return;}
+    function revealPage(replay){
+      if(waitForHandoff&&!replay){finishHandoffPage();return;}
       // 欠番しかない場合も、従来色のタイトルで表示を完了する。
       if(intro)intro.setAttribute('aria-hidden','true');
       var layers=[contents,decor];
@@ -17204,6 +17253,22 @@ hexReady(function(){
         else{finishReveal();}
       }
       requestAnimationFrame(revealFrame);
+    }
+    Promise.all([introReady,titleReady,decorReady,document.fonts?document.fonts.ready:Promise.resolve()]).then(revealPage);
+    document.addEventListener('hex:replay-page-intro',function(){
+      if(!intro||!hero.isConnected||!hero.classList.contains('is-hero-ready')||hero.classList.contains('is-hero-revealing'))return;
+      hero.classList.remove('is-hero-ready');
+      hero.classList.add('is-hero-loading');
+      hero.setAttribute('aria-busy','true');
+      intro.style.removeProperty('display');
+      intro.setAttribute('aria-hidden','false');
+      main.setAttribute('inert','');
+      unlockScroll=lockIntroScroll(hero);
+      var lenis=window.hexMotion&&window.hexMotion.lenis;
+      if(lenis)lenis.scrollTo(0,{immediate:true,force:true});
+      else window.scrollTo({top:0,left:0,behavior:'instant'});
+      layout();
+      requestAnimationFrame(function(){setTimeout(function(){revealPage(true);},2000);});
     });
   }
   function scan(){document.querySelectorAll('.pagetitle_type.pagetitle_type4').forEach(init);}

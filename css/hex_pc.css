@@ -9623,6 +9623,18 @@ html.hex-page-handoff-active body:has(.pagetitle_type.pagetitle_type4:not(.hex-p
   pointer-events:auto;
   touch-action:none;
 }
+.hex-page-yellow-cover .hex-page-yellow-intro{
+  display:none!important;
+  position:absolute!important;top:50%!important;left:16px!important;right:16px!important;
+  width:auto!important;max-width:none!important;margin:0!important;padding:0!important;
+  transform:translateY(-50%)!important;text-align:center!important;box-sizing:border-box;
+}
+.hex-page-yellow-cover.is-intro-visible .hex-page-yellow-intro{
+  display:block!important;visibility:visible!important;opacity:1!important;
+}
+.hex-page-yellow-cover .hex-page-yellow-intro :is(h4,p,span){
+  opacity:1!important;visibility:visible!important;transform:none!important;
+}
 html.hex-page-yellow-covering .hex-follow-cursor{
   visibility:hidden!important;
   opacity:0!important;
