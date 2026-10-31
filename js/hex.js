@@ -17987,28 +17987,6 @@ hexReady(function(){
     if(veilFrame)return;
     veilFrame=requestAnimationFrame(function(){veilFrame=0;updateVeils();});
   }
-  function addTitleSnapRanges(ranges,scroll,header,maximumScroll){
-    document.querySelectorAll('.pagetitle_type.pagetitle_type4.hex-page-hero').forEach(function(hero){
-      /* ナビのないタイトルや通常のオーバーラップ境界はスナップしない。 */
-      if(!hero.querySelector('.hex-anchor-nav:not(.hex-home-anchor-nav)'))return;
-      var next=hero._hexNextSection;
-      if(!next){
-        var branch=hero.closest('[id^="gc_auto_frame_"],.gc_auto_frame_page_title')||hero;
-        while(branch&&branch!==document.body&&!next){
-          for(var sibling=branch.nextElementSibling;sibling;sibling=sibling.nextElementSibling){
-            var style=getComputedStyle(sibling);
-            if(style.display!=='none'&&style.visibility!=='hidden'&&style.position!=='fixed'&&sibling.getBoundingClientRect().height>0){next=sibling;break;}
-          }
-          branch=branch.parentElement;
-        }
-      }
-      if(!next)return;
-      var box=hero.getBoundingClientRect();
-      if(box.height<=0||getComputedStyle(next).display==='none')return;
-      ranges.push({from:Math.max(0,Math.min(maximumScroll,box.bottom+scroll-window.hexViewportHeight())),
-        to:Math.max(0,Math.min(maximumScroll,originalNode(next).getBoundingClientRect().top+scroll-sectionLandingOffset(next,header)))});
-    });
-  }
   function homeAnchorArchPanel(entry){
     return null;
   }
@@ -18120,7 +18098,7 @@ hexReady(function(){
     /* オーバーラップの固定・フェードは維持し、自動着地の登録だけ外す。
        下層ページのタイトル内アンカーナビのスナップは従来どおり残す。 */
     snapRanges=[];
-    if(!homeFoundedSection())addTitleSnapRanges(snapRanges,scroll,header,maximumScroll);
+    // 下層ページ先頭は通常スクロールとし、タイトルと次セクションの自動着地を作らない。
     snapRanges=snapRanges.filter(function(range){return range.to-range.from>24;})
       .sort(function(a,b){return a.from-b.from||a.to-b.to;});
     var layouts=managed.map(function(item){
