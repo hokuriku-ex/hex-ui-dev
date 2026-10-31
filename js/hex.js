@@ -17109,6 +17109,13 @@ hexReady(function(){
     window.addEventListener('scroll',syncHeroCover,{passive:true});
     function queueLayout(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(layout);}
     layout();
+    // 導入文は背景画像やページ全体のloadを待たず、配置後の描画から表示する。
+    // ページ本体の丸開きは下のPromise.allで引き続き画像・フォントを待つ。
+    if(headerIntro){
+      requestAnimationFrame(function(){requestAnimationFrame(function(){
+        document.documentElement.classList.add('hex-header-intro-ready');
+      });});
+    }
     // 通常は導入文を最低2秒表示。共通内部リンクの遷移は固定待機を省く。
     var introReady=intro&&!skipIntro?new Promise(function(resolve){
       function beginIntro(){requestAnimationFrame(function(){setTimeout(resolve,2000);});}
