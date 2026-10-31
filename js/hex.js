@@ -2,6 +2,13 @@
 (function(){
   var handoff=window.hexPageTransition;
   if(!handoff)return;
+  try{
+    var headerIntro=JSON.parse(sessionStorage.getItem('hex-header-intro-v1')||'null');
+    sessionStorage.removeItem('hex-header-intro-v1');
+    if(headerIntro&&headerIntro.url===location.href&&Date.now()-headerIntro.time<45000&&handoff.incoming){
+      handoff.headerIntro=true;
+    }
+  }catch(error){}
   var anchorReady=!!handoff.anchorReady;
   Object.defineProperty(handoff,'anchorReady',{
     configurable:true,
@@ -16390,6 +16397,43 @@ hexReady(function(){
     if(stoppedLenis){stoppedLenis.start();stoppedLenis=null;}
   }
   window.addEventListener('pageshow',function(event){if(event.persisted)cleanup();});
+  // CMSメニューの直接遷移を、既存headが扱える一時的な内部リンクへ渡す。
+  document.addEventListener('click',function(event){
+    if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+    var menu=event.target.closest&&event.target.closest('.headermenu_type8,#gc_auto_frame_header_object_smartphone_hum_pupup');
+    if(!menu||event.target.closest('.menu-external'))return;
+    var source=event.target.closest('a[href],[onclick]');
+    if(!source||!menu.contains(source))return;
+    var url='';
+    if(source.matches('a[href]')){
+      if((source.target&&source.target!=='_self')||source.hasAttribute('download'))return;
+      url=source.href;
+    }else{
+      var jump=(source.getAttribute('onclick')||'').match(/^\s*gc_click_page_jump\(\s*['"]([\w-]+)['"]\s*,\s*['"]([\w-]+)['"](?:\s*,\s*(\d+))?\s*\)\s*;?\s*$/);
+      if(!jump)return;
+      url=window.hexBuildUrl({dataset:{shortname:jump[1],pagetype:jump[2]}});
+      if(url&&Number(jump[3])>0){
+        var itemUrl=new URL(url,location.href);
+        itemUrl.searchParams.set(HEX_IS_PRODUCTION?'v':'id',jump[3]);url=itemUrl.href;
+      }
+    }
+    if(!url)return;
+    var destination=new URL(url,location.href);
+    if(destination.origin!==location.origin||!/^https?:$/.test(destination.protocol)||
+      destination.pathname===location.pathname&&destination.search===location.search)return;
+    event.preventDefault();event.stopImmediatePropagation();
+    if(menu.id==='gc_auto_frame_header_object_smartphone_hum_pupup'){
+      var close=menu.querySelector('.closebutton');if(close)close.click();
+    }
+    var proxy=document.createElement('a');proxy.href=destination.href;
+    proxy.dataset.hexPageTransition='true';proxy.dataset.hexHeaderIntro='true';
+    proxy.style.display='none';document.body.appendChild(proxy);
+    var box=source.getBoundingClientRect();
+    proxy.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,button:0,detail:1,
+      clientX:event.detail?event.clientX:box.left+box.width/2,
+      clientY:event.detail?event.clientY:box.top+box.height/2}));
+    proxy.remove();
+  },true);
   // 管理画面headの既存リスナーが遷移先を保存した後に処理する（captureにしない）。
   document.addEventListener('click',function(event){
     if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
@@ -16424,6 +16468,11 @@ hexReady(function(){
     var end=Math.ceil(Math.max(Math.hypot(x,y),Math.hypot(width-x,y),
       Math.hypot(x,height-y),Math.hypot(width-x,height-y)))+2;
     event.preventDefault();
+    try{
+      if(link.dataset.hexHeaderIntro==='true'){
+        sessionStorage.setItem('hex-header-intro-v1',JSON.stringify({url:url.href,time:Date.now()}));
+      }else sessionStorage.removeItem('hex-header-intro-v1');
+    }catch(error){}
     // 丸が広がる間に遷移先を先行取得する。取得完了を待って遷移することはしない。
     warmLink=document.createElement('link');
     warmLink.rel='prefetch';warmLink.as='document';warmLink.href=url.href;
@@ -16893,12 +16942,14 @@ hexReady(function(){
     if(!contents||!heading)return;
     var handoff=window.hexPageTransition;
     /* 遷移演出は共通パーツの内部リンクで判定。アンカーは移動位置だけに使う。 */
-    var waitForHandoff=!!(handoff&&handoff.incoming);
+    var headerIntro=!!(handoff&&handoff.headerIntro&&
+      (contents.querySelector('.hex-intro')||document.querySelector('.hex-intro')));
+    var waitForHandoff=!!(handoff&&handoff.incoming&&!headerIntro);
     var skipIntro=waitForHandoff;
     hero.classList.add('hex-page-hero');
     /* 共通内部リンクでは元画面を保持し、それ以外では従来の導入文で準備を待つ。 */
     hero.classList.add('is-hero-loading');
-    hero.setAttribute('aria-busy','true');
+    hero.setAttribute('aria-busy',headerIntro?'false':'true');
     var unlockScroll=lockIntroScroll(hero);
     // 既存の導入文移動はwindow.load時。先に取得・移動して待機表示を確保する。
     var intro=contents.querySelector('.hex-intro')||document.querySelector('.hex-intro');
@@ -17057,7 +17108,14 @@ hexReady(function(){
     layout();
     // 通常は導入文を最低2秒表示。共通内部リンクの遷移は固定待機を省く。
     var introReady=intro&&!skipIntro?new Promise(function(resolve){
-      requestAnimationFrame(function(){setTimeout(resolve,2000);});
+      function beginIntro(){requestAnimationFrame(function(){setTimeout(resolve,2000);});}
+      if(headerIntro&&document.documentElement.classList.contains('hex-page-handoff-active')){
+        var handoffObserver=new MutationObserver(function(){
+          if(document.documentElement.classList.contains('hex-page-handoff-active'))return;
+          handoffObserver.disconnect();beginIntro();
+        });
+        handoffObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+      }else beginIntro();
     }):Promise.resolve();
     window.addEventListener('load',queueLayout,{once:true});
     window.addEventListener('hex:viewport-resize',queueLayout,{passive:true});

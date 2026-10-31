@@ -10349,6 +10349,9 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
 .hex-page-hero-slide.is-current{opacity:1;}
 
 /* 下層ページ：画像準備中は導入文のみ、準備後はタイトルとナビのみ */
+.pagetitle_type.pagetitle_type4.hex-page-hero:is(.is-hero-loading,.is-hero-revealing){
+  background:#f7d04f!important;
+}
 .pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-loading-intro{
   display:none!important;
   position:absolute!important;top:50%!important;left:16px!important;right:16px!important;
