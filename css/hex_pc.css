@@ -11110,6 +11110,10 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
 }
 
 /* 曲線を走る重機。速度は1秒あたりのCSS長さ（単位なしはpx/秒）。回転の角度制限なし。 */
+.hex-bg-range[data-bg-vehicle]{
+  /* イラストが上端からはみ出す部分も、直前の通常背景より前へ描く。 */
+  z-index:2;
+}
 :root{
   --hex-vehicle-width:clamp(144px,13.5vw,222px);
   --hex-vehicle-speed:3vw;
