@@ -9949,6 +9949,10 @@ body > .hex-v2-handoff{z-index:198;}
   flex:1;
   box-sizing:border-box;
 }
+.hex-audience-grid .hex-card{
+  background:#265ab0;
+  border:none;
+}
 /* PCだけ、実寸を90%相当に調整して左右へ傾ける。文字は拡縮しない。 */
 @media screen and (min-width:769px){
   .hex-card-grid.hex-audience-grid{padding-block:32px;}
