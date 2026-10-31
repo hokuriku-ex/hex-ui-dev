@@ -1614,6 +1614,8 @@ a.hex-anchor-nav-link.is-active{
 ======================================= */
 /* 背景色範囲指定 */
 .hex-bg-range{
+  /* 先頭・末尾の本文余白を背景内へ収め、連続範囲の境界に空白を作らない。 */
+  display:flow-root;
   position:relative;
   z-index:0;
   isolation:isolate;
