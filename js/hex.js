@@ -6887,7 +6887,7 @@ hexReady(function(){
       if(grid.classList.contains('hex-service-grid')){
         Array.from(grid.children).forEach(function(card,index){
           card.setAttribute('data-service-progress',(index+1)+' / '+cards.length);
-          card.querySelector('.hex-card-body').setAttribute('data-service-number',(index+1)+' / '+cards.length);
+          card.querySelector('.hex-card-body').setAttribute('data-service-number',String(index+1).padStart(2,'0'));
         });
       }
       setupAudienceGrid(grid);

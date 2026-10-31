@@ -6024,6 +6024,17 @@ html body
   .hex-service-grid.hex-card-grid :is(.hex-card-title,.hex-card-title-link,.hex-link-icon,.hex-card-text){
     color:#fff!important;
   }
+  .hex-service-grid.hex-card-grid .hex-card::after{
+    content:attr(data-service-progress);
+    position:absolute;
+    right:clamp(24px,3.4vw,64px);
+    bottom:20px;
+    color:#fff;
+    font-size:14px;
+    font-weight:700;
+    line-height:1;
+    pointer-events:none;
+  }
 }
 
 /* =======================================
