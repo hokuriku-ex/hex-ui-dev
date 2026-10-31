@@ -2149,6 +2149,11 @@ div[hex-sp]{
 .hex-card-carousel-status[hidden]{display:none;}
 .hex-card-carousel-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
 @media screen and (max-width:768px){
+  .hex-card-carousel-scroll .hex-card-carousel-slide > *,
+  .hex-card-carousel-scroll .hex-card-carousel-slide:is(:hover,:has(:focus-visible)) > *{
+    translate:none;
+    animation:none;
+  }
   .hex-card-carousel-slide{
     top:0;
     transform:translateX(-50%) translateX(var(--hex-carousel-x));

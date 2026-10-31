@@ -6915,7 +6915,7 @@ function setupResponsiveCardSlider(grid,modes){
   var active=null,activeAudienceStack=false,cleanup=null;
   ['pc','sp'].forEach(function(device){
     var value=modes[device];
-    var allowed=device==='pc'?['normal','vertical','horizontal','scroll']:['normal','vertical','horizontal'];
+    var allowed=['normal','vertical','horizontal','scroll'];
     modes[device]=allowed.indexOf(value)!==-1?value:'';
     if(modes[device])grid.setAttribute('data-slider-'+device,modes[device]);
   });
@@ -7259,7 +7259,7 @@ function setupCardCarousel(grid,mode){
     probe.style.width=grid.parentElement.clientWidth+'px';
     var card=document.createElement('div');card.className=cards[0].className;
     probe.appendChild(card);grid.parentElement.appendChild(probe);
-    scrollCardWidth=card.getBoundingClientRect().width;
+    scrollCardWidth=mobile.matches?viewport.clientWidth:card.getBoundingClientRect().width;
     probe.remove();
     // 小さいカード・少ない枚数でも画面端まで途切れないだけの循環列を用意。
     var required=Math.ceil((viewport.clientWidth+scrollCardWidth)/(scrollCardWidth+32))+2;
@@ -7291,14 +7291,17 @@ function setupCardCarousel(grid,mode){
     });
   }
   function bindAutoHover(slide){
-    slide.addEventListener('pointerenter',function(){autoHovered=true;stopAuto();});
+    slide.addEventListener('pointerenter',function(event){
+      if(event.pointerType==='touch')return;
+      autoHovered=true;stopAuto();
+    });
     slide.addEventListener('pointerleave',function(){autoHovered=false;startAuto();});
   }
   slides.forEach(bindAutoHover);
   function autoFocus(){stopAuto();startAuto();}
   function autoBlur(event){if(!grid.contains(event.relatedTarget))requestAnimationFrame(startAuto);}
   function autoVisibility(){
-    autoHovered=!!grid.querySelector('.hex-card-carousel-slide:hover');
+    autoHovered=!mobile.matches&&!!grid.querySelector('.hex-card-carousel-slide:hover');
     stopAuto();startAuto();
   }
   if(scrolling){
@@ -7466,7 +7469,7 @@ function setupCardCarousel(grid,mode){
     drag.samples.push({x:x,time:now});
     drag.samples=drag.samples.filter(function(sample){return now-sample.time<=120;});
     var travel=drag.dx/dragStep();
-    if(mobile.matches)travel=Math.max(-1,Math.min(1,travel));
+    if(mobile.matches&&!scrolling)travel=Math.max(-1,Math.min(1,travel));
     position=drag.start-travel;
     layout();
   }
@@ -7554,7 +7557,7 @@ function setupCardCarousel(grid,mode){
           scrollVelocity=Math.max(-3,Math.min(3,scrollVelocity));
         }
       }
-      autoHovered=!!viewport.querySelector('.hex-card-carousel-slide:hover');
+      autoHovered=!mobile.matches&&!!viewport.querySelector('.hex-card-carousel-slide:hover');
       layout();settleScroll(scrollVelocity);
       return;
     }
