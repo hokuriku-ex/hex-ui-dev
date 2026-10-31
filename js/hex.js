@@ -7278,7 +7278,8 @@ function setupCardCarousel(grid,mode){
   function stopAuto(){cancelAnimationFrame(autoFrame);autoFrame=0;autoTime=0;}
   function startAuto(){
     if(!scrolling||destroyed||!enabled||cards.length<2||reduced.matches||document.hidden||
-      !autoVisible||autoHovered||grid.contains(document.activeElement)||autoFrame)return;
+      !autoVisible||autoHovered||
+      (grid.contains(document.activeElement)&&document.activeElement.matches(':focus-visible'))||autoFrame)return;
     autoFrame=requestAnimationFrame(function tick(now){
       autoFrame=0;
       if(destroyed)return;
@@ -7294,12 +7295,16 @@ function setupCardCarousel(grid,mode){
     slide.addEventListener('pointerleave',function(){autoHovered=false;startAuto();});
   }
   slides.forEach(bindAutoHover);
-  function autoFocus(){stopAuto();}
+  function autoFocus(){stopAuto();startAuto();}
   function autoBlur(event){if(!grid.contains(event.relatedTarget))requestAnimationFrame(startAuto);}
-  function autoVisibility(){stopAuto();startAuto();}
+  function autoVisibility(){
+    autoHovered=!!grid.querySelector('.hex-card-carousel-slide:hover');
+    stopAuto();startAuto();
+  }
   if(scrolling){
     grid.addEventListener('focusin',autoFocus);grid.addEventListener('focusout',autoBlur);
     document.addEventListener('visibilitychange',autoVisibility);
+    window.addEventListener('focus',autoVisibility);
     if(reduced.addEventListener)reduced.addEventListener('change',autoVisibility);
   }
   var dots=document.createElement('div');
@@ -7572,6 +7577,7 @@ function setupCardCarousel(grid,mode){
     if(autoObserver)autoObserver.disconnect();
     grid.removeEventListener('focusin',autoFocus);grid.removeEventListener('focusout',autoBlur);
     document.removeEventListener('visibilitychange',autoVisibility);
+    window.removeEventListener('focus',autoVisibility);
     if(reduced.removeEventListener)reduced.removeEventListener('change',autoVisibility);
     cancelAnimationFrame(frame);cancelAnimationFrame(motion);
     if(observer)observer.disconnect();
