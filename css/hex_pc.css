@@ -2138,6 +2138,10 @@ div[hex-sp]{
 .hex-card-carousel-arrow:hover{background:#203459;color:#fff;}
 .hex-card-carousel-dots{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;margin-top:16px;}
 /* ドットは開幕と共通のhex-progress-dotで表示。円周タイマーは付けない。 */
+.hex-card-carousel-dots .hex-progress-dot:not(.is-current)::before{
+  border-color:var(--hex-opening-navy);
+  background:var(--hex-opening-navy);
+}
 .hex-card-carousel .hex-card-carousel-arrow:focus-visible{outline:2px solid #f7d04f;outline-offset:3px;}
 .hex-card-carousel [hidden],
 .hex-card-carousel-viewport[hidden],
