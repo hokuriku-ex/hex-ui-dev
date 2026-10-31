@@ -7042,6 +7042,19 @@ function setupCardStack(grid,mode){
         ?'translate3d('+offset+'px,0,0)':'translate3d(0,'+offset+'px,0)';
       if(slide.style.transform!==value)slide.style.transform=value;
     });
+    if(grid.classList.contains('hex-service-grid')){
+      var fillActive=window.innerWidth>768&&!reduced.matches&&rawProgress>=0&&rawProgress<=travel;
+      var fillViewport=window.hexViewportHeight?window.hexViewportHeight():window.innerHeight;
+      var fills=cards.map(function(card){
+        return fillActive?Math.max(0,Math.ceil(fillViewport-card.getBoundingClientRect().bottom)):0;
+      });
+      cards.forEach(function(card,index){
+        var fill=fills[index]+'px';
+        if(card.style.getPropertyValue('--hex-service-bottom-fill')!==fill){
+          card.style.setProperty('--hex-service-bottom-fill',fill);
+        }
+      });
+    }
     if(deferredLayout&&(rawProgress<0||rawProgress>travel)){
       deferredLayout=false;queue();
     }
@@ -7188,6 +7201,7 @@ function setupCardStack(grid,mode){
     }
     cards.forEach(function(card,index){
       card.style.transform=originalTransforms[index];
+      if(grid.classList.contains('hex-service-grid'))card.style.removeProperty('--hex-service-bottom-fill');
       if(stacking){grid.insertBefore(card,slides[index]);slides[index].remove();}
       else card.classList.remove('hex-card-stack-slide');
     });

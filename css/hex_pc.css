@@ -5954,6 +5954,18 @@ html body
     border:0;
     border-radius:0;
     color:#fff;
+    isolation:isolate;
+  }
+  .hex-service-grid.hex-card-grid .hex-card::before{
+    content:"";
+    position:absolute;
+    top:calc(100% - 1px);
+    left:0;
+    width:100%;
+    height:var(--hex-service-bottom-fill,0px);
+    background:inherit;
+    z-index:-1;
+    pointer-events:none;
   }
   .hex-service-grid.hex-card-grid .hex-card.has-image{
     grid-template-columns:minmax(0,1fr) minmax(0,1fr);
