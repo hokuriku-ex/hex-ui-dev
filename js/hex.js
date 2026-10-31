@@ -6668,6 +6668,10 @@ hexReady(function(){
     }):null;
 
   function syncCardSlide(state){
+    if(state.fadeTimer&&(!state.box.isConnected||!state.visible||document.hidden||slideReduced.matches)){
+      window.clearTimeout(state.fadeTimer);
+      state.finishFade();
+    }
     if(slideReduced.matches&&state.index!==0){
       state.images[state.index].classList.remove('is-active');
       state.images[state.index].setAttribute('aria-hidden','true');
@@ -6689,7 +6693,7 @@ hexReady(function(){
 
   function advanceCardSlide(state){
     if(!state.box.isConnected){syncCardSlide(state);return;}
-    if(slideReduced.matches||document.hidden||!state.visible)return;
+    if(slideReduced.matches||document.hidden||!state.visible||state.fadeTimer)return;
     var next=(state.index+1)%state.images.length;
     /* 読み込みエラー画像を避け、未読込なら現在の画像を保つ。 */
     while(next!==state.index&&state.images[next].dataset.hexSlideFailed==='1'){
@@ -6699,6 +6703,17 @@ hexReady(function(){
     if(next===state.index||!image.complete||!image.naturalWidth){return;}
     state.images[state.index].classList.remove('is-active');
     state.images[state.index].setAttribute('aria-hidden','true');
+    if(state.box.closest('.hex-audience-grid')){
+      state.index=next;
+      state.finishFade=function(){
+        image.classList.add('is-active');
+        image.removeAttribute('aria-hidden');
+        state.fadeTimer=0;
+        state.finishFade=null;
+      };
+      state.fadeTimer=window.setTimeout(state.finishFade,500);
+      return;
+    }
     image.classList.add('is-active');
     image.removeAttribute('aria-hidden');
     state.index=next;
@@ -6715,7 +6730,7 @@ hexReady(function(){
       image.addEventListener('error',function(){image.dataset.hexSlideFailed='1';});
     });
     var state={box:box,images:images,index:0,interval:interval,
-      visible:!slideObserver,timer:0};
+      visible:!slideObserver,timer:0,fadeTimer:0,finishFade:null};
     cardSlides.push(state);
     if(slideObserver){slideObserver.observe(box);}
     return state;

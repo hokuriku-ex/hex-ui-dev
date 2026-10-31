@@ -9990,11 +9990,12 @@ body > .hex-v2-handoff{z-index:198;}
     position:relative;
     container-type:inline-size;
 }
-/* お客様向けカードのみ、画像をクロスフェードで切り替える。 */
+/* お客様向けカードのみ、白を挟み0.5秒ずつ消灯・表示（計1秒）。 */
+.hex-audience-grid .hex-card-image.has-slideshow{background:#fff;}
 .hex-audience-grid .hex-card-image.has-slideshow > img{
   visibility:visible;
   opacity:0;
-  transition:opacity .7s ease;
+  transition:opacity .5s ease;
 }
 .hex-audience-grid .hex-card-image.has-slideshow > img.is-active{
   opacity:1;
