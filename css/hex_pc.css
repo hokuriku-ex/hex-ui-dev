@@ -9607,7 +9607,7 @@ html.hex-header-intro-handoff.hex-page-handoff-active::view-transition-new(root)
   clip-path:none!important;
   opacity:0!important;
 }
-html.hex-header-intro-handoff.hex-header-intro-ready.hex-page-handoff-active::view-transition-new(root){
+html.hex-header-intro-handoff.hex-header-intro-ready.hex-page-handoff-active:not(.hex-reload-header-pending)::view-transition-new(root){
   opacity:1!important;
 }
 html.hex-page-handoff-active #hex-motion-preparation-cover,
