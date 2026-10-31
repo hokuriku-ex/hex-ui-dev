@@ -7704,6 +7704,30 @@ hexLoad(function(){
   setTimeout(function(){
     var items=document.querySelectorAll('.gc_auto_frame_post_index_home_box_contents_cell_text_list,.gc_auto_frame_post_index_box_contents_cell_text_list');
     Array.prototype.forEach.call(items,function(item){
+      // CMSの直接location変更を通常リンクへ変換し、共通のページ遷移へ接続。
+      var jump=(item.getAttribute('onclick')||'').match(/^\s*gc_click_page_jump\(\s*['"]([\w-]+)['"]\s*,\s*['"]([\w-]+)['"]\s*,\s*(\d+)\s*\)\s*;?\s*$/);
+      if(jump){
+        var preview=document.getElementById('gc_index_url');
+        var published=document.getElementById('gc_index_url_publish');
+        var isPreview=preview&&preview.value.indexOf('ajax_gethtml_site_from_db.php')!==-1;
+        var base=isPreview?preview.value.split('&')[0]:published&&published.value;
+        if(base){
+          var articleUrl=new URL(base,location.href);
+          articleUrl.searchParams.set(isPreview?'shortname':'p',jump[1]);
+          articleUrl.searchParams.set(isPreview?'page_type':'k',jump[2]);
+          if(Number(jump[3])>0)articleUrl.searchParams.set(isPreview?'id':'v',jump[3]);
+          var articleLink=document.createElement('a');
+          Array.from(item.attributes).forEach(function(attr){
+            if(attr.name!=='onclick')articleLink.setAttribute(attr.name,attr.value);
+          });
+          articleLink.href=articleUrl.href;
+          articleLink.dataset.hexPageTransition='true';
+          while(item.firstChild)articleLink.appendChild(item.firstChild);
+          item.replaceWith(articleLink);item=articleLink;
+        }
+      }else if(item.matches('a[href]')){
+        item.dataset.hexPageTransition='true';
+      }
       var date=item.querySelector('.gc_auto_frame_post_index_home_box_contents_cell_date_list,.gc_auto_frame_post_index_box_contents_cell_date_list');
       var caption=item.querySelector('.gc_auto_frame_post_index_home_box_contents_cell_caption_list,.gc_auto_frame_post_index_box_contents_cell_caption_list');
       if(caption){
@@ -7936,6 +7960,7 @@ function hexHomeNewsUpdateButton(buttonArea,shortname,pagetype){
   if(link){
     if(!isButton)link.style.width=view.dataset.width||'100%';
     link.href=url;
+    link.dataset.hexPageTransition=(view.dataset.type||'internal')==='internal'?'true':'false';
     window.hexSetExternal(link,view.dataset.type||'internal');
   }
 
