@@ -2127,14 +2127,13 @@ div[hex-sp]{
 .hex-card-carousel-arrow.is-prev{left:calc(50% - var(--hex-carousel-card-width)/2 - 12px);}
 .hex-card-carousel-arrow.is-next{left:calc(50% + var(--hex-carousel-card-width)/2 + 12px);}
 .hex-card-carousel-arrow::before{
-  content:"";
-  width:9px;
-  height:9px;
-  border-top:2px solid currentColor;
-  border-right:2px solid currentColor;
-  transform:rotate(45deg);
+  content:"\f105";
+  font-family:"Font Awesome 6 Free";
+  font-size:18px;
+  font-weight:900;
+  line-height:1;
 }
-.hex-card-carousel-arrow.is-prev::before{transform:rotate(-135deg);}
+.hex-card-carousel-arrow.is-prev::before{content:"\f104";}
 .hex-card-carousel-arrow:hover{border-color:#f7d04f;background:#fff;color:#f7d04f;}
 .hex-card-carousel-dots{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;margin-top:16px;}
 /* ドットは開幕と共通のhex-progress-dotで表示。円周タイマーは付けない。 */
