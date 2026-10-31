@@ -10592,6 +10592,10 @@ body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
 }
 .hex-rise-back-layer{position:relative;z-index:0;}
 .hex-rise-front-layer{position:relative;z-index:1;isolation:isolate;}
+/* CMSのz-index:51に上書きされず、前の固定枠と同じ階層でDOM順に重ねる。 */
+#gc_auto_body_home > .gc_auto_frame_background.hex-rise-front-layer{
+  z-index:95!important;
+}
 
 /* 共通オーバーラップ：外枠を独立スクロール領域にしない。
    片軸だけvisibleにすると、もう片軸のauto/hiddenによってautoへ変わるため両軸を解除。
@@ -11110,10 +11114,6 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
 }
 
 /* 曲線を走る重機。速度は1秒あたりのCSS長さ（単位なしはpx/秒）。回転の角度制限なし。 */
-.hex-bg-range[data-bg-vehicle]{
-  /* イラストが上端からはみ出す部分も、直前の通常背景より前へ描く。 */
-  z-index:2;
-}
 :root{
   --hex-vehicle-width:clamp(144px,13.5vw,222px);
   --hex-vehicle-speed:3vw;
