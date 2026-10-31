@@ -7278,7 +7278,7 @@ function setupCardCarousel(grid,mode){
   function stopAuto(){cancelAnimationFrame(autoFrame);autoFrame=0;autoTime=0;}
   function startAuto(){
     if(!scrolling||destroyed||!enabled||cards.length<2||reduced.matches||document.hidden||
-      !autoVisible||autoHovered||drag||
+      !autoVisible||autoHovered||drag||motion||
       (grid.contains(document.activeElement)&&document.activeElement.matches(':focus-visible'))||autoFrame)return;
     autoFrame=requestAnimationFrame(function tick(now){
       autoFrame=0;
@@ -7514,6 +7514,21 @@ function setupCardCarousel(grid,mode){
     }
     motion=window.requestAnimationFrame(tick);
   }
+  function settleScroll(velocity){
+    var last=performance.now(),started=last;
+    if(reduced.matches||Math.abs(velocity)<.02){startAuto();return;}
+    function tick(now){
+      var elapsed=Math.max(0,Math.min(64,now-last));last=now;
+      var decay=Math.exp(-elapsed/220);
+      position-=velocity*220*(1-decay)/dragStep();
+      position=((position%slides.length)+slides.length)%slides.length;
+      velocity*=decay;
+      layout();
+      if(Math.abs(velocity)>.02&&now-started<1600){motion=requestAnimationFrame(tick);}
+      else{motion=0;startAuto();}
+    }
+    motion=requestAnimationFrame(tick);
+  }
   function endDrag(event){
     if(!drag||event.pointerId!==drag.id)return;
     if(drag.touch&&event.pointerType==='touch')return;
@@ -7522,14 +7537,20 @@ function setupCardCarousel(grid,mode){
     grid.classList.remove('is-dragging');
     grid.style.setProperty('--hex-carousel-drag','0px');
     if(scrolling){
-      // 自動送りはドラッグを離した位置から再開し、中央へのスナップは行わない。
+      // 離す直前の速度で減速し、中央へスナップせず自動送りへ戻す。
       position=((position%slides.length)+slides.length)%slides.length;
+      var scrollVelocity=0;
       if(gesture.moved){
         suppressClick=true;
         window.setTimeout(function(){suppressClick=false;},0);
+        var scrollFirst=gesture.samples[0],scrollLast=gesture.samples[gesture.samples.length-1];
+        if(event.type==='pointerup'&&performance.now()-scrollLast.time<100&&scrollLast.time>scrollFirst.time){
+          scrollVelocity=(scrollLast.x-scrollFirst.x)/(scrollLast.time-scrollFirst.time);
+          scrollVelocity=Math.max(-3,Math.min(3,scrollVelocity));
+        }
       }
       autoHovered=!!viewport.querySelector('.hex-card-carousel-slide:hover');
-      layout();startAuto();
+      layout();settleScroll(scrollVelocity);
       return;
     }
     if(gesture.moved){
