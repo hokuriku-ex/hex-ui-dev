@@ -2113,16 +2113,16 @@ div[hex-sp]{
   z-index:20;
   display:grid;
   place-items:center;
-  width:52px;
-  height:52px;
+  width:54px;
+  height:54px;
   padding:0;
-  border:1px solid #203459;
+  border:1px solid #265ab0;
   border-radius:50%;
   background:#fff;
-  color:#203459;
+  color:#265ab0;
   transform:translate(-50%,-50%);
   cursor:pointer;
-  transition:background .2s,color .2s;
+  transition:border-color .25s ease,color .25s ease,background .25s ease;
 }
 .hex-card-carousel-arrow.is-prev{left:calc(50% - var(--hex-carousel-card-width)/2 - 12px);}
 .hex-card-carousel-arrow.is-next{left:calc(50% + var(--hex-carousel-card-width)/2 + 12px);}
@@ -2135,7 +2135,7 @@ div[hex-sp]{
   transform:rotate(45deg);
 }
 .hex-card-carousel-arrow.is-prev::before{transform:rotate(-135deg);}
-.hex-card-carousel-arrow:hover{background:#203459;color:#fff;}
+.hex-card-carousel-arrow:hover{border-color:#f7d04f;background:#fff;color:#f7d04f;}
 .hex-card-carousel-dots{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;margin-top:16px;}
 /* ドットは開幕と共通のhex-progress-dotで表示。円周タイマーは付けない。 */
 .hex-card-carousel-dots .hex-progress-dot:not(.is-current)::before{
@@ -2158,9 +2158,9 @@ div[hex-sp]{
   .hex-card-carousel-controls .hex-card-carousel-dots{margin:0;min-width:0;}
   .hex-card-carousel-controls .hex-card-carousel-arrow{
     position:static;
-    flex:0 0 40px;
-    width:40px;
-    height:40px;
+    flex:0 0 54px;
+    width:54px;
+    height:54px;
     transform:none;
   }
 }
