@@ -7043,7 +7043,8 @@ function setupCardStack(grid,mode){
       if(slide.style.transform!==value)slide.style.transform=value;
     });
     if(grid.classList.contains('hex-service-grid')){
-      var fillActive=window.innerWidth>768&&!reduced.matches&&rawProgress>=0&&rawProgress<=travel;
+      // 1枚目が固定へ入る直前も、下端が画面内なら背景を補完する。
+      var fillActive=window.innerWidth>768&&!reduced.matches&&rawProgress<=travel;
       var fillViewport=window.hexViewportHeight?window.hexViewportHeight():window.innerHeight;
       var fills=cards.map(function(card){
         return fillActive?Math.max(0,Math.ceil(fillViewport-card.getBoundingClientRect().bottom)):0;
