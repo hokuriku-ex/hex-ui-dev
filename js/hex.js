@@ -322,8 +322,8 @@ const HOME_SECTIONS={
   NEWS:'gc_auto_frame_home_9', /* 重要なお知らせ */
   BLOG:'gc_auto_frame_home_10', /* スタッフブログ */
   BANNER:'gc_auto_frame_home_11', /* バナー */
-  MOVIE:'gc_auto_frame_home_12', /* プロモーション動画 */
-  RECRUIT:'gc_auto_frame_home_13', /* 採用情報 */
+  RECRUIT:'gc_auto_frame_home_12', /* 採用情報 */
+  MOVIE:'gc_auto_frame_home_13', /* プロモーション動画 */
   CONTACT:'gc_auto_frame_home_14', /* お問い合わせ */
   CALENDAR:'gc_auto_frame_home_15', /* 営業日カレンダー */
   AREA:'gc_auto_frame_home_16', /* 施工エリア */
@@ -340,6 +340,7 @@ const HOME_DISPLAY_SECTIONS=[
   HOME_SECTIONS.PICKUP,
   HOME_SECTIONS.NEWS_SECTION,
   HOME_SECTIONS.BANNER,
+  HOME_SECTIONS.RECRUIT,
   HOME_SECTIONS.MOVIE
 ];
 
@@ -353,11 +354,13 @@ const HOME_OVERLAP_SECTIONS={
     HOME_SECTIONS.ABOUT
   ],
   SP:[
+    HOME_SECTIONS.ABOUT,
     HOME_SECTIONS.PROCESS,
     HOME_SECTIONS.SERVICE,
     HOME_SECTIONS.PICKUP,
     HOME_SECTIONS.NEWS_SECTION,
     HOME_SECTIONS.BANNER,
+    HOME_SECTIONS.RECRUIT,
     HOME_SECTIONS.MOVIE
   ]
 };
@@ -373,8 +376,8 @@ const HOME_PADDING_SECTIONS=[
   HOME_SECTIONS.NEWS,
   HOME_SECTIONS.BLOG,
   HOME_SECTIONS.BANNER,
-  HOME_SECTIONS.MOVIE,
-  HOME_SECTIONS.RECRUIT
+  HOME_SECTIONS.RECRUIT,
+  HOME_SECTIONS.MOVIE
 ];
 
 /* =======================================
