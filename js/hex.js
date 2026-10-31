@@ -17773,6 +17773,7 @@ hexReady(function(){
     var surface=sectionCoverColor(front);
     front.classList.remove('hex-bg-round-top','hex-bg-curve-top','hex-bg-wave-small','hex-overlap-flat-front');
     front.classList.add('hex-overlap-shaped-front','hex-bg-curve-top');
+    front.dataset.bgVehicle='random';
     front.style.setProperty('--hex-overlap-surface',surface);
     if(front._hexOverlapCornerFill){front._hexOverlapCornerFill.remove();delete front._hexOverlapCornerFill;}
     return true;
@@ -18107,7 +18108,7 @@ hexReady(function(){
     if(runner.hero){runner.kind='curve';runner.depth=resolveLength(runner.host,'var(--hex-curve-depth)');}
     else{
       runner.depth=resolveLength(runner.host,'var(--hex-bg-upper-depth,0px)');
-      if(classes.contains('hex-bg-decoration-start')){
+      if(classes.contains('hex-bg-decoration-start')||classes.contains('hex-overlap-shaped-front')){
         if(classes.contains('hex-bg-curve-top'))runner.kind='curve';
         else if(classes.contains('hex-bg-curve-bottom'))runner.kind='curve-bottom';
         else if(['hex-bg-wave-large','hex-bg-wave-large-left','hex-bg-wave-large-right','hex-bg-wave-medium','hex-bg-wave-small'].some(function(c){return classes.contains(c);})){runner.kind='wave';runner.reverse=classes.contains('hex-bg-wave-large-right');runner.period=resolveLength(runner.track,'var(--hex-wave-upper-width,100vw)')||width;}
@@ -18123,6 +18124,13 @@ hexReady(function(){
     runner.speed=Number.isFinite(speed)&&speed>0?speed:48;
     runner.pad=runner.size*2;
     var top=parseFloat(pseudo.top)||0;
+    if(runner.overlap){
+      var hostBox=runner.host.getBoundingClientRect();
+      var parentBox=runner.track.parentElement.getBoundingClientRect();
+      top=hostBox.top-parentBox.top+runner.track.parentElement.scrollTop;
+      runner.track.style.setProperty('--hex-vehicle-track-left',
+        (hostBox.left-parentBox.left+hostBox.width/2)+'px');
+    }
     runner.track.style.setProperty('--hex-vehicle-track-top',(top-runner.pad)+'px');
     runner.track.style.setProperty('--hex-vehicle-track-height',(runner.depth+runner.pad*2)+'px');
     // 初回は全体が見え、右端から少し進んだ位置で開始する。
@@ -18174,8 +18182,14 @@ hexReady(function(){
     var actor=document.createElement('span');actor.className='hex-vehicle-actor';
     var crop=document.createElement('span');crop.className='hex-vehicle-crop';
     var img=document.createElement('img');img.alt='';img.decoding='async';img.draggable=false;
-    crop.appendChild(img);actor.appendChild(crop);track.appendChild(actor);surface.appendChild(track);
-    var runner={host:host,surface:surface,track:track,actor:actor,crop:crop,img:img,hero:hero,random:value==='random',visible:!observer,x:NaN,available:[]};
+    var overlap=host.classList.contains('hex-overlap-shaped-front');
+    var trackParent=overlap?host.parentElement:surface;
+    if(overlap){
+      if(getComputedStyle(trackParent).position==='static')trackParent.style.position='relative';
+      track.classList.add('hex-contact-vehicle-track');
+    }
+    crop.appendChild(img);actor.appendChild(crop);track.appendChild(actor);trackParent.appendChild(track);
+    var runner={host:host,surface:surface,track:track,actor:actor,crop:crop,img:img,hero:hero,overlap:overlap,random:value==='random',visible:!observer,x:NaN,available:[]};
     host._hexVehicleRunner=runner;track._hexVehicleRunner=runner;runners.push(runner);
     layout(runner);if(observer)observer.observe(track);
     (runner.random?assets():load(value).then(function(asset){return asset?[asset]:[];})).then(function(available){
@@ -18186,6 +18200,7 @@ hexReady(function(){
   }
   function scan(){
     document.querySelectorAll('.hex-bg-range[data-bg-vehicle]').forEach(function(host){attach(host,host,(host.dataset.bgVehicle||'').trim(),false);});
+    document.querySelectorAll('.hex-overlap-shaped-front[data-bg-vehicle]').forEach(function(host){attach(host,host,(host.dataset.bgVehicle||'').trim(),false);});
     document.querySelectorAll('.pagetitle_type.pagetitle_type4.hex-page-hero').forEach(function(host){
       var surface=Array.from(host.children).find(function(child){return child.classList.contains('contents');});
       if(surface)attach(host,surface,'random',true);
@@ -18197,6 +18212,7 @@ hexReady(function(){
   }
   scan();
   document.addEventListener('hex:page-hero-layout',queueLayout);
+  document.addEventListener('hex:home-overlap-measured',queueLayout);
   window.addEventListener('hex:viewport-resize',queueLayout,{passive:true});window.addEventListener('load',queueLayout,{once:true});
   document.addEventListener('visibilitychange',function(){lastTime=0;start();});
   function reducedChange(){if(reduced.matches){if(frame)cancelAnimationFrame(frame);frame=0;}else start();}

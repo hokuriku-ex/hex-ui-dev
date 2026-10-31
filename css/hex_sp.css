@@ -2958,7 +2958,8 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
 
 /* SPでは背景範囲に指定した重機イラストを非表示。 */
 @media screen and (max-width:768px){
-  .hex-bg-range[data-bg-vehicle] > .hex-vehicle-track{
+  .hex-bg-range[data-bg-vehicle] > .hex-vehicle-track,
+  .hex-contact-vehicle-track{
     display:none!important;
   }
 }

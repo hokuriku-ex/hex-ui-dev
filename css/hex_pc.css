@@ -11125,7 +11125,7 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
 .hex-vehicle-track{
   display:block;position:absolute!important;
   top:var(--hex-vehicle-track-top,0px)!important;
-  left:50%!important;right:auto!important;bottom:auto!important;
+  left:var(--hex-vehicle-track-left,50%)!important;right:auto!important;bottom:auto!important;
   width:var(--hex-vehicle-track-width,100vw)!important;
   height:var(--hex-vehicle-track-height,400px)!important;
   transform:translateX(-50%)!important;z-index:3!important;
@@ -11134,6 +11134,7 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   box-sizing:border-box;contain:layout;
 }
 .hex-vehicle-track.is-ready{visibility:visible;}
+.hex-vehicle-track.hex-contact-vehicle-track{z-index:96!important;}
 .hex-vehicle-actor{
   display:block;position:absolute;top:0;left:0;
   width:var(--hex-vehicle-width,128px);height:auto;
