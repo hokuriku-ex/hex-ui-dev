@@ -5958,15 +5958,15 @@ html body
   .hex-service-grid.hex-card-grid .hex-card.has-image{
     grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   }
-  /* 0段階目の白から、4枚目の青まで均等に濃くする。 */
+  /* 青と彩度・深みを揃えた赤・黄・緑・青。 */
   .hex-service-grid.hex-card-grid .hex-card[data-service-progress^="1 /"]{
-    background:#c9d6eb;
+    background:#b0263b;
   }
   .hex-service-grid.hex-card-grid .hex-card[data-service-progress^="2 /"]{
-    background:#93add8;
+    background:#b09526;
   }
   .hex-service-grid.hex-card-grid .hex-card[data-service-progress^="3 /"]{
-    background:#5c83c4;
+    background:#26b05a;
   }
   .hex-service-grid.hex-card-grid .hex-card[data-service-progress^="4 /"]{
     background:#265ab0;
