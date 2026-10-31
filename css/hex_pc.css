@@ -5941,9 +5941,6 @@ html body
 .hex-service-grid .hex-link-detail{
   display:none!important;
 }
-.hex-service-grid .hex-card .hex-card-head{
-  border-bottom:1px solid #fff;
-}
 @media(min-width:769px){
   .hex-card-grid.hex-service-grid,
   .hex-card-grid.hex-service-grid.hex-card-stack.is-section-scene{
