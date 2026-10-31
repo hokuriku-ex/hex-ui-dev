@@ -6711,7 +6711,7 @@ hexReady(function(){
         state.fadeTimer=0;
         state.finishFade=null;
       };
-      state.fadeTimer=window.setTimeout(state.finishFade,500);
+      state.fadeTimer=window.setTimeout(state.finishFade,280);
       return;
     }
     image.classList.add('is-active');

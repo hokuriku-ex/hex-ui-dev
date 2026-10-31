@@ -9990,18 +9990,31 @@ body > .hex-v2-handoff{z-index:198;}
     position:relative;
     container-type:inline-size;
 }
-/* お客様向けカードのみ、白を挟み0.5秒ずつ消灯・表示（計1秒）。 */
+/* 白へ抜けるフェードを重ね、ゆっくりしたズームで奥行きを付ける。 */
 .hex-audience-grid .hex-card-image.has-slideshow{background:#fff;}
 .hex-audience-grid .hex-card-image.has-slideshow > img{
   visibility:visible;
   opacity:0;
-  transition:opacity .5s ease;
+  transform:scale(1);
+  transform-origin:center;
+  transition:opacity .45s ease,transform 4s linear;
 }
 .hex-audience-grid .hex-card-image.has-slideshow > img.is-active{
   opacity:1;
+  transform:scale(1.035);
+  transition-duration:.72s,4s;
+}
+.hex-audience-grid .hex-card-image.has-slideshow::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:linear-gradient(180deg,rgba(12,30,60,.03),rgba(12,30,60,.16));
+  pointer-events:none;
 }
 @media(prefers-reduced-motion:reduce){
-  .hex-audience-grid .hex-card-image.has-slideshow > img{transition:none;}
+  .hex-audience-grid .hex-card-image.has-slideshow > img,
+  .hex-audience-grid .hex-card-image.has-slideshow > img.is-active{transition:none;transform:none;}
 }
 .hex-audience-item .hex-card-image > h2.hex-top-title{
     position:absolute;
