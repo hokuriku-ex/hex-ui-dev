@@ -5958,6 +5958,19 @@ html body
   .hex-service-grid.hex-card-grid .hex-card.has-image{
     grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   }
+  /* 0段階目の白から、4枚目の青まで均等に濃くする。 */
+  .hex-service-grid.hex-card-grid .hex-card[data-service-progress^="1 /"]{
+    background:#c9d6eb;
+  }
+  .hex-service-grid.hex-card-grid .hex-card[data-service-progress^="2 /"]{
+    background:#93add8;
+  }
+  .hex-service-grid.hex-card-grid .hex-card[data-service-progress^="3 /"]{
+    background:#5c83c4;
+  }
+  .hex-service-grid.hex-card-grid .hex-card[data-service-progress^="4 /"]{
+    background:#265ab0;
+  }
   .hex-service-grid.hex-card-grid .hex-card.no-image{
     grid-template-columns:1fr;
   }
