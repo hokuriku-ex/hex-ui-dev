@@ -5978,18 +5978,18 @@ html body
   .hex-service-grid.hex-card-grid .hex-card.has-image{
     grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   }
-  /* 青と彩度・深みを揃えた赤・黄・緑・青。 */
+  /* 青・緑・黄・赤の順。 */
   .hex-service-grid.hex-card-grid .hex-card[data-service-progress^="1 /"]{
-    background:#b0263b;
+    background:#265ab0;
   }
   .hex-service-grid.hex-card-grid .hex-card[data-service-progress^="2 /"]{
-    background:#b09526;
-  }
-  .hex-service-grid.hex-card-grid .hex-card[data-service-progress^="3 /"]{
     background:#26b05a;
   }
+  .hex-service-grid.hex-card-grid .hex-card[data-service-progress^="3 /"]{
+    background:#b09526;
+  }
   .hex-service-grid.hex-card-grid .hex-card[data-service-progress^="4 /"]{
-    background:#265ab0;
+    background:#b0263b;
   }
   .hex-service-grid.hex-card-grid .hex-card.no-image{
     grid-template-columns:1fr;
@@ -9951,7 +9951,7 @@ body > .hex-v2-handoff{z-index:198;}
   box-sizing:border-box;
 }
 .hex-audience-grid .hex-card{
-  background:#265ab0;
+  background:#f7f1e1;
   border:none;
 }
 /* PCだけ、実寸を90%相当に調整して左右へ傾ける。文字は拡縮しない。 */
