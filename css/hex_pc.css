@@ -9952,7 +9952,7 @@ body > .hex-v2-handoff{z-index:198;}
 }
 .hex-audience-grid .hex-card{
   background:#f7f1e1;
-  border:none;
+  border:2px solid #265ab0;
 }
 /* PCだけ、実寸を90%相当に調整して左右へ傾ける。文字は拡縮しない。 */
 @media screen and (min-width:769px){
