@@ -2093,7 +2093,19 @@ div[hex-sp]{
 .hex-card-carousel-scroll :is(.hex-card-carousel-controls,.hex-card-carousel-arrow,.hex-card-carousel-status){display:none!important;}
 .hex-card-carousel-scroll .hex-card-carousel-viewport{cursor:default;}
 .hex-card-carousel-scroll .hex-card-carousel-slide > *{transition:translate .25s ease;}
-.hex-card-carousel-scroll .hex-card-carousel-slide:is(:hover,:focus-within) > *{translate:0 -8px;}
+.hex-card-carousel-scroll .hex-card-carousel-slide:is(:hover,:focus-within) > *{
+  translate:0 -8px;
+  animation:hex-carousel-hover-hop .45s ease-out both;
+}
+@keyframes hex-carousel-hover-hop{
+  0%{translate:0 0;}
+  45%{translate:0 -14px;}
+  72%{translate:0 -5px;}
+  100%{translate:0 -8px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .hex-card-carousel-scroll .hex-card-carousel-slide:is(:hover,:focus-within) > *{animation:none;}
+}
 .hex-card-carousel-arrow{
   position:absolute;
   top:50%;

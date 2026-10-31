@@ -7257,7 +7257,7 @@ function setupCardCarousel(grid,mode){
     autoFrame=requestAnimationFrame(function tick(now){
       autoFrame=0;
       if(destroyed)return;
-      if(autoTime)position=(position+Math.min(64,now-autoTime)*.00008)%cards.length;
+      if(autoTime)position=(position+Math.min(64,now-autoTime)*.00012)%cards.length;
       autoTime=now;
       index=Math.round(position)%cards.length;
       layout();
@@ -7360,17 +7360,17 @@ function setupCardCarousel(grid,mode){
       // 折り返すカードを中央の上を横切らせない。
       var wraps=offsets[i]!==undefined&&Math.abs(offset-offsets[i])>1;
       slide.style.transition=(scrolling||wraps||motion||drag)?'none':'';
-      var x=mobile.matches?offset*step:
+      var x=scrolling?offset*(cardWidth+32):mobile.matches?offset*step:
         Math.sign(offset)*cardWidth*(Math.abs(offset)<=1?Math.abs(offset)*.82:
           .82+(Math.abs(offset)-1)*.64);
       slide.style.setProperty('--hex-carousel-x',x+'px');
-      slide.style.setProperty('--hex-carousel-scale',mobile.matches?'1':String(1-.42*Math.min(1,Math.abs(offset))));
+      slide.style.setProperty('--hex-carousel-scale',scrolling||mobile.matches?'1':String(1-.42*Math.min(1,Math.abs(offset))));
       slide.style.zIndex=String(10-Math.round(Math.abs(offset)));
       slide.classList.toggle('is-active',Math.abs(offset)<.5);
       // PCは見切れたカードも表示し、画面外の余裕を越えてから非表示にする。
       // 固定の「2枚分」で消すと、端へ入る途中でopacityの復帰が遅れる。
       var outside=mobile.matches?Math.abs(offset)>2:
-        Math.abs(x)-cardWidth*.29>width/2+cardWidth*.25;
+        Math.abs(x)-cardWidth*(scrolling?.5:.29)>width/2+cardWidth*.25;
       slide.classList.toggle('is-outside',outside);
       slide.inert=!scrolling&&i!==index;
       slide.setAttribute('aria-hidden',String(!scrolling&&i!==index));
