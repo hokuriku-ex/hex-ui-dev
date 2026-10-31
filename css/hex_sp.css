@@ -2956,6 +2956,13 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
 }
 
+/* SPでは背景範囲に指定した重機イラストを非表示。 */
+@media screen and (max-width:768px){
+  .hex-bg-range[data-bg-vehicle] > .hex-vehicle-track{
+    display:none!important;
+  }
+}
+
 /* SPの斜め文字帯：背景の描画面積を帯の周辺に限定する。 */
 @media screen and (max-width:768px){
   .hex-hashtag-banner{overflow:hidden;}
