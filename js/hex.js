@@ -1,3 +1,20 @@
+/* head側の丸開きは、白い準備幕が実際に外れてから開始する。 */
+(function(){
+  var handoff=window.hexPageTransition;
+  if(!handoff)return;
+  var anchorReady=!!handoff.anchorReady;
+  Object.defineProperty(handoff,'anchorReady',{
+    configurable:true,
+    get:function(){
+      var root=document.documentElement;
+      return anchorReady&&
+        !root.matches('.hex-motion-preparing,.hex-opening-pending,.hex-hero-display-wait')&&
+        !document.getElementById('hex-motion-preparation-cover');
+    },
+    set:function(value){anchorReady=!!value;}
+  });
+})();
+
 /* メインタイトル：SPは表示幅、開幕2〜5番は全端末で画面幅50%へ収める。 */
 (function(){
   'use strict';
