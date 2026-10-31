@@ -7,6 +7,7 @@
     sessionStorage.removeItem('hex-header-intro-v1');
     if(headerIntro&&headerIntro.url===location.href&&Date.now()-headerIntro.time<45000&&handoff.incoming){
       handoff.headerIntro=true;
+      document.documentElement.classList.add('hex-header-intro-handoff');
     }
   }catch(error){}
   var anchorReady=!!handoff.anchorReady;
@@ -14,9 +15,11 @@
     configurable:true,
     get:function(){
       var root=document.documentElement;
-      return anchorReady&&
+      var ready=anchorReady&&
         !root.matches('.hex-motion-preparing,.hex-opening-pending,.hex-hero-display-wait')&&
         !document.getElementById('hex-motion-preparation-cover');
+      if(ready&&handoff.headerIntro)root.classList.add('hex-header-intro-ready');
+      return ready;
     },
     set:function(value){anchorReady=!!value;}
   });
@@ -17109,9 +17112,11 @@ hexReady(function(){
     // 通常は導入文を最低2秒表示。共通内部リンクの遷移は固定待機を省く。
     var introReady=intro&&!skipIntro?new Promise(function(resolve){
       function beginIntro(){requestAnimationFrame(function(){setTimeout(resolve,2000);});}
-      if(headerIntro&&document.documentElement.classList.contains('hex-page-handoff-active')){
+      if(headerIntro&&document.documentElement.classList.contains('hex-page-handoff-active')&&
+        !document.documentElement.classList.contains('hex-header-intro-ready')){
         var handoffObserver=new MutationObserver(function(){
-          if(document.documentElement.classList.contains('hex-page-handoff-active'))return;
+          if(document.documentElement.classList.contains('hex-page-handoff-active')&&
+            !document.documentElement.classList.contains('hex-header-intro-ready'))return;
           handoffObserver.disconnect();beginIntro();
         });
         handoffObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']});

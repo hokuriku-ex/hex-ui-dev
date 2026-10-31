@@ -9602,6 +9602,14 @@ body > .hex-v2-handoff{z-index:198;}
 
 /* ドットナビと同じ黄色のマウス追従カーソル。画面色は変更しない。 */
 /* 遷移先の準備幕が一瞬見える場合も、旧ページの黄色から途切れさせない。 */
+/* ヘッダー経由は丸開きを挟まず、黄色から準備済みの導入文へ直接つなぐ。 */
+html.hex-header-intro-handoff.hex-page-handoff-active::view-transition-new(root){
+  clip-path:none!important;
+  opacity:0!important;
+}
+html.hex-header-intro-handoff.hex-header-intro-ready.hex-page-handoff-active::view-transition-new(root){
+  opacity:1!important;
+}
 html.hex-page-handoff-active #hex-motion-preparation-cover,
 html.hex-page-handoff-active.hex-opening-pending::before,
 html.hex-page-handoff-active body:has(.pagetitle_type.pagetitle_type4:not(.hex-page-hero))::after{
@@ -10350,6 +10358,10 @@ html:is(.hex-hero-return-preparing,.hex-hero-display-wait) .hex-v2-handoff{
 
 /* 下層ページ：画像準備中は導入文のみ、準備後はタイトルとナビのみ */
 .pagetitle_type.pagetitle_type4.hex-page-hero:is(.is-hero-loading,.is-hero-revealing){
+  background:#f7d04f!important;
+}
+.pagetitle_type.pagetitle_type4.hex-page-hero:is(.is-hero-loading,.is-hero-revealing)::before,
+.pagetitle_type.pagetitle_type4.hex-page-hero:is(.is-hero-loading,.is-hero-revealing) > .background_color{
   background:#f7d04f!important;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-loading-intro{
