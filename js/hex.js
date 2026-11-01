@@ -16448,17 +16448,20 @@ hexReady(function(){
     if(destination.origin!==location.origin||!/^https?:$/.test(destination.protocol)||
       samePage&&(destination.hash||!document.querySelector('.hex-page-hero.is-hero-ready .hex-page-hero-loading-intro')))return;
     event.preventDefault();event.stopImmediatePropagation();
-    if(menu.id==='gc_auto_frame_header_object_smartphone_hum_pupup'){
-      var close=menu.querySelector('.closebutton');if(close)close.click();
-    }
     var proxy=document.createElement('a');proxy.href=destination.href;
     proxy.dataset.hexPageTransition='true';proxy.dataset.hexHeaderIntro='true';
+    if(menu.id==='gc_auto_frame_header_object_smartphone_hum_pupup'){
+      proxy._hexCloseMenu=function(){
+        var close=menu.querySelector('.closebutton');if(close)close.click();
+      };
+    }
     if(samePage)proxy.dataset.hexReplayIntro='true';
     proxy.style.display='none';document.body.appendChild(proxy);
     var box=source.getBoundingClientRect();
-    proxy.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,button:0,detail:1,
+    var normalNavigation=proxy.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,button:0,detail:1,
       clientX:event.detail?event.clientX:box.left+box.width/2,
       clientY:event.detail?event.clientY:box.top+box.height/2}));
+    if(normalNavigation&&proxy._hexCloseMenu)proxy._hexCloseMenu();
     proxy.remove();
   },true);
   // 管理画面headの既存リスナーが遷移先を保存した後に処理する（captureにしない）。
@@ -16472,6 +16475,7 @@ hexReady(function(){
     var url;
     try{url=new URL(link.href,location.href);}catch(error){return;}
     var replayIntro=link.dataset.hexReplayIntro==='true';
+    var closeMenu=link._hexCloseMenu;
     if(url.origin!==location.origin||!/^https?:$/.test(url.protocol)||
       !replayIntro&&url.pathname===location.pathname&&url.search===location.search)return;
     if(cover){event.preventDefault();return;}
@@ -16528,6 +16532,8 @@ hexReady(function(){
         {clipPath:'circle('+radius+'px'+origin},
         {clipPath:'circle('+end+'px'+origin}
       ],{duration:650,easing:'cubic-bezier(.65,0,.35,1)',fill:'forwards'});
+      // 導入文の先行取得中はメニューを保ち、黄色丸の開始と同時に閉じる。
+      if(closeMenu)closeMenu();
       animation.finished.then(function(){
         if(run!==sequence)return;
         if(replayIntro){
