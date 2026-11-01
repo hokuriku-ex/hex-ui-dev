@@ -16532,10 +16532,10 @@ hexReady(function(){
         {clipPath:'circle('+radius+'px'+origin},
         {clipPath:'circle('+end+'px'+origin}
       ],{duration:650,easing:'cubic-bezier(.65,0,.35,1)',fill:'forwards'});
-      // 導入文の先行取得中はメニューを保ち、黄色丸の開始と同時に閉じる。
-      if(closeMenu)closeMenu();
       animation.finished.then(function(){
         if(run!==sequence)return;
+        // 拡大途中も背景ごとメニューを残し、黄色で覆い終えてから閉じる。
+        if(closeMenu)closeMenu();
         if(replayIntro){
           cleanup();
           document.dispatchEvent(new Event('hex:replay-page-intro'));
