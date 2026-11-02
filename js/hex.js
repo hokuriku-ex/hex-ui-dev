@@ -3385,7 +3385,8 @@ hexReady(function(){
       // Lenis/SPの実際の移動区間を使い、丸だけ別の時計で先行させない。
       var distance=welcomeCircleTravel.to-welcomeCircleTravel.from;
       var progress=distance>1?clamp((window.pageYOffset-welcomeCircleTravel.from)/distance,0,1):1;
-      return getWelcomeCircleProgress(progress);
+      // スクロール序盤の急な縮小を抑える。到着時は従来どおり完成させる。
+      return getWelcomeCircleProgress(progress*progress);
     }
     function renderWelcomeCircle(progress){
       if(!snapshot)return;
