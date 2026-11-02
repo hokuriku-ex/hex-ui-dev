@@ -11160,9 +11160,10 @@ html body .hex-home-has-bg-range .hex-bg-range .hex-overlap-spacer{
   width:100%;height:100%;z-index:0!important;
 }
 
+/* HOME_SECTIONS.NEWS_SECTIONからJSが付けるクラスを参照し、セクション番号に依存しない。 */
 /* トップお知らせ：範囲指定内では一覧のCMS白背景を透過し、範囲の色・画像を見せる。 */
-html body #gc_auto_frame_home_9 .hex-bg-range .hex-home-news-list,
-html body #gc_auto_frame_home_9 .hex-bg-range .hex-home-news-list :is(
+html body .hex-home-news-section .hex-bg-range .hex-home-news-list,
+html body .hex-home-news-section .hex-bg-range .hex-home-news-list :is(
   .hex-home-news-panel,
   .post_index_home_type1,
   .bg_post_index_home,
