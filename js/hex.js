@@ -18087,7 +18087,10 @@ hexReady(function(){
     managed=managed.filter(function(item){
       if(candidates.indexOf(item.node)!==-1)return true;
       if(sizeObserver)sizeObserver.unobserve(item.sticky);
-      if(item.runway.parentNode)item.runway.parentNode.insertBefore(item.node,item.runway);
+      // タブ初期化などで本文が既に別の親へ移動した場合は、その配置を維持する。
+      if(item.node.parentNode===item.sticky&&item.runway.parentNode){
+        item.runway.parentNode.insertBefore(item.node,item.runway);
+      }
       item.runway.remove();return false;
     });
     candidates.forEach(function(node){if(!managed.some(function(item){return item.node===node;}))managed.push(createItem(node));});
