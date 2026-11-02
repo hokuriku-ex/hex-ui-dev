@@ -3268,7 +3268,7 @@ hexReady(function(){
     var welcomeButtonVisible=false;
     var explored=false;
     var welcomeActive=false;
-    var welcomeCircleStarted=null,welcomeCircleFrame=0;
+    var welcomeCircleTravel=null;
     var heroAnchorDeparted=false;
     var released=false;
     var ready=false;
@@ -3378,13 +3378,13 @@ hexReady(function(){
       return isSp()?Math.pow(eased,1.18):eased;
     }
     function stopWelcomeCircleMotion(){
-      cancelAnimationFrame(welcomeCircleFrame);welcomeCircleFrame=0;
-      welcomeCircleStarted=null;
+      welcomeCircleTravel=null;
     }
     function welcomeCircleVisualProgress(fallback){
-      if(welcomeCircleStarted===null)return fallback;
-      var progress=clamp((performance.now()-welcomeCircleStarted)/getWelcomeCircleDuration(),0,1);
-      if(!isSp())progress=getWelcomeCircleScrollProgress(progress);
+      if(!welcomeCircleTravel)return fallback;
+      // Lenis/SPの実際の移動区間を使い、丸だけ別の時計で先行させない。
+      var distance=welcomeCircleTravel.to-welcomeCircleTravel.from;
+      var progress=distance>1?clamp((window.pageYOffset-welcomeCircleTravel.from)/distance,0,1):1;
       return getWelcomeCircleProgress(progress);
     }
     function renderWelcomeCircle(progress){
@@ -3394,19 +3394,10 @@ hexReady(function(){
       var clip='circle('+circle.radius+'px at '+circle.x+'px '+circle.y+'px)';
       snapshot.style.clipPath=clip;snapshot.style.webkitClipPath=clip;
     }
-    function startWelcomeCircleMotion(){
+    function startWelcomeCircleMotion(target){
       stopWelcomeCircleMotion();
       if(reduced)return;
-      welcomeCircleStarted=performance.now();
-      function advance(){
-        welcomeCircleFrame=0;
-        if(welcomeCircleStarted===null||!welcomeActive||!snapshot)return;
-        renderWelcomeCircle(welcomeCircleVisualProgress(1));
-        if(performance.now()-welcomeCircleStarted<getWelcomeCircleDuration()){
-          welcomeCircleFrame=requestAnimationFrame(advance);
-        }
-      }
-      welcomeCircleFrame=requestAnimationFrame(advance);
+      welcomeCircleTravel={from:window.pageYOffset,to:target};
     }
     ['pointerdown','wheel','keydown'].forEach(function(type){
       window.addEventListener(type,stopWelcomeCircleMotion,{passive:true,capture:true});
@@ -4547,7 +4538,7 @@ hexReady(function(){
       /* 通常アンカーはWELCOMEを準備した後、呼び出し側の移動先へ進む。 */
       if(skipScroll)return;
       target=Math.max(documentTop(welcomeWrap),0);
-      startWelcomeCircleMotion();
+      startWelcomeCircleMotion(target);
       if(isSp()){
         scrollSpCircleTo(target);
       }else if(window.hexMotion&&typeof window.hexMotion.scrollTo==="function"){
@@ -4677,7 +4668,7 @@ hexReady(function(){
         syncSnapshotLayer(false);
         startWelcomeReverseSnap();
       }
-      // 丸の見た目だけ時間駆動。見出し・本文・固定解除は従来のスクロール進行を使う。
+      // 丸だけ移動開始位置を補正。見出し・本文・固定解除は従来の進行を使う。
       renderWelcomeCircle(welcomeCircleVisualProgress(circleProgress));
 
       travelMetrics=measureWelcome();
