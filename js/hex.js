@@ -3268,6 +3268,7 @@ hexReady(function(){
     var welcomeButtonVisible=false;
     var explored=false;
     var welcomeActive=false;
+    var welcomeCircleStarted=null,welcomeCircleFrame=0;
     var heroAnchorDeparted=false;
     var released=false;
     var ready=false;
@@ -3376,6 +3377,41 @@ hexReady(function(){
       var eased=progress*progress*(3-2*progress);
       return isSp()?Math.pow(eased,1.18):eased;
     }
+    function stopWelcomeCircleMotion(){
+      cancelAnimationFrame(welcomeCircleFrame);welcomeCircleFrame=0;
+      welcomeCircleStarted=null;
+    }
+    function welcomeCircleVisualProgress(fallback){
+      if(welcomeCircleStarted===null)return fallback;
+      var progress=clamp((performance.now()-welcomeCircleStarted)/getWelcomeCircleDuration(),0,1);
+      if(!isSp())progress=getWelcomeCircleScrollProgress(progress);
+      return getWelcomeCircleProgress(progress);
+    }
+    function renderWelcomeCircle(progress){
+      if(!snapshot)return;
+      var circle=getWelcomeCircleGeometry(progress);
+      if(isSp())circle.y+=getSpWelcomeFixedOffset()*progress;
+      var clip='circle('+circle.radius+'px at '+circle.x+'px '+circle.y+'px)';
+      snapshot.style.clipPath=clip;snapshot.style.webkitClipPath=clip;
+    }
+    function startWelcomeCircleMotion(){
+      stopWelcomeCircleMotion();
+      if(reduced)return;
+      welcomeCircleStarted=performance.now();
+      function advance(){
+        welcomeCircleFrame=0;
+        if(welcomeCircleStarted===null||!welcomeActive||!snapshot)return;
+        renderWelcomeCircle(welcomeCircleVisualProgress(1));
+        if(performance.now()-welcomeCircleStarted<getWelcomeCircleDuration()){
+          welcomeCircleFrame=requestAnimationFrame(advance);
+        }
+      }
+      welcomeCircleFrame=requestAnimationFrame(advance);
+    }
+    ['pointerdown','wheel','keydown'].forEach(function(type){
+      window.addEventListener(type,stopWelcomeCircleMotion,{passive:true,capture:true});
+    });
+    window.addEventListener('pagehide',stopWelcomeCircleMotion);
     /* WELCOMEと人物フォーカスで、丸の軌道・サイズ・位置を共有する。 */
     function getWelcomeCircleGeometry(progress){
       var targetRadius=isSp()?getSpCircleRadius():getPcCircleRadius();
@@ -4184,6 +4220,7 @@ hexReady(function(){
       stopWelcomeReverseSnap();
       cancelWelcomeAuto();
       stopSpCircleScroll();
+      stopWelcomeCircleMotion();
       spCircleReleaseScrollY=null;
       cancelAutoZoom(false);
       welcomeActive=false;
@@ -4510,6 +4547,7 @@ hexReady(function(){
       /* 通常アンカーはWELCOMEを準備した後、呼び出し側の移動先へ進む。 */
       if(skipScroll)return;
       target=Math.max(documentTop(welcomeWrap),0);
+      startWelcomeCircleMotion();
       if(isSp()){
         scrollSpCircleTo(target);
       }else if(window.hexMotion&&typeof window.hexMotion.scrollTo==="function"){
@@ -4634,15 +4672,13 @@ hexReady(function(){
       circleProgress=getWelcomeCircleProgress(circleProgress);
       /* 拡大する前に固定位置と親要素を確定し、途中配置を表示しない。 */
       if(movingUp&&circleProgress<.999){
+        stopWelcomeCircleMotion();
         if(released){refixSnapshot(true);}
         syncSnapshotLayer(false);
         startWelcomeReverseSnap();
       }
-      var circle=getWelcomeCircleGeometry(circleProgress);
-      if(isSp()){circle.y+=getSpWelcomeFixedOffset()*circleProgress;}
-      var clip="circle("+circle.radius+"px at "+circle.x+"px "+circle.y+"px)";
-      snapshot.style.clipPath=clip;
-      snapshot.style.webkitClipPath=clip;
+      // 丸の見た目だけ時間駆動。見出し・本文・固定解除は従来のスクロール進行を使う。
+      renderWelcomeCircle(welcomeCircleVisualProgress(circleProgress));
 
       travelMetrics=measureWelcome();
 
