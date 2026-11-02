@@ -18499,7 +18499,7 @@ hexReady(function(){
     var speedValue=style.getPropertyValue('--hex-vehicle-speed').trim()||'3vw';
     // 単位なしは従来のpx/秒、vw等の長さ指定は画面幅に応じた移動量/秒。
     var speed=/^\d+(?:\.\d+)?$/.test(speedValue)?Number(speedValue):resolveLength(runner.host,speedValue);
-    runner.speed=Number.isFinite(speed)&&speed>0?speed:48;
+    runner.speed=(Number.isFinite(speed)&&speed>0?speed:48)*(runner.random?2:1);
     runner.pad=runner.size*2;
     var top=parseFloat(pseudo.top)||0;
     if(runner.overlap){
