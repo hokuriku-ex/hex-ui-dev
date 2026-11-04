@@ -3065,15 +3065,15 @@ hexReady(function(){
 /* =======================================
    共通セクション見出し（h2専用）にspan自動追加
 ======================================= */
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.hex-section-title').forEach(title => {
+hexLoad(function(){
+  document.querySelectorAll('.hex-section-title').forEach(function(title){
     // 二重追加防止
-    if (title.querySelector(':scope > span')) return;
+    if(title.querySelector(':scope > span')) return;
 
     const span = document.createElement('span');
 
     // 既存の子要素をすべてspan内へ移動
-    while (title.firstChild) {
+    while(title.firstChild){
       span.appendChild(title.firstChild);
     }
 
