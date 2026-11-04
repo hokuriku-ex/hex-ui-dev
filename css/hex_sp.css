@@ -11,6 +11,13 @@
 /* =======================================
    共通パーツ（既存調整）
 ======================================= */
+/* SPではページ上部へ戻るボタンを非表示 */
+@media screen and (max-width:768px){
+  .hex-page-top{
+    display:none!important;
+  }
+}
+
 /* 共通センター見出し（トップページ専用） */
 @media screen and (max-width:768px){
   .hex-center-title{
