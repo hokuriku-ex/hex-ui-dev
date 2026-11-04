@@ -11557,12 +11557,12 @@ html.hex-character-focus-active .hex-home-anchor-panel.is-hero-anchor,
   line-height:1.4!important;
   /* 各項目の左側の縦線 */
   border:none!important;
-  border-left:1px solid #203459!important;
+  border-left:1px solid #265ab0!important;
 }
 /* 最後の右側にも縦線 */
 .hex-home-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-link:last-child{
-  border-right:1px solid #203459!important;
+  border-right:1px solid #265ab0!important;
 }
 /* 下層ページと同じSECTION番号。 */
 .hex-home-anchor-nav:not(.is-fixed)
