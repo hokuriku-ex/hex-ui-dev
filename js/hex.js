@@ -14573,7 +14573,7 @@ hexLoad(function(){
       });
       if(subtitle&&!isReducedMotion()){
         gsap.killTweensOf(subtitle);
-        gsap.set(subtitle,{autoAlpha:0,y:16,scale:.9});
+        gsap.set(subtitle,{autoAlpha:0,y:0,scale:.8});
       }
     }
 
@@ -14602,8 +14602,8 @@ hexLoad(function(){
               y:0,
               scale:1,
               delay:(.5+(chars.length-1)*(.07*5/6))/2,
-              duration:(.55*5/6),
-              ease:'back.out(2.3)',
+              duration:.4,
+              ease:'back.out(1.7)',
               overwrite:'auto',
               onStart:function(){
                 if(main.closest('.hex-character-copy-stage')){
