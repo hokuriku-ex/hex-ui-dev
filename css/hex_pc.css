@@ -431,6 +431,12 @@ html{
   color:#203459;
   text-align:left;
 }
+.hex-section-smalltitle-light{
+  color:#203459!important;
+}
+.hex-section-smalltitle-dark{
+  color:#fff!important;
+}
 
 /* 標準見出しフォントサイズ（h2・h3・h4） */
 h2:not(.hex-section-subtitle){
