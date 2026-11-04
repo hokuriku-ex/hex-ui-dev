@@ -212,7 +212,7 @@ html{
   box-sizing:border-box;
 }
 .hex-section-title span{
-  padding: 0 12px 4px;
+  padding: 0 24px 4px;
   background:
     repeating-linear-gradient(
       45deg,
