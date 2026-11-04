@@ -3105,9 +3105,9 @@ hexLoad(function(){
   /* WELCOMEへ進む丸の区間だけ。人物選択・見出し・本文の表示時間とは独立。 */
   var WELCOME_MOVE_CIRCLE_DURATION_PC=2100;
   var WELCOME_MOVE_CIRCLE_DURATION_SP=2600;
-  /* 元の時間軸の終盤20%は維持し、それ以前の区間だけ1.5倍に引き延ばす。 */
+  /* 元の時間軸の終盤20%は維持し、それ以前の区間だけ1.3倍に引き延ばす。 */
   var WELCOME_MOVE_SLOW_PHASE_END=.8;
-  var WELCOME_MOVE_EARLY_TIME_SCALE=1.5;
+  var WELCOME_MOVE_EARLY_TIME_SCALE=1.3;
   var HERO_CHARACTER_CLICK_MAX_MOVE=6;
   var HERO_SP_TAP_MAX_MOVE=12;
   /* WELCOME本文の表示に必要なスクロール量。2なら従来の約2倍。 */
