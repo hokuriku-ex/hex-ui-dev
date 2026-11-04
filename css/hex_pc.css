@@ -1432,12 +1432,12 @@ div.NNAttached{
   line-height:1.4!important;
   /* 各項目の左側の縦線 */
   border:none!important;
-  border-left:1px solid #203459!important;
+  border-left:1px solid #265ab0!important;
 }
 /* 最後の右側にも縦線 */
 .hex-anchor-nav:where(:not(.hex-home-anchor-nav)):not(.is-fixed)
 .hex-anchor-nav-link:last-child{
-  border-right:1px solid #203459!important;
+  border-right:1px solid #265ab0!important;
 }
 /* SECTION.01から自動採番 */
 .hex-anchor-nav:where(:not(.hex-home-anchor-nav)):not(.is-fixed)
@@ -1501,7 +1501,7 @@ a.hex-anchor-nav-link:hover,
 .linktext_color_basecolor2
 .hex-anchor-nav:where(:not(.hex-home-anchor-nav)):not(.is-fixed)
 a.hex-anchor-nav-link.is-active{
-  color:#4a7fd0!important;
+  color:#f7d04f!important;
 }
 .hex-anchor-nav:where(:not(.hex-home-anchor-nav)):not(.is-fixed)
 a.hex-anchor-nav-link:hover::after,
@@ -1509,7 +1509,7 @@ a.hex-anchor-nav-link:hover::after,
 a.hex-anchor-nav-link:focus::after,
 .hex-anchor-nav:where(:not(.hex-home-anchor-nav)):not(.is-fixed)
 a.hex-anchor-nav-link.is-active::after{
-  color:#4a7fd0;
+  color:#f7d04f;
 }
 /* 固定表示：従来の横並びデザイン */
 .hex-anchor-nav.is-fixed
