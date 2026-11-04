@@ -204,7 +204,7 @@ html{
   margin:0 auto 24px!important;
   padding:0 0 8px!important;
   text-align:center;
-  font-size:32px;
+  font-size:clamp(6.4rem,8vw,9.6rem)!important;
   font-weight:700;
   line-height:1.4;
   letter-spacing:.02em;

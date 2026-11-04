@@ -49,6 +49,14 @@
     document.body.appendChild(node);
     var width=node.getBoundingClientRect().width;
     node.remove();
+    /* H2の斜線付きspanは、文字の左右余白も含めて収める。 */
+    if(main.matches('h2.hex-section-title')){
+      var decoration=main.querySelector('span');
+      if(decoration){
+        var decorationStyle=getComputedStyle(decoration);
+        width+=(parseFloat(decorationStyle.paddingLeft)||0)+(parseFloat(decorationStyle.paddingRight)||0);
+      }
+    }
     return width;
   }
   function fit(main,original){
@@ -85,6 +93,11 @@
   }
   function run(){
     frame=0;var changed=false;
+    /* 下層H2は文字分割せず、既存の斜線デザインのまま幅だけ調整する。 */
+    document.querySelectorAll('h2.hex-section-title').forEach(function(main){
+      if(!titles.has(main))titles.set(main,{value:main.style.getPropertyValue('font-size'),priority:main.style.getPropertyPriority('font-size')});
+      main.classList.add('hex-title-fit-one-line');
+    });
     titles.forEach(function(original,main){if(fit(main,original))changed=true;});
     if(changed&&window.hexMotion&&window.hexMotion.refreshLayout)window.hexMotion.refreshLayout();
   }
@@ -102,6 +115,8 @@
   window.addEventListener('resize',onWidthChange,{passive:true});
   window.addEventListener('hex:viewport-resize',onWidthChange,{passive:true});
   window.addEventListener('load',queue,{once:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',queue,{once:true});
+  else queue();
   ['hex:hero-layout-updated','hex:opening-finished','hex:top-returned'].forEach(function(name){document.addEventListener(name,queue);});
   if(document.fonts){
     document.fonts.ready.then(queue);
