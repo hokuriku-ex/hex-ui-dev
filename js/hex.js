@@ -4774,7 +4774,9 @@ hexLoad(function(){
       }
       syncSnapshotLayer(circleProgress>=.999);
       welcomeWrap.classList.toggle("is-v2-circle-complete",circleProgress>=.999);
-      if(circleProgress>=.999&&scrollY>=welcomeTop-1)queueWelcomeBodyAuto();
+      // タイトル開始と同時に本文の待機へ進む。スクロール到着を別に待つと、
+      // 丸の時間を延ばした際にサブタイトル開始イベントを取り逃してしまう。
+      if(circleProgress>=.999)queueWelcomeBodyAuto();
 
       if((isSp()&&circleProgress>=.999)||
         (!isSp()&&scrollY-welcomeTop>=welcomeReleaseTravel)){
