@@ -97,7 +97,7 @@ html{
   color:#265ab0!important;
 }
 .hex-top-title-dark{
-  color:#fff!important;
+  color:#f7d04f!important;
 }
 
 /* 英語メインタイトル */
@@ -116,7 +116,7 @@ html{
   color:#265ab0;
 }
 .hex-top-title-dark[data-en]::after{
-  color:#fff;
+  color:#f7d04f;
 }
 
 /* トップ見出し：英字1文字ずつのロールアップ */
