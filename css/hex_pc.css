@@ -202,7 +202,7 @@ html{
   width:fit-content;
   display:block;
   margin:0 auto 24px!important;
-  padding:0!important;
+  padding:0 0 8px!important;
   text-align:center;
   font-size:32px;
   font-weight:700;
@@ -220,7 +220,7 @@ html{
       #f7d04f 2px,
       transparent 2px,
       transparent 5px
-    ) bottom / 100% 12px no-repeat;
+    ) center bottom 8px / 100% 12px no-repeat;
   -webkit-box-decoration-break:clone;
   box-decoration-break:clone;
 }
@@ -618,7 +618,7 @@ span:is(
 }
 
 /* 斜線 */
-.hex-stripe-line {
+.hex-stripe-line{
   --hex-stripe-bottom:4px;
   --hex-stripe-extra-width:12px;
   --hex-stripe-height:6px;
