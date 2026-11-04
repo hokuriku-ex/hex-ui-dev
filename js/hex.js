@@ -3105,9 +3105,10 @@ hexLoad(function(){
   /* WELCOMEへ進む丸の区間だけ。人物選択・見出し・本文の表示時間とは独立。 */
   var WELCOME_MOVE_CIRCLE_DURATION_PC=2100;
   var WELCOME_MOVE_CIRCLE_DURATION_SP=2600;
-  /* 元の時間軸の終盤20%は維持し、それ以前の区間だけ1.3倍に引き延ばす。 */
+  /* 元の時間軸の前半80%は1.3倍、終盤20%は0.8倍の時間で進める。 */
   var WELCOME_MOVE_SLOW_PHASE_END=.8;
   var WELCOME_MOVE_EARLY_TIME_SCALE=1.3;
+  var WELCOME_MOVE_END_TIME_SCALE=.8;
   var HERO_CHARACTER_CLICK_MAX_MOVE=6;
   var HERO_SP_TAP_MAX_MOVE=12;
   /* WELCOME本文の表示に必要なスクロール量。2なら従来の約2倍。 */
@@ -3393,14 +3394,16 @@ hexLoad(function(){
     }
     function getWelcomeMoveCircleDuration(){
       var base=isSp()?WELCOME_MOVE_CIRCLE_DURATION_SP:WELCOME_MOVE_CIRCLE_DURATION_PC;
-      return base*(1+WELCOME_MOVE_SLOW_PHASE_END*(WELCOME_MOVE_EARLY_TIME_SCALE-1));
+      return base*(WELCOME_MOVE_SLOW_PHASE_END*WELCOME_MOVE_EARLY_TIME_SCALE+
+        (1-WELCOME_MOVE_SLOW_PHASE_END)*WELCOME_MOVE_END_TIME_SCALE);
     }
     function welcomeMoveScrollProgress(progress){
-      // 前半だけ時間を引き延ばし、終盤は従来の時間・加減速へ接続する。
-      var extra=WELCOME_MOVE_SLOW_PHASE_END*(WELCOME_MOVE_EARLY_TIME_SCALE-1);
-      var time=clamp(progress,0,1)*(1+extra);
-      progress=time<=WELCOME_MOVE_SLOW_PHASE_END*WELCOME_MOVE_EARLY_TIME_SCALE
-        ?time/WELCOME_MOVE_EARLY_TIME_SCALE:time-extra;
+      // 前半と終盤で時間倍率を分け、加減速の軌道は維持する。
+      var earlyTime=WELCOME_MOVE_SLOW_PHASE_END*WELCOME_MOVE_EARLY_TIME_SCALE;
+      var totalTime=earlyTime+(1-WELCOME_MOVE_SLOW_PHASE_END)*WELCOME_MOVE_END_TIME_SCALE;
+      var time=clamp(progress,0,1)*totalTime;
+      progress=time<=earlyTime?time/WELCOME_MOVE_EARLY_TIME_SCALE:
+        WELCOME_MOVE_SLOW_PHASE_END+(time-earlyTime)/WELCOME_MOVE_END_TIME_SCALE;
       progress=clamp(progress,0,1);
       // 丸の描画はスクロール側の一系統だけで更新する。
       return isSp()?progress:getWelcomeCircleScrollProgress(progress);
