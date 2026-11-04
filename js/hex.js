@@ -12540,9 +12540,9 @@ hexReady(function(){
   if(!fiveColumnQuery.matches)return;
 
   var root=document.querySelector('#gc_auto_frame_work_3');
-  if(!root||root.dataset.hexWork13==='done')return;
+  if(!root||root.dataset.hexWork25==='done')return;
 
-  root.dataset.hexWork13='done';
+  root.dataset.hexWork25='done';
 
   /* 組み替えが終わるまで一覧を隠す */
   root.classList.add('hex-work-loading');
@@ -12553,8 +12553,8 @@ hexReady(function(){
   var LIST_SELECTOR='.post_index_contents';
   var PAGER_SELECTOR='.bg_page_button';
 
-  var ORIGINAL_LIMIT=12;
-  var DISPLAY_LIMIT=13;
+  var ORIGINAL_LIMIT=24;
+  var DISPLAY_LIMIT=25;
 
   var currentUrl=new URL(window.location.href);
   var currentPage=parseInt(
@@ -12775,7 +12775,7 @@ hexReady(function(){
     startIndex%ORIGINAL_LIMIT;
 
   /*
-  * 13件を表示するために必要な
+  * 25件を表示するために必要な
   * 元ページの範囲を先に計算
   */
   var provisionalLastIndex=
@@ -12808,7 +12808,7 @@ hexReady(function(){
   var lastPagePromise=fetchPage(originalLastPage);
 
   /*
-  * 13件分が揃った時点で一覧を表示
+  * 25件分が揃った時点で一覧を表示
   * 最終ページの取得完了は待たない
   */
   cardsPromise
