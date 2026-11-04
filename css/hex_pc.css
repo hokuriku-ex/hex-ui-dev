@@ -634,7 +634,8 @@ span:is(
       #f7d04f 2px,
       transparent 2px,
       transparent 5px
-    ) bottom / 100% var(--hex-stripe-height) no-repeat!important;
+    ) center bottom var(--hex-stripe-bottom) /
+      100% var(--hex-stripe-height) no-repeat!important;
   -webkit-box-decoration-break:clone;
   box-decoration-break:clone;
 }
