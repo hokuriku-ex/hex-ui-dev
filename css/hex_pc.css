@@ -211,19 +211,6 @@ html{
   color:#265ab0!important;
   box-sizing:border-box;
 }
-.hex-section-title span{
-  padding: 0 12px 4px;
-  background:
-    repeating-linear-gradient(
-      45deg,
-      #f7d04f 0,
-      #f7d04f 2px,
-      transparent 2px,
-      transparent 5px
-    ) center bottom 6px / 100% 12px no-repeat;
-  -webkit-box-decoration-break:clone;
-  box-decoration-break:clone;
-}
 
 /* 共通セクションサブ見出し（h3専用） */
 .hex-section-subtitle{
