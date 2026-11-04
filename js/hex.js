@@ -14948,7 +14948,7 @@ hexLoad(function(){
 
     /*
      * サイト全体の標準モーション。
-     * 個別指定より弱い、移動を伴わないフェードだけを適用する。
+     * PCは縮小状態から少し弾ませて表示する。個別モーションは維持する。
      */
     function setupAutoRevealTargets(targets){
       var mobile=window.innerWidth<=768;
@@ -14962,20 +14962,21 @@ hexLoad(function(){
         target.dataset.hexAutoMotion='1';
       });
 
-      gsap.set(targets,{autoAlpha:0});
+      gsap.set(targets,mobile?{autoAlpha:0}:{autoAlpha:0,scale:.8});
 
       /* 同時に画面へ入った要素だけをDOM順に短くずらす */
       ScrollTrigger.batch(targets,{
-        start:mobile?'top 96%':'top 95%',
+        start:mobile?'top 96%':'top 70%',
         once:true,
         interval:.1,
         batchMax:12,
         onEnter:function(batch){
           gsap.to(batch,{
             autoAlpha:1,
-            duration:mobile?1.05:1.2,
+            scale:1,
+            duration:mobile?1.05:.4,
             stagger:mobile?.07:.09,
-            ease:'power1.out',
+            ease:mobile?'power1.out':'back.out(1.7)',
             overwrite:'auto',
             onComplete:function(){
               clearMotionProperties(batch);
@@ -14999,23 +15000,24 @@ hexLoad(function(){
         target.dataset.hexFooterMotion='1';
       });
 
-      gsap.set(targets,{autoAlpha:0});
+      gsap.set(targets,mobile?{autoAlpha:0}:{autoAlpha:0,scale:.8});
 
       /*
        * 画面に入った項目だけをまとめ、通常コンテンツより
        * 明確な間隔でDOM順に表示する。
        */
       ScrollTrigger.batch(targets,{
-        start:mobile?'top 96%':'top 95%',
+        start:mobile?'top 96%':'top 70%',
         once:true,
         interval:.12,
         batchMax:20,
         onEnter:function(batch){
           gsap.to(batch,{
             autoAlpha:1,
-            duration:mobile?.9:1,
+            scale:1,
+            duration:mobile?.9:.4,
             stagger:mobile?.18:.28,
-            ease:'power1.out',
+            ease:mobile?'power1.out':'back.out(1.7)',
             overwrite:'auto',
             onComplete:function(){
               clearMotionProperties(batch);
@@ -15039,19 +15041,20 @@ hexLoad(function(){
         target.dataset.hexContactMotion='1';
       });
 
-      gsap.set(targets,{autoAlpha:0});
+      gsap.set(targets,mobile?{autoAlpha:0}:{autoAlpha:0,scale:.8});
 
       ScrollTrigger.batch(targets,{
-        start:mobile?'top 96%':'top 95%',
+        start:mobile?'top 96%':'top 70%',
         once:true,
         interval:.12,
         batchMax:10,
         onEnter:function(batch){
           gsap.to(batch,{
             autoAlpha:1,
-            duration:mobile?.95:1.05,
+            scale:1,
+            duration:mobile?.95:.4,
             stagger:mobile?.13:.18,
-            ease:'power1.out',
+            ease:mobile?'power1.out':'back.out(1.7)',
             overwrite:'auto',
             onComplete:function(){
               clearMotionProperties(batch);
