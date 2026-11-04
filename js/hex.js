@@ -3391,7 +3391,10 @@ hexLoad(function(){
     function getWelcomeMoveCircleDuration(){
       return isSp()?WELCOME_MOVE_CIRCLE_DURATION_SP:WELCOME_MOVE_CIRCLE_DURATION_PC;
     }
-    function welcomeMoveScrollProgress(progress){return progress;}
+    function welcomeMoveScrollProgress(progress){
+      // 人物選択と同じ加減速。丸の描画はスクロール側の一系統だけで更新する。
+      return isSp()?progress:getWelcomeCircleScrollProgress(progress);
+    }
     function getWelcomeCircleScrollProgress(progress){
       var lenis=window.hexMotion&&window.hexMotion.lenis;
       var easing=lenis&&lenis.options&&lenis.options.easing;
