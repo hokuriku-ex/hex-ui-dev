@@ -15122,6 +15122,7 @@ hexLoad(function(){
         target.getAttribute('aria-hidden')==='true'||
         target.closest(manualMotionSelector)||
         target.closest(autoRevealExcludeSelector)||
+        isExcludedFromAutoPop(target)||
         target.dataset.hexMotionInitialized
       ){
         return false;
@@ -15164,6 +15165,38 @@ hexLoad(function(){
       }
 
       return true;
+    }
+
+    /* 背景の外枠や専用演出を持つ領域を、親ごと拡大・非表示にしない。 */
+    function isExcludedFromAutoPop(target){
+      var excluded=[
+        '#gc_auto_frame_home_3',
+        '.hex-welcome-wrap',
+        '#gc_auto_body_home .hex-top-title',
+        '#gc_auto_body_home .hex-center-title',
+        'footer',
+        '#footer',
+        '.gc_auto_frame_footer',
+        '#gc_auto_frame_home_17'
+      ].join(',');
+      if(target.closest(excluded)||target.querySelector(excluded))return true;
+
+      /* 範囲背景内の本文は対象のまま、背景を含む外枠だけ除外する。 */
+      if(target.matches('.hex-bg-range,.hex-home-bg-range')||
+        target.querySelector('.hex-bg-range,.hex-home-bg-range'))return true;
+
+      var news=target.closest(
+        '#gc_auto_frame_home_9,#gc_auto_frame_home_10,#gc_auto_frame_home_11,.hex-home-news-section'
+      );
+      if(news&&!target.closest('.hex-news-button,.hex-home-news-button'))return true;
+      if(target.querySelector('#gc_auto_frame_home_9,.hex-home-news-section'))return true;
+
+      var contact=target.closest('.gc_auto_frame_spotitem_body:has(.hex-contact-section),.hex-contact-section');
+      if(contact){
+        var button=target.closest('.hex-button-wrap');
+        return !button||!button.querySelector('.hex-btn-main');
+      }
+      return !!target.querySelector('.hex-contact-section');
     }
 
     function pushUniqueTarget(targets,target){
