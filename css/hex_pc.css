@@ -220,7 +220,7 @@ html{
       #f7d04f 2px,
       transparent 2px,
       transparent 5px
-    ) center bottom 8px / 100% 12px no-repeat;
+    ) center bottom 6px / 100% 12px no-repeat;
   -webkit-box-decoration-break:clone;
   box-decoration-break:clone;
 }
