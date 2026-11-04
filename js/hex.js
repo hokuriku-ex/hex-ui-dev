@@ -3103,8 +3103,8 @@ hexLoad(function(){
   var HERO_WELCOME_CIRCLE_DURATION_PC=1050;
   var HERO_WELCOME_CIRCLE_DURATION_SP=1300;
   /* WELCOMEへ進む丸の区間だけ。人物選択・見出し・本文の表示時間とは独立。 */
-  var WELCOME_MOVE_CIRCLE_DURATION_PC=1050;
-  var WELCOME_MOVE_CIRCLE_DURATION_SP=1300;
+  var WELCOME_MOVE_CIRCLE_DURATION_PC=2100;
+  var WELCOME_MOVE_CIRCLE_DURATION_SP=2600;
   var HERO_CHARACTER_CLICK_MAX_MOVE=6;
   var HERO_SP_TAP_MAX_MOVE=12;
   /* WELCOME本文の表示に必要なスクロール量。2なら従来の約2倍。 */
@@ -3392,9 +3392,9 @@ hexLoad(function(){
       return isSp()?WELCOME_MOVE_CIRCLE_DURATION_SP:WELCOME_MOVE_CIRCLE_DURATION_PC;
     }
     function welcomeMoveScrollProgress(progress){
-      // PCは減速する動きを保ちつつ、序盤に縮小が集中しすぎない強さへ緩める。
+      // 人物選択と加減速の比率を共有し、WELCOME側の所要時間だけで速さを調整する。
       // 丸の描画はスクロール側の一系統だけで更新する。
-      return isSp()?progress:1-Math.pow(1-progress,3);
+      return isSp()?progress:getWelcomeCircleScrollProgress(progress);
     }
     function getWelcomeCircleScrollProgress(progress){
       var lenis=window.hexMotion&&window.hexMotion.lenis;
