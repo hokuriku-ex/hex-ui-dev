@@ -14502,6 +14502,7 @@ hexLoad(function(){
     var spUppercaseIndex=-1;
     var chars=[];
     var tween=null;
+    var spWelcomePlaying=false;
     var subtitle=main&&main.parentElement
       ?main.parentElement.querySelector('.hex-opening-sub')
       :null;
@@ -14555,6 +14556,10 @@ hexLoad(function(){
     if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
 
     function reset(){
+      if(spWelcomePlaying){
+        document.documentElement.classList.remove('hex-sp-welcome-title-playing');
+        spWelcomePlaying=false;
+      }
       if(tween){
         tween.kill();
         tween=null;
@@ -14573,8 +14578,14 @@ hexLoad(function(){
     }
 
     function play(){
-      if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
+      var spWelcome=window.innerWidth<=768&&!!main.closest('.hex-welcome-wrap');
+      // SPのWELCOMEは生成時に幅合わせ済み。再生開始時の全文字再計測を避ける。
+      if(!spWelcome&&window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
       reset();
+      if(spWelcome){
+        spWelcomePlaying=true;
+        document.documentElement.classList.add('hex-sp-welcome-title-playing');
+      }
 
       tween=gsap.to(chars,{
         autoAlpha:1,
@@ -14607,6 +14618,10 @@ hexLoad(function(){
         },
         onComplete:function(){
           tween=null;
+          if(spWelcomePlaying){
+            document.documentElement.classList.remove('hex-sp-welcome-title-playing');
+            spWelcomePlaying=false;
+          }
           gsap.set(chars,{
             clearProps:'transform,opacity,visibility,willChange'
           });
@@ -18155,6 +18170,9 @@ hexReady(function(){
   }
   function measure(){
     measureFrame=0;
+    if(window.innerWidth<=768&&document.documentElement.classList.contains('hex-sp-welcome-title-playing')){
+      queueMeasure();return;
+    }
     scanHashtagOverlaps();
     if(homeFoundedSection())scanHome();
     scanCardStackOverlaps();
@@ -18244,6 +18262,10 @@ hexReady(function(){
   }
   function queueMeasure(){
     clearTimeout(measureTimer);
+    // SPの英字ロール中にページ全体のsticky枠を組み直さない。
+    if(window.innerWidth<=768&&document.documentElement.classList.contains('hex-sp-welcome-title-playing')){
+      measureTimer=setTimeout(queueMeasure,120);return;
+    }
     var delay=lastScrollTime?Math.max(0,180-(Date.now()-lastScrollTime)):0;
     if(delay){measureTimer=setTimeout(queueMeasure,delay);return;}
     if(!measureFrame)measureFrame=requestAnimationFrame(measure);
