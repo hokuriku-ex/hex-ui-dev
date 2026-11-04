@@ -3392,8 +3392,9 @@ hexLoad(function(){
       return isSp()?WELCOME_MOVE_CIRCLE_DURATION_SP:WELCOME_MOVE_CIRCLE_DURATION_PC;
     }
     function welcomeMoveScrollProgress(progress){
-      // 人物選択と同じ加減速。丸の描画はスクロール側の一系統だけで更新する。
-      return isSp()?progress:getWelcomeCircleScrollProgress(progress);
+      // PCは減速する動きを保ちつつ、序盤に縮小が集中しすぎない強さへ緩める。
+      // 丸の描画はスクロール側の一系統だけで更新する。
+      return isSp()?progress:1-Math.pow(1-progress,3);
     }
     function getWelcomeCircleScrollProgress(progress){
       var lenis=window.hexMotion&&window.hexMotion.lenis;
