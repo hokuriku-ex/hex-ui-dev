@@ -202,7 +202,7 @@ html{
   width:fit-content;
   display:block;
   margin:0 auto 24px!important;
-  padding:0 0 8px!important;
+  padding:0!important;
   text-align:center;
   font-size:32px;
   font-weight:700;
@@ -210,25 +210,19 @@ html{
   letter-spacing:.02em;
   color:#265ab0!important;
   box-sizing:border-box;
-  isolation:isolate;
 }
-.hex-section-title::after{
-  content:"";
-  position:absolute;
-  bottom:8px;
-  left:50%;
-  transform:translateX(-50%);
-  width:calc(100% + 48px);
-  height:12px;
-  box-sizing:border-box;
-  z-index:-1;
-  background:repeating-linear-gradient(
-    45deg,
-    #f7d04f 0,
-    #f7d04f 2px,
-    transparent 2px,
-    transparent 5px
-  )!important;
+.hex-section-title span{
+  padding: 0 12px 4px;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      #f7d04f 0,
+      #f7d04f 2px,
+      transparent 2px,
+      transparent 5px
+    ) bottom / 100% 12px no-repeat;
+  -webkit-box-decoration-break:clone;
+  box-decoration-break:clone;
 }
 
 /* 共通セクションサブ見出し（h3専用） */
@@ -624,49 +618,40 @@ span:is(
 }
 
 /* 斜線 */
-.hex-stripe-line{
+.hex-stripe-line {
+  --hex-stripe-bottom:4px;
+  --hex-stripe-extra-width:12px;
+  --hex-stripe-height:6px;
   position:relative;
-  padding-bottom:8px;
-  isolation:isolate;
+  padding:
+    0
+    calc(var(--hex-stripe-extra-width) / 2)
+    var(--hex-stripe-bottom);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      #f7d04f 0,
+      #f7d04f 2px,
+      transparent 2px,
+      transparent 5px
+    ) bottom / 100% var(--hex-stripe-height) no-repeat!important;
+  -webkit-box-decoration-break:clone;
+  box-decoration-break:clone;
 }
-h2.hex-stripe-line{
+h2 > hex-stripe-line{
   --hex-stripe-bottom:8px;
   --hex-stripe-extra-width:48px;
   --hex-stripe-height:12px;
 }
-h3.hex-stripe-line{
+h3 > hex-stripe-line{
   --hex-stripe-bottom:6px;
   --hex-stripe-extra-width:32px;
   --hex-stripe-height:8px;
 }
-h4.hex-stripe-line{
+h4 > hex-stripe-line{
   --hex-stripe-bottom:4px;
   --hex-stripe-extra-width:20px;
   --hex-stripe-height:6px;
-}
-span.hex-stripe-line{
-  --hex-stripe-bottom:4px;
-  --hex-stripe-extra-width:12px;
-  --hex-stripe-height:6px;
-}
-.hex-stripe-line::after{
-  content:"";
-  position:absolute;
-  left:50%;
-  bottom:var(--hex-stripe-bottom, 8px);
-  width:calc(100% + var(--hex-stripe-extra-width, 48px));
-  height:var(--hex-stripe-height, 12px);
-  box-sizing:border-box;
-  z-index:-1;
-  transform:translateX(-50%);
-  background:repeating-linear-gradient(
-    45deg,
-    #f7d04f 0,
-    #f7d04f 2px,
-    transparent 2px,
-    transparent 5px
-  )!important;
-  pointer-events:none;
 }
 
 /* 本文テキストリンク */
