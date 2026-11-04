@@ -15471,7 +15471,7 @@ hexLoad(function(){
     }
 
     function setupTopTitleRollTarget(target){
-      if(normalSp)return;
+      if(normalSp&&target.classList.contains('hex-founded-title'))return;
       if(target.dataset.hexTitleRollReady){return;}
       var isFoundedTitle=target.classList.contains('hex-founded-title');
       var english=(isFoundedTitle?target.textContent:(target.getAttribute('data-en')||'')).trim();
@@ -15522,6 +15522,9 @@ hexLoad(function(){
       }
 
       if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(englishWrap);
+
+      /* SPも実要素を幅合わせへ登録する。文字ロール・サブの演出はPCのみ。 */
+      if(normalSp)return;
 
       if(isReducedMotion()){
         gsap.set(chars,{
