@@ -211,6 +211,12 @@ html{
   color:#265ab0!important;
   box-sizing:border-box;
 }
+.hex-section-title-light{
+  color:#265ab0!important;
+}
+.hex-section-title-dark{
+  color:#fff!important;
+}
 .hex-section-title span{
   padding: 0 12px 4px;
   background:
@@ -246,6 +252,12 @@ html{
   text-decoration-thickness:2px;
   text-underline-offset:10px;
   text-decoration-skip-ink:none;
+}
+.hex-section-subtitle-light{
+  color:#203459!important;
+}
+.hex-section-subtitle-dark{
+  color:#fff!important;
 }
 .hex-section-subtitle::after{
   content:none!important;
