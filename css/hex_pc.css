@@ -6964,6 +6964,13 @@ html body
   .hex-staff-slider .hex-staff-body{
     text-align:center;
   }
+  /* 画像の縮小率を文字だけ相殺し、左右も中央と同じ文字サイズにする。 */
+  .hex-staff-slider .hex-staff-name{
+    font-size:calc(20px * var(--hex-staff-text-scale,1));
+  }
+  .hex-staff-slider .hex-staff-joined{
+    font-size:calc(16px * var(--hex-staff-text-scale,1));
+  }
   .hex-staff-slider .hex-card-carousel-slide:not(.is-staff-text-visible) .hex-staff-detail{
     visibility:hidden;
   }

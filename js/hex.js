@@ -7566,6 +7566,9 @@ function setupCardCarousel(grid,mode){
       slide.style.setProperty('--hex-carousel-x',x+'px');
       var scale=scrolling||mobile.matches?1:1-.42*Math.min(1,Math.abs(offset));
       slide.style.setProperty('--hex-carousel-scale',String(scale));
+      if(staffNormal&&!mobile.matches){
+        slide.style.setProperty('--hex-staff-text-scale',String(1/scale));
+      }
       if(mainStaffPhoto){
         var sidePhoto=cards[i].querySelector('.hex-staff-photo');
         var photoOffset=sidePhoto?(mainStaffPhotoHeight-sidePhoto.offsetHeight*scale)/2:0;
@@ -7700,8 +7703,8 @@ function setupCardCarousel(grid,mode){
       var easing=mobile.matches?progress*progress*(3-2*progress):1-Math.pow(1-progress,3);
       position=start+(target-start)*easing;
       layout();
-      /* スタッフPCの本文は、停止の約100ms前からポン表示を開始する。 */
-      if(staffNormal&&!mobile.matches&&duration*(1-progress)<=100){
+      /* スタッフPCの詳細は、停止の約500ms前からポン表示を開始する。 */
+      if(staffNormal&&!mobile.matches&&duration*(1-progress)<=500){
         syncStaffText(((target%cards.length)+cards.length)%cards.length);
       }
       if(progress<1)motion=window.requestAnimationFrame(tick);
