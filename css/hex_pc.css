@@ -6935,11 +6935,12 @@ html body
 }
 .hex-staff-section-heading > h3.hex-section-action{
   display:block;
+  white-space:nowrap;
 }
 .hex-staff-department-count{
   display:inline-block;
-  font-size:.7em;
-  font-weight:500;
+  font-size:inherit;
+  font-weight:inherit;
   white-space:nowrap;
 }
 .hex-staff-grid{
@@ -6971,6 +6972,7 @@ html body
   font-weight:800;
   line-height:1;
   letter-spacing:.04em;
+  transform:translate(100%,100%);
 }
 .hex-staff-slider .hex-staff-number-current{font:inherit;}
 .hex-staff-slider :is(.hex-staff-number-separator,.hex-staff-number-total){display:none!important;}
