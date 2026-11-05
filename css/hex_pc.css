@@ -6961,6 +6961,9 @@ html body
     transform:translateX(-50%) translateX(calc(var(--hex-carousel-x) + var(--hex-carousel-drag))) scale(var(--hex-carousel-scale));
     transform-origin:50% 0;
   }
+  .hex-staff-slider .hex-card-carousel-slide:not(.is-active) .hex-staff-body{
+    visibility:hidden;
+  }
 }
 .hex-staff-card{
   position:relative;
