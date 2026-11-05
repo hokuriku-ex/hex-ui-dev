@@ -7387,7 +7387,7 @@ function setupCardCarousel(grid,mode){
   }
   function syncStaffText(selected){
     if(!staffNormal)return;
-    if(mobile.matches||drag){hideStaffText();return;}
+    if(mobile.matches||drag&&(drag.moved||drag.staffTextMoved)){hideStaffText();return;}
     if(selected===undefined){
       if(motion)return;
       selected=index;
@@ -7396,7 +7396,7 @@ function setupCardCarousel(grid,mode){
     hideStaffText();staffTextIndex=selected;
     staffTextTimer=window.setTimeout(function(){
       staffTextTimer=0;
-      if(destroyed||mobile.matches||drag||selected!==staffTextIndex)return;
+      if(destroyed||mobile.matches||drag&&(drag.moved||drag.staffTextMoved)||selected!==staffTextIndex)return;
       var body=cards[selected].querySelector('.hex-staff-body');
       slides[selected].classList.add('is-staff-text-visible');
       if(!body||reduced.matches)return;
@@ -7626,7 +7626,6 @@ function setupCardCarousel(grid,mode){
   });
   viewport.addEventListener('dragstart',function(event){event.preventDefault();});
   function startDrag(id,x,y,touch){
-    hideStaffText();
     suppressClick=false;
     if(scrolling)stopAuto();
     window.cancelAnimationFrame(motion);motion=0;
@@ -7636,6 +7635,11 @@ function setupCardCarousel(grid,mode){
   function moveDrag(x,y,event){
     if(!drag)return;
     drag.dx=x-drag.x;
+    /* 押下だけでは消さず、PCスタッフを横へ動かしてから詳細を隠す。 */
+    if(staffNormal&&!mobile.matches&&drag.dx!==0&&!drag.staffTextMoved){
+      drag.staffTextMoved=true;
+      hideStaffText();
+    }
     if(!drag.moved){
       var dx=Math.abs(drag.dx),dy=Math.abs(y-drag.y);
       if(drag.touch){
