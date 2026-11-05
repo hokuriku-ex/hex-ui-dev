@@ -7381,8 +7381,8 @@ function setupCardCarousel(grid,mode){
     if(staffTextTween){staffTextTween.kill();staffTextTween=null;}
     slides.forEach(function(slide,i){
       slide.classList.remove('is-staff-text-visible','is-staff-text-pop');
-      var body=cards[i].querySelector('.hex-staff-body');
-      if(body){['opacity','visibility','transform'].forEach(function(name){body.style.removeProperty(name);});}
+      var detail=cards[i].querySelector('.hex-staff-detail');
+      if(detail){['opacity','visibility','transform'].forEach(function(name){detail.style.removeProperty(name);});}
     });
   }
   function syncStaffText(selected){
@@ -7397,11 +7397,11 @@ function setupCardCarousel(grid,mode){
     staffTextTimer=window.setTimeout(function(){
       staffTextTimer=0;
       if(destroyed||mobile.matches||drag||selected!==staffTextIndex)return;
-      var body=cards[selected].querySelector('.hex-staff-body');
+      var detail=cards[selected].querySelector('.hex-staff-detail');
       slides[selected].classList.add('is-staff-text-visible');
-      if(!body||reduced.matches)return;
+      if(!detail||reduced.matches)return;
       if(window.gsap){
-        staffTextTween=window.gsap.fromTo(body,{autoAlpha:0,scale:.8},{
+        staffTextTween=window.gsap.fromTo(detail,{autoAlpha:0,scale:.8},{
           autoAlpha:1,scale:1,duration:.4,ease:'back.out(1.7)',overwrite:'auto'
         });
       }else{
