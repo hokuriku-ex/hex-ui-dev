@@ -7381,8 +7381,8 @@ function setupCardCarousel(grid,mode){
     if(staffTextTween){staffTextTween.kill();staffTextTween=null;}
     slides.forEach(function(slide,i){
       slide.classList.remove('is-staff-text-visible','is-staff-text-pop');
-      var detail=cards[i].querySelector('.hex-staff-detail');
-      if(detail){['opacity','visibility','transform'].forEach(function(name){detail.style.removeProperty(name);});}
+      var body=cards[i].querySelector('.hex-staff-body');
+      if(body){['opacity','visibility','transform'].forEach(function(name){body.style.removeProperty(name);});}
     });
   }
   function syncStaffText(selected){
@@ -7397,12 +7397,13 @@ function setupCardCarousel(grid,mode){
     staffTextTimer=window.setTimeout(function(){
       staffTextTimer=0;
       if(destroyed||mobile.matches||drag||selected!==staffTextIndex)return;
-      var detail=cards[selected].querySelector('.hex-staff-detail');
+      var body=cards[selected].querySelector('.hex-staff-body');
       slides[selected].classList.add('is-staff-text-visible');
-      if(!detail||reduced.matches)return;
+      if(!body||reduced.matches)return;
       if(window.gsap){
-        staffTextTween=window.gsap.fromTo(detail,{autoAlpha:0,scale:.8},{
-          autoAlpha:1,scale:1,duration:.4,ease:'back.out(1.7)',overwrite:'auto'
+        /* 名前を消さず、入社年数・詳細と一緒に本文全体を拡大する。 */
+        staffTextTween=window.gsap.fromTo(body,{scale:.8},{
+          scale:1,duration:.4,ease:'back.out(1.7)',overwrite:'auto'
         });
       }else{
         slides[selected].classList.add('is-staff-text-pop');
@@ -7703,8 +7704,8 @@ function setupCardCarousel(grid,mode){
       var easing=mobile.matches?progress*progress*(3-2*progress):1-Math.pow(1-progress,3);
       position=start+(target-start)*easing;
       layout();
-      /* スタッフPCの詳細は、停止の約500ms前からポン表示を開始する。 */
-      if(staffNormal&&!mobile.matches&&duration*(1-progress)<=500){
+      /* スタッフPCの本文は、停止の約300ms前からポン表示を開始する。 */
+      if(staffNormal&&!mobile.matches&&duration*(1-progress)<=300){
         syncStaffText(((target%cards.length)+cards.length)%cards.length);
       }
       if(progress<1)motion=window.requestAnimationFrame(tick);

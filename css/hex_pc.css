@@ -6971,19 +6971,19 @@ html body
   .hex-staff-slider .hex-staff-joined{
     font-size:calc(16px * var(--hex-staff-text-scale,1));
   }
-  .hex-staff-slider .hex-card-carousel-slide:not(.is-staff-text-visible) .hex-staff-detail{
+  .hex-staff-slider .hex-card-carousel-slide:not(.is-staff-text-visible) :is(.hex-staff-joined,.hex-staff-detail){
     visibility:hidden;
   }
-  .hex-staff-slider .hex-card-carousel-slide.is-staff-text-pop .hex-staff-detail{
+  .hex-staff-slider .hex-card-carousel-slide.is-staff-text-pop .hex-staff-body{
     animation:hex-staff-body-pop .4s cubic-bezier(.34,1.56,.64,1) both;
   }
 }
 @keyframes hex-staff-body-pop{
-  from{opacity:0;transform:scale(.8);}
-  to{opacity:1;transform:scale(1);}
+  from{transform:scale(.8);}
+  to{transform:scale(1);}
 }
 @media(prefers-reduced-motion:reduce){
-  .hex-staff-slider .hex-staff-detail{animation:none!important;}
+  .hex-staff-slider .hex-staff-body{animation:none!important;}
 }
 .hex-staff-card{
   position:relative;
