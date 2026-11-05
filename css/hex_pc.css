@@ -186,8 +186,6 @@ html{
   margin-left:.036em;
   vertical-align:-.025em;
   overflow:visible;
-}
-.hex-hero-catch .hex-everyday-e{
   /* 影を重ね、既存の文字と同じ1〜8pxの段差にする。 */
   filter:drop-shadow(1px 1px 0 #265ab0) drop-shadow(2px 2px 0 #265ab0)
     drop-shadow(4px 4px 0 #265ab0) drop-shadow(1px 1px 0 #265ab0);

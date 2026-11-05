@@ -31,7 +31,7 @@ var hexEverydayGlyphId=0;
 /* Merienda Black の E を調整し、Oleo Script の大文字の高さに揃えた字形。 */
 function hexCreateEverydayGlyph(main,text){
   var phrase=text.replace(/\s+/g,' ');
-  var isOpening=main.closest('.hex-opening-message-stage')&&/^Draw Your Everyday(?: With)?\.?$/.test(phrase);
+  var isOpening=main.closest('.hex-opening-intro-stage')&&/^Draw Your Everyday\.?$/.test(phrase);
   var isHero=main.closest('.hex-hero-catch')&&/^Build Your Everyday\.?$/.test(phrase);
   if(!isOpening&&!isHero)return null;
 
@@ -52,7 +52,7 @@ function hexCreateEverydayGlyph(main,text){
         <path vector-effect="non-scaling-stroke" d="M175 614Q146 614 128.5 625Q111 636 103.5 661Q96 686 96 729Q96 749 98 767Q100 785 104 798Q162 790 228 785.5Q294 781 360 781Q437 781 514 788.5Q591 796 664 809Q657 736 621.5 693.5Q586 651 519 636Q487 629 436.5 624Q386 619 320 616.5Q254 614 175 614Z"/>
       </g>
     </defs>
-    ${isHero?`<use href="#${id}" fill="#265ab0" stroke="#265ab0" stroke-width="2" stroke-linejoin="round"/>`:''}
+    <use href="#${id}" fill="#265ab0" stroke="#265ab0" stroke-width="2" stroke-linejoin="round"/>
     <use href="#${id}" fill="currentColor"/>`.trim().replace(/>\s+</g,'><');
   return svg;
 }
