@@ -7545,8 +7545,8 @@ function setupCardCarousel(grid,mode){
     if(staffNormal){
       var photo=cards[index].querySelector('.hex-staff-photo');
       if(!mobile.matches&&photo){
-        /* 中央カードは上下中央配置。本文の長さにかかわらず画像中央へ揃える。 */
-        var arrowTop=(viewportHeight-slides[index].offsetHeight)/2+photo.offsetTop+photo.offsetHeight/2;
+        /* PCスタッフの上端20pxに合わせ、本文の高さに依存せず画像中央へ揃える。 */
+        var arrowTop=20+photo.offsetTop+photo.offsetHeight/2;
         prev.style.top=next.style.top=arrowTop+'px';
       }else{
         prev.style.removeProperty('top');next.style.removeProperty('top');

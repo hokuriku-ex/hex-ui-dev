@@ -6955,6 +6955,12 @@ html body
   .hex-staff-slider .hex-card-carousel-dots{
     display:none;
   }
+  /* 本文の高さから切り離し、画像の上端を固定してカードを拡縮する。 */
+  .hex-staff-slider.hex-card-carousel .hex-card-carousel-slide{
+    top:20px;
+    transform:translateX(-50%) translateX(calc(var(--hex-carousel-x) + var(--hex-carousel-drag))) scale(var(--hex-carousel-scale));
+    transform-origin:50% 0;
+  }
 }
 .hex-staff-card{
   position:relative;
