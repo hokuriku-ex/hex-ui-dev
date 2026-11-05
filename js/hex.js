@@ -11879,6 +11879,7 @@ hexLoad(function(){
     if(!wrap)return;
     original.insertAdjacentElement('afterend',wrap);
     hexInitStaffCards(wrap);
+    hexSetupStaffPageSliders(wrap);
     hexScrollToStaffAnchor(wrap);
     hexStaffPostResize();
     setTimeout(hexStaffPostResize,150);
@@ -11956,6 +11957,29 @@ function hexCreateStaffWrap(original){
     wrap.appendChild(section);
   });
   return wrap;
+}
+/* 独立したスタッフページのみ。埋め込み表示は従来の部署・リーダー構造を維持する。 */
+function hexSetupStaffPageSliders(wrap){
+  if(wrap.closest('.hex-staff-embedded-mode'))return;
+  Array.from(wrap.querySelectorAll('.hex-staff-section')).forEach(function(section){
+    if(section.querySelector('.hex-staff-slider'))return;
+    var grids=Array.from(section.querySelectorAll('.hex-staff-leader-grid,.hex-staff-member-grid'));
+    var cards=[];
+    grids.forEach(function(grid){
+      cards=cards.concat(Array.from(grid.querySelectorAll('.hex-staff-card')));
+    });
+    if(!cards.length)return;
+    var slider=document.createElement('div');
+    slider.className='hex-staff-grid hex-staff-slider hex-card-grid hex-card-grid5';
+    section.insertBefore(slider,grids[0]);
+    cards.forEach(function(card){
+      card.classList.remove('is-leader');
+      slider.appendChild(card);
+    });
+    grids.forEach(function(grid){grid.remove();});
+    section.classList.remove('has-leader');
+    setupResponsiveCardSlider(slider,{pc:'normal',sp:'normal'});
+  });
 }
 function hexScrollToStaffAnchor(wrap){
   var anchorParam=new URLSearchParams(location.search).get('anchor')||'';

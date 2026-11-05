@@ -6946,6 +6946,10 @@ html body
 .hex-staff-member-grid{
   margin-top:48px;
 }
+.hex-staff-slider .hex-card-carousel-slide > .hex-staff-card{
+  width:100%;
+  margin:0;
+}
 .hex-staff-card{
   position:relative;
   background:#fff;
