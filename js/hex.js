@@ -16043,6 +16043,26 @@ hexLoad(function(){
       });
     }
 
+    var welcomeTextItems=[],welcomeTextFrame=0;
+    function queueWelcomeTextRender(){
+      if(welcomeTextFrame)return;
+      welcomeTextFrame=window.requestAnimationFrame(function(){
+        welcomeTextFrame=0;
+        var height=window.hexViewportHeight?window.hexViewportHeight():window.innerHeight;
+        welcomeTextItems.forEach(function(item){
+          if(!item.body.isConnected)return;
+          var rect=item.body.getBoundingClientRect();
+          if(!rect.height)return;
+          var progress=window.innerWidth<=768||isReducedMotion()?1:
+            Math.max(0,Math.min(1,(height*.8-rect.top)/(rect.height+height*.2)));
+          var time=progress*(.8+Math.max(0,item.characters.length-1)*.02);
+          item.characters.forEach(function(character,index){
+            character.style.opacity=Math.max(0,Math.min(1,(time-index*.02)/.1));
+          });
+        });
+      });
+    }
+
     /* 通常WELCOME本文：固定・自動スクロールなしで、手動スクロールへ文字表示を同期。 */
     function setupWelcomeTextTargets(area){
       if(normalSp||isReducedMotion())return;
@@ -16075,10 +16095,26 @@ hexLoad(function(){
         });
         if(!characters.length)return;
         body.setAttribute('data-hex-scroll-body','');
-        gsap.fromTo(characters,{opacity:0},{
-          opacity:1,duration:.1,stagger:.02,ease:'none',
-          scrollTrigger:{trigger:body,start:'top 80%',end:'bottom 60%',scrub:true,invalidateOnRefresh:true}
-        });
+        characters.forEach(function(character){character.style.opacity=0;});
+        welcomeTextItems.push({body:body,characters:characters});
+        if(welcomeTextItems.length===1){
+          window.addEventListener('scroll',queueWelcomeTextRender,{passive:true});
+          window.addEventListener('resize',queueWelcomeTextRender,{passive:true});
+          window.addEventListener('load',queueWelcomeTextRender,{once:true});
+          ['hex:viewport-resize','hex:home-overlap-measured','hex:hero-layout-updated',
+            'hex:hero-display-ready','hex:opening-finished'].forEach(function(name){
+            document.addEventListener(name,queueWelcomeTextRender);
+          });
+          if(document.fonts){
+            document.fonts.ready.then(queueWelcomeTextRender);
+            document.fonts.addEventListener('loadingdone',queueWelcomeTextRender);
+          }
+        }
+        if(window.ResizeObserver){
+          var observer=new ResizeObserver(queueWelcomeTextRender);
+          observer.observe(body);
+        }
+        queueWelcomeTextRender();
       });
     }
 
