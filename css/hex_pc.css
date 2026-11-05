@@ -6933,6 +6933,15 @@ html body
 .hex-staff-section .hex-section-action{
   margin:0 0 32px;
 }
+.hex-staff-section-heading > h3.hex-section-action{
+  display:block;
+}
+.hex-staff-department-count{
+  display:inline-block;
+  font-size:.7em;
+  font-weight:500;
+  white-space:nowrap;
+}
 .hex-staff-grid{
   display:grid;
   grid-template-columns:repeat(5, minmax(0, 1fr));

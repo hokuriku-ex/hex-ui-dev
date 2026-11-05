@@ -1388,7 +1388,7 @@ function hexInitAnchorNav(){
         if(target)return;
         if(h2.offsetParent===null)return;
 
-        var targetText=(h2.textContent||'').trim();
+        var targetText=(h2.getAttribute('data-staff-department')||h2.textContent||'').trim();
         var targetId=(h2.id||'').trim();
 
         if(targetText===title||targetId===title){
@@ -11993,6 +11993,11 @@ function hexCreateStaffWrap(original){
       var title=document.createElement('h3');
       title.className='hex-section-action hex-anchor-target';
       title.textContent=group.name;
+      title.setAttribute('data-staff-department',group.name);
+      var count=document.createElement('span');
+      count.className='hex-staff-department-count';
+      count.textContent='　'+group.members.length+'名';
+      title.appendChild(count);
       heading.appendChild(title);
       if(group.description){
         var desc=document.createElement('h4');
@@ -12064,7 +12069,7 @@ function hexScrollToStaffAnchor(wrap){
     for(var i=0;i<sections.length;i++){
       var title=sections[i].querySelector('.hex-anchor-target');
       if(!title)continue;
-      if(title.textContent.trim()!==anchorParam)continue;
+      if((title.getAttribute('data-staff-department')||title.textContent).trim()!==anchorParam)continue;
 
       var target=sections[i];
 
