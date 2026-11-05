@@ -7510,7 +7510,9 @@ function setupCardCarousel(grid,mode){
     if(destroyed||!enabled)return;
     var width=viewport.clientWidth;
     if(!width)return;
-    var cardWidth=scrolling&&scrollCardWidth?scrollCardWidth:mobile.matches?width:width*(staffNormal?.26:.40);
+    /* スタッフPC：1200px以下は5枚、1600px以上は7枚。その間は滑らかに補間。 */
+    var staffRatio=.40-.14*Math.max(0,Math.min(1,(window.innerWidth-1200)/400));
+    var cardWidth=scrolling&&scrollCardWidth?scrollCardWidth:mobile.matches?width:width*(staffNormal?staffRatio:.40);
     var step=mobile.matches?width+32:cardWidth*.82;
     grid.style.setProperty('--hex-carousel-card-width',cardWidth+'px');
     var height=0;
@@ -7538,7 +7540,18 @@ function setupCardCarousel(grid,mode){
       height=Math.max(height,slide.offsetHeight);
       offsets[i]=offset;
     });
-    viewport.style.height=(height+(mobile.matches?0:40))+'px';
+    var viewportHeight=height+(mobile.matches?0:40);
+    viewport.style.height=viewportHeight+'px';
+    if(staffNormal){
+      var photo=cards[index].querySelector('.hex-staff-photo');
+      if(!mobile.matches&&photo){
+        /* 中央カードは上下中央配置。本文の長さにかかわらず画像中央へ揃える。 */
+        var arrowTop=(viewportHeight-slides[index].offsetHeight)/2+photo.offsetTop+photo.offsetHeight/2;
+        prev.style.top=next.style.top=arrowTop+'px';
+      }else{
+        prev.style.removeProperty('top');next.style.removeProperty('top');
+      }
+    }
     dotButtons.forEach(function(button,i){
       button.setAttribute('aria-current',String(i===index));
       button.classList.toggle('is-current',i===index);
