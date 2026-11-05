@@ -7372,8 +7372,40 @@ function setupCardCarousel(grid,mode){
     return slide;
   });
   var index=0,position=0,offsets=[],drag=null,suppressClick=false,frame=0,motion=0,enabled=true;
+  var staffTextIndex=-1,staffTextTimer=0,staffTextTween=null;
   var mobile=window.matchMedia('(max-width:768px)');
   var reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
+  function hideStaffText(){
+    if(!staffNormal)return;
+    window.clearTimeout(staffTextTimer);staffTextTimer=0;staffTextIndex=-1;
+    if(staffTextTween){staffTextTween.kill();staffTextTween=null;}
+    slides.forEach(function(slide,i){
+      slide.classList.remove('is-staff-text-visible','is-staff-text-pop');
+      var body=cards[i].querySelector('.hex-staff-body');
+      if(body){['opacity','visibility','transform'].forEach(function(name){body.style.removeProperty(name);});}
+    });
+  }
+  function syncStaffText(){
+    if(!staffNormal)return;
+    if(mobile.matches||motion||drag){hideStaffText();return;}
+    if(staffTextIndex===index)return;
+    hideStaffText();staffTextIndex=index;
+    var selected=index;
+    staffTextTimer=window.setTimeout(function(){
+      staffTextTimer=0;
+      if(destroyed||mobile.matches||motion||drag||selected!==index)return;
+      var body=cards[selected].querySelector('.hex-staff-body');
+      slides[selected].classList.add('is-staff-text-visible');
+      if(!body||reduced.matches)return;
+      if(window.gsap){
+        staffTextTween=window.gsap.fromTo(body,{autoAlpha:0,scale:.8},{
+          autoAlpha:1,scale:1,duration:.4,ease:'back.out(1.7)',overwrite:'auto'
+        });
+      }else{
+        slides[selected].classList.add('is-staff-text-pop');
+      }
+    },0);
+  }
   function measureScrollCard(){
     if(!scrolling)return;
     // スライダー化前と同じ親幅・列数で、通常グリッドのカード幅を計測。
@@ -7515,6 +7547,8 @@ function setupCardCarousel(grid,mode){
     var cardWidth=scrolling&&scrollCardWidth?scrollCardWidth:mobile.matches?width:width*(staffNormal?staffRatio:.40);
     var step=mobile.matches?width+32:cardWidth*.82;
     grid.style.setProperty('--hex-carousel-card-width',cardWidth+'px');
+    var mainStaffPhoto=staffNormal&&!mobile.matches?cards[index].querySelector('.hex-staff-photo'):null;
+    var mainStaffPhotoHeight=mainStaffPhoto?mainStaffPhoto.offsetHeight:0;
     var height=0;
     slides.forEach(function(slide,i){
       var loopCount=scrolling?slides.length:cards.length;
@@ -7527,7 +7561,13 @@ function setupCardCarousel(grid,mode){
         Math.sign(offset)*cardWidth*(Math.abs(offset)<=1?Math.abs(offset)*.82:
           .82+(Math.abs(offset)-1)*.64);
       slide.style.setProperty('--hex-carousel-x',x+'px');
-      slide.style.setProperty('--hex-carousel-scale',scrolling||mobile.matches?'1':String(1-.42*Math.min(1,Math.abs(offset))));
+      var scale=scrolling||mobile.matches?1:1-.42*Math.min(1,Math.abs(offset));
+      slide.style.setProperty('--hex-carousel-scale',String(scale));
+      if(mainStaffPhoto){
+        var sidePhoto=cards[i].querySelector('.hex-staff-photo');
+        var photoOffset=sidePhoto?(mainStaffPhotoHeight-sidePhoto.offsetHeight*scale)/2:0;
+        slide.style.setProperty('--hex-staff-photo-offset',photoOffset+'px');
+      }
       slide.style.zIndex=String(10-Math.round(Math.abs(offset)));
       slide.classList.toggle('is-active',Math.abs(offset)<.5);
       // PCは見切れたカードも表示し、画面外の余裕を越えてから非表示にする。
@@ -7560,6 +7600,7 @@ function setupCardCarousel(grid,mode){
     prev.hidden=next.hidden=dots.hidden=cards.length<2;
     controls.hidden=cards.length<2;
     status.textContent=(index+1)+' / '+cards.length;
+    syncStaffText();
   }
   function show(value){
     window.cancelAnimationFrame(motion);motion=0;
@@ -7578,6 +7619,7 @@ function setupCardCarousel(grid,mode){
   });
   viewport.addEventListener('dragstart',function(event){event.preventDefault();});
   function startDrag(id,x,y,touch){
+    hideStaffText();
     suppressClick=false;
     if(scrolling)stopAuto();
     window.cancelAnimationFrame(motion);motion=0;
@@ -7644,6 +7686,7 @@ function setupCardCarousel(grid,mode){
     return mobile.matches?viewport.clientWidth+32:viewport.clientWidth*.40*.82;
   }
   function settle(target,velocity){
+    hideStaffText();
     window.cancelAnimationFrame(motion);motion=0;
     var start=position,startTime=performance.now();
     var duration=reduced.matches?0:mobile.matches?280:Math.min(1100,500+Math.abs(velocity)*160+
@@ -7751,6 +7794,7 @@ function setupCardCarousel(grid,mode){
   syncMode();
   return function(){
     destroyed=true;
+    hideStaffText();
     stopAuto();
     if(autoObserver)autoObserver.disconnect();
     grid.removeEventListener('focusin',autoFocus);grid.removeEventListener('focusout',autoBlur);

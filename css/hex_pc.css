@@ -6955,15 +6955,25 @@ html body
   .hex-staff-slider .hex-card-carousel-dots{
     display:none;
   }
-  /* 本文の高さから切り離し、画像の上端を固定してカードを拡縮する。 */
+  /* 中央画像の位置を固定し、左右の画像だけ中心の高さへ合わせる。 */
   .hex-staff-slider.hex-card-carousel .hex-card-carousel-slide{
-    top:20px;
+    top:calc(20px + var(--hex-staff-photo-offset,0px));
     transform:translateX(-50%) translateX(calc(var(--hex-carousel-x) + var(--hex-carousel-drag))) scale(var(--hex-carousel-scale));
     transform-origin:50% 0;
   }
-  .hex-staff-slider .hex-card-carousel-slide:not(.is-active) .hex-staff-body{
+  .hex-staff-slider .hex-card-carousel-slide:not(.is-staff-text-visible) .hex-staff-body{
     visibility:hidden;
   }
+  .hex-staff-slider .hex-card-carousel-slide.is-staff-text-pop .hex-staff-body{
+    animation:hex-staff-body-pop .4s cubic-bezier(.34,1.56,.64,1) both;
+  }
+}
+@keyframes hex-staff-body-pop{
+  from{opacity:0;transform:scale(.8);}
+  to{opacity:1;transform:scale(1);}
+}
+@media(prefers-reduced-motion:reduce){
+  .hex-staff-slider .hex-staff-body{animation:none!important;}
 }
 .hex-staff-card{
   position:relative;
