@@ -16155,12 +16155,21 @@ hexLoad(function(){
       welcomeTextFrame=window.requestAnimationFrame(function(){
         welcomeTextFrame=0;
         var height=window.hexViewportHeight?window.hexViewportHeight():window.innerHeight;
+        var scrollY=window.scrollY||window.pageYOffset||0;
         welcomeTextItems.forEach(function(item){
-          if(!item.body.isConnected)return;
+          if(!item.body.isConnected||item.complete)return;
           var rect=item.body.getBoundingClientRect();
           if(!rect.height)return;
           var progress=window.innerWidth<=768||isReducedMotion()?1:
             Math.max(0,Math.min(1,(height*.8-rect.top)/(rect.height+height*.2)));
+          /* 初回だけ再生。途中でも戻りスクロールに入ったら全文を表示して確定する。 */
+          if(progress>=1||item.progress>0&&scrollY<item.lastScrollY-.5){
+            item.complete=true;
+            progress=1;
+          }
+          progress=Math.max(item.progress,progress);
+          item.progress=progress;
+          item.lastScrollY=scrollY;
           var time=progress*(.8+Math.max(0,item.characters.length-1)*.02);
           item.characters.forEach(function(character,index){
             character.style.opacity=Math.max(0,Math.min(1,(time-index*.02)/.1));
@@ -16202,7 +16211,8 @@ hexLoad(function(){
         if(!characters.length)return;
         body.setAttribute('data-hex-scroll-body','');
         characters.forEach(function(character){character.style.opacity=0;});
-        welcomeTextItems.push({body:body,characters:characters});
+        welcomeTextItems.push({body:body,characters:characters,progress:0,
+          lastScrollY:window.scrollY||window.pageYOffset||0,complete:false});
         if(welcomeTextItems.length===1){
           window.addEventListener('scroll',queueWelcomeTextRender,{passive:true});
           window.addEventListener('resize',queueWelcomeTextRender,{passive:true});
