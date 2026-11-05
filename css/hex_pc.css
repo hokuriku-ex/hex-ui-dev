@@ -5168,7 +5168,7 @@ html body
   margin-top:14px;
   font-family:var(--hex-font-pop-ja)!important;
   font-size:clamp(14px,1.15vw,18px);
-  font-weight:700;
+  font-weight:700!important;
   line-height:1.7;
   letter-spacing:.1em;
   color:#f7d04f!important;
@@ -5783,7 +5783,7 @@ html body
   font-family:var(--hex-font-pop-ja)!important;
   color:#f7d04f!important;
   font-size:clamp(16px,calc(var(--hex-founded-vw, 1vw) * 1.6),22px)!important;
-  font-weight:700;
+  font-weight:700!important;
   line-height:1.7;
   letter-spacing:.1em;
   text-align:center;
@@ -6136,7 +6136,7 @@ html body
   color:#203459;
   font-size:24px;
   font-family:var(--hex-font-pop-ja)!important;
-  font-weight:700;
+  font-weight:700!important;
   line-height:1.4;
   cursor:pointer;
   transition:.2s;
@@ -6330,7 +6330,6 @@ html body
   line-height:1.4!important;
   letter-spacing:.12em!important;
   font-weight:700!important;
-  font-style:normal;
 }
 
 /* 英語メインタイトル */
