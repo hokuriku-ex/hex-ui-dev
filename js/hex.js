@@ -14932,6 +14932,8 @@ hexLoad(function(){
       '.hex-link',
       'a[href]'
     ].join(',');
+    var characterCopySourceSelector='.hex-supervisor-wrap,.hex-block-wrap,.hex-sakan-wrap,'+
+      '.hex-pruning-wrap,.hex-aluminum-wrap,.hex-family-wrap';
     var autoRevealExcludeSelector=[
       '#gc_auto_frame_home_0',
       '#gc_auto_frame_home_1',
@@ -14957,12 +14959,7 @@ hexLoad(function(){
       '.pagetitle_type',
       '.hex-opening',
       '.hex-hero-wrap',
-      '.hex-supervisor-wrap',
-      '.hex-block-wrap',
-      '.hex-sakan-wrap',
-      '.hex-pruning-wrap',
-      '.hex-aluminum-wrap',
-      '.hex-family-wrap',
+      characterCopySourceSelector,
       /* WELCOMEの丸画像・コピーは既存の受け渡し演出を優先 */
       '.hex-welcome-wrap .hex-opening-copy-source',
       '.hex-welcome-wrap .hex-handoff-copy',
@@ -16229,9 +16226,11 @@ hexLoad(function(){
       var bodies=Array.prototype.slice.call(area.querySelectorAll('.welcome .text'));
       if(area!==document&&area.matches&&area.matches('.welcome .text'))bodies.unshift(area);
       bodies.forEach(function(body){
+        // 人物紹介はCMS原稿を複製してから、専用の文字演出を適用する。
         if(body.hasAttribute('data-hex-scroll-body')||body.closest(
           '.hex-welcome-wrap,.hex-character-copy-stage,#gc_auto_frame_home_3,'+
-          '.hex-opening,.hex-hero-wrap,.hex-motion-auto-off,[data-hex-motion-auto="off"]'
+          '.hex-opening,.hex-hero-wrap,.hex-motion-auto-off,[data-hex-motion-auto="off"],'+
+          characterCopySourceSelector
         ))return;
         var nodes=[],characters=[];
         var walker=document.createTreeWalker(body,NodeFilter.SHOW_TEXT),node;
