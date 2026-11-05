@@ -6971,6 +6971,7 @@ html body
 .hex-staff-slider .hex-staff-number-current{font:inherit;}
 .hex-staff-slider :is(.hex-staff-number-separator,.hex-staff-number-total){display:none!important;}
 .hex-staff-slider :is(.hex-staff-dept-tag,.hex-card-carousel-dots,.hex-card-carousel-controls){display:none;}
+.hex-staff-slider .hex-staff-joined{color:#f7d04f;}
 @media screen and (min-width:769px){
   /* 中央画像の位置を固定し、左右の画像だけ中心の高さへ合わせる。 */
   .hex-staff-slider.hex-card-carousel .hex-card-carousel-slide{
@@ -6984,6 +6985,11 @@ html body
   /* 画像の縮小率を文字だけ相殺し、左右も中央と同じ文字サイズにする。 */
   .hex-staff-slider .hex-staff-name{
     font-size:calc(20px * var(--hex-staff-text-scale,1));
+    transition:color 0s;
+  }
+  .hex-staff-slider .is-staff-text-visible .hex-staff-name{
+    color:#265ab0;
+    transition-delay:.4s;
   }
   .hex-staff-slider .hex-staff-joined{
     font-size:calc(16px * var(--hex-staff-text-scale,1));
@@ -7001,6 +7007,7 @@ html body
 }
 @media(prefers-reduced-motion:reduce){
   .hex-staff-slider .hex-staff-body{animation:none!important;}
+  .hex-staff-slider .hex-staff-name{transition:none!important;}
 }
 .hex-staff-card{
   position:relative;

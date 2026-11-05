@@ -1811,6 +1811,7 @@
   .hex-staff-slider .hex-card-carousel-arrow.is-prev{left:27px;}
   .hex-staff-slider .hex-card-carousel-arrow.is-next{left:calc(100% - 27px);}
   .hex-staff-slider .hex-staff-body{text-align:center;}
+  .hex-staff-slider .is-active .hex-staff-name{color:#265ab0;}
   .hex-staff-slider .hex-staff-head{
     position:relative;
     display:block;
