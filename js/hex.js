@@ -14660,6 +14660,27 @@ hexLoad(function(){
       Math.abs(event.deltaX||0)>Math.abs(event.deltaY||0);
   }
 
+  function createCatchSubtitlePop(subtitle,onStart){
+    if(!subtitle)return null;
+    var gsap=window.gsap;
+    subtitle.classList.add('has-hex-sub-pop');
+    function reset(){
+      gsap.killTweensOf(subtitle);
+      gsap.set(subtitle,isReducedMotion()
+        ?{clearProps:'opacity,visibility,transform'}
+        :{autoAlpha:0,y:0,scale:.8});
+    }
+    return{
+      reset:reset,
+      play:function(delay){
+        gsap.to(subtitle,{
+          autoAlpha:1,y:0,scale:1,delay:delay,duration:.4,
+          ease:'back.out(1.7)',overwrite:'auto',onStart:onStart
+        });
+      }
+    };
+  }
+
   /* ヒーロー・WELCOMEキャッチ用の1文字ロールアップ */
   function createCatchRoll(main){
     var gsap=window.gsap;
@@ -14700,9 +14721,11 @@ hexLoad(function(){
     main.dataset.hexCatchRollReady='1';
     main.classList.add('has-hex-catch-roll');
     if(spBreakIndex!==-1){main.classList.add('hex-sp-two-line-catch');}
-    if(subtitle){
-      subtitle.classList.add('has-hex-sub-pop');
-    }
+    var subtitlePop=createCatchSubtitlePop(subtitle,function(){
+      if(main.closest('.hex-welcome-wrap')){
+        main.dispatchEvent(new Event('hex:welcome-subtitle-start',{bubbles:true}));
+      }
+    });
     var everydayGlyph=hexCreateEverydayGlyph(main,textValue);
 
     Array.from(textValue).forEach(function(character,index){
@@ -14738,10 +14761,7 @@ hexLoad(function(){
         rotation:45,
         transformOrigin:'50% 100%'
       });
-      if(subtitle&&!isReducedMotion()){
-        gsap.killTweensOf(subtitle);
-        gsap.set(subtitle,{autoAlpha:0,y:0,scale:.8});
-      }
+      if(subtitlePop)subtitlePop.reset();
     }
 
     function play(){
@@ -14763,25 +14783,7 @@ hexLoad(function(){
         ease:'power3.out',
         overwrite:'auto',
         onStart:function(){
-          if(subtitle){
-            gsap.to(subtitle,{
-              autoAlpha:1,
-              y:0,
-              scale:1,
-              delay:(.5+(chars.length-1)*(.07*5/6))/2,
-              duration:.4,
-              ease:'back.out(1.7)',
-              overwrite:'auto',
-              onStart:function(){
-                if(main.closest('.hex-character-copy-stage')){
-                  main.dispatchEvent(new Event('hex:character-subtitle-start',{bubbles:true}));
-                }
-                if(main.closest('.hex-welcome-wrap')){
-                  main.dispatchEvent(new Event('hex:welcome-subtitle-start',{bubbles:true}));
-                }
-              }
-            });
-          }
+          if(subtitlePop)subtitlePop.play((.5+(chars.length-1)*(.07*5/6))/2);
         },
         onComplete:function(){
           tween=null;
@@ -14802,9 +14804,7 @@ hexLoad(function(){
         yPercent:0,
         rotation:0
       });
-      if(subtitle){
-        gsap.set(subtitle,{clearProps:'opacity,visibility,transform'});
-      }
+      if(subtitlePop)subtitlePop.reset();
     }else{
       reset();
     }
@@ -16114,19 +16114,21 @@ hexLoad(function(){
     }
 
     function setupHeroAndWelcomeCatchRolls(){
-      var characterRolls=new WeakMap();
+      var characterPops=new WeakMap();
       document.addEventListener('hex:character-copy-prepare',function(event){
         var stage=event.target;
-        var roll=createCatchRoll(stage.querySelector('.hex-opening-main'));
-        if(roll){characterRolls.set(stage,roll);}
+        var pop=createCatchSubtitlePop(stage.querySelector('.hex-opening-sub'),function(){
+          stage.dispatchEvent(new Event('hex:character-subtitle-start',{bubbles:true}));
+        });
+        if(pop){pop.reset();characterPops.set(stage,pop);}
       });
       document.addEventListener('hex:character-copy-show',function(event){
-        var roll=characterRolls.get(event.target);
-        if(roll&&!isReducedMotion()){roll.play();}
+        var pop=characterPops.get(event.target);
+        if(pop&&!isReducedMotion())pop.play(0);
       });
       document.addEventListener('hex:character-copy-reset',function(event){
-        var roll=characterRolls.get(event.target);
-        if(roll){roll.reset();characterRolls.delete(event.target);}
+        var pop=characterPops.get(event.target);
+        if(pop){pop.reset();characterPops.delete(event.target);}
       });
       setupHeroCatchRoll();
       var welcomeCopy=document.querySelector(

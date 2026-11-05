@@ -5168,9 +5168,12 @@ html body
   display:block;
   color:inherit!important;
 }
+.hex-handoff-copy .hex-opening-main,
+.hex-character-copy-stage .hex-handoff-copy .hex-opening-sub{
+  font-size:clamp(32px,6vw,7.2rem);
+}
 .hex-handoff-copy .hex-opening-main{
   font-family:var(--hex-font-pop-en)!important;
-  font-size:clamp(32px,6vw,7.2rem);
   font-weight:400;
   line-height:1.4;
   letter-spacing:.04em;
@@ -9685,6 +9688,8 @@ body > .hex-v2-handoff{z-index:198;}
 .hex-character-copy-stage::-webkit-scrollbar{display:none;}
 .hex-character-copy-stage.is-visible{opacity:1;visibility:visible;pointer-events:auto;}
 .hex-character-copy-stage .title:empty{display:none!important;}
+.hex-character-copy-stage .hex-opening-main{display:none!important;}
+.hex-character-copy-stage .hex-welcome-final-copy .hex-opening-sub{color:#265ab0!important;}
 .hex-character-copy-stage .welcome_contents{padding-inline:0!important;}
 .hex-character-copy-stage .welcome_contents .text{display:block;width:100%;box-sizing:border-box;}
 .hex-character-copy-stage .hex-v2-body-char{opacity:0;}

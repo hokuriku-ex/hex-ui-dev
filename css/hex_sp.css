@@ -1381,8 +1381,11 @@
     top:calc(100svh - 66px);
     bottom:auto;
   }
-  .hex-handoff-copy .hex-opening-main{
+  .hex-handoff-copy .hex-opening-main,
+  .hex-character-copy-stage .hex-handoff-copy .hex-opening-sub{
     font-size:48px;
+  }
+  .hex-handoff-copy .hex-opening-main{
     line-height:1.4;
     letter-spacing:.04em;
   }
