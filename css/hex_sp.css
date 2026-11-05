@@ -2053,7 +2053,7 @@
     max-width:48px;
   }
   .hex-reasons-section .hex-center-title{
-    font-size:26px;
+    font-size:clamp(40px,8vw,48px);
   }
   .hex-reasons-card{
     grid-template-columns:1fr;
