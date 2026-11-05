@@ -9703,6 +9703,13 @@ body > .hex-v2-handoff{z-index:198;}
 .hex-character-copy-stage .welcome_contents{padding-inline:0!important;}
 .hex-character-copy-stage .welcome_contents .text{display:block;width:100%;box-sizing:border-box;}
 .hex-character-copy-stage .hex-v2-body-char{opacity:0;}
+.hex-character-scroll-photo{position:relative;overflow:hidden;pointer-events:none;}
+.hex-character-scroll-photo > .hex-hero{
+  position:absolute!important;
+  top:0;
+  left:0;
+  margin:0!important;
+}
 @media screen and (min-width:769px){
   /* 左揃えのまま、行全体ではなく文字幅の中心から均等に拡大する。 */
   .hex-character-copy-stage .hex-opening-sub,
@@ -9714,11 +9721,7 @@ body > .hex-v2-handoff{z-index:198;}
 }
 @media screen and (max-width:768px){
   html.hex-character-focus-active .hex-hero-sticky{background:#fff;}
-  html.hex-character-focus-active .hex-hero{
-    transform:translateY(var(--hex-character-photo-offset,0px));
-    clip-path:inset(calc(-1 * var(--hex-character-photo-offset,0px)) 0 0);
-  }
-  html.hex-character-focus-active .hex-character-focus-close{
+  html.hex-character-focus-active .hex-character-focus-close.is-visible{
     display:flex;
     position:fixed;
     top:calc(var(--header_height_smartphone,80px) + 16px);
@@ -9732,11 +9735,7 @@ body > .hex-v2-handoff{z-index:198;}
     max-width:none;
     padding-bottom:max(40px,calc(env(safe-area-inset-bottom,0px) + 24px))!important;
   }
-  .hex-character-copy-stage::before{
-    content:"";
-    display:block;
-    height:var(--hex-character-photo-space,0px);
-  }
+  .hex-character-copy-stage .welcome_contents .text{padding-inline:16px;}
   .hex-character-copy-stage .hex-welcome-copy{margin-bottom:28px!important;text-align:center!important;}
 }
 

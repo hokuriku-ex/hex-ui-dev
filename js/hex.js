@@ -3336,6 +3336,7 @@ hexLoad(function(){
     };
     var characterFocusMask=null;
     var characterCopyStage=null;
+    var characterPhotoAnchor=null;
     var characterCopyChars=[];
     var characterCopyShownAt=0;
     var characterCopyBodyAt=0;
@@ -3631,7 +3632,10 @@ hexLoad(function(){
       }
       /* PCはBACK、SPはスクロール枠の外に置いた閉じるボタンを使う。 */
       if(characterCloseButton){
-        characterCloseButton.disabled=characterFocus.returning;
+        var closeVisible=visible&&isBack&&isSp()&&
+          characterFocus.rawProgress>=1&&!characterFocus.returning;
+        characterCloseButton.classList.toggle("is-visible",closeVisible);
+        characterCloseButton.disabled=!closeVisible;
       }
       visible=visible&&isBack&&!isSp();
       if(!welcomeButton){return;}
@@ -5301,9 +5305,6 @@ hexLoad(function(){
       }
       if(contents){characterCopyStage.appendChild(contents.cloneNode(true));}
       sticky.appendChild(characterCopyStage);
-      characterCopyStage.addEventListener("scroll",function(event){
-        if(isSp())sticky.style.setProperty("--hex-character-photo-offset",-Math.max(0,event.currentTarget.scrollTop)+"px");
-      },{passive:true});
       if(window.hexRegisterMainTitle){
         window.hexRegisterMainTitle(characterCopyStage.querySelector('.hex-opening-sub'));
       }
@@ -5319,7 +5320,17 @@ hexLoad(function(){
       }
     }
 
+    function restoreCharacterPhoto(){
+      if(!characterPhotoAnchor){return;}
+      var photo=heroSection.parentElement;
+      characterPhotoAnchor.replaceWith(heroSection);
+      characterPhotoAnchor=null;
+      photo.remove();
+      heroRenderDirty=true;
+    }
+
     function clearCharacterCopy(){
+      restoreCharacterPhoto();
       if(characterCopySizeObserver){characterCopySizeObserver.disconnect();characterCopySizeObserver=null;}
       if(characterCopyStage){
         characterCopyStage.dispatchEvent(new CustomEvent("hex:character-copy-reset",{bubbles:true}));
@@ -5327,7 +5338,6 @@ hexLoad(function(){
           window.hexUnregisterMainTitle(characterCopyStage.querySelector('.hex-opening-sub'));
         }
         characterCopyStage.remove();
-        sticky.style.removeProperty("--hex-character-photo-offset");
       }
       characterCopyStage=null;
       characterCopyChars=[];
@@ -5341,6 +5351,7 @@ hexLoad(function(){
     function updateCharacterCopy(now){
       if(!characterCopyStage){return;}
       if(characterFocus.returning||!characterFocus.maskVisible){
+        restoreCharacterPhoto();
         characterCopyStage.classList.remove("is-visible");
         characterCopyStage.setAttribute("aria-hidden","true");
         return;
@@ -5351,12 +5362,24 @@ hexLoad(function(){
         characterCopyLayoutDirty=false;
         var circle=getWelcomeCircleGeometry(1);
         if(isSp()){
-          characterCopyStage.style.setProperty("--hex-character-photo-space",(circle.y+circle.radius+24)+"px");
+          /* 丸画像を本文の前に置き、同じスクロール枠内で動かす。 */
+          var photo=characterCopyStage.querySelector(".hex-character-scroll-photo");
+          if(!photo){
+            photo=document.createElement("div");
+            photo.className="hex-character-scroll-photo";
+            photo.setAttribute("aria-hidden","true");
+            photo.inert=true;
+            characterPhotoAnchor=document.createComment("hero photo position");
+            heroSection.before(characterPhotoAnchor);
+            characterCopyStage.prepend(photo);
+            photo.appendChild(heroSection);
+            heroRenderDirty=true;
+          }
+          photo.style.height=(circle.y+circle.radius+24)+"px";
           characterCopyStage.style.removeProperty("top");
           characterCopyStage.style.removeProperty("max-height");
-          sticky.style.setProperty("--hex-character-photo-offset",-Math.max(0,characterCopyStage.scrollTop)+"px");
         }else{
-          sticky.style.removeProperty("--hex-character-photo-offset");
+          restoreCharacterPhoto();
           var top=Math.max(16,circle.y-characterCopyStage.scrollHeight*.5);
           characterCopyStage.style.top=top+"px";
           characterCopyStage.style.maxHeight=Math.max(1,metrics.height-top-88)+"px";
@@ -5429,10 +5452,6 @@ hexLoad(function(){
     function startCharacterFocusReturn(){
       if(!characterFocus.maskVisible||characterFocus.returning){return;}
       characterFocus.returning=true;
-      if(isSp()&&characterCopyStage){
-        characterCopyStage.scrollTop=0;
-        sticky.style.removeProperty("--hex-character-photo-offset");
-      }
       characterFocus.returnFrom=characterFocus.rawProgress;
       characterFocus.started=performance.now();
       characterFocus.active=true;
