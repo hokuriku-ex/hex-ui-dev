@@ -226,7 +226,7 @@ html{
       #f7d04f 2px,
       transparent 2px,
       transparent 5px
-    ) center bottom 6px / 100% 12px no-repeat;
+    ) center bottom 6px / 100% .4em no-repeat;
   -webkit-box-decoration-break:clone;
   box-decoration-break:clone;
 }
@@ -6509,6 +6509,9 @@ html body
     transparent 2px,
     transparent 5px
   )!important;
+}
+#gc_auto_body_company .publicinfo_company h2.hex-section-title::after{
+  height:.4em;
 }
 #gc_auto_body_company .hex-company-main-first-line{
   display:none!important;
