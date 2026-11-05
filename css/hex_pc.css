@@ -5517,6 +5517,12 @@ html body
   display:block;
   text-align:right;
 }
+.welcome .text .hex-scroll-body-char{
+  display:inline-block;
+}
+@media screen and (max-width:768px), (prefers-reduced-motion:reduce){
+  .welcome .text .hex-scroll-body-char{opacity:1!important;}
+}
 
 /* =======================================
    トップページ：ウェルカム→私たちについて切り替え

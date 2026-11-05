@@ -14827,7 +14827,8 @@ hexLoad(function(){
       '#gc_auto_frame_lp_form_dialog',
       '.hex-staff-source-stage',
       '.hex-motion-auto-off',
-      '[data-hex-motion-auto="off"]'
+      '[data-hex-motion-auto="off"]',
+      '[data-hex-scroll-body]'
     ].join(',');
 
     if(
@@ -15200,6 +15201,7 @@ hexLoad(function(){
 
     /* 背景の外枠や専用演出を持つ領域を、親ごと拡大・非表示にしない。 */
     function isExcludedFromAutoPop(target){
+      if(target.querySelector('[data-hex-scroll-body]'))return true;
       var excluded=[
         '#gc_auto_frame_home_3',
         '.hex-welcome-wrap',
@@ -16041,10 +16043,51 @@ hexLoad(function(){
       });
     }
 
+    /* 通常WELCOME本文：固定・自動スクロールなしで、手動スクロールへ文字表示を同期。 */
+    function setupWelcomeTextTargets(area){
+      if(normalSp||isReducedMotion())return;
+      var bodies=Array.prototype.slice.call(area.querySelectorAll('.welcome .text'));
+      if(area!==document&&area.matches&&area.matches('.welcome .text'))bodies.unshift(area);
+      bodies.forEach(function(body){
+        if(body.hasAttribute('data-hex-scroll-body')||body.closest(
+          '.hex-welcome-wrap,.hex-character-copy-stage,#gc_auto_frame_home_3,'+
+          '.hex-opening,.hex-hero-wrap,.hex-motion-auto-off,[data-hex-motion-auto="off"]'
+        ))return;
+        var nodes=[],characters=[];
+        var walker=document.createTreeWalker(body,NodeFilter.SHOW_TEXT),node;
+        while((node=walker.nextNode()))nodes.push(node);
+        nodes.forEach(function(textNode){
+          var value=textNode.nodeValue;
+          if(!value||!value.trim())return;
+          var segments=window.Intl&&Intl.Segmenter
+            ?Array.from(new Intl.Segmenter('ja',{granularity:'grapheme'}).segment(value),function(part){return part.segment;})
+            :Array.from(value);
+          var fragment=document.createDocumentFragment();
+          segments.forEach(function(character){
+            if(/^\s+$/.test(character)){
+              fragment.appendChild(document.createTextNode(character));return;
+            }
+            var span=document.createElement('span');
+            span.className='hex-scroll-body-char';span.textContent=character;
+            fragment.appendChild(span);characters.push(span);
+          });
+          textNode.parentNode.replaceChild(fragment,textNode);
+        });
+        if(!characters.length)return;
+        body.setAttribute('data-hex-scroll-body','');
+        gsap.fromTo(characters,{opacity:0},{
+          opacity:1,duration:.1,stagger:.02,ease:'none',
+          scrollTrigger:{trigger:body,start:'top 80%',end:'bottom 60%',scrub:true,invalidateOnRefresh:true}
+        });
+      });
+    }
+
     function setupMotionTargets(scope){
       var area=scope&&scope.querySelectorAll
         ?scope
         :document;
+
+      setupWelcomeTextTargets(area);
 
       var revealSelector=[
         '.hex-motion-up',
