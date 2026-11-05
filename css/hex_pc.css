@@ -6802,6 +6802,17 @@ html body
 .hex-staff-embedded-mode .hex-staff-section{
   margin:0 0 48px;
 }
+.hex-staff-embedded-mode .hex-staff-section-heading{
+  margin-bottom:0!important;
+}
+.hex-staff-embedded-mode .hex-staff-section-heading > .hex-staff-leader-grid{
+  grid-column:1 / -1;
+  min-width:0;
+  margin-top:28px;
+}
+.hex-staff-embedded-mode .hex-staff-section-heading .hex-staff-card{
+  background:transparent;
+}
 .hex-staff-embedded-mode .hex-staff-member-grid{
   display:none!important;
 }

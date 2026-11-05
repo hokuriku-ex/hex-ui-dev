@@ -12443,6 +12443,7 @@ function hexAdjustEmbeddedStaffView(scope){
     var button=section.getElementsByClassName('hex-staff-sp-button-wrap')[0];
     var heading=section.getElementsByClassName('hex-staff-section-heading')[0];
     var leader=section.querySelector('.hex-staff-card.is-leader');
+    var leaderGrid=section.getElementsByClassName('hex-staff-leader-grid')[0];
 
     if(button&&heading){
       var link=button.getElementsByTagName('a')[0];
@@ -12452,6 +12453,11 @@ function hexAdjustEmbeddedStaffView(scope){
       if(button.parentNode){
         button.parentNode.removeChild(button);
       }
+    }
+
+    /* 埋め込み表示だけ、説明文の下へリーダーカードを入れて1つの面にまとめる。 */
+    if(heading&&leaderGrid&&leaderGrid.parentNode!==heading){
+      heading.appendChild(leaderGrid);
     }
 
     if(!leader)continue;
