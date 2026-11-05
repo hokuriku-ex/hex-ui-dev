@@ -168,6 +168,30 @@ html{
   backface-visibility:hidden;
   will-change:transform,opacity;
 }
+.hex-everyday-e-char{
+  position:relative;
+  width:.709em; /* Merienda の字送り .669em ＋ キャッチの字間 .04em */
+}
+.hex-everyday-e-label{
+  position:absolute;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  clip-path:inset(50%);
+}
+.hex-everyday-e{
+  display:inline-block;
+  width:.634em;
+  height:.741em;
+  margin-left:.036em;
+  vertical-align:-.025em;
+  overflow:visible;
+}
+.hex-hero-catch .hex-everyday-e{
+  /* 影を重ね、既存の文字と同じ1〜8pxの段差にする。 */
+  filter:drop-shadow(1px 1px 0 #265ab0) drop-shadow(2px 2px 0 #265ab0)
+    drop-shadow(4px 4px 0 #265ab0) drop-shadow(1px 1px 0 #265ab0);
+}
 /* サブ見出しは英字ロール完了時にJSで表示する */
 .hex-opening-sub.has-hex-sub-pop{
   transition:none!important;
