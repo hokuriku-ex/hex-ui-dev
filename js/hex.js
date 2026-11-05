@@ -7691,8 +7691,6 @@ function setupCardCarousel(grid,mode){
   function settle(target,velocity){
     hideStaffText();
     window.cancelAnimationFrame(motion);motion=0;
-    /* ボタン操作・ドラッグ終了時に、切り替え先の本文を移動と同時に表示する。 */
-    syncStaffText(((target%cards.length)+cards.length)%cards.length);
     var start=position,startTime=performance.now();
     var duration=reduced.matches?0:mobile.matches?280:Math.min(1100,500+Math.abs(velocity)*160+
       Math.max(0,Math.abs(target-start)-1)*120);
@@ -7702,6 +7700,10 @@ function setupCardCarousel(grid,mode){
       var easing=mobile.matches?progress*progress*(3-2*progress):1-Math.pow(1-progress,3);
       position=start+(target-start)*easing;
       layout();
+      /* スタッフPCの本文は、停止の約100ms前からポン表示を開始する。 */
+      if(staffNormal&&!mobile.matches&&duration*(1-progress)<=100){
+        syncStaffText(((target%cards.length)+cards.length)%cards.length);
+      }
       if(progress<1)motion=window.requestAnimationFrame(tick);
       else{motion=0;show(target);}
     }
