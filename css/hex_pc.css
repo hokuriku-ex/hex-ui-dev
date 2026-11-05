@@ -6972,6 +6972,9 @@ html body
 .hex-staff-slider :is(.hex-staff-number-separator,.hex-staff-number-total){display:none!important;}
 .hex-staff-slider :is(.hex-staff-dept-tag,.hex-card-carousel-dots,.hex-card-carousel-controls){display:none;}
 .hex-staff-slider .hex-staff-joined{color:#f7d04f;}
+.hex-staff-slider :is(.hex-staff-detail,.hex-staff-divider){
+  border-top:0!important;
+}
 @media screen and (min-width:769px){
   /* 中央画像の位置を固定し、左右の画像だけ中心の高さへ合わせる。 */
   .hex-staff-slider.hex-card-carousel .hex-card-carousel-slide{
