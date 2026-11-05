@@ -9689,7 +9689,10 @@ body > .hex-v2-handoff{z-index:198;}
 .hex-character-copy-stage.is-visible{opacity:1;visibility:visible;pointer-events:auto;}
 .hex-character-copy-stage .title:empty{display:none!important;}
 .hex-character-copy-stage .hex-opening-main{display:none!important;}
-.hex-character-copy-stage .hex-welcome-final-copy .hex-opening-sub{color:#265ab0!important;}
+.hex-character-copy-stage .hex-welcome-final-copy .hex-opening-sub{
+  color:#265ab0!important;
+  white-space:nowrap;
+}
 .hex-character-copy-stage .welcome_contents{padding-inline:0!important;}
 .hex-character-copy-stage .welcome_contents .text{display:block;width:100%;box-sizing:border-box;}
 .hex-character-copy-stage .hex-v2-body-char{opacity:0;}

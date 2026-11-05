@@ -108,7 +108,8 @@ function hexSetCatchRollCharacter(span,character,everydayGlyph){
     restore(main,original);
     var isOpeningSlide=main.classList.contains('hex-opening-slide-title');
     var isSectionTitle=main.matches('h2.hex-section-title');
-    if(document.documentElement.clientWidth>768&&!isOpeningSlide&&!isSectionTitle)return previous!==main.style.getPropertyValue('font-size');
+    var isCharacterTitle=main.matches('.hex-character-copy-stage .hex-opening-sub');
+    if(document.documentElement.clientWidth>768&&!isOpeningSlide&&!isSectionTitle&&!isCharacterTitle)return previous!==main.style.getPropertyValue('font-size');
     var parent=main.parentElement;
     if(!parent||!main.getClientRects().length)return false;
     var style=getComputedStyle(main),parentStyle=getComputedStyle(parent);
@@ -151,6 +152,7 @@ function hexSetCatchRollCharacter(span,character,everydayGlyph){
     if(!titles.has(main))titles.set(main,{value:main.style.getPropertyValue('font-size'),priority:main.style.getPropertyPriority('font-size')});
     main.classList.add('hex-title-fit-one-line');queue();
   };
+  window.hexUnregisterMainTitle=function(main){titles.delete(main);};
   function onWidthChange(){
     var width=document.documentElement.clientWidth;
     if(width===knownWidth)return;
@@ -5285,6 +5287,9 @@ hexLoad(function(){
       }
       if(contents){characterCopyStage.appendChild(contents.cloneNode(true));}
       sticky.appendChild(characterCopyStage);
+      if(window.hexRegisterMainTitle){
+        window.hexRegisterMainTitle(characterCopyStage.querySelector('.hex-opening-sub'));
+      }
       characterCopyChars=prepareCopyBody(characterCopyStage.querySelector(".text"));
       renderCopyBody(characterCopyChars,0);
       characterCopyStage.dispatchEvent(new CustomEvent("hex:character-copy-prepare",{bubbles:true}));
@@ -5301,6 +5306,9 @@ hexLoad(function(){
       if(characterCopySizeObserver){characterCopySizeObserver.disconnect();characterCopySizeObserver=null;}
       if(characterCopyStage){
         characterCopyStage.dispatchEvent(new CustomEvent("hex:character-copy-reset",{bubbles:true}));
+        if(window.hexUnregisterMainTitle){
+          window.hexUnregisterMainTitle(characterCopyStage.querySelector('.hex-opening-sub'));
+        }
         characterCopyStage.remove();
       }
       characterCopyStage=null;
