@@ -6934,14 +6934,8 @@ html body
   margin:0 0 32px;
 }
 .hex-staff-section-heading > h3.hex-section-action{
-  display:block;
-  white-space:nowrap;
-}
-.hex-staff-department-count{
-  display:inline-block;
-  font-size:inherit;
-  font-weight:inherit;
-  white-space:nowrap;
+  display:block!important;
+  white-space:nowrap!important;
 }
 .hex-staff-grid{
   display:grid;

@@ -11992,12 +11992,8 @@ function hexCreateStaffWrap(original){
       heading.className='hex-section-action hex-staff-section-heading';
       var title=document.createElement('h3');
       title.className='hex-section-action hex-anchor-target';
-      title.textContent=group.name;
+      title.textContent=group.name+'　'+group.members.length+'名';
       title.setAttribute('data-staff-department',group.name);
-      var count=document.createElement('span');
-      count.className='hex-staff-department-count';
-      count.textContent='　'+group.members.length+'名';
-      title.appendChild(count);
       heading.appendChild(title);
       if(group.description){
         var desc=document.createElement('h4');
