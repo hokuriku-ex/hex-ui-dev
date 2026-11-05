@@ -217,6 +217,12 @@ html{
   color:#fff!important;
 }
 
+/* 共通セクション見出しと人物紹介の見出しで基準サイズを揃える。 */
+.hex-section-title,
+.hex-character-copy-stage .hex-handoff-copy .hex-opening-sub{
+  font-size:clamp(56px,6vw,64px)!important;
+}
+
 /* 共通セクション見出し（h2専用） */
 .hex-section-title{
   position:relative;
@@ -225,7 +231,6 @@ html{
   margin:0 auto 24px!important;
   padding:0 0 8px!important;
   text-align:center;
-  font-size:clamp(56px,6vw,64px)!important;
   font-weight:700;
   line-height:1.4;
   letter-spacing:.02em;
@@ -5168,12 +5173,9 @@ html body
   display:block;
   color:inherit!important;
 }
-.hex-handoff-copy .hex-opening-main,
-.hex-character-copy-stage .hex-handoff-copy .hex-opening-sub{
-  font-size:clamp(32px,6vw,7.2rem);
-}
 .hex-handoff-copy .hex-opening-main{
   font-family:var(--hex-font-pop-en)!important;
+  font-size:clamp(32px,6vw,7.2rem);
   font-weight:400;
   line-height:1.4;
   letter-spacing:.04em;

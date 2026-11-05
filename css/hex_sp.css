@@ -30,9 +30,12 @@
 
 /* 共通セクション見出し（h2専用） */
 @media screen and (max-width:768px){
+  .hex-section-title,
+  .hex-character-copy-stage .hex-handoff-copy .hex-opening-sub{
+    font-size:clamp(40px,8vw,48px)!important;
+  }
   .hex-section-title{
     margin:0 auto 24px!important;
-    font-size:clamp(40px,8vw,48px)!important;
   }
   .hex-section-title span{
     padding:0 6px 4px;
@@ -1381,11 +1384,8 @@
     top:calc(100svh - 66px);
     bottom:auto;
   }
-  .hex-handoff-copy .hex-opening-main,
-  .hex-character-copy-stage .hex-handoff-copy .hex-opening-sub{
-    font-size:48px;
-  }
   .hex-handoff-copy .hex-opening-main{
+    font-size:48px;
     line-height:1.4;
     letter-spacing:.04em;
   }
