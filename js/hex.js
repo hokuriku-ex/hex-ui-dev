@@ -15212,8 +15212,9 @@ hexLoad(function(){
       if(target.closest(excluded)||target.querySelector(excluded))return true;
 
       /* 範囲背景内の本文は対象のまま、背景を含む外枠だけ除外する。 */
-      if(target.matches('.hex-bg-range,.hex-home-bg-range')||
+      if(target.matches('.hex-bg-range,.hex-home-bg-range,.hex-rise-runway,.hex-rise-sticky,.hex-home-overlap-front,.hex-overlap-round-front,.hex-overlap-shaped-front')||
         target.querySelector('.hex-bg-range,.hex-home-bg-range'))return true;
+      if(target.closest('.hex-rise-veil,.hex-home-shape-fill,.hex-overlap-corner-fill'))return true;
 
       var news=target.closest(
         '#gc_auto_frame_home_9,#gc_auto_frame_home_10,#gc_auto_frame_home_11,.hex-home-news-section'
@@ -15235,12 +15236,20 @@ hexLoad(function(){
       }
     }
 
+    /* 除外された背景・親コンテナで、内側の本文の収集を止めない。 */
+    function autoRevealParentOwnsMotion(parent,contentRoot){
+      return !!(parent&&contentRoot.contains(parent)&&(
+        parent.dataset.hexAutoMotion==='1'||canUseAutoRevealItem(parent)
+      ));
+    }
+
     function collectAutoRevealTargets(scope){
       var area=scope&&scope.querySelectorAll
         ?scope
         :document;
       var roots=Array.prototype.slice.call(
-        area.querySelectorAll(autoRevealRootSelector)
+        area.querySelectorAll(autoRevealRootSelector+
+          (normalSp?'':',.hex-bg-range,.hex-rise-sticky'))
       );
       var targets=[];
 
@@ -15281,8 +15290,7 @@ hexLoad(function(){
               autoSpecificAtomicSelector
             );
 
-          return !atomicParent||
-            !contentRoot.contains(atomicParent);
+          return !autoRevealParentOwnsMotion(atomicParent,contentRoot);
         });
 
         atomics.forEach(function(target){
@@ -15303,7 +15311,7 @@ hexLoad(function(){
           atomicParent=target.closest(
             autoSpecificAtomicSelector
           );
-          if(atomicParent&&atomicParent!==target){
+          if(atomicParent!==target&&autoRevealParentOwnsMotion(atomicParent,contentRoot)){
             return;
           }
 
@@ -15311,8 +15319,7 @@ hexLoad(function(){
           semanticParent=target.parentElement&&
             target.parentElement.closest(autoSemanticSelector);
           if(
-            semanticParent&&
-            contentRoot.contains(semanticParent)
+            autoRevealParentOwnsMotion(semanticParent,contentRoot)
           ){
             return;
           }
