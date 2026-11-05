@@ -6959,11 +6959,23 @@ html body
   width:100%;
   margin:0;
 }
+.hex-staff-slider .hex-staff-number{
+  display:flex!important;
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:2;
+  width:max-content;
+  color:#265ab0;
+  font-size:34px;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:.04em;
+}
+.hex-staff-slider .hex-staff-number-current{font:inherit;}
+.hex-staff-slider :is(.hex-staff-number-separator,.hex-staff-number-total){display:none!important;}
+.hex-staff-slider :is(.hex-staff-dept-tag,.hex-card-carousel-dots,.hex-card-carousel-controls){display:none;}
 @media screen and (min-width:769px){
-  /* スタッフページ専用。共通normal・SPのドットは維持する。 */
-  .hex-staff-slider .hex-card-carousel-dots{
-    display:none;
-  }
   /* 中央画像の位置を固定し、左右の画像だけ中心の高さへ合わせる。 */
   .hex-staff-slider.hex-card-carousel .hex-card-carousel-slide{
     top:calc(20px + var(--hex-staff-photo-offset,0px));

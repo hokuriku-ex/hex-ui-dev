@@ -1808,6 +1808,10 @@
    下層ページ：スタッフ紹介
 ======================================= */
 @media screen and (max-width:768px){
+  .hex-staff-slider .hex-card-carousel-arrow.is-prev{left:27px;}
+  .hex-staff-slider .hex-card-carousel-arrow.is-next{left:calc(100% - 27px);}
+}
+@media screen and (max-width:768px){
   .hex-staff-wrap{
     padding:0 16px!important;
     padding-bottom:10%!important;

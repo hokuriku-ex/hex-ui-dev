@@ -7518,7 +7518,7 @@ function setupCardCarousel(grid,mode){
     grid.classList.toggle('hex-card-carousel',enabled);
     grid.classList.toggle('hex-motion-auto-off',enabled||originalMotionOff);
     viewport.hidden=controls.hidden=dots.hidden=status.hidden=!enabled;
-    if(mobile.matches){
+    if(mobile.matches&&!staffNormal){
       controls.insertBefore(prev,dots);
       controls.appendChild(next);
     }else{
@@ -7591,9 +7591,9 @@ function setupCardCarousel(grid,mode){
     viewport.style.height=viewportHeight+'px';
     if(staffNormal){
       var photo=cards[index].querySelector('.hex-staff-photo');
-      if(!mobile.matches&&photo){
-        /* PCスタッフの上端20pxに合わせ、本文の高さに依存せず画像中央へ揃える。 */
-        var arrowTop=20+photo.offsetTop+photo.offsetHeight/2;
+      if(photo){
+        /* 本文の高さに依存せず画像中央へ。PCだけ上端20pxの余白を加える。 */
+        var arrowTop=(mobile.matches?0:20)+photo.offsetTop+photo.offsetHeight/2;
         prev.style.top=next.style.top=arrowTop+'px';
       }else{
         prev.style.removeProperty('top');next.style.removeProperty('top');
@@ -12052,6 +12052,8 @@ function hexSetupStaffPageSliders(wrap){
     section.insertBefore(slider,grids[0]);
     cards.forEach(function(card){
       card.classList.remove('is-leader');
+      var number=card.querySelector('.hex-staff-number-current');
+      if(number)number.textContent='#'+number.textContent.replace(/^#/, '');
       slider.appendChild(card);
     });
     grids.forEach(function(grid){grid.remove();});
