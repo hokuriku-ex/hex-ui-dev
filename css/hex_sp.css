@@ -32,7 +32,7 @@
 @media screen and (max-width:768px){
   .hex-section-title{
     margin:0 auto 24px!important;
-    font-size:clamp(6.4rem,8vw,9.6rem)!important;
+    font-size:clamp(32px,8vw,48px)!important;
   }
   .hex-section-title span{
     padding:0 6px 4px;

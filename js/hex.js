@@ -64,7 +64,8 @@
     var previous=main.style.getPropertyValue('font-size');
     restore(main,original);
     var isOpeningSlide=main.classList.contains('hex-opening-slide-title');
-    if(document.documentElement.clientWidth>768&&!isOpeningSlide)return previous!==main.style.getPropertyValue('font-size');
+    var isSectionTitle=main.matches('h2.hex-section-title');
+    if(document.documentElement.clientWidth>768&&!isOpeningSlide&&!isSectionTitle)return previous!==main.style.getPropertyValue('font-size');
     var parent=main.parentElement;
     if(!parent||!main.getClientRects().length)return false;
     var style=getComputedStyle(main),parentStyle=getComputedStyle(parent);
@@ -82,7 +83,7 @@
       var size=base*available/natural;
       main.style.setProperty('font-size',(Math.floor(size*100)/100)+'px','important');
       // 固定pxの文字間隔などによる誤差も実測して収める。
-      for(var i=0;i<2;i++){
+      for(var i=0;i<(isSectionTitle?4:2);i++){
         var actual=measure(main,getComputedStyle(main));
         if(actual<=available+.1)break;
         size*=available/actual;
