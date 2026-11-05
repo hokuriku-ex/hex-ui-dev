@@ -6950,6 +6950,12 @@ html body
   width:100%;
   margin:0;
 }
+@media screen and (min-width:769px){
+  /* スタッフページ専用。共通normal・SPのドットは維持する。 */
+  .hex-staff-slider .hex-card-carousel-dots{
+    display:none;
+  }
+}
 .hex-staff-card{
   position:relative;
   background:#fff;

@@ -7343,6 +7343,7 @@ function setupCardStack(grid,mode){
 /* 共通カード：data-slider="normal" で中央拡大カルーセル。 */
 function setupCardCarousel(grid,mode){
   var scrolling=mode==='scroll';
+  var staffNormal=mode==='normal'&&grid.classList.contains('hex-staff-slider');
   var originalGridClass=grid.className,scrollCardWidth=0;
   var cards=Array.from(grid.children);
   if(!cards.length)return;
@@ -7474,7 +7475,7 @@ function setupCardCarousel(grid,mode){
   grid.appendChild(status);
   function syncMode(){
     if(destroyed)return;
-    enabled=scrolling||mobile.matches||cards.length>=5;
+    enabled=staffNormal||scrolling||mobile.matches||cards.length>=5;
     window.cancelAnimationFrame(motion);motion=0;
     drag=null;
     grid.classList.remove('is-dragging');
@@ -7509,7 +7510,7 @@ function setupCardCarousel(grid,mode){
     if(destroyed||!enabled)return;
     var width=viewport.clientWidth;
     if(!width)return;
-    var cardWidth=scrolling&&scrollCardWidth?scrollCardWidth:mobile.matches?width:width*.40;
+    var cardWidth=scrolling&&scrollCardWidth?scrollCardWidth:mobile.matches?width:width*(staffNormal?.26:.40);
     var step=mobile.matches?width+32:cardWidth*.82;
     grid.style.setProperty('--hex-carousel-card-width',cardWidth+'px');
     var height=0;
