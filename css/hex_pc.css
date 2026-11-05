@@ -204,7 +204,6 @@ html{
   margin:0 0 40px!important;
   padding:0!important;
   text-align:center;
-  font-size:32px;
   font-weight:700;
   line-height:1.4;
   letter-spacing:.02em;
@@ -217,7 +216,8 @@ html{
   color:#fff!important;
 }
 
-/* 共通セクション見出しと人物紹介の見出しで基準サイズを揃える。 */
+/* 共通見出しと人物紹介の見出しで基準サイズを揃える。 */
+.hex-center-title,
 .hex-section-title,
 .hex-character-copy-stage .hex-handoff-copy .hex-opening-sub{
   font-size:clamp(56px,6vw,64px)!important;
@@ -7381,7 +7381,7 @@ html body
   margin:0!important;
   color:#fff!important;
   font-family:var(--hex-font-serif);
-  font-size:32px;
+  font-size:32px!important;
   font-weight:700;
   line-height:1.5;
   letter-spacing:.04em;

@@ -22,7 +22,6 @@
 @media screen and (max-width:768px){
   .hex-center-title{
     margin:0 0 30px!important;
-    font-size:32px;
     line-height:1.4;
     letter-spacing:.02em;
   }
@@ -30,6 +29,7 @@
 
 /* 共通セクション見出し（h2専用） */
 @media screen and (max-width:768px){
+  .hex-center-title,
   .hex-section-title,
   .hex-character-copy-stage .hex-handoff-copy .hex-opening-sub{
     font-size:clamp(40px,8vw,48px)!important;
@@ -2053,7 +2053,7 @@
     max-width:48px;
   }
   .hex-reasons-section .hex-center-title{
-    font-size:26px;
+    font-size:26px!important;
   }
   .hex-reasons-card{
     grid-template-columns:1fr;
