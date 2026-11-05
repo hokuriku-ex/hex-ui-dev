@@ -7385,15 +7385,18 @@ function setupCardCarousel(grid,mode){
       if(body){['opacity','visibility','transform'].forEach(function(name){body.style.removeProperty(name);});}
     });
   }
-  function syncStaffText(){
+  function syncStaffText(selected){
     if(!staffNormal)return;
-    if(mobile.matches||motion||drag){hideStaffText();return;}
-    if(staffTextIndex===index)return;
-    hideStaffText();staffTextIndex=index;
-    var selected=index;
+    if(mobile.matches||drag){hideStaffText();return;}
+    if(selected===undefined){
+      if(motion)return;
+      selected=index;
+    }
+    if(staffTextIndex===selected)return;
+    hideStaffText();staffTextIndex=selected;
     staffTextTimer=window.setTimeout(function(){
       staffTextTimer=0;
-      if(destroyed||mobile.matches||motion||drag||selected!==index)return;
+      if(destroyed||mobile.matches||drag||selected!==staffTextIndex)return;
       var body=cards[selected].querySelector('.hex-staff-body');
       slides[selected].classList.add('is-staff-text-visible');
       if(!body||reduced.matches)return;
@@ -7688,6 +7691,8 @@ function setupCardCarousel(grid,mode){
   function settle(target,velocity){
     hideStaffText();
     window.cancelAnimationFrame(motion);motion=0;
+    /* ボタン操作・ドラッグ終了時に、切り替え先の本文を移動と同時に表示する。 */
+    syncStaffText(((target%cards.length)+cards.length)%cards.length);
     var start=position,startTime=performance.now();
     var duration=reduced.matches?0:mobile.matches?280:Math.min(1100,500+Math.abs(velocity)*160+
       Math.max(0,Math.abs(target-start)-1)*120);
