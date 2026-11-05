@@ -9901,9 +9901,9 @@ html.hex-page-yellow-covering .hex-follow-cursor{
   color:#fff;
   background:#265ab0;
   overflow:hidden;
-  font-family:var(--hex-font-gothic, sans-serif)!important;
+  font-family:var(--hex-font-pop-ja)!important;
   font-size:clamp(32px,3.6vw,58px)!important;
-  font-weight:400;
+  font-weight:900;
   line-height:var(--hex-hashtag-row-height);
   letter-spacing:.06em;
   white-space:nowrap;
