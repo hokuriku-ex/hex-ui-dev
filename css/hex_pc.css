@@ -3603,7 +3603,8 @@ div[hex-sp]{
 }
 
 /* 閉じるボタン */
-.hex-calendar-modal-close{
+.hex-calendar-modal-close,
+.hex-character-focus-close{
   position:absolute;
   top:24px;
   right:24px;
@@ -3629,13 +3630,15 @@ div[hex-sp]{
     background-color .25s ease,
     transform .25s ease;
 }
-.hex-calendar-modal-close:hover{
+.hex-calendar-modal-close:hover,
+.hex-character-focus-close:hover{
   border:2px solid #f7d04f!important;
   color:#f7d04f!important;
   background:#fff!important;
   transform:rotate(90deg);
 }
-.hex-calendar-modal-close:focus-visible{
+.hex-calendar-modal-close:focus-visible,
+.hex-character-focus-close:focus-visible{
   outline:2px solid #265ab0!important;
   outline-offset:3px;
 }
@@ -3651,6 +3654,7 @@ body.hex-calendar-modal-open{
   .hex-calendar-modal,
   .hex-calendar-modal-dialog,
   .hex-calendar-modal-close,
+  .hex-character-focus-close,
   .hex-calendar-open{
     transition:none!important;
   }
@@ -9416,6 +9420,7 @@ html.hex-opening-finishing
   fill:#fff;pointer-events:none;
 }
 .hex-character-focus-mask > path{fill:#fff!important;}
+.hex-character-focus-close{display:none;}
 /* 人物の丸表示中は探索用UIを隠し、逆再生の完了後に元の表示状態へ戻す。 */
 html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-replay,.hex-hero-welcome-button:not(.is-back)){
   opacity:0!important;
@@ -9708,9 +9713,29 @@ body > .hex-v2-handoff{z-index:198;}
   }
 }
 @media screen and (max-width:768px){
+  html.hex-character-focus-active .hex-hero-sticky{background:#fff;}
+  html.hex-character-focus-active .hex-hero{
+    transform:translateY(var(--hex-character-photo-offset,0px));
+    clip-path:inset(calc(-1 * var(--hex-character-photo-offset,0px)) 0 0);
+  }
+  html.hex-character-focus-active .hex-character-focus-close{
+    display:flex;
+    position:fixed;
+    top:calc(var(--header_height_smartphone,80px) + 16px);
+    right:max(24px,env(safe-area-inset-right,0px));
+    z-index:12;
+  }
   .hex-v2-welcome-copy-stage.hex-character-copy-stage{
+    top:var(--header_height_smartphone,80px);
+    bottom:0;
     right:0!important;left:0!important;width:auto!important;
     max-width:none;
+    padding-bottom:max(40px,calc(env(safe-area-inset-bottom,0px) + 24px))!important;
+  }
+  .hex-character-copy-stage::before{
+    content:"";
+    display:block;
+    height:var(--hex-character-photo-space,0px);
   }
   .hex-character-copy-stage .hex-welcome-copy{margin-bottom:28px!important;text-align:center!important;}
 }

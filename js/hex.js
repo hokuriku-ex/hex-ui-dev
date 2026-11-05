@@ -3272,6 +3272,7 @@ hexLoad(function(){
     var spCircleScrollFrame=0;
     var spCircleReleaseScrollY=null;
     var welcomeButton=null;
+    var characterCloseButton=null;
     var activeHero=null;
     var sourceImage=null;
     var heroLayerImages=[];
@@ -3588,12 +3589,20 @@ hexLoad(function(){
         event.preventDefault();
         if(!welcomeButton.classList.contains("is-visible")||welcomeButton.disabled){return;}
         if(characterFocus.maskVisible){
-          startCharacterFocusReturn();
+          if(!isSp())startCharacterFocusReturn();
           return;
         }
         beginWelcome(true);
       });
       sticky.appendChild(welcomeButton);
+
+      characterCloseButton=document.createElement("button");
+      characterCloseButton.className="hex-character-focus-close";
+      characterCloseButton.type="button";
+      characterCloseButton.setAttribute("aria-label","人物紹介を閉じる");
+      characterCloseButton.innerHTML='<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
+      characterCloseButton.addEventListener("click",startCharacterFocusReturn);
+      sticky.appendChild(characterCloseButton);
     }
 
     function updateWelcomeButton(){
@@ -3620,8 +3629,11 @@ hexLoad(function(){
         anchor.panel.setAttribute('aria-hidden',navVisible?'false':'true');
         anchor.nav.inert=!(fixedVisible||navVisible);
       }
-      /* 独立WELCOMEボタンは使わず、人物紹介のBACKだけを表示する。 */
-      visible=visible&&isBack;
+      /* PCはBACK、SPはスクロール枠の外に置いた閉じるボタンを使う。 */
+      if(characterCloseButton){
+        characterCloseButton.disabled=characterFocus.returning;
+      }
+      visible=visible&&isBack&&!isSp();
       if(!welcomeButton){return;}
 
       /* 人物紹介のBACKボタンだけを従来の位置・サイズで使用する。 */
@@ -4905,7 +4917,7 @@ hexLoad(function(){
       if(interactionLocked){return;}
 
       if(characterFocus.maskVisible){
-        startCharacterFocusReturn();
+        if(!isSp())startCharacterFocusReturn();
         return;
       }
       cancelCharacterFocus();
@@ -4947,7 +4959,7 @@ hexLoad(function(){
 
       if(points.length<2){return;}
       if(characterFocus.maskVisible){
-        startCharacterFocusReturn();
+        if(!isSp())startCharacterFocusReturn();
         return;
       }
       first=points[0];
@@ -5071,7 +5083,8 @@ hexLoad(function(){
     }
 
     function onPointerDown(event){
-      if(!ready||welcomeActive||event.button>0){return;}
+      if(!ready||welcomeActive||event.button>0||
+        (characterFocus.maskVisible&&isSp())){return;}
       event.preventDefault();
       if(interactionLocked||characterFocus.returning){return;}
 
@@ -5117,6 +5130,7 @@ hexLoad(function(){
       var now;
       var elapsed;
 
+      if(characterFocus.maskVisible&&isSp()){return;}
       if(event.pointerType==="mouse"&&event.pointerId===mouseTap.pointerId&&
         Math.hypot(event.clientX-mouseTap.x,event.clientY-mouseTap.y)>
           HERO_CHARACTER_CLICK_MAX_MOVE){
@@ -5272,14 +5286,14 @@ hexLoad(function(){
       clearCharacterCopy();
       if(!kind||!sticky){return;}
       var source=document.querySelector(".hex-"+kind+"-wrap");
-      if(!source){return;}
+      if(!source&&!isSp()){return;}
       characterCopyStage=document.createElement("div");
       characterCopyStage.className="hex-v2-welcome-copy-stage hex-character-copy-stage welcome hex-motion-auto-off";
       characterCopyStage.setAttribute("role","region");
       characterCopyStage.setAttribute("aria-label","人物紹介");
       characterCopyStage.setAttribute("aria-hidden","true");
-      var copy=source.querySelector(".hex-opening-copy-source,.hex-welcome-copy");
-      var contents=source.querySelector(".welcome_contents");
+      var copy=source&&source.querySelector(".hex-opening-copy-source,.hex-welcome-copy");
+      var contents=source&&source.querySelector(".welcome_contents");
       if(copy){
         copy=copy.cloneNode(true);
         copy.classList.add("hex-handoff-copy","hex-welcome-copy","hex-welcome-final-copy","is-copy-active");
@@ -5287,6 +5301,9 @@ hexLoad(function(){
       }
       if(contents){characterCopyStage.appendChild(contents.cloneNode(true));}
       sticky.appendChild(characterCopyStage);
+      characterCopyStage.addEventListener("scroll",function(event){
+        if(isSp())sticky.style.setProperty("--hex-character-photo-offset",-Math.max(0,event.currentTarget.scrollTop)+"px");
+      },{passive:true});
       if(window.hexRegisterMainTitle){
         window.hexRegisterMainTitle(characterCopyStage.querySelector('.hex-opening-sub'));
       }
@@ -5310,6 +5327,7 @@ hexLoad(function(){
           window.hexUnregisterMainTitle(characterCopyStage.querySelector('.hex-opening-sub'));
         }
         characterCopyStage.remove();
+        sticky.style.removeProperty("--hex-character-photo-offset");
       }
       characterCopyStage=null;
       characterCopyChars=[];
@@ -5332,13 +5350,17 @@ hexLoad(function(){
       if(characterCopyLayoutDirty){
         characterCopyLayoutDirty=false;
         var circle=getWelcomeCircleGeometry(1);
-        var stageHeight=characterCopyStage.scrollHeight;
-        var top=(isSp()
-          ?circle.y+circle.radius+24
-          :Math.max(16,circle.y-stageHeight*.5))+"px";
-        var maxHeight=Math.max(1,metrics.height-parseFloat(top)-88)+"px";
-        if(characterCopyStage.style.top!==top){characterCopyStage.style.top=top;}
-        if(characterCopyStage.style.maxHeight!==maxHeight){characterCopyStage.style.maxHeight=maxHeight;}
+        if(isSp()){
+          characterCopyStage.style.setProperty("--hex-character-photo-space",(circle.y+circle.radius+24)+"px");
+          characterCopyStage.style.removeProperty("top");
+          characterCopyStage.style.removeProperty("max-height");
+          sticky.style.setProperty("--hex-character-photo-offset",-Math.max(0,characterCopyStage.scrollTop)+"px");
+        }else{
+          sticky.style.removeProperty("--hex-character-photo-offset");
+          var top=Math.max(16,circle.y-characterCopyStage.scrollHeight*.5);
+          characterCopyStage.style.top=top+"px";
+          characterCopyStage.style.maxHeight=Math.max(1,metrics.height-top-88)+"px";
+        }
       }
       if(!characterCopyVisible){
         characterCopyVisible=true;
@@ -5407,6 +5429,10 @@ hexLoad(function(){
     function startCharacterFocusReturn(){
       if(!characterFocus.maskVisible||characterFocus.returning){return;}
       characterFocus.returning=true;
+      if(isSp()&&characterCopyStage){
+        characterCopyStage.scrollTop=0;
+        sticky.style.removeProperty("--hex-character-photo-offset");
+      }
       characterFocus.returnFrom=characterFocus.rawProgress;
       characterFocus.started=performance.now();
       characterFocus.active=true;
@@ -5456,8 +5482,7 @@ hexLoad(function(){
       }
     }
 
-    /* 円の外側だけを白で覆い、WELCOMEと同じ丸の窓を描く。
-       入力面は切り抜かず、円の外からでもドラッグで探索へ戻れる。 */
+    /* 円の外側だけを白で覆い、WELCOMEと同じ丸の窓を描く。 */
     function updateCharacterFocusMask(){
       if(!characterFocus.maskVisible||!heroSection){return;}
       var width=metrics.width,height=metrics.height;
