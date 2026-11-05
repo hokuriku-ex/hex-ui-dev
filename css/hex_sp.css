@@ -92,7 +92,7 @@
 
 /* 標準見出しフォントサイズ（h2・h3・h4） */
 @media screen and (max-width:768px){
-  h2:not(.hex-section-subtitle){
+  h2:not(.hex-section-subtitle,.hex-top-title){
     font-size:clamp(40px,8vw,48px)!important;
   }
   h3:not(.hex-section-subtitle){
