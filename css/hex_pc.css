@@ -35,8 +35,7 @@ body{
 h1,
 h2{
   font-family:var(--hex-font-pop-ja)!important;
-  -webkit-text-stroke:.5px currentColor;
-  paint-order:stroke fill;
+  font-weight:900!important;
 }
 h3,
 h4,
@@ -91,7 +90,7 @@ html{
   font-size:16px!important;
   line-height:1.4!important;
   letter-spacing:.12em!important;
-  font-weight:500!important;
+  font-weight:700!important;
 }
 .hex-top-title-light{
   color:#265ab0!important;
@@ -6137,7 +6136,7 @@ html body
   color:#203459;
   font-size:24px;
   font-family:var(--hex-font-pop-ja)!important;
-  font-weight:400;
+  font-weight:700;
   line-height:1.4;
   cursor:pointer;
   transition:.2s;
@@ -6330,7 +6329,7 @@ html body
   font-size:16px!important;
   line-height:1.4!important;
   letter-spacing:.12em!important;
-  font-weight:500!important;
+  font-weight:700!important;
   font-style:normal;
 }
 

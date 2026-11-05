@@ -1,4 +1,4 @@
-/* head側の丸開きは、白い準備幕が実際に外れてから開始する。  */
+/* head側の丸開きは、白い準備幕が実際に外れてから開始する。 */
 (function(){
   var handoff=window.hexPageTransition;
   if(!handoff)return;
