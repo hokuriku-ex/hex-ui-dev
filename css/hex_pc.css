@@ -254,17 +254,24 @@ html{
 .hex-section-title-light{
   color:#265ab0!important;
 }
-.hex-section-title-light .hex-section-title-en{
-  color:#265ab0!important;
-}
 .hex-section-title-dark{
-  color:#f7d04f!important;
-}
-.hex-section-title-dark .hex-section-title-en{
   color:#f7d04f!important;
 }
 .hex-section-title[data-en]:not([data-en=""]){
   white-space:normal;
+}
+/* 日本語サブタイトル */
+.hex-section-title[data-en]:not([data-en=""]):is(.hex-section-title-light, .hex-section-title-dark) {
+  color:#f7d04f!important;
+}
+/* 英字メインタイトル */
+.hex-section-title.hex-section-title-light[data-en]::after,
+.hex-section-title.hex-section-title-light[data-en] > .hex-top-title-en {
+  color:#265ab0!important;
+}
+.hex-section-title.hex-section-title-dark[data-en]::after,
+.hex-section-title.hex-section-title-dark[data-en] > .hex-top-title-en {
+  color:#f7d04f!important;
 }
 
 /* 共通セクションサブ見出し（h3専用） */
