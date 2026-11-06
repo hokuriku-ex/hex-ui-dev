@@ -6492,7 +6492,7 @@ html body
   opacity:1;
 }
 
-/* ページ別 英語タイトル  */
+/* ページ別 英語タイトル */
 #gc_auto_frame_gccat3_1 h1::after { content: "About Us"; }
 #gc_auto_frame_company_1 h1::after { content: "Company"; }
 #gc_auto_frame_gccat8_1 h1::after { content: "Recruit"; }
