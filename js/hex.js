@@ -14702,14 +14702,23 @@ hexLoad(function(){
     };
   }
 
-  function playTitleLetterPop(chars){
+  function applyTitleLetterArc(title,letters){
+    title.classList.add('hex-title-arc');
+    letters.forEach(function(letter,index){
+      var position=letters.length>1?index*2/(letters.length-1)-1:0;
+      letter.style.setProperty('--hex-title-arc-offset',(-.17*(1-position*position))+'em');
+      letter.style.setProperty('--hex-title-arc-angle',(10*position)+'deg');
+    });
+  }
+
+  function playTitleLetterPop(chars,stagger=.15){
     var gsap=window.gsap;
     return gsap.to(chars,{
       keyframes:[
         {scale:1.25,duration:.20,ease:'power1.inOut'},
         {scale:1,duration:.22,ease:'power1.inOut'}
       ],
-      stagger:.15,
+      stagger:stagger,
       onComplete:function(){gsap.set(chars,{clearProps:'transform'});}
     });
   }
@@ -14736,7 +14745,9 @@ hexLoad(function(){
       return null;
     }
 
-    if(main.closest('.hex-hero-catch')&&
+    var isHero=!!main.closest('.hex-hero-catch');
+    var useLetterPop=isHero||isWelcome;
+    if(isHero&&
       textValue==='Build Your Everyday.'){
       spBreakIndex='Build Your'.length;
     }else if(main.closest('.hex-welcome-wrap')&&
@@ -14775,6 +14786,7 @@ hexLoad(function(){
       chars.push(span);
     });
 
+    if(isHero)applyTitleLetterArc(main,chars);
     if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
 
     function reset(){
@@ -14792,7 +14804,7 @@ hexLoad(function(){
         return;
       }
 
-      gsap.set(chars,isWelcome?{scale:0,transformOrigin:'50% 50%'}:{
+      gsap.set(chars,useLetterPop?{scale:0,transformOrigin:'50% 50%'}:{
         autoAlpha:0,
         yPercent:100,
         rotation:45,
@@ -14810,8 +14822,11 @@ hexLoad(function(){
       if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
       reset();
       var subtitleDelay=(.5+(chars.length-1)*(.07*5/6))/2;
-      if(isWelcome){
-        tween=playTitleLetterPop(chars.filter(function(char){return char.textContent.trim()!=='';}));
+      if(useLetterPop){
+        var letters=chars.filter(function(char){return char.textContent.trim()!=='';});
+        /* 開幕から切り替わった後のヒーロー表示時間内に、末尾まで再生する。 */
+        var stagger=isHero?Math.min(.15,1.5/Math.max(1,letters.length-1)):.15;
+        tween=playTitleLetterPop(letters,stagger);
         if(subtitlePop)subtitlePop.play(subtitleDelay);
         return;
       }
@@ -15786,11 +15801,8 @@ hexLoad(function(){
     }
 
     function prepareArchedTitlePop(englishWrap,letters){
-      englishWrap.classList.add('hex-title-arc');
-      var chars=letters.filter(function(letter,index){
-        var position=letters.length>1?index*2/(letters.length-1)-1:0;
-        letter.style.setProperty('--hex-title-arc-offset',(-.17*(1-position*position))+'em');
-        letter.style.setProperty('--hex-title-arc-angle',(10*position)+'deg');
+      applyTitleLetterArc(englishWrap,letters);
+      var chars=letters.filter(function(letter){
         return letter.textContent.trim()!=='';
       });
       if(isReducedMotion())return null;

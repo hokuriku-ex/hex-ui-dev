@@ -150,7 +150,7 @@ html{
   overflow:visible;
   white-space:nowrap;
 }
-.hex-title-arc .hex-top-title-char{
+.hex-title-arc :is(.hex-top-title-char,.hex-catch-roll-char){
   position:relative;
   top:var(--hex-title-arc-offset);
   rotate:var(--hex-title-arc-angle);
@@ -5160,7 +5160,7 @@ html body
 /* キャッチコピー共通 */
 .hex-hero-catch{
   position:absolute;
-  top:50%;
+  top:calc(var(--header_height,80px) + 24px);
   right:0;
   left:0;
   z-index:3;
@@ -5172,7 +5172,6 @@ html body
   color:var(--hex-hero-copy-color);
   text-align:center;
   opacity:0;
-  transform:translateY(-50%);
   transition:opacity .7s ease;
 }
 
@@ -5280,6 +5279,11 @@ html body
   transition:
     opacity .8s ease .1s,
     transform .85s cubic-bezier(.22,.8,.3,1) .1s;
+}
+
+.hex-hero-catch .hex-handoff-copy .hex-opening-main.hex-title-arc{
+  transform:none;
+  transition:none;
 }
 
 /* サブキャッチは少し遅れて表示 */
