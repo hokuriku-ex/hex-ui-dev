@@ -92,14 +92,6 @@ function hexSetCatchRollCharacter(span,character,everydayGlyph){
     document.body.appendChild(node);
     var width=node.getBoundingClientRect().width;
     node.remove();
-    /* H2の斜線付きspanは、文字の左右余白も含めて収める。 */
-    if(main.matches('h2.hex-section-title')){
-      var decoration=main.querySelector('span');
-      if(decoration){
-        var decorationStyle=getComputedStyle(decoration);
-        width+=(parseFloat(decorationStyle.paddingLeft)||0)+(parseFloat(decorationStyle.paddingRight)||0);
-      }
-    }
     return width;
   }
   function fit(main,original){
@@ -107,7 +99,7 @@ function hexSetCatchRollCharacter(span,character,everydayGlyph){
     var previous=main.style.getPropertyValue('font-size');
     restore(main,original);
     var isOpeningSlide=main.classList.contains('hex-opening-slide-title');
-    var isSectionTitle=main.matches('h2.hex-section-title');
+    var isSectionTitle=main.matches('h2.hex-section-title,.hex-section-title-arc');
     var isCharacterTitle=main.matches('.hex-character-copy-stage .hex-opening-sub');
     if(document.documentElement.clientWidth>768&&!isOpeningSlide&&!isSectionTitle&&!isCharacterTitle)return previous!==main.style.getPropertyValue('font-size');
     var parent=main.parentElement;
@@ -138,8 +130,8 @@ function hexSetCatchRollCharacter(span,character,everydayGlyph){
   }
   function run(){
     frame=0;var changed=false;
-    /* 下層H2は文字分割せず、既存の斜線デザインのまま幅だけ調整する。 */
-    document.querySelectorAll('h2.hex-section-title').forEach(function(main){
+    /* 日本語だけの下層H2は、文字分割せずに幅を調整する。 */
+    document.querySelectorAll('h2.hex-section-title:not([data-en]:not([data-en=""]))').forEach(function(main){
       if(!titles.has(main))titles.set(main,{value:main.style.getPropertyValue('font-size'),priority:main.style.getPropertyPriority('font-size')});
       main.classList.add('hex-title-fit-one-line');
     });
@@ -3122,25 +3114,6 @@ hexReady(function(){
   });
 })();
 
-
-/* =======================================
-   共通セクション見出し（h2専用）にspan自動追加
-======================================= */
-hexLoad(function(){
-  document.querySelectorAll('.hex-section-title').forEach(function(title){
-    // 二重追加防止
-    if(title.querySelector(':scope > span')) return;
-
-    const span = document.createElement('span');
-
-    // 既存の子要素をすべてspan内へ移動
-    while(title.firstChild){
-      span.appendChild(title.firstChild);
-    }
-
-    title.appendChild(span);
-  });
-});
 
 /* =======================================
    2026 rebuild: Three.js hero + WELCOME handoff
@@ -15407,6 +15380,7 @@ hexLoad(function(){
         '.hex-welcome-wrap',
         '#gc_auto_body_home .hex-top-title',
         '#gc_auto_body_home .hex-center-title',
+        '.has-hex-section-title-pop',
         'footer',
         '#footer',
         '.gc_auto_frame_footer',
@@ -15812,6 +15786,67 @@ hexLoad(function(){
           tween.restart();
         }
       });
+    }
+
+    function setupSectionTitlePopTarget(target){
+      var english=(target.getAttribute('data-en')||'').trim().replace(/\s+/g,' ');
+      if(!english||target.classList.contains('has-hex-section-title-pop'))return;
+
+      var subtitle=document.createElement('span');
+      subtitle.className='hex-top-title-sub';
+      while(target.firstChild)subtitle.appendChild(target.firstChild);
+
+      var englishWrap=document.createElement('span');
+      englishWrap.className='hex-top-title-en hex-section-title-arc';
+      englishWrap.setAttribute('aria-hidden','true');
+      var letters=Array.from(english);
+      var chars=[];
+      letters.forEach(function(letter,index){
+        var char=document.createElement('span');
+        char.className='hex-top-title-char';
+        char.textContent=letter===' '?'\u00a0':letter;
+        var position=letters.length>1?index*2/(letters.length-1)-1:0;
+        char.style.setProperty('--hex-title-arc-offset',(-.12*(1-position*position))+'em');
+        char.style.setProperty('--hex-title-arc-angle',(7*position)+'deg');
+        englishWrap.appendChild(char);
+        if(letter!==' ')chars.push(char);
+      });
+
+      target.appendChild(subtitle);
+      target.appendChild(englishWrap);
+      target.classList.add('has-hex-section-title-pop');
+      target.dataset.hexMotionInitialized='1';
+      if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(englishWrap);
+      if(isReducedMotion())return;
+
+      var subtitlePop=createCatchSubtitlePop(subtitle);
+      subtitlePop.reset();
+      gsap.set(chars,{scale:0,transformOrigin:'50% 50%'});
+      function play(){
+        gsap.to(chars,{
+          keyframes:[
+            {scale:1.2,duration:.37,ease:'power1.inOut'},
+            {scale:1,duration:.30,ease:'power1.inOut'}
+          ],
+          stagger:.11,
+          onComplete:function(){gsap.set(chars,{clearProps:'transform'});}
+        });
+        subtitlePop.play(.8);
+      }
+
+      if(!normalSp){
+        ScrollTrigger.create({trigger:target,start:'50% 95%',once:true,onEnter:play});
+      }else if(window.IntersectionObserver){
+        var observer=new IntersectionObserver(function(entries){
+          if(entries.some(function(entry){return entry.intersectionRatio>=.5;})){
+            observer.disconnect();
+            play();
+          }
+        },{rootMargin:'0px 0px -5% 0px',threshold:.5});
+        observer.observe(target);
+      }else{
+        play();
+      }
     }
 
     function setupFoundedMotion(){
@@ -16374,6 +16409,9 @@ hexLoad(function(){
 
       /* 通常フェードの収集前に、見出しを専用モーションへ確定する */
       titleRolls.forEach(setupTopTitleRollTarget);
+      var sectionTitleSelector='h2.hex-section-title[data-en]';
+      if(area.matches&&area.matches(sectionTitleSelector))setupSectionTitlePopTarget(area);
+      area.querySelectorAll(sectionTitleSelector).forEach(setupSectionTitlePopTarget);
 
       var autoReveals=collectAutoRevealTargets(area);
       var footerReveals=autoReveals.filter(function(target){

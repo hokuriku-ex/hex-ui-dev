@@ -74,7 +74,8 @@ html{
    共通パーツ（既存調整）
 ======================================= */
 /* 共通センター見出し（トップページ専用） */
-.hex-top-title{
+.hex-top-title,
+.hex-section-title[data-en]:not([data-en=""]){
   position:relative;
   width:100%;
   display:flex;
@@ -100,7 +101,8 @@ html{
 }
 
 /* 英語メインタイトル */
-.hex-top-title[data-en]::after{
+.hex-top-title[data-en]::after,
+.hex-section-title[data-en]:not([data-en=""])::after{
   content:attr(data-en);
   display:block;
   margin:0!important;
@@ -119,7 +121,8 @@ html{
 }
 
 /* トップ見出し：英字1文字ずつのロールアップ */
-.hex-top-title.has-hex-title-roll[data-en]::after{
+.hex-top-title.has-hex-title-roll[data-en]::after,
+.hex-section-title.has-hex-section-title-pop[data-en]::after{
   content:none!important;
   display:none!important;
 }
@@ -143,10 +146,20 @@ html{
   display:block;
   transform-origin:50% 100%;
 }
+.hex-section-title .hex-section-title-arc{
+  overflow:visible;
+  white-space:nowrap;
+}
+.hex-section-title-arc .hex-top-title-char{
+  position:relative;
+  top:var(--hex-title-arc-offset);
+  rotate:var(--hex-title-arc-angle);
+}
 
 /* 日本語サブ見出しの色 */
 .hex-top-title.hex-top-title-light,
-.hex-top-title.hex-top-title-dark{
+.hex-top-title.hex-top-title-dark,
+.hex-section-title[data-en]:not([data-en=""]):is(.hex-top-title-light,.hex-top-title-dark){
   color:#f7d04f!important;
 }
 
@@ -244,18 +257,8 @@ html{
 .hex-section-title-dark{
   color:#fff!important;
 }
-.hex-section-title span{
-  padding: 0 12px 4px;
-  background:
-    repeating-linear-gradient(
-      45deg,
-      #f7d04f 0,
-      #f7d04f 2px,
-      transparent 2px,
-      transparent 5px
-    ) center bottom 6px / 100% .4em no-repeat;
-  -webkit-box-decoration-break:clone;
-  box-decoration-break:clone;
+.hex-section-title[data-en]:not([data-en=""]){
+  white-space:normal;
 }
 
 /* 共通セクションサブ見出し（h3専用） */
@@ -6512,8 +6515,7 @@ html body
 #gc_auto_body_company .bg_other_image_area.image_count0{
   display:none;
 }
-#gc_auto_body_company .publicinfo_company h2.title,
-#gc_auto_body_company .publicinfo_company h2.hex-section-title{
+#gc_auto_body_company .publicinfo_company h2:is(.title,.hex-section-title):not(.hex-section-title[data-en]){
   position:relative;
   width:fit-content;
   display:block;
@@ -6528,8 +6530,7 @@ html body
   box-sizing:border-box;
   isolation:isolate;
 }
-#gc_auto_body_company .publicinfo_company h2.title::after,
-#gc_auto_body_company .publicinfo_company h2.hex-section-title::after{
+#gc_auto_body_company .publicinfo_company h2.title:not(.hex-section-title)::after{
   content:"";
   position:absolute;
   bottom:8px;
@@ -6546,9 +6547,6 @@ html body
     transparent 2px,
     transparent 5px
   )!important;
-}
-#gc_auto_body_company .publicinfo_company h2.hex-section-title::after{
-  height:.4em;
 }
 #gc_auto_body_company .hex-company-main-first-line{
   display:none!important;
