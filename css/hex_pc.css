@@ -6508,8 +6508,8 @@ html body
 #gc_auto_frame_staff_1 h1::after { content: "Staff"; }
 #gc_auto_frame_gccat2_1 h1::after { content: "Homeowners"; }
 #gc_auto_frame_gccat1_1 h1::after { content: "Businesses"; }
-#gc_auto_frame_gccat7_1 h1::after { content: "Workflow"; }
-#gc_auto_frame_gccat26_1 h1::after { content: "Workflow"; }
+#gc_auto_frame_gccat7_1 h1::after { content: "Project Steps"; }
+#gc_auto_frame_gccat26_1 h1::after { content: "Apply Steps"; }
 #gc_auto_frame_gccat9_1 h1::after { content: "Services"; }
 #gc_auto_frame_gccat5_1 h1::after { content: "What's Hot"; }
 #gc_auto_frame_gccat14_1 h1::after { content: "Brands"; }
