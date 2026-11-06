@@ -9747,6 +9747,11 @@ body > .hex-v2-handoff{z-index:198;}
     padding-bottom:max(40px,calc(env(safe-area-inset-bottom,0px) + 24px))!important;
   }
   .hex-character-copy-stage .welcome_contents .text{padding-inline:16px;}
+  .hex-character-copy-stage.is-visible .hex-opening-sub{
+    opacity:1!important;
+    visibility:visible!important;
+    transform:none!important;
+  }
   .hex-character-copy-stage .hex-welcome-copy{margin-bottom:28px!important;text-align:center!important;}
 }
 
