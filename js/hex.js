@@ -7498,9 +7498,10 @@ function setupCardStack(grid,mode){
 }
 
 /* 共通カード：data-slider="normal" で中央拡大カルーセル。 */
-function setupCardCarousel(grid,mode){
+function setupCardCarousel(grid,mode,options){
   var scrolling=mode==='scroll';
   var staffNormal=mode==='normal'&&grid.classList.contains('hex-staff-slider');
+  var tiktok=grid.classList.contains('hex-tiktok-grid');
   var originalGridClass=grid.className,scrollCardWidth=0;
   var cards=Array.from(grid.children);
   if(!cards.length)return;
@@ -7528,7 +7529,8 @@ function setupCardCarousel(grid,mode){
     viewport.appendChild(slide);
     return slide;
   });
-  var index=0,position=0,offsets=[],drag=null,suppressClick=false,frame=0,motion=0,enabled=true;
+  var index=options?options.index:0,position=index,offsets=[],drag=null,suppressClick=false,frame=0,motion=0,enabled=true;
+  var tiktokCardWidth=0;
   var staffTextIndex=-1,staffTextTimer=0,staffTextTween=null;
   var mobile=window.matchMedia('(max-width:768px)');
   var reduced=window.matchMedia('(prefers-reduced-motion:reduce)');
@@ -7580,7 +7582,7 @@ function setupCardCarousel(grid,mode){
     probe.remove();
     // 小さいカード・少ない枚数でも画面端まで途切れないだけの循環列を用意。
     var required=Math.ceil((viewport.clientWidth+scrollCardWidth)/(scrollCardWidth+32))+2;
-    var count=Math.max(1,Math.ceil(required/cards.length))*cards.length;
+    var count=tiktok&&cards.length===1?1:Math.max(1,Math.ceil(required/cards.length))*cards.length;
     while(slides.length>count)slides.pop().remove();
     while(slides.length<count){
       var copy=slides[slides.length%cards.length].cloneNode(true);
@@ -7668,7 +7670,7 @@ function setupCardCarousel(grid,mode){
   grid.appendChild(status);
   function syncMode(){
     if(destroyed)return;
-    enabled=staffNormal||scrolling||mobile.matches||cards.length>=5;
+    enabled=tiktok||staffNormal||scrolling||mobile.matches||cards.length>=5;
     window.cancelAnimationFrame(motion);motion=0;
     drag=null;
     grid.classList.remove('is-dragging');
@@ -7706,6 +7708,10 @@ function setupCardCarousel(grid,mode){
     /* スタッフPC：1200px以下は5枚、1600px以上は7枚。その間は滑らかに補間。 */
     var staffRatio=.40-.14*Math.max(0,Math.min(1,(window.innerWidth-1200)/400));
     var cardWidth=scrolling&&scrollCardWidth?scrollCardWidth:mobile.matches?width:width*(staffNormal?staffRatio:.40);
+    if(tiktok&&!scrolling&&!mobile.matches){
+      cardWidth=Math.min(cardWidth,360,Math.max(180,(window.innerHeight-140)*9/16));
+      tiktokCardWidth=cardWidth;
+    }
     var step=mobile.matches?width+32:cardWidth*.82;
     grid.style.setProperty('--hex-carousel-card-width',cardWidth+'px');
     var mainStaffPhoto=staffNormal&&!mobile.matches?cards[index].querySelector('.hex-staff-photo'):null;
@@ -7766,13 +7772,14 @@ function setupCardCarousel(grid,mode){
     status.textContent=(index+1)+' / '+cards.length;
     syncStaffText();
   }
-  function show(value){
+  function show(value,settled){
     window.cancelAnimationFrame(motion);motion=0;
     var old=index;
     index=((value%cards.length)+cards.length)%cards.length;
     position=index;
-    if(slides[old].contains(document.activeElement))next.focus({preventScroll:true});
+    if((!tiktok||old!==index)&&slides[old].contains(document.activeElement))next.focus({preventScroll:true});
     layout();
+    if(settled&&options&&options.onSettled)options.onSettled(index);
   }
   viewport.addEventListener('keydown',function(event){
     if(scrolling)return;
@@ -7785,9 +7792,10 @@ function setupCardCarousel(grid,mode){
   function startDrag(id,x,y,touch){
     suppressClick=false;
     if(scrolling)stopAuto();
+    var interrupted=!!motion;
     window.cancelAnimationFrame(motion);motion=0;
     drag={id:id,x:x,y:y,dx:0,moved:false,touch:touch,
-      start:position,samples:[{x:x,time:performance.now()}]};
+      start:position,interrupted:interrupted,samples:[{x:x,time:performance.now()}]};
   }
   function moveDrag(x,y,event){
     if(!drag)return;
@@ -7801,13 +7809,14 @@ function setupCardCarousel(grid,mode){
       var dx=Math.abs(drag.dx),dy=Math.abs(y-drag.y);
       if(drag.touch){
         // Allow a diagonal finger path; release only a clearly vertical gesture.
-        if(dy>=8&&dy>dx*1.5){drag=null;show(Math.round(position));return;}
+        if(dy>=8&&dy>dx*1.5){var touchInterrupted=drag.interrupted;drag=null;show(Math.round(position),touchInterrupted);return;}
         if(dx<4||dy>dx*1.5)return;
       }else{
-        if(dy>dx&&dy>8){drag=null;show(Math.round(position));return;}
-        if(dx<8)return;
+        if(dy>dx&&dy>8){var pointerInterrupted=drag.interrupted;drag=null;show(Math.round(position),pointerInterrupted);return;}
+        if(dx<(tiktok?4:8))return;
       }
       drag.moved=true;
+      if(options&&options.onMoveStart)options.onMoveStart();
       if(!drag.touch)viewport.setPointerCapture(event.pointerId);
       grid.classList.add('is-dragging');
     }
@@ -7820,9 +7829,13 @@ function setupCardCarousel(grid,mode){
     position=drag.start-travel;
     layout();
   }
+  function isDragControl(target){
+    var button=target.closest('button');
+    return button&&!(tiktok&&button.classList.contains('hex-tiktok-poster'));
+  }
   viewport.addEventListener('pointerdown',function(event){
     if(mobile.matches&&event.pointerType==='touch')return;
-    if(!enabled||!event.isPrimary||event.button!==0||cards.length<2||event.target.closest('button'))return;
+    if(!enabled||!event.isPrimary||event.button!==0||cards.length<2||isDragControl(event.target))return;
     startDrag(event.pointerId,event.clientX,event.clientY,false);
   });
   viewport.addEventListener('pointermove',function(event){
@@ -7832,7 +7845,7 @@ function setupCardCarousel(grid,mode){
   // Safari needs a non-passive touchmove to cancel native vertical panning once
   // horizontal intent is established. Pointer capture alone cannot do this.
   viewport.addEventListener('touchstart',function(event){
-    if(!mobile.matches||!enabled||cards.length<2||event.touches.length!==1||event.target.closest('button'))return;
+    if(!mobile.matches||!enabled||cards.length<2||event.touches.length!==1||isDragControl(event.target))return;
     var touch=event.touches[0];
     startDrag(touch.identifier,touch.clientX,touch.clientY,true);
   },{passive:true});
@@ -7851,10 +7864,12 @@ function setupCardCarousel(grid,mode){
   viewport.addEventListener('touchcancel',finishTouch,{passive:true});
   function dragStep(){
     if(scrolling)return (scrollCardWidth||viewport.clientWidth*.40)+32;
+    if(tiktok&&!mobile.matches&&tiktokCardWidth)return tiktokCardWidth*.82;
     return mobile.matches?viewport.clientWidth+32:viewport.clientWidth*.40*.82;
   }
   function settle(target,velocity){
     hideStaffText();
+    if(options&&options.onMoveStart)options.onMoveStart();
     window.cancelAnimationFrame(motion);motion=0;
     var start=position,startTime=performance.now();
     var duration=reduced.matches?0:mobile.matches?280:Math.min(1100,500+Math.abs(velocity)*160+
@@ -7870,7 +7885,7 @@ function setupCardCarousel(grid,mode){
         syncStaffText(((target%cards.length)+cards.length)%cards.length);
       }
       if(progress<1)motion=window.requestAnimationFrame(tick);
-      else{motion=0;show(target);}
+      else{motion=0;show(target,true);}
     }
     motion=window.requestAnimationFrame(tick);
   }
@@ -7934,7 +7949,7 @@ function setupCardCarousel(grid,mode){
       }
       settle(target,velocity);
       window.setTimeout(function(){suppressClick=false;},0);
-    }else show(Math.round(position));
+    }else show(Math.round(position),gesture.interrupted);
   }
   viewport.addEventListener('pointerup',endDrag);
   viewport.addEventListener('pointercancel',endDrag);
@@ -17367,10 +17382,11 @@ hexReady(function(){
 })();
 
 
-/* TikTok Embed Player: user click loads player; only one video plays at a time. */
+/* TikTok：サムネイル一覧から中央再生へ切り替える。 */
 (function(){
  'use strict';
  var origin='https://www.tiktok.com';
+ var mobile=window.matchMedia('(max-width:768px)');
  var cards=[];
  var activeCard=null;
  function send(card,type){
@@ -17386,8 +17402,78 @@ hexReady(function(){
   var label=card.querySelector('.hex-tiktok-status');
   if(label){label.textContent=value;label.hidden=!value;}
  }
+ function reset(card){
+  var frame=card.querySelector('.hex-tiktok-frame');
+  if(!frame)return;
+  frame.remove();
+  card.querySelector('.hex-tiktok-screen').classList.remove('is-loaded');
+  status(card,'');
+  if(activeCard===card)activeCard=null;
+ }
+ function play(card,carousel,focusPlayer){
+  if(card.querySelector('.hex-tiktok-frame'))return;
+  activeCard=card;
+  pauseOthers(card);
+  status(card,'動画を読み込んでいます…');
+  var screen=card.querySelector('.hex-tiktok-screen');
+  var frame=document.createElement('iframe');
+  frame.className='hex-tiktok-frame';
+  frame.title='北陸エクステリア TikTok動画 '+(cards.indexOf(card)+1);
+  frame.allow='autoplay; fullscreen; encrypted-media';
+  frame.allowFullscreen=true;
+  frame.src=origin+'/player/v1/'+card.dataset.videoId+
+   '?autoplay=1&controls=1&description=0&music_info=0&loop=0&rel=0'+(carousel?'&muted=1':'');
+  frame.addEventListener('load',function(){
+   if(!frame.isConnected)return;
+   screen.classList.add('is-loaded');
+   status(card,'');
+   if(focusPlayer&&document.activeElement===document.body)frame.focus({preventScroll:true});
+  },{once:true});
+  screen.appendChild(frame);
+ }
+ function setupGrid(grid,items){
+  var selected=0,mode='',cleanup=null;
+  items.forEach(function(card,index){card.dataset.hexTiktokIndex=index;});
+  grid.dataset.sliderSp='normal';
+  function setMode(nextMode){
+   items.forEach(reset);
+   if(cleanup)cleanup();
+   mode=nextMode;
+   grid.dataset.sliderPc=mobile.matches?'scroll':mode;
+   cleanup=setupCardCarousel(grid,mode,{
+    index:selected,
+    onMoveStart:mode==='normal'?function(){reset(items[selected]);}:null,
+    onSettled:mode==='normal'?function(index){
+     selected=index;
+     play(items[index],true,false);
+    }:null
+   });
+   document.dispatchEvent(new Event('hex:card-slider-mode-changed'));
+  }
+  function syncMode(){setMode(mobile.matches?'normal':'scroll');}
+  if(mobile.addEventListener)mobile.addEventListener('change',syncMode);
+  else mobile.addListener(syncMode);
+  grid.addEventListener('click',function(event){
+   var poster=event.target.closest('.hex-tiktok-poster');
+   if(!poster)return;
+   var index=Number(poster.closest('.hex-tiktok-card').dataset.hexTiktokIndex);
+   if(!items[index])return;
+   selected=index;
+   if(mode==='scroll')setMode('normal');
+   play(items[index],true,event.detail===0);
+  });
+  document.addEventListener('click',function(event){
+   if(mobile.matches||mode!=='normal')return;
+   var path=event.composedPath();
+   if(path.includes(grid)&&path.some(function(node){
+    return node.matches&&node.matches('.hex-card-carousel-slide,.hex-card-carousel-arrow,.hex-card-carousel-controls');
+   }))return;
+   setMode('scroll');
+  });
+  syncMode();
+ }
  function init(){
-  document.querySelectorAll('.hex-tiktok-card[data-video-id]').forEach(function(card,index){
+  document.querySelectorAll('.hex-tiktok-card[data-video-id]').forEach(function(card){
    if(card.dataset.hexTiktokReady){return;}
    var id=card.dataset.videoId;
    var button=card.querySelector('.hex-tiktok-poster');
@@ -17395,24 +17481,18 @@ hexReady(function(){
    if(!/^\d+$/.test(id)||!button||!screen){return;}
    card.dataset.hexTiktokReady='1';
    cards.push(card);
-   button.addEventListener('click',function(){
-    if(card.querySelector('.hex-tiktok-frame')){return;}
-    activeCard=card;
-    pauseOthers(card);
-    status(card,'動画を読み込んでいます…');
-    var frame=document.createElement('iframe');
-    frame.className='hex-tiktok-frame';
-    frame.title='北陸エクステリア TikTok動画 '+(index+1);
-    frame.allow='autoplay; fullscreen; encrypted-media';
-    frame.allowFullscreen=true;
-    frame.src=origin+'/player/v1/'+id+'?autoplay=1&controls=1&description=0&music_info=0&loop=0&rel=0';
-    frame.addEventListener('load',function(){
-     screen.classList.add('is-loaded');
-     status(card,'');
-    },{once:true});
-    screen.appendChild(frame);
-    frame.focus();
-   });
+   var device=document.createElement('div');
+   device.className='hex-tiktok-device';
+   screen.before(device);
+   device.appendChild(screen);
+  });
+  document.querySelectorAll('.hex-tiktok-grid').forEach(function(grid){
+   var items=Array.from(grid.children);
+   if(items.length&&items.every(function(card){return cards.includes(card);})){setupGrid(grid,items);}
+  });
+  cards.forEach(function(card){
+   if(card.dataset.hexTiktokIndex!==undefined)return;
+   card.querySelector('.hex-tiktok-poster').addEventListener('click',function(){play(card,false,true);});
   });
  }
  window.addEventListener('message',function(event){
@@ -17426,8 +17506,11 @@ hexReady(function(){
   if(data.type==='onPlayerReady'){
    current.querySelector('.hex-tiktok-screen').classList.add('is-loaded');
    status(current,'');
-   send(current,current===activeCard?'play':'pause');
+   var shouldPlay=current===activeCard&&!document.hidden;
+   if(shouldPlay&&current.dataset.hexTiktokIndex!==undefined)send(current,'mute');
+   send(current,shouldPlay?'play':'pause');
   }else if(data.type==='onStateChange'&&data.value===1){
+   if(document.hidden){send(current,'pause');return;}
    activeCard=current;
    pauseOthers(current);
    status(current,'');
