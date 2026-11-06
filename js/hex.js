@@ -9050,12 +9050,12 @@ hexReady(function(){
   var SKIP_FADE_DURATION=500;
   /* ドット1〜7の表示時間（ms）。0はその場面の自動進行・終了を停止。 */
   var OPENING_SCENE_DURATIONS_MS={
-    1:2000,
-    2:2000,
-    3:2000,
-    4:2000,
-    5:3000,
-    6:3000,
+    1:1500,
+    2:1500,
+    3:1500,
+    4:1500,
+    5:2000,
+    6:2000,
     7:3000
   };
   function getOpeningSceneDuration(sceneNumber){

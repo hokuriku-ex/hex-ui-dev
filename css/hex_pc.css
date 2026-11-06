@@ -11603,9 +11603,6 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
 .hex-opening.is-scroll-driven .hex-opening-slide-catch{
   opacity:1;transform:none;transition:none;
 }
-.hex-opening.is-curtain-sequence .hex-opening-slide.is-v2-loader-image-ready .hex-opening-slide-catch{
-  opacity:0;
-}
 @media(prefers-reduced-motion:reduce){
   .hex-opening.is-curtain-sequence .hex-opening-slide-catch,
   .hex-opening.is-curtain-sequence .is-v2-entered .hex-opening-slide-catch{
