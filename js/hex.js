@@ -99,7 +99,7 @@ function hexSetCatchRollCharacter(span,character,everydayGlyph){
     var previous=main.style.getPropertyValue('font-size');
     restore(main,original);
     var isOpeningSlide=main.classList.contains('hex-opening-slide-title');
-    var isSectionTitle=main.matches('h2.hex-section-title,.hex-section-title-arc');
+    var isSectionTitle=main.matches('h2.hex-section-title,.hex-section-title .hex-title-arc');
     var isCharacterTitle=main.matches('.hex-character-copy-stage .hex-opening-sub');
     if(document.documentElement.clientWidth>768&&!isOpeningSlide&&!isSectionTitle&&!isCharacterTitle)return previous!==main.style.getPropertyValue('font-size');
     var parent=main.parentElement;
@@ -15623,10 +15623,7 @@ hexLoad(function(){
       );
     }
 
-    /*
-     * トップページ共通見出しの英字を、参照サイトと同じ
-     * 下方向＋45度回転から1文字ずつロールアップさせる。
-     */
+    /* トップページ共通見出しと創業見出しを収集する。 */
     function collectTopTitleRollTargets(scope){
       var area=scope&&scope.querySelectorAll
         ?scope
@@ -15676,8 +15673,6 @@ hexLoad(function(){
       var english=(isFoundedTitle?target.textContent:(target.getAttribute('data-en')||'')).trim();
       var englishWrap=isFoundedTitle?target:document.createElement('span');
       var chars=[];
-      var tween;
-      var resetChars;
 
       target.dataset.hexTitleRollReady='1';
       target.dataset.hexMotionInitialized='1';
@@ -15722,42 +15717,35 @@ hexLoad(function(){
 
       if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(englishWrap);
 
-      /* SPも実要素を幅合わせへ登録する。文字ロール・サブの演出はPCのみ。 */
+      /* SPも幅合わせへ登録する。トップページ共通見出しの演出はPCのみ。 */
       if(normalSp)return;
 
-      if(isReducedMotion()){
-        gsap.set(chars,{
-          autoAlpha:1,
-          yPercent:0,
-          rotation:0
-        });
-        return;
-      }
-
-      resetChars=function(){
+      var play;
+      if(isFoundedTitle){
+        if(isReducedMotion())return;
         gsap.set(chars,{
           autoAlpha:0,
           yPercent:100,
           rotation:45,
           transformOrigin:'50% 100%'
         });
-      };
-
-      resetChars();
-      if(subtitle){
-        gsap.set(subtitle,{autoAlpha:0,y:0,scale:.8});
-      }
-
-      tween=gsap.to(chars,{
-        paused:true,
-        autoAlpha:1,
-        yPercent:0,
-        rotation:0,
-        duration:.5,
-        stagger:(.07*5/6),
-        ease:'power3.out',
-        overwrite:'auto',
-        onStart:function(){
+        var tween=gsap.to(chars,{
+          paused:true,
+          autoAlpha:1,
+          yPercent:0,
+          rotation:0,
+          duration:.5,
+          stagger:(.07*5/6),
+          ease:'power3.out',
+          overwrite:'auto'
+        });
+        play=function(){tween.restart();};
+      }else{
+        var playArc=prepareArchedTitlePop(englishWrap,chars);
+        if(!playArc)return;
+        if(subtitle)gsap.set(subtitle,{autoAlpha:0,y:0,scale:.8});
+        play=function(){
+          playArc();
           if(subtitle){
             gsap.to(subtitle,{
               autoAlpha:1,
@@ -15774,18 +15762,39 @@ hexLoad(function(){
               }
             });
           }
-        }
-      });
+        };
+      }
 
       ScrollTrigger.create({
         trigger:target,
         /* 通常フェードと同じ進入位置から見出し演出を始める */
         start:window.innerWidth<=768?'top 96%':'top 95%',
         once:true,
-        onEnter:function(){
-          tween.restart();
-        }
+        onEnter:play
       });
+    }
+
+    function prepareArchedTitlePop(englishWrap,letters){
+      englishWrap.classList.add('hex-title-arc');
+      var chars=letters.filter(function(letter,index){
+        var position=letters.length>1?index*2/(letters.length-1)-1:0;
+        letter.style.setProperty('--hex-title-arc-offset',(-.17*(1-position*position))+'em');
+        letter.style.setProperty('--hex-title-arc-angle',(10*position)+'deg');
+        return letter.textContent.trim()!=='';
+      });
+      if(isReducedMotion())return null;
+
+      gsap.set(chars,{scale:0,transformOrigin:'50% 50%'});
+      return function(){
+        gsap.to(chars,{
+          keyframes:[
+            {scale:1.25,duration:.20,ease:'power1.inOut'},
+            {scale:1,duration:.22,ease:'power1.inOut'}
+          ],
+          stagger:.15,
+          onComplete:function(){gsap.set(chars,{clearProps:'transform'});}
+        });
+      };
     }
 
     function setupSectionTitlePopTarget(target){
@@ -15797,19 +15806,14 @@ hexLoad(function(){
       while(target.firstChild)subtitle.appendChild(target.firstChild);
 
       var englishWrap=document.createElement('span');
-      englishWrap.className='hex-top-title-en hex-section-title-arc';
+      englishWrap.className='hex-top-title-en';
       englishWrap.setAttribute('aria-hidden','true');
-      var letters=Array.from(english);
-      var chars=[];
-      letters.forEach(function(letter,index){
+      var letters=Array.from(english,function(letter){
         var char=document.createElement('span');
         char.className='hex-top-title-char';
         char.textContent=letter===' '?'\u00a0':letter;
-        var position=letters.length>1?index*2/(letters.length-1)-1:0;
-        char.style.setProperty('--hex-title-arc-offset',(-.17*(1-position*position))+'em');
-        char.style.setProperty('--hex-title-arc-angle',(10*position)+'deg');
         englishWrap.appendChild(char);
-        if(letter!==' ')chars.push(char);
+        return char;
       });
 
       target.appendChild(subtitle);
@@ -15817,20 +15821,13 @@ hexLoad(function(){
       target.classList.add('has-hex-section-title-pop');
       target.dataset.hexMotionInitialized='1';
       if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(englishWrap);
-      if(isReducedMotion())return;
+      var playArc=prepareArchedTitlePop(englishWrap,letters);
+      if(!playArc)return;
 
       var subtitlePop=createCatchSubtitlePop(subtitle);
       subtitlePop.reset();
-      gsap.set(chars,{scale:0,transformOrigin:'50% 50%'});
       function play(){
-        gsap.to(chars,{
-          keyframes:[
-            {scale:1.25,duration:.20,ease:'power1.inOut'},
-            {scale:1,duration:.22,ease:'power1.inOut'}
-          ],
-          stagger:.15,
-          onComplete:function(){gsap.set(chars,{clearProps:'transform'});}
-        });
+        playArc();
         subtitlePop.play(.8);
       }
 

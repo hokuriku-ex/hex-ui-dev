@@ -146,11 +146,11 @@ html{
   display:block;
   transform-origin:50% 100%;
 }
-.hex-section-title .hex-section-title-arc{
+.hex-top-title-en.hex-title-arc{
   overflow:visible;
   white-space:nowrap;
 }
-.hex-section-title-arc .hex-top-title-char{
+.hex-title-arc .hex-top-title-char{
   position:relative;
   top:var(--hex-title-arc-offset);
   rotate:var(--hex-title-arc-angle);
