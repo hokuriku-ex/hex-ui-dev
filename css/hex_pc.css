@@ -6183,6 +6183,9 @@ html body
   .hex-service-grid.hex-card-grid .hex-card-title{
     font-size:32px!important;
   }
+  .hex-service-grid.hex-card-grid .hex-card-text{
+    font-size:24px!important;
+  }
 }
 
 /* =======================================
