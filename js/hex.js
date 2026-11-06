@@ -3087,13 +3087,15 @@ hexReady(function(){
   }
 
   function findButtonSurface(button){
+    var isCardButton=button.parentElement.classList.contains('hex-card-button');
     var ownColor=window.getComputedStyle(button).backgroundColor;
     var current;
     var backgroundLayer;
     var color;
+    var style;
 
     /* バナーなど、すでに背景を持つボタンはその色を維持する */
-    if(hasVisibleBackground(ownColor)){
+    if(!isCardButton&&hasVisibleBackground(ownColor)){
       return ownColor;
     }
 
@@ -3115,10 +3117,14 @@ hexReady(function(){
         }
       }
 
-      color=window.getComputedStyle(current).backgroundColor;
+      style=window.getComputedStyle(current);
+      color=style.backgroundColor;
 
       if(hasVisibleBackground(color)){
         return color;
+      }
+      if(isCardButton&&current.classList.contains('hex-bg-range')){
+        return style.getPropertyValue('--hex-bg-range-color').trim()||'#fff';
       }
 
       current=current.parentElement;
@@ -3134,7 +3140,8 @@ hexReady(function(){
 
     area.querySelectorAll(
       '.hex-button-wrap > .hex-btn-main,'+
-      '.hex-banner-button > .hex-btn-main'
+      '.hex-banner-button > .hex-btn-main,'+
+      '.hex-card-button > .hex-btn-main'
     ).forEach(function(button){
       button.style.setProperty(
         '--hex-button-surface',

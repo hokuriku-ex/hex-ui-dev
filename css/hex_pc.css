@@ -1749,7 +1749,7 @@ div[hex-sp]{
   min-width:0;
   box-sizing:border-box;
 }
-.hex-button-wrap::before{
+:is(.hex-button-wrap,.hex-card-button)::before{
   content:"";
   position:absolute;
   z-index:0;
@@ -1770,7 +1770,7 @@ div[hex-sp]{
     calc(100% - 10px) calc(100% - 10px)
   );
 }
-.hex-button-wrap:has(> .hex-btn-main.light)::before{
+:is(.hex-button-wrap,.hex-card-button):has(> .hex-btn-main.light)::before{
   border-color:#265ab0;
   background:repeating-linear-gradient(
     45deg,
@@ -1780,7 +1780,7 @@ div[hex-sp]{
     transparent 5px
   );
 }
-.hex-button-wrap:has(> .hex-btn-main.dark)::before{
+:is(.hex-button-wrap,.hex-card-button):has(> .hex-btn-main.dark)::before{
   border-color:#fff;
   background:repeating-linear-gradient(
     45deg,
@@ -2441,6 +2441,31 @@ div[hex-sp]{
   display:flex;
   justify-content:center;
   margin-top:24px;
+}
+@media screen and (min-width:769px){
+  .hex-card-button{
+    position:relative;
+    isolation:isolate;
+    width:fit-content;
+    max-width:100%;
+    margin-inline:auto;
+  }
+  .hex-card-button > .hex-btn-main{
+    width:auto;
+    min-width:0;
+    background-color:var(--hex-button-surface,transparent)!important;
+  }
+  .hex-card-button > .hex-btn-main::before{
+    content:none!important;
+  }
+  .hex-card-button .hex-btn-main-title{overflow-wrap:anywhere;}
+  .hex-card-button .hex-btn-main-icon{flex-shrink:0;}
+}
+@media screen and (max-width:768px){
+  .hex-card-button::before{content:none;}
+}
+@media screen and (min-width:769px) and (hover:hover) and (pointer:fine){
+  .hex-card-button > .hex-btn-main:hover{transform:translate3d(9px,9px,0);}
 }
 
 /* 強みカード */
@@ -9304,12 +9329,14 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
   .hex-button-wrap > .hex-btn-main,
   .hex-button-wrap > .hex-btn-main::before,
-  .hex-banner-button > .hex-btn-main{
+  .hex-banner-button > .hex-btn-main,
+  .hex-card-button > .hex-btn-main{
     transition:none!important;
   }
   .hex-button-wrap > .hex-btn-main:hover,
   .hex-button-wrap > .hex-btn-main:hover::before,
-  .hex-banner-button > .hex-btn-main:hover{
+  .hex-banner-button > .hex-btn-main:hover,
+  .hex-card-button > .hex-btn-main:hover{
     transform:none!important;
   }
   .hex-button-wrap > .hex-btn-main:hover::before{
