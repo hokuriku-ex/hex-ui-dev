@@ -3899,9 +3899,6 @@ hexReady(function(){
     }
 
     function renderWelcomeBody(progress){
-      if(isSp()){
-        progress=reduced||welcomeBodyForced||welcomeWrap.classList.contains("is-sp-body-visible")?1:0;
-      }
       window.hexWelcomeAnchorState=window.hexWelcomeAnchorState||{};
       window.hexWelcomeAnchorState.complete=reduced||progress>=.999;
       if(window.hexHomeAnchorNav&&window.hexHomeAnchorNav.syncWelcomeEnd){
@@ -3942,7 +3939,7 @@ hexReady(function(){
     function updateWelcomeBody(circleDone,scrollProgress){
       /* 配置は固定し、本文の表示だけをWELCOME内のスクロール量で進める。 */
       var target=isSp()
-        ?(reduced||welcomeBodyForced||welcomeWrap.classList.contains("is-sp-body-visible")?1:0)
+        ?(reduced||welcomeBodyForced||circleDone?1:0)
         :(welcomeBodyForced?1:(circleDone?scrollProgress:0));
       if(!welcomeBodyChars.length){return;}
       /* 進行方向に関係なく現在のスクロール位置へ即座に同期する。 */
@@ -4333,7 +4330,6 @@ hexReady(function(){
       welcomeBodyTarget=0;
       welcomeBodyCompleted=false;
       welcomeBodyForced=false;
-      welcomeWrap&&welcomeWrap.classList.remove("is-sp-body-visible");
       renderWelcomeBody(0);
       welcomeBodyChars.forEach(function(character){
         character.style.opacity="0";
@@ -4544,12 +4540,7 @@ hexReady(function(){
     }
 
     document.addEventListener('hex:welcome-subtitle-start',function(event){
-      if(event.target&&event.target.closest('.hex-welcome-wrap')===welcomeWrap){
-        if(isSp()){
-          welcomeWrap.classList.add('is-sp-body-visible');
-          updateWelcomeBody(true,1);
-          return;
-        }
+      if(!isSp()&&event.target&&event.target.closest('.hex-welcome-wrap')===welcomeWrap){
         startWelcomeBodyAuto();
       }
     });
@@ -14706,15 +14697,26 @@ hexLoad(function(){
     };
   }
 
-  /* ヒーロー・WELCOMEキャッチ用の1文字ロールアップ */
-  function createCatchRoll(main){
+  function playTitleLetterPop(chars){
+    var gsap=window.gsap;
+    return gsap.to(chars,{
+      keyframes:[
+        {scale:1.25,duration:.20,ease:'power1.inOut'},
+        {scale:1,duration:.22,ease:'power1.inOut'}
+      ],
+      stagger:.15,
+      onComplete:function(){gsap.set(chars,{clearProps:'transform'});}
+    });
+  }
+
+  /* ヒーロー・開幕・WELCOMEキャッチの文字分割と再生 */
+  function createCatchRoll(main,isWelcome){
     var gsap=window.gsap;
     var textValue;
     var spBreakIndex=-1;
     var spUppercaseIndex=-1;
     var chars=[];
     var tween=null;
-    var spWelcomePlaying=false;
     var subtitle=main&&main.parentElement
       ?main.parentElement.querySelector('.hex-opening-sub')
       :null;
@@ -14747,7 +14749,7 @@ hexLoad(function(){
     main.classList.add('has-hex-catch-roll');
     if(spBreakIndex!==-1){main.classList.add('hex-sp-two-line-catch');}
     var subtitlePop=createCatchSubtitlePop(subtitle,function(){
-      if(main.closest('.hex-welcome-wrap')){
+      if(isWelcome){
         main.dispatchEvent(new Event('hex:welcome-subtitle-start',{bubbles:true}));
       }
     });
@@ -14771,16 +14773,21 @@ hexLoad(function(){
     if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
 
     function reset(){
-      if(spWelcomePlaying){
-        document.documentElement.classList.remove('hex-sp-welcome-title-playing');
-        spWelcomePlaying=false;
-      }
       if(tween){
         tween.kill();
         tween=null;
       }
 
-      gsap.set(chars,{
+      if(isWelcome&&(window.innerWidth<=768||isReducedMotion())){
+        clearMotion(chars);
+        if(subtitle){
+          gsap.killTweensOf(subtitle);
+          clearMotion(subtitle);
+        }
+        return;
+      }
+
+      gsap.set(chars,isWelcome?{scale:0,transformOrigin:'50% 50%'}:{
         autoAlpha:0,
         yPercent:100,
         rotation:45,
@@ -14789,14 +14796,19 @@ hexLoad(function(){
       if(subtitlePop)subtitlePop.reset();
     }
 
+    function clearMotion(target){
+      gsap.set(target,{clearProps:'transform,opacity,visibility,willChange'});
+    }
+
     function play(){
-      var spWelcome=window.innerWidth<=768&&!!main.closest('.hex-welcome-wrap');
-      // SPのWELCOMEは生成時に幅合わせ済み。再生開始時の全文字再計測を避ける。
-      if(!spWelcome&&window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
+      if(isWelcome&&(window.innerWidth<=768||isReducedMotion()))return;
+      if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
       reset();
-      if(spWelcome){
-        spWelcomePlaying=true;
-        document.documentElement.classList.add('hex-sp-welcome-title-playing');
+      var subtitleDelay=(.5+(chars.length-1)*(.07*5/6))/2;
+      if(isWelcome){
+        tween=playTitleLetterPop(chars.filter(function(char){return char.textContent.trim()!=='';}));
+        if(subtitlePop)subtitlePop.play(subtitleDelay);
+        return;
       }
 
       tween=gsap.to(chars,{
@@ -14808,22 +14820,16 @@ hexLoad(function(){
         ease:'power3.out',
         overwrite:'auto',
         onStart:function(){
-          if(subtitlePop)subtitlePop.play((.5+(chars.length-1)*(.07*5/6))/2);
+          if(subtitlePop)subtitlePop.play(subtitleDelay);
         },
         onComplete:function(){
           tween=null;
-          if(spWelcomePlaying){
-            document.documentElement.classList.remove('hex-sp-welcome-title-playing');
-            spWelcomePlaying=false;
-          }
-          gsap.set(chars,{
-            clearProps:'transform,opacity,visibility,willChange'
-          });
+          clearMotion(chars);
         }
       });
     }
 
-    if(isReducedMotion()){
+    if(!isWelcome&&isReducedMotion()){
       gsap.set(chars,{
         autoAlpha:1,
         yPercent:0,
@@ -15786,14 +15792,7 @@ hexLoad(function(){
 
       gsap.set(chars,{scale:0,transformOrigin:'50% 50%'});
       return function(){
-        gsap.to(chars,{
-          keyframes:[
-            {scale:1.25,duration:.20,ease:'power1.inOut'},
-            {scale:1,duration:.22,ease:'power1.inOut'}
-          ],
-          stagger:.15,
-          onComplete:function(){gsap.set(chars,{clearProps:'transform'});}
-        });
+        playTitleLetterPop(chars);
       };
     }
 
@@ -16224,7 +16223,7 @@ hexLoad(function(){
       var welcomeMain=welcomeCopy
         ?welcomeCopy.querySelector('.hex-opening-main')
         :null;
-      var welcomeRoll=createCatchRoll(welcomeMain);
+      var welcomeRoll=createCatchRoll(welcomeMain,true);
 
       if(isReducedMotion()){
         return;
@@ -16234,15 +16233,16 @@ hexLoad(function(){
         return;
       }
 
-      /* PC/SPとも丸画像の完成と同時に見出しをロール表示する */
+      /* PCは丸画像の完成に合わせて再生。SPは本文と同時に静止表示する。 */
       var welcomePlayed=false;
       var welcomeSection=welcomeCopy.closest('.hex-welcome-wrap');
+      var welcomeSp=window.matchMedia('(max-width:768px)');
 
       function syncWelcomeCatch(){
         var isActive=welcomeSection&&
           welcomeSection.classList.contains('is-v2-circle-complete');
 
-        if(isActive&&!welcomePlayed){
+        if(isActive&&!welcomeSp.matches&&!welcomePlayed){
           welcomePlayed=true;
           welcomeRoll.play();
         }
@@ -16259,6 +16259,12 @@ hexLoad(function(){
       document.addEventListener('hex:top-returned',function(){
         welcomePlayed=false;
         welcomeRoll.reset();
+      });
+
+      welcomeSp.addEventListener('change',function(){
+        welcomePlayed=false;
+        welcomeRoll.reset();
+        syncWelcomeCatch();
       });
 
       syncWelcomeCatch();
@@ -18526,9 +18532,6 @@ hexReady(function(){
   }
   function measure(){
     measureFrame=0;
-    if(window.innerWidth<=768&&document.documentElement.classList.contains('hex-sp-welcome-title-playing')){
-      queueMeasure();return;
-    }
     scanHashtagOverlaps();
     if(homeFoundedSection())scanHome();
     scanCardStackOverlaps();
@@ -18618,10 +18621,6 @@ hexReady(function(){
   }
   function queueMeasure(){
     clearTimeout(measureTimer);
-    // SPの英字ロール中にページ全体のsticky枠を組み直さない。
-    if(window.innerWidth<=768&&document.documentElement.classList.contains('hex-sp-welcome-title-playing')){
-      measureTimer=setTimeout(queueMeasure,120);return;
-    }
     var delay=lastScrollTime?Math.max(0,180-(Date.now()-lastScrollTime)):0;
     if(delay){measureTimer=setTimeout(queueMeasure,delay);return;}
     if(!measureFrame)measureFrame=requestAnimationFrame(measure);
