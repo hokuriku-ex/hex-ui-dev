@@ -7708,8 +7708,9 @@ function setupCardCarousel(grid,mode,options){
     /* スタッフPC：1200px以下は5枚、1600px以上は7枚。その間は滑らかに補間。 */
     var staffRatio=.40-.14*Math.max(0,Math.min(1,(window.innerWidth-1200)/400));
     var cardWidth=scrolling&&scrollCardWidth?scrollCardWidth:mobile.matches?width:width*(staffNormal?staffRatio:.40);
-    if(tiktok&&!scrolling&&!mobile.matches){
-      cardWidth=Math.min(cardWidth,360,Math.max(180,(window.innerHeight-140)*9/16));
+    if(tiktok&&!scrolling){
+      cardWidth=mobile.matches?Math.min(width-32,360):
+        Math.min(cardWidth,360,Math.max(180,(window.innerHeight-140)*9/16));
       tiktokCardWidth=cardWidth;
     }
     var step=mobile.matches?width+32:cardWidth*.82;
