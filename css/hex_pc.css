@@ -255,7 +255,7 @@ html{
   color:#265ab0!important;
 }
 .hex-section-title-dark{
-  color:#fff!important;
+  color:#f7d04f!important;
 }
 .hex-section-title[data-en]:not([data-en=""]){
   white-space:normal;
@@ -470,7 +470,7 @@ html{
 
 /* 標準見出しフォントサイズ（h2・h3・h4） */
 h2:not(.hex-section-subtitle){
-  font-size:clamp(48px,6vw,56px);
+  font-size:32px;
   font-weight:700;
 }
 h3:not(.hex-section-subtitle){
