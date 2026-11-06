@@ -1364,10 +1364,13 @@
     min-height:0;
   }
   .hex-hero-catch{
-    top:calc(var(--header_height_smartphone,80px) + 16px);
+    left:50%;
+    right:auto;
+    width:100%;
     max-width:100%;
     padding-right:16px;
     padding-left:16px;
+    transform:translate(-50%,-50%);
   }
   .hex-hero-catch .hex-handoff-copy{
     width:100%;

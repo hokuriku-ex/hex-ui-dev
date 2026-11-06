@@ -5160,7 +5160,7 @@ html body
 /* キャッチコピー共通 */
 .hex-hero-catch{
   position:absolute;
-  top:calc(var(--header_height,80px) + 24px);
+  top:50%;
   right:0;
   left:0;
   z-index:3;
@@ -5172,6 +5172,7 @@ html body
   color:var(--hex-hero-copy-color);
   text-align:center;
   opacity:0;
+  transform:translateY(-50%);
   transition:opacity .7s ease;
 }
 
