@@ -6180,6 +6180,9 @@ html body
     line-height:1;
     pointer-events:none;
   }
+  .hex-service-grid.hex-card-grid .hex-card-title{
+    font-size:32px!important;
+  }
 }
 
 /* =======================================
