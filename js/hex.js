@@ -15834,16 +15834,18 @@ hexLoad(function(){
         subtitlePop.play(.8);
       }
 
-      if(!normalSp){
-        ScrollTrigger.create({trigger:target,start:'50% 95%',once:true,onEnter:play});
-      }else if(window.IntersectionObserver){
+      if(window.IntersectionObserver){
+        /* stickyの固定・解除後も、見出しの実表示位置で開始を判定する。 */
+        var bottomMargin=normalSp?'-5%':(-Math.round(window.hexViewportHeight()*.05))+'px';
         var observer=new IntersectionObserver(function(entries){
           if(entries.some(function(entry){return entry.intersectionRatio>=.5;})){
             observer.disconnect();
             play();
           }
-        },{rootMargin:'0px 0px -5% 0px',threshold:.5});
+        },{rootMargin:'0px 0px '+bottomMargin+' 0px',threshold:.5});
         observer.observe(target);
+      }else if(!normalSp){
+        ScrollTrigger.create({trigger:target,start:'50% 95%',once:true,onEnter:play});
       }else{
         play();
       }
