@@ -4566,10 +4566,6 @@ hexReady(function(){
 
     function startWelcomeBodyAuto(){
       if(welcomeAutoPhase!=='title'||!welcomeActive||!welcomeWrap)return;
-      if(isWelcomeTitlePlaying()){
-        welcomeAutoTimer=window.setTimeout(startWelcomeBodyAuto,50);
-        return;
-      }
       window.clearTimeout(welcomeAutoTimer);welcomeAutoTimer=0;
       stopSpCircleScroll();
       welcomeBodyForced=false;
@@ -4605,9 +4601,26 @@ hexReady(function(){
     function queueWelcomeBodyAuto(){
       if(welcomeAutoPhase!=='circle')return;
       welcomeAutoPhase='title';
-      // 英字演出がない場合も、見出しを表示する時間を確保する。
+      // サブタイトルの演出がない場合も、見出しを表示する時間を確保する。
       welcomeAutoTimer=window.setTimeout(startWelcomeBodyAuto,reduced?0:1200);
     }
+
+    function advanceWelcomeDot(){
+      window.clearTimeout(welcomeDotTimer);welcomeDotTimer=0;
+      if(welcomeActive&&snapshot&&window.pageYOffset>=documentTop(welcomeWrap)-2){
+        scrollToWelcomeComplete();
+      }
+    }
+
+    document.addEventListener('hex:welcome-subtitle-start',function(event){
+      if(isSp()||event.target.closest('.hex-welcome-wrap')!==welcomeWrap)return;
+      if(welcomeDotTimer){advanceWelcomeDot();}
+      else{startWelcomeBodyAuto();}
+    });
+
+    document.addEventListener('hex:welcome-title-complete',function(event){
+      if(event.target.closest('.hex-welcome-wrap')===welcomeWrap){queueScrollEffects();}
+    });
 
     async function beginWelcome(autoBody,skipScroll){
       var target;
@@ -4835,10 +4848,14 @@ hexReady(function(){
       scrollY=window.pageYOffset;
       lastScrollY=scrollY;
       var welcomeReleaseTravel=getWelcomeReleaseTravel(travelMetrics,welcomeTop);
+      var scrollThroughWelcome=scrollY-welcomeTop;
+      // 自動スクロールが終端に着いても、英字の再生中は丸画像とコピーを固定する。
+      var holdWelcomeRelease=!released&&circleProgress>=.999&&
+        scrollThroughWelcome>=welcomeReleaseTravel&&
+        scrollThroughWelcome<=welcomeReleaseTravel+1&&isWelcomeTitlePlaying();
       if(welcomeStage&&welcomeStageTop!==null){
-        var scrollThroughWelcome=scrollY-welcomeTop;
         var keepFixed=!isSp()&&circleProgress>=.999&&
-          scrollThroughWelcome<welcomeReleaseTravel;
+          (scrollThroughWelcome<welcomeReleaseTravel||holdWelcomeRelease);
         var wasFixed=welcomeStage.classList.contains("is-screen-fixed");
         var fixedRect=wasFixed&&!keepFixed
           ?welcomeStage.getBoundingClientRect():null;
@@ -4868,25 +4885,15 @@ hexReady(function(){
       if(welcomeDotPending&&circleProgress>=.999&&
         scrollY>=welcomeTop-1){
         welcomeDotPending=false;
-        welcomeDotTimer=window.setTimeout(function advance(){
-          if(isWelcomeTitlePlaying()){
-            welcomeDotTimer=window.setTimeout(advance,50);
-            return;
-          }
-          welcomeDotTimer=0;
-          if(welcomeActive&&snapshot&&
-            window.pageYOffset>=documentTop(welcomeWrap)-2){
-            scrollToWelcomeComplete();
-          }
-        },650);
+        welcomeDotTimer=window.setTimeout(advanceWelcomeDot,isSp()||reduced?650:1200);
       }
       syncSnapshotLayer(circleProgress>=.999);
       welcomeWrap.classList.toggle("is-v2-circle-complete",circleProgress>=.999);
-      // 丸の完成と同時に、英字見出しの再生完了を待つ。
+      // 丸の完成と同時に、サブタイトルの再生開始を待つ。
       if(circleProgress>=.999)queueWelcomeBodyAuto();
 
       if((isSp()&&circleProgress>=.999)||
-        (!isSp()&&scrollY-welcomeTop>=welcomeReleaseTravel)){
+        (!isSp()&&!holdWelcomeRelease&&scrollThroughWelcome>=welcomeReleaseTravel)){
         releaseSnapshot(isSp()?0:welcomeReleaseTravel);
       }else if(released){
         refixSnapshot();
@@ -14836,7 +14843,9 @@ hexLoad(function(){
     main.dataset.hexCatchRollReady='1';
     main.classList.add('has-hex-catch-roll');
     if(spBreakIndex!==-1){main.classList.add('hex-sp-two-line-catch');}
-    var subtitlePop=createCatchSubtitlePop(subtitle);
+    var subtitlePop=createCatchSubtitlePop(subtitle,isWelcome?function(){
+      main.dispatchEvent(new Event('hex:welcome-subtitle-start',{bubbles:true}));
+    }:null);
     var everydayGlyph=hexCreateEverydayGlyph(main,textValue);
 
     Array.from(textValue).forEach(function(character,index){
@@ -14898,7 +14907,10 @@ hexLoad(function(){
         if(isWelcome)main.classList.add('is-welcome-title-playing');
         tween=playTitleLetterPop(letters,stagger,function(){
           tween=null;
-          if(isWelcome)main.classList.remove('is-welcome-title-playing');
+          if(isWelcome){
+            main.classList.remove('is-welcome-title-playing');
+            main.dispatchEvent(new Event('hex:welcome-title-complete',{bubbles:true}));
+          }
         });
         if(subtitlePop)subtitlePop.play(subtitleDelay);
         return;
