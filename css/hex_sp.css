@@ -879,8 +879,8 @@
   }
 }
 
-/* スマホメニュー変更 */
-@media screen and (max-width:1200px){
+/* ハンバーガーメニュー共通 */
+@media screen{
   /* メニュー内のホームを非表示 */
   #gc_auto_frame_header_object_smartphone_hum_pupup .home_button{
     display:none!important;
@@ -896,7 +896,9 @@
   #gc_auto_frame_header_object_smartphone_hum_pupup .bg_closebutton{
     display:none!important;
   }
+}
 
+@media screen and (max-width:1200px){
   /* ヘッダーを固定して前面に表示 */
   .bg_headermenu{
     position:fixed!important;
@@ -913,7 +915,9 @@
   .bg_contactbutton .menu_button{
     z-index:10003!important;
   }
+}
 
+@media screen{
   /* メニュー表示中はハンバーガーアイコンを隠す */
   .bg_contactbutton.hex-menu-open > .menu_button .bg_svg svg{
     visibility:hidden!important;
@@ -950,7 +954,7 @@
 /* =======================================
    ハンバーガーメニュー
 ======================================= */
-@media screen and (max-width:1200px){
+@media screen{
   /* メニュー領域を縦スクロール可能にする */
   #gc_auto_frame_header_object_smartphone_hum_pupup{
     overflow-x:hidden!important;
