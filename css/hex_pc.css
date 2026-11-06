@@ -3243,6 +3243,8 @@ div[hex-sp]{
     height:var(--header_height,80px)!important;
     z-index:10002!important;
     background:transparent!important;
+    transform:none!important;
+    translate:none!important;
   }
   html.hex-desktop-hero-header .bg_contactbutton > .menu_button{
     position:absolute!important;
@@ -3264,11 +3266,14 @@ div[hex-sp]{
     right:0!important;
     bottom:auto!important;
     left:0!important;
-    width:100%!important;
+    width:auto!important;
     max-width:none!important;
+    margin-inline:0!important;
     height:calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))!important;
     max-height:calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))!important;
     background:#fff!important;
+    transform:none!important;
+    translate:none!important;
     overscroll-behavior:contain;
     touch-action:pan-y;
   }
