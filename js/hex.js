@@ -3172,6 +3172,8 @@ hexReady(function(){
   var HERO_CLOUD_BACK_VERTICAL_FOLLOW=.20;
   var HERO_AUTO_ZOOM_WAIT=300;
   var HERO_AUTO_ZOOM_DURATION=1500;
+  /* イージング後の進行率。背景が減速してから見出しを重ねる。 */
+  var HERO_CATCH_ZOOM_PROGRESS=.9;
   var HERO_WELCOME_CIRCLE_DURATION_PC=1050;
   var HERO_WELCOME_CIRCLE_DURATION_SP=1300;
   /* WELCOMEへ進む丸の区間だけ。人物選択・見出し・本文の表示時間とは独立。 */
@@ -3671,6 +3673,9 @@ hexReady(function(){
     function syncHeroCatchAnchorHeight(){
       var anchor=window.hexHomeAnchorNav;
       if(!catchElement||!anchor||!anchor.panel.classList.contains('is-hero-anchor'))return;
+      /* 再生中は着地位置に合わせた見出しの高さを保つ。 */
+      if(hero.classList.contains('is-intro-playing')&&
+        catchElement.classList.contains('is-catch-visible'))return;
       /* 登場時の移動量を除き、下端に着地したときのナビの高さで揃える。 */
       catchElement.style.setProperty('--hex-hero-anchor-height',anchor.panel.offsetHeight+'px');
     }
@@ -5922,9 +5927,13 @@ hexReady(function(){
     window.hexHero={
       get:function(){return hero;},
       getActive:getActiveHero,
-      isAutoZoomSettled:function(){
-        return !renderer||reduced||
-          (bottomIntroComplete&&!autoZoomPending&&!autoZoomTimer&&!autoZooming);
+      prepareCatchPosition:function(){
+        var zoomReady=!autoZoomPending&&(autoZooming
+          ?bottomIntroProgress>=HERO_CATCH_ZOOM_PROGRESS
+          :bottomIntroComplete&&!autoZoomTimer);
+        if(renderer&&!reduced&&!zoomReady)return false;
+        syncHeroCatchAnchorHeight();
+        return true;
       },
       openWelcome:function(){
         if(!ready||characterFocus.maskVisible||welcomeActive||
@@ -9849,22 +9858,18 @@ hexReady(function(){
       var api=window.hexHero;
       var catchReady=isReducedMotion()||root.classList.contains('hex-motion-load-error')||
         (window.hexPrepareHeroCatch&&window.hexPrepareHeroCatch());
-      if(!catchReady||(api&&api.isAutoZoomSettled&&!api.isAutoZoomSettled())){
+      if(!catchReady||(api&&api.prepareCatchPosition&&!api.prepareCatchPosition())){
         window.requestAnimationFrame(waitForCatch);
         return;
       }
-      window.setTimeout(function(){
-        if(run!==heroCatchRun||heroIntroDeparted||document.querySelector(
-          '.hex-opening:not(.is-v2-hero-stage):not(.is-skipping)'
-        )){return;}
-        startHeroIntro();
-        hero.classList.remove('is-catch-waiting');
-        if(!hero.classList.contains('is-intro-complete')){
-          heroCatch.classList.add('is-catch-visible');
-        }
-      },delay||0);
+      if(document.querySelector('.hex-opening:not(.is-v2-hero-stage):not(.is-skipping)'))return;
+      startHeroIntro();
+      hero.classList.remove('is-catch-waiting');
+      if(!hero.classList.contains('is-intro-complete')){
+        heroCatch.classList.add('is-catch-visible');
+      }
     }
-    waitForCatch();
+    window.setTimeout(waitForCatch,delay||0);
   }
 
   function showHeroWithFade(){
@@ -9947,7 +9952,7 @@ hexReady(function(){
       root.classList.add('hex-direct-hero-fade-ready');
       root.classList.remove('hex-hero-display-wait','hex-hero-return-preparing');
       document.dispatchEvent(new Event('hex:hero-display-ready'));
-      /* 背景の初期ズームが落ち着いてから、ページ全体のloadを待たずに再生する。 */
+      /* ページ全体のloadを待たず、初期ズームの終盤で見出しを再生する。 */
       showHeroCatch(180);
       /* 操作開始と後続コンテンツの準備は従来のタイミングを維持する。 */
       var wasInert=hero.inert;
