@@ -4559,8 +4559,17 @@ hexReady(function(){
       welcomeReverseFrame=window.requestAnimationFrame(advance);
     }
 
+    function isWelcomeTitlePlaying(){
+      return !isSp()&&welcomeCopy&&
+        welcomeCopy.querySelector('.is-welcome-title-playing');
+    }
+
     function startWelcomeBodyAuto(){
       if(welcomeAutoPhase!=='title'||!welcomeActive||!welcomeWrap)return;
+      if(isWelcomeTitlePlaying()){
+        welcomeAutoTimer=window.setTimeout(startWelcomeBodyAuto,50);
+        return;
+      }
       window.clearTimeout(welcomeAutoTimer);welcomeAutoTimer=0;
       stopSpCircleScroll();
       welcomeBodyForced=false;
@@ -4596,15 +4605,9 @@ hexReady(function(){
     function queueWelcomeBodyAuto(){
       if(welcomeAutoPhase!=='circle')return;
       welcomeAutoPhase='title';
-      // ロール演出が無効な環境でも、見出しを表示してから進める。
+      // 英字演出がない場合も、見出しを表示する時間を確保する。
       welcomeAutoTimer=window.setTimeout(startWelcomeBodyAuto,reduced?0:1200);
     }
-
-    document.addEventListener('hex:welcome-subtitle-start',function(event){
-      if(!isSp()&&event.target&&event.target.closest('.hex-welcome-wrap')===welcomeWrap){
-        startWelcomeBodyAuto();
-      }
-    });
 
     async function beginWelcome(autoBody,skipScroll){
       var target;
@@ -4865,7 +4868,11 @@ hexReady(function(){
       if(welcomeDotPending&&circleProgress>=.999&&
         scrollY>=welcomeTop-1){
         welcomeDotPending=false;
-        welcomeDotTimer=window.setTimeout(function(){
+        welcomeDotTimer=window.setTimeout(function advance(){
+          if(isWelcomeTitlePlaying()){
+            welcomeDotTimer=window.setTimeout(advance,50);
+            return;
+          }
           welcomeDotTimer=0;
           if(welcomeActive&&snapshot&&
             window.pageYOffset>=documentTop(welcomeWrap)-2){
@@ -4875,8 +4882,7 @@ hexReady(function(){
       }
       syncSnapshotLayer(circleProgress>=.999);
       welcomeWrap.classList.toggle("is-v2-circle-complete",circleProgress>=.999);
-      // タイトル開始と同時に本文の待機へ進む。スクロール到着を別に待つと、
-      // 丸の時間を延ばした際にサブタイトル開始イベントを取り逃してしまう。
+      // 丸の完成と同時に、英字見出しの再生完了を待つ。
       if(circleProgress>=.999)queueWelcomeBodyAuto();
 
       if((isSp()&&circleProgress>=.999)||
@@ -14774,7 +14780,7 @@ hexLoad(function(){
     });
   }
 
-  function playTitleLetterPop(chars,stagger=.15){
+  function playTitleLetterPop(chars,stagger=.15,onComplete){
     var gsap=window.gsap;
     return gsap.to(chars,{
       keyframes:[
@@ -14782,7 +14788,10 @@ hexLoad(function(){
         {scale:1,duration:.22,ease:'power1.inOut'}
       ],
       stagger:stagger,
-      onComplete:function(){gsap.set(chars,{clearProps:'transform'});}
+      onComplete:function(){
+        gsap.set(chars,{clearProps:'transform'});
+        if(onComplete)onComplete();
+      }
     });
   }
 
@@ -14827,11 +14836,7 @@ hexLoad(function(){
     main.dataset.hexCatchRollReady='1';
     main.classList.add('has-hex-catch-roll');
     if(spBreakIndex!==-1){main.classList.add('hex-sp-two-line-catch');}
-    var subtitlePop=createCatchSubtitlePop(subtitle,function(){
-      if(isWelcome){
-        main.dispatchEvent(new Event('hex:welcome-subtitle-start',{bubbles:true}));
-      }
-    });
+    var subtitlePop=createCatchSubtitlePop(subtitle);
     var everydayGlyph=hexCreateEverydayGlyph(main,textValue);
 
     Array.from(textValue).forEach(function(character,index){
@@ -14857,6 +14862,7 @@ hexLoad(function(){
         tween.kill();
         tween=null;
       }
+      if(isWelcome)main.classList.remove('is-welcome-title-playing');
 
       if(isWelcome&&(window.innerWidth<=768||isReducedMotion())){
         clearMotion(chars);
@@ -14889,7 +14895,11 @@ hexLoad(function(){
         var letters=chars.filter(function(char){return char.textContent.trim()!=='';});
         /* 開幕から切り替わった後のヒーロー表示時間内に、末尾まで再生する。 */
         var stagger=isHero?Math.min(.15,1.5/Math.max(1,letters.length-1)):.15;
-        tween=playTitleLetterPop(letters,stagger);
+        if(isWelcome)main.classList.add('is-welcome-title-playing');
+        tween=playTitleLetterPop(letters,stagger,function(){
+          tween=null;
+          if(isWelcome)main.classList.remove('is-welcome-title-playing');
+        });
         if(subtitlePop)subtitlePop.play(subtitleDelay);
         return;
       }
