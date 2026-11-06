@@ -15806,8 +15806,8 @@ hexLoad(function(){
         char.className='hex-top-title-char';
         char.textContent=letter===' '?'\u00a0':letter;
         var position=letters.length>1?index*2/(letters.length-1)-1:0;
-        char.style.setProperty('--hex-title-arc-offset',(-.12*(1-position*position))+'em');
-        char.style.setProperty('--hex-title-arc-angle',(7*position)+'deg');
+        char.style.setProperty('--hex-title-arc-offset',(-.17*(1-position*position))+'em');
+        char.style.setProperty('--hex-title-arc-angle',(10*position)+'deg');
         englishWrap.appendChild(char);
         if(letter!==' ')chars.push(char);
       });
@@ -15825,10 +15825,10 @@ hexLoad(function(){
       function play(){
         gsap.to(chars,{
           keyframes:[
-            {scale:1.2,duration:.37,ease:'power1.inOut'},
-            {scale:1,duration:.30,ease:'power1.inOut'}
+            {scale:1.25,duration:.20,ease:'power1.inOut'},
+            {scale:1,duration:.22,ease:'power1.inOut'}
           ],
-          stagger:.11,
+          stagger:.15,
           onComplete:function(){gsap.set(chars,{clearProps:'transform'});}
         });
         subtitlePop.play(.8);
