@@ -584,6 +584,9 @@
   }
   .hex-card{
     display:block!important;
+  }
+  .hex-card,
+  .hex-tiktok-device{
     padding:18px;
   }
   .hex-card-image{

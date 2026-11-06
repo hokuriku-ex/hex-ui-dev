@@ -6910,6 +6910,19 @@ hexReady(function(){
 /* =======================================
    カード
 ======================================= */
+function hexApplyCardColors(element,colors){
+  var background=(colors.bgColor||'').trim();
+  var frameColor=(colors.frameColor||'').trim();
+  var frame='2px solid '+frameColor;
+  // CMSで指定した色を、セクション固有のカード装飾より優先する。
+  if(background&&CSS.supports('color',background)){
+    element.style.setProperty('background-color',background,'important');
+  }
+  if(frameColor&&CSS.supports('border',frame)){
+    element.style.setProperty('border',frame,'important');
+  }
+}
+
 hexReady(function(){
   var CARD_SLIDE_INTERVAL=3000;
   var cardSlides=[];
@@ -7043,8 +7056,8 @@ hexReady(function(){
               url:window.hexBuildUrl(cardStart),
               type:cardStart.dataset.type||'internal',
               style:cardStart.dataset.style||'light',
-              bgColor:(cardStart.dataset.bgColor||'').trim(),
-              frameColor:(cardStart.dataset.frameColor||'').trim(),
+              bgColor:cardStart.dataset.bgColor,
+              frameColor:cardStart.dataset.frameColor,
               col:cardStart.dataset.col||'4',
               image:images.length?images[0].src:'',
               images:images,
@@ -7070,14 +7083,7 @@ hexReady(function(){
         var title=document.createElement('h4');
         var text=document.createElement('p');
         card.className='hex-card '+cardData.style;
-        // CMSで指定した色を、セクション固有のカード装飾より優先する。
-        if(cardData.bgColor&&CSS.supports('color',cardData.bgColor)){
-          card.style.setProperty('background-color',cardData.bgColor,'important');
-        }
-        var frame='2px solid '+cardData.frameColor;
-        if(cardData.frameColor&&CSS.supports('border',frame)){
-          card.style.setProperty('border',frame,'important');
-        }
+        hexApplyCardColors(card,cardData);
         if(cardData.image){
           card.classList.add('has-image');
         }else{
@@ -17489,6 +17495,7 @@ hexReady(function(){
    cards.push(card);
    var device=document.createElement('div');
    device.className='hex-tiktok-device';
+   hexApplyCardColors(device,card.dataset);
    screen.before(device);
    device.appendChild(screen);
   });
