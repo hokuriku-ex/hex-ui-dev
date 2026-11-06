@@ -7598,16 +7598,15 @@ function setupCardCarousel(grid,mode,options){
       copy.removeAttribute('id');
       copy.querySelectorAll('[id]').forEach(function(node){node.removeAttribute('id');});
       copy.querySelectorAll('a,button,input,select,textarea,[tabindex]').forEach(function(node){node.setAttribute('tabindex','-1');});
-      bindAutoHover(copy);
       viewport.appendChild(copy);slides.push(copy);
     }
   }
-  var autoFrame=0,autoTime=0,autoVisible=!window.IntersectionObserver,autoHovered=false;
+  var autoFrame=0,autoTime=0,autoVisible=!window.IntersectionObserver;
   var pageScrollTimer=0,lastPageY=window.scrollY;
   function stopAuto(){cancelAnimationFrame(autoFrame);autoFrame=0;autoTime=0;}
   function startAuto(){
     if(!scrolling||destroyed||!enabled||cards.length<2||reduced.matches||document.hidden||
-      !autoVisible||autoHovered||pageScrollTimer||drag||motion||
+      !autoVisible||pageScrollTimer||drag||motion||
       (grid.contains(document.activeElement)&&document.activeElement.matches(':focus-visible'))||autoFrame)return;
     autoFrame=requestAnimationFrame(function tick(now){
       autoFrame=0;
@@ -7619,18 +7618,9 @@ function setupCardCarousel(grid,mode,options){
       startAuto();
     });
   }
-  function bindAutoHover(slide){
-    slide.addEventListener('pointerenter',function(event){
-      if(event.pointerType==='touch')return;
-      autoHovered=true;stopAuto();
-    });
-    slide.addEventListener('pointerleave',function(){autoHovered=false;startAuto();});
-  }
-  slides.forEach(bindAutoHover);
   function autoFocus(){stopAuto();startAuto();}
   function autoBlur(event){if(!grid.contains(event.relatedTarget))requestAnimationFrame(startAuto);}
   function autoVisibility(){
-    autoHovered=!mobile.matches&&!!grid.querySelector('.hex-card-carousel-slide:hover');
     stopAuto();startAuto();
   }
   function onPageScroll(){
@@ -7953,7 +7943,6 @@ function setupCardCarousel(grid,mode,options){
           scrollVelocity=Math.max(-3,Math.min(3,scrollVelocity));
         }
       }
-      autoHovered=!mobile.matches&&!!viewport.querySelector('.hex-card-carousel-slide:hover');
       layout();settleScroll(scrollVelocity);
       return;
     }
