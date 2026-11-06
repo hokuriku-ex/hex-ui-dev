@@ -3779,6 +3779,7 @@ hexReady(function(){
       run=autoZoomRun;
 
       autoZoomTimer=window.setTimeout(function(){
+        autoZoomTimer=0;
         function frame(now){
           var progress;
           var eased;
@@ -5921,6 +5922,10 @@ hexReady(function(){
     window.hexHero={
       get:function(){return hero;},
       getActive:getActiveHero,
+      isAutoZoomSettled:function(){
+        return !renderer||reduced||
+          (bottomIntroComplete&&!autoZoomPending&&!autoZoomTimer&&!autoZooming);
+      },
       openWelcome:function(){
         if(!ready||characterFocus.maskVisible||welcomeActive||
           !hero.classList.contains('is-intro-complete')||
@@ -9053,7 +9058,6 @@ hexReady(function(){
   var sharedNav=null;
   var heroIntroTimer=null;
   var heroCatchRun=0;
-  var HERO_CATCH_DELAY=1000;
   var heroIntroStarted=false;
   var heroIntroDeparted=false;
 
@@ -9078,9 +9082,9 @@ hexReady(function(){
     });}
   }
 
-  function startHeroIntro(duration){
+  function startHeroIntro(){
     if(heroIntroStarted||heroIntroDeparted){return;}
-    duration=typeof duration==='number'?duration:getOpeningSceneDuration(7);
+    var duration=getOpeningSceneDuration(7);
     heroIntroStarted=true;
     var hero=document.querySelector('.hex-hero-wrap');
     hero.classList.add('is-intro-playing');
@@ -9832,28 +9836,35 @@ hexReady(function(){
     }
   }
 
-  function showHeroCatch(delay,catchDelay,heroDuration){
+  function showHeroCatch(delay){
+    var root=document.documentElement;
     var hero=document.querySelector('.hex-hero-wrap');
     var heroCatch=hero&&hero.querySelector('.hex-hero-catch');
     var run=++heroCatchRun;
     if(!heroCatch){return;}
-    hero.classList.toggle('is-catch-waiting',!!catchDelay);
+    hero.classList.add('is-catch-waiting');
     heroCatch.classList.remove('is-catch-visible','is-exploring');
-    window.setTimeout(function(){
-      if(run!==heroCatchRun||heroIntroDeparted||document.querySelector(
-        '.hex-opening:not(.is-v2-hero-stage):not(.is-skipping)'
-      )){return;}
-      /* 計時開始とキャッチの遅延は維持し、表示経路ごとの時間を使用。 */
-      startHeroIntro(heroDuration);
-      function reveal(){
-        if(run!==heroCatchRun||heroIntroDeparted||
-          hero.classList.contains('is-intro-complete')){return;}
-        hero.classList.remove('is-catch-waiting');
-        heroCatch.classList.add('is-catch-visible');
+    function waitForCatch(){
+      if(run!==heroCatchRun||heroIntroDeparted)return;
+      var api=window.hexHero;
+      var catchReady=isReducedMotion()||root.classList.contains('hex-motion-load-error')||
+        (window.hexPrepareHeroCatch&&window.hexPrepareHeroCatch());
+      if(!catchReady||(api&&api.isAutoZoomSettled&&!api.isAutoZoomSettled())){
+        window.requestAnimationFrame(waitForCatch);
+        return;
       }
-      if(catchDelay){window.setTimeout(reveal,catchDelay);}
-      else{reveal();}
-    },delay||0);
+      window.setTimeout(function(){
+        if(run!==heroCatchRun||heroIntroDeparted||document.querySelector(
+          '.hex-opening:not(.is-v2-hero-stage):not(.is-skipping)'
+        )){return;}
+        startHeroIntro();
+        hero.classList.remove('is-catch-waiting');
+        if(!hero.classList.contains('is-intro-complete')){
+          heroCatch.classList.add('is-catch-visible');
+        }
+      },delay||0);
+    }
+    waitForCatch();
   }
 
   function showHeroWithFade(){
@@ -9936,17 +9947,8 @@ hexReady(function(){
       root.classList.add('hex-direct-hero-fade-ready');
       root.classList.remove('hex-hero-display-wait','hex-hero-return-preparing');
       document.dispatchEvent(new Event('hex:hero-display-ready'));
-      /* コピーはヒーローと一緒に開始し、ページ全体のloadを待たない。 */
-      function waitForCatch(){
-        if(!isReducedMotion()&&
-          !(window.hexPrepareHeroCatch&&window.hexPrepareHeroCatch())&&
-          !root.classList.contains('hex-motion-load-error')){
-          window.requestAnimationFrame(waitForCatch);
-          return;
-        }
-        showHeroCatch(180);
-      }
-      waitForCatch();
+      /* 背景の初期ズームが落ち着いてから、ページ全体のloadを待たずに再生する。 */
+      showHeroCatch(180);
       /* 操作開始と後続コンテンツの準備は従来のタイミングを維持する。 */
       var wasInert=hero.inert;
       hero.inert=true;
@@ -9968,7 +9970,7 @@ hexReady(function(){
     window.requestAnimationFrame(waitForDisplay);
   }
 
-  function finishOpening(opening){
+  function finishOpening(opening,onHandoffComplete){
     var root=document.documentElement;
     var host=opening&&opening._hexOpeningHost;
     var hero=document.querySelector(".hex-hero-wrap");
@@ -10066,6 +10068,7 @@ hexReady(function(){
       }
 
       window.dispatchEvent(new Event("scroll"));
+      if(onHandoffComplete)onHandoffComplete();
     }
 
     alignHero();
@@ -10696,7 +10699,8 @@ hexReady(function(){
       transitionLocked=true;
       ensureHeroReady();
       opening.classList.add("is-v2-hero-stage");
-      showHeroCatch(0,HERO_CATCH_DELAY,getOpeningSceneDuration(7));
+      var hero=document.querySelector('.hex-hero-wrap');
+      if(hero)hero.classList.add('is-catch-waiting');
       updateDots(true);
 
       // 最後の日本語キャッチから、中央の丸演出でヒーローへ。
@@ -10706,7 +10710,8 @@ hexReady(function(){
           scene.setAttribute("aria-hidden","true");
         });
         if(cancelled){return;}
-        finishOpening(opening);
+        // 丸演出と複製からの切り替えが済んでから、見出しの再生と計時を始める。
+        finishOpening(opening,function(){showHeroCatch(0);});
       });
     }
 
