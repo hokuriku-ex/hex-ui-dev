@@ -7596,6 +7596,7 @@ function setupCardCarousel(grid,mode,options){
     while(slides.length<count){
       var copy=slides[slides.length%cards.length].cloneNode(true);
       copy.removeAttribute('id');
+      copy.classList.remove('is-scroll-hovered');
       copy.querySelectorAll('[id]').forEach(function(node){node.removeAttribute('id');});
       copy.querySelectorAll('a,button,input,select,textarea,[tabindex]').forEach(function(node){node.setAttribute('tabindex','-1');});
       viewport.appendChild(copy);slides.push(copy);
@@ -7603,6 +7604,22 @@ function setupCardCarousel(grid,mode,options){
   }
   var autoFrame=0,autoTime=0,autoVisible=!window.IntersectionObserver;
   var pageScrollTimer=0,lastPageY=window.scrollY;
+  var hoverPoint=null,hoveredSlide=null;
+  function updateScrollHover(){
+    var hit=hoverPoint&&!pageScrollTimer&&!mobile.matches&&!reduced.matches
+      ?document.elementFromPoint(hoverPoint.x,hoverPoint.y):null;
+    var slide=hit&&hit.closest('.hex-card-carousel-slide');
+    if(slide&&slide.parentElement!==viewport)slide=null;
+    if(slide===hoveredSlide)return;
+    if(hoveredSlide)hoveredSlide.classList.remove('is-scroll-hovered');
+    hoveredSlide=slide;
+    if(hoveredSlide)hoveredSlide.classList.add('is-scroll-hovered');
+  }
+  function trackScrollHover(event){
+    if(event.pointerType==='touch')return;
+    hoverPoint={x:event.clientX,y:event.clientY};
+    updateScrollHover();
+  }
   function stopAuto(){cancelAnimationFrame(autoFrame);autoFrame=0;autoTime=0;}
   function startAuto(){
     if(!scrolling||destroyed||!enabled||cards.length<2||reduced.matches||document.hidden||
@@ -7621,6 +7638,7 @@ function setupCardCarousel(grid,mode,options){
   function autoFocus(){stopAuto();startAuto();}
   function autoBlur(event){if(!grid.contains(event.relatedTarget))requestAnimationFrame(startAuto);}
   function autoVisibility(){
+    updateScrollHover();
     stopAuto();startAuto();
   }
   function onPageScroll(){
@@ -7640,6 +7658,9 @@ function setupCardCarousel(grid,mode,options){
     },140);
   }
   if(scrolling){
+    viewport.addEventListener('pointerenter',trackScrollHover,{passive:true});
+    viewport.addEventListener('pointermove',trackScrollHover,{passive:true});
+    viewport.addEventListener('pointerleave',function(){hoverPoint=null;updateScrollHover();});
     grid.addEventListener('focusin',autoFocus);grid.addEventListener('focusout',autoBlur);
     document.addEventListener('visibilitychange',autoVisibility);
     window.addEventListener('focus',autoVisibility);
@@ -7726,6 +7747,8 @@ function setupCardCarousel(grid,mode,options){
     if(destroyed||!enabled)return;
     var width=viewport.clientWidth;
     if(!width)return;
+    // CSSの:hoverはポインターが静止していると更新が遅れるため、横移動に合わせて取り直す。
+    if(scrolling&&hoverPoint)updateScrollHover();
     /* スタッフPC：1200px以下は5枚、1600px以上は7枚。その間は滑らかに補間。 */
     var staffRatio=.40-.14*Math.max(0,Math.min(1,(window.innerWidth-1200)/400));
     var cardWidth=scrolling&&scrollCardWidth?scrollCardWidth:mobile.matches?width:width*(staffNormal?staffRatio:.40);
