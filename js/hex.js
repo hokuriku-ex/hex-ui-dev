@@ -3668,13 +3668,28 @@ hexReady(function(){
       welcomeButton.setAttribute("aria-hidden",visible?"false":"true");
     }
 
-    document.addEventListener('hex:home-anchor-ready',function(){
-      window.hexHomeAnchorNav.nav.addEventListener('hex:anchor-fixed-change',updateWelcomeButton);
-      updateWelcomeButton();
-    });
-    if(window.hexHomeAnchorNav){
-      window.hexHomeAnchorNav.nav.addEventListener('hex:anchor-fixed-change',updateWelcomeButton);
+    function syncHeroCatchAnchorHeight(){
+      var anchor=window.hexHomeAnchorNav;
+      if(!catchElement||!anchor||!anchor.panel.classList.contains('is-hero-anchor'))return;
+      /* 登場時の移動量を除き、下端に着地したときのナビの高さで揃える。 */
+      catchElement.style.setProperty('--hex-hero-anchor-height',anchor.panel.offsetHeight+'px');
     }
+
+    var heroAnchorSizeObserver=window.ResizeObserver
+      ?new ResizeObserver(syncHeroCatchAnchorHeight):null;
+    function bindHeroAnchor(){
+      var anchor=window.hexHomeAnchorNav;
+      if(!anchor)return;
+      anchor.nav.addEventListener('hex:anchor-fixed-change',updateWelcomeButton);
+      if(heroAnchorSizeObserver)heroAnchorSizeObserver.observe(anchor.panel);
+      syncHeroCatchAnchorHeight();
+      updateWelcomeButton();
+    }
+    document.addEventListener('hex:home-anchor-ready',bindHeroAnchor);
+    if(!heroAnchorSizeObserver){
+      window.addEventListener('hex:viewport-resize',syncHeroCatchAnchorHeight,{passive:true});
+    }
+    bindHeroAnchor();
 
     function updateZoomMetrics(){
       var zoom=clamp(state.zoom,reduced?HERO_ZOOM_MIN:HERO_ZOOM_INTRO_START,HERO_ZOOM_MAX);

@@ -5234,7 +5234,7 @@ html body
 /* キャッチコピー共通 */
 .hex-hero-catch{
   position:absolute;
-  top:50%;
+  top:calc((100% - var(--hex-hero-anchor-height,0px)) / 2);
   right:0;
   left:0;
   z-index:3;

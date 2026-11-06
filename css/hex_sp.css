@@ -1368,6 +1368,7 @@
     min-height:0;
   }
   .hex-hero-catch{
+    top:calc((100% + var(--header_height_smartphone,80px) - var(--hex-hero-anchor-height,0px)) / 2);
     left:50%;
     right:auto;
     width:100%;
