@@ -2985,7 +2985,7 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
 }
 
-/* サービス専用カード：SPはgrid2と同じ枠・画像上／本文下のデザイン。 */
+/* サービス専用カード：SPはgrid2と同じ画像上／本文下のデザイン。 */
 @media screen and (max-width:768px){
   .hex-service-grid .hex-card{
     display:block!important;
@@ -2994,12 +2994,11 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     margin-inline:0!important;
     padding:18px;
     background:#fff;
-    border:2px solid #203459;
+    border:0;
     border-radius:6px;
   }
   .hex-service-grid .hex-card.dark{
     background:transparent;
-    border-color:rgba(255,255,255,.75);
   }
   .hex-service-grid .hex-card-image{
     margin-bottom:20px;

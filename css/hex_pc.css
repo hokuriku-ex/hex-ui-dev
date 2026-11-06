@@ -2279,7 +2279,7 @@ div[hex-sp]{
   box-sizing:border-box;
   padding:22px;
   background:#fff;
-  border:2px solid #203459;
+  border:0;
   border-radius:6px;
   transition:border-color .25s ease;
 }
@@ -2308,13 +2308,8 @@ div[hex-sp]{
 .hex-card:has(.hex-card-title-link[href]):hover .hex-link-icon{
   transform:translateX(3px);
 }
-.hex-card.light{
-  background:#fff;
-  border-color:#203459;
-}
 .hex-card.dark{
   background:transparent;
-  border-color:rgba(255,255,255,.75);
 }
 .hex-card-grid1 .hex-card{
   display:grid;
@@ -2325,13 +2320,10 @@ div[hex-sp]{
   gap:34px;
   padding-top:0;
   padding-bottom:0;
-  background:none;
-  border:none;
 }
 .hex-card-grid1 .hex-card-body{
   padding:24px 28px!important;
   border-radius:6px!important;
-  background:#fafafa!important;
   box-sizing:border-box;
 }
 .hex-card-grid1 .hex-card.has-image{

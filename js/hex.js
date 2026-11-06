@@ -7043,6 +7043,8 @@ hexReady(function(){
               url:window.hexBuildUrl(cardStart),
               type:cardStart.dataset.type||'internal',
               style:cardStart.dataset.style||'light',
+              bgColor:(cardStart.dataset.bgColor||'').trim(),
+              frameColor:(cardStart.dataset.frameColor||'').trim(),
               col:cardStart.dataset.col||'4',
               image:images.length?images[0].src:'',
               images:images,
@@ -7068,6 +7070,14 @@ hexReady(function(){
         var title=document.createElement('h4');
         var text=document.createElement('p');
         card.className='hex-card '+cardData.style;
+        // CMSで指定した色を、セクション固有のカード装飾より優先する。
+        if(cardData.bgColor&&CSS.supports('color',cardData.bgColor)){
+          card.style.setProperty('background-color',cardData.bgColor,'important');
+        }
+        var frame='2px solid '+cardData.frameColor;
+        if(cardData.frameColor&&CSS.supports('border',frame)){
+          card.style.setProperty('border',frame,'important');
+        }
         if(cardData.image){
           card.classList.add('has-image');
         }else{
