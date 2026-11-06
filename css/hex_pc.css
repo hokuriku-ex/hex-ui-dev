@@ -9507,9 +9507,11 @@ html.hex-opening-finishing
 .hex-character-focus-mask{
   position:absolute;inset:0;z-index:6;
   display:none;width:100%;height:100%;overflow:hidden;
-  fill:#fff;pointer-events:none;
+  background:rgba(255,255,255,.84);
+  -webkit-backdrop-filter:grayscale(1);
+  backdrop-filter:grayscale(1);
+  pointer-events:none;
 }
-.hex-character-focus-mask > path{fill:#fff!important;}
 .hex-character-focus-close{display:none;}
 /* 人物の丸表示中は探索用UIを隠し、逆再生の完了後に元の表示状態へ戻す。 */
 html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-replay,.hex-hero-welcome-button:not(.is-back)){
@@ -9827,6 +9829,11 @@ body > .hex-v2-handoff{z-index:198;}
 }
 @media screen and (max-width:768px){
   html.hex-character-focus-active .hex-hero-sticky{background:#fff;}
+  .hex-character-scroll-photo::after{
+    content:"";
+    position:absolute;inset:auto 0 0;z-index:1;height:24px;
+    background:linear-gradient(transparent,#fff);
+  }
   html.hex-character-focus-active .hex-character-focus-close.is-visible{
     display:flex;
     position:fixed;

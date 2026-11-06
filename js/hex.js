@@ -5544,7 +5544,7 @@ hexReady(function(){
       }
     }
 
-    /* 円の外側だけを白で覆い、WELCOMEと同じ丸の窓を描く。 */
+    /* 円の外側だけに淡いモノクロのフィルターを重ねる。 */
     function updateCharacterFocusMask(){
       if(!characterFocus.maskVisible||!heroSection){return;}
       var width=metrics.width,height=metrics.height;
@@ -5554,28 +5554,16 @@ hexReady(function(){
       characterFocus.circleY=y;
       characterFocus.circleRadius=radius;
       if(!characterFocusMask){
-        characterFocusMask=document.createElementNS("http://www.w3.org/2000/svg","svg");
-        characterFocusMask.setAttribute("class","hex-character-focus-mask");
+        characterFocusMask=document.createElement("div");
+        characterFocusMask.className="hex-character-focus-mask";
         characterFocusMask.setAttribute("aria-hidden","true");
-        characterFocusMask.setAttribute("preserveAspectRatio","none");
-        var path=document.createElementNS("http://www.w3.org/2000/svg","path");
-        path.setAttribute("fill-rule","evenodd");
-        path.setAttribute("fill","#fff");
-        path.style.setProperty("fill","#fff","important");
-        characterFocusMask.appendChild(path);
         heroSection.appendChild(characterFocusMask);
       }
       characterFocusMask.style.display="block";
-      var viewBox="0 0 "+width+" "+height;
-      if(characterFocusMask.getAttribute("viewBox")!==viewBox){
-        characterFocusMask.setAttribute("viewBox",viewBox);
-      }
       var d="M0 0H"+width+"V"+height+"H0Z M"+(x-radius)+" "+y+
         "a"+radius+" "+radius+" 0 1 0 "+(radius*2)+" 0a"+
         radius+" "+radius+" 0 1 0 "+(-radius*2)+" 0Z";
-      if(characterFocusMask.firstChild.getAttribute("d")!==d){
-        characterFocusMask.firstChild.setAttribute("d",d);
-      }
+      characterFocusMask.style.clipPath='path(evenodd, "'+d+'")';
     }
 
     // Skip GPU work while the hero is outside the viewport.
