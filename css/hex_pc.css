@@ -254,15 +254,17 @@ html{
 .hex-section-title-light{
   color:#265ab0!important;
 }
+.hex-section-title-light .hex-section-title-en{
+  color:#265ab0!important;
+}
 .hex-section-title-dark{
+  color:#f7d04f!important;
+}
+.hex-section-title-dark .hex-section-title-en{
   color:#f7d04f!important;
 }
 .hex-section-title[data-en]:not([data-en=""]){
   white-space:normal;
-}
-/* 日本語サブ見出しの色 */
-.hex-section-title[data-en]:not([data-en=""]):is(.hex-section-title-light,.hex-section-title-dark){
-  color:#f7d04f!important;
 }
 
 /* 共通セクションサブ見出し（h3専用） */
