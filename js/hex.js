@@ -7603,10 +7603,11 @@ function setupCardCarousel(grid,mode,options){
     }
   }
   var autoFrame=0,autoTime=0,autoVisible=!window.IntersectionObserver,autoHovered=false;
+  var pageScrollTimer=0,lastPageY=window.scrollY;
   function stopAuto(){cancelAnimationFrame(autoFrame);autoFrame=0;autoTime=0;}
   function startAuto(){
     if(!scrolling||destroyed||!enabled||cards.length<2||reduced.matches||document.hidden||
-      !autoVisible||autoHovered||drag||motion||
+      !autoVisible||autoHovered||pageScrollTimer||drag||motion||
       (grid.contains(document.activeElement)&&document.activeElement.matches(':focus-visible'))||autoFrame)return;
     autoFrame=requestAnimationFrame(function tick(now){
       autoFrame=0;
@@ -7632,10 +7633,27 @@ function setupCardCarousel(grid,mode,options){
     autoHovered=!mobile.matches&&!!grid.querySelector('.hex-card-carousel-slide:hover');
     stopAuto();startAuto();
   }
+  function onPageScroll(){
+    var y=window.scrollY;
+    if(y===lastPageY)return;
+    lastPageY=y;
+    if(!pageScrollTimer){
+      stopAuto();
+      grid.classList.add('is-page-scrolling');
+    }
+    // 入力が終わった後も続く慣性を、実際の縦位置が止まるまで待つ。
+    window.clearTimeout(pageScrollTimer);
+    pageScrollTimer=window.setTimeout(function(){
+      pageScrollTimer=0;
+      grid.classList.remove('is-page-scrolling');
+      autoVisibility();
+    },140);
+  }
   if(scrolling){
     grid.addEventListener('focusin',autoFocus);grid.addEventListener('focusout',autoBlur);
     document.addEventListener('visibilitychange',autoVisibility);
     window.addEventListener('focus',autoVisibility);
+    window.addEventListener('scroll',onPageScroll,{passive:true});
     if(reduced.addEventListener)reduced.addEventListener('change',autoVisibility);
   }
   var dots=document.createElement('div');
@@ -7999,6 +8017,8 @@ function setupCardCarousel(grid,mode,options){
     grid.removeEventListener('focusin',autoFocus);grid.removeEventListener('focusout',autoBlur);
     document.removeEventListener('visibilitychange',autoVisibility);
     window.removeEventListener('focus',autoVisibility);
+    window.removeEventListener('scroll',onPageScroll);
+    window.clearTimeout(pageScrollTimer);
     if(reduced.removeEventListener)reduced.removeEventListener('change',autoVisibility);
     cancelAnimationFrame(frame);cancelAnimationFrame(motion);
     if(observer)observer.disconnect();
@@ -8007,7 +8027,7 @@ function setupCardCarousel(grid,mode,options){
     else mobile.removeListener(syncMode);
     cards.forEach(function(card){grid.insertBefore(card,viewport);});
     viewport.remove();controls.remove();status.remove();
-    grid.classList.remove('hex-card-carousel','hex-card-carousel-scroll','is-dragging');
+    grid.classList.remove('hex-card-carousel','hex-card-carousel-scroll','is-dragging','is-page-scrolling');
     grid.classList.toggle('hex-motion-auto-off',originalMotionOff);
     ['role','aria-label','aria-roledescription'].forEach(function(name,i){
       var value=[originalRole,originalLabel,originalDescription][i];
