@@ -9050,11 +9050,11 @@ hexReady(function(){
   var SKIP_FADE_DURATION=500;
   /* ドット1〜7の表示時間（ms）。0はその場面の自動進行・終了を停止。 */
   var OPENING_SCENE_DURATIONS_MS={
-    1:3000,
+    1:2000,
     2:2000,
     3:2000,
     4:2000,
-    5:2000,
+    5:3000,
     6:3000,
     7:3000
   };
@@ -9649,10 +9649,10 @@ hexReady(function(){
   // 通常再生・閲覧済みスキップ・リプレイで同じ場面リストを使う。
   function collectOpeningScenes(introStage,slideStage,messageStage){
     var scenes=[];
-    if(introStage)scenes.push(introStage);
     if(slideStage){
       Array.prototype.forEach.call(slideStage.querySelectorAll(".hex-opening-slide"),function(slide){scenes.push(slide);});
     }
+    if(introStage)scenes.push(introStage);
     if(messageStage&&messageStage.children.length)scenes.push(messageStage);
     return scenes;
   }
@@ -10250,17 +10250,16 @@ hexReady(function(){
 
     function animateIncoming(scene){
       var introMain;
-      var sceneIndex;
       if(!scene){return;}
-      sceneIndex=scenes.indexOf(scene);
+      var hasImage=scene===introStage||scene.parentElement===slideStage;
       var imageAlreadyRevealed=scene.classList.contains("is-v2-loader-image-ready");
       scene.classList.remove("is-v2-entered");
-      if(sceneIndex>=0&&sceneIndex<5&&!imageAlreadyRevealed){
+      if(hasImage&&!imageAlreadyRevealed){
         scene.classList.remove("is-v2-image-entered");
       }
       void scene.offsetWidth;
       scene.classList.add("is-v2-entered");
-      if(sceneIndex>=0&&sceneIndex<5){
+      if(hasImage){
         scene.classList.add("is-v2-image-entered");
       }
       scene.classList.remove("is-v2-loader-image-ready");
@@ -11335,12 +11334,12 @@ hexReady(function(){
     slides=collectOpeningSlides();
     messageData=collectOpeningMessage();
 
-    if(introData){
-      introStage=createOpeningIntro(opening,introData);
-    }
-
     if(slides.length){
       slideStage=createOpeningSlides(opening,slides);
+    }
+
+    if(introData){
+      introStage=createOpeningIntro(opening,introData);
     }
 
     if(messageData){

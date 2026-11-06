@@ -2932,7 +2932,7 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
 }
 
-/* 開幕1〜5番SP：縁取りはヒーロー共通。2〜5番は左上・その場で同時フェード。 */
+/* 開幕1〜5番SP：縁取りはヒーロー共通。1〜4番のスライドは左上で同時フェード。 */
 @media screen and (max-width:768px){
   .hex-opening-intro-stage .hex-opening-intro-catch .hex-opening-intro-main,
   .hex-opening-slide-catch .hex-opening-slide-title{
