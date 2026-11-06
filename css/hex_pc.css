@@ -2140,19 +2140,12 @@ div[hex-sp]{
 .hex-card-carousel-scroll :is(.hex-card-carousel-controls,.hex-card-carousel-arrow,.hex-card-carousel-status){display:none!important;}
 .hex-card-carousel-scroll .hex-card-carousel-viewport{cursor:grab;}
 .hex-card-carousel-scroll.is-dragging .hex-card-carousel-viewport{cursor:grabbing;}
-.hex-card-carousel-scroll .hex-card-carousel-slide > *{transition:translate .25s ease;}
-.hex-card-carousel-scroll .hex-card-carousel-slide:is(:hover,:has(:focus-visible)) > *{
-  translate:0 -8px;
-  animation:hex-carousel-hover-hop .45s ease-out both;
-}
-@keyframes hex-carousel-hover-hop{
-  0%{translate:0 0;}
-  45%{translate:0 -14px;}
-  72%{translate:0 -5px;}
-  100%{translate:0 -8px;}
-}
-@media(prefers-reduced-motion:reduce){
-  .hex-card-carousel-scroll .hex-card-carousel-slide:is(:hover,:has(:focus-visible)) > *{animation:none;}
+@media (min-width:769px) and (hover:hover) and (prefers-reduced-motion:no-preference){
+  .hex-card-carousel-scroll .hex-card-carousel-slide > *{
+    transform-origin:center;
+    transition:scale .25s ease;
+  }
+  .hex-card-carousel-scroll .hex-card-carousel-slide:is(:hover,:has(:focus-visible)) > *{scale:.96;}
 }
 .hex-card-carousel-arrow{
   position:absolute;
@@ -2196,11 +2189,6 @@ div[hex-sp]{
 .hex-card-carousel-status[hidden]{display:none;}
 .hex-card-carousel-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
 @media screen and (max-width:768px){
-  .hex-card-carousel-scroll .hex-card-carousel-slide > *,
-  .hex-card-carousel-scroll .hex-card-carousel-slide:is(:hover,:has(:focus-visible)) > *{
-    translate:none;
-    animation:none;
-  }
   .hex-card-carousel-slide{
     top:0;
     transform:translateX(-50%) translateX(var(--hex-carousel-x));
@@ -10487,7 +10475,7 @@ h2.hex-top-title.hex-audience-guide-title .hex-top-title-en{
 .hex-tiktok-credit{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:12px;font-size:14px;}
 .hex-tiktok-credit a{color:#265ab0!important;text-decoration:underline;text-underline-offset:3px;}
 .hex-tiktok-scroll-note{display:none;}
-@media (hover:hover) and (prefers-reduced-motion:no-preference){.hex-tiktok-poster:hover img{transform:scale(1.035);}}
+@media (hover:hover) and (prefers-reduced-motion:no-preference){.hex-tiktok-poster:not(.hex-card-carousel-scroll *):hover img{transform:scale(1.035);}}
 @media screen and (max-width:768px){
  .hex-tiktok-section{padding:28px 0;}
  .hex-tiktok-grid{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 16px 14px;scroll-padding-inline:16px;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;}
