@@ -17446,7 +17446,6 @@ hexReady(function(){
   if(card.querySelector('.hex-tiktok-frame'))return;
   activeCard=card;
   pauseOthers(card);
-  status(card,'動画を読み込んでいます…');
   var screen=card.querySelector('.hex-tiktok-screen');
   var frame=document.createElement('iframe');
   frame.className='hex-tiktok-frame';
