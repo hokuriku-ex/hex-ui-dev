@@ -36,6 +36,7 @@ h1,
 h2{
   font-family:var(--hex-font-pop-ja)!important;
   font-weight:900!important;
+  font-style:italic!important;
 }
 h3,
 h4,
