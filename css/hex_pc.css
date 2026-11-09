@@ -5642,6 +5642,7 @@ html body
   color:#203459;
   font-family:var(--hex-font-hand)!important;
   text-align:left;
+  -webkit-text-stroke:1px currentColor!important;
 }
 .welcome .text .text-center{
   display:block;
