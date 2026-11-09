@@ -5586,7 +5586,7 @@ html body
   font-size:32px!important;
   font-weight:500!important;
   line-height:1.4;
-  letter-spacing:.04em;
+  letter-spacing:.2em;
   font-family:var(--hex-font-hand)!important;
   -webkit-text-stroke:1.5px currentColor!important;
 }
@@ -5640,7 +5640,7 @@ html body
   font-size:24px;
   font-weight:500;
   line-height:2.5;
-  letter-spacing:.03em;
+  letter-spacing:.2em;
   color:#203459;
   font-family:var(--hex-font-hand)!important;
   text-align:left;
