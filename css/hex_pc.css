@@ -1594,12 +1594,12 @@ a.hex-anchor-nav-link{
   display:inline-block;
   margin-right:8px;
   color:#f7d04f;
-  font-family:var(--hex-font-italic)!important;
+  font-family:var(--hex-font-hand)!important;
   font-size:12px;
   font-weight:400;
   font-style:italic;
   line-height:1;
-  letter-spacing:.06em;
+  letter-spacing:.15em;
   transform:none;
 }
 /* 固定表示：項目間のみ縦線を表示 */
