@@ -5583,12 +5583,12 @@ html body
   z-index:1;
   margin:0;
   display:block;
-  font-size:32px;
+  font-size:32px!important;
   font-weight:500!important;
   line-height:1.4;
   letter-spacing:.04em;
   font-family:var(--hex-font-hand)!important;
-  -webkit-text-stroke:1px currentColor!important;
+  -webkit-text-stroke:1.5px currentColor!important;
 }
 .welcome .kakko_l,
 .welcome .kakko_br{
