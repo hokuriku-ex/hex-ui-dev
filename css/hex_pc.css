@@ -1489,12 +1489,12 @@ div.NNAttached{
   position:static;
   display:block;
   color:#f7d04f;
-  font-family:var(--hex-font-italic)!important;
+  font-family:var(--hex-font-hand)!important;
   font-size:12px;
   font-weight:400;
   font-style:italic;
   line-height:1;
-  letter-spacing:.12em;
+  letter-spacing:.15em;
   transform:none;
   transition:color .3s ease;
 }
