@@ -10222,14 +10222,6 @@ html.hex-page-yellow-covering .hex-follow-cursor{
   display:none!important;
 }
 
-/* WELCOME本文：文字の表示演出を保ち、塗りの外側に白い縁を描く。 */
-.hex-v2-welcome-copy-stage .welcome_contents .text,
-.hex-v2-welcome-copy-stage .welcome_contents .text *{
-  -webkit-text-stroke:3px #fff!important;
-  paint-order:stroke fill;
-  text-shadow:none!important;
-}
-
 /* 共通カード：複数画像は1枚目の枠を保ち、演出なしで切り替える。 */
 .hex-card-image.has-slideshow{
   position:relative;
