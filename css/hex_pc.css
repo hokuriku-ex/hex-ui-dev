@@ -5576,9 +5576,7 @@ html body
     clamp(24px, 3.75vw, 56px);
   box-sizing:border-box;
   color:#265ab0;
-  font-family:var(--hex-font-hand)!important;
   text-align:left;
-  -webkit-text-stroke:1px currentColor!important;
 }
 .welcome .title h3{
   position:relative;
@@ -5589,6 +5587,8 @@ html body
   font-weight:500!important;
   line-height:1.4;
   letter-spacing:.04em;
+  font-family:var(--hex-font-hand)!important;
+  -webkit-text-stroke:1px currentColor!important;
 }
 .welcome .kakko_l,
 .welcome .kakko_br{
