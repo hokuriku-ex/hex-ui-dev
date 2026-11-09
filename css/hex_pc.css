@@ -5576,7 +5576,9 @@ html body
     clamp(24px, 3.75vw, 56px);
   box-sizing:border-box;
   color:#265ab0;
+  font-family:var(--hex-font-hand)!important;
   text-align:left;
+  -webkit-text-stroke:1px currentColor!important;
 }
 .welcome .title h3{
   position:relative;
