@@ -90,8 +90,8 @@ html{
   font-family:var(--hex-font-pop-ja)!important;
   font-size:16px!important;
   line-height:1.4!important;
-  letter-spacing:.12em!important;
-  font-weight:700!important;
+  letter-spacing:.1em!important;
+  font-weight:400!important;
 }
 .hex-top-title-light{
   color:#265ab0!important;
@@ -109,8 +109,8 @@ html{
   font-family:var(--hex-font-pop-en)!important;
   font-size:clamp(6.4rem,8vw,9.6rem)!important;
   line-height:1.4;
-  letter-spacing:.04em;
-  font-weight:400;
+  letter-spacing:-.1em;
+  font-weight:700!important;
   opacity:1;
 }
 .hex-top-title-light[data-en]::after{
@@ -133,8 +133,8 @@ html{
   font-family:var(--hex-font-pop-en)!important;
   font-size:clamp(6.4rem,8vw,9.6rem)!important;
   line-height:1.4;
-  letter-spacing:.04em;
-  font-weight:400;
+  letter-spacing:-.1em;
+  font-weight:700!important;
   color:inherit;
 }
 .hex-top-title-char{
@@ -5278,9 +5278,9 @@ html body
 .hex-handoff-copy .hex-opening-main{
   font-family:var(--hex-font-pop-en)!important;
   font-size:clamp(32px,6vw,7.2rem);
-  font-weight:400;
+  font-weight:700!important;
   line-height:1.4;
-  letter-spacing:.04em;
+  letter-spacing:-.1em;
   color:#fafafa!important;
   -webkit-text-stroke:2px #265ab0;
   paint-order:stroke fill;
@@ -5298,7 +5298,7 @@ html body
   margin-top:14px;
   font-family:var(--hex-font-pop-ja)!important;
   font-size:clamp(14px,1.15vw,18px);
-  font-weight:700!important;
+  font-weight:400!important;
   line-height:1.7;
   letter-spacing:.1em;
   color:#f7d04f!important;
