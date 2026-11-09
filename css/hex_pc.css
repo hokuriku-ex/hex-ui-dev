@@ -5639,8 +5639,8 @@ html body
   margin:0 auto!important;
   font-size:24px;
   font-weight:500;
-  line-height:2.5;
-  letter-spacing:.2em;
+  line-height:2;
+  letter-spacing:.15em;
   color:#203459;
   font-family:var(--hex-font-hand)!important;
   text-align:left;
@@ -6478,8 +6478,8 @@ html body
   font-family:var(--hex-font-pop-ja)!important;
   font-size:16px!important;
   line-height:1.4!important;
-  letter-spacing:.12em!important;
-  font-weight:700!important;
+  letter-spacing:.1em!important;
+  font-weight:400!important;
 }
 
 /* 英語メインタイトル */
@@ -6490,8 +6490,8 @@ html body
   font-family:var(--hex-font-pop-en)!important;
   font-size:clamp(32px,3.5vw,56px);
   line-height:1.4;
-  letter-spacing:.04em;
-  font-weight:400;
+  letter-spacing:-.1em;
+  font-weight:700;
   opacity:1;
 }
 
@@ -6891,15 +6891,15 @@ html body
 .content_body:has(.hex-vision-section) .welcome .hex-signature-title{
   display:inline-block;
   margin:0;
-  font-size:14px;
+  font-size:16px;
   font-weight:400;
   color:#203459;
 }
 .content_body:has(.hex-vision-section) .welcome .hex-signature-name{
   display:inline-block;
-  font-size:20px;
+  font-size:24px;
   font-weight:500;
-  letter-spacing:.12em;
+  letter-spacing:.15em;
   color:#203459;
 }
 
