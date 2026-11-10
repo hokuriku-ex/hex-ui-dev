@@ -15042,6 +15042,9 @@ hexLoad(function(){
       '.gc_auto_frame_spotitem_box',
       /* 下層ページ本文 */
       '.content_body',
+      /* 下層の共通お問い合わせは本文の外に配置される場合もある。 */
+      '.hex-contact-section',
+      '.gc_auto_frame_spotitem_body:has(.hex-contact-section)',
       /* content_bodyを持たない下層ページの予備ルート */
       '[id^="gc_auto_body_"]:not(#gc_auto_body_home)',
       /* 通常フッター */
@@ -15416,7 +15419,15 @@ hexLoad(function(){
       });
     }
 
+    function isContactButtonTarget(target){
+      return !!(target.matches('.hex-button-wrap')&&
+        target.querySelector('.hex-btn-main')&&
+        target.closest('.hex-contact-section,.gc_auto_frame_spotitem_body:has(.hex-contact-section)'));
+    }
+
     function isContactRevealTarget(target){
+      /* フォームボタンはサイト共通のポップへ登録する。 */
+      if(isContactButtonTarget(target))return false;
       var contactBody=target.closest(
         '.gc_auto_frame_spotitem_body'
       );
@@ -15522,6 +15533,8 @@ hexLoad(function(){
     /* 背景の外枠や専用演出を持つ領域を、親ごと拡大・非表示にしない。 */
     function isExcludedFromAutoPop(target){
       if(target.querySelector('[data-hex-scroll-body]'))return true;
+      /* 問い合わせ外枠やフッターの除外を、内側のフォームボタンへ継承しない。 */
+      if(isContactButtonTarget(target))return false;
       var excluded=[
         '#gc_auto_frame_home_3',
         '.hex-welcome-wrap',
@@ -15781,9 +15794,10 @@ hexLoad(function(){
         ':not([data-hex-title-roll-ready])';
       var targets=[];
 
-      /* 下層の共通お問い合わせは従来通り除外。「選ばれる理由」は直接指定できる。 */
+      /* 下層の共通お問い合わせにもタイトル演出を登録する。 */
       if(!document.querySelector('.hex-hero-wrap')){
-        selector='.hex-founded-title:not([data-hex-title-roll-ready])';
+        selector='.hex-contact-section '+selector+
+          ',.hex-founded-title:not([data-hex-title-roll-ready])';
       }else{
         selector+=',.hex-founded-title:not([data-hex-title-roll-ready])';
       }
@@ -15814,6 +15828,10 @@ hexLoad(function(){
     }
 
     function setupTopTitleRollTarget(target){
+      if(!document.querySelector('.hex-hero-wrap')&&target.closest('.hex-contact-section')){
+        setupSectionTitlePopTarget(target);
+        return;
+      }
       if(normalSp&&target.classList.contains('hex-founded-title'))return;
       if(target.dataset.hexTitleRollReady){return;}
       var isFoundedTitle=target.classList.contains('hex-founded-title');
@@ -15956,6 +15974,11 @@ hexLoad(function(){
       target.appendChild(subtitle);
       target.appendChild(englishWrap);
       target.classList.add('has-hex-section-title-pop');
+      if(target.classList.contains('hex-top-title')){
+        /* 元のdata-en疑似要素を隠し、動く英字との二重表示を防ぐ。 */
+        target.classList.add('has-hex-title-roll');
+        target.dataset.hexTitleRollReady='1';
+      }
       target.dataset.hexMotionInitialized='1';
       if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(englishWrap);
       var playArc=prepareArchedTitlePop(englishWrap,letters);
@@ -16559,7 +16582,7 @@ hexLoad(function(){
 
       var autoReveals=collectAutoRevealTargets(area);
       var footerReveals=autoReveals.filter(function(target){
-        return !!target.closest('.gc_auto_frame_footer');
+        return !!target.closest('.gc_auto_frame_footer')&&!isContactButtonTarget(target);
       });
       var contactReveals=autoReveals.filter(function(target){
         return isContactRevealTarget(target);
@@ -16567,7 +16590,7 @@ hexLoad(function(){
 
       autoReveals=autoReveals.filter(function(target){
         return(
-          !target.closest('.gc_auto_frame_footer')&&
+          (!target.closest('.gc_auto_frame_footer')||isContactButtonTarget(target))&&
           !isContactRevealTarget(target)
         );
       });
