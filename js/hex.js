@@ -5209,7 +5209,7 @@ hexReady(function(){
 
       // Match tilt to the clamped pan position: center is zero, each edge is 5deg.
       var tiltX=metrics.maxY>0?clamp(-state.y/metrics.maxY,-1,1)*5:0;
-      var tiltY=metrics.maxX>0?clamp(-state.x/metrics.maxX,-1,1)*5:0;
+      var tiltY=metrics.maxX>0?clamp(state.x/metrics.maxX,-1,1)*5:0;
       webglStage.style.setProperty('--hex-hero-tilt-x',tiltX+'deg');
       webglStage.style.setProperty('--hex-hero-tilt-y',tiltY+'deg');
 
