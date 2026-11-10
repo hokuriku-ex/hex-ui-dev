@@ -9358,7 +9358,7 @@ html.hex-opening-finishing
 .hex-opening-intro-char{
   opacity:1;
   transform:scale(1);
-  animation:hex-opening-title-letter-pop .42s ease both;
+  animation:hex-opening-title-letter-pop .3s ease both;
   animation-delay:calc(var(--hex-opening-char-index,0) * .1s);
   transition-delay:
     calc(var(--hex-opening-char-index,0) * .1s);
@@ -9366,7 +9366,7 @@ html.hex-opening-finishing
 
 @keyframes hex-opening-title-letter-pop{
   0%{opacity:0;transform:scale(0);}
-  48%{opacity:1;transform:scale(1.25);}
+  46.666667%{opacity:1;transform:scale(1.25);}
   100%{opacity:1;transform:scale(1);}
 }
 @media (prefers-reduced-motion:reduce){

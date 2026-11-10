@@ -14827,8 +14827,8 @@ hexLoad(function(){
     var gsap=window.gsap;
     return gsap.to(chars,{
       keyframes:[
-        {scale:1.25,duration:.20,ease:'power1.inOut'},
-        {scale:1,duration:.22,ease:'power1.inOut'}
+        {scale:1.25,duration:.14,ease:'power1.inOut'},
+        {scale:1,duration:.16,ease:'power1.inOut'}
       ],
       stagger:stagger,
       onComplete:function(){
