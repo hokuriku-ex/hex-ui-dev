@@ -9495,6 +9495,19 @@ html.hex-opening-finishing
 .hex-webgl-stage.is-resetting{animation:hex-v2-hero-reset .7s ease both}
 @keyframes hex-v2-hero-reset{from{opacity:.15}to{opacity:1}}
 .hex-webgl-stage canvas{display:block;width:100%!important;height:100%!important}
+/* Drag tilts images only. The stage remains fixed for stable pointer capture. */
+.hex-webgl-stage canvas{
+  transform:perspective(1200px) rotateX(var(--hex-hero-tilt-x,0deg)) rotateY(var(--hex-hero-tilt-y,0deg));
+  transform-origin:50% 50%;
+  transition:transform .45s cubic-bezier(.22,.8,.3,1);
+}
+.hex-webgl-stage.is-dragging canvas{transition:none;will-change:transform;}
+/* Temporarily hide left/right bottom01-04, including cloned preview artwork. */
+.hex-hero-bottom-illustrations,
+.hex-hero-boundary-illustrations{display:none!important;}
+@media(prefers-reduced-motion:reduce){
+  .hex-webgl-stage canvas{transition:none;}
+}
 .hex-character-focus-mask{
   position:absolute;inset:0;z-index:6;
   display:none;width:100%;height:100%;overflow:hidden;

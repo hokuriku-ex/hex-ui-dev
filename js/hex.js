@@ -4318,6 +4318,7 @@ hexReady(function(){
     }
 
     function resetHero(withFade){
+      resetHeroTilt();
       heroAnchorDeparted=false;
       /* Safariの履歴復元中の一時的な位置変化を、上方向の手動スクロールと扱わない。 */
       if(isSp()&&(spHistoryBody||spHistoryRestoring))return;
@@ -4597,6 +4598,7 @@ hexReady(function(){
     });
 
     async function beginWelcome(autoBody,skipScroll){
+      resetHeroTilt();
       var target;
       var handoff;
       if(welcomeActive||!welcomeWrap){return;}
@@ -4945,6 +4947,13 @@ hexReady(function(){
       applyZoomAt(nextZoom,event.clientX,event.clientY);
     }
 
+    // Tilt only the composited image canvas; clouds, ellipse and text stay fixed.
+    function resetHeroTilt(){
+      if(!webglStage)return;
+      webglStage.style.removeProperty('--hex-hero-tilt-x');
+      webglStage.style.removeProperty('--hex-hero-tilt-y');
+    }
+
     function startDrag(pointerId,x,y){
       dragging=true;
       dragStart.pointerId=pointerId;
@@ -4986,6 +4995,7 @@ hexReady(function(){
       dx=midpointX-(pinch.rect.left+pinch.rect.width/2);
       dy=midpointY-(pinch.rect.top+pinch.rect.height/2);
       pinch.active=true;
+      resetHeroTilt();
       pinch.startDistance=Math.max(
         Math.hypot(second.x-first.x,second.y-first.y),
         1
@@ -5105,7 +5115,7 @@ hexReady(function(){
       if(interactionLocked||characterFocus.returning){return;}
 
       if(!characterFocus.maskVisible){cancelCharacterFocus(true);}
-      beginExplore();
+      // A tilt gesture keeps the hero copy visible; zoom still enters explore mode.
       /* DevToolsのドッキングなどでSP幅でも、マウスクリックは受け付ける。 */
       if(event.pointerType==="mouse"){
         mouseTap.pointerId=event.pointerId;
@@ -5143,8 +5153,6 @@ hexReady(function(){
     function onPointerMove(event){
       var dx;
       var dy;
-      var now;
-      var elapsed;
 
       if(characterFocus.maskVisible&&isSp()){return;}
       if(event.pointerType==="mouse"&&event.pointerId===mouseTap.pointerId&&
@@ -5185,17 +5193,13 @@ hexReady(function(){
       if(event.pointerId!==dragStart.pointerId){return;}
       dx=event.clientX-dragStart.x;
       dy=event.clientY-dragStart.y;
-      state.x=dragStart.cameraX-dx/Math.max(metrics.scale,.001);
-      state.y=dragStart.cameraY+dy/Math.max(metrics.scale,.001);
-      setCamera();
-
-      now=performance.now();
-      elapsed=Math.max(now-dragStart.lastTime,8);
-      state.vx=-(event.clientX-dragStart.lastX)/Math.max(metrics.scale,.001)*(16/elapsed);
-      state.vy=(event.clientY-dragStart.lastY)/Math.max(metrics.scale,.001)*(16/elapsed);
-      dragStart.lastX=event.clientX;
-      dragStart.lastY=event.clientY;
-      dragStart.lastTime=now;
+      // Half a viewport of drag reaches the limit, independently on each axis.
+      var tiltX=clamp(-dy/Math.max(metrics.height/2,1),-1,1)*10;
+      var tiltY=clamp(dx/Math.max(metrics.width/2,1),-1,1)*10;
+      webglStage.style.setProperty('--hex-hero-tilt-x',tiltX+'deg');
+      webglStage.style.setProperty('--hex-hero-tilt-y',tiltY+'deg');
+      state.vx=0;
+      state.vy=0;
 
       event.preventDefault();
     }
@@ -5243,6 +5247,7 @@ hexReady(function(){
         webglStage.classList.remove("is-dragging");
       }
 
+      if(!dragging){resetHeroTilt();}
 
       if(event.pointerType==="mouse"&&event.pointerId===mouseTap.pointerId){
         var clicked=event.type==="pointerup"&&!mouseTap.moved&&
