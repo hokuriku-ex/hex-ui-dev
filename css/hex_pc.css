@@ -4104,7 +4104,7 @@ body,
   font-size:clamp(38px,4.5vw,68px)!important;
   font-weight:400!important;
   line-height:1.65!important;
-  letter-spacing:.08em!important;
+  letter-spacing:-.1em!important;
 
   -webkit-text-stroke:.075em #f7f1e1;
   paint-order:stroke fill;
@@ -4120,7 +4120,7 @@ body,
   font-size:clamp(14px,1.15vw,18px)!important;
   font-weight:400!important;
   line-height:1.8!important;
-  letter-spacing:.08em!important;
+  letter-spacing:.1em!important;
 
   -webkit-text-stroke:.12em #f7f1e1;
   paint-order:stroke fill;
@@ -4230,7 +4230,7 @@ body,
   font-size:clamp(42px,6vw,92px);
   font-weight:400;
   line-height:1.4;
-  letter-spacing:.04em;
+  letter-spacing:-.1em;
   color:#f7d04f!important;
   -webkit-text-stroke:.075em #f7f1e1;
   paint-order:stroke fill;
@@ -11522,7 +11522,7 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
 .hex-opening-intro-catch .hex-opening-intro-main{
   font-family:var(--hex-font-pop-en)!important;
   font-size:clamp(32px,6vw,7.2rem)!important;
-  font-weight:400!important;line-height:1.4!important;letter-spacing:.04em!important;
+  font-weight:400!important;line-height:1.4!important;letter-spacing:-.1em!important;
   color:#f7d04f!important;-webkit-text-stroke:.075em #f7f1e1!important;text-shadow:none!important;
 }
 .hex-opening-intro-catch .hex-opening-intro-sub{
@@ -11557,7 +11557,7 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
 .hex-opening-slide-catch .hex-opening-slide-title{
   font-family:var(--hex-font-pop-en)!important;
   font-size:clamp(32px,6vw,7.2rem)!important;
-  font-weight:400!important;line-height:1.4!important;letter-spacing:.04em!important;
+  font-weight:400!important;line-height:1.4!important;letter-spacing:-.1em!important;
   color:#f7d04f!important;-webkit-text-stroke:.075em #f7f1e1!important;
   paint-order:stroke fill;
   text-shadow:none!important;
