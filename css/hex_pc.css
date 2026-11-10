@@ -1497,6 +1497,7 @@ div.NNAttached{
   letter-spacing:.15em;
   transform:none;
   transition:color .3s ease;
+  -webkit-text-stroke:1px currentColor!important;
 }
 /* タイトル下の下向きアイコン */
 .hex-anchor-nav:where(:not(.hex-home-anchor-nav)):not(.is-fixed)
