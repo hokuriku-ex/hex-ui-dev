@@ -9437,7 +9437,10 @@ hexReady(function(){
           catchCopy.appendChild(subtitle);
         }
         slide.appendChild(catchCopy);
-        if(item.title&&window.hexRegisterMainTitle)window.hexRegisterMainTitle(title);
+        if(item.title){
+          prepareOpeningIntroCharRoll(title);
+          if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(title);
+        }
       }
 
       stage.appendChild(slide);
@@ -9510,7 +9513,7 @@ hexReady(function(){
       main._hexOpeningRollWaiting=true;
       document.addEventListener('hex:catch-roll-ready',function(){
         prepareOpeningIntroCharRoll(main);
-        var stage=main.closest('.hex-opening-intro-stage')||main.closest('.hex-opening-message-stage');
+        var stage=main.closest('.hex-opening-intro-stage,.hex-opening-message-stage,.hex-opening-slide');
         if(main._hexOpeningSharedRoll&&stage&&stage.classList.contains('is-v2-entered')&&!isReducedMotion()){
           main._hexOpeningSharedRoll.play();
         }
@@ -10296,8 +10299,8 @@ hexReady(function(){
       }
       scene.classList.remove("is-v2-loader-image-ready");
 
-      if(scene===introStage||scene===messageStage){
-        introMain=scene.querySelector(".hex-opening-intro-main");
+      if(scene===introStage||scene===messageStage||scene.parentElement===slideStage){
+        introMain=scene.querySelector(".hex-opening-intro-main,.hex-opening-slide-title");
         if(introMain){
           prepareOpeningIntroCharRoll(introMain);
           if(introMain._hexOpeningSharedRoll){
@@ -14844,7 +14847,7 @@ hexLoad(function(){
     var chars=[];
     var tween=null;
     var subtitle=main&&main.parentElement
-      ?main.parentElement.querySelector('.hex-opening-sub')
+      ?main.parentElement.querySelector('.hex-opening-sub,.hex-opening-slide-subtitle')
       :null;
 
     if(!main||main.dataset.hexCatchRollReady==='1'){
@@ -14858,7 +14861,8 @@ hexLoad(function(){
     }
 
     var isHero=!!main.closest('.hex-hero-catch');
-    var useLetterPop=isHero||isWelcome;
+    var isOpening=!!main.closest('.hex-opening-intro-stage,.hex-opening-message-stage,.hex-opening-slide');
+    var useLetterPop=isHero||isWelcome||isOpening;
     if(isHero&&
       textValue==='Build Your Everyday.'){
       spBreakIndex='Build Your'.length;
@@ -14935,7 +14939,7 @@ hexLoad(function(){
       if(useLetterPop){
         var letters=chars.filter(function(char){return char.textContent.trim()!=='';});
         /* 開幕から切り替わった後のヒーロー表示時間内に、末尾まで再生する。 */
-        var stagger=isHero?Math.min(.15,1.5/Math.max(1,letters.length-1)):.15;
+        var stagger=isHero||isOpening?Math.min(.15,1.5/Math.max(1,letters.length-1)):.15;
         if(isWelcome)main.classList.add('is-welcome-title-playing');
         tween=playTitleLetterPop(letters,stagger,function(){
           tween=null;

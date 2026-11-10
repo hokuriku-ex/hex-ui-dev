@@ -4099,45 +4099,34 @@ body,
 .hex-opening-intro-main{
   display:block;
   margin:0!important;
-  color:#fafafa!important;
+  color:#f7d04f!important;
   font-family:var(--hex-font-pop-en);
   font-size:clamp(38px,4.5vw,68px)!important;
   font-weight:400!important;
   line-height:1.65!important;
   letter-spacing:.08em!important;
 
-  -webkit-text-stroke:2px var(--hex-opening-navy);
+  -webkit-text-stroke:.075em #f7f1e1;
   paint-order:stroke fill;
 
-  text-shadow:
-    1px 1px 0 var(--hex-opening-navy),
-    2px 2px 0 var(--hex-opening-navy),
-    3px 3px 0 var(--hex-opening-navy),
-    4px 4px 0 var(--hex-opening-navy),
-    5px 5px 0 var(--hex-opening-navy),
-    6px 6px 0 var(--hex-opening-navy),
-    7px 7px 0 var(--hex-opening-navy),
-    8px 8px 0 var(--hex-opening-navy);
+  text-shadow:none;
 }
 
 /* サブキャッチ */
 .hex-opening-intro-sub{
   display:block;
   margin-top:20px;
-  color:#fafafa!important;
+  color:#265ab0!important;
   font-size:clamp(14px,1.15vw,18px)!important;
   font-weight:400!important;
   line-height:1.8!important;
   letter-spacing:.08em!important;
 
-  -webkit-text-stroke:1px var(--hex-opening-navy);
+  -webkit-text-stroke:.12em #f7f1e1;
   paint-order:stroke fill;
 
-  text-shadow:
-    1px 1px 0 var(--hex-opening-navy),
-    2px 2px 0 var(--hex-opening-navy),
-    3px 3px 0 var(--hex-opening-navy),
-    4px 4px 0 var(--hex-opening-navy);
+  text-shadow:none;
+  filter:drop-shadow(.07em .07em 0 #000);
 }
 
 /* =======================================
@@ -4242,18 +4231,10 @@ body,
   font-weight:400;
   line-height:1.4;
   letter-spacing:.04em;
-  color:#fafafa!important;
-  -webkit-text-stroke:2px #265ab0;
+  color:#f7d04f!important;
+  -webkit-text-stroke:.075em #f7f1e1;
   paint-order:stroke fill;
-  text-shadow:
-    1px 1px 0 #265ab0,
-    2px 2px 0 #265ab0,
-    3px 3px 0 #265ab0,
-    4px 4px 0 #265ab0,
-    5px 5px 0 #265ab0,
-    6px 6px 0 #265ab0,
-    7px 7px 0 #265ab0,
-    8px 8px 0 #265ab0;
+  text-shadow:none;
   opacity:0;
   transform:translateY(18px);
 }
@@ -5247,14 +5228,6 @@ html body
   text-align:center;
   box-sizing:border-box;
 }
-@font-face{
-  font-family:HEXHeroCraftMincho;
-  src:url('../fonts/craftmincho.otf') format('opentype');
-  font-weight:400;
-  font-style:normal;
-  font-display:swap;
-}
-
 .hex-handoff-copy .hex-opening-main,
 .hex-handoff-copy .hex-opening-sub{
   display:block;
@@ -5266,18 +5239,10 @@ html body
   font-weight:700!important;
   line-height:1.4;
   letter-spacing:-.1em;
-  color:#fafafa!important;
-  -webkit-text-stroke:2px #265ab0;
+  color:#f7d04f!important;
+  -webkit-text-stroke:.075em #f7f1e1;
   paint-order:stroke fill;
-  text-shadow:
-    1px 1px 0 #265ab0,
-    2px 2px 0 #265ab0,
-    3px 3px 0 #265ab0,
-    4px 4px 0 #265ab0,
-    5px 5px 0 #265ab0,
-    6px 6px 0 #265ab0,
-    7px 7px 0 #265ab0,
-    8px 8px 0 #265ab0;
+  text-shadow:none;
 }
 .hex-handoff-copy .hex-opening-sub{
   margin-top:14px;
@@ -5286,34 +5251,22 @@ html body
   font-weight:400!important;
   line-height:1.7;
   letter-spacing:.1em;
-  color:#f7d04f!important;
-  -webkit-text-stroke:4px #fff;
+  color:#265ab0!important;
+  -webkit-text-stroke:.12em #f7f1e1;
   paint-order:stroke fill;
   text-shadow:none;
 }
 
-/* ヒーロー専用の袋文字。共通見出し・WELCOMEには適用しない。 */
-.hex-hero-catch .hex-handoff-copy :is(.hex-opening-main,.hex-opening-sub){
-  font-family:HEXHeroCraftMincho,serif!important;
-  font-weight:400!important;
-  font-style:normal!important;
-  -webkit-text-stroke:.075em #f7f1e1;
-  paint-order:stroke fill;
-  text-shadow:none;
-  overflow:visible;
-}
-.hex-hero-catch .hex-handoff-copy .hex-opening-main{
-  color:#f7d04f!important;
-  letter-spacing:.01em;
-}
+/* ヒーローのサブの影。WELCOME・人物紹介の共有コピーには追加しない。 */
 .hex-hero-catch .hex-handoff-copy .hex-opening-sub{
-  color:#265ab0!important;
-  -webkit-text-stroke:.12em #f7f1e1;
   filter:drop-shadow(.07em .07em 0 #000);
 }
-/* 文字分割前と分割後の双方で影を表示し、ポップ中も文字に追従する。 */
+/* 袋文字の黒い影は各文字と一緒にポップする。 */
 .hex-hero-catch .hex-handoff-copy .hex-opening-main:not(.has-hex-catch-roll),
-.hex-hero-catch .hex-handoff-copy .hex-opening-main > .hex-catch-roll-char{
+.hex-hero-catch .hex-handoff-copy .hex-opening-main > .hex-catch-roll-char,
+.hex-opening-intro-main:not(.has-hex-catch-roll):not(.has-hex-opening-char-roll),
+.hex-opening-slide-title:not(.has-hex-catch-roll):not(.has-hex-opening-char-roll),
+:is(.hex-opening-intro-main,.hex-opening-slide-title) > :is(.hex-catch-roll-char,.hex-opening-intro-char){
   filter:drop-shadow(.055em .055em 0 #000);
 }
 
@@ -9389,8 +9342,8 @@ html.hex-opening-finishing
 .hex-opening-intro-char{
   display:inline-block;
   opacity:0;
-  transform:translateY(100%) rotate(45deg);
-  transform-origin:50% 100%;
+  transform:scale(0);
+  transform-origin:50% 50%;
   backface-visibility:hidden;
   will-change:transform,opacity;
   transition:
@@ -9400,16 +9353,24 @@ html.hex-opening-finishing
     calc(var(--hex-opening-char-index,0) * .0583333333s);
 }
 
-.hex-opening-intro-main.is-char-roll-played
+:is(.hex-opening-intro-main,.hex-opening-slide-title).is-char-roll-played
 .hex-opening-intro-char{
   opacity:1;
-  transform:translateY(0) rotate(0deg);
+  transform:scale(1);
+  animation:hex-opening-title-letter-pop .42s ease both;
+  animation-delay:calc(var(--hex-opening-char-index,0) * .0583333333s);
   transition-delay:
     calc(var(--hex-opening-char-index,0) * .0583333333s);
 }
 
+@keyframes hex-opening-title-letter-pop{
+  0%{opacity:0;transform:scale(0);}
+  48%{opacity:1;transform:scale(1.25);}
+  100%{opacity:1;transform:scale(1);}
+}
 @media (prefers-reduced-motion:reduce){
   .hex-opening-intro-char{
+    animation:none!important;
     opacity:1;
     transform:none;
     transition:none;
@@ -11561,19 +11522,20 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   font-family:var(--hex-font-pop-en)!important;
   font-size:clamp(32px,6vw,7.2rem)!important;
   font-weight:400!important;line-height:1.4!important;letter-spacing:.04em!important;
-  color:#265ab0!important;-webkit-text-stroke:0!important;text-shadow:none!important;
+  color:#f7d04f!important;-webkit-text-stroke:.075em #f7f1e1!important;text-shadow:none!important;
 }
 .hex-opening-intro-catch .hex-opening-intro-sub{
   margin-top:0!important;font-family:var(--hex-font-pop-ja)!important;
   font-size:clamp(14px,1.15vw,18px)!important;
   font-weight:700!important;line-height:1.7!important;letter-spacing:.1em!important;
-  color:#f7d04f!important;-webkit-text-stroke:0!important;text-shadow:none!important;
+  color:#265ab0!important;-webkit-text-stroke:.12em #f7f1e1!important;text-shadow:none!important;
+  paint-order:stroke fill;filter:drop-shadow(.07em .07em 0 #000);
 }
 /* 共通GSAP演出の準備がまだの場合だけ使用する代替演出。 */
-:is(.hex-opening-intro-stage,.hex-opening-message-stage) .hex-opening-intro-sub:not(.has-hex-sub-pop){
+:is(.hex-opening-intro-stage,.hex-opening-message-stage,.hex-opening-slide) :is(.hex-opening-intro-sub,.hex-opening-slide-subtitle):not(.has-hex-sub-pop){
   opacity:0;transform:scale(.8);transform-origin:50% 100%;
 }
-:is(.hex-opening-intro-stage,.hex-opening-message-stage).is-v2-entered .hex-opening-intro-sub:not(.has-hex-sub-pop){
+:is(.hex-opening-intro-stage,.hex-opening-message-stage,.hex-opening-slide).is-v2-entered :is(.hex-opening-intro-sub,.hex-opening-slide-subtitle):not(.has-hex-sub-pop){
   animation:hex-opening-intro-sub-pop .4s cubic-bezier(.34,1.56,.64,1) var(--hex-opening-intro-sub-delay,.775s) both;
 }
 .hex-opening-intro-catch .hex-opening-intro-char{
@@ -11589,26 +11551,27 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
   }
 }
 
-/* 開幕1〜5番：ヒーローと同じ縁取り。6番の配色・演出は変更しない。 */
-.hex-opening-intro-stage .hex-opening-intro-catch .hex-opening-intro-main,
+/* 開幕の全タイトルをヒーローと同じ影付き袋文字に揃える。 */
+:is(.hex-opening-intro-stage,.hex-opening-message-stage) .hex-opening-intro-catch .hex-opening-intro-main,
 .hex-opening-slide-catch .hex-opening-slide-title{
   font-family:var(--hex-font-pop-en)!important;
   font-size:clamp(32px,6vw,7.2rem)!important;
   font-weight:400!important;line-height:1.4!important;letter-spacing:.04em!important;
-  color:#fafafa!important;-webkit-text-stroke:2px #265ab0!important;
+  color:#f7d04f!important;-webkit-text-stroke:.075em #f7f1e1!important;
   paint-order:stroke fill;
-  text-shadow:1px 1px 0 #265ab0,2px 2px 0 #265ab0,3px 3px 0 #265ab0,4px 4px 0 #265ab0,5px 5px 0 #265ab0,6px 6px 0 #265ab0,7px 7px 0 #265ab0,8px 8px 0 #265ab0!important;
+  text-shadow:none!important;
 }
-.hex-opening-intro-stage .hex-opening-intro-catch .hex-opening-intro-sub,
+:is(.hex-opening-intro-stage,.hex-opening-message-stage) .hex-opening-intro-catch .hex-opening-intro-sub,
 .hex-opening-slide-catch .hex-opening-slide-subtitle{
   display:block;margin:14px 0 0!important;
   font-family:var(--hex-font-pop-ja)!important;
   font-size:clamp(14px,1.15vw,18px)!important;
   font-weight:700!important;line-height:1.7!important;letter-spacing:.1em!important;
-  color:#f7d04f!important;-webkit-text-stroke:4px #fafafa!important;
+  color:#265ab0!important;-webkit-text-stroke:.12em #f7f1e1!important;
   paint-order:stroke fill;text-shadow:none!important;
+  filter:drop-shadow(.07em .07em 0 #000);
 }
-/* 1〜4番のスライドは左上で、メインとサブを同時にフェード表示。 */
+/* スライドの左上配置は維持し、文字のポップ開始前から表示する。 */
 .hex-opening-slide-catch{
   position:absolute;z-index:3;
   left:clamp(24px,6vw,96px);top:clamp(48px,10vh,120px);
@@ -11630,7 +11593,7 @@ html body .hex-bg-range .hex-banner-button > .hex-btn-main{
 }
 .hex-opening.is-curtain-sequence .is-v2-entered .hex-opening-slide-catch{
   opacity:1;transform:none!important;
-  transition:opacity .72s ease .56s!important;
+  transition:none!important;
 }
 .hex-opening.is-scroll-driven .hex-opening-slide-catch{
   opacity:1;transform:none;transition:none;
