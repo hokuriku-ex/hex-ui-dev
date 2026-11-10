@@ -1597,10 +1597,10 @@ a.hex-anchor-nav-link{
   font-family:var(--hex-font-hand)!important;
   font-size:12px;
   font-weight:400;
-  font-style:italic;
   line-height:1;
   letter-spacing:.15em;
   transform:none;
+  -webkit-text-stroke:.5px currentColor!important;
 }
 /* 固定表示：項目間のみ縦線を表示 */
 .hex-anchor-nav.is-fixed
@@ -11849,8 +11849,9 @@ html.hex-character-focus-active .hex-home-anchor-panel.is-hero-anchor,
   content:"SECTION." counter(hex-anchor-number, decimal-leading-zero);
   position:static;display:block;color:#f7d04f;
   font-family:var(--hex-font-italic)!important;font-size:12px;
-  font-weight:400;font-style:italic;line-height:1;letter-spacing:.12em;
+  font-weight:400;line-height:1;letter-spacing:.15em;
   transform:none;transition:color .3s ease;
+  -webkit-text-stroke:.5px currentColor!important;
 }
 /* タイトル下の下向きアイコン */
 .hex-home-anchor-nav:not(.is-fixed)
