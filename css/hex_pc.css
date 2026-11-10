@@ -1485,7 +1485,7 @@ div.NNAttached{
 /* SECTION.01から自動採番 */
 .hex-anchor-nav:where(:not(.hex-home-anchor-nav)):not(.is-fixed)
 .hex-anchor-nav-link::before{
-  content:"SECTION." counter(hex-anchor-number, decimal-leading-zero);
+  content:"Section." counter(hex-anchor-number, decimal-leading-zero);
   position:static;
   display:block;
   color:#f7d04f;
@@ -11846,7 +11846,7 @@ html.hex-character-focus-active .hex-home-anchor-panel.is-hero-anchor,
 /* 下層ページと同じSECTION番号。 */
 .hex-home-anchor-nav:not(.is-fixed)
 .hex-anchor-nav-link::before{
-  content:"SECTION." counter(hex-anchor-number, decimal-leading-zero);
+  content:"Section." counter(hex-anchor-number, decimal-leading-zero);
   position:static;display:block;color:#f7d04f;
   font-family:var(--hex-font-hand)!important;font-size:10px;
   font-weight:400;line-height:1;letter-spacing:.15em;
