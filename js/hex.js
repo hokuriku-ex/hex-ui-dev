@@ -4964,8 +4964,6 @@ hexReady(function(){
       dragStart.lastTime=performance.now();
       dragStart.cameraX=state.x;
       dragStart.cameraY=state.y;
-      dragStart.tiltX=parseFloat(webglStage.style.getPropertyValue('--hex-hero-tilt-x'))||0;
-      dragStart.tiltY=parseFloat(webglStage.style.getPropertyValue('--hex-hero-tilt-y'))||0;
       state.vx=0;
       state.vy=0;
       webglStage.classList.add("is-dragging");
@@ -5209,9 +5207,9 @@ hexReady(function(){
       dragStart.lastY=event.clientY;
       dragStart.lastTime=now;
 
-      // Half a viewport of drag reaches the limit, independently on each axis.
-      var tiltX=clamp(dragStart.tiltX-dy/Math.max(metrics.height/2,1)*10,-10,10);
-      var tiltY=clamp(dragStart.tiltY+dx/Math.max(metrics.width/2,1)*10,-10,10);
+      // Match tilt to the clamped pan position: center is zero, each edge is 10deg.
+      var tiltX=metrics.maxY>0?clamp(-state.y/metrics.maxY,-1,1)*10:0;
+      var tiltY=metrics.maxX>0?clamp(-state.x/metrics.maxX,-1,1)*10:0;
       webglStage.style.setProperty('--hex-hero-tilt-x',tiltX+'deg');
       webglStage.style.setProperty('--hex-hero-tilt-y',tiltY+'deg');
 
