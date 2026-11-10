@@ -5259,6 +5259,7 @@ html body
 
 /* ヒーローのサブの影。WELCOME・人物紹介の共有コピーには追加しない。 */
 .hex-hero-catch .hex-handoff-copy .hex-opening-sub{
+  font-size:clamp(18px,1.8vw,26px);
   filter:drop-shadow(.07em .07em 0 #000);
 }
 /* 袋文字の黒い影は各文字と一緒にポップする。 */
