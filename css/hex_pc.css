@@ -1492,12 +1492,11 @@ div.NNAttached{
   font-family:var(--hex-font-hand)!important;
   font-size:12px;
   font-weight:400;
-  font-style:italic;
   line-height:1;
   letter-spacing:.15em;
   transform:none;
   transition:color .3s ease;
-  -webkit-text-stroke:1px currentColor!important;
+  -webkit-text-stroke:.5px currentColor!important;
 }
 /* タイトル下の下向きアイコン */
 .hex-anchor-nav:where(:not(.hex-home-anchor-nav)):not(.is-fixed)
