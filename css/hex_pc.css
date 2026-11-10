@@ -1422,8 +1422,7 @@ div.NNAttached{
   min-height:0!important;
   margin:0!important;
   color:#265ab0!important;
-  font-family:var(--hex-font-hand)!important;
-  font-size:20px!important;
+  font-size:16px!important;
   font-weight:500!important;
   letter-spacing:normal!important;
   text-align:center!important;
@@ -1435,7 +1434,6 @@ div.NNAttached{
   transition:
     color .3s ease,
     border-color .3s ease;
-  -webkit-text-stroke:1px currentColor!important;
   counter-increment:hex-anchor-number;
 }
 /* 初期表示：SECTION番号／タイトル／下向きアイコン */
