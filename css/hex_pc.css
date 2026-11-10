@@ -9351,7 +9351,7 @@ html.hex-opening-finishing
     opacity .5s cubic-bezier(.215,.61,.355,1),
     transform .5s cubic-bezier(.215,.61,.355,1);
   transition-delay:
-    calc(var(--hex-opening-char-index,0) * .0583333333s);
+    calc(var(--hex-opening-char-index,0) * .1s);
 }
 
 :is(.hex-opening-intro-main,.hex-opening-slide-title).is-char-roll-played
@@ -9359,9 +9359,9 @@ html.hex-opening-finishing
   opacity:1;
   transform:scale(1);
   animation:hex-opening-title-letter-pop .42s ease both;
-  animation-delay:calc(var(--hex-opening-char-index,0) * .0583333333s);
+  animation-delay:calc(var(--hex-opening-char-index,0) * .1s);
   transition-delay:
-    calc(var(--hex-opening-char-index,0) * .0583333333s);
+    calc(var(--hex-opening-char-index,0) * .1s);
 }
 
 @keyframes hex-opening-title-letter-pop{

@@ -14823,7 +14823,7 @@ hexLoad(function(){
     });
   }
 
-  function playTitleLetterPop(chars,stagger=.15,onComplete){
+  function playTitleLetterPop(chars,stagger=.1,onComplete){
     var gsap=window.gsap;
     return gsap.to(chars,{
       keyframes:[
@@ -14938,8 +14938,8 @@ hexLoad(function(){
       var subtitleDelay=(.5+(chars.length-1)*(.07*5/6))/2;
       if(useLetterPop){
         var letters=chars.filter(function(char){return char.textContent.trim()!=='';});
-        /* 開幕から切り替わった後のヒーロー表示時間内に、末尾まで再生する。 */
-        var stagger=isHero||isOpening?Math.min(.15,1.5/Math.max(1,letters.length-1)):.15;
+        /* 全タイトルの文字ポップは0.1秒間隔に統一する。 */
+        var stagger=.1;
         if(isWelcome)main.classList.add('is-welcome-title-playing');
         tween=playTitleLetterPop(letters,stagger,function(){
           tween=null;
