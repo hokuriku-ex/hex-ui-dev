@@ -5271,7 +5271,7 @@ html body
   filter:drop-shadow(.055em .055em 0 #000);
 }
 
-/* ウェルカム側コピー */
+/* ウェルカム側コピー  */
 .hex-opening-copy-source.hex-welcome-copy{
   display:block!important;
 }
