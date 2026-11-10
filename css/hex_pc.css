@@ -181,28 +181,6 @@ html{
   backface-visibility:hidden;
   will-change:transform,opacity;
 }
-.hex-everyday-e-char{
-  position:relative;
-  width:.709em; /* Merienda の字送り .669em ＋ キャッチの字間 .04em */
-}
-.hex-everyday-e-label{
-  position:absolute;
-  width:1px;
-  height:1px;
-  overflow:hidden;
-  clip-path:inset(50%);
-}
-.hex-everyday-e{
-  display:inline-block;
-  width:.634em;
-  height:.741em;
-  margin-left:.036em;
-  vertical-align:-.025em;
-  overflow:visible;
-  /* 影を重ね、既存の文字と同じ1〜8pxの段差にする。 */
-  filter:drop-shadow(1px 1px 0 #265ab0) drop-shadow(2px 2px 0 #265ab0)
-    drop-shadow(4px 4px 0 #265ab0) drop-shadow(1px 1px 0 #265ab0);
-}
 /* サブ見出しは英字ロール完了時にJSで表示する */
 .hex-opening-sub.has-hex-sub-pop{
   transition:none!important;
@@ -5269,6 +5247,14 @@ html body
   text-align:center;
   box-sizing:border-box;
 }
+@font-face{
+  font-family:HEXHeroCraftMincho;
+  src:url('../fonts/craftmincho.otf') format('opentype');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
 .hex-handoff-copy .hex-opening-main,
 .hex-handoff-copy .hex-opening-sub{
   display:block;
@@ -5304,6 +5290,31 @@ html body
   -webkit-text-stroke:4px #fff;
   paint-order:stroke fill;
   text-shadow:none;
+}
+
+/* ヒーロー専用の袋文字。共通見出し・WELCOMEには適用しない。 */
+.hex-hero-catch .hex-handoff-copy :is(.hex-opening-main,.hex-opening-sub){
+  font-family:HEXHeroCraftMincho,serif!important;
+  font-weight:400!important;
+  font-style:normal!important;
+  -webkit-text-stroke:.075em #f7f1e1;
+  paint-order:stroke fill;
+  text-shadow:none;
+  overflow:visible;
+}
+.hex-hero-catch .hex-handoff-copy .hex-opening-main{
+  color:#f7d04f!important;
+  letter-spacing:.01em;
+}
+.hex-hero-catch .hex-handoff-copy .hex-opening-sub{
+  color:#265ab0!important;
+  -webkit-text-stroke:.12em #f7f1e1;
+  filter:drop-shadow(.07em .07em 0 #000);
+}
+/* 文字分割前と分割後の双方で影を表示し、ポップ中も文字に追従する。 */
+.hex-hero-catch .hex-handoff-copy .hex-opening-main:not(.has-hex-catch-roll),
+.hex-hero-catch .hex-handoff-copy .hex-opening-main > .hex-catch-roll-char{
+  filter:drop-shadow(.055em .055em 0 #000);
 }
 
 /* ウェルカム側コピー */

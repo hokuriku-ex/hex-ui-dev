@@ -26,46 +26,8 @@
   });
 })();
 
-var hexEverydayGlyphId=0;
-
-/* Merienda Black の E を調整し、Oleo Script の大文字の高さに揃えた字形。 */
-function hexCreateEverydayGlyph(main,text){
-  var phrase=text.replace(/\s+/g,' ');
-  var isOpening=main.closest('.hex-opening-intro-stage')&&/^Draw Your Everyday\.?$/.test(phrase);
-  var isHero=main.closest('.hex-hero-catch')&&/^Build Your Everyday\.?$/.test(phrase);
-  if(!isOpening&&!isHero)return null;
-
-  var id='hex-everyday-e-'+(++hexEverydayGlyphId);
-  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.setAttribute('class','hex-everyday-e');
-  svg.setAttribute('viewBox','36 0 634 741');
-  svg.setAttribute('aria-hidden','true');
-  svg.setAttribute('focusable','false');
-  // SVG内の整形用空白を除き、開幕の予備表示から組み直す際も元の文言を保つ。
-  svg.innerHTML=`
-    <defs>
-      <clipPath id="${id}-edge"><polygon points="120,240 152.5,500 720,500 720,240"/></clipPath>
-      <g id="${id}" transform="translate(0 718.2717391) scale(1 -0.880434783)">
-        <path vector-effect="non-scaling-stroke" d="M140 29Q119 49 112.5 73.5Q106 98 106 128Q106 159 111.5 210.5Q117 262 125 326Q133 390 141.5 459Q150 528 155.5 595Q161 662 161 719L350 721Q352 712 352 703Q352 694 352 683Q352 651 345.5 595Q339 539 330 470Q321 401 312 329Q303 257 296.5 191.5Q290 126 290 77Q290 70 290 64Q290 58 290 52Z"/>
-        <path vector-effect="non-scaling-stroke" d="M42 -19Q45 -3 55 23Q65 49 86.5 76Q108 103 145.5 121.5Q183 140 241 140Q301 140 359.5 143.5Q418 147 470 154Q522 161 564 170.5Q606 180 634 191Q623 87 582.5 34Q542 -19 486 -19Q448 -19 379.5 -7.5Q311 4 225 4Q185 4 138.5 -0.5Q92 -5 42 -19Z"/>
-        <path vector-effect="non-scaling-stroke" clip-path="url(#${id}-edge)" d="M95 280Q93 295 90 311.5Q87 328 87 343Q87 383 108 403Q129 423 164 429.5Q199 436 242 436Q261 436 280 435.5Q299 435 318.5 434Q338 433 356 433Q399 433 439 439.5Q479 446 506 466Q510 454 512 441Q514 428 514 416Q514 359 490.5 340Q467 321 429 321Q404 321 381.5 321Q359 321 339 322Q286 322 246.5 319Q207 316 172 307Q137 298 95 280Z"/>
-        <path vector-effect="non-scaling-stroke" d="M175 614Q146 614 128.5 625Q111 636 103.5 661Q96 686 96 729Q96 749 98 767Q100 785 104 798Q162 790 228 785.5Q294 781 360 781Q437 781 514 788.5Q591 796 664 809Q657 736 621.5 693.5Q586 651 519 636Q487 629 436.5 624Q386 619 320 616.5Q254 614 175 614Z"/>
-      </g>
-    </defs>
-    <use href="#${id}" fill="#265ab0" stroke="#265ab0" stroke-width="2" stroke-linejoin="round"/>
-    <use href="#${id}" fill="currentColor"/>`.trim().replace(/>\s+</g,'><');
-  return svg;
-}
-
-function hexSetCatchRollCharacter(span,character,everydayGlyph){
+function hexSetCatchRollCharacter(span,character){
   span.textContent=character===' '?'\u00a0':character;
-  if(character!=='E'||!everydayGlyph)return;
-
-  var label=document.createElement('span');
-  label.className='hex-everyday-e-label';
-  label.textContent=character;
-  span.classList.add('hex-everyday-e-char');
-  span.replaceChildren(label,everydayGlyph);
 }
 
 /* メインタイトル：SPは表示幅、開幕2〜5番は全端末で画面幅50%へ収める。 */
@@ -85,7 +47,6 @@ function hexSetCatchRollCharacter(span,character,everydayGlyph){
       Array.prototype.forEach.call(chars,function(char){
         var copy=document.createElement('span');
         copy.style.cssText='display:inline-block;white-space:pre;padding:0;margin:0;border:0;';
-        if(char.classList.contains('hex-everyday-e-char'))copy.classList.add('hex-everyday-e-char');
         copy.textContent=char.textContent;node.appendChild(copy);
       });
     }else{node.textContent=main.textContent;}
@@ -9571,7 +9532,6 @@ hexReady(function(){
     var mobileBreak=/^What Shall We Draw\?$/i.test(textValue)?'What Shall'.length:
       (/^Draw Your Everyday With$/i.test(textValue)?'Draw Your'.length:-1);
     if(mobileBreak!==-1)main.classList.add('hex-sp-two-line-catch');
-    var everydayGlyph=hexCreateEverydayGlyph(main,textValue);
 
     Array.from(textValue).forEach(function(character,index){
       var span=document.createElement("span");
@@ -9583,7 +9543,7 @@ hexReady(function(){
         "--hex-opening-char-index",
         String(index)
       );
-      hexSetCatchRollCharacter(span,character,everydayGlyph);
+      hexSetCatchRollCharacter(span,character);
       main.appendChild(span);
     });
     if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
@@ -14919,7 +14879,6 @@ hexLoad(function(){
     var subtitlePop=createCatchSubtitlePop(subtitle,isWelcome?function(){
       main.dispatchEvent(new Event('hex:welcome-subtitle-start',{bubbles:true}));
     }:null);
-    var everydayGlyph=hexCreateEverydayGlyph(main,textValue);
 
     Array.from(textValue).forEach(function(character,index){
       var span=document.createElement('span');
@@ -14931,7 +14890,7 @@ hexLoad(function(){
       if(index===spUppercaseIndex){
         span.classList.add('hex-catch-roll-mobile-capitalize');
       }
-      hexSetCatchRollCharacter(span,character,everydayGlyph);
+      hexSetCatchRollCharacter(span,character);
       main.appendChild(span);
       chars.push(span);
     });
