@@ -4964,6 +4964,8 @@ hexReady(function(){
       dragStart.lastTime=performance.now();
       dragStart.cameraX=state.x;
       dragStart.cameraY=state.y;
+      dragStart.tiltX=parseFloat(webglStage.style.getPropertyValue('--hex-hero-tilt-x'))||0;
+      dragStart.tiltY=parseFloat(webglStage.style.getPropertyValue('--hex-hero-tilt-y'))||0;
       state.vx=0;
       state.vy=0;
       webglStage.classList.add("is-dragging");
@@ -5115,7 +5117,7 @@ hexReady(function(){
       if(interactionLocked||characterFocus.returning){return;}
 
       if(!characterFocus.maskVisible){cancelCharacterFocus(true);}
-      // A tilt gesture keeps the hero copy visible; zoom still enters explore mode.
+      beginExplore();
       /* DevToolsのドッキングなどでSP幅でも、マウスクリックは受け付ける。 */
       if(event.pointerType==="mouse"){
         mouseTap.pointerId=event.pointerId;
@@ -5153,6 +5155,8 @@ hexReady(function(){
     function onPointerMove(event){
       var dx;
       var dy;
+      var now;
+      var elapsed;
 
       if(characterFocus.maskVisible&&isSp()){return;}
       if(event.pointerType==="mouse"&&event.pointerId===mouseTap.pointerId&&
@@ -5193,13 +5197,23 @@ hexReady(function(){
       if(event.pointerId!==dragStart.pointerId){return;}
       dx=event.clientX-dragStart.x;
       dy=event.clientY-dragStart.y;
+      state.x=dragStart.cameraX-dx/Math.max(metrics.scale,.001);
+      state.y=dragStart.cameraY+dy/Math.max(metrics.scale,.001);
+      setCamera();
+
+      now=performance.now();
+      elapsed=Math.max(now-dragStart.lastTime,8);
+      state.vx=-(event.clientX-dragStart.lastX)/Math.max(metrics.scale,.001)*(16/elapsed);
+      state.vy=(event.clientY-dragStart.lastY)/Math.max(metrics.scale,.001)*(16/elapsed);
+      dragStart.lastX=event.clientX;
+      dragStart.lastY=event.clientY;
+      dragStart.lastTime=now;
+
       // Half a viewport of drag reaches the limit, independently on each axis.
-      var tiltX=clamp(-dy/Math.max(metrics.height/2,1),-1,1)*10;
-      var tiltY=clamp(dx/Math.max(metrics.width/2,1),-1,1)*10;
+      var tiltX=clamp(dragStart.tiltX-dy/Math.max(metrics.height/2,1)*10,-10,10);
+      var tiltY=clamp(dragStart.tiltY+dx/Math.max(metrics.width/2,1)*10,-10,10);
       webglStage.style.setProperty('--hex-hero-tilt-x',tiltX+'deg');
       webglStage.style.setProperty('--hex-hero-tilt-y',tiltY+'deg');
-      state.vx=0;
-      state.vy=0;
 
       event.preventDefault();
     }
@@ -5247,7 +5261,7 @@ hexReady(function(){
         webglStage.classList.remove("is-dragging");
       }
 
-      if(!dragging){resetHeroTilt();}
+      // Keep the released tilt while the camera continues its usual inertia.
 
       if(event.pointerType==="mouse"&&event.pointerId===mouseTap.pointerId){
         var clicked=event.type==="pointerup"&&!mouseTap.moved&&
