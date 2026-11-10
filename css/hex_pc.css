@@ -9497,7 +9497,7 @@ html.hex-opening-finishing
 .hex-webgl-stage canvas{display:block;width:100%!important;height:100%!important}
 /* Drag tilts images only. The stage remains fixed for stable pointer capture. */
 .hex-webgl-stage canvas{
-  transform:perspective(1200px) rotateX(var(--hex-hero-tilt-x,0deg)) rotateY(var(--hex-hero-tilt-y,0deg));
+  transform:perspective(4000px) rotateX(var(--hex-hero-tilt-x,0deg)) rotateY(var(--hex-hero-tilt-y,0deg));
   transform-origin:50% 50%;
   transition:transform .45s cubic-bezier(.22,.8,.3,1);
 }
