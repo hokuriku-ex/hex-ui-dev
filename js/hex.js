@@ -3258,6 +3258,7 @@ hexReady(function(){
     var sourceImage=null;
     var heroLayerImages=[];
     var heroLayerPopOrder=new Map();
+    var heroLayerStyleCache=new WeakMap();
     var heroLayerPopGroupCount=0;
     var HERO_LAYER_STATIC_SELECTOR=".hex-hero-plinth-image,.hex-hero-bg img,.hex-hero-character--family,"+
       ".hex-hero-house,.hex-hero-house-layer > img";
@@ -3781,6 +3782,7 @@ hexReady(function(){
       interactionLocked=true;
       autoZooming=true;
       heroLayerPop.active=true;
+      heroLayerStyleCache=new WeakMap();
       heroLayerPop.started=null;
       heroLayerPop.elapsed=0;
       heroLayerPop.lastFrame=-1;
@@ -3807,10 +3809,15 @@ hexReady(function(){
           bottomIntroProgress=eased;
           state.zoom=HERO_ZOOM_INTRO_START+
             (HERO_ZOOM_AUTO-HERO_ZOOM_INTRO_START)*eased;
-          updateZoomMetrics();
+          if(HERO_ZOOM_INTRO_START!==HERO_ZOOM_AUTO){updateZoomMetrics();}
           /* 上端合わせから画像中央へ、ズーム完了と同時に移動を終える。 */
           state.y=0;
-          setCamera();
+          if(HERO_ZOOM_INTRO_START!==HERO_ZOOM_AUTO){
+            setCamera();
+          }else{
+            updateBottomIllustrations();
+            updateWelcomeButton();
+          }
 
           if(progress<1){
             autoZoomFrame=window.requestAnimationFrame(frame);
@@ -4263,6 +4270,7 @@ hexReady(function(){
     }
 
     function resizeRenderer(){
+      heroLayerStyleCache=new WeakMap();
       var width;
       var height;
       var imageWidth;
@@ -5339,7 +5347,7 @@ hexReady(function(){
       if(HEX_IS_PRODUCTION||document.hidden||!ready||!textureCanvas||
         !activeHero||!sourceImage||!sourceImage.naturalWidth){return;}
       // Live CSS inspection can wait until the camera animation or drag ends.
-      if(characterFocus.active||autoZooming||dragging||pinch.active||state.vx||state.vy)return;
+      if(heroLayerPop.active||characterFocus.active||autoZooming||dragging||pinch.active||state.vx||state.vy)return;
       if(now-heroDevStyleCheckedAt<150){return;}
       heroDevStyleCheckedAt=now;
       var values=[getComputedStyle(activeHero).getPropertyValue(
@@ -5709,6 +5717,18 @@ hexReady(function(){
       context.restore();
     }
 
+    function getHeroLayerDrawStyle(layer){
+      var cached=heroLayerPop.active&&heroLayerStyleCache.get(layer);
+      if(cached)return cached;
+      var style=getComputedStyle(layer);
+      var values={};
+      ['--hex-hero-base-layer-scale','--hex-sprite-x','--hex-sprite-bottom','--hex-sprite-width'].forEach(function(name){
+        values[name]=style.getPropertyValue(name);
+      });
+      if(heroLayerPop.active)heroLayerStyleCache.set(layer,values);
+      return values;
+    }
+
     function updateTextureSource(image){
       var naturalWidth=image&&image.naturalWidth;
       var naturalHeight=image&&image.naturalHeight;
@@ -5733,7 +5753,7 @@ hexReady(function(){
       if(textureCanvas.height!==canvasHeight)textureCanvas.height=canvasHeight;
       context=textureCanvas.getContext("2d",{alpha:true});
       if(!context){return false;}
-      baseLayerScale=parseFloat(getComputedStyle(activeHero).getPropertyValue("--hex-hero-base-layer-scale"));
+      baseLayerScale=parseFloat(getHeroLayerDrawStyle(activeHero)["--hex-hero-base-layer-scale"]);
       if(!Number.isFinite(baseLayerScale)||baseLayerScale<=0){baseLayerScale=1;}
       baseLayerWidth=textureCanvas.width*baseLayerScale;
       baseLayerHeight=textureCanvas.height*baseLayerScale;
@@ -5755,10 +5775,10 @@ hexReady(function(){
           drawHeroLayer(context,layer,baseLayerX,baseLayerY,baseLayerWidth,baseLayerHeight,index);
           return;
         }
-        style=getComputedStyle(layer);
-        x=parseFloat(style.getPropertyValue("--hex-sprite-x"));
-        bottom=parseFloat(style.getPropertyValue("--hex-sprite-bottom"));
-        width=parseFloat(style.getPropertyValue("--hex-sprite-width"));
+        style=getHeroLayerDrawStyle(layer);
+        x=parseFloat(style["--hex-sprite-x"]);
+        bottom=parseFloat(style["--hex-sprite-bottom"]);
+        width=parseFloat(style["--hex-sprite-width"]);
         if(!Number.isFinite(x)||!Number.isFinite(bottom)||
           !Number.isFinite(width)||width<=0){return;}
         if(layer.classList.contains("hex-hero-character")){
