@@ -5700,8 +5700,7 @@ hexReady(function(){
       context.clearRect(0,0,textureCanvas.width,textureCanvas.height);
       heroCharacterBounds=[];
       heroCharacterHitRect=null;
-      /* 台座は寸法の基準としてのみ使い、画像自体は描画しない。
-         図面以降の合成位置・サイズはそのまま維持する。 */
+      // Draw the plinth first, then the remaining layers at their existing positions.
       heroLayerImages.forEach(function(layer,index){
         var style;
         var x;
@@ -5828,7 +5827,8 @@ hexReady(function(){
       var imageHeight;
 
       activeHero=getActiveHero();
-      sourceImage=activeHero&&activeHero.querySelector(".hex-hero-bg img");
+      sourceImage=activeHero&&(activeHero.querySelector(".hex-hero-plinth-image")||
+        activeHero.querySelector(".hex-hero-bg img"));
       if(!activeHero||!sourceImage){createFallback();return;}
       heroLayerImages=Array.from(activeHero.querySelectorAll(
         ".hex-hero-house-layer img,.hex-hero-exterior-layer img,"+
@@ -5837,6 +5837,9 @@ hexReady(function(){
         ".hex-hero-scene > .hex-hero-sprite,"+
         ".hex-hero-scene > .hex-hero-character"
       ));
+      // The plinth defines the image dimensions and pops before the drawing.
+      heroLayerImages=heroLayerImages.filter(function(layer){return layer!==sourceImage;});
+      heroLayerImages.unshift(sourceImage);
       /* CMSに旧順序のHTMLが残っていても、建物の手前に下草1を合成する。 */
       var houseIndex=heroLayerImages.findIndex(function(layer){
         return layer.matches(".hex-hero-house,.hex-hero-house-layer > img");
