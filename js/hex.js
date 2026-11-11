@@ -3736,7 +3736,7 @@ hexReady(function(){
       spTap.pointerId=null;
       updateZoomMetrics();
       /* 最初の画像表示は高さ中央ではなく画像の上端に揃える。 */
-      state.y=metrics.maxY;
+      state.y=0;
       setCamera();
 
       if(reduced||!renderer||!camera){
@@ -3767,7 +3767,7 @@ hexReady(function(){
             (HERO_ZOOM_AUTO-HERO_ZOOM_INTRO_START)*eased;
           updateZoomMetrics();
           /* 上端合わせから画像中央へ、ズーム完了と同時に移動を終える。 */
-          state.y=metrics.maxY*(1-eased);
+          state.y=0;
           setCamera();
 
           if(progress<1){
@@ -4276,7 +4276,7 @@ hexReady(function(){
       if(ready&&!characterFocus.maskVisible&&previousScale>0){
         state.y*=previousScale/metrics.scale;
       }
-      if(!ready&&!welcomeActive){state.y=metrics.maxY;}
+      if(!ready&&!welcomeActive){state.y=0;}
 
       renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
       renderer.setSize(width,height,false);
@@ -4372,7 +4372,7 @@ hexReady(function(){
         character.style.removeProperty("transform");
       });
       updateZoomMetrics();
-      state.y=metrics.maxY;
+      state.y=0;
       setCamera();
       if(returningFromWelcome){
         /* 戻った時点でキャッチなどの再生済み判定を外す。 */
