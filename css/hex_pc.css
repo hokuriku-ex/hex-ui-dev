@@ -5271,11 +5271,6 @@ html body
   filter:drop-shadow(.055em .055em 0 #000);
 }
 
-/* Static hero title: keep the arch and shadow without per-letter animation layers. */
-.hex-hero-catch .hex-handoff-copy .hex-opening-main > .hex-catch-roll-char{
-  will-change:auto;
-}
-
 /* Temporarily hide the hero anchor nav for performance comparison. */
 .hex-hero-wrap .hex-home-anchor-panel.is-hero-anchor{
   opacity:0!important;
