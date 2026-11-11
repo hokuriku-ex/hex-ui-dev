@@ -11307,166 +11307,34 @@ hexReady(function(){
     }
 
     function createOpeningHeroPreview(){
-      var hero=document.querySelector(".hex-hero-wrap");
-      var activeHero;
-      var sourceImage;
-      var preview;
-      var previewImage;
-      var behindClouds;
-      var frontClouds;
-      var ellipse;
-      var width;
-      var height;
-      var imageWidth;
-      var imageHeight;
-      var scale;
-      var composite;
-
-      if(!hero||opening._hexOpeningHeroPreview){
-        return opening._hexOpeningHeroPreview||null;
-      }
-
-      activeHero=hero.querySelector(".hex-hero");
-
-      if(!activeHero){return null;}
-      sourceImage=activeHero.querySelector(".hex-hero-bg img");
-      if(!sourceImage){return null;}
-
-      preview=document.createElement("div");
-      preview.className=
-        "hex-opening-hero-preview hex-v2-opening-preview is-active";
-      preview.setAttribute("aria-hidden","true");
-      behindClouds=document.createElement("div");
-      behindClouds.className="hex-cloud-layer hex-cloud-layer--behind";
-      frontClouds=document.createElement("div");
-      frontClouds.className="hex-cloud-layer hex-cloud-layer--front";
-      activeHero.querySelectorAll(".hex-cloud").forEach(function(cloud){
-        var cloned=cloud.cloneNode(true);
-        cloned.style.animation="none";
-        if(cloud.classList.contains("hex-cloud--3")||
-          cloud.classList.contains("hex-cloud--6")||
-          cloud.classList.contains("hex-cloud--in-front-of-ellipse")){
-          frontClouds.appendChild(cloned);
-        }else{
-          behindClouds.appendChild(cloned);
-        }
-      });
-      preview.appendChild(behindClouds);
-      ellipse=activeHero.querySelector(".hex-hero-ellipse");
-      if(ellipse){preview.appendChild(ellipse.cloneNode(true));}
-      preview.appendChild(frontClouds);
-      /* 透明の建物画像と背景を同じ上端基準の画像座標で重ねる。 */
-      previewImage=sourceImage.cloneNode(true);
-      previewImage.removeAttribute("id");
-      previewImage.className="hex-opening-hero-preview-image";
-      previewImage.alt="";
-      composite=window.hexHero&&window.hexHero.getCompositePreview&&
-        window.hexHero.getCompositePreview();
-      if(composite){
-        previewImage.src=composite.src;
-        preview.dataset.hexCompositeVersion=String(composite.version);
-      }
-      /* 合成前の代替画像として台座だけが表示されるのも防ぐ。 */
-      if(!composite){previewImage.style.visibility="hidden";}
-      preview.appendChild(previewImage);
-      var bottomArt=activeHero.querySelector(".hex-hero-bottom-illustrations");
-      if(bottomArt){preview.appendChild(bottomArt.cloneNode(true));}
-      var boundaryArt=activeHero.querySelector('.hex-hero-boundary-illustrations');
-      if(boundaryArt){preview.insertBefore(boundaryArt.cloneNode(true),previewImage);}
+      if(opening._hexOpeningHeroPreview)return opening._hexOpeningHeroPreview;
+      var scene=window.hexHero&&window.hexHero.createOpeningIntroScene&&
+        window.hexHero.createOpeningIntroScene();
+      if(!scene)return null;
+      var preview=document.createElement('div');
+      preview.className='hex-opening-hero-preview hex-v2-opening-preview is-active';
+      preview.setAttribute('aria-hidden','true');
+      // Reveal the initial plinth, house and family, then hand over to the live hero.
+      preview.appendChild(scene);
       document.body.appendChild(preview);
-      width=preview.clientWidth||window.innerWidth;
-      height=preview.clientHeight||window.hexViewportHeight();
-      var previewBoundary=preview.querySelector('.hex-hero-boundary-illustrations');
-      if(previewBoundary){previewBoundary.style.setProperty('--hex-boundary-top',(height/2)+'px');}
-      imageWidth=sourceImage.naturalWidth||1672;
-      imageHeight=sourceImage.naturalHeight||941;
-      scale=Math.max(width/imageWidth,height/imageHeight)*
-        (window.matchMedia("(max-width:768px)").matches?1.16:1.1);
-      preview.style.setProperty("--hex-preview-image-width",imageWidth*scale+"px");
-      preview.style.setProperty("--hex-preview-image-height",imageHeight*scale+"px");
-      preview.style.setProperty("--hex-preview-image-transform",
-        "translate3d("+(width-imageWidth*scale)/2+"px,0,0)");
-      if(bottomArt){
-        var previewBottomArt=preview.querySelector(
-          ".hex-hero-bottom-illustrations");
-        var previewArtWidth=imageWidth*(height/imageHeight)*1.1;
-        previewBottomArt.style.width=previewArtWidth+"px";
-        previewBottomArt.style.transform="translate3d("+
-          (width-previewArtWidth)/2+"px,0,0)";
-      }
-      if(ellipse){
-        var previewEllipse=preview.querySelector(".hex-hero-ellipse");
-        var previewLayerScale=parseFloat(getComputedStyle(activeHero).getPropertyValue('--hex-hero-base-layer-scale'))||1;
-        var previewEllipseWidth=Math.max(imageWidth*scale*previewLayerScale,width+4);
-        previewEllipse.style.width=previewEllipseWidth+"px";
-        previewEllipse.style.height=imageHeight*scale*previewLayerScale+"px";
-        previewEllipse.style.transform="translate3d("+(width-previewEllipseWidth)/2+"px,"+
-          (height/2-imageHeight*scale*previewLayerScale*(250.94686585/941))+"px,0)";
-      }
+      scene._hexSyncStaticHero();
       opening._hexOpeningHeroPreview=preview;
       return preview;
     }
 
     function syncOpeningHeroPreview(preview){
-      var hero=document.querySelector(".hex-hero");
-      var liveEllipse=hero&&hero.querySelector(".hex-hero-ellipse");
-      var previewEllipse=preview.querySelector(".hex-hero-ellipse");
-      var composite=window.hexHero&&window.hexHero.getCompositePreview&&
-        window.hexHero.getCompositePreview();
-      if(composite&&preview.dataset.hexCompositeVersion!==String(composite.version)){
-        var previewImage=preview.querySelector(".hex-opening-hero-preview-image");
-        if(previewImage){
-          previewImage.src=composite.src;
-          previewImage.style.removeProperty("visibility");
-        }
-        preview.dataset.hexCompositeVersion=String(composite.version);
-      }
-      if(liveEllipse&&previewEllipse&&liveEllipse.style.width){
-        previewEllipse.style.width=liveEllipse.style.width;
-        previewEllipse.style.height=liveEllipse.style.height;
-        previewEllipse.style.transform=liveEllipse.style.transform;
-        preview.style.setProperty("--hex-preview-image-width",
-          liveEllipse.style.getPropertyValue("--hex-ellipse-source-width")||liveEllipse.style.width);
-        preview.style.setProperty("--hex-preview-image-height",
-          liveEllipse.style.getPropertyValue("--hex-ellipse-source-height")||liveEllipse.style.height);
-        preview.style.setProperty("--hex-preview-image-transform",
-          liveEllipse.style.getPropertyValue("--hex-ellipse-source-transform")||liveEllipse.style.transform);
-      }
-      if(!hero){return;}
-      var liveBoundary=hero.querySelector('.hex-hero-boundary-illustrations');
-      var previewBoundary=preview.querySelector('.hex-hero-boundary-illustrations');
-      if(liveBoundary&&previewBoundary){
-        ['--hex-boundary-top','--hex-boundary-left','--hex-boundary-right','--hex-boundary-width'].forEach(function(name){
-          previewBoundary.style.setProperty(name,liveBoundary.style.getPropertyValue(name));
-        });
-      }
-      var liveBottomArt=hero.querySelector(".hex-hero-bottom-illustrations");
-      var previewBottomArt=preview.querySelector(
-        ".hex-hero-bottom-illustrations");
-      if(liveBottomArt&&previewBottomArt&&liveBottomArt.style.width){
-        previewBottomArt.style.width=liveBottomArt.style.width;
-        previewBottomArt.style.transform=liveBottomArt.style.transform;
-        ["--hex-bottom-baseline","--hex-bottom-screen-left","--hex-bottom-screen-right","--hex-bottom-moss-parallax-x","--hex-bottom-edge-inset","--hex-bottom-moss-edge-inset","--hex-bottom-tree-edge-inset"].forEach(function(name){
-          previewBottomArt.style.setProperty(name,liveBottomArt.style.getPropertyValue(name));
-        });
-      }
-      hero.querySelectorAll(".hex-cloud").forEach(function(cloud){
-        var cloudType=Array.from(cloud.classList).filter(function(name){
+      var hero=document.querySelector('.hex-hero');
+      if(!hero)return;
+      // Keep cloud drift continuous without regenerating a full composite image.
+      hero.querySelectorAll('.hex-cloud').forEach(function(cloud){
+        var kind=Array.from(cloud.classList).find(function(name){
           return /^hex-cloud--[1-6]$/.test(name);
-        })[0];
-        var target=cloudType&&preview.querySelector("."+cloudType);
-        if(target){target.style.transform=getComputedStyle(cloud).transform;}
-      });
-      hero.querySelectorAll(".hex-hero-bottom-img").forEach(function(image){
-        var kind=Array.from(image.classList).filter(function(name){
-          return /^hex-hero-bottom-img--[lr][1-3]$/.test(name);
-        })[0];
-        var target=kind&&preview.querySelector("."+kind);
-        if(!target){return;}
-        target.style.setProperty("--hex-bottom-offset",
-          image.style.getPropertyValue("--hex-bottom-offset"));
-        target.style.setProperty("--hex-bottom-opacity",
-          image.style.getPropertyValue("--hex-bottom-opacity"));
+        });
+        var target=kind&&preview.querySelector('.'+kind);
+        if(target){
+          target.style.animation='none';
+          target.style.transform=getComputedStyle(cloud).transform;
+        }
       });
     }
 
