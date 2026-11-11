@@ -4950,8 +4950,18 @@ hexReady(function(){
     // Tilt only the composited image canvas; clouds, ellipse and text stay fixed.
     function resetHeroTilt(){
       if(!webglStage)return;
+      webglStage.classList.remove('is-coasting');
       webglStage.style.removeProperty('--hex-hero-tilt-x');
       webglStage.style.removeProperty('--hex-hero-tilt-y');
+    }
+
+    function updateHeroTilt(){
+      if(!webglStage)return;
+      // CSS scales the 5deg input to 3deg perspective tilt and 0.5deg roll.
+      var tiltX=metrics.maxY>0?clamp(-state.y/metrics.maxY,-1,1)*5:0;
+      var tiltY=metrics.maxX>0?clamp(state.x/metrics.maxX,-1,1)*5:0;
+      webglStage.style.setProperty('--hex-hero-tilt-x',tiltX+'deg');
+      webglStage.style.setProperty('--hex-hero-tilt-y',tiltY+'deg');
     }
 
     function startDrag(pointerId,x,y){
@@ -5207,11 +5217,7 @@ hexReady(function(){
       dragStart.lastY=event.clientY;
       dragStart.lastTime=now;
 
-      // Match tilt to the clamped pan position: center is zero, each edge is 5deg.
-      var tiltX=metrics.maxY>0?clamp(-state.y/metrics.maxY,-1,1)*5:0;
-      var tiltY=metrics.maxX>0?clamp(state.x/metrics.maxX,-1,1)*5:0;
-      webglStage.style.setProperty('--hex-hero-tilt-x',tiltX+'deg');
-      webglStage.style.setProperty('--hex-hero-tilt-y',tiltY+'deg');
+      updateHeroTilt();
 
       event.preventDefault();
     }
@@ -5259,8 +5265,6 @@ hexReady(function(){
         webglStage.classList.remove("is-dragging");
       }
 
-      // Keep the released tilt while the camera continues its usual inertia.
-
       if(event.pointerType==="mouse"&&event.pointerId===mouseTap.pointerId){
         var clicked=event.type==="pointerup"&&!mouseTap.moved&&
           Math.hypot(event.clientX-mouseTap.x,event.clientY-mouseTap.y)<=
@@ -5275,6 +5279,9 @@ hexReady(function(){
       }
 
       if(tappedCharacter){startCharacterFocus(tappedCharacter);}
+
+      webglStage.classList.toggle('is-coasting',!dragging&&!pinch.active&&
+        !characterFocus.maskVisible&&(state.vx!==0||state.vy!==0));
 
       try{
         if(webglStage.hasPointerCapture(event.pointerId)){
@@ -5582,8 +5589,14 @@ hexReady(function(){
             if(Math.abs(state.vx)<.002){state.vx=0;}
             if(Math.abs(state.vy)<.002){state.vy=0;}
             /* 停止中のカメラ・装飾更新を避け、人物本文の時間進行は維持する。 */
-            if(moving){setCamera();}
-            else if(characterCopyStage){updateCharacterCopy(performance.now());}
+            if(moving){
+              if(webglStage)webglStage.classList.add('is-coasting');
+              setCamera();
+              updateHeroTilt();
+            }else{
+              if(webglStage)webglStage.classList.remove('is-coasting');
+              if(characterCopyStage){updateCharacterCopy(performance.now());}
+            }
           }
         }
         // The scene contains a static texture; CSS clouds and hover effects

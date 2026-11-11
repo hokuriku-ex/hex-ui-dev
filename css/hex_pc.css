@@ -9502,7 +9502,8 @@ html.hex-opening-finishing
   transform-origin:50% 50%;
   transition:transform .45s cubic-bezier(.22,.8,.3,1);
 }
-.hex-webgl-stage.is-dragging canvas{transition:none;will-change:transform;}
+.hex-webgl-stage.is-dragging canvas,
+.hex-webgl-stage.is-coasting canvas{transition:none;will-change:transform;}
 /* Temporarily hide left/right bottom01-04, including cloned preview artwork. */
 .hex-hero-bottom-illustrations,
 .hex-hero-boundary-illustrations{display:none!important;}
