@@ -1001,9 +1001,15 @@ function hexAnchorVisualBottom(element){
   }
   return bottom;
 }
+// Temporary performance isolation: do not initialize the home anchor nav.
+var HEX_HOME_ANCHOR_ENABLED=false;
 function hexInitAnchorNav(){
   var source=document.querySelector('.hex-home-anchor-source')||document.querySelector('.hex-anchor-source');
   if(!source||source._hexAnchorNav)return;
+  if(!HEX_HOME_ANCHOR_ENABLED&&source.classList.contains('hex-home-anchor-source')){
+    if(window.hexPageTransition)window.hexPageTransition.anchorReady=true;
+    return;
+  }
   var anchorStickyEnabled=hexAnchorStickyEnabled(source);
   var homePanel=source.classList.contains('hex-home-anchor-source')?hexPrepareHomeAnchorNav(source):null;
   var text=source.textContent||'';
@@ -3655,7 +3661,7 @@ hexReady(function(){
       welcomeButton.setAttribute("aria-hidden",visible?"false":"true");
     }
 
-    document.addEventListener('hex:hero-title-start',function(){
+    if(HEX_HOME_ANCHOR_ENABLED)document.addEventListener('hex:hero-title-start',function(){
       hero.classList.add('is-subtitle-started');
       updateWelcomeButton();
       var anchor=window.hexHomeAnchorNav;
@@ -3665,7 +3671,7 @@ hexReady(function(){
         });
       }
     });
-    document.addEventListener('hex:hero-subtitle-reset',function(){
+    if(HEX_HOME_ANCHOR_ENABLED)document.addEventListener('hex:hero-subtitle-reset',function(){
       hero.classList.remove('is-subtitle-started');
       updateWelcomeButton();
     });
@@ -3680,7 +3686,7 @@ hexReady(function(){
       catchElement.style.setProperty('--hex-hero-anchor-height',anchor.panel.offsetHeight+'px');
     }
 
-    var heroAnchorSizeObserver=window.ResizeObserver
+    var heroAnchorSizeObserver=HEX_HOME_ANCHOR_ENABLED&&window.ResizeObserver
       ?new ResizeObserver(syncHeroCatchAnchorHeight):null;
     function bindHeroAnchor(){
       var anchor=window.hexHomeAnchorNav;
@@ -3690,11 +3696,11 @@ hexReady(function(){
       syncHeroCatchAnchorHeight();
       updateWelcomeButton();
     }
-    document.addEventListener('hex:home-anchor-ready',bindHeroAnchor);
-    if(!heroAnchorSizeObserver){
+    if(HEX_HOME_ANCHOR_ENABLED)document.addEventListener('hex:home-anchor-ready',bindHeroAnchor);
+    if(HEX_HOME_ANCHOR_ENABLED&&!heroAnchorSizeObserver){
       window.addEventListener('hex:viewport-resize',syncHeroCatchAnchorHeight,{passive:true});
     }
-    bindHeroAnchor();
+    if(HEX_HOME_ANCHOR_ENABLED)bindHeroAnchor();
 
     function updateZoomMetrics(){
       var zoom=clamp(state.zoom,reduced?HERO_ZOOM_MIN:HERO_ZOOM_INTRO_START,HERO_ZOOM_MAX);
