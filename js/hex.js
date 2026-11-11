@@ -3300,6 +3300,13 @@ hexReady(function(){
     var activeHero=null;
     var sourceImage=null;
     var heroLayerImages=[];
+    // Registration rectangles for losslessly trimmed assets (see images/top-hero/layer-crops.json).
+    var HERO_LAYER_CROPS={
+      'drawing.webp':{x:273,y:768,width:2484,height:588,originalWidth:3000,originalHeight:1854},
+      'exterior01.webp':{x:272,y:678,width:2485,height:283,originalWidth:3000,originalHeight:1854},
+      'exterior02.webp':{x:278,y:660,width:2419,height:551,originalWidth:3000,originalHeight:1854},
+      'house.webp':{x:781,y:501,width:1433,height:488,originalWidth:3000,originalHeight:1854}
+    };
     var heroLayerPopOrder=new Map();
     var heroLayerStyleCache=new WeakMap();
     var heroLayerPopGroupCount=0;
@@ -4234,6 +4241,7 @@ hexReady(function(){
     }
 
     function resizeRenderer(){
+      syncHeroCroppedLayerLayout();
       heroLayerStyleCache=new WeakMap();
       var width;
       var height;
@@ -5668,15 +5676,52 @@ hexReady(function(){
       updateTextureSource(sourceImage);
     }
 
+    function getHeroLayerCrop(layer){
+      var name=(layer.currentSrc||layer.src||'').split(/[?#]/)[0].split('/').pop();
+      var crop=HERO_LAYER_CROPS[name];
+      // Accept both cached full-size assets and newly cropped assets during deployment.
+      return crop&&layer.naturalWidth===crop.width&&layer.naturalHeight===crop.height?crop:null;
+    }
+
+    function syncHeroCroppedLayerLayout(){
+      heroLayerImages.forEach(function(layer){
+        var crop=getHeroLayerCrop(layer);
+        if(!crop||!layer.parentElement)return;
+        var box=layer.parentElement;
+        var width=box.clientWidth,height=box.clientHeight;
+        if(!width||!height)return;
+        var scale=Math.max(width/crop.originalWidth,height/crop.originalHeight);
+        var left=(width-crop.originalWidth*scale)/2+crop.x*scale;
+        var top=crop.y*scale;
+        layer.style.position='absolute';
+        layer.style.inset='auto';
+        layer.style.left=left+'px';layer.style.top=top+'px';
+        layer.style.width=crop.width*scale+'px';
+        layer.style.height=crop.height*scale+'px';
+        layer.style.objectFit='fill';
+        layer.style.transformOrigin=(width/2-left)+'px '+(height/2-top)+'px';
+      });
+    }
+
+    function drawHeroLayerImage(context,layer,x,y,width,height){
+      var crop=getHeroLayerCrop(layer);
+      if(crop){
+        context.drawImage(layer,x+width*crop.x/crop.originalWidth,y+height*crop.y/crop.originalHeight,
+          width*crop.width/crop.originalWidth,height*crop.height/crop.originalHeight);
+      }else{
+        context.drawImage(layer,x,y,width,height);
+      }
+    }
+
     function drawHeroLayer(context,layer,x,y,width,height,index){
       if(!heroLayerPop.active||layer.matches(HERO_LAYER_STATIC_SELECTOR)){
-        context.drawImage(layer,x,y,width,height);return;
+        drawHeroLayerImage(context,layer,x,y,width,height);return;
       }
       if(heroLayerPopOrder.has(layer)){index=heroLayerPopOrder.get(layer);}
       var progress=clamp((heroLayerPop.elapsed-heroLayerPopStart(index))/
         heroLayerPopDuration(index),0,1);
       if(progress<=0)return;
-      if(progress>=1){context.drawImage(layer,x,y,width,height);return;}
+      if(progress>=1){drawHeroLayerImage(context,layer,x,y,width,height);return;}
       var peak=.46666667;
       var scale=progress<peak
         ?1.10*(1-Math.pow(1-progress/peak,3))
@@ -5684,7 +5729,7 @@ hexReady(function(){
       context.save();
       context.translate(x+width/2,y+height/2);
       context.scale(scale,scale);
-      context.drawImage(layer,-width/2,-height/2,width,height);
+      drawHeroLayerImage(context,layer,-width/2,-height/2,width,height);
       context.restore();
     }
 
@@ -5932,6 +5977,7 @@ hexReady(function(){
       heroLayerImages.forEach(function(layer){
         layer.addEventListener("load",function(){
           characterAlphaPixels.delete(layer);
+          syncHeroCroppedLayerLayout();
           queueLayerTextureUpdate();
         });
       });
@@ -5949,6 +5995,7 @@ hexReady(function(){
         try{
           imageWidth=sourceImage.naturalWidth||1920;
           imageHeight=sourceImage.naturalHeight||1080;
+          syncHeroCroppedLayerLayout();
           webglStage=document.createElement("div");
           webglStage.className="hex-webgl-stage";
           renderer=new THREE.WebGLRenderer({

@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "alpha_threshold": 0,
+  "layers": {
+    "drawing.webp": {
+      "originalWidth": 3000,
+      "originalHeight": 1854,
+      "x": 273,
+      "y": 768,
+      "width": 2484,
+      "height": 588
+    },
+    "exterior01.webp": {
+      "originalWidth": 3000,
+      "originalHeight": 1854,
+      "x": 272,
+      "y": 678,
+      "width": 2485,
+      "height": 283
+    },
+    "exterior02.webp": {
+      "originalWidth": 3000,
+      "originalHeight": 1854,
+      "x": 278,
+      "y": 660,
+      "width": 2419,
+      "height": 551
+    },
+    "house.webp": {
+      "originalWidth": 3000,
+      "originalHeight": 1854,
+      "x": 781,
+      "y": 501,
+      "width": 1433,
+      "height": 488
+    }
+  }
+}
