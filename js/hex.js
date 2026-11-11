@@ -3405,10 +3405,9 @@ hexReady(function(){
     var clouds=cloudLayers.reduce(function(result,layer){
       return result.concat(Array.from(layer.querySelectorAll(".hex-cloud")));
     },[]);
-    var bottomIllustrations=hero.querySelector(
-      ".hex-hero > .hex-hero-bottom-illustrations");
-    var boundaryIllustrations=hero.querySelector(
-      ".hex-hero > .hex-hero-boundary-illustrations");
+    // bottom01-04 are hidden; skip their load, layout, parallax and snapshot work.
+    var bottomIllustrations=null;
+    var boundaryIllustrations=null;
     var bottomImages=bottomIllustrations
       ?Array.from(bottomIllustrations.querySelectorAll(".hex-hero-bottom-img"))
       :[];
@@ -4086,85 +4085,8 @@ hexReady(function(){
     }
 
     function updateBottomIllustrations(){
-      /* 初回の自動演出だけで表示し、以後のドラッグ・ズーム・復帰では再生しない。 */
-      var progress=reduced||bottomIntroComplete?1:clamp(bottomIntroProgress,0,1);
-      if(progress>=1){bottomIntroComplete=true;}
-      var anchor=window.hexHomeAnchorNav;
-      /* 登場完了後は寸法・CSSを読み直さず、確定した表示値を使う。 */
-      if(progress>=1){
-        if(anchor&&anchor.panel.classList.contains('is-hero-anchor')){
-          if(anchor.panel.style.getPropertyValue('--hex-home-anchor-intro-offset')!=='0px'){
-            anchor.panel.style.setProperty('--hex-home-anchor-intro-offset','0px');
-          }
-          if(anchor.panel.style.getPropertyValue('--hex-home-anchor-intro-opacity')!=='1'){
-            anchor.panel.style.setProperty('--hex-home-anchor-intro-opacity','1');
-          }
-        }
-        bottomImages.forEach(function(image){
-          if(image.style.getPropertyValue('--hex-bottom-offset')!=='0px'){
-            image.style.setProperty('--hex-bottom-offset','0px');
-          }
-          if(image.style.getPropertyValue('--hex-bottom-opacity')!=='1'){
-            image.style.setProperty('--hex-bottom-opacity','1');
-          }
-        });
-        return;
-      }
-      if(anchor&&anchor.panel.classList.contains('is-hero-anchor')){
-        /* 最初のbottom01と同じ開始・終了・せり上がりのカーブを共有する。 */
-        var reference=bottomImages[0]&&getComputedStyle(bottomImages[0]);
-        var navStart=reference?parseFloat(reference.getPropertyValue('--hex-bottom-start')):.09;
-        var navEnd=reference?parseFloat(reference.getPropertyValue('--hex-bottom-end')):.52;
-        var navRise=reference?parseFloat(reference.getPropertyValue('--hex-bottom-rise')):1.03;
-        if(!Number.isFinite(navStart))navStart=.09;
-        if(!Number.isFinite(navEnd)||navEnd<=navStart)navEnd=.52;
-        if(!Number.isFinite(navRise)||navRise<=0)navRise=1.03;
-        var navLocal=clamp((progress-navStart)/(navEnd-navStart),0,1);
-        var navEased=1-Math.pow(1-navLocal,3);
-        var navOffset=((1-navEased)*(anchor.panel.offsetHeight*navRise+24))+'px';
-        var navOpacity=String(clamp(navLocal*4,0,1));
-        if(anchor.panel.style.getPropertyValue('--hex-home-anchor-intro-offset')!==navOffset){
-          anchor.panel.style.setProperty('--hex-home-anchor-intro-offset',navOffset);
-        }
-        if(anchor.panel.style.getPropertyValue('--hex-home-anchor-intro-opacity')!==navOpacity){
-          anchor.panel.style.setProperty('--hex-home-anchor-intro-opacity',navOpacity);
-        }
-      }
-      bottomImages.forEach(function(image){
-        /* 苔山01は初回から表示し、02・03だけ登場演出を続ける。 */
-        if(image.matches('.hex-hero-bottom-img--l1,.hex-hero-bottom-img--r1')){
-          if(image.style.getPropertyValue('--hex-bottom-offset')!=='0px'){
-            image.style.setProperty('--hex-bottom-offset','0px');
-          }
-          if(image.style.getPropertyValue('--hex-bottom-opacity')!=='1'){
-            image.style.setProperty('--hex-bottom-opacity','1');
-          }
-          return;
-        }
-        var style=getComputedStyle(image);
-        var start=parseFloat(style.getPropertyValue("--hex-bottom-start"));
-        var end=parseFloat(style.getPropertyValue("--hex-bottom-end"));
-        var rise=parseFloat(style.getPropertyValue("--hex-bottom-rise"));
-        var height=bottomArtTravel.get(image);
-        if(!Number.isFinite(start)){start=0;}
-        if(!Number.isFinite(end)||end<=start){end=1;}
-        if(!Number.isFinite(rise)||rise<=0){rise=1.05;}
-        if(height===undefined){
-          height=image.offsetHeight;
-          bottomArtTravel.set(image,height);
-        }
-        var local=clamp((progress-start)/(end-start),0,1);
-        /* 下から表示位置まで伸び、行き過ぎずに止まる。 */
-        var eased=1-Math.pow(1-local,3);
-        var offset=Math.round((1-eased)*(height*rise+24)*10)/10+"px";
-        var opacity=String(Math.round(clamp(local*4,0,1)*1000)/1000);
-        if(image.style.getPropertyValue("--hex-bottom-offset")!==offset){
-          image.style.setProperty("--hex-bottom-offset",offset);
-        }
-        if(image.style.getPropertyValue("--hex-bottom-opacity")!==opacity){
-          image.style.setProperty("--hex-bottom-opacity",opacity);
-        }
-      });
+      // Preserve intro readiness only; bottom and old anchor rise animations are disabled.
+      if(reduced||bottomIntroProgress>=1){bottomIntroComplete=true;}
     }
 
     function setCamera(){
