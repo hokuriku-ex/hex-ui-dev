@@ -5987,7 +5987,8 @@ hexReady(function(){
         var zoomReady=!autoZoomPending&&(autoZooming
           ?bottomIntroProgress>=HERO_CATCH_ZOOM_PROGRESS
           :bottomIntroComplete&&!autoZoomTimer);
-        if(renderer&&!reduced&&!zoomReady)return false;
+        // Wait for the last image to finish popping before starting the title.
+        if(renderer&&!reduced&&(!zoomReady||heroLayerPop.active))return false;
         syncHeroCatchAnchorHeight();
         return true;
       },
