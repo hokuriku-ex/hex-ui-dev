@@ -9497,8 +9497,8 @@ html.hex-opening-finishing
 .hex-webgl-stage canvas{display:block;width:100%!important;height:100%!important}
 /* Drag tilts images only. The stage remains fixed for stable pointer capture. */
 .hex-webgl-stage canvas{
-  /* Limit roll to 1deg; keep matching 5deg perspective tilts on both axes. */
-  transform:rotateZ(calc(var(--hex-hero-tilt-y,0deg) * .2)) perspective(1200px) rotateX(var(--hex-hero-tilt-x,0deg)) rotateY(calc(var(--hex-hero-tilt-y,0deg) * -1));
+  /* Scale the 5deg input to 1deg roll and 3deg perspective tilts on both axes. */
+  transform:rotateZ(calc(var(--hex-hero-tilt-y,0deg) * .2)) perspective(1200px) rotateX(calc(var(--hex-hero-tilt-x,0deg) * .6)) rotateY(calc(var(--hex-hero-tilt-y,0deg) * -.6));
   transform-origin:50% 50%;
   transition:transform .45s cubic-bezier(.22,.8,.3,1);
 }
