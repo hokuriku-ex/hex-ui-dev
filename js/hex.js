@@ -3346,6 +3346,7 @@ hexReady(function(){
     var characterCopyBodyComplete=false;
     var spTap={pointerId:null,x:0,y:0,hit:false,character:null};
     var interactionLocked=true;
+    var heroIntroCameraLocked=false;
     var autoZooming=false;
     var autoZoomPending=false;
     var autoZoomPendingDelay=0;
@@ -3735,6 +3736,7 @@ hexReady(function(){
     }
 
     function cancelAutoZoom(unlock){
+      heroIntroCameraLocked=false;
       finishHeroLayerPop();
       cancelCharacterFocus();
       autoZoomRun+=1;
@@ -3781,6 +3783,7 @@ hexReady(function(){
 
       interactionLocked=true;
       autoZooming=true;
+      heroIntroCameraLocked=true;
       heroLayerPop.active=true;
       heroLayerStyleCache=new WeakMap();
       heroLayerPop.started=null;
@@ -3824,7 +3827,7 @@ hexReady(function(){
           }else{
             autoZoomFrame=0;
             autoZooming=false;
-            interactionLocked=false;
+            interactionLocked=heroIntroCameraLocked;
             hero.classList.remove("is-auto-zooming");
             updateWelcomeButton();
           }
@@ -4167,7 +4170,7 @@ hexReady(function(){
     function setCamera(){
       var nextX;
       var nextY;
-      if(!camera){return;}
+      if(!camera||heroIntroCameraLocked){return;}
       heroRenderDirty=true;
       /* 丸表示中は人物を左側の丸の中央へ置くため、通常の探索範囲で制限しない。 */
       nextX=characterFocus.maskVisible?state.x:clamp(state.x,-metrics.maxX,metrics.maxX);
@@ -5627,7 +5630,7 @@ hexReady(function(){
       if(!document.hidden&&heroRenderVisible&&renderer&&camera&&scene){
         advanceHeroLayerPop(performance.now());
         if(!HEX_IS_PRODUCTION){syncHeroDevStyles(performance.now());}
-        if(!dragging&&!pinch.active&&!autoZooming&&!welcomeActive){
+        if(!heroIntroCameraLocked&&!dragging&&!pinch.active&&!autoZooming&&!welcomeActive){
           if(characterFocus.active){
             advanceCharacterFocus(performance.now());
             setCamera();
@@ -5871,6 +5874,7 @@ hexReady(function(){
     }
 
     function createFallback(){
+      heroIntroCameraLocked=false;
       destroyThree();
       activeHero=getActiveHero();
       if(activeHero){activeHero.classList.add("is-v2-fallback");}
@@ -6276,7 +6280,11 @@ hexReady(function(){
     document.addEventListener("hex:hero-display-ready",function(){
       if(autoZoomPending){scheduleAutoZoom(autoZoomPendingDelay);}
     });
-    document.addEventListener("hex:hero-intro-complete",updateWelcomeButton);
+    document.addEventListener("hex:hero-intro-complete",function(){
+      heroIntroCameraLocked=false;
+      if(!autoZooming&&!welcomeActive){interactionLocked=false;}
+      updateWelcomeButton();
+    });
     document.addEventListener("hex:opening-finished",function(){
       hero.classList.add("is-ready");
       setHeroPageLock(true);
@@ -9283,7 +9291,7 @@ hexReady(function(){
     4:1500,
     5:2000,
     6:2000,
-    7:3000
+    7:4000
   };
   function getOpeningSceneDuration(sceneNumber){
     var duration=OPENING_SCENE_DURATIONS_MS[sceneNumber];
