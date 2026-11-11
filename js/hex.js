@@ -3259,8 +3259,8 @@ hexReady(function(){
     var heroLayerImages=[];
     var heroLayerPopOrder=new Map();
     var heroLayerPopGroupCount=0;
+    var HERO_LAYER_STATIC_SELECTOR=".hex-hero-plinth-image,.hex-hero-bg img,.hex-hero-character--family";
     var HERO_LAYER_POP_SELECTORS=[
-      ".hex-hero-plinth-image,.hex-hero-bg img,.hex-hero-character--family",
       ".hex-hero-house,.hex-hero-house-layer > img",
       ".hex-hero-drawing,.hex-hero-character--supervisor",
       ".hex-hero-exterior-image--01,.hex-hero-exterior-image,.hex-hero-exterior-layer > img,"+
@@ -3270,7 +3270,7 @@ hexReady(function(){
         ".hex-hero-character--pruning"
     ];
     var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
-    var HERO_LAYER_POP_DURATIONS=[500,420,350,280,220];
+    var HERO_LAYER_POP_DURATIONS=[420,350,280,220];
     var heroLayerVersion=0;
     var heroTextureUpdateFrame=0;
     var heroLayerPreviewCache=null;
@@ -3781,7 +3781,9 @@ hexReady(function(){
       heroLayerPop.started=null;
       heroLayerPop.elapsed=0;
       heroLayerPop.lastFrame=-1;
-      webglStage.classList.add('is-layer-pop-pending');
+      updateTextureSource(sourceImage);
+      renderer.render(scene,camera);
+      webglStage.classList.remove('is-layer-pop-pending');
       hero.classList.add("is-auto-zooming");
       run=autoZoomRun;
 
@@ -5685,7 +5687,9 @@ hexReady(function(){
     }
 
     function drawHeroLayer(context,layer,x,y,width,height,index){
-      if(!heroLayerPop.active){context.drawImage(layer,x,y,width,height);return;}
+      if(!heroLayerPop.active||layer.matches(HERO_LAYER_STATIC_SELECTOR)){
+        context.drawImage(layer,x,y,width,height);return;
+      }
       if(heroLayerPopOrder.has(layer)){index=heroLayerPopOrder.get(layer);}
       var progress=clamp((heroLayerPop.elapsed-heroLayerPopStart(index))/
         heroLayerPopDuration(index),0,1);
@@ -5915,7 +5919,7 @@ hexReady(function(){
         if(matched)heroLayerPopGroupCount+=1;
       });
       heroLayerImages.forEach(function(layer){
-        if(!heroLayerPopOrder.has(layer)){
+        if(!heroLayerPopOrder.has(layer)&&!layer.matches(HERO_LAYER_STATIC_SELECTOR)){
           heroLayerPopOrder.set(layer,heroLayerPopGroupCount);
           heroLayerPopGroupCount+=1;
         }
@@ -5972,6 +5976,10 @@ hexReady(function(){
           scene=new THREE.Scene();
           camera=new THREE.OrthographicCamera(-1,1,1,-1,.1,10);
           camera.position.z=1;
+          // The first rendered frame contains only the plinth and family.
+          heroLayerPop.active=!reduced;
+          heroLayerPop.started=null;
+          heroLayerPop.elapsed=0;
           if(!updateTextureSource(sourceImage)){
             throw new Error("Hero texture could not be prepared");
           }
@@ -5997,7 +6005,6 @@ hexReady(function(){
             throw new Error("Hero texture rendered as an empty frame");
           }
           activeHero.classList.add("is-v2-active");
-          if(!reduced)webglStage.classList.add('is-layer-pop-pending');
           ready=true;
           hero.classList.add("is-v2-ready");
           setHeroPageLock(true);
