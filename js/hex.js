@@ -3258,23 +3258,19 @@ hexReady(function(){
     var sourceImage=null;
     var heroLayerImages=[];
     var heroLayerPopOrder=new Map();
+    var heroLayerPopGroupCount=0;
     var HERO_LAYER_POP_SELECTORS=[
       ".hex-hero-plinth-image,.hex-hero-bg img",
       ".hex-hero-character--family",
       ".hex-hero-house,.hex-hero-house-layer > img",
       ".hex-hero-drawing",
       ".hex-hero-character--supervisor",
-      ".hex-hero-exterior-image--01",
-      ".hex-hero-exterior-image:not(.hex-hero-exterior-image--01),.hex-hero-exterior-layer > img",
+      ".hex-hero-exterior-image--01,.hex-hero-exterior-image,.hex-hero-exterior-layer > img",
       ".hex-hero-character--aluminum",
       ".hex-hero-character--sakan",
       ".hex-hero-character--block",
-      ".hex-hero-sprite--tree01",
-      ".hex-hero-sprite--tree02",
-      ".hex-hero-sprite--tree03",
-      ".hex-hero-sprite--underplant01",
-      ".hex-hero-sprite--underplant02",
-      ".hex-hero-sprite--underplant03",
+      ".hex-hero-sprite--tree01,.hex-hero-sprite--tree02,.hex-hero-sprite--tree03",
+      ".hex-hero-sprite--underplant01,.hex-hero-sprite--underplant02,.hex-hero-sprite--underplant03",
       ".hex-hero-character--pruning"
     ];
     var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
@@ -5660,7 +5656,7 @@ hexReady(function(){
 
     function advanceHeroLayerPop(now){
       if(!heroLayerPop.active||heroLayerPop.started===null)return;
-      var duration=Math.max(heroLayerImages.length-1,0)*HERO_LAYER_POP_INTERVAL+
+      var duration=Math.max(heroLayerPopGroupCount-1,0)*HERO_LAYER_POP_INTERVAL+
         HERO_LAYER_POP_DURATION;
       heroLayerPop.elapsed=Math.max(0,now-heroLayerPop.started);
       if(heroLayerPop.elapsed>=duration){finishHeroLayerPop();return;}
@@ -5889,15 +5885,22 @@ hexReady(function(){
       }
       // Assign pop timing separately; never sort the compositing array.
       heroLayerPopOrder.clear();
+      heroLayerPopGroupCount=0;
       HERO_LAYER_POP_SELECTORS.forEach(function(selector){
+        var matched=false;
         heroLayerImages.forEach(function(layer){
           if(!heroLayerPopOrder.has(layer)&&layer.matches(selector)){
-            heroLayerPopOrder.set(layer,heroLayerPopOrder.size);
+            heroLayerPopOrder.set(layer,heroLayerPopGroupCount);
+            matched=true;
           }
         });
+        if(matched)heroLayerPopGroupCount+=1;
       });
       heroLayerImages.forEach(function(layer){
-        if(!heroLayerPopOrder.has(layer))heroLayerPopOrder.set(layer,heroLayerPopOrder.size);
+        if(!heroLayerPopOrder.has(layer)){
+          heroLayerPopOrder.set(layer,heroLayerPopGroupCount);
+          heroLayerPopGroupCount+=1;
+        }
       });
       /* 同時に届いた画像は、次の描画フレームで一度だけ合成する。 */
       function queueLayerTextureUpdate(){
