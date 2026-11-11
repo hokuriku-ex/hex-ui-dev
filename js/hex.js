@@ -3259,18 +3259,21 @@ hexReady(function(){
     var heroLayerImages=[];
     var heroLayerPopOrder=new Map();
     var heroLayerPopGroupCount=0;
-    var HERO_LAYER_STATIC_SELECTOR=".hex-hero-plinth-image,.hex-hero-bg img,.hex-hero-character--family";
+    var HERO_LAYER_STATIC_SELECTOR=".hex-hero-plinth-image,.hex-hero-bg img,.hex-hero-character--family,"+
+      ".hex-hero-house,.hex-hero-house-layer > img";
     var HERO_LAYER_POP_SELECTORS=[
-      ".hex-hero-house,.hex-hero-house-layer > img",
-      ".hex-hero-drawing,.hex-hero-character--supervisor",
-      ".hex-hero-exterior-image--01,.hex-hero-exterior-image,.hex-hero-exterior-layer > img,"+
-        ".hex-hero-character--aluminum,.hex-hero-character--sakan,.hex-hero-character--block",
-      ".hex-hero-sprite--tree01,.hex-hero-sprite--tree02,.hex-hero-sprite--tree03,"+
-        ".hex-hero-sprite--underplant01,.hex-hero-sprite--underplant02,.hex-hero-sprite--underplant03,"+
-        ".hex-hero-character--pruning"
+      ".hex-hero-drawing",
+      ".hex-hero-character--supervisor",
+      ".hex-hero-character--sakan",
+      ".hex-hero-exterior-image--01,.hex-hero-exterior-image,.hex-hero-exterior-layer > img",
+      ".hex-hero-character--aluminum",
+      ".hex-hero-character--block",
+      ".hex-hero-sprite--tree01,.hex-hero-sprite--tree02,.hex-hero-sprite--tree03",
+      ".hex-hero-character--pruning",
+      ".hex-hero-sprite--underplant01,.hex-hero-sprite--underplant02,.hex-hero-sprite--underplant03"
     ];
     var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
-    var HERO_LAYER_POP_DURATIONS=[420,350,280,220];
+    var HERO_LAYER_POP_DURATIONS=[500,460,425,390,350,310,275,240,200];
     var heroLayerVersion=0;
     var heroTextureUpdateFrame=0;
     var heroLayerPreviewCache=null;
@@ -5976,7 +5979,7 @@ hexReady(function(){
           scene=new THREE.Scene();
           camera=new THREE.OrthographicCamera(-1,1,1,-1,.1,10);
           camera.position.z=1;
-          // The first rendered frame contains only the plinth and family.
+          // The first rendered frame contains the plinth, family and house.
           heroLayerPop.active=!reduced;
           heroLayerPop.started=null;
           heroLayerPop.elapsed=0;
