@@ -5644,7 +5644,7 @@ hexReady(function(){
         HERO_LAYER_POP_DURATION;
       heroLayerPop.elapsed=Math.max(0,now-heroLayerPop.started);
       if(heroLayerPop.elapsed>=duration){finishHeroLayerPop();return;}
-      // Limit temporary canvas uploads to 30fps; restore full resolution at the end.
+      // Limit canvas uploads to 30fps without changing the GPU texture dimensions.
       if(heroLayerPop.lastFrame>=0&&now-heroLayerPop.lastFrame<1000/30)return;
       heroLayerPop.lastFrame=now;
       updateTextureSource(sourceImage);
@@ -5671,7 +5671,9 @@ hexReady(function(){
     function updateTextureSource(image){
       var naturalWidth=image&&image.naturalWidth;
       var naturalHeight=image&&image.naturalHeight;
-      var maxTextureSize=heroLayerPop.active?1536:4096;
+      // Keep dimensions stable after CanvasTexture allocation; shrinking the source
+      // can upload into only the lower-left portion of the existing GPU texture.
+      var maxTextureSize=4096;
       var scale;
       var context;
       var baseLayerScale;
