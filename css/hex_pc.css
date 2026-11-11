@@ -5271,10 +5271,9 @@ html body
   filter:drop-shadow(.055em .055em 0 #000);
 }
 
-/* Temporarily disable only the hero main-title shadow for performance comparison. */
-.hex-hero-catch .hex-handoff-copy .hex-opening-main,
+/* Static hero title: keep the arch and shadow without per-letter animation layers. */
 .hex-hero-catch .hex-handoff-copy .hex-opening-main > .hex-catch-roll-char{
-  filter:none;
+  will-change:auto;
 }
 
 /* ウェルカム側コピー */

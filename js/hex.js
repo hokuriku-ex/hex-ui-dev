@@ -15019,7 +15019,7 @@ hexLoad(function(){
       chars.push(span);
     });
 
-    if(isHero)main.classList.remove('hex-title-arc');
+    if(isHero)applyTitleLetterArc(main,chars);
     if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
 
     function reset(){
@@ -15029,6 +15029,12 @@ hexLoad(function(){
       }
       if(isHero)main.dispatchEvent(new Event('hex:hero-subtitle-reset',{bubbles:true}));
       if(isWelcome)main.classList.remove('is-welcome-title-playing');
+
+      if(isHero){
+        clearMotion(chars);
+        if(subtitlePop)subtitlePop.reset();
+        return;
+      }
 
       if(isWelcome&&(window.innerWidth<=768||isReducedMotion())){
         clearMotion(chars);
@@ -15058,6 +15064,12 @@ hexLoad(function(){
       reset();
       if(isHero)main.dispatchEvent(new Event('hex:hero-title-start',{bubbles:true}));
       var subtitleDelay=(.5+(chars.length-1)*(.07*5/6))/2;
+      if(isHero){
+        // Keep the arched title static; only the subtitle retains its existing pop.
+        clearMotion(chars);
+        if(subtitlePop)subtitlePop.play(subtitleDelay);
+        return;
+      }
       if(useLetterPop){
         var letters=chars.filter(function(char){return char.textContent.trim()!=='';});
         /* 全タイトルの文字ポップは0.1秒間隔に統一する。 */
