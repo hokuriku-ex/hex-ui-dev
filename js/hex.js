@@ -3270,8 +3270,7 @@ hexReady(function(){
         ".hex-hero-character--pruning"
     ];
     var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
-    var HERO_LAYER_POP_INTERVAL=400;
-    var HERO_LAYER_POP_DURATION=400;
+    var HERO_LAYER_POP_DURATIONS=[500,420,350,280,220];
     var heroLayerVersion=0;
     var heroTextureUpdateFrame=0;
     var heroLayerPreviewCache=null;
@@ -5664,10 +5663,19 @@ hexReady(function(){
       if(wasActive&&texture&&sourceImage)updateTextureSource(sourceImage);
     }
 
+    function heroLayerPopDuration(index){
+      return HERO_LAYER_POP_DURATIONS[Math.min(index,HERO_LAYER_POP_DURATIONS.length-1)];
+    }
+
+    function heroLayerPopStart(index){
+      var elapsed=0;
+      for(var i=0;i<index;i+=1){elapsed+=heroLayerPopDuration(i);}
+      return elapsed;
+    }
+
     function advanceHeroLayerPop(now){
       if(!heroLayerPop.active||heroLayerPop.started===null)return;
-      var duration=Math.max(heroLayerPopGroupCount-1,0)*HERO_LAYER_POP_INTERVAL+
-        HERO_LAYER_POP_DURATION;
+      var duration=heroLayerPopStart(heroLayerPopGroupCount);
       heroLayerPop.elapsed=Math.max(0,now-heroLayerPop.started);
       if(heroLayerPop.elapsed>=duration){finishHeroLayerPop();return;}
       // Limit canvas uploads to 30fps without changing the GPU texture dimensions.
@@ -5679,8 +5687,8 @@ hexReady(function(){
     function drawHeroLayer(context,layer,x,y,width,height,index){
       if(!heroLayerPop.active){context.drawImage(layer,x,y,width,height);return;}
       if(heroLayerPopOrder.has(layer)){index=heroLayerPopOrder.get(layer);}
-      var progress=clamp((heroLayerPop.elapsed-index*HERO_LAYER_POP_INTERVAL)/
-        HERO_LAYER_POP_DURATION,0,1);
+      var progress=clamp((heroLayerPop.elapsed-heroLayerPopStart(index))/
+        heroLayerPopDuration(index),0,1);
       if(progress<=0)return;
       if(progress>=1){context.drawImage(layer,x,y,width,height);return;}
       var peak=.46666667;
