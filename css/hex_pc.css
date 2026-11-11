@@ -5276,6 +5276,13 @@ html body
   will-change:auto;
 }
 
+/* Hide hero titles while preserving the timing events used by the anchor nav. */
+.hex-hero-catch .hex-handoff-copy{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
 /* ウェルカム側コピー */
 .hex-opening-copy-source.hex-welcome-copy{
   display:block!important;
