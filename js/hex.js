@@ -3257,6 +3257,26 @@ hexReady(function(){
     var activeHero=null;
     var sourceImage=null;
     var heroLayerImages=[];
+    var heroLayerPopOrder=new Map();
+    var HERO_LAYER_POP_SELECTORS=[
+      ".hex-hero-plinth-image,.hex-hero-bg img",
+      ".hex-hero-character--family",
+      ".hex-hero-house,.hex-hero-house-layer > img",
+      ".hex-hero-drawing",
+      ".hex-hero-character--supervisor",
+      ".hex-hero-exterior-image--01",
+      ".hex-hero-exterior-image:not(.hex-hero-exterior-image--01),.hex-hero-exterior-layer > img",
+      ".hex-hero-character--aluminum",
+      ".hex-hero-character--sakan",
+      ".hex-hero-character--block",
+      ".hex-hero-sprite--tree01",
+      ".hex-hero-sprite--tree02",
+      ".hex-hero-sprite--tree03",
+      ".hex-hero-sprite--underplant01",
+      ".hex-hero-sprite--underplant02",
+      ".hex-hero-sprite--underplant03",
+      ".hex-hero-character--pruning"
+    ];
     var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
     var HERO_LAYER_POP_INTERVAL=300;
     var HERO_LAYER_POP_DURATION=300;
@@ -5652,6 +5672,7 @@ hexReady(function(){
 
     function drawHeroLayer(context,layer,x,y,width,height,index){
       if(!heroLayerPop.active){context.drawImage(layer,x,y,width,height);return;}
+      if(heroLayerPopOrder.has(layer)){index=heroLayerPopOrder.get(layer);}
       var progress=clamp((heroLayerPop.elapsed-index*HERO_LAYER_POP_INTERVAL)/
         HERO_LAYER_POP_DURATION,0,1);
       if(progress<=0)return;
@@ -5837,7 +5858,7 @@ hexReady(function(){
         ".hex-hero-scene > .hex-hero-sprite,"+
         ".hex-hero-scene > .hex-hero-character"
       ));
-      // The plinth defines the image dimensions and pops before the drawing.
+      // Keep the plinth at the back of the compositing order.
       heroLayerImages=heroLayerImages.filter(function(layer){return layer!==sourceImage;});
       heroLayerImages.unshift(sourceImage);
       /* CMSに旧順序のHTMLが残っていても、建物の手前に下草1を合成する。 */
@@ -5866,6 +5887,18 @@ hexReady(function(){
         });
         heroLayerImages.splice(underplantIndex+1,0,underplant02Image);
       }
+      // Assign pop timing separately; never sort the compositing array.
+      heroLayerPopOrder.clear();
+      HERO_LAYER_POP_SELECTORS.forEach(function(selector){
+        heroLayerImages.forEach(function(layer){
+          if(!heroLayerPopOrder.has(layer)&&layer.matches(selector)){
+            heroLayerPopOrder.set(layer,heroLayerPopOrder.size);
+          }
+        });
+      });
+      heroLayerImages.forEach(function(layer){
+        if(!heroLayerPopOrder.has(layer))heroLayerPopOrder.set(layer,heroLayerPopOrder.size);
+      });
       /* 同時に届いた画像は、次の描画フレームで一度だけ合成する。 */
       function queueLayerTextureUpdate(){
         if(heroTextureUpdateFrame||!textureCanvas||!sourceImage||!sourceImage.naturalWidth)return;
