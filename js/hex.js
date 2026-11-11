@@ -4356,6 +4356,7 @@ hexReady(function(){
       stopWelcomeCircleMotion();
       spCircleReleaseScrollY=null;
       cancelAutoZoom(false);
+      if(!completed&&!reduced){prepareHeroLayerPop();}
       welcomeActive=false;
       released=false;
       explored=false;
@@ -5672,6 +5673,16 @@ hexReady(function(){
       updateHeroLayerTransforms();
     }
 
+    function prepareHeroLayerPop(){
+      // Keep only the static layers visible while the intro is waiting to start.
+      heroLayerPop.active=true;
+      heroLayerPop.started=null;
+      heroLayerPop.elapsed=0;
+      heroLayerPop.lastFrame=-1;
+      heroLayerStyleCache=new WeakMap();
+      updateHeroLayerTransforms();
+    }
+
     function heroLayerPopDuration(index){
       return HERO_LAYER_POP_DURATIONS[Math.min(index,HERO_LAYER_POP_DURATIONS.length-1)];
     }
@@ -6366,6 +6377,14 @@ hexReady(function(){
       get:function(){return hero;},
       getActive:getActiveHero,
       createOpeningIntroScene:createOpeningIntroScene,
+      prepareOpeningHandoff:function(){
+        cancelAutoZoom(false);
+        if(!reduced)prepareHeroLayerPop();
+        state.x=0;state.y=0;state.vx=0;state.vy=0;
+        state.zoom=HERO_ZOOM_INTRO_START;
+        interactionLocked=true;
+        return this.prepareDisplay();
+      },
       prepareCatchPosition:function(){
         var zoomReady=!autoZoomPending&&(heroLayerPop.active
           ?heroLayerPop.started!==null
@@ -10612,6 +10631,12 @@ hexReady(function(){
       if(finished){
         return;
       }
+      // Keep the initial-state cover until the live canvas has rendered its frame.
+      var api=window.hexHero;
+      if(heroPreview&&api&&api.prepareDisplay&&!api.prepareDisplay()){
+        requestAnimationFrame(completeHandoff);
+        return;
+      }
       finished=true;
 
       root.style.scrollBehavior=previousScrollBehavior;
@@ -11259,6 +11284,9 @@ hexReady(function(){
       stopAutoAdvance();
       transitionLocked=true;
       ensureHeroReady();
+      if(window.hexHero&&window.hexHero.prepareOpeningHandoff){
+        window.hexHero.prepareOpeningHandoff();
+      }
       opening.classList.add("is-v2-hero-stage");
       var hero=document.querySelector('.hex-hero-wrap');
       if(hero)hero.classList.add('is-catch-waiting');
