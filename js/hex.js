@@ -3617,8 +3617,7 @@ hexReady(function(){
 
       var anchor=window.hexHomeAnchorNav;
       if(anchor&&anchor.panel.classList.contains('is-hero-anchor')){
-        var navVisible=ready&&(bottomIntroComplete||
-          Number(anchor.panel.style.getPropertyValue('--hex-home-anchor-intro-opacity'))>0)&&
+        var navVisible=ready&&(reduced||hero.classList.contains('is-subtitle-started'))&&
           !hero.classList.contains('is-intro-departed')&&!welcomeActive&&!isBack&&
           !document.documentElement.classList.contains('hex-opening-lock');
         anchor.panel.classList.toggle('is-welcome-end-hidden',!navVisible);
@@ -3652,6 +3651,21 @@ hexReady(function(){
       welcomeButton.classList.toggle("is-visible",visible);
       welcomeButton.setAttribute("aria-hidden",visible?"false":"true");
     }
+
+    document.addEventListener('hex:hero-subtitle-start',function(){
+      hero.classList.add('is-subtitle-started');
+      updateWelcomeButton();
+      var anchor=window.hexHomeAnchorNav;
+      if(!reduced&&anchor&&!anchor.nav.classList.contains('is-fixed')&&anchor.nav.animate){
+        anchor.nav.animate([{scale:'.8'},{scale:'1'}],{
+          duration:400,easing:'cubic-bezier(.175,.885,.32,1.275)'
+        });
+      }
+    });
+    document.addEventListener('hex:hero-subtitle-reset',function(){
+      hero.classList.remove('is-subtitle-started');
+      updateWelcomeButton();
+    });
 
     function syncHeroCatchAnchorHeight(){
       var anchor=window.hexHomeAnchorNav;
@@ -15018,6 +15032,8 @@ hexLoad(function(){
     if(spBreakIndex!==-1){main.classList.add('hex-sp-two-line-catch');}
     var subtitlePop=createCatchSubtitlePop(subtitle,isWelcome?function(){
       main.dispatchEvent(new Event('hex:welcome-subtitle-start',{bubbles:true}));
+    }:isHero?function(){
+      main.dispatchEvent(new Event('hex:hero-subtitle-start',{bubbles:true}));
     }:null);
 
     Array.from(textValue).forEach(function(character,index){
@@ -15043,6 +15059,7 @@ hexLoad(function(){
         tween.kill();
         tween=null;
       }
+      if(isHero)main.dispatchEvent(new Event('hex:hero-subtitle-reset',{bubbles:true}));
       if(isWelcome)main.classList.remove('is-welcome-title-playing');
 
       if(isWelcome&&(window.innerWidth<=768||isReducedMotion())){
