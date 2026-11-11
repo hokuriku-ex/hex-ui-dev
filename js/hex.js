@@ -3129,8 +3129,8 @@ hexReady(function(){
 
   var THREE_URL="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js";
   var HERO_ZOOM_MIN=1;
-  /* 初回演出だけ90%から開始。手動操作の範囲は100～200%。 */
-  var HERO_ZOOM_INTRO_START=.9;
+  /* Intro zoom temporarily disabled; manual zoom remains 100-200%. */
+  var HERO_ZOOM_INTRO_START=1;
   var HERO_ZOOM_AUTO=1;
   var HERO_ZOOM_MAX=2;
   /* SVG画像内の水平上端。画面上の固定位置ではなく画像内の割合。 */
@@ -3258,7 +3258,7 @@ hexReady(function(){
     var sourceImage=null;
     var heroLayerImages=[];
     var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
-    var HERO_LAYER_POP_INTERVAL=60;
+    var HERO_LAYER_POP_INTERVAL=300;
     var HERO_LAYER_POP_DURATION=300;
     var heroLayerVersion=0;
     var heroTextureUpdateFrame=0;
