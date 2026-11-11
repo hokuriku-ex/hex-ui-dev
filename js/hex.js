@@ -3679,7 +3679,9 @@ hexReady(function(){
         anchor.nav.classList.toggle('is-welcome-end-hidden',!(fixedVisible||navVisible));
         anchor.panel.setAttribute('aria-hidden',navVisible?'false':'true');
         anchor.nav.inert=!(fixedVisible||navVisible);
-        if(navVisible&&navWasHidden&&!fixedVisible){hexPlayHeroControlPop(anchor.nav);}
+        if(navVisible&&navWasHidden&&!fixedVisible&&!hero.classList.contains('is-returned-complete')){
+          hexPlayHeroControlPop(anchor.nav);
+        }
       }
       /* PCはBACK、SPはスクロール枠の外に置いた閉じるボタンを使う。 */
       if(characterCloseButton){
@@ -4341,8 +4343,9 @@ hexReady(function(){
       window.requestAnimationFrame(resizeRenderer);
     }
 
-    function resetHero(withFade){
+    function resetHero(withFade,completed){
       resetHeroTilt();
+      hero.classList.remove('is-returned-complete');
       heroAnchorDeparted=false;
       /* Safariの履歴復元中の一時的な位置変化を、上方向の手動スクロールと扱わない。 */
       if(isSp()&&(spHistoryBody||spHistoryRestoring))return;
@@ -4366,7 +4369,7 @@ hexReady(function(){
       state.y=0;
       state.vx=0;
       state.vy=0;
-      state.zoom=HERO_ZOOM_INTRO_START;
+      state.zoom=completed?HERO_ZOOM_AUTO:HERO_ZOOM_INTRO_START;
       hero.classList.remove("is-exploring","is-welcome-transition");
       if(webglStage){webglStage.classList.remove("is-dragging","is-pinching");}
       if(snapshot){snapshot.remove();snapshot=null;snapshotCanvas=null;}
@@ -4398,6 +4401,27 @@ hexReady(function(){
       updateZoomMetrics();
       state.y=0;
       setCamera();
+      if(completed){
+        // Reuse the loaded scene and restore the end state without replaying the intro.
+        autoZoomPending=false;
+        autoZoomPendingDelay=0;
+        bottomIntroProgress=1;
+        bottomIntroComplete=true;
+        heroIntroCameraLocked=false;
+        interactionLocked=false;
+        hero.classList.remove('is-intro-playing','is-intro-departed','is-catch-waiting');
+        hero.classList.add('is-intro-complete','is-subtitle-started','is-returned-complete');
+        if(catchElement){
+          catchElement.classList.remove('is-catch-visible');
+          catchElement.classList.add('is-exploring');
+        }
+        if(returningFromWelcome)document.dispatchEvent(new Event('hex:top-returned'));
+        updateBottomIllustrations();
+        setHeroPageLock(true);
+        document.dispatchEvent(new Event('hex:hero-return-complete'));
+        updateWelcomeButton();
+        return;
+      }
       if(returningFromWelcome){
         /* 戻った時点でキャッチなどの再生済み判定を外す。 */
         catchElement&&catchElement.classList.remove("is-catch-visible");
@@ -4789,7 +4813,7 @@ hexReady(function(){
 
       if((welcomeActive||heroAnchorDeparted)&&movingUp&&scrollY<=heroTop+2){
         /* 画像と描画を再利用し、ヒーローの先頭演出へ戻す。 */
-        resetHero(false);
+        resetHero(false,true);
         var headerHeight=parseFloat(getComputedStyle(document.documentElement)
           .getPropertyValue('--header_height'))||80;
         var target=Math.max(0,documentTop(hero)-(isSp()?headerHeight:0));
@@ -4799,7 +4823,6 @@ hexReady(function(){
           window.scrollTo({top:target,left:0,behavior:'instant'});
         }
         window.hexHero.prepareDisplay();
-        document.dispatchEvent(new Event('hex:hero-restart'));
         return;
       }
 
@@ -9520,6 +9543,16 @@ hexReady(function(){
     showHeroCatch(0);
   });
 
+  document.addEventListener('hex:hero-return-complete',function(){
+    stopHeroIntro();
+    heroCatchRun+=1;
+    heroIntroStarted=true;
+    heroIntroDeparted=false;
+    if(sharedNav){sharedNav.hidden=false;}
+    selectHeroDot();
+    document.dispatchEvent(new Event('hex:hero-intro-complete'));
+  });
+
   document.addEventListener('hex:hero-departed',function(){
     heroIntroDeparted=true;
     heroCatchRun+=1;
@@ -9605,7 +9638,9 @@ hexReady(function(){
       button.classList.toggle('is-outside-hero',!visible);
       button.setAttribute('aria-hidden',visible?'false':'true');
       button.tabIndex=visible?0:-1;
-      if(visible&&wasHidden){hexPlayHeroControlPop(button);}
+      if(visible&&wasHidden&&!hero.closest('.hex-hero-wrap').classList.contains('is-returned-complete')){
+        hexPlayHeroControlPop(button);
+      }
       updateRequested=false;
     }
 
