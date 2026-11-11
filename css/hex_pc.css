@@ -7162,12 +7162,29 @@ html body
   overflow:hidden;
 }
 .hex-staff-photo{
+  position:relative;
   width:100%;
   aspect-ratio:1/1;
+  background-color:#d93e30;
+  clip-path:circle(closest-side at 50% 50%);
+}
+.hex-staff-photo::before,
+.hex-staff-photo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.hex-staff-photo::before{
+  background-color:#fff;
+  -webkit-mask:url("../images/common/patterns/grunge.svg") center / cover no-repeat;
+  mask:url("../images/common/patterns/grunge.svg") center / cover no-repeat;
+}
+.hex-staff-photo::after{
+  background-image:var(--hex-staff-image,none);
   background-position:center top;
   background-size:cover;
   background-repeat:no-repeat;
-  background-color:transparent;
 }
 .hex-staff-body{
   position:relative;

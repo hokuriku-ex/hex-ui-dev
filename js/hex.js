@@ -12873,7 +12873,7 @@ function createStaffCard(data){
   number.appendChild(total);
   var photo=document.createElement('div');
   photo.className='hex-staff-photo';
-  if(data.image)photo.style.backgroundImage=data.image;
+  if(data.image)photo.style.setProperty('--hex-staff-image',data.image);
   var body=document.createElement('div');
   body.className='hex-staff-body';
   var deptTag=document.createElement('p');
