@@ -11778,6 +11778,10 @@ html body .hex-home-anchor-panel.is-hero-anchor:not(:has(> .hex-home-anchor-nav.
   transition:none;
 }
 .hex-home-anchor-panel.is-hero-anchor > .hex-home-anchor-nav{transition:none;}
+html body .hex-hero-wrap.is-subtitle-started .hex-home-anchor-panel.is-hero-anchor:not(:has(> .hex-home-anchor-nav.is-fixed)){
+  transform:none;
+  opacity:1;
+}
 html.hex-character-focus-active .hex-home-anchor-panel.is-hero-anchor,
 .hex-hero-wrap.is-intro-departed .hex-home-anchor-panel.is-hero-anchor{
   opacity:0!important;visibility:hidden!important;pointer-events:none!important;

@@ -3654,7 +3654,7 @@ hexReady(function(){
       welcomeButton.setAttribute("aria-hidden",visible?"false":"true");
     }
 
-    document.addEventListener('hex:hero-subtitle-start',function(){
+    document.addEventListener('hex:hero-title-start',function(){
       hero.classList.add('is-subtitle-started');
       updateWelcomeButton();
       var anchor=window.hexHomeAnchorNav;
@@ -6063,11 +6063,11 @@ hexReady(function(){
       get:function(){return hero;},
       getActive:getActiveHero,
       prepareCatchPosition:function(){
-        var zoomReady=!autoZoomPending&&(autoZooming
-          ?bottomIntroProgress>=HERO_CATCH_ZOOM_PROGRESS
+        var zoomReady=!autoZoomPending&&(heroLayerPop.active
+          ?heroLayerPop.started!==null
           :bottomIntroComplete&&!autoZoomTimer);
-        // Wait for the last image to finish popping before starting the title.
-        if(renderer&&!reduced&&(!zoomReady||heroLayerPop.active))return false;
+        // Start the title alongside the first image pop (the supervisor).
+        if(renderer&&!reduced&&!zoomReady)return false;
         syncHeroCatchAnchorHeight();
         return true;
       },
@@ -15106,6 +15106,7 @@ hexLoad(function(){
       if(isWelcome&&(window.innerWidth<=768||isReducedMotion()))return;
       if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
       reset();
+      if(isHero)main.dispatchEvent(new Event('hex:hero-title-start',{bubbles:true}));
       var subtitleDelay=(.5+(chars.length-1)*(.07*5/6))/2;
       if(useLetterPop){
         var letters=chars.filter(function(char){return char.textContent.trim()!=='';});
