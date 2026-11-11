@@ -3271,7 +3271,7 @@ hexReady(function(){
     ];
     var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
     var HERO_LAYER_POP_INTERVAL=500;
-    var HERO_LAYER_POP_DURATION=300;
+    var HERO_LAYER_POP_DURATION=600;
     var heroLayerVersion=0;
     var heroTextureUpdateFrame=0;
     var heroLayerPreviewCache=null;
@@ -5671,8 +5671,8 @@ hexReady(function(){
       if(progress>=1){context.drawImage(layer,x,y,width,height);return;}
       var peak=.46666667;
       var scale=progress<peak
-        ?1.25*(1-Math.pow(1-progress/peak,3))
-        :1.25-.25*(1-Math.pow(1-(progress-peak)/(1-peak),3));
+        ?1.10*(1-Math.pow(1-progress/peak,3))
+        :1.10-.10*(1-Math.pow(1-(progress-peak)/(1-peak),3));
       context.save();
       context.translate(x+width/2,y+height/2);
       context.scale(scale,scale);
