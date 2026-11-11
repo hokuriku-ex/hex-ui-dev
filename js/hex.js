@@ -5833,7 +5833,14 @@ hexReady(function(){
         var key=(layer.currentSrc||layer.src)+'|'+layer.naturalWidth+'x'+layer.naturalHeight;
         if(entry&&entry.key!==key){disposeHeroLayerMesh(entry);heroLayerMeshes.delete(layer);entry=null;}
         if(!entry){
-          var map=new THREE.Texture(layer);
+          // Rasterize once before upload. This avoids relying on a hidden DOM image's
+          // browser/GPU decode surface while keeping all animation work on the GPU.
+          var pixels=document.createElement('canvas');
+          pixels.width=layer.naturalWidth;pixels.height=layer.naturalHeight;
+          var pixelsContext=pixels.getContext('2d',{alpha:true});
+          if(!pixelsContext)throw new Error('Hero layer canvas unavailable');
+          pixelsContext.drawImage(layer,0,0);
+          var map=new THREE.CanvasTexture(pixels);
           map.colorSpace=THREE.SRGBColorSpace;
           map.generateMipmaps=false;
           map.minFilter=THREE.LinearFilter;
