@@ -1,0 +1,348 @@
+<!doctype html><meta charset="utf-8"><title>Hero render comparison</title><link rel="stylesheet" href="../css/hex_pc.css"><style>body{margin:12px!important;background:#eee!important;font:14px sans-serif!important}#assets{position:absolute;left:-10000px;top:0;width:960px;height:600px;visibility:hidden}#result{position:relative!important;z-index:999999;white-space:pre-wrap;background:white;padding:12px;color:black}#views{display:flex;flex-wrap:wrap;gap:12px}figure{margin:0}canvas{background:#def;max-width:46vw;height:auto}h1{font:22px sans-serif}</style><h1>Canvas composite / individual WebGL layers</h1><pre id="result">Loading</pre><div id="views"></div><div id="assets"><!-- CMSのヒーローHTML差し替え用。画像は images/top-hero/ に保存します。 -->
+<div class="hex-hero-wrap">
+  <div class="hex-hero-sticky">
+    <section class="hex-hero">
+      <div class="hex-cloud-layer" aria-hidden="true">
+        <img class="hex-cloud hex-cloud--1 hex-cloud--behind-ellipse" src="../images/top-hero/left_cloud01.svg" alt="">
+        <img class="hex-cloud hex-cloud--2 hex-cloud--behind-ellipse" src="../images/top-hero/left_cloud02.svg" alt="">
+        <img class="hex-cloud hex-cloud--3 hex-cloud--in-front-of-ellipse" src="../images/top-hero/left_cloud03.svg" alt="">
+        <img class="hex-cloud hex-cloud--4 hex-cloud--behind-ellipse" src="../images/top-hero/right_cloud01.svg" alt="">
+        <img class="hex-cloud hex-cloud--5 hex-cloud--behind-ellipse" src="../images/top-hero/right_cloud02.svg" alt="">
+        <img class="hex-cloud hex-cloud--6 hex-cloud--in-front-of-ellipse" src="../images/top-hero/right_cloud03.svg" alt="">
+      </div>
+      <div class="hex-hero-ellipse" aria-hidden="true" style="background-image:url('ellipse.svg')"></div>
+
+      <!-- 奥から手前へ。HTMLの記載順が合成順になります。 -->
+      <div class="hex-hero-boundary-illustrations" aria-hidden="true"><img class="hex-hero-boundary-img hex-hero-boundary-img--left" src="../images/top-hero/left_bottom04.webp" alt=""><img class="hex-hero-boundary-img hex-hero-boundary-img--right" src="../images/top-hero/right_bottom04.webp" alt=""></div><div class="hex-hero-scene">
+        <!-- 01 台座：全画像の基準サイズ -->
+        <div class="hex-hero-bg"><img class="hex-hero-plinth-image" src="../images/top-hero/plinth.webp" alt=""></div>
+        <!-- 02 図面：台座と同じ画像サイズ・構図 -->
+        <img class="hex-hero-layer hex-hero-drawing" src="../images/top-hero/drawing.webp" alt="">
+        <!-- 外構1：図面の直後、台座と同じ画像サイズ・構図 -->
+        <img class="hex-hero-layer hex-hero-exterior-image--01" src="../images/top-hero/exterior01.webp" alt="">
+        <!-- 04 樹木1：位置とサイズを個別指定 -->
+        <img class="hex-hero-sprite hex-hero-sprite--tree01" src="../images/top-hero/tree01.webp" alt="">
+        <!-- 05 建物：台座と同じ画像サイズ・構図 -->
+        <img class="hex-hero-layer hex-hero-house" src="../images/top-hero/house.webp" alt="">
+        <!-- 06 下草1：建物の手前に表示 -->
+        <img class="hex-hero-sprite hex-hero-sprite--underplant01" src="../images/top-hero/underplant01.webp" alt="">
+        <!-- 07 下草2：下草1の直後、外構の奥に表示 -->
+        <img class="hex-hero-sprite hex-hero-sprite--underplant02" src="../images/top-hero/underplant02.webp" alt="">
+        <!-- 外構2（従来の位置）：台座と同じ画像サイズ・構図 -->
+        <img class="hex-hero-layer hex-hero-exterior-image" src="../images/top-hero/exterior02.webp" alt="">
+        <!-- 09～11 樹木2・樹木3・下草3 -->
+        <img class="hex-hero-sprite hex-hero-sprite--tree02" src="../images/top-hero/tree02.webp" alt="">
+        <img class="hex-hero-sprite hex-hero-sprite--tree03" src="../images/top-hero/tree03.webp" alt="">
+        <img class="hex-hero-sprite hex-hero-sprite--underplant03" src="../images/top-hero/underplant03.webp" alt="">
+        <!-- 12～17 人物：位置とサイズを個別指定 -->
+        <img class="hex-hero-character hex-hero-character--aluminum" src="../images/top-hero/aluminum.webp" alt="">
+        <img class="hex-hero-character hex-hero-character--pruning" src="../images/top-hero/pruning.webp" alt="">
+        <img class="hex-hero-character hex-hero-character--sakan" src="../images/top-hero/sakan.webp" alt="">
+        <img class="hex-hero-character hex-hero-character--block" src="../images/top-hero/block.webp" alt="">
+        <img class="hex-hero-character hex-hero-character--supervisor" src="../images/top-hero/supervisor.webp" alt="">
+        <img class="hex-hero-character hex-hero-character--family" src="../images/top-hero/family.webp" alt="">
+      </div>
+
+      <div class="hex-hero-bottom-illustrations" aria-hidden="true">
+        <img class="hex-hero-bottom-img hex-hero-bottom-img--l1" src="../images/top-hero/left_bottom01.webp" alt="">
+        <img class="hex-hero-bottom-img hex-hero-bottom-img--l2" src="../images/top-hero/left_bottom02.webp" alt="">
+        <img class="hex-hero-bottom-img hex-hero-bottom-img--l3" src="../images/top-hero/left_bottom03.webp" alt="">
+        <img class="hex-hero-bottom-img hex-hero-bottom-img--r1" src="../images/top-hero/right_bottom01.webp" alt="">
+        <img class="hex-hero-bottom-img hex-hero-bottom-img--r2" src="../images/top-hero/right_bottom02.webp" alt="">
+        <img class="hex-hero-bottom-img hex-hero-bottom-img--r3" src="../images/top-hero/right_bottom03.webp" alt="">
+      </div>
+    </section>
+    <div class="hex-hero-catch">
+      <div class="hex-handoff-copy">
+        <span class="hex-opening-main">Build Your Everyday</span>
+        <span class="hex-opening-sub">住宅廻りに、快適さを</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div><script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script><script>
+window.addEventListener('error',e=>document.getElementById('result').textContent+='\nERROR '+e.message);
+    var HERO_LAYER_CROPS={
+      'drawing.webp':{x:273,y:768,width:2484,height:588,originalWidth:3000,originalHeight:1854},
+      'exterior01.webp':{x:272,y:678,width:2485,height:283,originalWidth:3000,originalHeight:1854},
+      'exterior02.webp':{x:278,y:660,width:2419,height:551,originalWidth:3000,originalHeight:1854},
+      'house.webp':{x:781,y:501,width:1433,height:488,originalWidth:3000,originalHeight:1854}
+    };
+    var HERO_LAYER_STATIC_SELECTOR=".hex-hero-plinth-image,.hex-hero-bg img,.hex-hero-character--family,"+
+      ".hex-hero-house,.hex-hero-house-layer > img";
+    var HERO_LAYER_POP_SELECTORS=[
+      ".hex-hero-character--supervisor",
+      ".hex-hero-drawing",
+      ".hex-hero-exterior-image--01,.hex-hero-exterior-image,.hex-hero-exterior-layer > img",
+      ".hex-hero-character--aluminum",
+      ".hex-hero-character--block",
+      ".hex-hero-character--sakan",
+      ".hex-hero-sprite--tree01,.hex-hero-sprite--tree02,.hex-hero-sprite--tree03",
+      ".hex-hero-character--pruning",
+      ".hex-hero-sprite--underplant01,.hex-hero-sprite--underplant02,.hex-hero-sprite--underplant03"
+    ];
+    var HERO_LAYER_POP_DURATIONS=[500,460,425,390,350,310,275,240,200];
+var heroLayerMeshes=new Map(),heroLayerStyleCache=new WeakMap(),heroLayerPreviewCache=null,heroLayerVersion=0,heroCharacterBounds=[],heroCharacterHitRect=null,textureCanvas=null,heroRenderDirty=false;
+var heroLayerPop={active:false,elapsed:0,started:0},heroLayerPopOrder=new Map(),heroLayerPopGroupCount=0;
+var activeHero=document.querySelector('#assets .hex-hero'),sourceImage=activeHero.querySelector('.hex-hero-bg img');
+var heroLayerImages=[sourceImage,...activeHero.querySelectorAll('.hex-hero-scene > .hex-hero-layer,.hex-hero-scene > .hex-hero-sprite,.hex-hero-scene > .hex-hero-character')];
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}function pointerHitsCharacter(){}
+var renderer,scene,camera;
+    function heroLayerPopDuration(index){
+      return HERO_LAYER_POP_DURATIONS[Math.min(index,HERO_LAYER_POP_DURATIONS.length-1)];
+    }
+    function heroLayerPopStart(index){
+      var elapsed=0;
+      for(var i=0;i<index;i+=1){elapsed+=heroLayerPopDuration(i);}
+      return elapsed;
+    }
+    function getHeroLayerCrop(layer){
+      var name=(layer.currentSrc||layer.src||'').split(/[?#]/)[0].split('/').pop();
+      var crop=HERO_LAYER_CROPS[name];
+      // Accept both cached full-size assets and newly cropped assets during deployment.
+      return crop&&layer.naturalWidth===crop.width&&layer.naturalHeight===crop.height?crop:null;
+    }
+    function drawHeroLayerImage(context,layer,x,y,width,height){
+      var crop=getHeroLayerCrop(layer);
+      if(crop){
+        context.drawImage(layer,x+width*crop.x/crop.originalWidth,y+height*crop.y/crop.originalHeight,
+          width*crop.width/crop.originalWidth,height*crop.height/crop.originalHeight);
+      }else{
+        context.drawImage(layer,x,y,width,height);
+      }
+    }
+    function drawHeroLayer(context,layer,x,y,width,height,index){
+      if(!heroLayerPop.active||layer.matches(HERO_LAYER_STATIC_SELECTOR)){
+        drawHeroLayerImage(context,layer,x,y,width,height);return;
+      }
+      if(heroLayerPopOrder.has(layer)){index=heroLayerPopOrder.get(layer);}
+      var progress=clamp((heroLayerPop.elapsed-heroLayerPopStart(index))/
+        heroLayerPopDuration(index),0,1);
+      if(progress<=0)return;
+      if(progress>=1){drawHeroLayerImage(context,layer,x,y,width,height);return;}
+      var peak=.46666667;
+      var scale=progress<peak
+        ?1.10*(1-Math.pow(1-progress/peak,3))
+        :1.10-.10*(1-Math.pow(1-(progress-peak)/(1-peak),3));
+      context.save();
+      context.translate(x+width/2,y+height/2);
+      context.scale(scale,scale);
+      drawHeroLayerImage(context,layer,-width/2,-height/2,width,height);
+      context.restore();
+    }
+    function getHeroLayerDrawStyle(layer){
+      var cached=heroLayerPop.active&&heroLayerStyleCache.get(layer);
+      if(cached)return cached;
+      var style=getComputedStyle(layer);
+      var values={};
+      ['--hex-hero-base-layer-scale','--hex-sprite-x','--hex-sprite-bottom','--hex-sprite-width'].forEach(function(name){
+        values[name]=style.getPropertyValue(name);
+      });
+      if(heroLayerPop.active)heroLayerStyleCache.set(layer,values);
+      return values;
+    }
+    function getHeroLayerRect(layer,imageWidth,imageHeight,baseScale){
+      var width=imageWidth*baseScale,height=imageHeight*baseScale;
+      var x=(imageWidth-width)/2,y=(imageHeight-height)/2;
+      if(layer.matches('.hex-hero-character,.hex-hero-sprite')){
+        var style=getHeroLayerDrawStyle(layer);
+        width=imageWidth*parseFloat(style['--hex-sprite-width'])/100;
+        height=width*layer.naturalHeight/layer.naturalWidth;
+        x=imageWidth*parseFloat(style['--hex-sprite-x'])/100;
+        y=imageHeight-imageHeight*parseFloat(style['--hex-sprite-bottom'])/100-height;
+      }
+      return {x:x,y:y,width:width,height:height};
+    }
+    function getHeroLayerPopScale(layer){
+      if(!heroLayerPop.active||layer.matches(HERO_LAYER_STATIC_SELECTOR))return 1;
+      var index=heroLayerPopOrder.get(layer);
+      if(index===undefined)return 1;
+      var progress=clamp((heroLayerPop.elapsed-heroLayerPopStart(index))/heroLayerPopDuration(index),0,1);
+      if(progress<=0)return 0;
+      if(progress>=1)return 1;
+      var peak=.46666667;
+      return progress<peak
+        ?1.10*(1-Math.pow(1-progress/peak,3))
+        :1.10-.10*(1-Math.pow(1-(progress-peak)/(1-peak),3));
+    }
+    function updateHeroLayerTransforms(){
+      heroLayerMeshes.forEach(function(entry,layer){
+        var scale=getHeroLayerPopScale(layer);
+        entry.pivot.visible=entry.valid&&scale>0;
+        entry.pivot.scale.set(scale,scale,1);
+      });
+      heroLayerPreviewCache=null;
+      heroRenderDirty=true;
+    }
+    function disposeHeroLayerMesh(entry){
+      if(scene)scene.remove(entry.pivot);
+      entry.mesh.geometry.dispose();
+      entry.mesh.material.map.dispose();
+      entry.mesh.material.dispose();
+    }
+    function updateTextureSource(image){
+      if(!image||!image.naturalWidth||!scene||!renderer||!window.THREE)return false;
+      var THREE=window.THREE;
+      var imageWidth=image.naturalWidth,imageHeight=image.naturalHeight;
+      var baseScale=parseFloat(getHeroLayerDrawStyle(activeHero)['--hex-hero-base-layer-scale']);
+      if(!Number.isFinite(baseScale)||baseScale<=0)baseScale=1;
+      heroCharacterBounds=[];
+      heroCharacterHitRect=null;
+      heroLayerMeshes.forEach(function(entry,layer){
+        if(heroLayerImages.indexOf(layer)<0){disposeHeroLayerMesh(entry);heroLayerMeshes.delete(layer);}
+      });
+      heroLayerImages.forEach(function(layer,index){
+        if(!layer.complete||!layer.naturalWidth)return;
+        var rect=getHeroLayerRect(layer,imageWidth,imageHeight,baseScale);
+        var entry=heroLayerMeshes.get(layer);
+        var key=(layer.currentSrc||layer.src)+'|'+layer.naturalWidth+'x'+layer.naturalHeight;
+        if(entry&&entry.key!==key){disposeHeroLayerMesh(entry);heroLayerMeshes.delete(layer);entry=null;}
+        if(!entry){
+          var map=new THREE.Texture(layer);
+          map.colorSpace=THREE.SRGBColorSpace;
+          map.generateMipmaps=false;
+          map.minFilter=THREE.LinearFilter;
+          map.needsUpdate=true;
+          var mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({
+            map:map,transparent:true,depthTest:false,depthWrite:false
+          }));
+          var pivot=new THREE.Group();
+          pivot.add(mesh);scene.add(pivot);
+          entry={key:key,mesh:mesh,pivot:pivot,valid:false};
+          heroLayerMeshes.set(layer,entry);
+          // Decode/upload once before the intro; never upload textures on animation frames.
+          renderer.initTexture(map);
+        }
+        entry.valid=[rect.x,rect.y,rect.width,rect.height].every(Number.isFinite)&&rect.width>0&&rect.height>0;
+        if(!entry.valid)return;
+        var crop=getHeroLayerCrop(layer);
+        var x=rect.x,y=rect.y,width=rect.width,height=rect.height;
+        if(crop){
+          x+=rect.width*crop.x/crop.originalWidth;
+          y+=rect.height*crop.y/crop.originalHeight;
+          width*=crop.width/crop.originalWidth;
+          height*=crop.height/crop.originalHeight;
+        }
+        // Keep the old full-canvas pop pivot, even though the texture itself is trimmed.
+        entry.pivot.position.set(rect.x+rect.width/2-imageWidth/2,imageHeight/2-rect.y-rect.height/2,0);
+        entry.mesh.position.set(x+width/2-rect.x-rect.width/2,rect.y+rect.height/2-y-height/2,0);
+        entry.mesh.scale.set(width,height,1);
+        entry.mesh.renderOrder=index+1;
+        if(layer.classList.contains('hex-hero-character')){
+          var style=getHeroLayerDrawStyle(layer);
+          heroCharacterBounds.push({layer:layer,x:parseFloat(style['--hex-sprite-x'])/100,
+            bottom:parseFloat(style['--hex-sprite-bottom'])/100,width:parseFloat(style['--hex-sprite-width'])/100,
+            aspect:layer.naturalHeight/layer.naturalWidth,
+            kind:['supervisor','block','sakan','pruning','aluminum','family'].find(function(name){
+              return layer.classList.contains('hex-hero-character--'+name);
+            })});
+          pointerHitsCharacter(layer,0,0);
+        }
+      });
+      heroLayerVersion+=1;
+      updateHeroLayerTransforms();
+      return heroLayerMeshes.size>0;
+    }
+    function renderHeroCompositePreview(image){
+      var naturalWidth=image&&image.naturalWidth;
+      var naturalHeight=image&&image.naturalHeight;
+      // Keep dimensions stable after CanvasTexture allocation; shrinking the source
+      // can upload into only the lower-left portion of the existing GPU texture.
+      var maxTextureSize=4096;
+      var scale;
+      var context;
+      var baseLayerScale;
+      var baseLayerWidth;
+      var baseLayerHeight;
+      var baseLayerX;
+      var baseLayerY;
+
+      if(!naturalWidth||!naturalHeight||!window.THREE){return false;}
+
+      scale=Math.min(1,maxTextureSize/Math.max(naturalWidth,naturalHeight));
+      if(!textureCanvas){textureCanvas=document.createElement("canvas");}
+      var canvasWidth=Math.max(1,Math.round(naturalWidth*scale));
+      var canvasHeight=Math.max(1,Math.round(naturalHeight*scale));
+      if(textureCanvas.width!==canvasWidth)textureCanvas.width=canvasWidth;
+      if(textureCanvas.height!==canvasHeight)textureCanvas.height=canvasHeight;
+      context=textureCanvas.getContext("2d",{alpha:true});
+      if(!context){return false;}
+      baseLayerScale=parseFloat(getHeroLayerDrawStyle(activeHero)["--hex-hero-base-layer-scale"]);
+      if(!Number.isFinite(baseLayerScale)||baseLayerScale<=0){baseLayerScale=1;}
+      baseLayerWidth=textureCanvas.width*baseLayerScale;
+      baseLayerHeight=textureCanvas.height*baseLayerScale;
+      baseLayerX=(textureCanvas.width-baseLayerWidth)/2;
+      baseLayerY=(textureCanvas.height-baseLayerHeight)/2;
+      context.clearRect(0,0,textureCanvas.width,textureCanvas.height);
+      heroCharacterBounds=[];
+      heroCharacterHitRect=null;
+      // Draw the plinth first, then the remaining layers at their existing positions.
+      heroLayerImages.forEach(function(layer,index){
+        var style;
+        var x;
+        var bottom;
+        var width;
+        var height;
+        if(!layer.complete||!layer.naturalWidth){return;}
+        if(!layer.classList.contains("hex-hero-character")&&
+          !layer.classList.contains("hex-hero-sprite")){
+          drawHeroLayer(context,layer,baseLayerX,baseLayerY,baseLayerWidth,baseLayerHeight,index);
+          return;
+        }
+        style=getHeroLayerDrawStyle(layer);
+        x=parseFloat(style["--hex-sprite-x"]);
+        bottom=parseFloat(style["--hex-sprite-bottom"]);
+        width=parseFloat(style["--hex-sprite-width"]);
+        if(!Number.isFinite(x)||!Number.isFinite(bottom)||
+          !Number.isFinite(width)||width<=0){return;}
+        if(layer.classList.contains("hex-hero-character")){
+          heroCharacterBounds.push({layer:layer,x:x/100,bottom:bottom/100,width:width/100,
+            aspect:layer.naturalHeight/layer.naturalWidth,
+            kind:["supervisor","block","sakan","pruning","aluminum","family"].find(function(name){
+              return layer.classList.contains("hex-hero-character--"+name);
+            })});
+          // Prepare the alpha pixels once, before cursor movement needs them.
+          pointerHitsCharacter(layer,0,0);
+        }
+        x=textureCanvas.width*x/100;
+        bottom=textureCanvas.height*bottom/100;
+        width=textureCanvas.width*width/100;
+        height=width*layer.naturalHeight/layer.naturalWidth;
+        drawHeroLayer(context,layer,x,textureCanvas.height-bottom-height,width,height,index);
+      });
+      heroLayerVersion+=1;
+      heroLayerPreviewCache=null;
+
+      return true;
+    }
+(async()=>{try{
+ await Promise.all(heroLayerImages.map(i=>i.decode()));
+ HERO_LAYER_POP_SELECTORS.forEach(selector=>{let matched=false;heroLayerImages.forEach(layer=>{if(!heroLayerPopOrder.has(layer)&&layer.matches(selector)){heroLayerPopOrder.set(layer,heroLayerPopGroupCount);matched=true;}});if(matched)heroLayerPopGroupCount++;});
+ renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,preserveDrawingBuffer:true});renderer.setClearColor(0xffffff,0);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.setPixelRatio(1);
+ scene=new THREE.Scene();const iw=sourceImage.naturalWidth,ih=sourceImage.naturalHeight;
+ let output=[],maxBad=0,uploads=0;
+ const oldInit=renderer.initTexture.bind(renderer);renderer.initTexture=t=>{uploads++;oldInit(t);};
+ for(const size of [[960,600],[390,780]]){
+  const [w,h]=size,cover=Math.max(w/iw,h/ih)*(w<=768?1.16:1.1),vw=w/cover,vh=h/cover;
+  camera=new THREE.OrthographicCamera(-vw/2,vw/2,vh/2,-vh/2,.1,10);camera.position.z=1;renderer.setSize(w,h);
+  for(const [label,elapsed,active,zoom,panX,panY] of [['initial',0,true,1,0,0],['supervisor',233.333,true,1,0,0],['exterior',1150,true,1,0,0],['complete',3150,false,1,0,0],['camera',3150,false,1.5,100,-60]]){
+   heroLayerPop.active=active;heroLayerPop.elapsed=elapsed;heroLayerStyleCache=new WeakMap();
+   camera.zoom=zoom;camera.position.x=panX;camera.position.y=panY;camera.updateProjectionMatrix();
+   updateTextureSource(sourceImage);renderer.render(scene,camera);
+   const gl=renderer.getContext(),a=new Uint8Array(w*h*4);gl.readPixels(0,0,w,h,gl.RGBA,gl.UNSIGNED_BYTE,a);
+   const imageA=document.createElement('canvas');imageA.width=w;imageA.height=h;imageA.getContext('2d').drawImage(renderer.domElement,0,0);
+   renderHeroCompositePreview(sourceImage);const refScene=new THREE.Scene(),map=new THREE.CanvasTexture(textureCanvas);map.colorSpace=THREE.SRGBColorSpace;map.generateMipmaps=false;map.minFilter=THREE.LinearFilter;
+   const ref=new THREE.Mesh(new THREE.PlaneGeometry(iw,ih),new THREE.MeshBasicMaterial({map,transparent:true}));refScene.add(ref);renderer.render(refScene,camera);
+   const b=new Uint8Array(w*h*4);gl.readPixels(0,0,w,h,gl.RGBA,gl.UNSIGNED_BYTE,b);
+   let bad=0,alphaMismatch=0,sum=0;for(let i=0;i<a.length;i+=4){let d=0;for(let j=0;j<4;j++){const n=Math.abs(a[i+j]-b[i+j]);d=Math.max(d,n);sum+=n;}if(d>32)bad++;if(Math.abs(a[i+3]-b[i+3])>32)alphaMismatch++;}
+   const ratio=bad/(w*h);maxBad=Math.max(maxBad,ratio);output.push(size.join('x')+' '+label+': >32 difference '+(100*ratio).toFixed(2)+'%, alpha '+(100*alphaMismatch/(w*h)).toFixed(2)+'%, mean '+(sum/a.length).toFixed(2));
+   if(label==='complete'){for(const [caption,canvas] of [['REFERENCE',renderer.domElement],['INDIVIDUAL',imageA]]){const fig=document.createElement('figure'),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(canvas,0,0);const cap=document.createElement('figcaption');cap.textContent=size.join('x')+' '+caption;fig.append(cap,c);document.getElementById('views').append(fig);}}
+   ref.geometry.dispose();ref.material.dispose();map.dispose();
+  }
+ }
+ heroLayerPop.active=true;const beforeUploads=uploads;for(let t=0;t<=3150;t+=16.67){heroLayerPop.elapsed=t;updateHeroLayerTransforms();renderer.render(scene,camera);}const newUploads=uploads-beforeUploads;
+ output.push('Layer textures: '+heroLayerMeshes.size+'; uploads during transform-only animation: '+newUploads);
+ const passed=maxBad<.05&&newUploads===0&&heroLayerMeshes.size===17;
+ document.getElementById('result').textContent=(passed?'PASS':'FAIL')+'\n'+output.join('\n');
+}catch(e){document.getElementById('result').textContent='ERROR '+e.stack;}})();
+</script>
