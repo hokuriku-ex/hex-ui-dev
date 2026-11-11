@@ -3270,7 +3270,7 @@ hexReady(function(){
         ".hex-hero-character--pruning"
     ];
     var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
-    var HERO_LAYER_POP_INTERVAL=300;
+    var HERO_LAYER_POP_INTERVAL=500;
     var HERO_LAYER_POP_DURATION=300;
     var heroLayerVersion=0;
     var heroTextureUpdateFrame=0;
