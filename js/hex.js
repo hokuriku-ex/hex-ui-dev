@@ -3260,18 +3260,14 @@ hexReady(function(){
     var heroLayerPopOrder=new Map();
     var heroLayerPopGroupCount=0;
     var HERO_LAYER_POP_SELECTORS=[
-      ".hex-hero-plinth-image,.hex-hero-bg img",
-      ".hex-hero-character--family",
+      ".hex-hero-plinth-image,.hex-hero-bg img,.hex-hero-character--family",
       ".hex-hero-house,.hex-hero-house-layer > img",
-      ".hex-hero-drawing",
-      ".hex-hero-character--supervisor",
-      ".hex-hero-exterior-image--01,.hex-hero-exterior-image,.hex-hero-exterior-layer > img",
-      ".hex-hero-character--aluminum",
-      ".hex-hero-character--sakan",
-      ".hex-hero-character--block",
-      ".hex-hero-sprite--tree01,.hex-hero-sprite--tree02,.hex-hero-sprite--tree03",
-      ".hex-hero-sprite--underplant01,.hex-hero-sprite--underplant02,.hex-hero-sprite--underplant03",
-      ".hex-hero-character--pruning"
+      ".hex-hero-drawing,.hex-hero-character--supervisor",
+      ".hex-hero-exterior-image--01,.hex-hero-exterior-image,.hex-hero-exterior-layer > img,"+
+        ".hex-hero-character--aluminum,.hex-hero-character--sakan,.hex-hero-character--block",
+      ".hex-hero-sprite--tree01,.hex-hero-sprite--tree02,.hex-hero-sprite--tree03,"+
+        ".hex-hero-sprite--underplant01,.hex-hero-sprite--underplant02,.hex-hero-sprite--underplant03,"+
+        ".hex-hero-character--pruning"
     ];
     var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
     var HERO_LAYER_POP_INTERVAL=300;
