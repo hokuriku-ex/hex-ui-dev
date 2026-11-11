@@ -3264,10 +3264,10 @@ hexReady(function(){
     var HERO_LAYER_POP_SELECTORS=[
       ".hex-hero-character--supervisor",
       ".hex-hero-drawing",
-      ".hex-hero-character--sakan",
       ".hex-hero-exterior-image--01,.hex-hero-exterior-image,.hex-hero-exterior-layer > img",
       ".hex-hero-character--aluminum",
       ".hex-hero-character--block",
+      ".hex-hero-character--sakan",
       ".hex-hero-sprite--tree01,.hex-hero-sprite--tree02,.hex-hero-sprite--tree03",
       ".hex-hero-character--pruning",
       ".hex-hero-sprite--underplant01,.hex-hero-sprite--underplant02,.hex-hero-sprite--underplant03"
