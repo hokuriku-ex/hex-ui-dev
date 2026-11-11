@@ -3324,6 +3324,7 @@ hexReady(function(){
       ".hex-hero-sprite--underplant01,.hex-hero-sprite--underplant02,.hex-hero-sprite--underplant03"
     ];
     var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
+    var heroImageIntroReady=false;
     var HERO_LAYER_POP_DURATIONS=[500,460,425,390,350,310,275,240,200];
     var heroLayerVersion=0;
     var heroTextureUpdateFrame=0;
@@ -3670,7 +3671,7 @@ hexReady(function(){
       var anchor=window.hexHomeAnchorNav;
       if(anchor&&anchor.panel.classList.contains('is-hero-anchor')){
         var navWasHidden=anchor.panel.classList.contains('is-welcome-end-hidden');
-        var navVisible=ready&&hero.classList.contains('is-intro-complete')&&
+        var navVisible=ready&&hero.classList.contains('is-subtitle-started')&&
           !hero.classList.contains('is-intro-departed')&&!welcomeActive&&!isBack&&
           !document.documentElement.classList.contains('hex-opening-lock');
         anchor.panel.classList.toggle('is-welcome-end-hidden',!navVisible);
@@ -3712,7 +3713,18 @@ hexReady(function(){
       hero.classList.add('is-subtitle-started');
       updateWelcomeButton();
     });
-    if(HEX_HOME_ANCHOR_ENABLED)document.addEventListener('hex:hero-subtitle-reset',function(){
+    document.addEventListener('hex:hero-subtitle-start',function(){
+      if(hero.classList.contains('is-intro-departed'))return;
+      hero.classList.add('is-subtitle-started');
+      updateWelcomeButton();
+    });
+    document.addEventListener('hex:hero-subtitle-complete',function(){
+      if(hero.classList.contains('is-intro-departed'))return;
+      heroImageIntroReady=true;
+      scheduleAutoZoom(0);
+    });
+    document.addEventListener('hex:hero-subtitle-reset',function(){
+      heroImageIntroReady=false;
       hero.classList.remove('is-subtitle-started');
       updateWelcomeButton();
     });
@@ -3799,6 +3811,8 @@ hexReady(function(){
       var run;
       var started=0;
 
+      if(!heroImageIntroReady){autoZoomPending=true;return;}
+
       if(isSp()&&(welcomeActive||spHistoryBody||spHistoryRestoring)){
         autoZoomPending=false;cancelAutoZoom(true);return;
       }
@@ -3879,7 +3893,7 @@ hexReady(function(){
           }
         }
         autoZoomFrame=window.requestAnimationFrame(frame);
-      },HERO_AUTO_ZOOM_WAIT);
+      },0);
     }
 
     function scheduleAutoZoom(delay){
@@ -3890,7 +3904,7 @@ hexReady(function(){
       autoZoomPendingDelay=Math.max(0,delay||0);
       interactionLocked=true;
       window.clearTimeout(autoZoomTimer);
-      if(!ready||!renderer||!camera||
+      if(!heroImageIntroReady||!ready||!renderer||!camera||
         document.documentElement.classList.contains("hex-opening-lock")||
         document.documentElement.classList.contains("hex-hero-display-wait")||
         document.documentElement.classList.contains("hex-hero-return-preparing")){return;}
@@ -5675,6 +5689,7 @@ hexReady(function(){
 
     function prepareHeroLayerPop(){
       // Keep only the static layers visible while the intro is waiting to start.
+      heroImageIntroReady=false;
       heroLayerPop.active=true;
       heroLayerPop.started=null;
       heroLayerPop.elapsed=0;
@@ -6386,17 +6401,14 @@ hexReady(function(){
         return this.prepareDisplay();
       },
       prepareCatchPosition:function(){
-        var zoomReady=!autoZoomPending&&(heroLayerPop.active
-          ?heroLayerPop.started!==null
-          :bottomIntroComplete&&!autoZoomTimer);
-        // Start the title alongside the first image pop (the supervisor).
-        if(renderer&&!reduced&&!zoomReady)return false;
+        // The title starts on the static scene, before the image animation.
+        if(!ready)return false;
         syncHeroCatchAnchorHeight();
         return true;
       },
       openWelcome:function(){
         if(!ready||characterFocus.maskVisible||welcomeActive||
-          !hero.classList.contains('is-intro-complete')||
+          !hero.classList.contains('is-subtitle-started')||
           document.documentElement.classList.contains('hex-opening-lock'))return;
         beginWelcome(true);
       },
@@ -9626,12 +9638,22 @@ hexReady(function(){
 
   function startHeroIntro(){
     if(heroIntroStarted||heroIntroDeparted){return;}
-    var duration=getOpeningSceneDuration(7);
     heroIntroStarted=true;
     var hero=document.querySelector('.hex-hero-wrap');
     hero.classList.add('is-intro-playing');
     hero.classList.remove('is-intro-complete');
     selectHeroDot();
+    if(isReducedMotion()||document.documentElement.classList.contains('hex-motion-load-error')){
+      document.dispatchEvent(new Event('hex:hero-subtitle-start'));
+      document.dispatchEvent(new Event('hex:hero-subtitle-complete'));
+    }
+  }
+
+  // Start the image-stage countdown after the subtitle and controls have popped in.
+  document.addEventListener('hex:hero-subtitle-complete',function(){
+    if(!heroIntroStarted||heroIntroDeparted||heroIntroTimer!==null)return;
+    var duration=getOpeningSceneDuration(7);
+    var hero=document.querySelector('.hex-hero-wrap');
     var dot=sharedNav&&sharedNav.querySelector('.is-current');
     if(dot&&duration){
       void dot.offsetWidth;
@@ -9649,7 +9671,7 @@ hexReady(function(){
       if(copy){copy.classList.add('is-exploring');}
       document.dispatchEvent(new Event('hex:hero-intro-complete'));
     },duration);
-  }
+  });
 
   document.addEventListener('hex:hero-restart',function(){
     stopHeroIntro();
@@ -9753,7 +9775,7 @@ hexReady(function(){
       var buttonBottom=button.getBoundingClientRect().bottom;
       var visible=rect.top<window.hexViewportHeight()&&
         rect.bottom>buttonBottom+16&&
-        hero.closest('.hex-hero-wrap').classList.contains('is-intro-complete')&&
+        hero.closest('.hex-hero-wrap').classList.contains('is-subtitle-started')&&
         !hero.closest('.hex-hero-wrap').classList.contains('is-intro-departed')&&
         !hero.closest('.hex-hero-wrap').classList.contains('is-welcome-transition');
       var wasHidden=button.classList.contains('is-outside-hero');
@@ -9807,6 +9829,8 @@ hexReady(function(){
     document.body.appendChild(button);
     window.addEventListener('scroll',requestReplayUpdate,{passive:true});
     window.addEventListener('hex:viewport-resize',requestReplayUpdate);
+    document.addEventListener('hex:hero-subtitle-start',updateReplayVisibility);
+    document.addEventListener('hex:hero-subtitle-reset',requestReplayUpdate);
     ['hex:opening-finished','hex:hero-intro-complete','hex:hero-departed','hex:hero-intro-reset'].forEach(function(name){
       document.addEventListener(name,requestReplayUpdate);
     });
@@ -15206,7 +15230,7 @@ hexLoad(function(){
       Math.abs(event.deltaX||0)>Math.abs(event.deltaY||0);
   }
 
-  function createCatchSubtitlePop(subtitle,onStart){
+  function createCatchSubtitlePop(subtitle,onStart,onComplete){
     if(!subtitle)return null;
     var gsap=window.gsap;
     subtitle.classList.add('has-hex-sub-pop');
@@ -15221,7 +15245,7 @@ hexLoad(function(){
       play:function(delay){
         gsap.to(subtitle,{
           autoAlpha:1,y:0,scale:1,delay:delay,duration:.4,
-          ease:'back.out(1.7)',overwrite:'auto',onStart:onStart
+          ease:'back.out(1.7)',overwrite:'auto',onStart:onStart,onComplete:onComplete
         });
       }
     };
@@ -15297,6 +15321,8 @@ hexLoad(function(){
       main.dispatchEvent(new Event('hex:welcome-subtitle-start',{bubbles:true}));
     }:isHero?function(){
       main.dispatchEvent(new Event('hex:hero-subtitle-start',{bubbles:true}));
+    }:null,isHero?function(){
+      main.dispatchEvent(new Event('hex:hero-subtitle-complete',{bubbles:true}));
     }:null);
 
     Array.from(textValue).forEach(function(character,index){
@@ -15360,6 +15386,10 @@ hexLoad(function(){
         if(isWelcome)main.classList.add('is-welcome-title-playing');
         tween=playTitleLetterPop(letters,stagger,function(){
           tween=null;
+          if(isHero&&!subtitlePop){
+            main.dispatchEvent(new Event('hex:hero-subtitle-start',{bubbles:true}));
+            main.dispatchEvent(new Event('hex:hero-subtitle-complete',{bubbles:true}));
+          }
           if(isWelcome){
             main.classList.remove('is-welcome-title-playing');
             main.dispatchEvent(new Event('hex:welcome-title-complete',{bubbles:true}));
