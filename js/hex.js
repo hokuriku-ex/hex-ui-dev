@@ -5661,7 +5661,6 @@ hexReady(function(){
         ?1.25*(1-Math.pow(1-progress/peak,3))
         :1.25-.25*(1-Math.pow(1-(progress-peak)/(1-peak),3));
       context.save();
-      context.globalAlpha=Math.min(progress/peak,1);
       context.translate(x+width/2,y+height/2);
       context.scale(scale,scale);
       context.drawImage(layer,-width/2,-height/2,width,height);
