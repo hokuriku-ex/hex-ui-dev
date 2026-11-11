@@ -53,6 +53,14 @@ function hexSetCatchRollCharacter(span,character){
   span.textContent=character===' '?'\u00a0':character;
 }
 
+function hexPlayHeroControlPop(element){
+  if(!element||!element.animate||
+    window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  element.animate([{scale:'.8'},{scale:'1'}],{
+    duration:400,easing:'cubic-bezier(.175,.885,.32,1.275)'
+  });
+}
+
 /* メインタイトル：SPは表示幅、開幕2〜5番は全端末で画面幅50%へ収める。 */
 (function(){
   'use strict';
@@ -3655,7 +3663,8 @@ hexReady(function(){
 
       var anchor=window.hexHomeAnchorNav;
       if(anchor&&anchor.panel.classList.contains('is-hero-anchor')){
-        var navVisible=ready&&(reduced||hero.classList.contains('is-subtitle-started'))&&
+        var navWasHidden=anchor.panel.classList.contains('is-welcome-end-hidden');
+        var navVisible=ready&&hero.classList.contains('is-intro-complete')&&
           !hero.classList.contains('is-intro-departed')&&!welcomeActive&&!isBack&&
           !document.documentElement.classList.contains('hex-opening-lock');
         anchor.panel.classList.toggle('is-welcome-end-hidden',!navVisible);
@@ -3664,6 +3673,7 @@ hexReady(function(){
         anchor.nav.classList.toggle('is-welcome-end-hidden',!(fixedVisible||navVisible));
         anchor.panel.setAttribute('aria-hidden',navVisible?'false':'true');
         anchor.nav.inert=!(fixedVisible||navVisible);
+        if(navVisible&&navWasHidden&&!fixedVisible){hexPlayHeroControlPop(anchor.nav);}
       }
       /* PCはBACK、SPはスクロール枠の外に置いた閉じるボタンを使う。 */
       if(characterCloseButton){
@@ -3690,15 +3700,9 @@ hexReady(function(){
       welcomeButton.setAttribute("aria-hidden",visible?"false":"true");
     }
 
-    if(HEX_HOME_ANCHOR_ENABLED)document.addEventListener('hex:hero-title-start',function(){
+    if(HEX_HOME_ANCHOR_ENABLED)document.addEventListener('hex:hero-intro-complete',function(){
       hero.classList.add('is-subtitle-started');
       updateWelcomeButton();
-      var anchor=window.hexHomeAnchorNav;
-      if(!reduced&&anchor&&!anchor.nav.classList.contains('is-fixed')&&anchor.nav.animate){
-        anchor.nav.animate([{scale:'.8'},{scale:'1'}],{
-          duration:400,easing:'cubic-bezier(.175,.885,.32,1.275)'
-        });
-      }
     });
     if(HEX_HOME_ANCHOR_ENABLED)document.addEventListener('hex:hero-subtitle-reset',function(){
       hero.classList.remove('is-subtitle-started');
@@ -5652,8 +5656,15 @@ hexReady(function(){
       heroLayerPop.elapsed=Math.max(0,now-heroLayerPop.started);
       if(heroLayerPop.elapsed>=duration){finishHeroLayerPop();return;}
       // Limit canvas uploads to 30fps without changing the GPU texture dimensions.
-      if(heroLayerPop.lastFrame>=0&&now-heroLayerPop.lastFrame<1000/30)return;
-      heroLayerPop.lastFrame=now;
+      var frameInterval=1000/30;
+      if(heroLayerPop.lastFrame>=0){
+        var frameElapsed=now-heroLayerPop.lastFrame;
+        if(frameElapsed<frameInterval-.5)return;
+        // Preserve cadence instead of delaying the next frame after rounding or a long task.
+        heroLayerPop.lastFrame+=Math.max(1,Math.round(frameElapsed/frameInterval))*frameInterval;
+      }else{
+        heroLayerPop.lastFrame=now;
+      }
       updateTextureSource(sourceImage);
     }
 
@@ -9403,9 +9414,11 @@ hexReady(function(){
         hero.closest('.hex-hero-wrap').classList.contains('is-intro-complete')&&
         !hero.closest('.hex-hero-wrap').classList.contains('is-intro-departed')&&
         !hero.closest('.hex-hero-wrap').classList.contains('is-welcome-transition');
+      var wasHidden=button.classList.contains('is-outside-hero');
       button.classList.toggle('is-outside-hero',!visible);
       button.setAttribute('aria-hidden',visible?'false':'true');
       button.tabIndex=visible?0:-1;
+      if(visible&&wasHidden){hexPlayHeroControlPop(button);}
       updateRequested=false;
     }
 
