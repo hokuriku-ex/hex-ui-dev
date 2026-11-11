@@ -342,6 +342,7 @@ var renderer,scene,camera;
  }
  heroLayerPop.active=true;const beforeUploads=uploads;for(let t=0;t<=3150;t+=16.67){heroLayerPop.elapsed=t;updateHeroLayerTransforms();renderer.render(scene,camera);}const newUploads=uploads-beforeUploads;
  output.push('Layer textures: '+heroLayerMeshes.size+'; uploads during transform-only animation: '+newUploads);
+ output.push('Layer diagnostics: '+JSON.stringify(Array.from(heroLayerMeshes.values()).slice(0,4).map(e=>({valid:e.valid,visible:e.pivot.visible,pivot:e.pivot.position.toArray(),scale:e.pivot.scale.toArray(),mesh:e.mesh.position.toArray(),size:e.mesh.scale.toArray(),map:e.mesh.material.map.image.currentSrc})))+'; render '+JSON.stringify(renderer.info.render));
  const passed=maxBad<.05&&newUploads===0&&heroLayerMeshes.size===17;
  document.getElementById('result').textContent=(passed?'PASS':'FAIL')+'\n'+output.join('\n');
 }catch(e){document.getElementById('result').textContent='ERROR '+e.stack;}})();

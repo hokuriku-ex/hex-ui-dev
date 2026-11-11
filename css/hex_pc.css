@@ -9534,6 +9534,7 @@ html.hex-character-focus-active :is(.hex-opening-progress-nav,.hex-opening-repla
 .hex-hero-wrap.is-exploring .hex-scroll-indicator{opacity:0!important;transition:opacity .35s ease!important}
 .hex-scroll-indicator{display:none!important}
 .hex-hero.is-v2-fallback>.hex-hero-scene{opacity:1!important;visibility:visible!important}
+.hex-hero.is-v2-fallback .hex-hero-bg img{visibility:visible!important;}
 /* WELCOME移行中は固定した丸スナップショットだけを表示する */
 .hex-hero-wrap.is-welcome-transition .hex-hero{opacity:0!important;visibility:hidden!important;transition:none!important}
 .hex-hero-wrap.is-welcome-transition .hex-hero-welcome-button{opacity:0!important;visibility:hidden!important;transform:translate3d(-50%,14px,0)!important;transition:none!important;pointer-events:none!important}

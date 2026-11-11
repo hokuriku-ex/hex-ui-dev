@@ -4240,6 +4240,9 @@ hexReady(function(){
     }
 
     function resizeRenderer(){
+      if(activeHero&&activeHero.classList.contains('is-v2-fallback')){
+        syncHeroFallbackLayout();resizeQueued=false;return;
+      }
       syncHeroCroppedLayerLayout();
       heroLayerStyleCache=new WeakMap();
       var width;
@@ -4313,7 +4316,7 @@ hexReady(function(){
       try{
         renderer.render(scene,camera);
       }catch(error){
-        createFallback();
+        createFallback(error);
         return;
       }
       if(snapshot&&!isSp()){
@@ -5631,7 +5634,7 @@ hexReady(function(){
             }
             heroRenderDirty=false;
           }catch(error){
-            createFallback();
+            createFallback(error);
             return;
           }
         }
@@ -5673,6 +5676,9 @@ hexReady(function(){
     }
 
     function syncHeroCroppedLayerLayout(){
+      if(activeHero&&activeHero.classList.contains('is-v2-fallback')){
+        syncHeroFallbackLayout();return;
+      }
       heroLayerImages.forEach(function(layer){
         var crop=getHeroLayerCrop(layer);
         if(!crop||!layer.parentElement)return;
@@ -5745,6 +5751,38 @@ hexReady(function(){
         y=imageHeight-imageHeight*parseFloat(style['--hex-sprite-bottom'])/100-height;
       }
       return {x:x,y:y,width:width,height:height};
+    }
+
+    function syncHeroFallbackLayout(){
+      if(!activeHero||!sourceImage||!sourceImage.naturalWidth)return;
+      var imageWidth=sourceImage.naturalWidth,imageHeight=sourceImage.naturalHeight;
+      var width=activeHero.clientWidth,height=activeHero.clientHeight;
+      if(!width||!height)return;
+      heroLayerStyleCache=new WeakMap();
+      var baseScale=parseFloat(getHeroLayerDrawStyle(activeHero)['--hex-hero-base-layer-scale'])||1;
+      var scale=Math.max(width/imageWidth,height/imageHeight)*(isSp()?1.16:1.1);
+      var originX=(width-imageWidth*scale)/2,originY=(height-imageHeight*scale)/2;
+      var layers=heroLayerImages.length?heroLayerImages:[sourceImage];
+      layers.forEach(function(layer,index){
+        if(!layer.naturalWidth)return;
+        var rect=getHeroLayerRect(layer,imageWidth,imageHeight,baseScale);
+        if(![rect.x,rect.y,rect.width,rect.height].every(Number.isFinite))return;
+        var crop=getHeroLayerCrop(layer);
+        if(crop){
+          rect.x+=rect.width*crop.x/crop.originalWidth;
+          rect.y+=rect.height*crop.y/crop.originalHeight;
+          rect.width*=crop.width/crop.originalWidth;rect.height*=crop.height/crop.originalHeight;
+        }
+        layer.style.setProperty('position','absolute','important');
+        layer.style.setProperty('inset','auto','important');
+        layer.style.setProperty('left',(originX+rect.x*scale)+'px','important');
+        layer.style.setProperty('top',(originY+rect.y*scale)+'px','important');
+        layer.style.setProperty('width',rect.width*scale+'px','important');
+        layer.style.setProperty('height',rect.height*scale+'px','important');
+        layer.style.setProperty('transform','none','important');
+        layer.style.setProperty('object-fit','fill','important');
+        layer.style.setProperty('z-index',String(index),'important');
+      });
     }
 
     function getHeroLayerPopScale(layer){
@@ -5975,11 +6013,26 @@ hexReady(function(){
       heroLayerPreviewCache=null;
     }
 
-    function createFallback(){
+    function createFallback(error){
       heroIntroCameraLocked=false;
       destroyThree();
       activeHero=getActiveHero();
       if(activeHero){activeHero.classList.add("is-v2-fallback");}
+      if(activeHero&&!sourceImage){
+        sourceImage=activeHero.querySelector('.hex-hero-plinth-image,.hex-hero-bg img');
+      }
+      if(activeHero&&!heroLayerImages.length){
+        heroLayerImages=Array.from(activeHero.querySelectorAll(
+          '.hex-hero-bg img,.hex-hero-house-layer img,.hex-hero-exterior-layer img,'+
+          '.hex-hero-characters .hex-hero-character,.hex-hero-scene > .hex-hero-layer,'+
+          '.hex-hero-scene > .hex-hero-sprite,.hex-hero-scene > .hex-hero-character'
+        ));
+      }
+      if(error&&error.message){
+        hero.dataset.hexWebglError=error.message;
+        console.warn('HEX hero WebGL fallback:',error);
+      }
+      syncHeroFallbackLayout();
       hero.classList.add("is-v2-ready","is-v2-fallback");
       ready=true;
       interactionLocked=false;
@@ -6135,7 +6188,7 @@ hexReady(function(){
           renderLoop();
           if(autoZoomPending){scheduleAutoZoom(autoZoomPendingDelay);}
         }catch(error){
-          createFallback();
+          createFallback(error);
         }
       }
 
