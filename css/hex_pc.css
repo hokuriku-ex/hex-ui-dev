@@ -5276,8 +5276,8 @@ html body
   will-change:auto;
 }
 
-/* Hide hero titles while preserving the timing events used by the anchor nav. */
-.hex-hero-catch .hex-handoff-copy{
+/* Temporarily hide the hero anchor nav for performance comparison. */
+.hex-hero-wrap .hex-home-anchor-panel.is-hero-anchor{
   opacity:0!important;
   visibility:hidden!important;
   pointer-events:none!important;
