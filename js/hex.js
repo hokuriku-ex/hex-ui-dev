@@ -15019,7 +15019,7 @@ hexLoad(function(){
       chars.push(span);
     });
 
-    if(isHero)applyTitleLetterArc(main,chars);
+    if(isHero)main.classList.remove('hex-title-arc');
     if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
 
     function reset(){
