@@ -5916,6 +5916,15 @@ hexReady(function(){
       });
 
       function complete(){
+        // Decode every layer before starting the intro, rather than on its first pop.
+        Promise.all(heroLayerImages.map(function(layer){
+          return typeof layer.decode==="function"
+            ?layer.decode().catch(function(){})
+            :Promise.resolve();
+        })).then(completeDecoded);
+      }
+
+      function completeDecoded(){
         try{
           imageWidth=sourceImage.naturalWidth||1920;
           imageHeight=sourceImage.naturalHeight||1080;
@@ -5946,6 +5955,9 @@ hexReady(function(){
           }
           texture=new THREE.CanvasTexture(textureCanvas);
           texture.colorSpace=THREE.SRGBColorSpace;
+          // The intro uploads this canvas repeatedly; avoid rebuilding mipmaps each time.
+          texture.generateMipmaps=false;
+          texture.minFilter=THREE.LinearFilter;
           texture.needsUpdate=true;
           geometry=new THREE.PlaneGeometry(imageWidth,imageHeight);
           material=new THREE.MeshBasicMaterial({map:texture,transparent:true});
