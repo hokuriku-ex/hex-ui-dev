@@ -3271,7 +3271,7 @@ hexReady(function(){
     ];
     var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
     var HERO_LAYER_POP_INTERVAL=500;
-    var HERO_LAYER_POP_DURATION=600;
+    var HERO_LAYER_POP_DURATION=500;
     var heroLayerVersion=0;
     var heroTextureUpdateFrame=0;
     var heroLayerPreviewCache=null;
