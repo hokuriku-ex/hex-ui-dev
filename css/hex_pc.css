@@ -5271,13 +5271,6 @@ html body
   filter:drop-shadow(.055em .055em 0 #000);
 }
 
-/* Temporarily hide the hero anchor nav for performance comparison. */
-.hex-hero-wrap .hex-home-anchor-panel.is-hero-anchor{
-  opacity:0!important;
-  visibility:hidden!important;
-  pointer-events:none!important;
-}
-
 /* ウェルカム側コピー */
 .hex-opening-copy-source.hex-welcome-copy{
   display:block!important;

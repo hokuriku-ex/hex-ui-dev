@@ -26,6 +26,29 @@
   });
 })();
 
+// Defer non-hero work until the existing four-second hero timer completes.
+var hexHomeContentReleased=false;
+var hexHomeContentTasks=new Map();
+function hexHomeIntroPending(){
+  var hero=document.querySelector('.hex-hero-wrap');
+  return !hexHomeContentReleased&&!!hero&&!hero.classList.contains('is-intro-complete')&&
+    !hero.classList.contains('is-intro-departed');
+}
+function hexDeferHomeContent(key,task){
+  if(!hexHomeIntroPending())return false;
+  hexHomeContentTasks.set(key,task);
+  return true;
+}
+function hexReleaseHomeContent(){
+  if(hexHomeContentReleased)return;
+  hexHomeContentReleased=true;
+  var tasks=Array.from(hexHomeContentTasks.values());
+  hexHomeContentTasks.clear();
+  tasks.forEach(function(task){window.setTimeout(task,0);});
+}
+document.addEventListener('hex:hero-intro-complete',hexReleaseHomeContent);
+document.addEventListener('hex:hero-departed',hexReleaseHomeContent);
+
 function hexSetCatchRollCharacter(span,character){
   span.textContent=character===' '?'\u00a0':character;
 }
@@ -91,6 +114,12 @@ function hexSetCatchRollCharacter(span,character){
   }
   function run(){
     frame=0;var changed=false;
+    if(hexDeferHomeContent('title-fit',run)){
+      titles.forEach(function(original,main){
+        if(main.closest('.hex-hero-wrap'))fit(main,original);
+      });
+      return;
+    }
     /* 日本語だけの下層H2は、文字分割せずに幅を調整する。 */
     document.querySelectorAll('h2.hex-section-title:not([data-en]:not([data-en=""]))').forEach(function(main){
       if(!titles.has(main))titles.set(main,{value:main.style.getPropertyValue('font-size'),priority:main.style.getPropertyPriority('font-size')});
@@ -1002,7 +1031,7 @@ function hexAnchorVisualBottom(element){
   return bottom;
 }
 // Temporary performance isolation: do not initialize the home anchor nav.
-var HEX_HOME_ANCHOR_ENABLED=false;
+var HEX_HOME_ANCHOR_ENABLED=true;
 function hexInitAnchorNav(){
   var source=document.querySelector('.hex-home-anchor-source')||document.querySelector('.hex-anchor-source');
   if(!source||source._hexAnchorNav)return;
@@ -15294,7 +15323,10 @@ hexLoad(function(){
 
     if(!normalSp){
       gsap.registerPlugin(ScrollTrigger);
-      ScrollTrigger.config({autoRefreshEvents:'visibilitychange,DOMContentLoaded,load'});
+      ScrollTrigger.config({autoRefreshEvents:hexHomeIntroPending()?'none':'visibilitychange,DOMContentLoaded,load'});
+      hexDeferHomeContent('scroll-trigger-auto-refresh',function(){
+        ScrollTrigger.config({autoRefreshEvents:'visibilitychange,DOMContentLoaded,load'});
+      });
     }
     window.addEventListener('hex:viewport-resize',function(){scheduleRefresh();},{passive:true});
 
@@ -15339,6 +15371,7 @@ hexLoad(function(){
       lenis.on('scroll',ScrollTrigger.update);
 
       gsap.ticker.add(function(time){
+        if(hexHomeIntroPending())return;
         lenis.raf(time*1000);
       });
       gsap.ticker.lagSmoothing(0);
@@ -15355,10 +15388,12 @@ hexLoad(function(){
     }
 
     function scheduleRefresh(delay){
+      if(hexDeferHomeContent('motion-layout',function(){scheduleRefresh(0);}))return;
       if(normalSp)return;
       window.clearTimeout(refreshTimer);
 
       refreshTimer=window.setTimeout(function(){
+        if(hexDeferHomeContent('motion-layout',function(){scheduleRefresh(0);}))return;
         // タッチ前に予約された寸法再計測も、安定後の共通通知まで待つ。
         if(window.hexViewportIsHeld&&window.hexViewportIsHeld())return;
         if(lenis){
@@ -16137,6 +16172,7 @@ hexLoad(function(){
     }
 
     function setupFoundedMotion(){
+      if(hexDeferHomeContent('founded-motion',setupFoundedMotion))return;
       var section=document.getElementById(HOME_SECTIONS.ABOUT);
       var title=section&&section.querySelector('.hex-center-title');
       var foundedArc=title&&title.querySelector('.hex-founded-arc');
@@ -16663,6 +16699,7 @@ hexLoad(function(){
     }
 
     function setupMotionTargets(scope){
+      if(hexDeferHomeContent('motion-targets',function(){setupMotionTargets(document);}))return;
       var area=scope&&scope.querySelectorAll
         ?scope
         :document;
@@ -16793,6 +16830,7 @@ hexLoad(function(){
         setupMotionTargets(scope||document);
       },
       refreshLayout:function(){
+        if(hexDeferHomeContent('motion-layout',function(){scheduleRefresh(0);}))return;
         if(lenis){
           lenis.resize();
         }
@@ -16841,6 +16879,7 @@ hexLoad(function(){
     );
 
     function refreshAfterTopLayoutChange(event){
+      if(hexDeferHomeContent('motion-layout',function(){scheduleRefresh(0);}))return;
       var syncAfterOpening=
         event&&event.type==='hex:opening-finished';
 
@@ -16881,7 +16920,8 @@ hexLoad(function(){
     // 開幕1番もヒーロー・WELCOMEと同じロール演出を使用する。
     window.hexCreateCatchRoll=createCatchRoll;
     document.dispatchEvent(new Event('hex:catch-roll-ready'));
-    setupHeroAndWelcomeCatchRolls();
+    setupHeroCatchRoll();
+    if(!hexDeferHomeContent('welcome-motion',setupHeroAndWelcomeCatchRolls))setupHeroAndWelcomeCatchRolls();
 
     /* 初回の対象登録と位置計算が終わってから白カバーを外す */
     window.requestAnimationFrame(function(){
@@ -18890,6 +18930,7 @@ hexReady(function(){
   }
   function measure(){
     measureFrame=0;
+    if(hexDeferHomeContent('overlap-measure',queueMeasure))return;
     scanHashtagOverlaps();
     if(homeFoundedSection())scanHome();
     scanCardStackOverlaps();
@@ -18978,6 +19019,7 @@ hexReady(function(){
     if(window.hexHomeAnchorNav)document.dispatchEvent(new Event('hex:home-overlap-measured'));
   }
   function queueMeasure(){
+    if(hexDeferHomeContent('overlap-measure',queueMeasure))return;
     clearTimeout(measureTimer);
     var delay=lastScrollTime?Math.max(0,180-(Date.now()-lastScrollTime)):0;
     if(delay){measureTimer=setTimeout(queueMeasure,delay);return;}
@@ -19119,6 +19161,7 @@ hexReady(function(){
     });
   }
   function scan(){
+    if(hexDeferHomeContent('overlap-scan',scan))return;
     scanHashtagOverlaps();
     if(homeFoundedSection()){
       // stickyの再計測で、ブラウザのアンカー補正が遠方へ移動させるのを防ぐ。
