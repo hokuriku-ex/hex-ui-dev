@@ -3257,6 +3257,9 @@ hexReady(function(){
     var activeHero=null;
     var sourceImage=null;
     var heroLayerImages=[];
+    var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
+    var HERO_LAYER_POP_INTERVAL=60;
+    var HERO_LAYER_POP_DURATION=300;
     var heroLayerVersion=0;
     var heroTextureUpdateFrame=0;
     var heroLayerPreviewCache=null;
@@ -3703,6 +3706,7 @@ hexReady(function(){
     }
 
     function cancelAutoZoom(unlock){
+      finishHeroLayerPop();
       cancelCharacterFocus();
       autoZoomRun+=1;
       window.clearTimeout(autoZoomTimer);
@@ -3748,6 +3752,11 @@ hexReady(function(){
 
       interactionLocked=true;
       autoZooming=true;
+      heroLayerPop.active=true;
+      heroLayerPop.started=null;
+      heroLayerPop.elapsed=0;
+      heroLayerPop.lastFrame=-1;
+      webglStage.classList.add('is-layer-pop-pending');
       hero.classList.add("is-auto-zooming");
       run=autoZoomRun;
 
@@ -3757,7 +3766,10 @@ hexReady(function(){
           var progress;
           var eased;
           if(run!==autoZoomRun||welcomeActive){return;}
-          if(!started){started=now;}
+          if(!started){
+            started=now;
+            heroLayerPop.started=now;
+          }
           progress=clamp((now-started)/HERO_AUTO_ZOOM_DURATION,0,1);
           eased=progress<.5
             ?4*progress*progress*progress
@@ -5575,6 +5587,7 @@ hexReady(function(){
     }
     function renderLoop(){
       if(!document.hidden&&heroRenderVisible&&renderer&&camera&&scene){
+        advanceHeroLayerPop(performance.now());
         if(!HEX_IS_PRODUCTION){syncHeroDevStyles(performance.now());}
         if(!dragging&&!pinch.active&&!autoZooming&&!welcomeActive){
           if(characterFocus.active){
@@ -5604,6 +5617,9 @@ hexReady(function(){
         if(heroRenderDirty){
           try{
             renderer.render(scene,camera);
+            if(heroLayerPop.active&&heroLayerPop.started!==null&&webglStage){
+              webglStage.classList.remove('is-layer-pop-pending');
+            }
             heroRenderDirty=false;
           }catch(error){
             createFallback();
@@ -5614,10 +5630,48 @@ hexReady(function(){
       renderFrameId=window.requestAnimationFrame(renderLoop);
     }
 
+    function finishHeroLayerPop(){
+      var wasActive=heroLayerPop.active;
+      heroLayerPop.active=false;
+      heroLayerPop.started=null;
+      if(webglStage)webglStage.classList.remove('is-layer-pop-pending');
+      if(wasActive&&texture&&sourceImage)updateTextureSource(sourceImage);
+    }
+
+    function advanceHeroLayerPop(now){
+      if(!heroLayerPop.active||heroLayerPop.started===null)return;
+      var duration=Math.max(heroLayerImages.length-1,0)*HERO_LAYER_POP_INTERVAL+
+        HERO_LAYER_POP_DURATION;
+      heroLayerPop.elapsed=Math.max(0,now-heroLayerPop.started);
+      if(heroLayerPop.elapsed>=duration){finishHeroLayerPop();return;}
+      // Limit temporary canvas uploads to 30fps; restore full resolution at the end.
+      if(heroLayerPop.lastFrame>=0&&now-heroLayerPop.lastFrame<1000/30)return;
+      heroLayerPop.lastFrame=now;
+      updateTextureSource(sourceImage);
+    }
+
+    function drawHeroLayer(context,layer,x,y,width,height,index){
+      if(!heroLayerPop.active){context.drawImage(layer,x,y,width,height);return;}
+      var progress=clamp((heroLayerPop.elapsed-index*HERO_LAYER_POP_INTERVAL)/
+        HERO_LAYER_POP_DURATION,0,1);
+      if(progress<=0)return;
+      if(progress>=1){context.drawImage(layer,x,y,width,height);return;}
+      var peak=.46666667;
+      var scale=progress<peak
+        ?1.25*(1-Math.pow(1-progress/peak,3))
+        :1.25-.25*(1-Math.pow(1-(progress-peak)/(1-peak),3));
+      context.save();
+      context.globalAlpha=Math.min(progress/peak,1);
+      context.translate(x+width/2,y+height/2);
+      context.scale(scale,scale);
+      context.drawImage(layer,-width/2,-height/2,width,height);
+      context.restore();
+    }
+
     function updateTextureSource(image){
       var naturalWidth=image&&image.naturalWidth;
       var naturalHeight=image&&image.naturalHeight;
-      var maxTextureSize=4096;
+      var maxTextureSize=heroLayerPop.active?1536:4096;
       var scale;
       var context;
       var baseLayerScale;
@@ -5630,8 +5684,10 @@ hexReady(function(){
 
       scale=Math.min(1,maxTextureSize/Math.max(naturalWidth,naturalHeight));
       if(!textureCanvas){textureCanvas=document.createElement("canvas");}
-      textureCanvas.width=Math.max(1,Math.round(naturalWidth*scale));
-      textureCanvas.height=Math.max(1,Math.round(naturalHeight*scale));
+      var canvasWidth=Math.max(1,Math.round(naturalWidth*scale));
+      var canvasHeight=Math.max(1,Math.round(naturalHeight*scale));
+      if(textureCanvas.width!==canvasWidth)textureCanvas.width=canvasWidth;
+      if(textureCanvas.height!==canvasHeight)textureCanvas.height=canvasHeight;
       context=textureCanvas.getContext("2d",{alpha:true});
       if(!context){return false;}
       baseLayerScale=parseFloat(getComputedStyle(activeHero).getPropertyValue("--hex-hero-base-layer-scale"));
@@ -5645,7 +5701,7 @@ hexReady(function(){
       heroCharacterHitRect=null;
       /* 台座は寸法の基準としてのみ使い、画像自体は描画しない。
          図面以降の合成位置・サイズはそのまま維持する。 */
-      heroLayerImages.forEach(function(layer){
+      heroLayerImages.forEach(function(layer,index){
         var style;
         var x;
         var bottom;
@@ -5654,7 +5710,7 @@ hexReady(function(){
         if(!layer.complete||!layer.naturalWidth){return;}
         if(!layer.classList.contains("hex-hero-character")&&
           !layer.classList.contains("hex-hero-sprite")){
-          context.drawImage(layer,baseLayerX,baseLayerY,baseLayerWidth,baseLayerHeight);
+          drawHeroLayer(context,layer,baseLayerX,baseLayerY,baseLayerWidth,baseLayerHeight,index);
           return;
         }
         style=getComputedStyle(layer);
@@ -5676,7 +5732,7 @@ hexReady(function(){
         bottom=textureCanvas.height*bottom/100;
         width=textureCanvas.width*width/100;
         height=width*layer.naturalHeight/layer.naturalWidth;
-        context.drawImage(layer,x,textureCanvas.height-bottom-height,width,height);
+        drawHeroLayer(context,layer,x,textureCanvas.height-bottom-height,width,height,index);
       });
       heroLayerVersion+=1;
       heroLayerPreviewCache=null;
@@ -5871,6 +5927,7 @@ hexReady(function(){
             throw new Error("Hero texture rendered as an empty frame");
           }
           activeHero.classList.add("is-v2-active");
+          if(!reduced)webglStage.classList.add('is-layer-pop-pending');
           ready=true;
           hero.classList.add("is-v2-ready");
           setHeroPageLock(true);

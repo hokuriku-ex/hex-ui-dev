@@ -9504,6 +9504,7 @@ html.hex-opening-finishing
 }
 .hex-webgl-stage.is-dragging canvas,
 .hex-webgl-stage.is-coasting canvas{transition:none;will-change:transform;}
+.hex-webgl-stage.is-layer-pop-pending canvas{opacity:0;}
 /* Temporarily hide left/right bottom01-04, including cloned preview artwork. */
 .hex-hero-bottom-illustrations,
 .hex-hero-boundary-illustrations{display:none!important;}
