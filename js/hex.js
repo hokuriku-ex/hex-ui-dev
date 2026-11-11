@@ -3262,8 +3262,8 @@ hexReady(function(){
     var HERO_LAYER_STATIC_SELECTOR=".hex-hero-plinth-image,.hex-hero-bg img,.hex-hero-character--family,"+
       ".hex-hero-house,.hex-hero-house-layer > img";
     var HERO_LAYER_POP_SELECTORS=[
-      ".hex-hero-drawing",
       ".hex-hero-character--supervisor",
+      ".hex-hero-drawing",
       ".hex-hero-character--sakan",
       ".hex-hero-exterior-image--01,.hex-hero-exterior-image,.hex-hero-exterior-layer > img",
       ".hex-hero-character--aluminum",
