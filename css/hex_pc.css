@@ -4080,6 +4080,48 @@ body,
 }
 
 /* キャッチ全体 */
+.hex-opening-intro-hero-scene{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  isolation:isolate;
+  background:#a0d8ef;
+  pointer-events:none;
+}
+.hex-opening-intro-hero-images{
+  position:absolute;
+  inset:0;
+  z-index:4;
+  pointer-events:none;
+}
+.hex-opening-intro-hero-image{
+  position:absolute;
+  display:block;
+  max-width:none;
+  object-fit:fill;
+  transform:none!important;
+  animation:none!important;
+  transition:none!important;
+}
+.hex-opening-intro-hero-scene>.hex-cloud-layer .hex-cloud--behind-ellipse{z-index:0;}
+.hex-opening-intro-hero-scene>.hex-cloud-layer .hex-cloud--in-front-of-ellipse{z-index:2;}
+html body .hex-opening .hex-opening-intro-stage.is-hero-scene .hex-opening-intro-catch{
+  inset:auto 0;
+  top:calc((100% - var(--hex-hero-anchor-height,0px)) / 2);
+  width:min(90vw,960px);
+  margin:0 auto;
+  padding:0;
+  opacity:1!important;
+  transform:translateY(-50%)!important;
+  transition:none!important;
+  pointer-events:none;
+}
+@media screen and (max-width:768px){
+  html body .hex-opening .hex-opening-intro-stage.is-hero-scene .hex-opening-intro-catch{
+    top:calc((100% + var(--header_height_smartphone,80px) - var(--hex-hero-anchor-height,0px)) / 2);
+    max-width:calc(100% - 32px);
+  }
+}
 .hex-opening-intro-catch{
   position:absolute;
   inset:0;
