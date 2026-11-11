@@ -9497,8 +9497,8 @@ html.hex-opening-finishing
 .hex-webgl-stage canvas{display:block;width:100%!important;height:100%!important}
 /* Drag tilts images only. The stage remains fixed for stable pointer capture. */
 .hex-webgl-stage canvas{
-  /* Rightmost first: vertical perspective, then clockwise/counterclockwise roll. */
-  transform:rotateZ(var(--hex-hero-tilt-y,0deg)) perspective(1200px) rotateX(var(--hex-hero-tilt-x,0deg));
+  /* Keep the roll; add subtle horizontal perspective (max 2deg yaw). */
+  transform:rotateZ(var(--hex-hero-tilt-y,0deg)) perspective(4000px) rotateY(calc(var(--hex-hero-tilt-y,0deg) * -.4)) perspective(1200px) rotateX(var(--hex-hero-tilt-x,0deg));
   transform-origin:50% 50%;
   transition:transform .45s cubic-bezier(.22,.8,.3,1);
 }
