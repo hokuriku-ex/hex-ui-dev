@@ -7179,8 +7179,8 @@ html body
 }
 .hex-staff-photo::before{
   background-color:#fff;
-  -webkit-mask:url("../images/common/patterns/grunge.svg") center / cover no-repeat;
-  mask:url("../images/common/patterns/grunge.svg") center / cover no-repeat;
+  -webkit-mask:url("../images/common/patterns/grunge.png") center / cover no-repeat;
+  mask:url("../images/common/patterns/grunge.png") center / cover no-repeat;
 }
 .hex-staff-photo::after{
   background-image:var(--hex-staff-image,none);
