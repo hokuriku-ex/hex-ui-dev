@@ -9651,25 +9651,25 @@ body > .hex-v2-handoff{z-index:198;}
   height:50%;
   z-index:0;
   pointer-events:none;
-  /* Upper rows: separate beige circles on sky. Lower rows: sky circles on beige.
-     closest-side keeps each circle inside its cell, avoiding clipped line-like gaps. */
+  /* Paint sky once under all rows. Transparent space around each circle
+     avoids horizontal seams from fractional row heights and positions. */
   background-image:
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 0.00%,var(--hex-hero-sky) 0.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 6.33%,var(--hex-hero-sky) 6.83%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 12.67%,var(--hex-hero-sky) 13.17%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 19.00%,var(--hex-hero-sky) 19.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 25.33%,var(--hex-hero-sky) 25.83%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 31.67%,var(--hex-hero-sky) 32.17%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 38.00%,var(--hex-hero-sky) 38.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 44.33%,var(--hex-hero-sky) 44.83%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 50.67%,var(--hex-hero-sky) 51.17%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 57.00%,var(--hex-hero-sky) 57.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 63.33%,var(--hex-hero-sky) 63.83%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 69.67%,var(--hex-hero-sky) 70.17%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 76.00%,var(--hex-hero-sky) 76.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 82.33%,var(--hex-hero-sky) 82.83%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 88.67%,var(--hex-hero-sky) 89.17%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 95.00%,var(--hex-hero-sky) 95.50%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 0.00%,transparent 0.50%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 6.33%,transparent 6.83%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 12.67%,transparent 13.17%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 19.00%,transparent 19.50%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 25.33%,transparent 25.83%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 31.67%,transparent 32.17%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 38.00%,transparent 38.50%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 44.33%,transparent 44.83%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 50.67%,transparent 51.17%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 57.00%,transparent 57.50%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 63.33%,transparent 63.83%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 69.67%,transparent 70.17%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 76.00%,transparent 76.50%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 82.33%,transparent 82.83%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 88.67%,transparent 89.17%),
+    radial-gradient(circle closest-side,var(--hex-hero-ground) 95.00%,transparent 95.50%),
     radial-gradient(circle closest-side,var(--hex-hero-sky) 60.00%,transparent 60.50%),
     radial-gradient(circle closest-side,var(--hex-hero-sky) 56.00%,transparent 56.50%),
     radial-gradient(circle closest-side,var(--hex-hero-sky) 52.00%,transparent 52.50%),
@@ -9685,9 +9685,44 @@ body > .hex-v2-handoff{z-index:198;}
     radial-gradient(circle closest-side,var(--hex-hero-sky) 12.00%,transparent 12.50%),
     radial-gradient(circle closest-side,var(--hex-hero-sky) 8.00%,transparent 8.50%),
     radial-gradient(circle closest-side,var(--hex-hero-sky) 4.00%,transparent 4.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 0.00%,transparent 0.50%);
-  background-size:var(--hex-hero-dot-pitch) 3.125%;
-  background-position:center 0.000000%,
+    radial-gradient(circle closest-side,var(--hex-hero-sky) 0.00%,transparent 0.50%),
+    linear-gradient(to bottom,var(--hex-hero-sky) 0 50%,transparent 50%);
+  background-size:
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    var(--hex-hero-dot-pitch) 3.125%,
+    100% 100%;
+  background-position:
+    center 0.000000%,
     center 3.225806%,
     center 6.451613%,
     center 9.677419%,
@@ -9718,8 +9753,9 @@ body > .hex-v2-handoff{z-index:198;}
     center 90.322581%,
     center 93.548387%,
     center 96.774194%,
-    center 100.000000%;
-  background-repeat:repeat-x;
+    center 100.000000%,
+    center;
+  background-repeat:repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,no-repeat;
 }
 @media screen and (max-width:768px){
   .hex-hero,
