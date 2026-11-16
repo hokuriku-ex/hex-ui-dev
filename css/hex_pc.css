@@ -9691,6 +9691,7 @@ body > .hex-v2-handoff{z-index:198;}
 }
 /* 雲の輪郭だけを伸縮し、ドットの半径・ピッチはCSS pxで維持する。 */
 .hex-cloud--fixed-dots{
+  aspect-ratio:1280 / 763;
   --hex-cloud-dot-color:#6886de;
   background-image:
     radial-gradient(circle,var(--hex-cloud-dot-color) 0 var(--hex-cloud-dot-radius),transparent calc(var(--hex-cloud-dot-radius) + .18px)),
@@ -9698,11 +9699,11 @@ body > .hex-v2-handoff{z-index:198;}
   background-size:var(--hex-cloud-dot-pitch) var(--hex-cloud-dot-pitch);
   background-position:0 0,calc(var(--hex-cloud-dot-pitch) / 2) calc(var(--hex-cloud-dot-pitch) / 2);
   background-repeat:repeat;
-  mask-size:contain;
+  mask-size:100% 100%;
   mask-position:center;
   mask-repeat:no-repeat;
   mask-mode:alpha;
-  -webkit-mask-size:contain;
+  -webkit-mask-size:100% 100%;
   -webkit-mask-position:center;
   -webkit-mask-repeat:no-repeat;
 }
