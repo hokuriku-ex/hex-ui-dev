@@ -9646,15 +9646,15 @@ body > .hex-v2-handoff{z-index:198;}
   overflow:hidden;
   pointer-events:none;
 }
-/* 空 → 上の雲４枚 → 下の雲２枚 → 左右の植栽６枚 → 楕円 → 建物。 */
-.hex-cloud-layer--behind{z-index:0;}
+/* 空 → ベージュ面 → 上の雲４枚 → 下の雲２枚 → 建物・外構・人物。 */
+.hex-cloud-layer--behind{z-index:1;}
 .hex-hero>.hex-cloud-layer .hex-cloud--behind-ellipse{z-index:0;}
 .hex-hero>.hex-cloud-layer .hex-cloud--in-front-of-ellipse{z-index:2;}
 .hex-hero-ellipse{
   position:absolute;
   top:0;
   left:0;
-  z-index:3;
+  z-index:0;
   width:100%;
   height:100%;
   background-position:left top;
@@ -9676,7 +9676,7 @@ body > .hex-v2-handoff{z-index:198;}
   background:var(--hex-hero-ellipse-color,#f7f1e1);
   pointer-events:none;
 }
-.hex-cloud-layer--front{z-index:1;}
+.hex-cloud-layer--front{z-index:2;}
 .hex-cloud{
   position:absolute;
   display:block;
