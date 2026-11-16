@@ -12648,10 +12648,10 @@ function hexCreateStaffWrap(original){
 }
 function hexGetStaffGroupColor(groupName){
   switch(groupName){
-    case '役員':return '#265ab0';
-    case '営業部':return '#26b05a';
-    case '企画設計部':return '#b09526';
-    case '工事部':return '#b0263b';
+    case '役員':return '#db3d30';
+    case '営業部':return '#2c8495';
+    case '企画設計部':return '#b99a45';
+    case '工事部':return '#3b7064';
     default:return '#fff';
   }
 }
