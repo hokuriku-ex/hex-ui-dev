@@ -9633,134 +9633,11 @@ body > .hex-v2-handoff{z-index:198;}
 }
 
 /* 画像より背面で、濃淡２色の青い雲PNGを個別に漂わせる。 */
-/* Static halftone: shrink sky-colored dots into the beige ground. */
+/* 空色背景と、模型の中央に追従するベージュ面。境界のぼかしはellipse.svgで描画。 */
 .hex-hero,
 .hex-v2-handoff,
 .hex-opening-intro-hero-scene{
-  --hex-hero-sky:#a0d8ef;
-  --hex-hero-ground:#f7f1e1;
-  --hex-hero-dot-pitch:12px;
-  background:var(--hex-hero-ground);
-}
-.hex-hero::before,
-.hex-v2-handoff::before,
-.hex-opening-intro-hero-scene::before{
-  content:"";
-  position:absolute;
-  inset:0 0 auto;
-  height:50%;
-  z-index:0;
-  pointer-events:none;
-  /* Paint sky once under all rows. Transparent space around each circle
-     avoids horizontal seams from fractional row heights and positions. */
-  background-image:
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 0.00%,transparent 0.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 6.33%,transparent 6.83%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 12.67%,transparent 13.17%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 19.00%,transparent 19.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 25.33%,transparent 25.83%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 31.67%,transparent 32.17%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 38.00%,transparent 38.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 44.33%,transparent 44.83%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 50.67%,transparent 51.17%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 57.00%,transparent 57.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 63.33%,transparent 63.83%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 69.67%,transparent 70.17%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 76.00%,transparent 76.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 82.33%,transparent 82.83%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 88.67%,transparent 89.17%),
-    radial-gradient(circle closest-side,var(--hex-hero-ground) 95.00%,transparent 95.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 60.00%,transparent 60.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 56.00%,transparent 56.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 52.00%,transparent 52.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 48.00%,transparent 48.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 44.00%,transparent 44.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 40.00%,transparent 40.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 36.00%,transparent 36.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 32.00%,transparent 32.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 28.00%,transparent 28.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 24.00%,transparent 24.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 20.00%,transparent 20.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 16.00%,transparent 16.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 12.00%,transparent 12.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 8.00%,transparent 8.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 4.00%,transparent 4.50%),
-    radial-gradient(circle closest-side,var(--hex-hero-sky) 0.00%,transparent 0.50%),
-    linear-gradient(to bottom,var(--hex-hero-sky) 0 50%,transparent 50%);
-  background-size:
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    var(--hex-hero-dot-pitch) 3.125%,
-    100% 100%;
-  background-position:
-    center 0.000000%,
-    center 3.225806%,
-    center 6.451613%,
-    center 9.677419%,
-    center 12.903226%,
-    center 16.129032%,
-    center 19.354839%,
-    center 22.580645%,
-    center 25.806452%,
-    center 29.032258%,
-    center 32.258065%,
-    center 35.483871%,
-    center 38.709677%,
-    center 41.935484%,
-    center 45.161290%,
-    center 48.387097%,
-    center 51.612903%,
-    center 54.838710%,
-    center 58.064516%,
-    center 61.290323%,
-    center 64.516129%,
-    center 67.741935%,
-    center 70.967742%,
-    center 74.193548%,
-    center 77.419355%,
-    center 80.645161%,
-    center 83.870968%,
-    center 87.096774%,
-    center 90.322581%,
-    center 93.548387%,
-    center 96.774194%,
-    center 100.000000%,
-    center;
-  background-repeat:repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,repeat-x,no-repeat;
-}
-@media screen and (max-width:768px){
-  .hex-hero,
-  .hex-v2-handoff,
-  .hex-opening-intro-hero-scene{--hex-hero-dot-pitch:8px;}
+  background:#a0d8ef;
 }
 .hex-cloud-layer{
   position:absolute;
@@ -9774,7 +9651,6 @@ body > .hex-v2-handoff{z-index:198;}
 .hex-hero>.hex-cloud-layer .hex-cloud--behind-ellipse{z-index:0;}
 .hex-hero>.hex-cloud-layer .hex-cloud--in-front-of-ellipse{z-index:2;}
 .hex-hero-ellipse{
-  background-image:none!important;
   position:absolute;
   top:0;
   left:0;
@@ -9791,7 +9667,6 @@ body > .hex-v2-handoff{z-index:198;}
 /* 縦移動で画像の下端が画面内へ入っても、同色の面を下へ続ける。
    WELCOMEへ複製した楕円にも適用し、上端の曲線・画像サイズは変えない。 */
 .hex-hero-ellipse::after{
-  display:none;
   content:"";
   position:absolute;
   top:calc(100% - 1px);
@@ -11951,7 +11826,7 @@ html body .hex-home-anchor-panel .hex-home-anchor-nav.hex-anchor-nav:not(.is-fix
   }
 }
 
-/* ヒーロー背景は共通のCSSドットグラデーションで表示する。 */
+/* ヒーローの背景面はellipse.svgのグラデーションで空色と自然につなぐ。 */
 /* 独立WELCOMEは廃止。BACKのみ従来どおり使用する。 */
 .hex-hero-welcome-button:not(.is-back){display:none!important;}
 html body .hex-home-anchor-panel.is-hero-anchor{
