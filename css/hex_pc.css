@@ -6987,7 +6987,7 @@ html body
   }
   .hex-staff-embedded-mode .hex-staff-card.is-leader .hex-staff-photo{
     display:block;
-    aspect-ratio:auto;
+    aspect-ratio:1/1;
     min-height:280px;
   }
   .hex-staff-embedded-mode .hex-staff-card.is-leader .hex-staff-body{
@@ -7165,14 +7165,16 @@ html body
   position:relative;
   width:100%;
   aspect-ratio:1/1;
+  align-self:start;
   background-color:#d93e30;
-  clip-path:circle(closest-side at 50% 50%);
+  border-radius:50%;
 }
 .hex-staff-photo::before,
 .hex-staff-photo::after{
   content:"";
   position:absolute;
   inset:0;
+  border-radius:inherit;
   pointer-events:none;
 }
 .hex-staff-photo::before{
@@ -7254,7 +7256,7 @@ html body
     display:none!important;
   }
   .hex-staff-card.is-leader .hex-staff-photo{
-    aspect-ratio:auto;
+    aspect-ratio:1/1;
     min-height:280px;
     background-position:center top;
   }
