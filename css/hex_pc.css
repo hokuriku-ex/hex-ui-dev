@@ -7166,7 +7166,7 @@ html body
   width:100%;
   aspect-ratio:1/1;
   align-self:start;
-  background-color:#d93e30;
+  background-color:var(--hex-staff-photo-bg,#fff);
   border-radius:50%;
 }
 .hex-staff-photo::before,

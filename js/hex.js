@@ -12601,6 +12601,7 @@ function hexCreateStaffWrap(original){
   groups.forEach(function(group){
       var section=document.createElement('section');
       section.className='hex-staff-section';
+      section.style.setProperty('--hex-staff-photo-bg',hexGetStaffGroupColor(group.name));
       var heading=document.createElement('div');
       heading.className='hex-section-action hex-staff-section-heading';
       var title=document.createElement('h3');
@@ -12644,6 +12645,15 @@ function hexCreateStaffWrap(original){
     wrap.appendChild(section);
   });
   return wrap;
+}
+function hexGetStaffGroupColor(groupName){
+  switch(groupName){
+    case '役員':return '#265ab0';
+    case '営業部':return '#26b05a';
+    case '企画設計部':return '#b09526';
+    case '工事部':return '#b0263b';
+    default:return '#fff';
+  }
 }
 /* 独立したスタッフページのみ。埋め込み表示は従来の部署・リーダー構造を維持する。 */
 function hexSetupStaffPageSliders(wrap){
