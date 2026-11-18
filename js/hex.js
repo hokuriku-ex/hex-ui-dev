@@ -3317,7 +3317,7 @@ hexReady(function(){
       'pave01.webp':{originalWidth:3000,originalHeight:1854,x:777,y:727,width:1438,height:212},
       'pave02.webp':{originalWidth:3000,originalHeight:1854,x:283,y:832,width:1663,height:382},
       'pave03.webp':{originalWidth:3000,originalHeight:1854,x:1160,y:863,width:1595,height:497},
-      'plinth.webp':{originalWidth:3000,originalHeight:1854,x:126,y:710,width:2772,height:829},
+      'plinth.webp':{originalWidth:3000,originalHeight:1854,x:129,y:706,width:2845,height:903},
       'wall01.webp':{originalWidth:3000,originalHeight:1854,x:273,y:694,width:2483,height:273},
       'wall02.webp':{originalWidth:3000,originalHeight:1854,x:1323,y:768,width:684,height:323},
       'wall03.webp':{originalWidth:3000,originalHeight:1854,x:278,y:936,width:1063,height:236}
