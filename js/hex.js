@@ -3309,18 +3309,18 @@ hexReady(function(){
     // Registration rectangles for losslessly trimmed assets (see images/top-hero/layer-crops.json).
     var HERO_LAYER_CROPS={
       'drawing.webp':{originalWidth:3000,originalHeight:1854,x:272,y:768,width:2485,height:588},
-      'exterior01.webp':{originalWidth:3000,originalHeight:1854,x:273,y:678,width:2482,height:239},
-      'exterior02.webp':{originalWidth:3000,originalHeight:1854,x:295,y:700,width:1315,height:344},
-      'exterior03.webp':{originalWidth:3000,originalHeight:1854,x:1906,y:658,width:791,height:381},
-      'exterior04.webp':{originalWidth:3000,originalHeight:1854,x:1024,y:818,width:933,height:393},
-      'house.webp':{originalWidth:3000,originalHeight:1854,x:781,y:501,width:1433,height:488},
-      'pave01.webp':{originalWidth:3000,originalHeight:1854,x:777,y:770,width:1437,height:134},
-      'pave02.webp':{originalWidth:3000,originalHeight:1854,x:288,y:880,width:1655,height:286},
-      'pave03.webp':{originalWidth:3000,originalHeight:1854,x:1160,y:868,width:1593,height:488},
-      'plinth.webp':{originalWidth:3000,originalHeight:1854,x:135,y:755,width:2750,height:768},
-      'wall01.webp':{originalWidth:3000,originalHeight:1854,x:272,y:738,width:2485,height:223},
-      'wall02.webp':{originalWidth:3000,originalHeight:1854,x:1323,y:768,width:685,height:323},
-      'wall03.webp':{originalWidth:3000,originalHeight:1854,x:278,y:937,width:1063,height:235}
+      'exterior01.webp':{originalWidth:3000,originalHeight:1854,x:266,y:630,width:2492,height:334},
+      'exterior02.webp':{originalWidth:3000,originalHeight:1854,x:289,y:698,width:1325,height:377},
+      'exterior03.webp':{originalWidth:3000,originalHeight:1854,x:1899,y:658,width:804,height:393},
+      'exterior04.webp':{originalWidth:3000,originalHeight:1854,x:1019,y:818,width:941,height:398},
+      'house.webp':{originalWidth:3000,originalHeight:1854,x:777,y:508,width:1440,height:491},
+      'pave01.webp':{originalWidth:3000,originalHeight:1854,x:777,y:727,width:1438,height:212},
+      'pave02.webp':{originalWidth:3000,originalHeight:1854,x:283,y:832,width:1663,height:382},
+      'pave03.webp':{originalWidth:3000,originalHeight:1854,x:1160,y:863,width:1595,height:497},
+      'plinth.webp':{originalWidth:3000,originalHeight:1854,x:126,y:710,width:2772,height:829},
+      'wall01.webp':{originalWidth:3000,originalHeight:1854,x:273,y:694,width:2483,height:273},
+      'wall02.webp':{originalWidth:3000,originalHeight:1854,x:1323,y:768,width:684,height:323},
+      'wall03.webp':{originalWidth:3000,originalHeight:1854,x:278,y:936,width:1063,height:236}
     };
     var heroLayerPopOrder=new Map();
     var heroLayerStyleCache=new WeakMap();
