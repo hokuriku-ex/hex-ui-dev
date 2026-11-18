@@ -337,7 +337,7 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
     if(!/^[^/\\?#]+\.(?:avif|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i.test(file))return null;
     var url=new URL(file,imageRoot);
     if(sceneAsset.test(file)){
-      var version=/^(?:drawing|tree|underplant)/i.test(file)?'20261118-cropped':'20261118-diorama-2';
+      var version=/^(?:drawing|tree|underplant)/i.test(file)?'20261118-cropped':'20261118-diorama-4';
       url.searchParams.set('v',version);
     }
     return url.href;
@@ -3317,7 +3317,7 @@ hexReady(function(){
       'pave01.webp':{originalWidth:3000,originalHeight:1854,x:777,y:770,width:1437,height:134},
       'pave02.webp':{originalWidth:3000,originalHeight:1854,x:288,y:880,width:1655,height:286},
       'pave03.webp':{originalWidth:3000,originalHeight:1854,x:1160,y:868,width:1593,height:488},
-      'plinth.webp':{originalWidth:3000,originalHeight:1854,x:135,y:755,width:2750,height:768},
+      'plinth.webp':{originalWidth:3000,originalHeight:1854,x:80,y:755,width:2860,height:840},
       'wall01.webp':{originalWidth:3000,originalHeight:1854,x:272,y:738,width:2485,height:223},
       'wall02.webp':{originalWidth:3000,originalHeight:1854,x:1323,y:768,width:685,height:323},
       'wall03.webp':{originalWidth:3000,originalHeight:1854,x:278,y:937,width:1063,height:235}
