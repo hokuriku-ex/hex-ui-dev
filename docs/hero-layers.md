@@ -1,35 +1,51 @@
-# ヒーローの17レイヤー
+# ヒーローの25レイヤー
 
-CMSのヒーローHTMLは `examples/hero-layers.html` を使用します。画像は `images/top-hero/` に保存してください。CSS・JSは旧HTMLにも対応します。
+CMSのヒーローHTMLには `examples/hero-layers-inline.html` を使用します。整形版は `examples/hero-layers.html` にあります。画像は `images/top-hero/` に配置します。
 
 ## 奥から手前への重なり順
 
-1. `plinth.webp`（台座：非表示・寸法基準）
-2. `drawing.webp`（図面）
-3. `exterior01.webp`（外構1：追加）
-4. `tree01.webp`（樹木1）
-5. `house.webp`（建物）
-6. `underplant01.webp`（下草1）
-7. `underplant02.webp`（下草2）
-8. `exterior02.webp`（外構2：従来の外構）
-9. `tree02.webp`（樹木2）
-10. `tree03.webp`（樹木3）
-11. `underplant03.webp`（下草3）
-12. `aluminum.webp`（アルミ施工職人）
-13. `pruning.webp`（剪定職人）
-14. `sakan.webp`（左官職人）
-15. `block.webp`（ブロック職人）
-16. `supervisor.webp`（現場監督）
-17. `family.webp`（家族）
+1. `plinth.webp`
+2. `drawing.webp`
+3. `pave01.webp`
+4. `wall01.webp`
+5. `exterior01.webp`
+6. `tree01.webp`
+7. `pave02.webp`
+8. `pave03.webp`
+9. `house.webp`
+10. `underplant01.webp`
+11. `exterior02.webp`
+12. `tree02.webp`
+13. `underplant02.webp`
+14. `exterior03.webp`
+15. `wall02.webp`
+16. `wall03.webp`
+17. `exterior04.webp`
+18. `supervisor.webp`
+19. `block.webp`
+20. `tree03.webp`
+21. `underplant03.webp`
+22. `aluminum.webp`
+23. `sakan.webp`
+24. `pruning.webp`
+25. `family.webp`
 
-原則としてHTMLの記載順で合成します。旧HTMLでも建物→下草1→下草2の順になるようJSで補正します。
+台座を最背面に置き、残りはHTMLの記載順に重ねます。
 
-## 画像の作り方
+## ポン表示の順番
 
-- `plinth.png` を基準に、`drawing.png`・`house.png`・`exterior02.webp` は同じ画像寸法・構図で出力します。台座以外は必要部分のみ残した透過PNGにします。
-- `tree01～03.png`・`underplant01～03.png`・人物6枚は、単体の透過PNGを使います。位置・サイズは個別に指定します。
-- 樹木・下草のCSS位置は画像追加前の仮配置です。完成画像を置いてからバランスを調整します。
-- `exterior_sub.png`・`exterior_main.png`・`block_worker.png`・`tree.png`・`carport.png` は今回の最終構成には含めません。
+1. 台座、家、家族を初期表示
+2. 図面、監督
+3. 壁1・3、ブロック職人
+4. 壁2、外構3・4、アルミ職人
+5. 舗装2、外構1・2
+6. 舗装1・3、左官職人
+7. 樹木1〜3、剪定職人
+8. 下草1〜3
+
+同じ段階の画像を同時に表示します。段階2〜8の演出時間は合計3.15秒です。
+
+舗装1〜3、壁1〜3、外構3・4には現在 `exterior01.webp` と同じ仮素材が入っており、元画像と同じ切り抜き座標を使います。各画像を台座と同じ3000×1854の透過WebPに差し替えると、そのキャンバス座標で重なります。切り抜いて配信する場合は `HERO_LAYER_CROPS` に個別の座標を指定します。
 
 ## 個別配置の変更例
 
@@ -54,15 +70,9 @@ CMSのヒーローHTMLは `examples/hero-layers.html` を使用します。画�
 
 左官職人は `.hex-hero-character--sakan`、ほかは `family`・`supervisor`・`block`・`pruning`・`aluminum` です。再読み込みで編集は元に戻るため、確定値は `css/hex_pc.css` へ保存してください。
 
-## 外構の2枚構成
-
-exterior01.webp は図面の直後、exterior02.webp は従来の外構の位置に表示します。どちらも提供された3000×1854の透過PNGを、寸法・余白を維持してロスレスWebPへ変換したものです。
-
-改行なしの登録用HTMLは examples/hero-layers-inline.html です。旧ファイル名 exterior.png / exterior.webp はJSで exterior02.webp に読み替えます。
-
 ## 背景レイヤーと位置
 
-空 → 上の雲（左右４枚）→ 下の雲（左右２枚）→ bottom植栽（左右６枚）→ 楕円 → 模型の順に表示します。bottom内部の重なりは01 → 03 → 02のまま、６枚の下端を背景面の水平な上端に揃えます。
+背景色、楕円、上側の雲、下側の雲、模型の順に重ねます。表示を有効にした場合、左右のbottom01〜03は模型より手前に重なります。
 
 楕円は台座・図面と同じカメラ座標に固定し、縦ドラッグでも相対位置がずれません。図面の100px下移動は取り消し、元の合成位置に戻しています。背景面は図面・建物・外構と同じ中央基準の倍率・上下位置で表示し、独立した下移動は加えません。bottom画像６枚も接点を維持します。非表示の台座は引き続き寸法基準として使います。建物・外構・人物・個別植栽の位置は変更しません。独立WELCOMEボタンは廃止し、ヒーロー下端のアンカーナビ先頭「ようこそ」で従来と同じ丸演出を開始します。人物紹介のBACKは従来の下部に表示します。
 
@@ -88,7 +98,7 @@ exterior01.webp は図面の直後、exterior02.webp は従来の外構の位置
 
 雲６枚の幅はヒーロー表示高の40%・22%・33%を基準とし、従来の最小／最大サイズを維持します。SPの固定px幅は使わず、位置だけ端末別指定を維持します。bottom６枚の基準幅は `元画像幅 × 表示高 ÷ 元画像高 × 1.1` で計算し、既存の各画像の幅割合を適用します。これらの画像サイズは手動ズーム倍率に依存せず、同じ表示高なら画面幅にかかわらず同じです。
 
-bottom02・03の登場は初回の自動進行のみに連動します。bottom01は初めから表示し、位置と重なり順を維持します。一度完了すると、ドラッグ・ズーム・WELCOMEや人物紹介からの復帰・REPLAYでも登場演出を繰り返しません。ページ再読込時には初回演出を再生します。SVG上端への下端合わせ、横ドラッグ追従、内部の重なり順は維持します。
+左右のbottom01〜03は現在 `hidden` で非表示です。HTMLから `hidden` を外して有効にすると、シーンのポン表示が完了した後に6枚を表示します。
 
 ## ドット雲の固定ピッチ
 
@@ -105,7 +115,7 @@ WELCOMEのCMS外枠はオーバーラップ用runway（z-index:95）内に入る
 
 ## 境界の前景 bottom04
 
-left_bottom04.webp・right_bottom04.webpは独立したhex-hero-boundary-illustrationsに置きます。他の画像と同様にHTMLで指定します。JSでは自動追加しません。改行なしの登録用HTMLはexamples/hero-layers-inline.htmlを使用してください。フラット背景より前、模型より後ろに表示し、01〜03の位置・重なり・初回演出は維持します。04は初めから表示し、ニョキ演出や手動ズームによる拡縮は行いません。横ドラッグの追従率75%と端位置は01と共有します。表示幅はbottom01と同じにし、苔山の水平上端を01の下端（背景の水平上端）へ揃えます。下草の株元は苔山の手前に表示します。左右は各画像をそのまま表示します。left_bottom04.webpは画像側で反転済みのため、CSSでは反転しません。WELCOME・人物フォーカス・開幕プレビューにも複製します。
+left_bottom04.webp・right_bottom04.webpは独立したhex-hero-boundary-illustrationsに置きます。現在はCSSで非表示です。
 
 ### bottom04の内側延長
 

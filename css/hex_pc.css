@@ -9567,8 +9567,9 @@ html.hex-opening-finishing
 .hex-webgl-stage.is-dragging canvas,
 .hex-webgl-stage.is-coasting canvas{transition:none;will-change:transform;}
 .hex-webgl-stage.is-layer-pop-pending canvas{opacity:0;}
-/* Temporarily hide left/right bottom01-04, including cloned preview artwork. */
-.hex-hero-bottom-illustrations,
+/* Reserve bottom01-03 for the last reveal when enabled in the CMS. */
+.hex-hero-bottom-illustrations:not(.hex-hero-bottom-illustrations--last.is-layer-pop-complete),
+.hex-hero-bottom-illustrations[hidden],
 .hex-hero-boundary-illustrations{display:none!important;}
 @media(prefers-reduced-motion:reduce){
   .hex-webgl-stage canvas{transition:none;}
@@ -9756,7 +9757,7 @@ body > .hex-v2-handoff{z-index:198;}
   bottom:0;
   left:0;
   width:100%;
-  z-index:2;
+  z-index:6;
   overflow:visible;
   transform:translate3d(0,0,0);
   pointer-events:none;
@@ -9787,6 +9788,10 @@ body > .hex-v2-handoff{z-index:198;}
 /* 苔山01は位置・z-indexを維持し、初回から下端合わせで表示する。 */
 .hex-hero-bottom-img--l1,.hex-hero-bottom-img--r1{
   opacity:1;transform:translate3d(var(--hex-bottom-offset-x,0px),0,0);
+}
+.hex-hero-bottom-illustrations--last.is-layer-pop-complete{
+  --hex-bottom-opacity:1;
+  --hex-bottom-offset:0px;
 }
 /* 左右の下草（02）だけ、共通の下端位置から15px下げる。 */
 .hex-hero-bottom-img--l2,

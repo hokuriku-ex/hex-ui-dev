@@ -330,7 +330,7 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
     file=file.replace(/^((?:left|right)_bottom0[1-4])\.png(?=[?#]|$)/i,'$1.webp');
     file=file.replace(/^(aluminum|pruning|sakan|block|supervisor|family)\.png(?=[?#]|$)/i,'$1.webp');
     file=file.replace(/^exterior\.(?:png|webp)(?=[?#]|$)/i,'exterior02.webp');
-    file=file.replace(/^(house|drawing|exterior0[12]|tree0[1-3]|underplant0[1-3])\.png(?=[?#]|$)/i,'$1.webp');
+    file=file.replace(/^(house|drawing|exterior0[1-4]|(?:pave|wall|tree|underplant)0[1-3])\.png(?=[?#]|$)/i,'$1.webp');
     /* 同名の短い旧画像がキャッシュに残っていても、延長版を読み込む。 */
     if(/^(?:left|right)_bottom04\.webp$/i.test(file))file+='?v=20261029-oriented';
     if(!/^[^/\\?#]+\.(?:avif|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i.test(file))return null;
@@ -3313,19 +3313,17 @@ hexReady(function(){
     var HERO_LAYER_STATIC_SELECTOR=".hex-hero-plinth-image,.hex-hero-bg img,.hex-hero-character--family,"+
       ".hex-hero-house,.hex-hero-house-layer > img";
     var HERO_LAYER_POP_SELECTORS=[
-      ".hex-hero-character--supervisor",
-      ".hex-hero-drawing",
-      ".hex-hero-exterior-image--01,.hex-hero-exterior-image,.hex-hero-exterior-layer > img",
-      ".hex-hero-character--aluminum",
-      ".hex-hero-character--block",
-      ".hex-hero-character--sakan",
-      ".hex-hero-sprite--tree01,.hex-hero-sprite--tree02,.hex-hero-sprite--tree03",
-      ".hex-hero-character--pruning",
+      ".hex-hero-drawing,.hex-hero-character--supervisor",
+      ".hex-hero-wall--01,.hex-hero-wall--03,.hex-hero-character--block",
+      ".hex-hero-wall--02,.hex-hero-exterior-image--03,.hex-hero-exterior-image--04,.hex-hero-character--aluminum",
+      ".hex-hero-pave--02,.hex-hero-exterior-image--01,.hex-hero-exterior-image,.hex-hero-exterior-layer > img",
+      ".hex-hero-pave--01,.hex-hero-pave--03,.hex-hero-character--sakan",
+      ".hex-hero-sprite--tree01,.hex-hero-sprite--tree02,.hex-hero-sprite--tree03,.hex-hero-character--pruning",
       ".hex-hero-sprite--underplant01,.hex-hero-sprite--underplant02,.hex-hero-sprite--underplant03"
     ];
     var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
     var heroImageIntroReady=false;
-    var HERO_LAYER_POP_DURATIONS=[500,460,425,390,350,310,275,240,200];
+    var HERO_LAYER_POP_DURATIONS=[570,530,490,450,410,370,330];
     var heroLayerVersion=0;
     var heroTextureUpdateFrame=0;
     var heroLayerPreviewCache=null;
@@ -3455,8 +3453,8 @@ hexReady(function(){
     var clouds=cloudLayers.reduce(function(result,layer){
       return result.concat(Array.from(layer.querySelectorAll(".hex-cloud")));
     },[]);
-    // bottom01-04 are hidden; skip their load, layout, parallax and snapshot work.
-    var bottomIllustrations=null;
+    // bottom01-03 stay out of layout and snapshots while hidden in the CMS.
+    var bottomIllustrations=hero.querySelector(".hex-hero-bottom-illustrations--last:not([hidden])");
     var boundaryIllustrations=null;
     var bottomImages=bottomIllustrations
       ?Array.from(bottomIllustrations.querySelectorAll(".hex-hero-bottom-img"))
@@ -3834,6 +3832,20 @@ hexReady(function(){
       state.y=0;
       setCamera();
 
+      if(!reduced&&activeHero&&activeHero.classList.contains("is-v2-fallback")){
+        heroLayerPop.active=true;
+        heroLayerPop.started=performance.now();
+        heroLayerPop.elapsed=0;
+        updateHeroLayerTransforms();
+        function advanceFallbackPop(now){
+          advanceHeroLayerPop(now);
+          autoZoomFrame=heroLayerPop.active?window.requestAnimationFrame(advanceFallbackPop):0;
+        }
+        autoZoomFrame=window.requestAnimationFrame(advanceFallbackPop);
+        interactionLocked=false;
+        return;
+      }
+
       if(reduced||!renderer||!camera){
         bottomIntroProgress=1;
         updateBottomIllustrations();
@@ -3904,7 +3916,8 @@ hexReady(function(){
       autoZoomPendingDelay=Math.max(0,delay||0);
       interactionLocked=true;
       window.clearTimeout(autoZoomTimer);
-      if(!heroImageIntroReady||!ready||!renderer||!camera||
+      if(!heroImageIntroReady||!ready||((!renderer||!camera)&&
+        !hero.classList.contains("is-v2-fallback"))||
         document.documentElement.classList.contains("hex-opening-lock")||
         document.documentElement.classList.contains("hex-hero-display-wait")||
         document.documentElement.classList.contains("hex-hero-return-preparing")){return;}
@@ -5719,6 +5732,8 @@ hexReady(function(){
 
     function getHeroLayerCrop(layer){
       var name=(layer.currentSrc||layer.src||'').split(/[?#]/)[0].split('/').pop();
+      // These placeholders use the same trimmed artwork as exterior01.webp.
+      if(/^(?:exterior0[34]|(?:pave|wall)0[1-3])\.webp$/.test(name))name='exterior01.webp';
       var crop=HERO_LAYER_CROPS[name];
       // Accept both cached full-size assets and newly cropped assets during deployment.
       return crop&&layer.naturalWidth===crop.width&&layer.naturalHeight===crop.height?crop:null;
@@ -5816,6 +5831,7 @@ hexReady(function(){
         if(!layer.naturalWidth)return;
         var rect=getHeroLayerRect(layer,imageWidth,imageHeight,baseScale);
         if(![rect.x,rect.y,rect.width,rect.height].every(Number.isFinite))return;
+        var centerX=rect.x+rect.width/2,centerY=rect.y+rect.height/2;
         var crop=getHeroLayerCrop(layer);
         if(crop){
           rect.x+=rect.width*crop.x/crop.originalWidth;
@@ -5829,6 +5845,7 @@ hexReady(function(){
         layer.style.setProperty('width',rect.width*scale+'px','important');
         layer.style.setProperty('height',rect.height*scale+'px','important');
         layer.style.setProperty('transform','none','important');
+        layer.style.transformOrigin=(centerX-rect.x)*scale+'px '+(centerY-rect.y)*scale+'px';
         layer.style.setProperty('object-fit','fill','important');
         layer.style.setProperty('z-index',String(index),'important');
       });
@@ -5955,6 +5972,14 @@ hexReady(function(){
         entry.pivot.visible=entry.valid&&scale>0;
         entry.pivot.scale.set(scale,scale,1);
       });
+      if(activeHero&&activeHero.classList.contains("is-v2-fallback")){
+        heroLayerImages.forEach(function(layer){
+          layer.style.scale=getHeroLayerPopScale(layer);
+        });
+      }
+      if(bottomIllustrations){
+        bottomIllustrations.classList.toggle('is-layer-pop-complete',!heroLayerPop.active);
+      }
       heroLayerPreviewCache=null;
       heroRenderDirty=true;
     }
@@ -6171,44 +6196,7 @@ hexReady(function(){
       heroLayerPreviewCache=null;
     }
 
-    function createFallback(error){
-      heroIntroCameraLocked=false;
-      destroyThree();
-      activeHero=getActiveHero();
-      if(activeHero){activeHero.classList.add("is-v2-fallback");}
-      if(activeHero&&!sourceImage){
-        sourceImage=activeHero.querySelector('.hex-hero-plinth-image,.hex-hero-bg img');
-      }
-      if(activeHero&&!heroLayerImages.length){
-        heroLayerImages=Array.from(activeHero.querySelectorAll(
-          '.hex-hero-bg img,.hex-hero-house-layer img,.hex-hero-exterior-layer img,'+
-          '.hex-hero-characters .hex-hero-character,.hex-hero-scene > .hex-hero-layer,'+
-          '.hex-hero-scene > .hex-hero-sprite,.hex-hero-scene > .hex-hero-character'
-        ));
-      }
-      if(error&&error.message){
-        hero.dataset.hexWebglError=error.message;
-        console.warn('HEX hero WebGL fallback:',error);
-      }
-      syncHeroFallbackLayout();
-      hero.classList.add("is-v2-ready","is-v2-fallback");
-      ready=true;
-      interactionLocked=false;
-      revealCatch(false);
-      setHeroPageLock(true);
-      updateWelcomeButton();
-    }
-
-    function buildThree(THREE){
-      var geometry;
-      var material;
-      var imageWidth;
-      var imageHeight;
-
-      activeHero=getActiveHero();
-      sourceImage=activeHero&&(activeHero.querySelector(".hex-hero-plinth-image")||
-        activeHero.querySelector(".hex-hero-bg img"));
-      if(!activeHero||!sourceImage){createFallback();return;}
+    function collectHeroLayers(){
       heroLayerImages=Array.from(activeHero.querySelectorAll(
         ".hex-hero-house-layer img,.hex-hero-exterior-layer img,"+
         ".hex-hero-characters .hex-hero-character,"+
@@ -6218,33 +6206,7 @@ hexReady(function(){
       ));
       // Keep the plinth at the back of the compositing order.
       heroLayerImages=heroLayerImages.filter(function(layer){return layer!==sourceImage;});
-      heroLayerImages.unshift(sourceImage);
-      /* CMSに旧順序のHTMLが残っていても、建物の手前に下草1を合成する。 */
-      var houseIndex=heroLayerImages.findIndex(function(layer){
-        return layer.matches(".hex-hero-house,.hex-hero-house-layer > img");
-      });
-      var underplantIndex=heroLayerImages.findIndex(function(layer){
-        return layer.classList.contains("hex-hero-sprite--underplant01");
-      });
-      if(houseIndex>underplantIndex&&underplantIndex>=0){
-        var houseImage=heroLayerImages[houseIndex];
-        heroLayerImages[houseIndex]=heroLayerImages[underplantIndex];
-        heroLayerImages[underplantIndex]=houseImage;
-      }
-      /* 下草2は下草1の直後へ移し、外構より奥に合成する。 */
-      var underplant02Index=heroLayerImages.findIndex(function(layer){
-        return layer.classList.contains("hex-hero-sprite--underplant02");
-      });
-      underplantIndex=heroLayerImages.findIndex(function(layer){
-        return layer.classList.contains("hex-hero-sprite--underplant01");
-      });
-      if(underplantIndex>=0&&underplant02Index>=0&&underplant02Index!==underplantIndex+1){
-        var underplant02Image=heroLayerImages.splice(underplant02Index,1)[0];
-        underplantIndex=heroLayerImages.findIndex(function(layer){
-          return layer.classList.contains("hex-hero-sprite--underplant01");
-        });
-        heroLayerImages.splice(underplantIndex+1,0,underplant02Image);
-      }
+      if(sourceImage)heroLayerImages.unshift(sourceImage);
       // Assign pop timing separately; never sort the compositing array.
       heroLayerPopOrder.clear();
       heroLayerPopGroupCount=0;
@@ -6264,6 +6226,50 @@ hexReady(function(){
           heroLayerPopGroupCount+=1;
         }
       });
+    }
+
+    function createFallback(error){
+      heroIntroCameraLocked=false;
+      destroyThree();
+      activeHero=getActiveHero();
+      if(activeHero){activeHero.classList.add("is-v2-fallback");}
+      if(activeHero&&!sourceImage){
+        sourceImage=activeHero.querySelector('.hex-hero-plinth-image,.hex-hero-bg img');
+      }
+      if(activeHero&&!heroLayerImages.length){
+        collectHeroLayers();
+        heroLayerImages.forEach(function(layer){
+          layer.addEventListener("load",syncHeroFallbackLayout,{once:true});
+        });
+        heroLayerPop.active=!reduced;
+      }
+      if(heroLayerPop.started!==null)finishHeroLayerPop();
+      updateHeroLayerTransforms();
+      if(error&&error.message){
+        hero.dataset.hexWebglError=error.message;
+        console.warn('HEX hero WebGL fallback:',error);
+      }
+      syncHeroFallbackLayout();
+      hero.classList.add("is-v2-ready","is-v2-fallback");
+      ready=true;
+      interactionLocked=false;
+      revealCatch(false);
+      setHeroPageLock(true);
+      updateWelcomeButton();
+      if(autoZoomPending&&heroLayerPop.active)scheduleAutoZoom(autoZoomPendingDelay);
+    }
+
+    function buildThree(THREE){
+      var geometry;
+      var material;
+      var imageWidth;
+      var imageHeight;
+
+      activeHero=getActiveHero();
+      sourceImage=activeHero&&(activeHero.querySelector(".hex-hero-plinth-image")||
+        activeHero.querySelector(".hex-hero-bg img"));
+      if(!activeHero||!sourceImage){createFallback();return;}
+      collectHeroLayers();
       /* 同時に届いた画像は、次の描画フレームで一度だけ合成する。 */
       function queueLayerTextureUpdate(){
         if(heroTextureUpdateFrame||!scene||!renderer||!sourceImage||!sourceImage.naturalWidth)return;

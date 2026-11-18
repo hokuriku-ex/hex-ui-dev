@@ -1,4 +1,5 @@
-<!doctype html><meta charset="utf-8"><title>Hero render comparison</title><link rel="stylesheet" href="../css/hex_pc.css"><style>body{margin:12px!important;background:#eee!important;font:14px sans-serif!important}#assets{position:absolute;left:-10000px;top:0;width:960px;height:600px;visibility:hidden}#result{position:relative!important;z-index:999999;white-space:pre-wrap;background:white;padding:12px;color:black}#views{display:flex;flex-wrap:wrap;gap:12px}figure{margin:0}canvas{background:#def;max-width:46vw;height:auto}h1{font:22px sans-serif}</style><h1>Canvas composite / individual WebGL layers</h1><pre id="result">Loading</pre><div id="views"></div><div id="assets"><!-- CMSのヒーローHTML差し替え用。画像は images/top-hero/ に保存します。 -->
+<!doctype html><meta charset="utf-8"><title>Hero render comparison</title><link rel="stylesheet" href="../css/hex_pc.css"><style>body{margin:12px!important;background:#eee!important;font:14px sans-serif!important}#assets{position:absolute;left:-10000px;top:0;width:960px;height:600px;visibility:hidden}#result{position:relative!important;z-index:999999;white-space:pre-wrap;background:white;padding:12px;color:black}#views{display:flex;flex-wrap:wrap;gap:12px}figure{margin:0}canvas{background:#def;max-width:46vw;height:auto}h1{font:22px sans-serif}</style><h1>Canvas composite / individual WebGL layers</h1><pre id="result">Loading</pre><div id="views"></div><div id="assets">
+<!-- CMSのヒーローHTML差し替え用。画像は images/top-hero/ に保存します。 -->
 <div class="hex-hero-wrap">
   <div class="hex-hero-sticky">
     <section class="hex-hero">
@@ -10,40 +11,39 @@
         <img class="hex-cloud hex-cloud--5 hex-cloud--behind-ellipse" src="../images/top-hero/right_cloud02.svg" alt="">
         <img class="hex-cloud hex-cloud--6 hex-cloud--in-front-of-ellipse" src="../images/top-hero/right_cloud03.svg" alt="">
       </div>
-      <div class="hex-hero-ellipse" aria-hidden="true" style="background-image:url('ellipse.svg')"></div>
+      <div class="hex-hero-ellipse" aria-hidden="true" style="background-image:url('../images/top-hero/ellipse.svg')"></div>
 
-      <!-- 奥から手前へ。HTMLの記載順が合成順になります。 -->
-      <div class="hex-hero-boundary-illustrations" aria-hidden="true"><img class="hex-hero-boundary-img hex-hero-boundary-img--left" src="../images/top-hero/left_bottom04.webp" alt=""><img class="hex-hero-boundary-img hex-hero-boundary-img--right" src="../images/top-hero/right_bottom04.webp" alt=""></div><div class="hex-hero-scene">
-        <!-- 01 台座：全画像の基準サイズ -->
+      <div class="hex-hero-boundary-illustrations" aria-hidden="true"><img class="hex-hero-boundary-img hex-hero-boundary-img--left" src="../images/top-hero/left_bottom04.webp" alt=""><img class="hex-hero-boundary-img hex-hero-boundary-img--right" src="../images/top-hero/right_bottom04.webp" alt=""></div>
+
+      <div class="hex-hero-scene">
         <div class="hex-hero-bg"><img class="hex-hero-plinth-image" src="../images/top-hero/plinth.webp" alt=""></div>
-        <!-- 02 図面：台座と同じ画像サイズ・構図 -->
         <img class="hex-hero-layer hex-hero-drawing" src="../images/top-hero/drawing.webp" alt="">
-        <!-- 外構1：図面の直後、台座と同じ画像サイズ・構図 -->
+        <img class="hex-hero-layer hex-hero-pave--01" src="../images/top-hero/pave01.webp" alt="">
+        <img class="hex-hero-layer hex-hero-wall--01" src="../images/top-hero/wall01.webp" alt="">
         <img class="hex-hero-layer hex-hero-exterior-image--01" src="../images/top-hero/exterior01.webp" alt="">
-        <!-- 04 樹木1：位置とサイズを個別指定 -->
         <img class="hex-hero-sprite hex-hero-sprite--tree01" src="../images/top-hero/tree01.webp" alt="">
-        <!-- 05 建物：台座と同じ画像サイズ・構図 -->
+        <img class="hex-hero-layer hex-hero-pave--02" src="../images/top-hero/pave02.webp" alt="">
+        <img class="hex-hero-layer hex-hero-pave--03" src="../images/top-hero/pave03.webp" alt="">
         <img class="hex-hero-layer hex-hero-house" src="../images/top-hero/house.webp" alt="">
-        <!-- 06 下草1：建物の手前に表示 -->
         <img class="hex-hero-sprite hex-hero-sprite--underplant01" src="../images/top-hero/underplant01.webp" alt="">
-        <!-- 07 下草2：下草1の直後、外構の奥に表示 -->
-        <img class="hex-hero-sprite hex-hero-sprite--underplant02" src="../images/top-hero/underplant02.webp" alt="">
-        <!-- 外構2（従来の位置）：台座と同じ画像サイズ・構図 -->
         <img class="hex-hero-layer hex-hero-exterior-image" src="../images/top-hero/exterior02.webp" alt="">
-        <!-- 09～11 樹木2・樹木3・下草3 -->
         <img class="hex-hero-sprite hex-hero-sprite--tree02" src="../images/top-hero/tree02.webp" alt="">
+        <img class="hex-hero-sprite hex-hero-sprite--underplant02" src="../images/top-hero/underplant02.webp" alt="">
+        <img class="hex-hero-layer hex-hero-exterior-image--03" src="../images/top-hero/exterior03.webp" alt="">
+        <img class="hex-hero-layer hex-hero-wall--02" src="../images/top-hero/wall02.webp" alt="">
+        <img class="hex-hero-layer hex-hero-wall--03" src="../images/top-hero/wall03.webp" alt="">
+        <img class="hex-hero-layer hex-hero-exterior-image--04" src="../images/top-hero/exterior04.webp" alt="">
+        <img class="hex-hero-character hex-hero-character--supervisor" src="../images/top-hero/supervisor.webp" alt="">
+        <img class="hex-hero-character hex-hero-character--block" src="../images/top-hero/block.webp" alt="">
         <img class="hex-hero-sprite hex-hero-sprite--tree03" src="../images/top-hero/tree03.webp" alt="">
         <img class="hex-hero-sprite hex-hero-sprite--underplant03" src="../images/top-hero/underplant03.webp" alt="">
-        <!-- 12～17 人物：位置とサイズを個別指定 -->
         <img class="hex-hero-character hex-hero-character--aluminum" src="../images/top-hero/aluminum.webp" alt="">
-        <img class="hex-hero-character hex-hero-character--pruning" src="../images/top-hero/pruning.webp" alt="">
         <img class="hex-hero-character hex-hero-character--sakan" src="../images/top-hero/sakan.webp" alt="">
-        <img class="hex-hero-character hex-hero-character--block" src="../images/top-hero/block.webp" alt="">
-        <img class="hex-hero-character hex-hero-character--supervisor" src="../images/top-hero/supervisor.webp" alt="">
+        <img class="hex-hero-character hex-hero-character--pruning" src="../images/top-hero/pruning.webp" alt="">
         <img class="hex-hero-character hex-hero-character--family" src="../images/top-hero/family.webp" alt="">
       </div>
 
-      <div class="hex-hero-bottom-illustrations" aria-hidden="true">
+      <div class="hex-hero-bottom-illustrations hex-hero-bottom-illustrations--last" aria-hidden="true" hidden>
         <img class="hex-hero-bottom-img hex-hero-bottom-img--l1" src="../images/top-hero/left_bottom01.webp" alt="">
         <img class="hex-hero-bottom-img hex-hero-bottom-img--l2" src="../images/top-hero/left_bottom02.webp" alt="">
         <img class="hex-hero-bottom-img hex-hero-bottom-img--l3" src="../images/top-hero/left_bottom03.webp" alt="">
@@ -54,7 +54,7 @@
     </section>
     <div class="hex-hero-catch">
       <div class="hex-handoff-copy">
-        <span class="hex-opening-main">Build Your Everyday</span>
+        <span class="hex-opening-main">Build Your Everyday.</span>
         <span class="hex-opening-sub">住宅廻りに、快適さを</span>
       </div>
     </div>
@@ -71,17 +71,15 @@ window.addEventListener('error',e=>document.getElementById('result').textContent
     var HERO_LAYER_STATIC_SELECTOR=".hex-hero-plinth-image,.hex-hero-bg img,.hex-hero-character--family,"+
       ".hex-hero-house,.hex-hero-house-layer > img";
     var HERO_LAYER_POP_SELECTORS=[
-      ".hex-hero-character--supervisor",
-      ".hex-hero-drawing",
-      ".hex-hero-exterior-image--01,.hex-hero-exterior-image,.hex-hero-exterior-layer > img",
-      ".hex-hero-character--aluminum",
-      ".hex-hero-character--block",
-      ".hex-hero-character--sakan",
-      ".hex-hero-sprite--tree01,.hex-hero-sprite--tree02,.hex-hero-sprite--tree03",
-      ".hex-hero-character--pruning",
+      ".hex-hero-drawing,.hex-hero-character--supervisor",
+      ".hex-hero-wall--01,.hex-hero-wall--03,.hex-hero-character--block",
+      ".hex-hero-wall--02,.hex-hero-exterior-image--03,.hex-hero-exterior-image--04,.hex-hero-character--aluminum",
+      ".hex-hero-pave--02,.hex-hero-exterior-image--01,.hex-hero-exterior-image,.hex-hero-exterior-layer > img",
+      ".hex-hero-pave--01,.hex-hero-pave--03,.hex-hero-character--sakan",
+      ".hex-hero-sprite--tree01,.hex-hero-sprite--tree02,.hex-hero-sprite--tree03,.hex-hero-character--pruning",
       ".hex-hero-sprite--underplant01,.hex-hero-sprite--underplant02,.hex-hero-sprite--underplant03"
     ];
-    var HERO_LAYER_POP_DURATIONS=[500,460,425,390,350,310,275,240,200];
+    var HERO_LAYER_POP_DURATIONS=[570,530,490,450,410,370,330];
 var heroLayerMeshes=new Map(),heroLayerStyleCache=new WeakMap(),heroLayerPreviewCache=null,heroLayerVersion=0,heroCharacterBounds=[],heroCharacterHitRect=null,textureCanvas=null,heroRenderDirty=false;
 var heroLayerPop={active:false,elapsed:0,started:0},heroLayerPopOrder=new Map(),heroLayerPopGroupCount=0;
 var activeHero=document.querySelector('#assets .hex-hero'),sourceImage=activeHero.querySelector('.hex-hero-bg img');
@@ -98,6 +96,8 @@ var renderer,scene,camera;
     }
     function getHeroLayerCrop(layer){
       var name=(layer.currentSrc||layer.src||'').split(/[?#]/)[0].split('/').pop();
+      // These placeholders use the same trimmed artwork as exterior01.webp.
+      if(/^(?:exterior0[34]|(?:pave|wall)0[1-3])\.webp$/.test(name))name='exterior01.webp';
       var crop=HERO_LAYER_CROPS[name];
       // Accept both cached full-size assets and newly cropped assets during deployment.
       return crop&&layer.naturalWidth===crop.width&&layer.naturalHeight===crop.height?crop:null;
@@ -350,7 +350,7 @@ var renderer,scene,camera;
  heroLayerPop.active=true;const beforeUploads=uploads;for(let t=0;t<=3150;t+=16.67){heroLayerPop.elapsed=t;updateHeroLayerTransforms();renderer.render(scene,camera);}const newUploads=uploads-beforeUploads;
  output.push('Layer textures: '+heroLayerMeshes.size+'; uploads during transform-only animation: '+newUploads);
  output.push('Layer diagnostics: '+JSON.stringify(Array.from(heroLayerMeshes.values()).slice(0,4).map(e=>({valid:e.valid,visible:e.pivot.visible,pivot:e.pivot.position.toArray(),scale:e.pivot.scale.toArray(),mesh:e.mesh.position.toArray(),size:e.mesh.scale.toArray(),mapWidth:e.mesh.material.map.image.width,mapHeight:e.mesh.material.map.image.height})))+'; render '+JSON.stringify(renderer.info.render));
- const passed=maxBad<.05&&newUploads===0&&heroLayerMeshes.size===17;
+ const passed=maxBad<.05&&newUploads===0&&heroLayerMeshes.size===25;
  document.getElementById('result').textContent=(passed?'PASS':'FAIL')+'\n'+output.join('\n');
 }catch(e){document.getElementById('result').textContent='ERROR '+e.stack;}})();
 </script>
