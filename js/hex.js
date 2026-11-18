@@ -330,11 +330,14 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
     file=file.replace(/^((?:left|right)_bottom0[1-4])\.png(?=[?#]|$)/i,'$1.webp');
     file=file.replace(/^(aluminum|pruning|sakan|block|supervisor|family)\.png(?=[?#]|$)/i,'$1.webp');
     file=file.replace(/^exterior\.(?:png|webp)(?=[?#]|$)/i,'exterior02.webp');
-    file=file.replace(/^(house|drawing|exterior0[1-4]|(?:pave|wall|tree|underplant)0[1-3])\.png(?=[?#]|$)/i,'$1.webp');
+    var sceneAsset=/^(plinth|house|drawing|exterior0[1-4]|(?:pave|wall|tree|underplant)0[1-3])\.(?:png|webp)(?=[?#]|$)/i;
+    file=file.replace(sceneAsset,'$1.webp');
     /* 同名の短い旧画像がキャッシュに残っていても、延長版を読み込む。 */
     if(/^(?:left|right)_bottom04\.webp$/i.test(file))file+='?v=20261029-oriented';
     if(!/^[^/\\?#]+\.(?:avif|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i.test(file))return null;
-    return new URL(file,imageRoot).href;
+    var url=new URL(file,imageRoot);
+    if(sceneAsset.test(file))url.searchParams.set('v','20261118-cropped');
+    return url.href;
   }
   function prepare(){
     /* bottom04もHTMLに記載された画像だけを読み込む。 */
@@ -3302,10 +3305,19 @@ hexReady(function(){
     var heroLayerImages=[];
     // Registration rectangles for losslessly trimmed assets (see images/top-hero/layer-crops.json).
     var HERO_LAYER_CROPS={
-      'drawing.webp':{x:273,y:768,width:2484,height:588,originalWidth:3000,originalHeight:1854},
-      'exterior01.webp':{x:272,y:678,width:2485,height:283,originalWidth:3000,originalHeight:1854},
-      'exterior02.webp':{x:278,y:660,width:2419,height:551,originalWidth:3000,originalHeight:1854},
-      'house.webp':{x:781,y:501,width:1433,height:488,originalWidth:3000,originalHeight:1854}
+      'drawing.webp':{originalWidth:3000,originalHeight:1854,x:272,y:768,width:2485,height:588},
+      'exterior01.webp':{originalWidth:3000,originalHeight:1854,x:273,y:678,width:2482,height:239},
+      'exterior02.webp':{originalWidth:3000,originalHeight:1854,x:295,y:700,width:1315,height:344},
+      'exterior03.webp':{originalWidth:3000,originalHeight:1854,x:1906,y:658,width:791,height:381},
+      'exterior04.webp':{originalWidth:3000,originalHeight:1854,x:1024,y:818,width:933,height:393},
+      'house.webp':{originalWidth:3000,originalHeight:1854,x:781,y:501,width:1433,height:488},
+      'pave01.webp':{originalWidth:3000,originalHeight:1854,x:777,y:770,width:1437,height:134},
+      'pave02.webp':{originalWidth:3000,originalHeight:1854,x:288,y:880,width:1655,height:286},
+      'pave03.webp':{originalWidth:3000,originalHeight:1854,x:1160,y:868,width:1593,height:488},
+      'plinth.webp':{originalWidth:3000,originalHeight:1854,x:135,y:755,width:2750,height:768},
+      'wall01.webp':{originalWidth:3000,originalHeight:1854,x:272,y:738,width:2485,height:223},
+      'wall02.webp':{originalWidth:3000,originalHeight:1854,x:1323,y:768,width:685,height:323},
+      'wall03.webp':{originalWidth:3000,originalHeight:1854,x:278,y:937,width:1063,height:235}
     };
     var heroLayerPopOrder=new Map();
     var heroLayerStyleCache=new WeakMap();
@@ -4294,8 +4306,9 @@ hexReady(function(){
       var previousScale=metrics.scale;
       width=Math.max(activeHero.clientWidth,1);
       height=Math.max(activeHero.clientHeight,1);
-      imageWidth=sourceImage.naturalWidth||1920;
-      imageHeight=sourceImage.naturalHeight||1080;
+      var imageSize=getHeroSourceCanvasSize(sourceImage);
+      imageWidth=imageSize.width;
+      imageHeight=imageSize.height;
       overscan=isSp()?1.16:1.1;
       coverScale=Math.max(width/imageWidth,height/imageHeight)*overscan;
       visibleWidth=width/coverScale;
@@ -5732,11 +5745,15 @@ hexReady(function(){
 
     function getHeroLayerCrop(layer){
       var name=(layer.currentSrc||layer.src||'').split(/[?#]/)[0].split('/').pop();
-      // These placeholders use the same trimmed artwork as exterior01.webp.
-      if(/^(?:exterior0[34]|(?:pave|wall)0[1-3])\.webp$/.test(name))name='exterior01.webp';
       var crop=HERO_LAYER_CROPS[name];
       // Accept both cached full-size assets and newly cropped assets during deployment.
       return crop&&layer.naturalWidth===crop.width&&layer.naturalHeight===crop.height?crop:null;
+    }
+
+    function getHeroSourceCanvasSize(image){
+      var crop=getHeroLayerCrop(image);
+      return crop?{width:crop.originalWidth,height:crop.originalHeight}
+        :{width:image.naturalWidth,height:image.naturalHeight};
     }
 
     function syncHeroCroppedLayerLayout(){
@@ -5819,7 +5836,8 @@ hexReady(function(){
 
     function syncHeroFallbackLayout(){
       if(!activeHero||!sourceImage||!sourceImage.naturalWidth)return;
-      var imageWidth=sourceImage.naturalWidth,imageHeight=sourceImage.naturalHeight;
+      var imageSize=getHeroSourceCanvasSize(sourceImage);
+      var imageWidth=imageSize.width,imageHeight=imageSize.height;
       var width=activeHero.clientWidth,height=activeHero.clientHeight;
       if(!width||!height)return;
       heroLayerStyleCache=new WeakMap();
@@ -5886,7 +5904,8 @@ hexReady(function(){
         var width=root.clientWidth||live.clientWidth;
         var height=root.clientHeight||live.clientHeight;
         if(!width||!height)return;
-        var imageWidth=plinth.naturalWidth||3000,imageHeight=plinth.naturalHeight||1854;
+        var imageSize=getHeroSourceCanvasSize(plinth);
+        var imageWidth=imageSize.width||3000,imageHeight=imageSize.height||1854;
         var baseScale=parseFloat(getComputedStyle(live).getPropertyValue('--hex-hero-base-layer-scale'))||1;
         var scale=Math.max(width/imageWidth,height/imageHeight)*(isSp()?1.16:1.1)*HERO_ZOOM_AUTO;
         var left=(width-imageWidth*scale)/2,top=(height-imageHeight*scale)/2;
@@ -5994,7 +6013,8 @@ hexReady(function(){
     function updateTextureSource(image){
       if(!image||!image.naturalWidth||!scene||!renderer||!window.THREE)return false;
       var THREE=window.THREE;
-      var imageWidth=image.naturalWidth,imageHeight=image.naturalHeight;
+      var imageSize=getHeroSourceCanvasSize(image);
+      var imageWidth=imageSize.width,imageHeight=imageSize.height;
       var baseScale=parseFloat(getHeroLayerDrawStyle(activeHero)['--hex-hero-base-layer-scale']);
       if(!Number.isFinite(baseScale)||baseScale<=0)baseScale=1;
       heroCharacterBounds=[];
@@ -6064,8 +6084,9 @@ hexReady(function(){
 
     // Canvas compositing is retained only for an explicitly requested preview/snapshot.
     function renderHeroCompositePreview(image){
-      var naturalWidth=image&&image.naturalWidth;
-      var naturalHeight=image&&image.naturalHeight;
+      if(!image||!image.naturalWidth||!image.naturalHeight||!window.THREE)return false;
+      var imageSize=getHeroSourceCanvasSize(image);
+      var naturalWidth=imageSize.width,naturalHeight=imageSize.height;
       // Keep dimensions stable after CanvasTexture allocation; shrinking the source
       // can upload into only the lower-left portion of the existing GPU texture.
       var maxTextureSize=4096;
@@ -6076,8 +6097,6 @@ hexReady(function(){
       var baseLayerHeight;
       var baseLayerX;
       var baseLayerY;
-
-      if(!naturalWidth||!naturalHeight||!window.THREE){return false;}
 
       scale=Math.min(1,maxTextureSize/Math.max(naturalWidth,naturalHeight));
       if(!textureCanvas){textureCanvas=document.createElement("canvas");}
@@ -6260,11 +6279,6 @@ hexReady(function(){
     }
 
     function buildThree(THREE){
-      var geometry;
-      var material;
-      var imageWidth;
-      var imageHeight;
-
       activeHero=getActiveHero();
       sourceImage=activeHero&&(activeHero.querySelector(".hex-hero-plinth-image")||
         activeHero.querySelector(".hex-hero-bg img"));
@@ -6299,8 +6313,6 @@ hexReady(function(){
 
       function completeDecoded(){
         try{
-          imageWidth=sourceImage.naturalWidth||1920;
-          imageHeight=sourceImage.naturalHeight||1080;
           syncHeroCroppedLayerLayout();
           webglStage=document.createElement("div");
           webglStage.className="hex-webgl-stage";

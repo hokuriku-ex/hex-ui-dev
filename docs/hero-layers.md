@@ -45,13 +45,13 @@ CMSのヒーローHTMLには `examples/hero-layers-inline.html` を使用しま�
 
 同じ段階の画像を同時に表示します。段階2〜8の演出時間は合計3.15秒です。
 
-舗装1〜3、壁1〜3、外構3・4には現在 `exterior01.webp` と同じ仮素材が入っており、元画像と同じ切り抜き座標を使います。各画像を台座と同じ3000×1854の透過WebPに差し替えると、そのキャンバス座標で重なります。切り抜いて配信する場合は `HERO_LAYER_CROPS` に個別の座標を指定します。
+台座、図面、建物、舗装、壁、外構は3000×1854の透過PNGを基準に、外周の透明な余白を切り抜いたロスレスWebPを使います。`images/top-hero/layer-crops.json` と `HERO_LAYER_CROPS` の座標で、元のキャンバス位置に重ねます。台座の表示用WebPを切り抜いても、カメラと配置の基準は3000×1854です。
 
 ## 個別配置の変更例
 
 樹木・下草の配信用画像は `tree01～03.webp`・`underplant01～03.webp` です。元の3000×1854画像から透明余白だけを切り詰め、台座と同じ位置に重なるよう、基準倍率0.8を含めたCSSの配置・幅を設定しています。元画像内の切り抜き座標は `docs/hero-sprite-layout.json` に記録しています。以後は人物と同じ `--hex-sprite-x`・`--hex-sprite-bottom`・`--hex-sprite-width` で調整できます。
 
-建物・図面・外構は3000×1854の余白を維持したWebPです。CMSのPNGファイル名指定はJSで対応するWebPに読み替えます。
+CMSでPNGファイル名を指定した場合は、JSで対応するWebPに読み替えます。
 
 ```html
 <img class="hex-hero-sprite hex-hero-sprite--tree01" src="tree01.png" alt=""

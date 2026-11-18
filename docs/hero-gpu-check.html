@@ -63,10 +63,19 @@
 </div><script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script><script>
 window.addEventListener('error',e=>document.getElementById('result').textContent+='\nERROR '+e.message);
     var HERO_LAYER_CROPS={
-      'drawing.webp':{x:273,y:768,width:2484,height:588,originalWidth:3000,originalHeight:1854},
-      'exterior01.webp':{x:272,y:678,width:2485,height:283,originalWidth:3000,originalHeight:1854},
-      'exterior02.webp':{x:278,y:660,width:2419,height:551,originalWidth:3000,originalHeight:1854},
-      'house.webp':{x:781,y:501,width:1433,height:488,originalWidth:3000,originalHeight:1854}
+      'drawing.webp':{originalWidth:3000,originalHeight:1854,x:272,y:768,width:2485,height:588},
+      'exterior01.webp':{originalWidth:3000,originalHeight:1854,x:273,y:678,width:2482,height:239},
+      'exterior02.webp':{originalWidth:3000,originalHeight:1854,x:295,y:700,width:1315,height:344},
+      'exterior03.webp':{originalWidth:3000,originalHeight:1854,x:1906,y:658,width:791,height:381},
+      'exterior04.webp':{originalWidth:3000,originalHeight:1854,x:1024,y:818,width:933,height:393},
+      'house.webp':{originalWidth:3000,originalHeight:1854,x:781,y:501,width:1433,height:488},
+      'pave01.webp':{originalWidth:3000,originalHeight:1854,x:777,y:770,width:1437,height:134},
+      'pave02.webp':{originalWidth:3000,originalHeight:1854,x:288,y:880,width:1655,height:286},
+      'pave03.webp':{originalWidth:3000,originalHeight:1854,x:1160,y:868,width:1593,height:488},
+      'plinth.webp':{originalWidth:3000,originalHeight:1854,x:135,y:755,width:2750,height:768},
+      'wall01.webp':{originalWidth:3000,originalHeight:1854,x:272,y:738,width:2485,height:223},
+      'wall02.webp':{originalWidth:3000,originalHeight:1854,x:1323,y:768,width:685,height:323},
+      'wall03.webp':{originalWidth:3000,originalHeight:1854,x:278,y:937,width:1063,height:235}
     };
     var HERO_LAYER_STATIC_SELECTOR=".hex-hero-plinth-image,.hex-hero-bg img,.hex-hero-character--family,"+
       ".hex-hero-house,.hex-hero-house-layer > img";
@@ -96,11 +105,14 @@ var renderer,scene,camera;
     }
     function getHeroLayerCrop(layer){
       var name=(layer.currentSrc||layer.src||'').split(/[?#]/)[0].split('/').pop();
-      // These placeholders use the same trimmed artwork as exterior01.webp.
-      if(/^(?:exterior0[34]|(?:pave|wall)0[1-3])\.webp$/.test(name))name='exterior01.webp';
       var crop=HERO_LAYER_CROPS[name];
       // Accept both cached full-size assets and newly cropped assets during deployment.
       return crop&&layer.naturalWidth===crop.width&&layer.naturalHeight===crop.height?crop:null;
+    }
+    function getHeroSourceCanvasSize(image){
+      var crop=getHeroLayerCrop(image);
+      return crop?{width:crop.originalWidth,height:crop.originalHeight}
+        :{width:image.naturalWidth,height:image.naturalHeight};
     }
     function drawHeroLayerImage(context,layer,x,y,width,height){
       var crop=getHeroLayerCrop(layer);
@@ -183,7 +195,8 @@ var renderer,scene,camera;
     function updateTextureSource(image){
       if(!image||!image.naturalWidth||!scene||!renderer||!window.THREE)return false;
       var THREE=window.THREE;
-      var imageWidth=image.naturalWidth,imageHeight=image.naturalHeight;
+      var imageSize=getHeroSourceCanvasSize(image);
+      var imageWidth=imageSize.width,imageHeight=imageSize.height;
       var baseScale=parseFloat(getHeroLayerDrawStyle(activeHero)['--hex-hero-base-layer-scale']);
       if(!Number.isFinite(baseScale)||baseScale<=0)baseScale=1;
       heroCharacterBounds=[];
@@ -251,8 +264,9 @@ var renderer,scene,camera;
       return heroLayerMeshes.size>0;
     }
     function renderHeroCompositePreview(image){
-      var naturalWidth=image&&image.naturalWidth;
-      var naturalHeight=image&&image.naturalHeight;
+      if(!image||!image.naturalWidth||!image.naturalHeight||!window.THREE)return false;
+      var imageSize=getHeroSourceCanvasSize(image);
+      var naturalWidth=imageSize.width,naturalHeight=imageSize.height;
       // Keep dimensions stable after CanvasTexture allocation; shrinking the source
       // can upload into only the lower-left portion of the existing GPU texture.
       var maxTextureSize=4096;
@@ -263,8 +277,6 @@ var renderer,scene,camera;
       var baseLayerHeight;
       var baseLayerX;
       var baseLayerY;
-
-      if(!naturalWidth||!naturalHeight||!window.THREE){return false;}
 
       scale=Math.min(1,maxTextureSize/Math.max(naturalWidth,naturalHeight));
       if(!textureCanvas){textureCanvas=document.createElement("canvas");}
@@ -326,7 +338,7 @@ var renderer,scene,camera;
  await Promise.all(heroLayerImages.map(i=>i.decode()));
  HERO_LAYER_POP_SELECTORS.forEach(selector=>{let matched=false;heroLayerImages.forEach(layer=>{if(!heroLayerPopOrder.has(layer)&&layer.matches(selector)){heroLayerPopOrder.set(layer,heroLayerPopGroupCount);matched=true;}});if(matched)heroLayerPopGroupCount++;});
  renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,preserveDrawingBuffer:true});renderer.setClearColor(0xffffff,0);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.setPixelRatio(1);
- scene=new THREE.Scene();const iw=sourceImage.naturalWidth,ih=sourceImage.naturalHeight;
+ scene=new THREE.Scene();const {width:iw,height:ih}=getHeroSourceCanvasSize(sourceImage);
  let output=[],maxBad=0,uploads=0;
  const oldInit=renderer.initTexture.bind(renderer);renderer.initTexture=t=>{uploads++;oldInit(t);};
  for(const size of [[960,600],[390,780]]){
