@@ -5750,7 +5750,9 @@ hexReady(function(){
       var name=(layer.currentSrc||layer.src||'').split(/[?#]/)[0].split('/').pop();
       var crop=HERO_LAYER_CROPS[name];
       // Accept both cached full-size assets and newly cropped assets during deployment.
-      return crop&&layer.naturalWidth===crop.width&&layer.naturalHeight===crop.height?crop:null;
+      if(!crop)return null;
+      var density=layer.naturalWidth/crop.width;
+      return (density===1||density===2)&&layer.naturalHeight===crop.height*density?crop:null;
     }
 
     function getHeroSourceCanvasSize(image){
