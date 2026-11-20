@@ -10160,6 +10160,19 @@ hexReady(function(){
     if(data.sequence){
       catchBox.appendChild(data.sequence);
       stage.appendChild(catchBox);
+      var firstLine=data.sequence.querySelector(':scope > div:first-child > [lang="ja"]:only-child');
+      if(firstLine&&!firstLine.children.length&&!isReducedMotion()){
+        var characters=Array.from(firstLine.textContent.trim());
+        firstLine.textContent='';
+        firstLine.parentElement.classList.add('hex-opening-copy-stagger');
+        characters.forEach(function(character,index){
+          var letter=document.createElement('span');
+          letter.className='hex-opening-copy-letter';
+          letter.textContent=character;
+          letter.style.setProperty('--letter-delay',(index*100)+'ms');
+          firstLine.appendChild(letter);
+        });
+      }
       var groups=Array.from(data.sequence.children);
       groups.forEach(function(group,index){
         group.style.setProperty('--copy-start',(index*2200)+'ms');

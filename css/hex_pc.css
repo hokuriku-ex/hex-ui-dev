@@ -12066,6 +12066,20 @@ html body .hex-card-stack-continuation{background:var(--hex-bg-range-color,#fff)
 .is-v2-entered .hex-opening-copy-sequence > div:last-child{
   animation:hex-opening-copy-pop .3s ease-in-out var(--copy-start) forwards;
 }
+.hex-opening-copy-letter{
+  display:inline-block;
+  transform:scale(0);
+}
+.is-v2-entered .hex-opening-copy-sequence > .hex-opening-copy-stagger{
+  transform:scale(1);
+  animation:none;
+}
+.is-v2-entered .hex-opening-copy-sequence > .hex-opening-copy-stagger:not(:last-child){
+  animation:hex-opening-copy-pop .2s ease-in-out var(--copy-exit) reverse forwards;
+}
+.is-v2-entered .hex-opening-copy-letter{
+  animation:hex-opening-copy-pop .3s ease-in-out var(--letter-delay) forwards;
+}
 @keyframes hex-opening-copy-pop{
   0%{transform:scale(0)}
   55%{transform:scale(1.12)}
