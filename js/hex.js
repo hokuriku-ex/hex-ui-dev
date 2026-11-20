@@ -10174,11 +10174,14 @@ hexReady(function(){
         });
       }
       var groups=Array.from(data.sequence.children);
+      var copyTime=0;
       groups.forEach(function(group,index){
-        group.style.setProperty('--copy-start',(index*2200)+'ms');
-        group.style.setProperty('--copy-exit',(index*2200+2000)+'ms');
+        var duration=index===0&&groups.length>1?3000:2000;
+        group.style.setProperty('--copy-start',copyTime+'ms');
+        copyTime+=duration;
+        group.style.setProperty('--copy-exit',(index===0?2000:copyTime-200)+'ms');
       });
-      stage.dataset.copyDuration=groups.length*2200;
+      stage.dataset.copyDuration=copyTime;
       opening.insertBefore(stage,opening.firstChild);
       if(staticScene&&staticScene._hexSyncStaticHero)staticScene._hexSyncStaticHero();
       return stage;
@@ -10860,6 +10863,7 @@ hexReady(function(){
     var touchStartY=null;
     /* 開幕各場面の表示時間。0にすると自動進行を停止。 */
     var autoAdvanceTimer=null;
+    var copyStartedAt=0;
     var WHEEL_THRESHOLD=45;
     var SWIPE_THRESHOLD=42;
     var screenShort=Math.min(window.screen.width,window.screen.height);
@@ -10947,6 +10951,7 @@ hexReady(function(){
       }
       void scene.offsetWidth;
       scene.classList.add("is-v2-entered");
+      if(scene===introStage&&scene.dataset.copyDuration)copyStartedAt=performance.now();
       if(hasImage){
         scene.classList.add("is-v2-image-entered");
       }
@@ -11000,6 +11005,9 @@ hexReady(function(){
       if(cancelled||transitionLocked||document.hidden||
          !duration||!opening.isConnected){return;}
       /* 各場面のドットごとに計時する。 */
+      if(scenes[index]===introStage&&introStage.dataset.copyDuration){
+        duration=Math.max(0,duration-(performance.now()-copyStartedAt));
+      }
       var activeDot=nav&&nav.querySelector('.hex-progress-dot.is-current');
       if(activeDot){
         activeDot.classList.remove('is-timing');
