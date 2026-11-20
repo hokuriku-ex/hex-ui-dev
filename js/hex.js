@@ -10308,6 +10308,15 @@ hexReady(function(){
       stage.className='hex-opening-final-logo';
       opening.appendChild(stage);
       stage.appendChild(logoStory);
+      var caption=document.createElement('div');
+      caption.className='hex-opening-logo-caption';
+      Array.from('With 北陸エクステリア株式会社').forEach(function(character,index){
+        var letter=document.createElement('span');
+        letter.textContent=character;
+        letter.style.setProperty('--letter-delay',(index*100)+'ms');
+        caption.appendChild(letter);
+      });
+      stage.appendChild(caption);
       logoStory.classList.add('hex-simple-loader-logo');
       if(
         logoCompanyHref&&
