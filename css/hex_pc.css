@@ -12133,3 +12133,10 @@ html body .hex-card-stack-continuation{background:var(--hex-bg-range-color,#fff)
   .hex-logo-story.is-playing + .hex-opening-logo-caption > span{animation:none;transform:none}
 }
 .hex-opening-final-logo.is-background-only > *{display:none!important}
+
+.hex-opening-scroll-host:has(> .is-returning-from-hero){
+  position:fixed;
+  inset:0;
+  background:transparent;
+}
+.hex-opening.is-curtain-sequence.is-returning-from-hero{background:transparent}

@@ -10853,7 +10853,8 @@ hexReady(function(){
     slideStage,
     messageStage,
     replayRequested,
-    startIndex
+    startIndex,
+    onHeroCovered
   ){
     var scenes=collectOpeningScenes(opening,introStage,slideStage,messageStage);
     var blueExit=opening.querySelector('.hex-opening-final-logo.is-background-only');
@@ -10910,6 +10911,7 @@ hexReady(function(){
     }
 
     function cancel(){
+      opening.classList.remove("is-returning-from-hero");
       cancelled=true;
       window.clearTimeout(autoAdvanceTimer);
       timers.forEach(window.clearTimeout);
@@ -10946,8 +10948,8 @@ hexReady(function(){
     /* SKIP時は押した場面を残し、その上で中央の丸を広げる。 */
     if(startIndex===undefined||startIndex<scenes.length){
       visualScenes.forEach(function(scene,sceneIndex){
-        scene.classList.toggle("is-v2-current",sceneIndex===0);
-        scene.setAttribute("aria-hidden",sceneIndex===0?"false":"true");
+        scene.classList.toggle("is-v2-current",!onHeroCovered&&sceneIndex===0);
+        scene.setAttribute("aria-hidden",!onHeroCovered&&sceneIndex===0?"false":"true");
       });
     }
 
@@ -11127,7 +11129,7 @@ hexReady(function(){
 
       curtain.classList.add("is-active","is-v2-running");
 
-      var vertical=window.matchMedia("(max-width:768px)").matches;
+      var vertical=!opening.classList.contains("is-returning-from-hero")&&window.matchMedia("(max-width:768px)").matches;
       var duration=930;
       // 参考映像の約935ms（800msの帯変形＋段差）に合わせる。
       // 入り約195ms / 横断約363ms / 4本を細く見せる約186ms / 抜け約186ms。
@@ -11764,18 +11766,20 @@ hexReady(function(){
         heroCatchRun+=1;
         stopHeroIntro();
         heroIntroStarted=false;
-        var hero=document.querySelector('.hex-hero-wrap');
-        hero.classList.remove('is-intro-playing','is-intro-complete');
-        var copy=hero.querySelector('.hex-hero-catch');
-        if(copy){copy.classList.remove('is-catch-visible','is-exploring');}
-        document.dispatchEvent(new Event('hex:hero-intro-reset'));
         document.documentElement.classList.add('hex-opening-lock');
         opening.classList.remove('is-skipping','is-v2-hero-stage');
+        opening.classList.add("is-returning-from-hero");
         document.body.insertBefore(opening._hexOpeningHost,document.body.firstChild);
-        if(window.hexHero&&window.hexHero.reset){
-          window.hexHero.reset({forOpening:true});
-        }
-        startOpeningCurtainSequence(opening,introStage,slideStage,messageStage,true,target);
+        startOpeningCurtainSequence(opening,introStage,slideStage,messageStage,true,target,function(){
+          var hero=document.querySelector('.hex-hero-wrap');
+          hero.classList.remove('is-intro-playing','is-intro-complete');
+          var copy=hero.querySelector('.hex-hero-catch');
+          if(copy){copy.classList.remove('is-catch-visible','is-exploring');}
+          document.dispatchEvent(new Event('hex:hero-intro-reset'));
+          if(window.hexHero&&window.hexHero.reset){
+            window.hexHero.reset({forOpening:true});
+          }
+        });
       };
 
       window.addEventListener("wheel",onWheel,{passive:false,capture:true});
@@ -11791,6 +11795,18 @@ hexReady(function(){
         return;
       }
       index=Math.max(0,Math.min(scenes.length-1,startIndex||0));
+      if(onHeroCovered){
+        transitionLocked=true;
+        runCurtain(null,scenes[index],false,-1).then(function(){
+          if(cancelled)return;
+          onHeroCovered();
+          opening.classList.remove("is-returning-from-hero");
+          transitionLocked=false;
+          updateDots(false);
+          scheduleAutoAdvance();
+        });
+        return;
+      }
       if(!firstSceneEntered)activate(index);
       updateDots(false);
       scheduleAutoAdvance();

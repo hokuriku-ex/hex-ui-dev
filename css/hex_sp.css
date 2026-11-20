@@ -2584,7 +2584,7 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   }
 
   /* SPの4色カーテンは下から上へ通過 */
-  .hex-opening.is-curtain-sequence .hex-opening-curtain-track{
+  .hex-opening.is-curtain-sequence:where(:not(.is-returning-from-hero)) .hex-opening-curtain-track{
     top:0;
     left:0;
     flex-direction:column;
@@ -2593,7 +2593,7 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     transform:translate3d(0,101vh,0);
     transform-origin:center top;
   }
-  .hex-opening.is-curtain-sequence .hex-opening-curtain-track>i{
+  .hex-opening.is-curtain-sequence:where(:not(.is-returning-from-hero)) .hex-opening-curtain-track>i{
     top:auto!important;
     right:auto!important;
     bottom:auto!important;
