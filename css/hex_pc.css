@@ -12074,3 +12074,15 @@ html body .hex-card-stack-continuation{background:var(--hex-bg-range-color,#fff)
 @media(prefers-reduced-motion:reduce){
   .is-v2-entered .hex-opening-copy-sequence > div{animation-duration:1ms}
 }
+.hex-opening-hero-preview.has-reveal-ring::after{
+  content:""!important;
+  position:absolute;
+  inset:0;
+  z-index:100;
+  pointer-events:none;
+  background:radial-gradient(circle at var(--hex-ring-origin),
+    transparent max(0px,calc(var(--hex-ring-radius) - 4px)),
+    #fff max(0px,calc(var(--hex-ring-radius) - 3px)),
+    #f7d04f max(0px,calc(var(--hex-ring-radius) - 2px)),
+    #f7d04f var(--hex-ring-radius),transparent var(--hex-ring-radius));
+}

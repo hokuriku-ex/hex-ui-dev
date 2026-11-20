@@ -11287,6 +11287,13 @@ hexReady(function(){
       originY=wordmarkRect&&wordmarkRect.height
         ?wordmarkRect.top+wordmarkRect.height/2-previewRect.top
         :previewRect.height/2;
+      var showRing=introStage&&introStage.dataset.copyDuration&&
+        introStage.classList.contains('is-v2-current')&&!reduced;
+      preview.classList.toggle('has-reveal-ring',!!showRing);
+      if(showRing){
+        preview.style.setProperty('--hex-ring-origin',originX+'px '+originY+'px');
+        preview.style.setProperty('--hex-ring-radius','1px');
+      }
       radius=Math.hypot(
         Math.max(originX,previewRect.width-originX),
         Math.max(originY,previewRect.height-originY)
@@ -11315,6 +11322,7 @@ hexReady(function(){
             ?4*progress*progress*progress
             :1-Math.pow(-2*progress+2,3)/2;
           currentRadius=1+(radius-1)*eased;
+          if(showRing)preview.style.setProperty('--hex-ring-radius',currentRadius+'px');
           preview.style.setProperty(
             "clip-path",
             "circle("+currentRadius+"px at "+originX+"px "+originY+"px)"
