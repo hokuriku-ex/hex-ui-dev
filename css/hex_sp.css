@@ -2941,7 +2941,8 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
 /* 開幕1〜5番SP：縁取りはヒーロー共通。1〜4番のスライドは左上で同時フェード。 */
 @media screen and (max-width:768px){
   :is(.hex-opening-intro-stage,.hex-opening-message-stage) .hex-opening-intro-catch .hex-opening-intro-main,
-  .hex-opening-slide-catch .hex-opening-slide-title{
+  .hex-opening-slide-catch .hex-opening-slide-title,
+.hex-opening-logo-caption{
     font-size:48px!important;line-height:1.4!important;letter-spacing:.04em!important;
   }
   .hex-opening-intro-stage .hex-opening-intro-catch .hex-opening-intro-sub,
