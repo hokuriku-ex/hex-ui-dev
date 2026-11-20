@@ -12132,3 +12132,4 @@ html body .hex-card-stack-continuation{background:var(--hex-bg-range-color,#fff)
 @media(prefers-reduced-motion:reduce){
   .hex-logo-story.is-playing + .hex-opening-logo-caption > span{animation:none;transform:none}
 }
+.hex-opening-final-logo.is-background-only > *{display:none!important}

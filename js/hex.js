@@ -9610,6 +9610,7 @@ hexReady(function(){
 
   /* 常に表示true　本番公開時false */
   var FORCE_PLAY=false;
+  var PLAY_FINAL_LOGO=false;
 
   /* SKIP時に開幕画面が消える時間 */
   var SKIP_FADE_DURATION=500;
@@ -10306,6 +10307,7 @@ hexReady(function(){
     if(!stage){
       stage=document.createElement('div');
       stage.className='hex-opening-final-logo';
+      stage.classList.toggle('is-background-only',!PLAY_FINAL_LOGO);
       opening.appendChild(stage);
       stage.appendChild(logoStory);
       var caption=document.createElement('div');
@@ -10991,7 +10993,7 @@ hexReady(function(){
       var activeDotIndex;
       if(!nav){return;}
       var logo=opening.querySelector('.hex-opening-final-logo .hex-logo-story');
-      if(logo)logo.classList.toggle('is-playing',scenes[index]===logo.parentElement);
+      if(PLAY_FINAL_LOGO&&logo)logo.classList.toggle('is-playing',scenes[index]===logo.parentElement);
       activeDotIndex=heroSelected?scenes.length:index;
       Array.prototype.forEach.call(
         nav.querySelectorAll(".hex-progress-dot"),
@@ -11010,9 +11012,13 @@ hexReady(function(){
 
     function scheduleAutoAdvance(){
       window.clearTimeout(autoAdvanceTimer);
+      if(cancelled||transitionLocked||document.hidden||!opening.isConnected)return;
+      if(scenes[index].classList.contains("is-background-only")){
+        finishToHero();
+        return;
+      }
       var duration=Number(scenes[index].dataset.copyDuration)||getOpeningSceneDuration(index+1);
-      if(cancelled||transitionLocked||document.hidden||
-         !duration||!opening.isConnected){return;}
+      if(!duration)return;
       /* 各場面のドットごとに計時する。 */
       if(scenes[index]===introStage&&introStage.dataset.copyDuration){
         duration=Math.max(0,duration-(performance.now()-copyStartedAt));
@@ -11726,7 +11732,7 @@ hexReady(function(){
           if(dotIndex===scenes.length){
             dot.setAttribute('aria-label','ヒーローへ移動');
           }else if(scenes[dotIndex].classList.contains('hex-opening-final-logo')){
-            dot.setAttribute('aria-label','ロゴアニメーションへ移動');
+            dot.setAttribute('aria-label',PLAY_FINAL_LOGO?'ロゴアニメーションへ移動':'ヒーロー直前の青背景へ移動');
           }else if(scenes[dotIndex]===messageStage){
             var messageTitle=messageStage.querySelector('.hex-opening-message-main');
             var label=messageTitle?messageTitle.textContent.replace(/\u00a0/g,' ').trim():'すぐそばにある、特別な時間。';
