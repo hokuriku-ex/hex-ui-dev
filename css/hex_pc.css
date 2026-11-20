@@ -12074,11 +12074,10 @@ html body .hex-card-stack-continuation{background:var(--hex-bg-range-color,#fff)
 @media(prefers-reduced-motion:reduce){
   .is-v2-entered .hex-opening-copy-sequence > div{animation-duration:1ms}
 }
-.hex-simple-loader.is-sliding-out{
-  animation:hex-opening-loader-slide .6s cubic-bezier(.65,0,.35,1) both;
-}
-@keyframes hex-opening-loader-slide{
-  to{transform:translateX(-100%)}
+.hex-simple-loader.is-curtain-outgoing{
+  position:absolute;
+  z-index:2;
+  pointer-events:none;
 }
 .hex-opening-final-logo{
   position:absolute;

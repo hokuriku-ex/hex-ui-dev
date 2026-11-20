@@ -11592,16 +11592,26 @@ hexReady(function(){
         }
       }
       stage.hidden=false;
-      void stage.offsetWidth;
-      logoStory.classList.add('is-playing');
-      return wait(2350);
+      logoStory.style.visibility='hidden';
+      return runCurtain(scenes[index],stage,false,1).then(function(){
+        if(cancelled)return;
+        stage.classList.remove('is-v2-incoming');
+        stage.style.removeProperty('clip-path');
+        stage.style.removeProperty('opacity');
+        stage.style.removeProperty('z-index');
+        logoStory.style.removeProperty('visibility');
+        logoStory.classList.add('is-playing');
+        return wait(2350);
+      });
     }
 
     function hideFinalLogo(){
       var stage=opening.querySelector('.hex-opening-final-logo');
       if(stage){
-        stage.hidden=true;
-        stage.querySelector('.hex-logo-story').classList.remove('is-playing');
+        var logoStory=stage.querySelector('.hex-logo-story');
+        logoStory.classList.remove('is-playing');
+        stage.parentElement.querySelector('.hex-opening-logo-stage').appendChild(logoStory);
+        stage.remove();
       }
     }
 
@@ -11638,17 +11648,18 @@ hexReady(function(){
 
       function revealOpening(resolve){
         if(cancelled){return;}
-        if(scenes[0]){
-          scenes[0].classList.add(
-            "is-v2-current","is-v2-image-entered","is-v2-loader-image-ready"
-          );
-          scenes[0].setAttribute("aria-hidden","false");
-        }
-        loader.classList.add("is-sliding-out");
-        later(function(){
+        var firstScene=scenes[0];
+        if(!firstScene){
           loader.remove();
           resolve();
-        },600);
+          return;
+        }
+        opening.appendChild(loader);
+        loader.classList.add("is-curtain-outgoing");
+        runCurtain(loader,firstScene,false,1).then(function(){
+          loader.remove();
+          resolve(true);
+        });
       }
       return new Promise(function(resolve){
         function startResourceLoading(){
@@ -11691,7 +11702,7 @@ hexReady(function(){
       });
     }
 
-    function begin(){
+    function begin(firstSceneEntered){
       if(cancelled){return;}
       if(!scenes.length){
         finishToHero();
@@ -11752,7 +11763,7 @@ hexReady(function(){
         return;
       }
       index=Math.max(0,Math.min(scenes.length-1,startIndex||0));
-      activate(index);
+      if(!firstSceneEntered)activate(index);
       updateDots(false);
       scheduleAutoAdvance();
     }
