@@ -9654,6 +9654,7 @@ hexReady(function(){
     selectHeroDot();
     var duration=getOpeningSceneDuration(7);
     if(!duration)return;
+    dot.classList.remove('is-hero-countdown');
     dot.style.setProperty('--hex-opening-auto-duration',duration+'ms');
     void dot.offsetWidth;
     dot.classList.add('is-timing');
@@ -9686,6 +9687,12 @@ hexReady(function(){
     var duration=getOpeningSceneDuration(7);
     var hero=document.querySelector('.hex-hero-wrap');
     if(!duration){return;}
+    var dot=sharedNav&&sharedNav.querySelector('.hex-progress-dot:last-child.is-timing');
+    if(dot){
+      var progress=getComputedStyle(dot,'::after').getPropertyValue('--hex-opening-ring-progress');
+      dot.style.setProperty('--hex-hero-ring-start',progress.trim()||'0deg');
+      dot.classList.add('is-hero-countdown');
+    }
     heroIntroTimer=window.setTimeout(function(){
       if(heroIntroDeparted){return;}
       /* 時間終了で外周タイマーだけ消し、現在位置の丸は残す。 */

@@ -12140,3 +12140,18 @@ html body .hex-card-stack-continuation{background:var(--hex-bg-range-color,#fff)
   background:transparent;
 }
 .hex-opening.is-curtain-sequence.is-returning-from-hero{background:transparent}
+
+.hex-opening-progress-nav .hex-progress-dot:last-child.is-current.is-timing::after{
+  animation-name:hex-hero-ring-intro;
+}
+.hex-opening-progress-nav .hex-progress-dot:last-child.is-current.is-timing.is-hero-countdown::after{
+  animation-name:hex-hero-ring-countdown;
+}
+@keyframes hex-hero-ring-intro{
+  from{--hex-opening-ring-progress:0deg}
+  to{--hex-opening-ring-progress:120deg}
+}
+@keyframes hex-hero-ring-countdown{
+  from{--hex-opening-ring-progress:var(--hex-hero-ring-start,0deg)}
+  to{--hex-opening-ring-progress:360deg}
+}
