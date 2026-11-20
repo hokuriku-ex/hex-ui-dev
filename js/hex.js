@@ -8927,14 +8927,14 @@ hexLoad(function(){
   var modalBody=document.createElement('div');
   var closeButton=document.createElement('button');
   var lastFocusedElement=null;
-  var calendarTitlePrepared=false;
+  var calendarTitleWrap;
 
   function prepareCalendarModalTitle(){
     var title=calendarSection.querySelector('.hex-top-title[data-en]');
     var english;
     var wrap;
 
-    if(calendarTitlePrepared||!title){return;}
+    if(calendarTitleWrap||!title){return;}
     english=(title.getAttribute('data-en')||'').trim();
     if(!english){return;}
 
@@ -8948,25 +8948,19 @@ hexLoad(function(){
     if(subtitle.childNodes.length){
       title.insertBefore(subtitle,title.firstChild);
     }
-    title.style.setProperty(
-      '--hex-sub-pop-delay',
-      (((Array.from(english).length-1)*(.07*5/6)+.5)/2)+'s'
-    );
-
     wrap=document.createElement('span');
     wrap.className='hex-top-title-en';
     wrap.setAttribute('aria-hidden','true');
-    Array.from(english).forEach(function(character,index){
+    Array.from(english).forEach(function(character){
       var span=document.createElement('span');
       span.className='hex-top-title-char';
       span.textContent=character===' '?'\u00a0':character;
-      span.style.animationDelay=(index*(.07*5/6))+'s';
       wrap.appendChild(span);
     });
     title.classList.add('has-hex-title-roll');
     title.appendChild(wrap);
     if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(wrap);
-    calendarTitlePrepared=true;
+    calendarTitleWrap=wrap;
   }
 
   /* モーダル背景 */
@@ -9077,6 +9071,7 @@ hexLoad(function(){
     prepareCalendarModalTitle();
 
     modal.classList.add('is-open');
+    if(calendarTitleWrap&&window.hexPlayCalendarTitle)window.hexPlayCalendarTitle(calendarTitleWrap);
     modal.setAttribute('aria-hidden','false');
 
     document.documentElement.classList.add(
@@ -15293,6 +15288,28 @@ hexLoad(function(){
     });
   }
 
+  function topTitleSubtitleDelay(letterCount){
+    return (.5+(letterCount-1)*(.07*5/6))/2;
+  }
+
+  window.hexPlayCalendarTitle=function(wrap){
+    var letters=Array.from(wrap.children);
+    applyTitleLetterArc(wrap,letters);
+    var gsap=window.gsap;
+    if(!gsap)return;
+    var chars=letters.filter(function(letter){return letter.textContent.trim()!=='';});
+    var subtitle=wrap.parentElement.querySelector('.hex-top-title-sub');
+    gsap.killTweensOf(chars);
+    var subtitlePop=createCatchSubtitlePop(subtitle);
+    if(subtitlePop)subtitlePop.reset();
+    if(isReducedMotion()){
+      gsap.set(chars,{clearProps:'transform'});
+      return;
+    }
+    gsap.set(chars,{scale:0,transformOrigin:'50% 50%'});
+    playTitleLetterPop(chars);
+    if(subtitlePop)subtitlePop.play(topTitleSubtitleDelay(letters.length));
+  };
   function playTitleLetterPop(chars,stagger=.1,onComplete){
     var gsap=window.gsap;
     return gsap.to(chars,{
@@ -16402,7 +16419,7 @@ hexLoad(function(){
               autoAlpha:1,
               y:0,
               scale:1,
-              delay:(.5+(chars.length-1)*(.07*5/6))/2,
+              delay:topTitleSubtitleDelay(chars.length),
               duration:.4,
               ease:'back.out(1.7)',
               overwrite:'auto',
