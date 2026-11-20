@@ -9647,6 +9647,18 @@ hexReady(function(){
     });
   }
 
+  function startHeroDotRing(){
+    if(!sharedNav)return;
+    var dot=sharedNav.querySelector('.hex-progress-dot:last-child');
+    if(!dot||dot.classList.contains('is-timing'))return;
+    selectHeroDot();
+    var duration=getOpeningSceneDuration(7);
+    if(!duration)return;
+    dot.style.setProperty('--hex-opening-auto-duration',duration+'ms');
+    void dot.offsetWidth;
+    dot.classList.add('is-timing');
+  }
+
   function stopHeroIntro(){
     window.clearTimeout(heroIntroTimer);
     heroIntroTimer=null;
@@ -9661,7 +9673,7 @@ hexReady(function(){
     var hero=document.querySelector('.hex-hero-wrap');
     hero.classList.add('is-intro-playing');
     hero.classList.remove('is-intro-complete');
-    selectHeroDot();
+    startHeroDotRing();
     if(isReducedMotion()||document.documentElement.classList.contains('hex-motion-load-error')){
       document.dispatchEvent(new Event('hex:hero-subtitle-start'));
       document.dispatchEvent(new Event('hex:hero-subtitle-complete'));
@@ -9673,12 +9685,6 @@ hexReady(function(){
     if(!heroIntroStarted||heroIntroDeparted||heroIntroTimer!==null)return;
     var duration=getOpeningSceneDuration(7);
     var hero=document.querySelector('.hex-hero-wrap');
-    var dot=sharedNav&&sharedNav.querySelector('.is-current');
-    if(dot&&duration){
-      void dot.offsetWidth;
-      dot.style.setProperty('--hex-opening-auto-duration',duration+'ms');
-      dot.classList.add('is-timing');
-    }
     if(!duration){return;}
     heroIntroTimer=window.setTimeout(function(){
       if(heroIntroDeparted){return;}
@@ -9701,7 +9707,7 @@ hexReady(function(){
     var copy=hero.querySelector('.hex-hero-catch');
     if(copy){copy.classList.remove('is-catch-visible','is-exploring');}
     if(sharedNav){sharedNav.hidden=false;}
-    selectHeroDot();
+    startHeroDotRing();
     document.dispatchEvent(new Event('hex:hero-intro-reset'));
     showHeroCatch(0);
   });
@@ -10648,6 +10654,7 @@ hexReady(function(){
       root.classList.add('hex-hero-first-frame-ready');
       showPendingPage();
       root.classList.add('hex-direct-hero-fade-ready');
+      startHeroDotRing();
       root.classList.remove('hex-hero-display-wait','hex-hero-return-preparing');
       document.dispatchEvent(new Event('hex:hero-display-ready'));
       /* ページ全体のloadを待たず、初期ズームの終盤で見出しを再生する。 */
@@ -11429,6 +11436,7 @@ hexReady(function(){
 
       // 最後の日本語キャッチから、中央の丸演出でヒーローへ。
       updateDots(true);
+      startHeroDotRing();
       runHeroCircleReveal(true).then(function(){
         if(cancelled)return;
         visualScenes.forEach(function(scene){
