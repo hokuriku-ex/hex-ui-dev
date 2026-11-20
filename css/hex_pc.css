@@ -12087,3 +12087,8 @@ html body .hex-card-stack-continuation{background:var(--hex-bg-range-color,#fff)
   pointer-events:none;
 }
 .hex-opening-final-logo[hidden]{display:none!important}
+.hex-opening-final-logo:not(.is-v2-current):not(.is-v2-incoming),
+.hex-opening-final-logo .hex-logo-story:not(.is-playing){
+  visibility:hidden;
+}
+.hex-opening-final-logo.is-v2-current{z-index:2}

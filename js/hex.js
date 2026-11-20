@@ -10277,13 +10277,55 @@ hexReady(function(){
   }
 
   // 通常再生・閲覧済みスキップ・リプレイで同じ場面リストを使う。
-  function collectOpeningScenes(introStage,slideStage,messageStage){
+  function createFinalLogo(opening){
+    var logoStory=opening.querySelector(".hex-logo-story");
+    var logoCompanyImage=logoStory&&logoStory.querySelector(
+      ".hex-logo-company-name image"
+    );
+    var logoCompanyHref=logoCompanyImage&&
+      logoCompanyImage.getAttribute("href");
+    var logoCompanyWhiteHref=logoCompanyHref;
+    if(!logoStory)return null;
+    var stage=opening.querySelector('.hex-opening-final-logo');
+    if(!stage){
+      stage=document.createElement('div');
+      stage.className='hex-opening-final-logo';
+      opening.appendChild(stage);
+      stage.appendChild(logoStory);
+      logoStory.classList.add('hex-simple-loader-logo');
+      if(
+        logoCompanyHref&&
+        logoCompanyHref.indexOf("data:image/svg+xml;base64,")===0
+      ){
+        try{
+          logoCompanyWhiteHref=
+            "data:image/svg+xml;base64,"+
+            window.btoa(
+              window.atob(
+                logoCompanyHref.slice("data:image/svg+xml;base64,".length)
+              ).replace(/#(?:1f2774|265ab0)/gi,"#ffffff")
+            );
+        }catch(error){
+          logoCompanyWhiteHref=logoCompanyHref;
+        }
+      }
+      if(logoCompanyImage&&logoCompanyWhiteHref){
+        logoCompanyImage.setAttribute("href",logoCompanyWhiteHref);
+      }
+    }
+    stage.dataset.copyDuration="2350";
+    return stage;
+  }
+
+  function collectOpeningScenes(opening,introStage,slideStage,messageStage){
     var scenes=[];
     if(slideStage){
       Array.prototype.forEach.call(slideStage.querySelectorAll(".hex-opening-slide"),function(slide){scenes.push(slide);});
     }
     if(introStage)scenes.push(introStage);
     if(messageStage&&messageStage.children.length)scenes.push(messageStage);
+    var logo=createFinalLogo(opening);
+    if(logo)scenes.push(logo);
     return scenes;
   }
 
@@ -10786,7 +10828,7 @@ hexReady(function(){
     replayRequested,
     startIndex
   ){
-    var scenes=collectOpeningScenes(introStage,slideStage,messageStage);
+    var scenes=collectOpeningScenes(opening,introStage,slideStage,messageStage);
     var index=0;
     var cancelled=false;
     var timers=[];
@@ -10838,7 +10880,6 @@ hexReady(function(){
     }
 
     function cancel(){
-      hideFinalLogo();
       cancelled=true;
       window.clearTimeout(autoAdvanceTimer);
       timers.forEach(window.clearTimeout);
@@ -10922,6 +10963,8 @@ hexReady(function(){
     function updateDots(heroSelected){
       var activeDotIndex;
       if(!nav){return;}
+      var logo=opening.querySelector('.hex-opening-final-logo .hex-logo-story');
+      if(logo)logo.classList.toggle('is-playing',scenes[index]===logo.parentElement);
       activeDotIndex=heroSelected?scenes.length:index;
       Array.prototype.forEach.call(
         nav.querySelectorAll(".hex-progress-dot"),
@@ -11347,15 +11390,11 @@ hexReady(function(){
       opening.classList.add("is-v2-hero-stage");
       var hero=document.querySelector('.hex-hero-wrap');
       if(hero)hero.classList.add('is-catch-waiting');
-      updateDots(true);
 
       // 最後の日本語キャッチから、中央の丸演出でヒーローへ。
-      var logoDone=fromCenter||index!==scenes.length-1?Promise.resolve():playFinalLogo();
-      logoDone.then(function(){
-        if(!cancelled)return runHeroCircleReveal(true);
-      }).then(function(){
+      updateDots(true);
+      runHeroCircleReveal(true).then(function(){
         if(cancelled)return;
-        hideFinalLogo();
         scenes.forEach(function(scene){
           scene.classList.remove("is-v2-current");
           scene.setAttribute("aria-hidden","true");
@@ -11555,66 +11594,6 @@ hexReady(function(){
       });
     }
 
-    function playFinalLogo(){
-      var logoStory=opening.querySelector(".hex-logo-story");
-      var logoCompanyImage=logoStory&&logoStory.querySelector(
-        ".hex-logo-company-name image"
-      );
-      var logoCompanyHref=logoCompanyImage&&
-        logoCompanyImage.getAttribute("href");
-      var logoCompanyWhiteHref=logoCompanyHref;
-      if(!logoStory||reduced)return Promise.resolve();
-      var stage=opening.querySelector('.hex-opening-final-logo');
-      if(!stage){
-        stage=document.createElement('div');
-        stage.className='hex-opening-final-logo';
-        opening.appendChild(stage);
-        stage.appendChild(logoStory);
-        logoStory.classList.add('hex-simple-loader-logo');
-        if(
-          logoCompanyHref&&
-          logoCompanyHref.indexOf("data:image/svg+xml;base64,")===0
-        ){
-          try{
-            logoCompanyWhiteHref=
-              "data:image/svg+xml;base64,"+
-              window.btoa(
-                window.atob(
-                  logoCompanyHref.slice("data:image/svg+xml;base64,".length)
-                ).replace(/#(?:1f2774|265ab0)/gi,"#ffffff")
-              );
-          }catch(error){
-            logoCompanyWhiteHref=logoCompanyHref;
-          }
-        }
-        if(logoCompanyImage&&logoCompanyWhiteHref){
-          logoCompanyImage.setAttribute("href",logoCompanyWhiteHref);
-        }
-      }
-      stage.hidden=false;
-      logoStory.style.visibility='hidden';
-      return runCurtain(scenes[index],stage,false,1).then(function(){
-        if(cancelled)return;
-        stage.classList.remove('is-v2-incoming');
-        stage.style.removeProperty('clip-path');
-        stage.style.removeProperty('opacity');
-        stage.style.removeProperty('z-index');
-        logoStory.style.removeProperty('visibility');
-        logoStory.classList.add('is-playing');
-        return wait(2350);
-      });
-    }
-
-    function hideFinalLogo(){
-      var stage=opening.querySelector('.hex-opening-final-logo');
-      if(stage){
-        var logoStory=stage.querySelector('.hex-logo-story');
-        logoStory.classList.remove('is-playing');
-        stage.parentElement.querySelector('.hex-opening-logo-stage').appendChild(logoStory);
-        stage.remove();
-      }
-    }
-
     function showLoader(){
       var loader=document.createElement("div");
       var progress=loader.appendChild(document.createElement("div"));
@@ -11716,6 +11695,8 @@ hexReady(function(){
         function(dot,dotIndex){
           if(dotIndex===scenes.length){
             dot.setAttribute('aria-label','ヒーローへ移動');
+          }else if(scenes[dotIndex].classList.contains('hex-opening-final-logo')){
+            dot.setAttribute('aria-label','ロゴアニメーションへ移動');
           }else if(scenes[dotIndex]===messageStage){
             var messageTitle=messageStage.querySelector('.hex-opening-message-main');
             var label=messageTitle?messageTitle.textContent.replace(/\u00a0/g,' ').trim():'すぐそばにある、特別な時間。';
@@ -11827,7 +11808,7 @@ hexReady(function(){
     openingHost.appendChild(opening);
     opening._hexOpeningHost=openingHost;
     if(directHero){
-      var sceneCount=collectOpeningScenes(introStage,slideStage,messageStage).length;
+      var sceneCount=collectOpeningScenes(opening,introStage,slideStage,messageStage).length;
       createOpeningProgressNav(opening,sceneCount+1,sceneCount);
       /* 共通ドットのクリック制御を作り、開幕の計時・入力は停止する。 */
       startOpeningCurtainSequence(opening,introStage,slideStage,messageStage,true,sceneCount-1);
@@ -15077,6 +15058,7 @@ hexLoad(function(){
         '#hex-motion-preparation-cover.is-ready{'+
           'opacity:0;pointer-events:none;'+
         '}'+
+        'html.hex-opening-lock.hex-opening-ready #hex-motion-preparation-cover,'+
         'html.hex-hero-first-frame-ready #hex-motion-preparation-cover{'+
           'display:none;'+
         '}'+
