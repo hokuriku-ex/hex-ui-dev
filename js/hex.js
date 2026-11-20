@@ -11822,11 +11822,9 @@ hexReady(function(){
   function initOpening(){
     var opening;
     var openingHost;
-    var introData;
     var introStage=null;
     var slides;
     var slideStage=null;
-    var messageData;
     var messageStage=null;
 
     if(!isTopPage()){
@@ -11851,21 +11849,14 @@ hexReady(function(){
     opening=createOpeningElement();
     document.documentElement.classList.add("hex-opening-lock");
     setupOpeningSkip(opening);
-    introData=collectOpeningIntro();
-    slides=collectOpeningSlides();
-    messageData=collectOpeningMessage();
+    collectOpeningIntro();
+    slides=collectOpeningSlides().slice(0,4);
+    collectOpeningMessage();
 
     if(slides.length){
       slideStage=createOpeningSlides(opening,slides);
     }
 
-    if(introData){
-      introStage=createOpeningIntro(opening,introData);
-    }
-
-    if(messageData&&!(introData&&introData.sequence)){
-      messageStage=createOpeningMessage(opening,messageData);
-    }
     openingHost=document.createElement("div");
     openingHost.className="hex-opening-scroll-host";
     openingHost.appendChild(opening);
