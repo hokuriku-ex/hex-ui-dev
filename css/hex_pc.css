@@ -12074,15 +12074,17 @@ html body .hex-card-stack-continuation{background:var(--hex-bg-range-color,#fff)
 @media(prefers-reduced-motion:reduce){
   .is-v2-entered .hex-opening-copy-sequence > div{animation-duration:1ms}
 }
-.hex-opening-hero-preview.has-reveal-ring::after{
-  content:""!important;
+.hex-simple-loader.is-sliding-out{
+  animation:hex-opening-loader-slide .6s cubic-bezier(.65,0,.35,1) both;
+}
+@keyframes hex-opening-loader-slide{
+  to{transform:translateX(-100%)}
+}
+.hex-opening-final-logo{
   position:absolute;
   inset:0;
-  z-index:100;
+  z-index:10;
+  background:#265ab0;
   pointer-events:none;
-  background:radial-gradient(circle at var(--hex-ring-origin),
-    transparent max(0px,calc(var(--hex-ring-radius) - 4px)),
-    #fff max(0px,calc(var(--hex-ring-radius) - 3px)),
-    #f7d04f max(0px,calc(var(--hex-ring-radius) - 2px)),
-    #f7d04f var(--hex-ring-radius),transparent var(--hex-ring-radius));
 }
+.hex-opening-final-logo[hidden]{display:none!important}

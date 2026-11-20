@@ -10838,6 +10838,7 @@ hexReady(function(){
     }
 
     function cancel(){
+      hideFinalLogo();
       cancelled=true;
       window.clearTimeout(autoAdvanceTimer);
       timers.forEach(window.clearTimeout);
@@ -11287,13 +11288,6 @@ hexReady(function(){
       originY=wordmarkRect&&wordmarkRect.height
         ?wordmarkRect.top+wordmarkRect.height/2-previewRect.top
         :previewRect.height/2;
-      var showRing=introStage&&introStage.dataset.copyDuration&&
-        introStage.classList.contains('is-v2-current')&&!reduced;
-      preview.classList.toggle('has-reveal-ring',!!showRing);
-      if(showRing){
-        preview.style.setProperty('--hex-ring-origin',originX+'px '+originY+'px');
-        preview.style.setProperty('--hex-ring-radius','1px');
-      }
       radius=Math.hypot(
         Math.max(originX,previewRect.width-originX),
         Math.max(originY,previewRect.height-originY)
@@ -11322,7 +11316,6 @@ hexReady(function(){
             ?4*progress*progress*progress
             :1-Math.pow(-2*progress+2,3)/2;
           currentRadius=1+(radius-1)*eased;
-          if(showRing)preview.style.setProperty('--hex-ring-radius',currentRadius+'px');
           preview.style.setProperty(
             "clip-path",
             "circle("+currentRadius+"px at "+originX+"px "+originY+"px)"
@@ -11357,7 +11350,12 @@ hexReady(function(){
       updateDots(true);
 
       // 最後の日本語キャッチから、中央の丸演出でヒーローへ。
-      runHeroCircleReveal(true).then(function(){
+      var logoDone=fromCenter||index!==scenes.length-1?Promise.resolve():playFinalLogo();
+      logoDone.then(function(){
+        if(!cancelled)return runHeroCircleReveal(true);
+      }).then(function(){
+        if(cancelled)return;
+        hideFinalLogo();
         scenes.forEach(function(scene){
           scene.classList.remove("is-v2-current");
           scene.setAttribute("aria-hidden","true");
@@ -11557,36 +11555,22 @@ hexReady(function(){
       });
     }
 
-    function showLoader(){
-      var loader=document.createElement("div");
-      var progress=loader.appendChild(document.createElement("div"));
-      var label=loader.appendChild(document.createElement("span"));
-      var bar=loader.appendChild(document.createElement("i"));
+    function playFinalLogo(){
       var logoStory=opening.querySelector(".hex-logo-story");
-      var logoHome=logoStory&&logoStory.parentNode;
-      var logoViewBox=logoStory&&logoStory.getAttribute("viewBox");
       var logoCompanyImage=logoStory&&logoStory.querySelector(
         ".hex-logo-company-name image"
       );
       var logoCompanyHref=logoCompanyImage&&
         logoCompanyImage.getAttribute("href");
       var logoCompanyWhiteHref=logoCompanyHref;
-      var urls=collectPreloadUrls();
-      var completed=0;
-      var started=0;
-      var maximumTimer;
-      var loaderFinished=false;
-
-      loader.className="hex-simple-loader is-loading-phase";
-      progress.className="hex-simple-loader-inner";
-      label.className="hex-simple-loader-label";
-      bar.className="hex-simple-loader-bar";
-      label.textContent="LOADING";
-
-      if(logoStory){
-        loader.classList.add("has-logo-animation");
-        logoStory.classList.add("hex-simple-loader-logo");
-        logoStory.setAttribute("viewBox","0 0 1000 560");
+      if(!logoStory||reduced)return Promise.resolve();
+      var stage=opening.querySelector('.hex-opening-final-logo');
+      if(!stage){
+        stage=document.createElement('div');
+        stage.className='hex-opening-final-logo';
+        opening.appendChild(stage);
+        stage.appendChild(logoStory);
+        logoStory.classList.add('hex-simple-loader-logo');
         if(
           logoCompanyHref&&
           logoCompanyHref.indexOf("data:image/svg+xml;base64,")===0
@@ -11606,29 +11590,42 @@ hexReady(function(){
         if(logoCompanyImage&&logoCompanyWhiteHref){
           logoCompanyImage.setAttribute("href",logoCompanyWhiteHref);
         }
-        loader.insertBefore(logoStory,progress);
-      }else{
-        loader.classList.add("is-loading-phase");
       }
+      stage.hidden=false;
+      void stage.offsetWidth;
+      logoStory.classList.add('is-playing');
+      return wait(2350);
+    }
+
+    function hideFinalLogo(){
+      var stage=opening.querySelector('.hex-opening-final-logo');
+      if(stage){
+        stage.hidden=true;
+        stage.querySelector('.hex-logo-story').classList.remove('is-playing');
+      }
+    }
+
+    function showLoader(){
+      var loader=document.createElement("div");
+      var progress=loader.appendChild(document.createElement("div"));
+      var label=loader.appendChild(document.createElement("span"));
+      var bar=loader.appendChild(document.createElement("i"));
+      var urls=collectPreloadUrls();
+      var completed=0;
+      var started=0;
+      var maximumTimer;
+      var loaderFinished=false;
+
+      loader.className="hex-simple-loader is-loading-phase";
+      progress.className="hex-simple-loader-inner";
+      label.className="hex-simple-loader-label";
+      bar.className="hex-simple-loader-bar";
+      label.textContent="LOADING";
+
       document.body.appendChild(loader);
 
       function setProgress(value){
         loader.style.setProperty("--hex-loader-progress",String(value));
-      }
-
-      function restoreLogo(){
-        if(!logoStory||!logoHome){return;}
-        logoStory.classList.remove(
-          "hex-simple-loader-logo",
-          "is-playing"
-        );
-        if(logoViewBox){
-          logoStory.setAttribute("viewBox",logoViewBox);
-        }
-        if(logoCompanyImage&&logoCompanyHref){
-          logoCompanyImage.setAttribute("href",logoCompanyHref);
-        }
-        logoHome.appendChild(logoStory);
       }
 
       function finish(resolve){
@@ -11636,7 +11633,7 @@ hexReady(function(){
         loaderFinished=true;
         window.clearTimeout(maximumTimer);
         var remaining=Math.max(700-(Date.now()-started),0);
-        later(function(){playLogo(resolve);},remaining);
+        later(function(){revealOpening(resolve);},remaining);
       }
 
       function revealOpening(resolve){
@@ -11647,57 +11644,12 @@ hexReady(function(){
           );
           scenes[0].setAttribute("aria-hidden","false");
         }
-        var mask="radial-gradient(circle at 50% 50%,transparent 0px,#000 1px)";
-        var supportsMask=window.CSS&&typeof window.CSS.supports==="function"&&(
-          window.CSS.supports("mask-image",mask)||
-          window.CSS.supports("-webkit-mask-image",mask)
-        );
-        function complete(){
-          restoreLogo();
-          if(loader.parentNode){loader.remove();}
+        loader.classList.add("is-sliding-out");
+        later(function(){
+          loader.remove();
           resolve();
-        }
-        if(!supportsMask){
-          loader.classList.add("is-complete");
-          later(complete,460);
-          return;
-        }
-        var radius=Math.hypot(window.innerWidth/2,window.innerHeight/2)+4;
-        var revealStarted=null;
-        loader.classList.add("is-circle-revealing");
-        function frame(now){
-          if(cancelled){return;}
-          if(revealStarted===null){revealStarted=now;}
-          var progress=Math.min(1,(now-revealStarted)/1100);
-          var eased=progress<.5
-            ?4*progress*progress*progress
-            :1-Math.pow(-2*progress+2,3)/2;
-          var currentRadius=radius*eased;
-          var image="radial-gradient(circle at 50% 50%,transparent "+
-            currentRadius+"px,#000 "+(currentRadius+1)+"px)";
-          loader.style.setProperty("mask-image",image);
-          loader.style.setProperty("-webkit-mask-image",image);
-          if(progress<1){window.requestAnimationFrame(frame);}
-          else{complete();}
-        }
-        window.requestAnimationFrame(frame);
+        },600);
       }
-
-      function playLogo(resolve){
-        if(cancelled){return;}
-        loader.classList.remove("is-loading-phase");
-        loader.classList.add("is-logo-phase");
-        if(!logoStory){revealOpening(resolve);return;}
-        /* 読み込み完了後、ロゴの初期描画を終えてから1回だけ再生する。 */
-        window.requestAnimationFrame(function(){
-          window.requestAnimationFrame(function(){
-            if(cancelled){return;}
-            logoStory.classList.add("is-playing");
-            later(function(){revealOpening(resolve);},2350);
-          });
-        });
-      }
-
       return new Promise(function(resolve){
         function startResourceLoading(){
           var tasks;
