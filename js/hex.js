@@ -10352,7 +10352,7 @@ hexReady(function(){
     if(introStage)scenes.push(introStage);
     if(messageStage&&messageStage.children.length)scenes.push(messageStage);
     var logo=createFinalLogo(opening);
-    if(logo)scenes.push(logo);
+    if(PLAY_FINAL_LOGO&&logo)scenes.push(logo);
     return scenes;
   }
 
@@ -10856,6 +10856,8 @@ hexReady(function(){
     startIndex
   ){
     var scenes=collectOpeningScenes(opening,introStage,slideStage,messageStage);
+    var blueExit=opening.querySelector('.hex-opening-final-logo.is-background-only');
+    var visualScenes=blueExit?scenes.concat(blueExit):scenes;
     var index=0;
     var cancelled=false;
     var timers=[];
@@ -10943,7 +10945,7 @@ hexReady(function(){
 
     /* SKIP時は押した場面を残し、その上で中央の丸を広げる。 */
     if(startIndex===undefined||startIndex<scenes.length){
-      scenes.forEach(function(scene,sceneIndex){
+      visualScenes.forEach(function(scene,sceneIndex){
         scene.classList.toggle("is-v2-current",sceneIndex===0);
         scene.setAttribute("aria-hidden",sceneIndex===0?"false":"true");
       });
@@ -10981,12 +10983,12 @@ hexReady(function(){
     }
 
     function activate(nextIndex){
-      scenes.forEach(function(scene,sceneIndex){
+      visualScenes.forEach(function(scene,sceneIndex){
         var active=sceneIndex===nextIndex;
         scene.classList.toggle("is-v2-current",active);
         scene.setAttribute("aria-hidden",active?"false":"true");
       });
-      animateIncoming(scenes[nextIndex]);
+      animateIncoming(visualScenes[nextIndex]);
     }
 
     function updateDots(heroSelected){
@@ -11013,10 +11015,6 @@ hexReady(function(){
     function scheduleAutoAdvance(){
       window.clearTimeout(autoAdvanceTimer);
       if(cancelled||transitionLocked||document.hidden||!opening.isConnected)return;
-      if(scenes[index].classList.contains("is-background-only")){
-        finishToHero();
-        return;
-      }
       var duration=Number(scenes[index].dataset.copyDuration)||getOpeningSceneDuration(index+1);
       if(!duration)return;
       /* 各場面のドットごとに計時する。 */
@@ -11088,7 +11086,7 @@ hexReady(function(){
             return;
           }
 
-          scenes.forEach(function(scene){
+          visualScenes.forEach(function(scene){
             var active=scene===nextScene;
             scene.classList.toggle("is-v2-current",active);
             scene.classList.remove("is-v2-incoming");
@@ -11114,7 +11112,7 @@ hexReady(function(){
       }
 
       if(reduced){
-        if(nextScene){activate(scenes.indexOf(nextScene));}
+        if(nextScene){activate(visualScenes.indexOf(nextScene));}
         if(currentScene){currentScene.classList.remove("is-v2-text-exiting");}
         return Promise.resolve();
       }
@@ -11327,7 +11325,7 @@ hexReady(function(){
         curtain.classList.remove("is-active","is-v2-running");
 
         if(nextScene){
-          scenes.forEach(function(scene){
+          visualScenes.forEach(function(scene){
             var active=scene===nextScene;
             scene.classList.toggle("is-v2-current",active);
             scene.classList.remove("is-v2-incoming");
@@ -11431,7 +11429,7 @@ hexReady(function(){
       updateDots(true);
       runHeroCircleReveal(true).then(function(){
         if(cancelled)return;
-        scenes.forEach(function(scene){
+        visualScenes.forEach(function(scene){
           scene.classList.remove("is-v2-current");
           scene.setAttribute("aria-hidden","true");
         });
@@ -11445,7 +11443,20 @@ hexReady(function(){
       var nextScene;
 
       if(cancelled||transitionLocked||!opening.isConnected){return;}
-      if(nextIndex>=scenes.length){finishToHero();return;}
+      if(nextIndex>=scenes.length){
+        if(blueExit&&index===scenes.length-1){
+          stopAutoAdvance();
+          transitionLocked=true;
+          runCurtain(scenes[index],blueExit,false,1).then(function(){
+            if(cancelled)return;
+            transitionLocked=false;
+            finishToHero();
+          });
+        }else{
+          finishToHero();
+        }
+        return;
+      }
       nextIndex=Math.max(0,nextIndex);
       if(nextIndex===index){return;}
 
