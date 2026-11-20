@@ -12030,3 +12030,47 @@ html body .hex-card-stack-continuation{background:var(--hex-bg-range-color,#fff)
   padding-top:0!important;
   -webkit-mask-image:none!important;mask-image:none!important;
 }
+
+.hex-opening-copy-sequence{
+  display:grid;
+  width:100%;
+  place-items:center;
+  text-align:center;
+}
+.hex-opening-copy-sequence > div{
+  grid-area:1 / 1;
+  transform:scale(0);
+  paint-order:stroke fill;
+  filter:drop-shadow(.06em .06em 0 #222);
+}
+.hex-opening-copy-sequence strong{
+  display:block;
+  font:400 clamp(30px,6vw,72px)/1.35 var(--hex-font-pop-en);
+  color:#f7d04f;
+  -webkit-text-stroke:.075em #f7f1e1;
+}
+.hex-opening-copy-sequence [lang="ja"]{
+  display:block;
+  font:700 clamp(18px,3vw,44px)/1.55 var(--hex-font-pop-ja);
+  color:#265ab0;
+  -webkit-text-stroke:.1em #f7f1e1;
+  text-wrap:balance;
+}
+.hex-opening-copy-sequence strong + [lang="ja"]{
+  font-size:clamp(14px,1.6vw,24px);
+}
+.is-v2-entered .hex-opening-copy-sequence > div{
+  animation:hex-opening-copy-pop .3s ease-in-out var(--copy-start) forwards,
+            hex-opening-copy-pop .2s ease-in-out var(--copy-exit) reverse forwards;
+}
+.is-v2-entered .hex-opening-copy-sequence > div:last-child{
+  animation:hex-opening-copy-pop .3s ease-in-out var(--copy-start) forwards;
+}
+@keyframes hex-opening-copy-pop{
+  0%{transform:scale(0)}
+  55%{transform:scale(1.12)}
+  100%{transform:scale(1)}
+}
+@media(prefers-reduced-motion:reduce){
+  .is-v2-entered .hex-opening-copy-sequence > div{animation-duration:1ms}
+}

@@ -10028,7 +10028,7 @@ hexReady(function(){
         span.textContent=title?(title.textContent||'').replace(/\u00a0/g,' '):'';
         return span.innerHTML;
       }
-      data={heroScene:true,
+      data={heroScene:true, sequence:source.querySelector(".hex-opening-copy-sequence"),
         main:main?main.innerHTML:heroTitle('main'),
         sub:sub?sub.innerHTML:heroTitle('sub')
       };
@@ -10156,6 +10156,20 @@ hexReady(function(){
     }
 
     catchBox.className="hex-opening-intro-catch"+(data.heroScene?' hex-handoff-copy':'');
+
+    if(data.sequence){
+      catchBox.appendChild(data.sequence);
+      stage.appendChild(catchBox);
+      var groups=Array.from(data.sequence.children);
+      groups.forEach(function(group,index){
+        group.style.setProperty('--copy-start',(index*2200)+'ms');
+        group.style.setProperty('--copy-exit',(index*2200+2000)+'ms');
+      });
+      stage.dataset.copyDuration=groups.length*2200;
+      opening.insertBefore(stage,opening.firstChild);
+      if(staticScene&&staticScene._hexSyncStaticHero)staticScene._hexSyncStaticHero();
+      return stage;
+    }
 
     if(data.main){
       main.className="hex-opening-intro-main hex-opening-main";
@@ -10925,7 +10939,7 @@ hexReady(function(){
 
     function scheduleAutoAdvance(){
       window.clearTimeout(autoAdvanceTimer);
-      var duration=getOpeningSceneDuration(index+1);
+      var duration=Number(scenes[index].dataset.copyDuration)||getOpeningSceneDuration(index+1);
       if(cancelled||transitionLocked||document.hidden||
          !duration||!opening.isConnected){return;}
       /* 各場面のドットごとに計時する。 */
@@ -11834,7 +11848,7 @@ hexReady(function(){
       introStage=createOpeningIntro(opening,introData);
     }
 
-    if(messageData){
+    if(messageData&&!(introData&&introData.sequence)){
       messageStage=createOpeningMessage(opening,messageData);
     }
     openingHost=document.createElement("div");
