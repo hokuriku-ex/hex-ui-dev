@@ -3,12 +3,12 @@
   "alpha_threshold": 0,
   "layers": {
     "drawing.webp": {
-      "originalWidth": 3000,
-      "originalHeight": 1854,
-      "x": 272,
-      "y": 768,
-      "width": 2485,
-      "height": 588
+      "originalWidth": 2048,
+      "originalHeight": 1265,
+      "x": 186,
+      "y": 524,
+      "width": 1696,
+      "height": 402
     },
     "exterior01.webp": {
       "originalWidth": 3000,
@@ -51,12 +51,12 @@
       "height": 333
     },
     "pave01.webp": {
-      "originalWidth": 3000,
-      "originalHeight": 1854,
-      "x": 777,
-      "y": 727,
-      "width": 1438,
-      "height": 212
+      "originalWidth": 2048,
+      "originalHeight": 1265,
+      "x": 530,
+      "y": 525,
+      "width": 1350,
+      "height": 401
     },
     "pave02.webp": {
       "originalWidth": 3000,
@@ -67,12 +67,12 @@
       "height": 382
     },
     "pave03.webp": {
-      "originalWidth": 3000,
-      "originalHeight": 1854,
-      "x": 1160,
-      "y": 868,
-      "width": 1593,
-      "height": 488
+      "originalWidth": 2048,
+      "originalHeight": 1265,
+      "x": 799,
+      "y": 592,
+      "width": 1074,
+      "height": 329
     },
     "plinth.webp": {
       "originalWidth": 3000,

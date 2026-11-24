@@ -3308,15 +3308,15 @@ hexReady(function(){
     var heroLayerImages=[];
     // Registration rectangles for losslessly trimmed assets (see images/top-hero/layer-crops.json).
     var HERO_LAYER_CROPS={
-      'drawing.webp':{originalWidth:3000,originalHeight:1854,x:272,y:768,width:2485,height:588},
+      'drawing.webp':{originalWidth:2048,originalHeight:1265,x:186,y:524,width:1696,height:402},
       'exterior01.webp':{originalWidth:3000,originalHeight:1854,x:266,y:630,width:2492,height:334},
       'exterior02.webp':{originalWidth:3000,originalHeight:1854,x:289,y:698,width:1325,height:377},
       'exterior03.webp':{originalWidth:3000,originalHeight:1854,x:1899,y:658,width:804,height:393},
       'exterior04.webp':{originalWidth:3000,originalHeight:1854,x:1019,y:818,width:941,height:398},
       'house.webp':{originalWidth:2048,originalHeight:1265,x:533,y:342,width:979,height:333},
-      'pave01.webp':{originalWidth:3000,originalHeight:1854,x:777,y:727,width:1438,height:212},
+      'pave01.webp':{originalWidth:2048,originalHeight:1265,x:530,y:525,width:1350,height:401},
       'pave02.webp':{originalWidth:3000,originalHeight:1854,x:283,y:832,width:1663,height:382},
-      'pave03.webp':{originalWidth:3000,originalHeight:1854,x:1160,y:868,width:1593,height:488},
+      'pave03.webp':{originalWidth:2048,originalHeight:1265,x:799,y:592,width:1074,height:329},
       'plinth.webp':{originalWidth:3000,originalHeight:1854,x:129,y:706,width:2845,height:903},
       'wall01.webp':{originalWidth:3000,originalHeight:1854,x:273,y:694,width:2483,height:273},
       'wall02.webp':{originalWidth:3000,originalHeight:1854,x:1323,y:768,width:684,height:323},
