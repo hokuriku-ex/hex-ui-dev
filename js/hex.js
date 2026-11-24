@@ -3318,9 +3318,9 @@ hexReady(function(){
       'pave02.webp':{originalWidth:3000,originalHeight:1854,x:283,y:832,width:1663,height:382},
       'pave03.webp':{originalWidth:2048,originalHeight:1265,x:799,y:592,width:1074,height:329},
       'plinth.webp':{originalWidth:3000,originalHeight:1854,x:129,y:706,width:2845,height:903},
-      'wall01.webp':{originalWidth:3000,originalHeight:1854,x:273,y:694,width:2483,height:273},
+      'wall01.webp':{originalWidth:2048,originalHeight:1265,x:185,y:503,width:1697,height:153},
       'wall02.webp':{originalWidth:3000,originalHeight:1854,x:1323,y:768,width:684,height:323},
-      'wall03.webp':{originalWidth:3000,originalHeight:1854,x:278,y:936,width:1063,height:236}
+      'wall03.webp':{originalWidth:2048,originalHeight:1265,x:189,y:639,width:727,height:161}
     };
     var heroLayerPopOrder=new Map();
     var heroLayerStyleCache=new WeakMap();

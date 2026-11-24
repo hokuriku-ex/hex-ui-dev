@@ -83,12 +83,12 @@
       "height": 903
     },
     "wall01.webp": {
-      "originalWidth": 3000,
-      "originalHeight": 1854,
-      "x": 273,
-      "y": 694,
-      "width": 2483,
-      "height": 273
+      "originalWidth": 2048,
+      "originalHeight": 1265,
+      "x": 185,
+      "y": 503,
+      "width": 1697,
+      "height": 153
     },
     "wall02.webp": {
       "originalWidth": 3000,
@@ -99,12 +99,12 @@
       "height": 323
     },
     "wall03.webp": {
-      "originalWidth": 3000,
-      "originalHeight": 1854,
-      "x": 278,
-      "y": 936,
-      "width": 1063,
-      "height": 236
+      "originalWidth": 2048,
+      "originalHeight": 1265,
+      "x": 189,
+      "y": 639,
+      "width": 727,
+      "height": 161
     }
   }
 }
