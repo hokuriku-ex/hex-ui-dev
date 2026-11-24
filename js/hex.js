@@ -3313,7 +3313,7 @@ hexReady(function(){
       'exterior02.webp':{originalWidth:3000,originalHeight:1854,x:289,y:698,width:1325,height:377},
       'exterior03.webp':{originalWidth:3000,originalHeight:1854,x:1899,y:658,width:804,height:393},
       'exterior04.webp':{originalWidth:3000,originalHeight:1854,x:1019,y:818,width:941,height:398},
-      'house.webp':{originalWidth:2048,originalHeight:1265,x:533,y:342,width:979,height:333},
+      'house.webp':{originalWidth:2048,originalHeight:1265,x:533,y:342,width:979,height:345},
       'pave01.webp':{originalWidth:2048,originalHeight:1265,x:530,y:525,width:1350,height:401},
       'pave02.webp':{originalWidth:3000,originalHeight:1854,x:283,y:832,width:1663,height:382},
       'pave03.webp':{originalWidth:2048,originalHeight:1265,x:799,y:592,width:1074,height:329},
@@ -5750,6 +5750,10 @@ hexReady(function(){
       var name=(layer.currentSrc||layer.src||'').split(/[?#]/)[0].split('/').pop();
       var crop=HERO_LAYER_CROPS[name];
       // Older house exports can still be served from the browser cache.
+      if(name==='house.webp'&&((layer.naturalWidth===1958&&layer.naturalHeight===666)||
+        (layer.naturalWidth===979&&layer.naturalHeight===333))){
+        return {originalWidth:2048,originalHeight:1265,x:533,y:342,width:979,height:333};
+      }
       if(name==='house.webp'&&((layer.naturalWidth===2880&&layer.naturalHeight===982)||
         (layer.naturalWidth===1440&&layer.naturalHeight===491))){
         return {originalWidth:3000,originalHeight:1854,x:777,y:508,width:1440,height:491};
