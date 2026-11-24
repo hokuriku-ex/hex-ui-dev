@@ -3309,7 +3309,7 @@ hexReady(function(){
     // Registration rectangles for losslessly trimmed assets (see images/top-hero/layer-crops.json).
     var HERO_LAYER_CROPS={
       'drawing.webp':{originalWidth:2048,originalHeight:1265,x:186,y:524,width:1696,height:402},
-      'exterior01.webp':{originalWidth:3000,originalHeight:1854,x:266,y:630,width:2492,height:334},
+      'exterior01.webp':{originalWidth:2048,originalHeight:1265,x:186,y:463,width:1695,height:163},
       'exterior02.webp':{originalWidth:3000,originalHeight:1854,x:289,y:698,width:1325,height:377},
       'exterior03.webp':{originalWidth:3000,originalHeight:1854,x:1899,y:658,width:804,height:393},
       'exterior04.webp':{originalWidth:3000,originalHeight:1854,x:1019,y:818,width:941,height:398},
