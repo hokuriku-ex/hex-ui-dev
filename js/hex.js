@@ -18357,12 +18357,12 @@ hexReady(function(){
       (source&&source.textContent.split('|').some(function(label){return label.trim();})&&
         document.querySelector('h2, .hex-anchor-target')));
     var intro=contents.querySelector('.hex-intro')||document.querySelector('.hex-intro');
-    var headerIntro=!!(expectsNav&&intro&&handoff&&handoff.headerIntro);
-    var waitForHandoff=!!(handoff&&handoff.incoming&&!headerIntro);
-    var skipIntro=waitForHandoff||!expectsNav;
-    hero.classList.add('hex-page-hero',expectsNav?'is-hero-loading':'is-hero-ready');
-    hero.setAttribute('aria-busy',expectsNav&&!headerIntro?'true':'false');
-    var unlockScroll=expectsNav?lockIntroScroll(hero):function(){};
+    var headerIntro=!!(intro&&handoff&&handoff.headerIntro);
+    var waitForHandoff=!!(expectsNav&&handoff&&handoff.incoming&&!headerIntro);
+    var skipIntro=waitForHandoff;
+    hero.classList.add('hex-page-hero','is-hero-loading');
+    hero.setAttribute('aria-busy',headerIntro?'false':'true');
+    var unlockScroll=lockIntroScroll(hero);
     if(intro){
       contents.appendChild(intro);
       intro.classList.add('hex-page-hero-loading-intro');
@@ -18375,7 +18375,12 @@ hexReady(function(){
       if(child!==intro&&!child.matches('.hex-anchor-source,.hex-home-anchor-source,.hex-anchor-nav,.hex-anchor-nav-placeholder'))main.appendChild(child);
     });
     contents.insertBefore(main,contents.firstChild);
-    if(expectsNav)main.setAttribute('inert','');
+    main.setAttribute('inert','');
+    if(!expectsNav&&!intro){
+      var loadingLabel=hexCreateLoadingLabel();
+      loadingLabel.classList.add('hex-page-hero-loading-label');
+      contents.appendChild(loadingLabel);
+    }
     var nav=contents.querySelector('.hex-anchor-nav');
     if(nav)nav.setAttribute('inert','');
     function finishHandoffPage(){
@@ -18513,6 +18518,8 @@ hexReady(function(){
         });
         handoffObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
       }else beginIntro();
+    }):!expectsNav?new Promise(function(resolve){
+      requestAnimationFrame(function(){setTimeout(resolve,650);});
     }):Promise.resolve();
     window.addEventListener('load',queueLayout,{once:true});
     window.addEventListener('hex:viewport-resize',queueLayout,{passive:true});
@@ -18529,7 +18536,7 @@ hexReady(function(){
     }).observe(contents,{childList:true,subtree:true});
     if(document.fonts)document.fonts.ready.then(queueLayout);
     function revealPage(replay){
-      if(!expectsNav||(waitForHandoff&&!replay)){finishHandoffPage();return;}
+      if(waitForHandoff&&!replay){finishHandoffPage();return;}
       // 欠番しかない場合も、従来色のタイトルで表示を完了する。
       if(intro)intro.setAttribute('aria-hidden','true');
       var layers=[contents,decor];
@@ -18573,7 +18580,7 @@ hexReady(function(){
     }
     Promise.all([introReady,document.fonts?document.fonts.ready:Promise.resolve()]).then(revealPage);
     document.addEventListener('hex:replay-page-intro',function(){
-      if(!nav||!intro||!hero.isConnected||!hero.classList.contains('is-hero-ready')||hero.classList.contains('is-hero-revealing'))return;
+      if(!intro||!hero.isConnected||!hero.classList.contains('is-hero-ready')||hero.classList.contains('is-hero-revealing'))return;
       hero.classList.remove('is-hero-ready');
       hero.classList.add('is-hero-loading');
       hero.setAttribute('aria-busy','true');
