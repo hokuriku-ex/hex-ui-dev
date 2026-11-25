@@ -2803,25 +2803,6 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   .hex-page-hero .hex-anchor-nav:not(.is-fixed){
     margin-bottom:0!important;
   }
-  .hex-page-hero .hex-page-hero-photo{
-    inset:0 0 auto!important;
-    width:100%!important;
-    height:var(--hex-page-photo-height,0px);
-    clip-path:polygon(0 0,100% 0,100% 75%,0 100%);
-  }
-}
-
-@media(max-width:768px){
-  .pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-photo{
-    inset:0!important;width:100%!important;height:100%!important;
-    clip-path:none!important;
-  }
-}
-
-@media(max-width:768px){
-  .pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-photo{
-    height:var(--hex-page-image-height,100%)!important;bottom:auto!important;
-  }
 }
 
 /* SPのナビ背景：上辺の丸みを80pxに統一 */
@@ -2845,10 +2826,7 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
   border-radius:0 0 50% 50% / 0 0 var(--hex-curve-depth) var(--hex-curve-depth);
 }
 
-/* ナビの曲線を共通パーツと統一。画像はカーブの背後まで表示 */
-.pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-photo{
-  height:100%!important;bottom:0!important;
-}
+/* ナビの曲線を共通パーツと統一 */
 .pagetitle_type.pagetitle_type4.hex-page-hero > .contents::before{
   top:calc(var(--hex-page-image-height,100%) - var(--hex-curve-depth));
   -webkit-clip-path:none;clip-path:none;

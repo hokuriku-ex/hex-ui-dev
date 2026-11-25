@@ -1526,6 +1526,7 @@ function hexInitAnchorNav(){
   var placeholder=document.createElement('div');
   placeholder.className='hex-anchor-nav-placeholder';
   nav.parentNode.insertBefore(placeholder,nav.nextSibling);
+  nav.dispatchEvent(new Event('hex:anchor-nav-ready',{bubbles:true}));
   var fixedStart=0;
   var fixedNavHeight=0;
   var originalParent=nav.parentNode;
@@ -18111,66 +18112,10 @@ hexReady(function(){
 })();
 
 
-/* =======================================
-   下層ページ：斜めテクスチャー＋写真文字（2026-10-08）
-   斜めはtextures、文字はphotosの01.webp〜30.webp。欠番は再試行しない。
-======================================= */
+/* Lower-page heroes */
 (function(){
   'use strict';
   if(hexIsArticlePage())return;
-  var ownScript=document.currentScript;
-  var base=HEX_IS_PRODUCTION
-    ?'https://hokuriku-ex.github.io/hex-ui/'
-    :'https://hokuriku-ex.github.io/hex-ui-dev/';
-  if(ownScript&&ownScript.src){
-    try{base=new URL('../',ownScript.src).href;}catch(error){}
-  }
-  var imageRoot=new URL('images/page-hero/',base).href;
-  var assetsPromise, texturesPromise;
-  var imageRatios=Object.create(null);
-  function shuffle(items){
-    var result=items.slice();
-    for(var i=result.length-1;i>0;i--){
-      var j=Math.floor(Math.random()*(i+1));
-      var value=result[i];result[i]=result[j];result[j]=value;
-    }
-    return result;
-  }
-  function loadFolder(folder){
-    // 先に番号をシャッフルすれば、重複のないランダム抽選になる。
-    var candidates=shuffle(Array.from({length:30},function(_,i){return i+1;}));
-    return new Promise(function(resolve){
-      var cursor=0;
-      function attempt(){
-        if(cursor>=candidates.length){resolve([]);return;}
-        var image=new Image();
-        var number=candidates[cursor++];
-        var url=imageRoot+folder+'/'+String(number).padStart(2,'0')+'.webp';
-        var done=false;
-        var timeout=setTimeout(function(){finish(null);},15000);
-        function finish(value){
-          if(done)return;done=true;clearTimeout(timeout);
-          image.onload=null;image.onerror=null;
-          if(value){resolve([value]);}
-          else{attempt();}
-        }
-        image.onload=function(){
-          imageRatios[url]=(image.naturalWidth||1)/(image.naturalHeight||1);
-          // デコード完了まで導入文を表示する。画像エラー時も画面を進める。
-          if(typeof image.decode==='function'){
-            image.decode().then(function(){finish(url);},function(){finish(url);});
-          }else{finish(url);}
-        };
-        image.onerror=function(){finish(null);};
-        image.src=url;
-      }
-      attempt();
-    });
-  }
-  function assets(){
-    if(!assetsPromise)assetsPromise=loadFolder('textures');
-    return assetsPromise;
-  }
   var scrollLocks=new Set(),heldLenis=null,resumeLenis=false,lockFrame=0;
   function preventScroll(event){
     if(event.type==='keydown'){
@@ -18256,18 +18201,17 @@ hexReady(function(){
     var heading=hero.querySelector('.bg_text h1');
     if(!contents||!heading)return;
     var handoff=window.hexPageTransition;
-    /* 遷移演出は共通パーツの内部リンクで判定。アンカーは移動位置だけに使う。 */
-    var headerIntro=!!(handoff&&handoff.headerIntro&&
-      (contents.querySelector('.hex-intro')||document.querySelector('.hex-intro')));
-    var waitForHandoff=!!(handoff&&handoff.incoming&&!headerIntro);
-    var skipIntro=waitForHandoff;
-    hero.classList.add('hex-page-hero');
-    /* 共通内部リンクでは元画面を保持し、それ以外では従来の導入文で準備を待つ。 */
-    hero.classList.add('is-hero-loading');
-    hero.setAttribute('aria-busy',headerIntro?'false':'true');
-    var unlockScroll=lockIntroScroll(hero);
-    // 既存の導入文移動はwindow.load時。先に取得・移動して待機表示を確保する。
+    var source=document.querySelector('.hex-anchor-source');
+    var expectsNav=!!(contents.querySelector('.hex-anchor-nav')||
+      (source&&source.textContent.split('|').some(function(label){return label.trim();})&&
+        document.querySelector('h2, .hex-anchor-target')));
     var intro=contents.querySelector('.hex-intro')||document.querySelector('.hex-intro');
+    var headerIntro=!!(expectsNav&&intro&&handoff&&handoff.headerIntro);
+    var waitForHandoff=!!(handoff&&handoff.incoming&&!headerIntro);
+    var skipIntro=waitForHandoff||!expectsNav;
+    hero.classList.add('hex-page-hero',expectsNav?'is-hero-loading':'is-hero-ready');
+    hero.setAttribute('aria-busy',expectsNav&&!headerIntro?'true':'false');
+    var unlockScroll=expectsNav?lockIntroScroll(hero):function(){};
     if(intro){
       contents.appendChild(intro);
       intro.classList.add('hex-page-hero-loading-intro');
@@ -18279,7 +18223,7 @@ hexReady(function(){
       if(child!==intro&&!child.matches('.hex-anchor-source,.hex-home-anchor-source,.hex-anchor-nav,.hex-anchor-nav-placeholder'))main.appendChild(child);
     });
     contents.insertBefore(main,contents.firstChild);
-    main.setAttribute('inert','');
+    if(expectsNav)main.setAttribute('inert','');
     var nav=contents.querySelector('.hex-anchor-nav');
     if(nav)nav.setAttribute('inert','');
     function finishHandoffPage(){
@@ -18291,19 +18235,10 @@ hexReady(function(){
       unlockScroll();layout();
     }
     if(waitForHandoff)handoff.forceReady=finishHandoffPage;
-    // 開幕と同じSCROLL表示。アンカーがないページだけ、下端に表示する。
-    var scrollCue=document.createElement('div');
-    scrollCue.className='hex-opening-scroll-cue hex-page-hero-scroll-cue';
-    scrollCue.setAttribute('aria-hidden','true');
-    scrollCue.innerHTML='<span>SCROLL</span><i></i>';
-    contents.appendChild(scrollCue);
     var decor=document.createElement('div');
     decor.className='hex-page-hero-decor';decor.setAttribute('aria-hidden','true');
-    var photo=document.createElement('div');photo.className='hex-page-hero-photo';
-    var track=document.createElement('div');track.className='hex-page-hero-photo-track';
-    photo.appendChild(track);
-    decor.appendChild(photo);hero.insertBefore(decor,hero.firstChild);
-    var resizeFrame=0, titleRatio=1,layoutObserver=null,observedNav=null;
+    hero.insertBefore(decor,hero.firstChild);
+    var resizeFrame=0,layoutObserver=null,observedNav=null;
     var pageViewportWidth=0;
     function syncPageViewportHeight(){
       var width=window.innerWidth;
@@ -18362,12 +18297,6 @@ hexReady(function(){
         if(layoutObserver&&observedNav!==nav){layoutObserver.observe(nav);observedNav=nav;}
       }
       fitTitle();
-      var titleStyle=getComputedStyle(heading,'::after');
-      var titleSize=parseFloat(hero.style.getPropertyValue('--hex-page-title-size'))||48;
-      var titleHeight=parseFloat(titleStyle.lineHeight)||titleSize*1.4;
-      var tileWidth=Math.max(1,titleHeight*titleRatio);
-      hero.style.setProperty('--hex-page-title-tile-width',tileWidth+'px');
-      hero.style.setProperty('--hex-page-subtitle-tile-width',(tileWidth/3)+'px');
       var probe=document.createElement('div');
       probe.style.cssText='position:absolute;visibility:hidden;pointer-events:none;width:0;';
       probe.style.height=window.innerWidth<=768
@@ -18376,48 +18305,39 @@ hexReady(function(){
       hero.appendChild(probe);
       var header=probe.getBoundingClientRect().height||80;probe.remove();
       hero.style.setProperty('--hex-page-header',header+'px');
-      var surface=nextSectionColor(hero);
-      hero.style.setProperty('--hex-page-nav-background',surface);
-      var nextSection=hero._hexNextSection;
-      if(nextSection){
-        nextSection.classList.add('hex-page-hero-following');
-        nextSection.style.setProperty('--hex-page-following-surface',surface);
+      if(nav){
+        var surface=nextSectionColor(hero);
+        hero.style.setProperty('--hex-page-nav-background',surface);
+        var nextSection=hero._hexNextSection;
+        if(nextSection){
+          nextSection.classList.add('hex-page-hero-following');
+          nextSection.style.setProperty('--hex-page-following-surface',surface);
+        }
+        if(!nav.classList.contains('is-fixed')){
+          var heroRect=hero.getBoundingClientRect();
+          var imageHeight=Math.max(0,Math.min(heroRect.height,nav.getBoundingClientRect().top-heroRect.top));
+          hero.style.setProperty('--hex-page-image-height',imageHeight+'px');
+        }
+        syncHeroCover();
+      }else{
+        hero.style.setProperty('--hex-page-title-half-height',main.offsetHeight/2+'px');
       }
-      syncHeroCover();
-      var heroRect=hero.getBoundingClientRect();
-      if(nav&&!nav.classList.contains('is-fixed')){
-        var imageHeight=Math.max(0,Math.min(heroRect.height,nav.getBoundingClientRect().top-heroRect.top));
-        hero.style.setProperty('--hex-page-image-height',imageHeight+'px');
-      }else if(!nav){
-        hero.style.setProperty('--hex-page-image-height',Math.max(0,heroRect.height-72)+'px');
-      }
-      // ナビ・画像・フォントの準備後に変わるアーチの原点を装飾側へ通知する。
       hero.dispatchEvent(new Event('hex:page-hero-layout',{bubbles:true}));
     }
     function syncHeroCover(){
+      if(!nav)return;
       var header=parseFloat(hero.style.getPropertyValue('--hex-page-header'))||80;
       var rect=hero.getBoundingClientRect();
-      var covered=rect.bottom<=header||rect.top>=window.hexViewportHeight();
-      if(covered)hero.classList.add('is-hero-covered');
-      else hero.classList.remove('is-hero-covered');
-      // 固定背景の描画をタイトルセクション内に限定する。
-      // ナビなし等で後続セクションが透明でも、画像がフォーム下に残らない。
-      // 丸展開中はそのclip-pathを優先し、完了後のlayoutで切り替える。
+      hero.classList.toggle('is-hero-covered',rect.bottom<=header||rect.top>=window.hexViewportHeight());
       if(!hero.classList.contains('is-hero-loading')&&!hero.classList.contains('is-hero-revealing')){
         var decorRect=decor.getBoundingClientRect();
-        var bottom=Number.isFinite(rect.bottom)?rect.bottom:rect.top+rect.height;
-        var viewportBottom=Number.isFinite(decorRect.bottom)?decorRect.bottom:window.hexViewportHeight();
-        var crop=Math.max(0,Math.min(decorRect.height,viewportBottom-bottom));
+        var crop=Math.max(0,Math.min(decorRect.height,decorRect.bottom-rect.bottom));
         var bounds='inset(0px 0px '+crop+'px 0px)';
         decor.style.setProperty('clip-path',bounds);
         decor.style.setProperty('-webkit-clip-path',bounds);
       }
-      // ページ先頭から離れたら消し、先頭へ戻った時だけ再表示。
-      // iOSの上方向のバウンス（負値）も先頭として扱う。
-      var scrollTop=window.scrollY||window.pageYOffset||document.documentElement.scrollTop||0;
-      if(scrollTop>1)scrollCue.classList.add('is-hidden');
-      else scrollCue.classList.remove('is-hidden');
     }
+    contents.addEventListener('hex:anchor-nav-ready',layout);
     window.addEventListener('scroll',syncHeroCover,{passive:true});
     function queueLayout(){cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(layout);}
     layout();
@@ -18458,27 +18378,8 @@ hexReady(function(){
       });}))queueLayout();
     }).observe(contents,{childList:true,subtree:true});
     if(document.fonts)document.fonts.ready.then(queueLayout);
-    if(!texturesPromise)texturesPromise=loadFolder('photos');
-    var titleReady=texturesPromise.then(function(urls){
-      if(!urls.length)return;
-      var url=urls[Math.floor(Math.random()*urls.length)];
-      hero.style.setProperty('--hex-page-title-texture','url("'+url+'")');
-      titleRatio=imageRatios[url]||1;
-      layout();
-      hero.classList.add('has-title-texture');
-    });
-    var decorReady=assets().then(function(data){
-      var selected=data[0];
-      if(selected){
-        var image=document.createElement('img');image.src=selected;image.alt='';
-        image.className='hex-page-hero-slide is-current';image.decoding='async';
-        track.style.setProperty('background-image','url("'+selected+'")');
-        track.appendChild(image);photo.classList.add('has-images');
-      }
-      window.dispatchEvent(new Event('resize'));
-    });
     function revealPage(replay){
-      if(waitForHandoff&&!replay){finishHandoffPage();return;}
+      if(!expectsNav||(waitForHandoff&&!replay)){finishHandoffPage();return;}
       // 欠番しかない場合も、従来色のタイトルで表示を完了する。
       if(intro)intro.setAttribute('aria-hidden','true');
       var layers=[contents,decor];
@@ -18520,9 +18421,9 @@ hexReady(function(){
       }
       requestAnimationFrame(revealFrame);
     }
-    Promise.all([introReady,titleReady,decorReady,document.fonts?document.fonts.ready:Promise.resolve()]).then(revealPage);
+    Promise.all([introReady,document.fonts?document.fonts.ready:Promise.resolve()]).then(revealPage);
     document.addEventListener('hex:replay-page-intro',function(){
-      if(!intro||!hero.isConnected||!hero.classList.contains('is-hero-ready')||hero.classList.contains('is-hero-revealing'))return;
+      if(!nav||!intro||!hero.isConnected||!hero.classList.contains('is-hero-ready')||hero.classList.contains('is-hero-revealing'))return;
       hero.classList.remove('is-hero-ready');
       hero.classList.add('is-hero-loading');
       hero.setAttribute('aria-busy','true');
@@ -19845,7 +19746,7 @@ hexReady(function(){
   function scan(){
     document.querySelectorAll('.hex-bg-range[data-bg-vehicle]').forEach(function(host){attach(host,host,(host.dataset.bgVehicle||'').trim(),false);});
     document.querySelectorAll('.hex-overlap-shaped-front[data-bg-vehicle]').forEach(function(host){attach(host,host,(host.dataset.bgVehicle||'').trim(),false);});
-    document.querySelectorAll('.pagetitle_type.pagetitle_type4.hex-page-hero').forEach(function(host){
+    document.querySelectorAll('.pagetitle_type.pagetitle_type4.hex-page-hero.has-hero-nav').forEach(function(host){
       var surface=Array.from(host.children).find(function(child){return child.classList.contains('contents');});
       if(surface)attach(host,surface,'random',true);
     });
