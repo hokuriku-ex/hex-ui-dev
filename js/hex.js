@@ -2537,8 +2537,8 @@ hexLoad(function(){
       backdrop.addEventListener('click',function(event){
         event.stopPropagation();
         if(!wrapper.classList.contains('hex-menu-open')||wrapper.classList.contains('hex-menu-closing'))return;
-        var button=wrapper.querySelector(':scope > .menu_button');
-        if(button)button.click();
+        var close=popup.querySelector('.closebutton')||wrapper.querySelector(':scope > .menu_button');
+        if(close)close.click();
       });
       var animateMenu=window.matchMedia('(min-width:769px) and (prefers-reduced-motion:no-preference)');
       var closeAnimation=null;
