@@ -9709,7 +9709,6 @@ hexReady(function(){
   var heroCatchRun=0;
   var heroIntroStarted=false;
   var heroIntroDeparted=false;
-  var heroGuideShown=false;
 
   function showHeroGuide(onDismiss){
     var guide=document.createElement('dialog');
@@ -9751,7 +9750,6 @@ hexReady(function(){
     guide.showModal();
     var cursor=document.querySelector('.hex-follow-cursor');
     if(cursor)guide.appendChild(cursor);
-    heroGuideShown=true;
     return true;
   }
 
@@ -10625,7 +10623,7 @@ hexReady(function(){
         opening._hexV2Cancel();
       }
 
-      showHeroWithFade();
+      showHeroWithFade(true);
 
       document.documentElement.classList.remove(
         "hex-opening-lock"
@@ -10706,19 +10704,20 @@ hexReady(function(){
     }
     function waitForHero(){
       if(run!==heroCatchRun||heroIntroDeparted||!hero.isConnected)return;
-      if(root.matches('.hex-direct-hero-fade,.hex-opening-finishing')||
+      if((afterOpening&&root.classList.contains('hex-direct-hero-fade'))||
+        root.classList.contains('hex-opening-finishing')||
         document.querySelector('.hex-opening:not(.is-v2-hero-stage):not(.is-skipping)')){
         window.requestAnimationFrame(waitForHero);
         return;
       }
       // The static hero is already visible. The catch can finish preparing after dismissal.
-      if((afterOpening||!heroGuideShown)&&showHeroGuide(waitForCatch))return;
+      if(afterOpening&&showHeroGuide(waitForCatch))return;
       waitForCatch();
     }
     window.setTimeout(waitForHero,delay||0);
   }
 
-  function showHeroWithFade(){
+  function showHeroWithFade(afterOpening){
     var root=document.documentElement;
     var hero=document.querySelector('.hex-hero-wrap');
     var prepared=false;
@@ -10796,11 +10795,11 @@ hexReady(function(){
       root.classList.add('hex-hero-first-frame-ready');
       showPendingPage();
       root.classList.add('hex-direct-hero-fade-ready');
-      if(heroGuideShown)startHeroDotRing();
+      if(!afterOpening)startHeroDotRing();
       root.classList.remove('hex-hero-display-wait','hex-hero-return-preparing');
       document.dispatchEvent(new Event('hex:hero-display-ready'));
       /* ページ全体のloadを待たず、初期ズームの終盤で見出しを再生する。 */
-      showHeroCatch(180);
+      showHeroCatch(180,afterOpening);
       /* 操作開始と後続コンテンツの準備は従来のタイミングを維持する。 */
       var wasInert=hero.inert;
       hero.inert=true;
