@@ -2540,7 +2540,7 @@ hexLoad(function(){
         var close=popup.querySelector('.closebutton')||wrapper.querySelector(':scope > .menu_button');
         if(close)close.click();
       });
-      var animateMenu=window.matchMedia('(min-width:769px) and (prefers-reduced-motion:no-preference)');
+      var animateMenu=window.matchMedia('(prefers-reduced-motion:no-preference)');
       function finishMenuClose(){
         wrapper.classList.remove('hex-menu-closing','hex-menu-close-finished','hex-menu-open');
         wrapper.style.removeProperty('--hex-menu-panel-display');
@@ -2550,7 +2550,8 @@ hexLoad(function(){
         if(!animateMenu.matches||!popup.getAnimations)return false;
         wrapper.classList.add('hex-menu-closing');
         var closing=popup.getAnimations().find(function(animation){
-          return animation.animationName==='hex-menu-panel-hide';
+          return animation.animationName==='hex-menu-panel-hide'||
+            animation.animationName==='hex-menu-panel-hide-up';
         });
         if(!closing){
           wrapper.classList.remove('hex-menu-closing');
