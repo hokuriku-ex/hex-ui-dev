@@ -10049,7 +10049,7 @@ html.hex-page-handoff-active body:has(.pagetitle_type.pagetitle_type4:not(.hex-p
 }
 .hex-page-yellow-cover .hex-simple-loader-label[hidden]{display:none;}
 .hex-page-hero-viewport-cover{top:var(--header_height,80px);}
-.hex-direct-hero-cover{background:#265ab0;}
+.hex-direct-hero-cover{top:0;background:#265ab0;}
 @media(max-width:768px){
   .hex-page-hero-viewport-cover{top:var(--header_height_smartphone,clamp(64px,20vw,80px));}
 }

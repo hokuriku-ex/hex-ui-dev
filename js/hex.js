@@ -10745,7 +10745,7 @@ hexReady(function(){
       root.classList.add('hex-direct-hero-fade');
     }else{
       cover=document.createElement('div');
-      cover.className='hex-page-yellow-cover hex-page-hero-viewport-cover hex-direct-hero-cover';
+      cover.className='hex-page-yellow-cover hex-direct-hero-cover';
       cover.appendChild(hexCreateLoadingLabel());
       document.body.appendChild(cover);
     }
