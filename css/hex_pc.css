@@ -6708,7 +6708,7 @@ html body
   width:100%;
 }
 #gc_auto_body_company .bg_company_googlemap_link_url{
-  margin-top:0!important;
+  display:none;
 }
 #gc_auto_body_company .hex-company-map-link{
   display:flex;
