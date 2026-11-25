@@ -17792,9 +17792,9 @@ hexReady(function(){
 
 /* ページ遷移：クリック位置の黄色からヘッダー下を覆い、既存の丸開きへ渡す。 */
 hexReady(function(){
-  var root=document.documentElement,cover=null,animation=null,sequence=0,recovery=0,warmLink=null;
+  var root=document.documentElement,cover=null,animation=null,sequence=0,recovery=0;
   var stoppedLenis=null;
-  function prepareHeaderIntro(url){
+  function preparePageIntro(url){
     var controller=new AbortController();
     var timeout=setTimeout(function(){controller.abort();},5000);
     return fetch(url,{credentials:'same-origin',signal:controller.signal}).then(function(response){
@@ -17802,7 +17802,7 @@ hexReady(function(){
       return response.text();
     }).then(function(html){
       var page=new DOMParser().parseFromString(html,'text/html');
-      var intro=page.querySelector('.hex-intro');
+      var intro=page.querySelector('.pagetitle_type.pagetitle_type4 > .contents .hex-intro')||page.querySelector('.hex-intro');
       if(!intro)return null;
       intro= document.importNode(intro,true);
       intro.querySelectorAll('script,style,link,iframe,object,embed').forEach(function(node){node.remove();});
@@ -17819,7 +17819,6 @@ hexReady(function(){
     sequence+=1;clearTimeout(recovery);
     if(animation){animation.cancel();animation=null;}
     if(cover){cover.remove();cover=null;}
-    if(warmLink){warmLink.remove();warmLink=null;}
     root.classList.remove('hex-page-yellow-covering');
     if(stoppedLenis){stoppedLenis.start();stoppedLenis=null;}
   }
@@ -17903,17 +17902,10 @@ hexReady(function(){
       }else sessionStorage.removeItem('hex-header-intro-v1');
     }catch(error){}
     // メニューは導入文を先に配置し、丸が広がり切ったフレームで表示する。
-    var preparedIntro=!replayIntro&&link.dataset.hexHeaderIntro==='true'
-      ?prepareHeaderIntro(url.href):Promise.resolve(null);
-    if(link.dataset.hexHeaderIntro!=='true'){
-      warmLink=document.createElement('link');
-      warmLink.rel='prefetch';warmLink.as='document';warmLink.href=url.href;
-      warmLink.setAttribute('fetchpriority','high');
-      document.head.appendChild(warmLink);
-    }
+    var preparedIntro=replayIntro?Promise.resolve(null):preparePageIntro(url.href);
     cover=document.createElement('div');cover.className='hex-page-yellow-cover';
     var loadingLabel=cover.appendChild(hexCreateLoadingLabel());
-    loadingLabel.hidden=replayIntro||link.dataset.hexHeaderIntro==='true';
+    loadingLabel.hidden=true;
     cover.setAttribute('aria-hidden','true');
     hexAddLoadingHeaderLogo(cover);
     var origin=' at '+x+'px '+y+'px)';
