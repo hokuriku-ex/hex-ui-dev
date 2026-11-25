@@ -3147,6 +3147,12 @@ div[hex-sp]{
   fill:#1f2774!important;
 }
 
+/* 開幕とヒーローのヘッダー用の白いロゴとメニューアイコン */
+html:is(.hex-desktop-hero-header,.hex-opening-lock,.hex-opening-finishing,.hex-hero-manual-lock):not(.hex-page-yellow-covering,:has(.bg_contactbutton.hex-menu-open))
+  :is(.headermenu_type8 .headermenu_logo img,.bg_contactbutton > .menu_button .bg_svg svg){
+  filter:brightness(0) invert(1) drop-shadow(0 1px 2px #1f2774)!important;
+}
+
 /* ハンバーガーメニュー閉じるボタン */
 .bg_contactbutton.hex-menu-open > .menu_button .bg_svg::before,
 .bg_contactbutton.hex-menu-open > .menu_button .bg_svg::after{
