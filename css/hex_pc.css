@@ -3157,9 +3157,7 @@ div[hex-sp]{
 
 /* 1201px以上のみハンバーガーメニュー非表示 */
 @media screen and (min-width:1201px){
-  .contactbutton_type1 .menu_button,
-  .contactbutton_type1 .menu_button.contactbutton_none,
-  .contactbutton_type1 .menu_button.contactbutton_none.menubutton_position{
+  .contactbutton_type1 .menu_button:not(.hex-menu-open > .menu_button){
     display:none!important;
     visibility:hidden!important;
     opacity:0!important;
@@ -3181,15 +3179,24 @@ div[hex-sp]{
 }
 
 /* ハンバーガーメニューをヘッダーの下から表示 */
-@media screen and (min-width:769px) and (max-width:1200px){
+@media screen and (min-width:769px){
   #gc_auto_frame_header_object_smartphone_hum_pupup{
-    top:var(--header_height)!important;
-    height:calc(
-      var(--hex-viewport-height,100dvh) - var(--header_height)
-    )!important;
-    max-height:calc(
-      var(--hex-viewport-height,100dvh) - var(--header_height)
-    )!important;
+    position:fixed!important;
+    top:var(--header_height,80px)!important;
+    right:0!important;
+    bottom:0!important;
+    left:auto!important;
+    width:768px!important;
+    max-width:100%!important;
+    margin:0!important;
+    height:auto!important;
+    max-height:none!important;
+    box-sizing:border-box!important;
+    background:#fff!important;
+    transform:none!important;
+    translate:none!important;
+    overscroll-behavior:contain;
+    touch-action:pan-y;
   }
 }
 
@@ -3215,10 +3222,11 @@ div[hex-sp]{
     .headermenu_type8 .hex-header-info,
     .hex-header-sns,
     .bg_contactbutton > :not(.menu_button,#gc_auto_frame_header_object_smartphone_hum_pupup,:has(#gc_auto_frame_header_object_smartphone_hum_pupup))
-  ){
+  ),
+  .bg_contactbutton.hex-menu-open > :not(.menu_button,#gc_auto_frame_header_object_smartphone_hum_pupup,:has(#gc_auto_frame_header_object_smartphone_hum_pupup)){
     display:none!important;
   }
-  html.hex-desktop-hero-header .bg_contactbutton{
+  :is(html.hex-desktop-hero-header .bg_contactbutton,.bg_contactbutton.hex-menu-open){
     position:fixed!important;
     top:0!important;
     right:0!important;
@@ -3231,7 +3239,7 @@ div[hex-sp]{
     transform:none!important;
     translate:none!important;
   }
-  html.hex-desktop-hero-header .bg_contactbutton > .menu_button{
+  :is(html.hex-desktop-hero-header .bg_contactbutton,.bg_contactbutton.hex-menu-open) > .menu_button{
     position:absolute!important;
     inset:0!important;
     display:flex!important;
@@ -3245,24 +3253,7 @@ div[hex-sp]{
     pointer-events:auto!important;
     background:transparent!important;
   }
-  html.hex-desktop-hero-header #gc_auto_frame_header_object_smartphone_hum_pupup{
-    position:fixed!important;
-    top:var(--header_height,80px)!important;
-    right:0!important;
-    bottom:auto!important;
-    left:0!important;
-    width:auto!important;
-    max-width:none!important;
-    margin-inline:0!important;
-    height:calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))!important;
-    max-height:calc(var(--hex-viewport-height,100dvh) - var(--header_height,80px))!important;
-    background:#fff!important;
-    transform:none!important;
-    translate:none!important;
-    overscroll-behavior:contain;
-    touch-action:pan-y;
-  }
-  html.hex-desktop-hero-header #gc_auto_frame_header_object_smartphone_hum_pupup .hex-header-info-menu{
+  :is(html.hex-desktop-hero-header,.bg_contactbutton.hex-menu-open) #gc_auto_frame_header_object_smartphone_hum_pupup .hex-header-info-menu{
     display:flex!important;
   }
 }

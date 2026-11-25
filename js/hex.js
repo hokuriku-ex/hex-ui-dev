@@ -2493,11 +2493,6 @@ hexReady(function(){
     var circleInProgress=!!welcome&&hero.classList.contains('is-welcome-transition')&&
       !welcome.classList.contains('is-v2-circle-complete');
     var active=desktop.matches&&(root.matches(heroStates)||circleInProgress);
-    if(root.classList.contains('hex-desktop-hero-header')===active)return;
-    if(!active&&desktop.matches){
-      var button=document.querySelector('.bg_contactbutton.hex-menu-open > .menu_button');
-      if(button)button.click();
-    }
     root.classList.toggle('hex-desktop-hero-header',active);
   }
 
@@ -2526,6 +2521,7 @@ hexLoad(function(){
       'gc_auto_frame_header_object_smartphone_hum_pupup'
     );
     if(!popup)return;
+    popup.setAttribute('data-lenis-prevent','');
 
     var wrapper=popup.closest('.bg_contactbutton');
     var groups=Array.prototype.slice.call(
