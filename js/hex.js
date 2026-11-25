@@ -9695,10 +9695,10 @@ hexReady(function(){
   var heroIntroDeparted=false;
   var heroGuideShown=false;
 
-  function showHeroGuide(hero){
-    if(heroGuideShown||!hero.isConnected||!hero.classList.contains('is-intro-complete'))return;
+  function showHeroGuide(onDismiss){
+    if(heroGuideShown)return false;
     var guide=document.createElement('dialog');
-    if(typeof guide.showModal!=='function')return;
+    if(typeof guide.showModal!=='function')return false;
     guide.className='hex-hero-guide';
     guide.setAttribute('data-lenis-prevent','');
     guide.setAttribute('aria-labelledby','hex-hero-guide-title');
@@ -9711,19 +9711,26 @@ hexReady(function(){
       '</div>'+
       '<button type="button" class="hex-hero-guide-start" autofocus>START</button>';
     function closeGuide(){if(guide.open)guide.close();}
+    var cancelled=false;
+    function cancelGuide(){
+      cancelled=true;
+      closeGuide();
+    }
     guide.addEventListener('click',function(event){
       if(!event.target.closest('.hex-hero-guide-circle'))closeGuide();
     });
     guide.addEventListener('close',function(){
       guide.remove();
-      document.removeEventListener('hex:hero-departed',closeGuide);
-      document.removeEventListener('hex:hero-intro-reset',closeGuide);
+      document.removeEventListener('hex:hero-departed',cancelGuide);
+      document.removeEventListener('hex:hero-intro-reset',cancelGuide);
+      if(!cancelled)onDismiss();
     });
-    document.addEventListener('hex:hero-departed',closeGuide);
-    document.addEventListener('hex:hero-intro-reset',closeGuide);
+    document.addEventListener('hex:hero-departed',cancelGuide);
+    document.addEventListener('hex:hero-intro-reset',cancelGuide);
     document.body.appendChild(guide);
     guide.showModal();
     heroGuideShown=true;
+    return true;
   }
 
   function selectHeroDot(){
@@ -9794,12 +9801,6 @@ hexReady(function(){
       var copy=hero.querySelector('.hex-hero-catch');
       if(copy){copy.classList.add('is-exploring');}
       document.dispatchEvent(new Event('hex:hero-intro-complete'));
-      // Wait for the catch to finish fading before showing the guide.
-      var fade=copy&&copy.getAnimations&&copy.getAnimations().find(function(animation){
-        return animation.transitionProperty==='opacity';
-      });
-      if(fade)fade.finished.then(function(){showHeroGuide(hero);},function(){});
-      else showHeroGuide(hero);
     },duration);
   });
 
@@ -10662,6 +10663,14 @@ hexReady(function(){
     if(!heroCatch){return;}
     hero.classList.add('is-catch-waiting');
     heroCatch.classList.remove('is-catch-visible','is-exploring');
+    function playIntro(){
+      if(run!==heroCatchRun||heroIntroDeparted||!hero.isConnected)return;
+      startHeroIntro();
+      hero.classList.remove('is-catch-waiting');
+      if(!hero.classList.contains('is-intro-complete')){
+        heroCatch.classList.add('is-catch-visible');
+      }
+    }
     function waitForCatch(){
       if(run!==heroCatchRun||heroIntroDeparted)return;
       var api=window.hexHero;
@@ -10672,11 +10681,11 @@ hexReady(function(){
         return;
       }
       if(document.querySelector('.hex-opening:not(.is-v2-hero-stage):not(.is-skipping)'))return;
-      startHeroIntro();
-      hero.classList.remove('is-catch-waiting');
-      if(!hero.classList.contains('is-intro-complete')){
-        heroCatch.classList.add('is-catch-visible');
+      if(!heroGuideShown&&root.classList.contains('hex-direct-hero-fade')){
+        window.requestAnimationFrame(waitForCatch);
+        return;
       }
+      if(!showHeroGuide(playIntro))playIntro();
     }
     window.setTimeout(waitForCatch,delay||0);
   }
@@ -10759,7 +10768,7 @@ hexReady(function(){
       root.classList.add('hex-hero-first-frame-ready');
       showPendingPage();
       root.classList.add('hex-direct-hero-fade-ready');
-      startHeroDotRing();
+      if(heroGuideShown)startHeroDotRing();
       root.classList.remove('hex-hero-display-wait','hex-hero-return-preparing');
       document.dispatchEvent(new Event('hex:hero-display-ready'));
       /* ページ全体のloadを待たず、初期ズームの終盤で見出しを再生する。 */
@@ -11541,7 +11550,7 @@ hexReady(function(){
 
       // 最後の日本語キャッチから、中央の丸演出でヒーローへ。
       updateDots(true);
-      startHeroDotRing();
+      if(heroGuideShown)startHeroDotRing();
       runHeroCircleReveal(true).then(function(){
         if(cancelled)return;
         visualScenes.forEach(function(scene){
