@@ -3155,9 +3155,9 @@ div[hex-sp]{
   background:#1f2774!important;
 }
 
-/* 1201px以上のみハンバーガーメニュー非表示 */
+/* 1201px以上の通常ヘッダーでは、メニューを閉じた後にPCナビへ戻す */
 @media screen and (min-width:1201px){
-  .contactbutton_type1 .menu_button:not(.hex-menu-open > .menu_button){
+  html:not(.hex-desktop-hero-header) .contactbutton_type1 .menu_button:not(.hex-menu-open > .menu_button){
     display:none!important;
     visibility:hidden!important;
     opacity:0!important;
