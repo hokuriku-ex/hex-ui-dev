@@ -9637,6 +9637,21 @@ function hexLoadAllAlphaVideos(scope){
 /* =======================================
    開幕アニメーション
 ======================================= */
+function hexCreateLoadingLabel(){
+  var label=document.createElement('div');
+  label.className='hex-simple-loader-label';
+  label.setAttribute('role','status');
+  label.setAttribute('aria-label','LOADING');
+  Array.from('LOADING').forEach(function(letter,index){
+    var character=document.createElement('b');
+    character.textContent=letter;
+    character.setAttribute('aria-hidden','true');
+    character.style.setProperty('--hex-loader-letter-index',index);
+    label.appendChild(character);
+  });
+  return label;
+}
+
 /* DOM準備後も、読み込んだJSと同じ環境のopeningフォルダを参照する。 */
 const HEX_OPENING_IMAGE_ROOT=(function(){
   var ownScript=document.currentScript;
@@ -11778,23 +11793,13 @@ hexReady(function(){
 
     function showLoader(){
       var loader=document.createElement("div");
-      var label=loader.appendChild(document.createElement("span"));
+      loader.appendChild(hexCreateLoadingLabel());
       var urls=collectPreloadUrls();
       var started=0;
       var maximumTimer;
       var loaderFinished=false;
 
       loader.className="hex-simple-loader is-loading-phase";
-      label.className="hex-simple-loader-label";
-      label.setAttribute("role","status");
-      label.setAttribute("aria-label","LOADING");
-      Array.from("LOADING").forEach(function(letter,index){
-        var character=document.createElement("span");
-        character.textContent=letter;
-        character.setAttribute("aria-hidden","true");
-        character.style.setProperty("--hex-loader-letter-index",index);
-        label.appendChild(character);
-      });
 
       document.body.appendChild(loader);
 
@@ -17809,6 +17814,7 @@ hexReady(function(){
       document.head.appendChild(warmLink);
     }
     cover=document.createElement('div');cover.className='hex-page-yellow-cover';
+    var loadingLabel=cover.appendChild(hexCreateLoadingLabel());
     cover.setAttribute('aria-hidden','true');cover.style.top=top+'px';
     var origin=' at '+x+'px '+y+'px)';
     cover.style.clipPath='circle('+radius+'px'+origin;
@@ -17818,16 +17824,14 @@ hexReady(function(){
     var lenis=window.hexMotion&&window.hexMotion.lenis;
     if(lenis&&!lenis.isStopped){stoppedLenis=lenis;lenis.stop();}
     var run=++sequence;
-    preparedIntro.then(function(introPreview){
-      if(run!==sequence)return;
-      if(introPreview)cover.appendChild(introPreview);
     try{
       animation=cover.animate([
         {clipPath:'circle('+radius+'px'+origin},
         {clipPath:'circle('+end+'px'+origin}
       ],{duration:650,easing:'cubic-bezier(.65,0,.35,1)',fill:'forwards'});
-      animation.finished.then(function(){
+      Promise.all([animation.finished,preparedIntro]).then(function(results){
         if(run!==sequence)return;
+        var introPreview=results[1];
         // 拡大途中も背景ごとメニューを残し、黄色で覆い終えてから閉じる。
         if(closeMenu)closeMenu();
         if(replayIntro){
@@ -17836,6 +17840,8 @@ hexReady(function(){
           return;
         }
         if(introPreview){
+          cover.appendChild(introPreview);
+          introPreview.appendChild(loadingLabel);
           cover.classList.add('is-intro-visible');
           try{sessionStorage.setItem('hex-header-intro-v1',JSON.stringify({
             url:url.href,time:Date.now(),displayedAt:Date.now()
@@ -17848,7 +17854,6 @@ hexReady(function(){
         recovery=setTimeout(cleanup,20000);
       }).catch(function(){if(run===sequence){cleanup();location.assign(url.href);}});
     }catch(error){cleanup();location.assign(url.href);}
-    });
   });
 });
 
@@ -18316,6 +18321,7 @@ hexReady(function(){
     if(intro){
       contents.appendChild(intro);
       intro.classList.add('hex-page-hero-loading-intro');
+      intro.appendChild(hexCreateLoadingLabel());
       intro.setAttribute('aria-hidden',skipIntro?'true':'false');
       if(skipIntro)intro.style.setProperty('display','none','important');
     }

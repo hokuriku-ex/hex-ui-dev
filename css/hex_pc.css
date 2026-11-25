@@ -9454,7 +9454,7 @@ html.hex-opening-finishing
 .hex-simple-loader.is-complete{opacity:0;visibility:hidden}
 .hex-simple-loader-label{display:inline-flex;gap:.24em;font-size:clamp(16px,2.2vw,20px);font-weight:700;}
 @media(prefers-reduced-motion:no-preference){
-  .hex-simple-loader-label > span{
+  .hex-simple-loader-label > b{
     animation:hex-loader-letter-pop 1.6s cubic-bezier(.455,.03,.515,.955) calc(var(--hex-loader-letter-index) * .1s) infinite both;
   }
 }
@@ -10033,11 +10033,24 @@ html.hex-page-handoff-active body:has(.pagetitle_type.pagetitle_type4:not(.hex-p
 }
 .hex-page-yellow-cover{
   position:fixed;
+  display:grid;
+  place-items:center;
   right:0;bottom:0;left:0;
   z-index:2147482099;
   background:#f7d04f;
   pointer-events:auto;
   touch-action:none;
+}
+.hex-page-yellow-cover .hex-simple-loader-label,
+.hex-page-hero-loading-intro .hex-simple-loader-label{
+  color:#265ab0;
+}
+:is(.hex-page-yellow-intro,.hex-page-hero-loading-intro) > .hex-simple-loader-label{
+  position:absolute;
+  top:100%;
+  left:50%;
+  margin-top:clamp(12px,3vh,28px);
+  transform:translateX(-50%);
 }
 .hex-page-yellow-cover .hex-page-yellow-intro{
   display:none!important;
