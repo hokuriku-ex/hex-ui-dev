@@ -1357,7 +1357,7 @@ function hexInitAnchorNav(){
         target.getBoundingClientRect().top-sticky.getBoundingClientRect().top
       :target.getBoundingClientRect().top+window.pageYOffset;
   }
-  function scrollToAnchorTarget(target){
+  function scrollToAnchorTarget(target,fromHero){
     var offset=getHexAnchorOffset();
     if(window.hexOverlapAnchor){
       window.hexOverlapAnchor.cancelSnap();
@@ -1398,7 +1398,8 @@ function hexInitAnchorNav(){
         '(prefers-reduced-motion:reduce)'
       ).matches;
     /* 元画面の下で移動を終え、丸演出中にスクロールを続けない。 */
-    if(window.hexPageTransition&&window.hexPageTransition.incoming)reducedMotion=true;
+    if(window.hexPageTransition&&window.hexPageTransition.incoming&&
+      (!fromHero||document.documentElement.classList.contains('hex-page-handoff-active')))reducedMotion=true;
 
     if(
       window.hexMotion&&
@@ -1407,7 +1408,7 @@ function hexInitAnchorNav(){
       window.hexMotion.scrollTo(targetTop,{
         offset:0,
         duration:duration,
-        easing:hexAnchorEasing,
+        easing:fromHero?function(progress){return progress*progress*(3-2*progress);}:hexAnchorEasing,
         immediate:reducedMotion,
         lock:false,
         force:true
@@ -1466,6 +1467,7 @@ function hexInitAnchorNav(){
         if(window.hexHero&&window.hexHero.openWelcome)window.hexHero.openWelcome();
         return;
       }
+      var fromHero=!!(homePanel&&homePanel.classList.contains('is-hero-anchor'));
       if(homePanel&&window.hexHero&&window.hexHero.leaveForAnchor){
         await window.hexHero.leaveForAnchor();
         /* WELCOMEの高さ変更を外側のsticky枠にも反映してから着地点を読む。 */
@@ -1474,7 +1476,7 @@ function hexInitAnchorNav(){
         }
       }
       currentAnchorTarget=target;
-      scrollToAnchorTarget(target);
+      scrollToAnchorTarget(target,fromHero);
     });
     list.appendChild(link);
     pairs.push({
@@ -4759,7 +4761,7 @@ hexReady(function(){
       createWelcomeStage();
       measureWelcome();
       handoff=captureCurrentFrame();
-      if(handoff){
+      if(handoff&&!skipScroll){
         /* 複製画像のデコード前に元ヒーローを隠すと、雲・植栽が一瞬抜ける。 */
         await Promise.all(Array.from(handoff.querySelectorAll("img")).map(function(image){
           image.loading="eager";
@@ -4775,6 +4777,7 @@ hexReady(function(){
         });
         if(!welcomeActive||snapshot!==handoff||!handoff.isConnected){return;}
       }
+      if(handoff&&skipScroll)handoff.style.visibility="visible";
       /*
        * 丸演出は現在フレームの複製だけを見せる。
        * 複製に成功した場合に限り元ヒーローを隠すことで、
@@ -4798,6 +4801,8 @@ hexReady(function(){
         measureWelcome();
       }
       updateScrollEffects();
+      /* 通常アンカーはWELCOMEを準備した後、呼び出し側の移動先へ進む。 */
+      if(skipScroll)return;
       /* スクロール終了を待たず、外側の固定枠と表示演出の座標も同期する。 */
       if(window.hexOverlapAnchor&&window.hexOverlapAnchor.refreshLayout){
         window.hexOverlapAnchor.refreshLayout();
@@ -4806,8 +4811,6 @@ hexReady(function(){
         window.hexMotion.refreshLayout();
       }
 
-      /* 通常アンカーはWELCOMEを準備した後、呼び出し側の移動先へ進む。 */
-      if(skipScroll)return;
       target=Math.max(documentTop(welcomeWrap),0);
       startWelcomeCircleMotion(target);
       if(isSp()){
@@ -6522,6 +6525,9 @@ hexReady(function(){
       },
       leaveForAnchor:function(){
         cancelWelcomeAuto();
+        stopSpCircleScroll();
+        stopWelcomeReverseSnap();
+        stopWelcomeCircleMotion();
         cancelAutoZoom(true);
         heroAnchorDeparted=true;
         setHeroPageLock(false);
