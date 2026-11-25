@@ -17815,6 +17815,7 @@ hexReady(function(){
     }
     cover=document.createElement('div');cover.className='hex-page-yellow-cover';
     var loadingLabel=cover.appendChild(hexCreateLoadingLabel());
+    loadingLabel.hidden=replayIntro||link.dataset.hexHeaderIntro==='true';
     cover.setAttribute('aria-hidden','true');cover.style.top=top+'px';
     var origin=' at '+x+'px '+y+'px)';
     cover.style.clipPath='circle('+radius+'px'+origin;
@@ -17824,6 +17825,9 @@ hexReady(function(){
     var lenis=window.hexMotion&&window.hexMotion.lenis;
     if(lenis&&!lenis.isStopped){stoppedLenis=lenis;lenis.stop();}
     var run=++sequence;
+    preparedIntro.then(function(introPreview){
+      if(run===sequence&&!replayIntro&&!introPreview)loadingLabel.hidden=false;
+    });
     try{
       animation=cover.animate([
         {clipPath:'circle('+radius+'px'+origin},
@@ -17843,6 +17847,7 @@ hexReady(function(){
           cover.appendChild(introPreview);
           introPreview.appendChild(loadingLabel);
           cover.classList.add('is-intro-visible');
+          loadingLabel.hidden=false;
           try{sessionStorage.setItem('hex-header-intro-v1',JSON.stringify({
             url:url.href,time:Date.now(),displayedAt:Date.now()
           }));}catch(error){}

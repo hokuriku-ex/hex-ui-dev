@@ -10043,8 +10043,9 @@ html.hex-page-handoff-active body:has(.pagetitle_type.pagetitle_type4:not(.hex-p
 }
 .hex-page-yellow-cover .hex-simple-loader-label,
 .hex-page-hero-loading-intro .hex-simple-loader-label{
-  color:#265ab0;
+  color:#fff;
 }
+.hex-page-yellow-cover .hex-simple-loader-label[hidden]{display:none;}
 :is(.hex-page-yellow-intro,.hex-page-hero-loading-intro) > .hex-simple-loader-label{
   position:absolute;
   top:100%;
