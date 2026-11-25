@@ -101,7 +101,7 @@ function hexPlayHeroControlPop(element){
     var parentWidth=parent.clientWidth-(parseFloat(parentStyle.paddingLeft)||0)-(parseFloat(parentStyle.paddingRight)||0);
     var viewport=document.documentElement.clientWidth;
     var available=Math.min(parentWidth||viewport-32,viewport-32);
-    if(isOpeningSlide)available=Math.min(available,viewport*.5);
+    if(isOpeningSlide&&viewport>768)available=Math.min(available,viewport*.5);
     // 影・縁取りは計測文字幅に含まれないため、右下の余裕を別に確保する。
     var outline=parseFloat(style.webkitTextStrokeWidth)||0;
     var shadow=style.textShadow&&style.textShadow!=='none'?8:0;
@@ -123,8 +123,10 @@ function hexPlayHeroControlPop(element){
   function run(){
     frame=0;var changed=false;
     if(hexDeferHomeContent('title-fit',run)){
+      var mobile=document.documentElement.clientWidth<=768;
       titles.forEach(function(original,main){
-        if(main.closest('.hex-hero-wrap'))fit(main,original);
+        if(main.closest('.hex-hero-wrap')||
+          (mobile&&main.classList.contains('hex-opening-slide-title')))fit(main,original);
       });
       return;
     }
