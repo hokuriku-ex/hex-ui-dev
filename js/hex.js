@@ -17888,15 +17888,10 @@ hexReady(function(){
       var saved=JSON.parse(sessionStorage.getItem('hex-page-transition-v1')||'null');
       if(!replayIntro&&(!saved||saved.url!==url.href||Date.now()-saved.time>45000))return;
     }catch(error){return;}
-    var probe=document.createElement('div');
-    probe.style.cssText='position:fixed;visibility:hidden;pointer-events:none;width:0;';
-    probe.style.height=window.innerWidth<=768?'var(--header_height_smartphone,80px)':'var(--header_height,80px)';
-    document.body.appendChild(probe);
-    var top=probe.getBoundingClientRect().height;probe.remove();
-    var width=document.documentElement.clientWidth,height=Math.max(1,window.innerHeight-top);
+    var width=root.clientWidth,height=root.clientHeight;
     var rect=link.getBoundingClientRect();
     var x=event.detail?event.clientX:Math.max(0,Math.min(width,rect.left+rect.width/2));
-    var y=(event.detail?event.clientY:rect.top+rect.height/2)-top;
+    var y=event.detail?event.clientY:Math.max(0,Math.min(height,rect.top+rect.height/2));
     var cursor=document.querySelector('.hex-follow-cursor.is-visible');
     var radius=cursor?Math.max(9,cursor.getBoundingClientRect().width/2):9;
     var end=Math.ceil(Math.max(Math.hypot(x,y),Math.hypot(width-x,y),
@@ -17919,7 +17914,8 @@ hexReady(function(){
     cover=document.createElement('div');cover.className='hex-page-yellow-cover';
     var loadingLabel=cover.appendChild(hexCreateLoadingLabel());
     loadingLabel.hidden=replayIntro||link.dataset.hexHeaderIntro==='true';
-    cover.setAttribute('aria-hidden','true');cover.style.top=top+'px';
+    cover.setAttribute('aria-hidden','true');
+    hexAddLoadingHeaderLogo(cover);
     var origin=' at '+x+'px '+y+'px)';
     cover.style.clipPath='circle('+radius+'px'+origin;
     document.body.appendChild(cover);
@@ -18441,7 +18437,7 @@ hexReady(function(){
     main.setAttribute('inert','');
     var loadingCover=null;
     function showLoadingCover(){
-      if(expectsNav||loadingCover)return;
+      if(loadingCover)return;
       loadingCover=document.createElement('div');
       loadingCover.className='hex-page-yellow-cover hex-page-hero-viewport-cover';
       if(intro){
@@ -18451,9 +18447,10 @@ hexReady(function(){
       }else{
         loadingCover.appendChild(hexCreateLoadingLabel());
       }
+      hexAddLoadingHeaderLogo(loadingCover);
       document.body.appendChild(loadingCover);
     }
-    showLoadingCover();
+    if(!waitForHandoff)showLoadingCover();
     var nav=contents.querySelector('.hex-anchor-nav');
     if(nav)nav.setAttribute('inert','');
     function finishHandoffPage(){
@@ -18616,7 +18613,7 @@ hexReady(function(){
         if(intro){
           intro.classList.remove('hex-page-yellow-intro');
           contents.appendChild(intro);
-        }else loadingCover.replaceChildren();
+        }else loadingCover.querySelector('.hex-simple-loader-label').remove();
         loadingCover.setAttribute('aria-hidden','true');
       }
       var layers=[contents,decor];
