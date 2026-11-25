@@ -15681,6 +15681,16 @@ hexLoad(function(){
     var normalSp=window.innerWidth<=768;
     var useLenis=shouldUseLenis();
     var lenis=null;
+    var initialViewport=null;
+    function isInitiallyVisible(target){
+      if(!initialViewport)return false;
+      var rect=target.getBoundingClientRect();
+      var scrollTop=window.scrollY;
+      return rect.width>0&&rect.height>0&&rect.right>0&&
+        rect.left<document.documentElement.clientWidth&&
+        rect.bottom+scrollTop>initialViewport.top&&
+        rect.top+scrollTop<initialViewport.bottom;
+    }
     var autoRevealRootSelector=[
       /* トップページ・共通スポット項目 */
       '.gc_auto_frame_spotitem_box',
@@ -16532,6 +16542,11 @@ hexLoad(function(){
 
       if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(englishWrap);
 
+      if(isInitiallyVisible(target)){
+        if(!isFoundedTitle)applyTitleLetterArc(englishWrap,chars);
+        return;
+      }
+
       /* SPも幅合わせへ登録する。トップページ共通見出しの演出はPCのみ。 */
       if(normalSp)return;
 
@@ -16631,6 +16646,10 @@ hexLoad(function(){
       }
       target.dataset.hexMotionInitialized='1';
       if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(englishWrap);
+      if(isInitiallyVisible(target)){
+        applyTitleLetterArc(englishWrap,letters);
+        return;
+      }
       var playArc=prepareArchedTitlePop(englishWrap,letters);
       if(!playArc)return;
 
@@ -17297,6 +17316,21 @@ hexLoad(function(){
         return;
       }
 
+      function outsideInitialViewport(targets){
+        if(!initialViewport)return targets;
+        return targets.filter(function(target){
+          if(!isInitiallyVisible(target))return true;
+          target.dataset.hexMotionInitialized='1';
+          return false;
+        });
+      }
+      // Measure before any reveal applies its initial scaling or offset.
+      autoReveals=outsideInitialViewport(autoReveals);
+      contactReveals=outsideInitialViewport(contactReveals);
+      footerReveals=outsideInitialViewport(footerReveals);
+      reveals=outsideInitialViewport(reveals);
+      staggers=outsideInitialViewport(staggers);
+      images=outsideInitialViewport(images);
       setupAutoRevealTargets(autoReveals);
       setupContactRevealTargets(contactReveals);
       setupFooterRevealTargets(footerReveals);
@@ -17403,6 +17437,9 @@ hexLoad(function(){
 
     /* フェードと見出しは下層ページと同じ初期化経路を使う */
     setupFoundedMotion();
+    if(!document.querySelector('.hex-hero-wrap')){
+      initialViewport={top:window.scrollY,bottom:window.scrollY+window.hexViewportHeight()};
+    }
     setupMotionTargets(document);
     // 開幕1番もヒーロー・WELCOMEと同じロール演出を使用する。
     window.hexCreateCatchRoll=createCatchRoll;
