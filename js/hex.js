@@ -9663,6 +9663,27 @@ function hexCreateLoadingLabel(){
   return label;
 }
 
+function hexAddLoadingHeaderLogo(cover){
+  var images=document.querySelectorAll('.headermenu_type8 .headermenu_logo img');
+  for(var image of images){
+    var rect=image.getBoundingClientRect();
+    if(!rect.width||!rect.height)continue;
+    var src=image.currentSrc||image.getAttribute('src');
+    if(!src)continue;
+    var logo=document.createElement('img');
+    logo.className='hex-loading-header-logo';
+    logo.src=src;
+    logo.alt='';
+    logo.setAttribute('aria-hidden','true');
+    Object.assign(logo.style,{
+      left:rect.left+'px',top:rect.top+'px',width:rect.width+'px',height:rect.height+'px',
+      objectFit:getComputedStyle(image).objectFit
+    });
+    cover.appendChild(logo);
+    break;
+  }
+}
+
 /* DOM準備後も、読み込んだJSと同じ環境のopeningフォルダを参照する。 */
 const HEX_OPENING_IMAGE_ROOT=(function(){
   var ownScript=document.currentScript;
@@ -10747,6 +10768,7 @@ hexReady(function(){
       cover=document.createElement('div');
       cover.className='hex-page-yellow-cover hex-direct-hero-cover';
       cover.appendChild(hexCreateLoadingLabel());
+      hexAddLoadingHeaderLogo(cover);
       document.body.appendChild(cover);
     }
     ensureHeroReady();
@@ -10756,7 +10778,7 @@ hexReady(function(){
       var rect=cover.getBoundingClientRect();
       var radius=Math.hypot(rect.width/2,rect.height/2)+4;
       var started=null;
-      cover.replaceChildren();
+      cover.querySelector('.hex-simple-loader-label').remove();
       cover.style.maskImage='radial-gradient(circle, transparent 1px, #000 2px)';
       requestAnimationFrame(function reveal(now){
         if(started===null)started=now;
@@ -11837,6 +11859,7 @@ hexReady(function(){
     function showLoader(){
       var loader=document.createElement("div");
       loader.appendChild(hexCreateLoadingLabel());
+      hexAddLoadingHeaderLogo(loader);
       var urls=collectPreloadUrls();
       var started=0;
       var maximumTimer;

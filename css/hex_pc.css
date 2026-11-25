@@ -9454,6 +9454,14 @@ html.hex-opening-finishing
 ======================================= */
 .hex-simple-loader{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:#265ab0;color:#fff;opacity:1;visibility:visible;transition:opacity .46s ease,visibility 0s linear .46s}
 .hex-simple-loader.is-complete{opacity:0;visibility:hidden}
+.hex-loading-header-logo{
+  position:absolute;
+  display:block;
+  max-width:none!important;
+  margin:0!important;
+  filter:brightness(0) invert(1);
+  pointer-events:none;
+}
 .hex-simple-loader-label{display:inline-flex;gap:.24em;font-size:clamp(16px,2.2vw,20px);font-weight:700;}
 @media(prefers-reduced-motion:no-preference){
   .hex-simple-loader-label > b{
