@@ -12092,7 +12092,7 @@ hexLoad(function(){
   if(!pageTitleContents)return;
 
   /* 導入文を移動 */
-  if(hexIntro){
+  if(hexIntro&&!hexIntro.closest('.hex-page-hero-viewport-cover')){
     pageTitleContents.appendChild(hexIntro);
   }
 
