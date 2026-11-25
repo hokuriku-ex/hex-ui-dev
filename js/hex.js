@@ -5068,7 +5068,7 @@ hexReady(function(){
         return;
       }
       if(hexIsDesktopHeroHeaderTarget(event.target)||
-        (event.target&&event.target.closest(".hex-character-copy-stage"))){return;}
+        (event.target&&event.target.closest(".hex-character-copy-stage,.hex-hero-guide"))){return;}
       if(handledWheelEvents&&handledWheelEvents.has(event)){return;}
       if(handledWheelEvents){handledWheelEvents.add(event);}
       if(Math.abs(event.deltaX)+Math.abs(event.deltaY)<2){return;}
@@ -9693,6 +9693,38 @@ hexReady(function(){
   var heroCatchRun=0;
   var heroIntroStarted=false;
   var heroIntroDeparted=false;
+  var heroGuideShown=false;
+
+  function showHeroGuide(hero){
+    if(heroGuideShown||!hero.isConnected||!hero.classList.contains('is-intro-complete'))return;
+    var guide=document.createElement('dialog');
+    if(typeof guide.showModal!=='function')return;
+    guide.className='hex-hero-guide';
+    guide.setAttribute('data-lenis-prevent','');
+    guide.setAttribute('aria-labelledby','hex-hero-guide-title');
+    guide.setAttribute('aria-describedby','hex-hero-guide-instructions');
+    guide.innerHTML=
+      '<div class="hex-hero-guide-circle">'+
+        '<i class="fa-regular fa-hand-pointer" aria-hidden="true"></i>'+
+        '<p id="hex-hero-guide-title">私たちの仕事を<br>のぞいてみましょう。</p>'+
+        '<p id="hex-hero-guide-instructions">ドラッグ・スワイプで<br>動かしてみよう</p>'+
+      '</div>'+
+      '<button type="button" class="hex-hero-guide-start" autofocus>START</button>';
+    function closeGuide(){if(guide.open)guide.close();}
+    guide.addEventListener('click',function(event){
+      if(!event.target.closest('.hex-hero-guide-circle'))closeGuide();
+    });
+    guide.addEventListener('close',function(){
+      guide.remove();
+      document.removeEventListener('hex:hero-departed',closeGuide);
+      document.removeEventListener('hex:hero-intro-reset',closeGuide);
+    });
+    document.addEventListener('hex:hero-departed',closeGuide);
+    document.addEventListener('hex:hero-intro-reset',closeGuide);
+    document.body.appendChild(guide);
+    guide.showModal();
+    heroGuideShown=true;
+  }
 
   function selectHeroDot(){
     if(!sharedNav){return;}
@@ -9762,6 +9794,12 @@ hexReady(function(){
       var copy=hero.querySelector('.hex-hero-catch');
       if(copy){copy.classList.add('is-exploring');}
       document.dispatchEvent(new Event('hex:hero-intro-complete'));
+      // Wait for the catch to finish fading before showing the guide.
+      var fade=copy&&copy.getAnimations&&copy.getAnimations().find(function(animation){
+        return animation.transitionProperty==='opacity';
+      });
+      if(fade)fade.finished.then(function(){showHeroGuide(hero);},function(){});
+      else showHeroGuide(hero);
     },duration);
   });
 
@@ -18574,7 +18612,7 @@ hexReady(function(){
     if(window.hexMotion&&window.hexMotion.lenis&&window.hexMotion.lenis.isStopped)return false;
     if(window.visualViewport&&window.visualViewport.scale>1.05)return false;
     if(document.activeElement&&document.activeElement.matches('input,textarea,select,[contenteditable="true"]'))return false;
-    if(document.documentElement.matches('.hex-opening-lock,.hex-hero-manual-lock,.hex-page-intro-scroll-lock,.hex-calendar-modal-open,.lenis-stopped'))return false;
+    if(document.documentElement.matches('.hex-opening-lock,.hex-hero-manual-lock,.hex-page-intro-scroll-lock,.hex-calendar-modal-open,.lenis-stopped,:has(.hex-hero-guide[open])'))return false;
     return getComputedStyle(document.body).position!=='fixed';
   }
   function snapExcluded(target,event){
