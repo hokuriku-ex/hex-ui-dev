@@ -9642,12 +9642,13 @@ function hexCreateLoadingLabel(){
   label.className='hex-simple-loader-label';
   label.setAttribute('role','status');
   label.setAttribute('aria-label','LOADING');
-  Array.from('LOADING').forEach(function(letter,index){
-    var character=document.createElement('b');
-    character.textContent=letter;
-    character.setAttribute('aria-hidden','true');
-    character.style.setProperty('--hex-loader-letter-index',index);
-    label.appendChild(character);
+  label.textContent='LOADING';
+  Array.from('...').forEach(function(dot,index){
+    var marker=document.createElement('b');
+    marker.textContent=dot;
+    marker.setAttribute('aria-hidden','true');
+    marker.style.setProperty('--hex-loader-dot-index',index);
+    label.appendChild(marker);
   });
   return label;
 }

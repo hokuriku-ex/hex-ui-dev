@@ -9455,14 +9455,14 @@ html.hex-opening-finishing
 .hex-simple-loader-label{display:inline-flex;gap:.24em;font-size:clamp(16px,2.2vw,20px);font-weight:700;}
 @media(prefers-reduced-motion:no-preference){
   .hex-simple-loader-label > b{
-    animation:hex-loader-letter-pop 1.6s cubic-bezier(.455,.03,.515,.955) calc(var(--hex-loader-letter-index) * .1s) infinite both;
+    animation:hex-loader-dot-pop 1.1s cubic-bezier(.455,.03,.515,.955) calc(var(--hex-loader-dot-index) * .1s) infinite both;
   }
 }
-@keyframes hex-loader-letter-pop{
+@keyframes hex-loader-dot-pop{
   0%{opacity:1;transform:scale(0);}
-  8.75%{opacity:1;transform:scale(1.25);}
-  18.75%,58%{opacity:1;transform:scale(1);}
-  65%,100%{opacity:0;transform:scale(1);}
+  12.73%{opacity:1;transform:scale(1.25);}
+  27.27%,63%{opacity:1;transform:scale(1);}
+  73%,100%{opacity:0;transform:scale(1);}
 }
 
 .hex-opening-scroll-host:has(.is-curtain-sequence){height:var(--hex-viewport-height,100dvh)!important;min-height:var(--hex-viewport-height,100dvh)!important;background:#fff}
