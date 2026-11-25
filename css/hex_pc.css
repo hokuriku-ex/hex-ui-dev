@@ -9450,12 +9450,20 @@ html.hex-opening-finishing
 /* =======================================
    2026 opening / WebGL hero rebuild
 ======================================= */
-.hex-simple-loader{--hex-loader-progress:0;position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:#265ab0;color:#fff;opacity:1;visibility:visible;transition:opacity .46s ease,visibility 0s linear .46s}
+.hex-simple-loader{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:#265ab0;color:#fff;opacity:1;visibility:visible;transition:opacity .46s ease,visibility 0s linear .46s}
 .hex-simple-loader.is-complete{opacity:0;visibility:hidden}
-.hex-simple-loader-inner{position:absolute;inset:0;pointer-events:none}
-.hex-simple-loader-label{position:absolute;top:calc(50% - 12px);left:50%;font-size:10px;font-weight:700;letter-spacing:.28em;transform:translateX(-50%)}
-.hex-simple-loader-bar{position:absolute;top:calc(50% + 14px);left:50%;width:clamp(120px,30vw,480px);height:1px;overflow:hidden;background:rgba(255,255,255,.2);transform:translateX(-50%)}
-.hex-simple-loader-bar::after{content:"";display:block;width:100%;height:100%;background:#f7d04f;transform:scaleX(var(--hex-loader-progress));transform-origin:left center;transition:transform .18s ease-out}
+.hex-simple-loader-label{display:inline-flex;gap:.24em;font-size:clamp(16px,2.2vw,20px);font-weight:700;}
+@media(prefers-reduced-motion:no-preference){
+  .hex-simple-loader-label > span{
+    animation:hex-loader-letter-pop 1.6s ease-out calc(var(--hex-loader-letter-index) * .1s) infinite both;
+  }
+}
+@keyframes hex-loader-letter-pop{
+  0%{opacity:0;transform:translateY(.3em) scale(.7);}
+  10%{opacity:1;transform:translateY(-.15em) scale(1.15);}
+  19%,58%{opacity:1;transform:none;}
+  65%,100%{opacity:0;transform:none;}
+}
 
 .hex-opening-scroll-host:has(.is-curtain-sequence){height:var(--hex-viewport-height,100dvh)!important;min-height:var(--hex-viewport-height,100dvh)!important;background:#fff}
 .hex-opening-scroll-host>.hex-opening.is-curtain-sequence{position:fixed!important;top:var(--header_height,80px)!important;right:0!important;bottom:0!important;left:0!important;width:100vw!important;height:auto!important}
@@ -9533,9 +9541,7 @@ html.hex-opening-finishing
 .hex-simple-loader-logo.is-playing .hex-logo-back-arm-mask-path{animation:hex-loader-logo-draw .30s cubic-bezier(.45,0,.25,1) .74s forwards!important}
 .hex-simple-loader-logo.is-playing :is(.hex-logo-back-hand,.hex-logo-company-name){animation:hex-loader-logo-fade .48s cubic-bezier(.22,.9,.35,1.35) 1.13s forwards!important}
 .hex-simple-loader.is-logo-hiding .hex-simple-loader-logo{opacity:0}
-.hex-simple-loader.has-logo-animation:not(.is-loading-phase) :is(.hex-simple-loader-label,.hex-simple-loader-bar){opacity:0;visibility:hidden}
-.hex-simple-loader.has-logo-animation.is-loading-phase .hex-simple-loader-label{top:calc(50% - 12px);opacity:1;visibility:visible}
-.hex-simple-loader.has-logo-animation.is-loading-phase .hex-simple-loader-bar{top:calc(50% + 14px);opacity:1;visibility:visible}
+.hex-simple-loader.has-logo-animation:not(.is-loading-phase) .hex-simple-loader-label{opacity:0;visibility:hidden}
 /* 2026-09-18版と同じ描画速度・順序・ポップ動作。 */
 @keyframes hex-loader-logo-draw{
   0%{opacity:0;stroke-dashoffset:var(--hex-logo-arm-length)}

@@ -2658,8 +2658,6 @@ html.lenis.lenis-smooth [data-lenis-prevent]{
     transform:translate(-50%,-50%);
   }
 
-  .hex-simple-loader.has-logo-animation.is-loading-phase .hex-simple-loader-label{top:calc(50% - 12px)}
-  .hex-simple-loader.has-logo-animation.is-loading-phase .hex-simple-loader-bar{top:calc(50% + 14px);width:150px}
 
   /* 開幕側と同じ動的ビューポート高に揃え、切替時の下端余白をなくす */
   .hex-hero-wrap,

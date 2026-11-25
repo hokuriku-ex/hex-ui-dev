@@ -11774,26 +11774,25 @@ hexReady(function(){
 
     function showLoader(){
       var loader=document.createElement("div");
-      var progress=loader.appendChild(document.createElement("div"));
       var label=loader.appendChild(document.createElement("span"));
-      var bar=loader.appendChild(document.createElement("i"));
       var urls=collectPreloadUrls();
-      var completed=0;
       var started=0;
       var maximumTimer;
       var loaderFinished=false;
 
       loader.className="hex-simple-loader is-loading-phase";
-      progress.className="hex-simple-loader-inner";
       label.className="hex-simple-loader-label";
-      bar.className="hex-simple-loader-bar";
-      label.textContent="LOADING";
+      label.setAttribute("role","status");
+      label.setAttribute("aria-label","LOADING");
+      Array.from("LOADING").forEach(function(letter,index){
+        var character=document.createElement("span");
+        character.textContent=letter;
+        character.setAttribute("aria-hidden","true");
+        character.style.setProperty("--hex-loader-letter-index",index);
+        label.appendChild(character);
+      });
 
       document.body.appendChild(loader);
-
-      function setProgress(value){
-        loader.style.setProperty("--hex-loader-progress",String(value));
-      }
 
       function finish(resolve){
         if(loaderFinished){return;}
@@ -11825,16 +11824,7 @@ hexReady(function(){
           started=Date.now();
           loader.classList.remove("is-logo-phase","is-logo-hiding");
           loader.classList.add("is-loading-phase");
-          setProgress(.04);
-
-          tasks=urls.map(function(url){
-            return preload(url).then(function(){
-              completed+=1;
-              setProgress(.08+.92*(completed/urls.length));
-            });
-          });
-
-          if(!urls.length){setProgress(.82);}
+          tasks=urls.map(preload);
 
           if(typeof window.hexPreloadThree==="function"){
             tasks.push(window.hexPreloadThree().catch(function(){}));
@@ -11845,12 +11835,10 @@ hexReady(function(){
           }
 
           maximumTimer=window.setTimeout(function(){
-            setProgress(1);
             finish(resolve);
           },6000);
 
           Promise.all(tasks).then(function(){
-            setProgress(1);
             finish(resolve);
           });
         }
