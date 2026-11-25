@@ -2541,37 +2541,54 @@ hexLoad(function(){
         if(close)close.click();
       });
       var animateMenu=window.matchMedia('(min-width:769px) and (prefers-reduced-motion:no-preference)');
-      var closeAnimation=null;
       function finishMenuClose(){
-        closeAnimation=null;
-        wrapper.classList.remove('hex-menu-closing','hex-menu-open');
+        wrapper.classList.remove('hex-menu-closing','hex-menu-close-finished','hex-menu-open');
         wrapper.style.removeProperty('--hex-menu-panel-display');
         popup.inert=false;
       }
+      function startMenuClose(){
+        if(!animateMenu.matches||!popup.getAnimations)return false;
+        wrapper.classList.add('hex-menu-closing');
+        var closing=popup.getAnimations().find(function(animation){
+          return animation.animationName==='hex-menu-panel-hide';
+        });
+        if(!closing){
+          wrapper.classList.remove('hex-menu-closing');
+          return false;
+        }
+        popup.inert=true;
+        closing.finished.then(function(){
+          wrapper.classList.add('hex-menu-close-finished');
+          syncSmartphoneMenuState();
+        },function(){
+          finishMenuClose();
+          syncSmartphoneMenuState();
+        });
+        return true;
+      }
+      wrapper.addEventListener('click',function(event){
+        if(!wrapper.classList.contains('hex-menu-open'))return;
+        var target=event.target.closest('.menu_button,.closebutton');
+        if(!target||!(target.parentElement===wrapper||popup.contains(target)&&target.matches('.closebutton')))return;
+        if(wrapper.classList.contains('hex-menu-closing')){
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          return;
+        }
+        startMenuClose();
+      },true);
       function syncSmartphoneMenuState(){
-        var wasClosing=wrapper.classList.contains('hex-menu-closing');
-        if(wasClosing)wrapper.classList.remove('hex-menu-closing');
-        var display=window.getComputedStyle(popup).display;
-        var isOpen=display!=='none';
-        if(isOpen){
-          closeAnimation=null;
-          popup.inert=false;
+        var display=getComputedStyle(popup).display;
+        if(wrapper.classList.contains('hex-menu-closing')){
+          if(wrapper.classList.contains('hex-menu-close-finished')&&display==='none')finishMenuClose();
+          return;
+        }
+        if(display!=='none'){
+          wrapper.classList.add('hex-menu-open');
           wrapper.style.setProperty('--hex-menu-panel-display',display);
-        }else if(wrapper.classList.contains('hex-menu-open')&&animateMenu.matches&&popup.getAnimations){
-          wrapper.classList.add('hex-menu-closing');
-          popup.inert=true;
-          var closing=popup.getAnimations().find(function(animation){
-            return animation.animationName==='hex-menu-panel-hide';
-          });
-          if(closing){
-            closeAnimation=closing;
-            function onCloseEnd(){if(closeAnimation===closing)finishMenuClose();}
-            closing.finished.then(onCloseEnd,onCloseEnd);
-            return;
-          }
+        }else if(wrapper.classList.contains('hex-menu-open')&&!startMenuClose()){
           finishMenuClose();
         }
-        wrapper.classList.toggle('hex-menu-open',isOpen);
       }
 
       var observer=new MutationObserver(function(){

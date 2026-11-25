@@ -3235,9 +3235,11 @@ div[hex-sp]{
     animation:hex-menu-panel-reveal .46s cubic-bezier(.22,1,.36,1);
   }
   .bg_contactbutton.hex-menu-closing #gc_auto_frame_header_object_smartphone_hum_pupup{
-    display:var(--hex-menu-panel-display,block)!important;
     pointer-events:none!important;
     animation:hex-menu-panel-hide .46s cubic-bezier(.22,1,.36,1) reverse both;
+  }
+  .bg_contactbutton.hex-menu-closing:not(.hex-menu-close-finished) #gc_auto_frame_header_object_smartphone_hum_pupup{
+    display:var(--hex-menu-panel-display,block)!important;
   }
 }
 @keyframes hex-menu-panel-reveal{
