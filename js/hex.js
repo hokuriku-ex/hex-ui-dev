@@ -10633,7 +10633,7 @@ hexReady(function(){
         opening._hexV2Cancel();
       }
 
-      showHeroWithFade(true);
+      showDirectHero(true);
 
       document.documentElement.classList.remove(
         "hex-opening-lock"
@@ -10727,7 +10727,7 @@ hexReady(function(){
     window.setTimeout(waitForHero,delay||0);
   }
 
-  function showHeroWithFade(afterOpening){
+  function showDirectHero(afterOpening){
     var root=document.documentElement;
     var hero=document.querySelector('.hex-hero-wrap');
     var prepared=false;
@@ -10736,9 +10736,42 @@ hexReady(function(){
     var alignedOnce=false;
     var backgroundImage=null;
     var backgroundUrl='';
+    var cover=null;
+    var loadingStarted=performance.now();
+    var reduced=isReducedMotion();
 
-    root.classList.add('hex-direct-hero-fade','hex-hero-display-wait');
+    root.classList.add('hex-hero-display-wait');
+    if(afterOpening){
+      root.classList.add('hex-direct-hero-fade');
+    }else{
+      cover=document.createElement('div');
+      cover.className='hex-page-yellow-cover hex-page-hero-viewport-cover hex-direct-hero-cover';
+      cover.appendChild(hexCreateLoadingLabel());
+      document.body.appendChild(cover);
+    }
     ensureHeroReady();
+
+    function revealDirectHero(){
+      if(reduced){finish();return;}
+      var rect=cover.getBoundingClientRect();
+      var radius=Math.hypot(rect.width/2,rect.height/2)+4;
+      var started=null;
+      cover.replaceChildren();
+      cover.style.maskImage='radial-gradient(circle, transparent 1px, #000 2px)';
+      requestAnimationFrame(function reveal(now){
+        if(started===null)started=now;
+        var progress=Math.min(1,(now-started)/1100);
+        var eased=progress<.5?4*progress*progress*progress:1-Math.pow(-2*progress+2,3)/2;
+        var size=1+(radius-1)*eased;
+        cover.style.maskImage='radial-gradient(circle, transparent '+size+'px, #000 '+(size+1)+'px)';
+        if(progress<1)requestAnimationFrame(reveal);
+        else finish();
+      });
+      function finish(){
+        cover.remove();
+        showHeroCatch(0,false);
+      }
+    }
 
     function waitForDisplay(){
       var motion=window.hexMotion;
@@ -10790,7 +10823,7 @@ hexReady(function(){
         .map(function(value){return Math.round(value*10)/10;}).join(',');
       stableFrames=geometry===previousGeometry?stableFrames+1:0;
       previousGeometry=geometry;
-      if(stableFrames<3){
+      if(stableFrames<3||(cover&&!reduced&&performance.now()-loadingStarted<650)){
         window.requestAnimationFrame(waitForDisplay);
         return;
       }
@@ -10804,12 +10837,12 @@ hexReady(function(){
       }
       root.classList.add('hex-hero-first-frame-ready');
       showPendingPage();
-      root.classList.add('hex-direct-hero-fade-ready');
-      if(!afterOpening)startHeroDotRing();
+      if(afterOpening)root.classList.add('hex-direct-hero-fade-ready');
       root.classList.remove('hex-hero-display-wait','hex-hero-return-preparing');
       document.dispatchEvent(new Event('hex:hero-display-ready'));
       /* ページ全体のloadを待たず、初期ズームの終盤で見出しを再生する。 */
-      showHeroCatch(180,afterOpening);
+      if(cover)revealDirectHero();
+      else showHeroCatch(180,true);
       /* 操作開始と後続コンテンツの準備は従来のタイミングを維持する。 */
       var wasInert=hero.inert;
       hero.inert=true;
@@ -10823,7 +10856,7 @@ hexReady(function(){
         hero.inert=wasInert;
       }
       window.requestAnimationFrame(waitForIntro);
-      window.setTimeout(function(){
+      if(afterOpening)window.setTimeout(function(){
         root.classList.remove('hex-direct-hero-fade','hex-direct-hero-fade-ready');
       },DIRECT_HERO_FADE_DURATION+100);
     }
@@ -12005,7 +12038,7 @@ hexReady(function(){
       opening._hexV2Cancel();
       document.documentElement.classList.remove('hex-opening-lock');
       removeOpeningSourceBlocks();
-      showHeroWithFade();
+      showDirectHero(false);
       return;
     }
     document.body.insertBefore(openingHost,document.body.firstChild);
