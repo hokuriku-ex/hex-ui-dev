@@ -10788,11 +10788,8 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
   left:0;width:100%;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero{
-  --hex-page-title-color:#265ab0;
-  --hex-page-hero-gap:24px;
-}
-.pagetitle_type.pagetitle_type4.hex-page-hero.has-hero-nav{
   --hex-page-title-color:#f7d04f;
+  --hex-page-hero-gap:24px;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero .bg_text h1::after,
 .pagetitle_type.pagetitle_type4.hex-page-hero .bg_text h1 :is(.title_box,.title_font_big_headline){
