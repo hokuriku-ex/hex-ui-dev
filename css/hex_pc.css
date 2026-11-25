@@ -10920,7 +10920,6 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero{
   --hex-page-title-color:#f7d04f;
-  --hex-page-hero-gap:24px;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero .bg_text h1::after,
 .pagetitle_type.pagetitle_type4.hex-page-hero .bg_text h1 :is(.title_box,.title_font_big_headline){
@@ -10936,8 +10935,8 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
   background:#265ab0;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero:not(.has-hero-nav){
-  height:auto!important;
-  background:#fff!important;
+  height:calc((var(--hex-viewport-height,100dvh) - var(--hex-page-header)) / 2)!important;
+  background:#265ab0!important;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero:not(.has-hero-nav)::before,
 .pagetitle_type.pagetitle_type4.hex-page-hero:not(.has-hero-nav) > .contents::before,
@@ -10948,11 +10947,7 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
   display:none;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero:not(.has-hero-nav) > .contents{
-  height:auto!important;
-  /* Preserve the title center from the full-height hero with its 72px scroll cue. */
-  --hex-page-title-center:calc((var(--hex-viewport-height,100dvh) - var(--hex-page-header) - 72px - var(--hex-curve-depth)) / 2);
-  padding-block-start:max(0px,calc(var(--hex-page-title-center) - var(--hex-page-title-half-height,0px)))!important;
-  padding-block-end:var(--hex-page-hero-gap)!important;
+  justify-content:center!important;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero:not(.has-hero-nav) .hex-page-hero-main{
   position:relative;top:auto;left:auto;transform:none;

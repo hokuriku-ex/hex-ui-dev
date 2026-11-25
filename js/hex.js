@@ -18471,8 +18471,6 @@ hexReady(function(){
           hero.style.setProperty('--hex-page-image-height',imageHeight+'px');
         }
         syncHeroCover();
-      }else{
-        hero.style.setProperty('--hex-page-title-half-height',main.offsetHeight/2+'px');
       }
       hero.dispatchEvent(new Event('hex:page-hero-layout',{bubbles:true}));
     }
