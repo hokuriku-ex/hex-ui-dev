@@ -3149,7 +3149,9 @@ div[hex-sp]{
 
 /* 開幕とヒーローのヘッダー用の白いロゴとメニューアイコン */
 html:is(.hex-desktop-hero-header,.hex-opening-lock,.hex-opening-finishing,.hex-hero-manual-lock):not(.hex-page-yellow-covering,:has(.bg_contactbutton.hex-menu-open))
-  :is(.headermenu_type8 .headermenu_logo img,.bg_contactbutton > .menu_button .bg_svg svg){
+  :is(.headermenu_type8 .headermenu_logo img,.bg_contactbutton > .menu_button .bg_svg svg),
+html.hex-hero-manual-lock:not(.hex-opening-lock,.hex-opening-finishing,.hex-page-yellow-covering):has(.bg_contactbutton.hex-menu-open)
+  .headermenu_type8 .headermenu_logo img{
   filter:brightness(0) invert(1)!important;
 }
 
