@@ -882,6 +882,18 @@
   }
 }
 
+@media screen and (max-width:768px) and (prefers-reduced-motion:no-preference){
+  .bg_contactbutton.hex-menu-open #gc_auto_frame_header_object_smartphone_hum_pupup{
+    opacity:1!important;
+    transition:none!important;
+    animation:hex-menu-panel-reveal-down .46s cubic-bezier(.22,1,.36,1);
+  }
+}
+@keyframes hex-menu-panel-reveal-down{
+  from{clip-path:inset(0 0 100% 0);}
+  to{clip-path:inset(0);}
+}
+
 /* ハンバーガーメニュー共通 */
 @media screen{
   /* メニュー内のホームを非表示 */
