@@ -1125,9 +1125,15 @@
     align-items:center!important;
     justify-content:center!important;
     margin-left:auto!important;
-    color:#1f2774!important;
+    color:inherit!important;
     font-size:16px!important;
     line-height:1!important;
+  }
+
+  #gc_auto_frame_header_object_smartphone_hum_pupup
+  .menu_group.hex-submenu-open .menu_inner_group{
+    color:#f7d04f!important;
+    border-bottom-color:#f7d04f!important;
   }
 
   /* 電話番号・カレンダー配置 */
