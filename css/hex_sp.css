@@ -1040,7 +1040,8 @@
   /* 開いている親メニュー */
   #gc_auto_frame_header_object_smartphone_hum_pupup
   .menu_group.hex-submenu-open > .menu_group_text{
-    color:#1f2774!important;
+    color:#f7d04f!important;
+    border-bottom-color:#f7d04f!important;
     font-weight:900!important;
   }
 
@@ -1071,6 +1072,7 @@
   #gc_auto_frame_header_object_smartphone_hum_pupup
   .menu_right > .menu_group.hex-submenu-open > .menu_group_text::after{
     content:"\f078";
+    color:inherit!important;
     transform:rotate(180deg);
   }
 
