@@ -9706,8 +9706,8 @@ hexReady(function(){
     guide.innerHTML=
       '<div class="hex-hero-guide-circle">'+
         '<i class="fa-regular fa-hand-pointer" aria-hidden="true"></i>'+
-        '<p id="hex-hero-guide-title">私たちの仕事を<br>のぞいてみましょう。</p>'+
-        '<p id="hex-hero-guide-instructions">ドラッグ・スワイプで<br>動かしてみよう</p>'+
+        '<p id="hex-hero-guide-title">外構づくりの現場を、<br>のぞいてみよう。</p>'+
+        '<p id="hex-hero-guide-instructions" lang="en">DRAG ＆ ZOOM<br>OR<br>SWIPE</p>'+
       '</div>'+
       '<button type="button" class="hex-hero-guide-start" autofocus>START</button>';
     function closeGuide(){if(guide.open)guide.close();}
@@ -17526,6 +17526,10 @@ hexReady(function(){
   function setMode(mode){
     if(cursor.dataset.mode===mode){return;}
     cursor.dataset.mode=mode;
+    if(mode==='click'||mode==='home'){
+      label.textContent=mode.toUpperCase();
+      return;
+    }
     label.textContent=mode==='normal'?'':
       mode.charAt(0).toUpperCase()+mode.slice(1);
   }
