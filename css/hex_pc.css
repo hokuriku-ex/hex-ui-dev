@@ -3229,6 +3229,9 @@ div[hex-sp]{
 
 @media screen and (min-width:769px) and (prefers-reduced-motion:no-preference){
   .bg_contactbutton.hex-menu-open #gc_auto_frame_header_object_smartphone_hum_pupup{
+    /* CMSのフェードを抑え、開閉はクリップのアニメーションだけで描画する。 */
+    opacity:1!important;
+    transition:none!important;
     animation:hex-menu-panel-reveal .46s cubic-bezier(.22,1,.36,1);
   }
   .bg_contactbutton.hex-menu-closing #gc_auto_frame_header_object_smartphone_hum_pupup{
