@@ -12741,27 +12741,6 @@ hexLoad(function(){
       if(oldTitle){
         oldTitle.style.display='none';
       }
-      var mapLink=accessBlock.querySelector('a');
-      if(mapLink){
-        var mapWrap=document.createElement('div');
-        var titleSpan=document.createElement('span');
-        var iconSpan=document.createElement('span');
-        var icon=document.createElement('i');
-        mapWrap.className='hex-link-wrap hex-company-map-link';
-        mapLink.className='hex-link light';
-        mapLink.target='_blank';
-        mapLink.rel='noopener';
-        mapLink.textContent='';
-        titleSpan.className='hex-link-title';
-        titleSpan.textContent='Googleマップで見る';
-        iconSpan.className='hex-link-icon';
-        icon.className='fa-solid fa-arrow-up-right-from-square';
-        iconSpan.appendChild(icon);
-        mapLink.appendChild(titleSpan);
-        mapLink.appendChild(iconSpan);
-        mapLink.parentNode.insertBefore(mapWrap,mapLink);
-        mapWrap.appendChild(mapLink);
-      }
     }
 
     /* 施工エリアの■をライン用spanに置換 */
