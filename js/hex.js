@@ -9714,6 +9714,8 @@ hexReady(function(){
     }
     function closeGuide(play){
       if(!guide.open)return;
+      var cursor=guide.querySelector('.hex-follow-cursor');
+      if(cursor)document.body.appendChild(cursor);
       guide.close();
       guide.remove();
       document.removeEventListener('hex:hero-departed',cancelGuide);
@@ -9731,6 +9733,8 @@ hexReady(function(){
     document.addEventListener('hex:hero-intro-reset',cancelGuide);
     document.body.appendChild(guide);
     guide.showModal();
+    var cursor=document.querySelector('.hex-follow-cursor');
+    if(cursor)guide.appendChild(cursor);
     heroGuideShown=true;
     return true;
   }
@@ -17513,7 +17517,8 @@ hexReady(function(){
   label.className='hex-follow-cursor-label';
   cursor.appendChild(disc);
   cursor.appendChild(label);
-  document.body.appendChild(cursor);
+  var cursorHost=document.querySelector('.hex-hero-guide[open]')||document.body;
+  cursorHost.appendChild(cursor);
 
   var targetX=0,targetY=0,currentX=0,currentY=0;
   var visible=false,dragHeld=false,frame=0,lastFrameTime=0,needsHitTest=false;
