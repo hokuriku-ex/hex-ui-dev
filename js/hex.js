@@ -8063,6 +8063,7 @@ function setupCardCarousel(grid,mode,options){
   var scrolling=mode==='scroll';
   var staffNormal=mode==='normal'&&grid.classList.contains('hex-staff-slider');
   var tiktok=grid.classList.contains('hex-tiktok-grid');
+  var uniformCards=scrolling||tiktok;
   var originalGridClass=grid.className,scrollCardWidth=0;
   var cards=Array.from(grid.children);
   if(!cards.length)return;
@@ -8321,11 +8322,11 @@ function setupCardCarousel(grid,mode,options){
       var firstLayout=offsets[i]===undefined;
       var wraps=!firstLayout&&Math.abs(offset-offsets[i])>1;
       slide.style.transition=(scrolling||wraps||motion||drag||(tiktok&&firstLayout))?'none':'';
-      var x=scrolling?offset*(cardWidth+32):mobile.matches?offset*step:
+      var x=uniformCards?offset*(cardWidth+32):mobile.matches?offset*step:
         Math.sign(offset)*cardWidth*(Math.abs(offset)<=1?Math.abs(offset)*.82:
           .82+(Math.abs(offset)-1)*.64);
       slide.style.setProperty('--hex-carousel-x',x+'px');
-      var scale=scrolling||mobile.matches?1:1-.42*Math.min(1,Math.abs(offset));
+      var scale=uniformCards||mobile.matches?1:1-.42*Math.min(1,Math.abs(offset));
       slide.style.setProperty('--hex-carousel-scale',String(scale));
       if(staffNormal&&!mobile.matches){
         slide.style.setProperty('--hex-staff-text-scale',String(1/scale));
@@ -8340,7 +8341,7 @@ function setupCardCarousel(grid,mode,options){
       // PCは見切れたカードも表示し、画面外の余裕を越えてから非表示にする。
       // 固定の「2枚分」で消すと、端へ入る途中でopacityの復帰が遅れる。
       var outside=mobile.matches?Math.abs(offset)>2:
-        Math.abs(x)-cardWidth*(scrolling?.5:.29)>width/2+cardWidth*.25;
+        Math.abs(x)-cardWidth*(uniformCards?.5:.29)>width/2+cardWidth*.25;
       slide.classList.toggle('is-outside',outside);
       slide.inert=!scrolling&&i!==index;
       slide.setAttribute('aria-hidden',String(scrolling?i>=cards.length:i!==index));
@@ -8461,7 +8462,7 @@ function setupCardCarousel(grid,mode,options){
   viewport.addEventListener('touchcancel',finishTouch,{passive:true});
   function dragStep(){
     if(scrolling)return (scrollCardWidth||viewport.clientWidth*.40)+32;
-    if(tiktok&&!mobile.matches)return getTiktokCardWidth(viewport.clientWidth)*.82;
+    if(tiktok)return getTiktokCardWidth(viewport.clientWidth)+32;
     return mobile.matches?viewport.clientWidth+32:viewport.clientWidth*.40*.82;
   }
   function settle(target,velocity){
