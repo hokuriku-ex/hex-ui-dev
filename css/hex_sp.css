@@ -1131,7 +1131,7 @@
   }
 
   #gc_auto_frame_header_object_smartphone_hum_pupup
-  .menu_group.hex-submenu-open .menu_inner_group{
+  .menu_group.hex-submenu-open .menu_inner_group:hover{
     color:#f7d04f!important;
     border-bottom-color:#f7d04f!important;
   }
