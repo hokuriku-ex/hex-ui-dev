@@ -9696,7 +9696,6 @@ hexReady(function(){
   var heroGuideShown=false;
 
   function showHeroGuide(onDismiss){
-    if(heroGuideShown)return false;
     var guide=document.createElement('dialog');
     if(typeof guide.showModal!=='function')return false;
     guide.className='hex-hero-guide';
@@ -9710,20 +9709,23 @@ hexReady(function(){
         '<p id="hex-hero-guide-instructions" lang="en">DRAG ＆ ZOOM<br>OR<br>SWIPE</p>'+
       '</div>'+
       '<button type="button" class="hex-hero-guide-start" autofocus>START</button>';
-    function closeGuide(){if(guide.open)guide.close();}
-    var cancelled=false;
     function cancelGuide(){
-      cancelled=true;
-      closeGuide();
+      closeGuide(false);
     }
-    guide.addEventListener('click',function(event){
-      if(!event.target.closest('.hex-hero-guide-circle'))closeGuide();
-    });
-    guide.addEventListener('close',function(){
+    function closeGuide(play){
+      if(!guide.open)return;
+      guide.close();
       guide.remove();
       document.removeEventListener('hex:hero-departed',cancelGuide);
       document.removeEventListener('hex:hero-intro-reset',cancelGuide);
-      if(!cancelled)onDismiss();
+      if(play)onDismiss();
+    }
+    guide.addEventListener('click',function(event){
+      if(!event.target.closest('.hex-hero-guide-circle'))closeGuide(true);
+    });
+    guide.addEventListener('cancel',function(event){
+      event.preventDefault();
+      closeGuide(true);
     });
     document.addEventListener('hex:hero-departed',cancelGuide);
     document.addEventListener('hex:hero-intro-reset',cancelGuide);
@@ -10655,7 +10657,7 @@ hexReady(function(){
     }
   }
 
-  function showHeroCatch(delay){
+  function showHeroCatch(delay,afterOpening){
     var root=document.documentElement;
     var hero=document.querySelector('.hex-hero-wrap');
     var heroCatch=hero&&hero.querySelector('.hex-hero-catch');
@@ -10680,14 +10682,20 @@ hexReady(function(){
         window.requestAnimationFrame(waitForCatch);
         return;
       }
-      if(document.querySelector('.hex-opening:not(.is-v2-hero-stage):not(.is-skipping)'))return;
-      if(!heroGuideShown&&root.classList.contains('hex-direct-hero-fade')){
-        window.requestAnimationFrame(waitForCatch);
+      playIntro();
+    }
+    function waitForHero(){
+      if(run!==heroCatchRun||heroIntroDeparted||!hero.isConnected)return;
+      if(root.matches('.hex-direct-hero-fade,.hex-opening-finishing')||
+        document.querySelector('.hex-opening:not(.is-v2-hero-stage):not(.is-skipping)')){
+        window.requestAnimationFrame(waitForHero);
         return;
       }
-      if(!showHeroGuide(playIntro))playIntro();
+      // The static hero is already visible. The catch can finish preparing after dismissal.
+      if((afterOpening||!heroGuideShown)&&showHeroGuide(waitForCatch))return;
+      waitForCatch();
     }
-    window.setTimeout(waitForCatch,delay||0);
+    window.setTimeout(waitForHero,delay||0);
   }
 
   function showHeroWithFade(){
@@ -11550,7 +11558,6 @@ hexReady(function(){
 
       // 最後の日本語キャッチから、中央の丸演出でヒーローへ。
       updateDots(true);
-      if(heroGuideShown)startHeroDotRing();
       runHeroCircleReveal(true).then(function(){
         if(cancelled)return;
         visualScenes.forEach(function(scene){
@@ -11559,7 +11566,7 @@ hexReady(function(){
         });
         if(cancelled){return;}
         // 丸演出と複製からの切り替えが済んでから、見出しの再生と計時を始める。
-        finishOpening(opening,function(){showHeroCatch(0);});
+        finishOpening(opening,function(){showHeroCatch(0,true);});
       });
     }
 
