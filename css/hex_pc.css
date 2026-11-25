@@ -3178,23 +3178,25 @@ div[hex-sp]{
   }
 }
 
-/* ハンバーガーメニューをヘッダーの下から表示 */
+/* 右側のメニューパネルをヘッダーの上から画面下端まで重ねる */
 @media screen and (min-width:769px){
   #gc_auto_frame_header_object_smartphone_hum_pupup{
     --hex-menu-panel-radius:clamp(32px,4vw,64px);
     position:fixed!important;
-    top:var(--header_height,80px)!important;
+    top:0!important;
     right:0!important;
     bottom:0!important;
     left:auto!important;
     width:768px!important;
     max-width:100%!important;
     margin:0!important;
+    padding-top:var(--header_height,80px)!important;
     height:auto!important;
     max-height:none!important;
     box-sizing:border-box!important;
     background:#fff!important;
     border-radius:var(--hex-menu-panel-radius) 0 0 var(--hex-menu-panel-radius)!important;
+    z-index:0!important;
     transform:none!important;
     translate:none!important;
     overscroll-behavior:contain;
@@ -3206,19 +3208,28 @@ div[hex-sp]{
   .bg_contactbutton.hex-menu-open #gc_auto_frame_header_object_smartphone_hum_pupup{
     animation:hex-menu-panel-reveal .46s cubic-bezier(.22,1,.36,1);
   }
+  .bg_contactbutton.hex-menu-closing #gc_auto_frame_header_object_smartphone_hum_pupup{
+    display:var(--hex-menu-panel-display,block)!important;
+    pointer-events:none!important;
+    animation:hex-menu-panel-hide .46s cubic-bezier(.22,1,.36,1) reverse both;
+  }
 }
 @keyframes hex-menu-panel-reveal{
+  from{clip-path:inset(0 0 0 100% round var(--hex-menu-panel-radius) 0 0 var(--hex-menu-panel-radius));}
+  to{clip-path:inset(0 round var(--hex-menu-panel-radius) 0 0 var(--hex-menu-panel-radius));}
+}
+@keyframes hex-menu-panel-hide{
   from{clip-path:inset(0 0 0 100% round var(--hex-menu-panel-radius) 0 0 var(--hex-menu-panel-radius));}
   to{clip-path:inset(0 round var(--hex-menu-panel-radius) 0 0 var(--hex-menu-panel-radius));}
 }
 
 /* 開幕・ヒーローからWELCOMEの丸が完成するまでのPCヘッダー */
 @media screen and (min-width:769px){
-  html.hex-desktop-hero-header:has(.bg_contactbutton.hex-menu-open){
-    --hex-desktop-hero-header-background:#fff;
+  html:not(.hex-desktop-hero-header):has(.bg_contactbutton.hex-menu-open) :is(#header,.gc_auto_frame_header,.bg_headermenu,.headermenu_type8,.headermenu_type8 .pc_menu){
+    background:#fff!important;
   }
   html.hex-desktop-hero-header :is(#header,.gc_auto_frame_header,.bg_headermenu,.headermenu_type8,.headermenu_type8 .pc_menu){
-    background:var(--hex-desktop-hero-header-background,transparent)!important;
+    background:transparent!important;
     box-shadow:none!important;
   }
   html.hex-desktop-hero-header .bg_headermenu{
@@ -3254,6 +3265,7 @@ div[hex-sp]{
   :is(html.hex-desktop-hero-header .bg_contactbutton,.bg_contactbutton.hex-menu-open) > .menu_button{
     position:absolute!important;
     inset:0!important;
+    z-index:10003!important;
     display:flex!important;
     align-items:center!important;
     justify-content:center!important;

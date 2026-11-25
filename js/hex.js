@@ -2530,10 +2530,37 @@ hexLoad(function(){
 
     /* ハンバーガーと×アイコンの切り替え */
     if(wrapper){
+      var animateMenu=window.matchMedia('(min-width:769px) and (prefers-reduced-motion:no-preference)');
+      var closeAnimation=null;
+      function finishMenuClose(){
+        closeAnimation=null;
+        wrapper.classList.remove('hex-menu-closing','hex-menu-open');
+        wrapper.style.removeProperty('--hex-menu-panel-display');
+        popup.inert=false;
+      }
       function syncSmartphoneMenuState(){
-        var isOpen=
-          window.getComputedStyle(popup).display!=='none';
-
+        var wasClosing=wrapper.classList.contains('hex-menu-closing');
+        if(wasClosing)wrapper.classList.remove('hex-menu-closing');
+        var display=window.getComputedStyle(popup).display;
+        var isOpen=display!=='none';
+        if(isOpen){
+          closeAnimation=null;
+          popup.inert=false;
+          wrapper.style.setProperty('--hex-menu-panel-display',display);
+        }else if(wrapper.classList.contains('hex-menu-open')&&animateMenu.matches&&popup.getAnimations){
+          wrapper.classList.add('hex-menu-closing');
+          popup.inert=true;
+          var closing=popup.getAnimations().find(function(animation){
+            return animation.animationName==='hex-menu-panel-hide';
+          });
+          if(closing){
+            closeAnimation=closing;
+            function onCloseEnd(){if(closeAnimation===closing)finishMenuClose();}
+            closing.finished.then(onCloseEnd,onCloseEnd);
+            return;
+          }
+          finishMenuClose();
+        }
         wrapper.classList.toggle('hex-menu-open',isOpen);
       }
 
