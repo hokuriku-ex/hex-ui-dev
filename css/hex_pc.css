@@ -972,6 +972,9 @@ a.hex-text-link[target="_blank"]::after{
   box-sizing:border-box!important;
   border-width:0!important;
 }
+.gc_auto_frame_post_item_title.is-relocated-to-hero{
+  display:none!important;
+}
 .gc_auto_frame_post_item_title .date{
   position:relative;
   width:fit-content!important;
@@ -10875,6 +10878,32 @@ html.hex-page-intro-scroll-lock{scrollbar-gutter:stable;}
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero .bg_text h1 .title_box{
   background:none!important;
+}
+.pagetitle_type.pagetitle_type4.has-article-hero-title .bg_text{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+}
+.pagetitle_type.pagetitle_type4.has-article-hero-title .bg_text h1::after{
+  content:none!important;
+}
+.hex-article-hero-title{
+  max-width:min(calc(100% - 32px),960px);
+  font-family:var(--hex-font-pop-ja)!important;
+  font-size:clamp(22px,4vw,56px)!important;
+  line-height:1.35!important;
+  letter-spacing:.04em!important;
+  color:var(--hex-page-title-color,#f7d04f)!important;
+  -webkit-text-fill-color:currentColor!important;
+  -webkit-text-stroke:0!important;
+  text-shadow:none!important;
+  overflow-wrap:anywhere;
+}
+.hex-page-hero .hex-article-hero-date{
+  margin:.6em 0 0!important;
+  color:#fff!important;
+  font-size:clamp(14px,1.4vw,20px)!important;
+  text-align:center;
 }
 .pagetitle_type.pagetitle_type4.hex-page-hero .hex-page-hero-decor{
   background:#265ab0;

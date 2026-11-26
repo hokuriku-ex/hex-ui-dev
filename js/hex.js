@@ -222,11 +222,15 @@ window.hexPrepareFixedBackgroundImages=function(){
   document.querySelectorAll('.hex-bg-patterns-layer').forEach(window.hexPrepareFixedBackgroundLayer);
 };
 
+function hexGetArticlePageType(params){
+  var pageType=params.get('k')||params.get('page_type')||'';
+  return /^(work_item|information_item|staffblog_item)$/.test(pageType)?pageType:'';
+}
+
 /* 施工事例・お知らせ・ブログの詳細は親ページと同じヒーローを使う。 */
 function hexShouldHidePageHero(){
   var params=new URLSearchParams(window.location.search);
-  var pageType=params.get('k')||params.get('page_type')||'';
-  if(/^(work_item|information_item|staffblog_item)$/.test(pageType))return false;
+  if(hexGetArticlePageType(params))return false;
 
   return ['id','page_no'].some(function(name){
     return /^\d+$/.test(params.get(name)||'');
@@ -2299,12 +2303,16 @@ hexLoad(function(){
 /* =======================================
    記事詳細タイトル整形
 ======================================= */
+function hexCleanArticleTitle(text){
+  return text.replace(/【(?:スタッフブログ|重要なお知らせ)】[ \u00A0　]*/g,'').replace(/\s+/g,' ').trim();
+}
+
 hexLoad(function(){
   setTimeout(function(){
     var titles=document.querySelectorAll('.gc_auto_frame_post_item_title h2');
     Array.prototype.forEach.call(titles,function(title){
       if(title.classList.contains('hex-article-title-done'))return;
-      title.textContent=title.textContent.replace(/【(?:スタッフブログ|重要なお知らせ)】[ \u00A0　]*/g,'').replace(/\s+/g,' ').trim();
+      title.textContent=hexCleanArticleTitle(title.textContent);
       title.classList.add('hex-article-title-done');
     });
   },0);
@@ -18383,6 +18391,8 @@ hexReady(function(){
 (function(){
   'use strict';
   if(hexShouldHidePageHero())return;
+  var articlePageType=hexGetArticlePageType(new URLSearchParams(window.location.search));
+  var articleHeaderSelector='.gc_auto_frame_post_item_title';
   var scrollLocks=new Set(),heldLenis=null,resumeLenis=false,lockFrame=0;
   function preventScroll(event){
     if(event.type==='keydown'){
@@ -18738,16 +18748,57 @@ hexReady(function(){
       requestAnimationFrame(function(){setTimeout(function(){revealPage(true);},2000);});
     });
   }
-  function scan(){document.querySelectorAll('.pagetitle_type.pagetitle_type4').forEach(init);}
+  function setArticleHeroTitle(hero){
+    var articleHeader=document.querySelector(articleHeaderSelector);
+    var articleTitle=articleHeader&&articleHeader.querySelector('h2');
+    var heading=hero.querySelector('.bg_text h1');
+    var text=articleTitle&&hexCleanArticleTitle(articleTitle.textContent);
+    if(!heading||!text)return;
+
+    var title=heading.querySelector('.hex-article-hero-title');
+    if(!title){
+      title=document.createElement('span');
+      title.className='hex-article-hero-title';
+      heading.replaceChildren(title);
+    }
+    if(title.textContent!==text)title.textContent=text;
+    hero.classList.add('has-article-hero-title');
+
+    var date=articlePageType!=='work_item'&&articleHeader.querySelector('.date');
+    var dateText=date&&date.textContent.trim();
+    var subtitle=hero.querySelector('.hex-article-hero-date');
+    if(dateText){
+      if(!subtitle){
+        subtitle=document.createElement('p');
+        subtitle.className='hex-article-hero-date';
+        heading.after(subtitle);
+      }
+      if(subtitle.textContent!==dateText)subtitle.textContent=dateText;
+    }else if(subtitle){
+      subtitle.remove();
+    }
+    articleHeader.classList.add('is-relocated-to-hero');
+  }
+
+  function scan(){
+    document.querySelectorAll('.pagetitle_type.pagetitle_type4').forEach(function(hero){
+      if(articlePageType)setArticleHeroTitle(hero);
+      init(hero);
+    });
+  }
   hexReady(scan);
   hexLoad(scan);
   // HOPWEBのページ差し替えにも対応
   hexReady(function(){
     var queued=false;
+    var watchedSelector='.pagetitle_type4'+(articlePageType?','+articleHeaderSelector:'');
     new MutationObserver(function(records){
-      var relevant=records.some(function(record){return Array.from(record.addedNodes).some(function(node){
-        return node.nodeType===1&&(node.matches('.pagetitle_type4')||node.querySelector('.pagetitle_type4'));
-      });});
+      var relevant=records.some(function(record){
+        return (articlePageType&&record.target.closest&&record.target.closest(articleHeaderSelector))||
+          Array.from(record.addedNodes).some(function(node){
+            return node.nodeType===1&&(node.matches(watchedSelector)||node.querySelector(watchedSelector));
+          });
+      });
       if(relevant&&!queued){queued=true;requestAnimationFrame(function(){queued=false;scan();});}
     }).observe(document.body,{childList:true,subtree:true});
   });
