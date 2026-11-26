@@ -58,23 +58,21 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
     return !!Element.prototype.animate&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
   function playCurtain(overlay){
-    if(curtain!==overlay)return;
+    if(curtain!==overlay||!transition)return;
     var track=overlay.firstElementChild;
     var bands=Array.from(track.children);
     var animations=hexAnimateCurtain(track,bands,false,backwards,930);
-    if(transition){
-      function revealBehindCurtain(){
-        if(curtain!==overlay)return;
-        var width=root.clientWidth;
-        var bounds=track.getBoundingClientRect();
-        // Place the seam beneath the bands so the outgoing and incoming pages meet inside the curtain.
-        var edge=Math.max(0,Math.min(width,(bounds.left+bounds.right)/2));
-        root.style.setProperty('--hex-history-old-clip',backwards
-          ?'inset(0 0 0 '+edge+'px)':'inset(0 '+(width-edge)+'px 0 0)');
-        frame=requestAnimationFrame(revealBehindCurtain);
-      }
-      revealBehindCurtain();
+    function revealBehindCurtain(){
+      if(curtain!==overlay)return;
+      var width=root.clientWidth;
+      var bounds=track.getBoundingClientRect();
+      // Place the seam beneath the bands so the outgoing and incoming pages meet inside the curtain.
+      var edge=Math.max(0,Math.min(width,(bounds.left+bounds.right)/2));
+      root.style.setProperty('--hex-history-old-clip',backwards
+        ?'inset(0 0 0 '+edge+'px)':'inset(0 '+(width-edge)+'px 0 0)');
+      frame=requestAnimationFrame(revealBehindCurtain);
     }
+    revealBehindCurtain();
     function finish(){
       if(curtain===overlay)clearCurtain();
     }
@@ -88,8 +86,10 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
         (!document.fonts||document.fonts.status==='loaded')&&
         !root.matches('.hex-opening-pending,.hex-hero-display-wait,.hex-reload-header-pending,.hex-motion-preparing')&&
         !document.querySelector('.hex-page-hero[aria-busy="true"],#hex-motion-preparation-cover');
-      if(ready||performance.now()-start>=5000){
+      if(ready){
         frame=requestAnimationFrame(function(){playCurtain(overlay);});
+      }else if(performance.now()-start>=5000){
+        clearCurtain();
       }else{
         frame=requestAnimationFrame(check);
       }
@@ -129,9 +129,10 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
     current.ready.then(function(){
       if(transition===current)waitForPage(overlay);
     },function(){
-      if(transition!==current)return;
-      clearCurtain();
-      waitForPage(createCurtain());
+      if(transition===current)clearCurtain();
+    });
+    current.finished.then(function(){
+      if(transition===current)clearCurtain();
     });
   });
   window.addEventListener('pagehide',leaveHistoryPage);
@@ -139,13 +140,6 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
   window.addEventListener('pageshow',function(event){
     if(!event.persisted&&!hexHistoryNavigation)return;
     root.classList.add('hex-history-navigation');
-    if(curtain)return;
-    frame=requestAnimationFrame(function(){
-      if(!curtain&&canAnimate()){
-        restoreHistoryDirection(window.navigation&&window.navigation.activation);
-        waitForPage(createCurtain());
-      }
-    });
   });
 })();
 
