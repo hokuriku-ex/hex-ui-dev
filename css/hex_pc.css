@@ -10601,7 +10601,8 @@ h2.hex-top-title.hex-audience-guide-title .hex-top-title-en{
   pointer-events:none!important;
 }
 /* 自動進行前はキャッチ、進行後は操作ボタンを表示。 */
-.hex-hero-wrap.is-intro-playing .hex-hero-catch.is-catch-visible{
+.hex-hero-wrap.is-intro-playing .hex-hero-catch.is-catch-visible,
+.hex-hero-wrap.is-returned-complete .hex-hero-catch.is-return-title-visible{
   opacity:1!important;
   visibility:visible!important;
 }
@@ -10610,6 +10611,9 @@ h2.hex-top-title.hex-audience-guide-title .hex-top-title-en{
   opacity:0!important;
   visibility:hidden!important;
   transition:opacity .45s ease,visibility 0s linear .45s!important;
+}
+.hex-hero-wrap.is-returned-complete .hex-hero-catch.is-return-title-visible{
+  transition:opacity .52s ease,visibility 0s linear!important;
 }
 .hex-hero-wrap:not(.is-intro-complete) .hex-hero-welcome-button,
 .hex-hero-wrap.is-intro-departed .hex-hero-welcome-button{

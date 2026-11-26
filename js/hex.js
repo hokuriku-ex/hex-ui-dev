@@ -9743,6 +9743,7 @@ hexReady(function(){
   }
   var sharedNav=null;
   var heroIntroTimer=null;
+  var returnedHeroTitleTimer=null;
   var heroCatchRun=0;
   var heroIntroStarted=false;
   var heroIntroDeparted=false;
@@ -9819,6 +9820,12 @@ hexReady(function(){
   function stopHeroIntro(){
     window.clearTimeout(heroIntroTimer);
     heroIntroTimer=null;
+    if(returnedHeroTitleTimer!==null){
+      window.clearTimeout(returnedHeroTitleTimer);
+      returnedHeroTitleTimer=null;
+      var copy=document.querySelector('.hex-hero-catch.is-return-title-visible');
+      if(copy)copy.classList.remove('is-return-title-visible','is-catch-visible');
+    }
     if(sharedNav){sharedNav.querySelectorAll('.is-timing').forEach(function(dot){
       dot.classList.remove('is-timing');
     });}
@@ -9886,6 +9893,9 @@ hexReady(function(){
     if(sharedNav){sharedNav.hidden=false;}
     selectHeroDot();
     document.dispatchEvent(new Event('hex:hero-intro-complete'));
+    if(!document.documentElement.classList.contains('hex-hero-display-wait')){
+      showReturnedHeroTitle();
+    }
   });
 
   document.addEventListener('hex:hero-departed',function(){
@@ -10743,6 +10753,30 @@ hexReady(function(){
     }
   }
 
+  function showReturnedHeroTitle(){
+    var root=document.documentElement;
+    var hero=document.querySelector('.hex-hero-wrap');
+    var copy=hero&&hero.querySelector('.hex-hero-catch');
+    var run=++heroCatchRun;
+    if(!copy)return;
+
+    function waitForTitle(){
+      if(run!==heroCatchRun||heroIntroDeparted||!hero.isConnected||
+        !hero.classList.contains('is-returned-complete'))return;
+      if(!isReducedMotion()&&!root.classList.contains('hex-motion-load-error')&&
+        !(window.hexPrepareHeroCatch&&window.hexPrepareHeroCatch())){
+        window.requestAnimationFrame(waitForTitle);
+        return;
+      }
+      copy.classList.add('is-catch-visible','is-return-title-visible');
+      returnedHeroTitleTimer=window.setTimeout(function(){
+        returnedHeroTitleTimer=null;
+        copy.classList.remove('is-return-title-visible');
+      },getOpeningSceneDuration(7));
+    }
+    waitForTitle();
+  }
+
   function showHeroCatch(delay,afterOpening){
     var root=document.documentElement;
     var hero=document.querySelector('.hex-hero-wrap');
@@ -10828,7 +10862,8 @@ hexReady(function(){
       });
       function finish(){
         cover.remove();
-        if(!restoreCompleted)showHeroCatch(0,false);
+        if(restoreCompleted)showReturnedHeroTitle();
+        else showHeroCatch(0,false);
       }
     }
 
@@ -15567,6 +15602,7 @@ hexLoad(function(){
     var spUppercaseIndex=-1;
     var chars=[];
     var tween=null;
+    var titleOnly=false;
     var subtitle=main&&main.parentElement
       ?main.parentElement.querySelector('.hex-opening-sub,.hex-opening-slide-subtitle')
       :null;
@@ -15604,9 +15640,9 @@ hexLoad(function(){
     var subtitlePop=createCatchSubtitlePop(subtitle,isWelcome?function(){
       main.dispatchEvent(new Event('hex:welcome-subtitle-start',{bubbles:true}));
     }:isHero?function(){
-      main.dispatchEvent(new Event('hex:hero-subtitle-start',{bubbles:true}));
+      if(!titleOnly)main.dispatchEvent(new Event('hex:hero-subtitle-start',{bubbles:true}));
     }:null,isHero?function(){
-      main.dispatchEvent(new Event('hex:hero-subtitle-complete',{bubbles:true}));
+      if(!titleOnly)main.dispatchEvent(new Event('hex:hero-subtitle-complete',{bubbles:true}));
     }:null);
 
     Array.from(textValue).forEach(function(character,index){
@@ -15627,12 +15663,12 @@ hexLoad(function(){
     if(isHero||main.closest('.hex-opening-intro-stage.is-hero-scene'))applyTitleLetterArc(main,chars);
     if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
 
-    function reset(){
+    function reset(silent){
       if(tween){
         tween.kill();
         tween=null;
       }
-      if(isHero)main.dispatchEvent(new Event('hex:hero-subtitle-reset',{bubbles:true}));
+      if(isHero&&!silent)main.dispatchEvent(new Event('hex:hero-subtitle-reset',{bubbles:true}));
       if(isWelcome)main.classList.remove('is-welcome-title-playing');
 
       if(isWelcome&&(window.innerWidth<=768||isReducedMotion())){
@@ -15657,11 +15693,12 @@ hexLoad(function(){
       gsap.set(target,{clearProps:'transform,opacity,visibility,willChange'});
     }
 
-    function play(){
+    function play(onlyTitle){
       if(isWelcome&&(window.innerWidth<=768||isReducedMotion()))return;
       if(window.hexRegisterMainTitle)window.hexRegisterMainTitle(main);
-      reset();
-      if(isHero)main.dispatchEvent(new Event('hex:hero-title-start',{bubbles:true}));
+      titleOnly=isHero&&onlyTitle===true;
+      reset(titleOnly);
+      if(isHero&&!titleOnly)main.dispatchEvent(new Event('hex:hero-title-start',{bubbles:true}));
       var subtitleDelay=(.5+(chars.length-1)*(.07*5/6))/2;
       if(useLetterPop){
         var letters=chars.filter(function(char){return char.textContent.trim()!=='';});
@@ -15670,7 +15707,7 @@ hexLoad(function(){
         if(isWelcome)main.classList.add('is-welcome-title-playing');
         tween=playTitleLetterPop(letters,stagger,function(){
           tween=null;
-          if(isHero&&!subtitlePop){
+          if(isHero&&!titleOnly&&!subtitlePop){
             main.dispatchEvent(new Event('hex:hero-subtitle-start',{bubbles:true}));
             main.dispatchEvent(new Event('hex:hero-subtitle-complete',{bubbles:true}));
           }
@@ -15709,7 +15746,7 @@ hexLoad(function(){
       });
       if(subtitlePop)subtitlePop.reset();
     }else{
-      reset();
+      reset(isHero&&!!main.closest('.hex-hero-wrap.is-returned-complete'));
     }
 
     return{
@@ -15736,7 +15773,7 @@ hexLoad(function(){
           heroCatch.classList.contains('is-catch-visible')
         ){
           heroPlayed=true;
-          heroRoll.play();
+          heroRoll.play(heroCatch.classList.contains('is-return-title-visible'));
         }
       }
 
@@ -15748,10 +15785,12 @@ hexLoad(function(){
         }
       );
 
-      ['hex:top-returned','hex:hero-intro-reset'].forEach(function(name){
-        document.addEventListener(name,function(){
+      ['hex:top-returned','hex:hero-intro-reset','hex:hero-return-complete'].forEach(function(name){
+        document.addEventListener(name,function(event){
+          if(event.type==='hex:top-returned'&&
+            heroCatch.closest('.hex-hero-wrap.is-returned-complete'))return;
           heroPlayed=false;
-          heroRoll.reset();
+          heroRoll.reset(event.type==='hex:hero-return-complete');
         });
       });
 
