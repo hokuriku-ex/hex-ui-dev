@@ -15929,6 +15929,7 @@ hexLoad(function(){
       '.hex-calendar-modal-dialog',
       '#gc_auto_frame_lp_form_dialog',
       '.hex-staff-source-stage',
+      '.hex-section-smalltitle',
       '.hex-motion-auto-off',
       '[data-hex-motion-auto="off"]',
       '[data-hex-scroll-body]'
@@ -16318,7 +16319,7 @@ hexLoad(function(){
 
     /* 背景の外枠や専用演出を持つ領域を、親ごと拡大・非表示にしない。 */
     function isExcludedFromAutoPop(target){
-      if(target.querySelector('[data-hex-scroll-body]'))return true;
+      if(target.querySelector('[data-hex-scroll-body],.hex-section-smalltitle'))return true;
       /* 問い合わせ外枠やフッターの除外を、内側のフォームボタンへ継承しない。 */
       if(isContactButtonTarget(target))return false;
       var excluded=[
