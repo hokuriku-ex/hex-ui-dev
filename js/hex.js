@@ -9719,6 +9719,7 @@ hexReady(function(){
   var STORAGE_KEY="hex_top_opening_viewed";
   var REPLAY_KEY="hex_top_opening_replay";
   var HERO_INTRO_COMPLETE_KEY="hex_top_hero_intro_complete";
+  var HEADER_LOGO_NAVIGATION_KEY="hex_top_header_logo_navigation";
 
   /* 常に表示true　本番公開時false */
   var FORCE_PLAY=false;
@@ -9936,11 +9937,31 @@ hexReady(function(){
     }
   }
 
-  function shouldRestoreHeroOnReload(){
+  document.addEventListener('click',function(event){
+    if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+    var logo=event.target.closest&&event.target.closest('.headermenu_logo');
+    if(!logo)return;
+    var link=event.target.closest('a[href]');
+    if(link&&((link.target&&link.target!=='_self')||link.hasAttribute('download')))return;
     try{
+      sessionStorage.setItem(HEADER_LOGO_NAVIGATION_KEY,String(Date.now()));
+    }catch(error){}
+  },true);
+
+  function consumeHeaderLogoNavigation(){
+    try{
+      var clickedAt=Number(sessionStorage.getItem(HEADER_LOGO_NAVIGATION_KEY));
+      sessionStorage.removeItem(HEADER_LOGO_NAVIGATION_KEY);
+      return clickedAt>0&&Date.now()-clickedAt<30000;
+    }catch(error){return false;}
+  }
+
+  function shouldRestoreCompletedHero(fromHeaderLogo){
+    try{
+      if(sessionStorage.getItem(HERO_INTRO_COMPLETE_KEY)!=="1")return false;
+      if(fromHeaderLogo)return true;
       var navigation=performance.getEntriesByType('navigation')[0];
-      return !!navigation&&navigation.type==='reload'&&
-        sessionStorage.getItem(HERO_INTRO_COMPLETE_KEY)==="1";
+      return !!navigation&&navigation.type==='reload';
     }catch(error){return false;}
   }
 
@@ -12037,6 +12058,7 @@ hexReady(function(){
     var slides;
     var slideStage=null;
     var messageStage=null;
+    var fromHeaderLogo=consumeHeaderLogoNavigation();
 
     if(!isTopPage()){
       showPendingPage();
@@ -12047,7 +12069,8 @@ hexReady(function(){
 
     var replayRequested=isReplayRequested();
     clearReplayRequest();
-    var directHero=isReducedMotion()||
+    var restoreCompleted=!FORCE_PLAY&&!replayRequested&&shouldRestoreCompletedHero(fromHeaderLogo);
+    var directHero=restoreCompleted||isReducedMotion()||
       (!FORCE_PLAY&&!replayRequested&&hasViewedOpening());
 
 
@@ -12080,7 +12103,7 @@ hexReady(function(){
       opening._hexV2Cancel();
       document.documentElement.classList.remove('hex-opening-lock');
       removeOpeningSourceBlocks();
-      showDirectHero(false,!replayRequested&&shouldRestoreHeroOnReload());
+      showDirectHero(false,restoreCompleted);
       return;
     }
     document.body.insertBefore(openingHost,document.body.firstChild);
