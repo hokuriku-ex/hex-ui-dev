@@ -8,6 +8,27 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
 (function(){
   var root=document.documentElement;
   var curtain,frame=0,transition=null;
+  var historyDirectionKey='hex-history-curtain-direction';
+  var backwards=true;
+  function getHistoryDirection(activation){
+    if(!activation||!activation.from||!activation.entry)return null;
+    var fromIndex=activation.from.index;
+    var toIndex=activation.entry.index;
+    if(!Number.isInteger(fromIndex)||!Number.isInteger(toIndex)||
+      fromIndex<0||toIndex<0||fromIndex===toIndex)return null;
+    return toIndex<fromIndex;
+  }
+  function restoreHistoryDirection(activation){
+    var direction=getHistoryDirection(activation);
+    try{
+      var saved=JSON.parse(sessionStorage.getItem(historyDirectionKey)||'null');
+      sessionStorage.removeItem(historyDirectionKey);
+      if(direction===null&&saved&&saved.url===location.href&&Date.now()-saved.time<30000){
+        direction=saved.backwards;
+      }
+    }catch(error){}
+    if(direction!==null)backwards=direction;
+  }
   function clearCurtain(){
     cancelAnimationFrame(frame);
     if(curtain){curtain.remove();curtain=null;}
@@ -22,6 +43,7 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
   function leaveHistoryPage(){
     clearCurtain();
     root.classList.remove('hex-history-navigation');
+    backwards=true;
   }
   function createCurtain(){
     var overlay=document.createElement('div');
@@ -39,18 +61,16 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
     if(curtain!==overlay)return;
     var track=overlay.firstElementChild;
     var bands=Array.from(track.children);
-    var activation=window.navigation&&window.navigation.activation;
-    var backwards=!(activation&&activation.from&&activation.entry&&activation.from.index>=0&&
-      activation.entry.index>activation.from.index);
     var animations=hexAnimateCurtain(track,bands,false,backwards,930);
     if(transition){
       function revealBehindCurtain(){
         if(curtain!==overlay)return;
         var width=root.clientWidth;
-        var edge=track.getBoundingClientRect();
-        var covered=Math.max(0,Math.min(width,backwards?edge.right:width-edge.left));
+        var bounds=track.getBoundingClientRect();
+        // Place the seam beneath the bands so the outgoing and incoming pages meet inside the curtain.
+        var edge=Math.max(0,Math.min(width,(bounds.left+bounds.right)/2));
         root.style.setProperty('--hex-history-old-clip',backwards
-          ?'inset(0 0 0 '+covered+'px)':'inset(0 '+covered+'px 0 0)');
+          ?'inset(0 0 0 '+edge+'px)':'inset(0 '+(width-edge)+'px 0 0)');
         frame=requestAnimationFrame(revealBehindCurtain);
       }
       revealBehindCurtain();
@@ -80,6 +100,14 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
     if(!event.activation)return;
     if(event.activation.navigationType==='traverse'){
       root.classList.add('hex-history-navigation');
+      var direction=getHistoryDirection(event.activation);
+      if(direction!==null&&event.activation.entry.url){
+        try{
+          sessionStorage.setItem(historyDirectionKey,JSON.stringify({
+            url:event.activation.entry.url,time:Date.now(),backwards:direction
+          }));
+        }catch(error){}
+      }
     }else{
       leaveHistoryPage();
     }
@@ -88,6 +116,7 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
     var activation=window.navigation&&window.navigation.activation;
     if(!hexHistoryNavigation&&(!activation||activation.navigationType!=='traverse'))return;
     root.classList.add('hex-history-navigation');
+    restoreHistoryDirection(activation);
     if(!event.viewTransition)return;
     if(!canAnimate()){
       event.viewTransition.skipTransition();
@@ -112,7 +141,10 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
     root.classList.add('hex-history-navigation');
     if(curtain)return;
     frame=requestAnimationFrame(function(){
-      if(!curtain&&canAnimate())waitForPage(createCurtain());
+      if(!curtain&&canAnimate()){
+        restoreHistoryDirection(window.navigation&&window.navigation.activation);
+        waitForPage(createCurtain());
+      }
     });
   });
 })();
@@ -11088,6 +11120,7 @@ hexReady(function(){
       cover.querySelector('.hex-simple-loader-label').remove();
       cover.style.maskImage='radial-gradient(circle, transparent 1px, #000 2px)';
       requestAnimationFrame(function reveal(now){
+        if(root.classList.contains('hex-history-navigation')){finish();return;}
         if(started===null)started=now;
         var progress=Math.min(1,(now-started)/1100);
         var eased=progress<.5?4*progress*progress*progress:1-Math.pow(-2*progress+2,3)/2;
@@ -18844,7 +18877,7 @@ hexReady(function(){
         loadingCover.setAttribute('aria-hidden','true');
       }
       var layers=[contents,decor];
-      var reduced=(!replay&&hexHistoryNavigation)||
+      var reduced=(!replay&&root.classList.contains('hex-history-navigation'))||
         window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var rect=(loadingCover||hero).getBoundingClientRect();
       var radius=Math.hypot(rect.width/2,rect.height/2)+4;
@@ -18880,7 +18913,10 @@ hexReady(function(){
       hero.classList.add('is-hero-revealing');
       var started=null;
       function revealFrame(now){
-        if(hero.isConnected===false){finishReveal();return;}
+        if(hero.isConnected===false||root.classList.contains('hex-history-navigation')){
+          finishReveal();
+          return;
+        }
         if(started===null)started=now;
         var progress=Math.min(1,(now-started)/1100);
         // 開幕と同じ1.1秒・中央起点・三次のイーズインアウト。
