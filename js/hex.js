@@ -6613,6 +6613,7 @@ hexReady(function(){
         window.setTimeout(function(){
           if(
             !document.documentElement.classList.contains("hex-opening-lock")&&
+            !hero.classList.contains("is-intro-complete")&&
             !document.querySelector(".hex-opening.is-curtain-sequence")
           ){
             scheduleAutoZoom(0);
@@ -6624,6 +6625,9 @@ hexReady(function(){
         var forOpening=!!(options&&options.forOpening);
         resetHero(!forOpening);
         if(forOpening){this.prepareDisplay();}
+      },
+      restoreCompleted:function(){
+        resetHero(false,true);
       }
     };
 
@@ -9714,6 +9718,7 @@ hexReady(function(){
   /* 閲覧済み記録はlocalStorage、リプレイ要求はタブ内だけのsessionStorage。 */
   var STORAGE_KEY="hex_top_opening_viewed";
   var REPLAY_KEY="hex_top_opening_replay";
+  var HERO_INTRO_COMPLETE_KEY="hex_top_hero_intro_complete";
 
   /* 常に表示true　本番公開時false */
   var FORCE_PLAY=false;
@@ -9851,6 +9856,9 @@ hexReady(function(){
       hero.classList.add('is-intro-complete');
       var copy=hero.querySelector('.hex-hero-catch');
       if(copy){copy.classList.add('is-exploring');}
+      try{
+        sessionStorage.setItem(HERO_INTRO_COMPLETE_KEY,"1");
+      }catch(error){}
       document.dispatchEvent(new Event('hex:hero-intro-complete'));
     },duration);
   });
@@ -9926,6 +9934,14 @@ hexReady(function(){
     }catch(error){
       return false;
     }
+  }
+
+  function shouldRestoreHeroOnReload(){
+    try{
+      var navigation=performance.getEntriesByType('navigation')[0];
+      return !!navigation&&navigation.type==='reload'&&
+        sessionStorage.getItem(HERO_INTRO_COMPLETE_KEY)==="1";
+    }catch(error){return false;}
   }
 
   function clearReplayRequest(){
@@ -10748,7 +10764,7 @@ hexReady(function(){
     window.setTimeout(waitForHero,delay||0);
   }
 
-  function showDirectHero(afterOpening){
+  function showDirectHero(afterOpening,restoreCompleted){
     var root=document.documentElement;
     var hero=document.querySelector('.hex-hero-wrap');
     var prepared=false;
@@ -10791,7 +10807,7 @@ hexReady(function(){
       });
       function finish(){
         cover.remove();
-        showHeroCatch(0,false);
+        if(!restoreCompleted)showHeroCatch(0,false);
       }
     }
 
@@ -10851,6 +10867,9 @@ hexReady(function(){
       }
       /* 最後に届いたパーツも合成し、安定した座標で描画してから表示。 */
       if(typeof api.refreshLayers==='function'){api.refreshLayers();}
+      if(restoreCompleted&&!hero.classList.contains('is-returned-complete')){
+        api.restoreCompleted();
+      }
       if(!api.prepareDisplay()){
         prepared=false;
         stableFrames=0;
@@ -12061,7 +12080,7 @@ hexReady(function(){
       opening._hexV2Cancel();
       document.documentElement.classList.remove('hex-opening-lock');
       removeOpeningSourceBlocks();
-      showDirectHero(false);
+      showDirectHero(false,!replayRequested&&shouldRestoreHeroOnReload());
       return;
     }
     document.body.insertBefore(openingHost,document.body.firstChild);
