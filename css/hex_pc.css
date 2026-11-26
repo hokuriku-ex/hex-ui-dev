@@ -9964,11 +9964,11 @@ body > .hex-v2-handoff{z-index:198;}
 /* ドットナビと同じ黄色のマウス追従カーソル。画面色は変更しない。 */
 /* 遷移先の準備幕が一瞬見える場合も、旧ページの黄色から途切れさせない。 */
 /* ヘッダー経由は丸開きを挟まず、黄色から準備済みの導入文へ直接つなぐ。 */
-html.hex-header-intro-handoff.hex-page-handoff-active::view-transition-new(root){
+html.hex-header-intro-handoff.hex-page-handoff-active:not(.hex-history-navigation)::view-transition-new(root){
   clip-path:none!important;
   opacity:0!important;
 }
-html.hex-header-intro-handoff.hex-header-intro-ready.hex-page-handoff-active:not(.hex-reload-header-pending)::view-transition-new(root){
+html.hex-header-intro-handoff.hex-header-intro-ready.hex-page-handoff-active:not(.hex-reload-header-pending,.hex-history-navigation)::view-transition-new(root){
   opacity:1!important;
 }
 html.hex-page-handoff-active:not(.hex-history-navigation) #hex-motion-preparation-cover,

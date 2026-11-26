@@ -8,16 +8,21 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
 (function(){
   var root=document.documentElement;
   var curtain,frame=0;
-  function clear(){
+  function clearCurtain(){
     cancelAnimationFrame(frame);
     if(curtain){curtain.remove();curtain=null;}
+  }
+  function leaveHistoryPage(){
+    clearCurtain();
     root.classList.remove('hex-history-navigation');
   }
   function skipViewTransition(event){
     if(event.viewTransition)event.viewTransition.skipTransition();
   }
   window.addEventListener('pageswap',function(event){
-    if(event.activation&&event.activation.navigationType==='traverse')skipViewTransition(event);
+    if(!event.activation)return;
+    if(event.activation.navigationType==='traverse')skipViewTransition(event);
+    else leaveHistoryPage();
   });
   window.addEventListener('pagereveal',function(event){
     var activation=window.navigation&&window.navigation.activation;
@@ -25,15 +30,14 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
     root.classList.add('hex-history-navigation');
     skipViewTransition(event);
   });
-  window.addEventListener('pagehide',clear);
-  document.addEventListener('hex:page-cover-start',clear);
+  window.addEventListener('pagehide',leaveHistoryPage);
+  document.addEventListener('hex:page-cover-start',leaveHistoryPage);
   window.addEventListener('pageshow',function(event){
     if(!event.persisted&&!hexHistoryNavigation)return;
     root.classList.add('hex-history-navigation');
     frame=requestAnimationFrame(function(){
       frame=requestAnimationFrame(function(){
         if(!Element.prototype.animate||window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-          clear();
           return;
         }
         if(curtain)curtain.remove();
@@ -49,7 +53,8 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
           activation.entry.index>activation.from.index);
         var animations=hexAnimateCurtain(track,Array.from(track.children),false,backwards,930);
         function finish(){
-          if(curtain===overlay)clear();
+          // Keep the history guard after the curtain exits so a delayed handoff cannot reappear.
+          if(curtain===overlay)clearCurtain();
         }
         animations.track.finished.then(finish,finish);
       });
@@ -156,7 +161,9 @@ function hexAnimateCurtain(track,bands,vertical,backwards,duration){
       var ready=anchorReady&&
         !root.matches('.hex-motion-preparing,.hex-opening-pending,.hex-hero-display-wait')&&
         !document.getElementById('hex-motion-preparation-cover');
-      if(ready&&handoff.headerIntro)root.classList.add('hex-header-intro-ready');
+      if(ready&&handoff.headerIntro&&!root.classList.contains('hex-history-navigation')){
+        root.classList.add('hex-header-intro-ready');
+      }
       return ready;
     },
     set:function(value){anchorReady=!!value;}
@@ -18051,7 +18058,8 @@ hexReady(function(){
     if(url.origin!==location.origin||!/^https?:$/.test(url.protocol)||
       !replayIntro&&url.pathname===location.pathname&&url.search===location.search)return;
     if(cover){event.preventDefault();return;}
-    if(!window.hexPageTransition||root.classList.contains('hex-page-handoff-active')||
+    if(!window.hexPageTransition||
+      (root.classList.contains('hex-page-handoff-active')&&!root.classList.contains('hex-history-navigation'))||
       window.matchMedia('(prefers-reduced-motion:reduce)').matches||!Element.prototype.animate)return;
     // 既存のページ間View Transitionが有効なリンクだけを対象にする。
     try{
