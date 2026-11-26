@@ -222,16 +222,15 @@ window.hexPrepareFixedBackgroundImages=function(){
   document.querySelectorAll('.hex-bg-patterns-layer').forEach(window.hexPrepareFixedBackgroundLayer);
 };
 
-function hexGetArticlePageType(params){
+function hexIsArticleDetail(params){
   var pageType=params.get('k')||params.get('page_type')||'';
-  return /^(work_item|information_item|staffblog_item)$/.test(pageType)?pageType:'';
+  return /^(work_item|information_item|staffblog_item)$/.test(pageType);
 }
 
 /* 施工事例・お知らせ・ブログの詳細は親ページと同じヒーローを使う。 */
 function hexShouldHidePageHero(){
   var params=new URLSearchParams(window.location.search);
-  if(hexGetArticlePageType(params))return false;
-
+  if(hexIsArticleDetail(params))return false;
   return ['id','page_no'].some(function(name){
     return /^\d+$/.test(params.get(name)||'');
   });
@@ -9678,6 +9677,23 @@ function hexCreateLoadingLabel(){
   return label;
 }
 
+function hexCreateArticleLoadingIntro(page,params,intro){
+  if(!hexIsArticleDetail(params))return intro;
+  var title=page.querySelector('.gc_auto_frame_post_item_title h2');
+  var text=title&&hexCleanArticleTitle(title.textContent);
+  if(!text)return intro;
+
+  if(!intro){
+    intro=document.createElement('div');
+    intro.className='hex-intro';
+  }
+  var copy=document.createElement('h4');
+  copy.className='hex-article-loading-title';
+  copy.textContent=text;
+  intro.replaceChildren(copy);
+  return intro;
+}
+
 function hexAddLoadingHeaderLogo(cover){
   var images=document.querySelectorAll('.headermenu_type8 .headermenu_logo img');
   for(var image of images){
@@ -17876,6 +17892,7 @@ hexReady(function(){
     }).then(function(html){
       var page=new DOMParser().parseFromString(html,'text/html');
       var intro=page.querySelector('.pagetitle_type.pagetitle_type4 > .contents .hex-intro')||page.querySelector('.hex-intro');
+      intro=hexCreateArticleLoadingIntro(page,new URL(url,location.href).searchParams,intro);
       if(!intro)return null;
       intro= document.importNode(intro,true);
       intro.querySelectorAll('script,style,link,iframe,object,embed').forEach(function(node){node.remove();});
@@ -18391,8 +18408,6 @@ hexReady(function(){
 (function(){
   'use strict';
   if(hexShouldHidePageHero())return;
-  var articlePageType=hexGetArticlePageType(new URLSearchParams(window.location.search));
-  var articleHeaderSelector='.gc_auto_frame_post_item_title';
   var scrollLocks=new Set(),heldLenis=null,resumeLenis=false,lockFrame=0;
   function preventScroll(event){
     if(event.type==='keydown'){
@@ -18483,6 +18498,7 @@ hexReady(function(){
       (source&&source.textContent.split('|').some(function(label){return label.trim();})&&
         document.querySelector('h2, .hex-anchor-target')));
     var intro=contents.querySelector('.hex-intro')||document.querySelector('.hex-intro');
+    intro=hexCreateArticleLoadingIntro(document,new URLSearchParams(window.location.search),intro);
     var headerIntro=!!(intro&&handoff&&handoff.headerIntro);
     var waitForHandoff=!!(expectsNav&&handoff&&handoff.incoming&&!headerIntro);
     var skipIntro=waitForHandoff;
@@ -18547,14 +18563,10 @@ hexReady(function(){
       pageViewportWidth=width;
     }
     function fitTitle(){
-      var articleTitle=heading.querySelector('.hex-article-hero-title');
-      var style=articleTitle?getComputedStyle(articleTitle):getComputedStyle(heading,'::after');
-      var text=articleTitle?articleTitle.textContent:style.content;
-      if(!text)return;
-      if(!articleTitle){
-        if(text==='none'||text==='normal')return;
-        try{text=JSON.parse(text);}catch(error){text=text.replace(/^['"]|['"]$/g,'');}
-      }
+      var style=getComputedStyle(heading,'::after');
+      var text=style.content;
+      if(!text||text==='none'||text==='normal')return;
+      try{text=JSON.parse(text);}catch(error){text=text.replace(/^['"]|['"]$/g,'');}
       var measure=document.createElement('span');
       measure.textContent=text;
       measure.style.cssText='position:absolute;visibility:hidden;pointer-events:none;white-space:pre;width:max-content;';
@@ -18574,13 +18586,12 @@ hexReady(function(){
       if(width>0){
         // 1000px以上は964px、未満は左右16pxを残して文字幅を合わせる。
         var limit=window.innerWidth<1000?Math.max(1,window.innerWidth-32):964;
-        if(articleTitle)limit*=2;
         // Staffなどの短い見出しは、幅いっぱいまで過度に拡大しない。
         var size=Math.min(128,100*limit/width);
         measure.style.fontSize=size+'px';
         width=measure.getBoundingClientRect().width;
         if(width>limit)size*=limit/width;
-        hero.style.setProperty('--hex-page-title-size',(articleTitle?Math.max(22,size):size)+'px');
+        hero.style.setProperty('--hex-page-title-size',size+'px');
       }
       measure.remove();
     }
@@ -18672,12 +18683,9 @@ hexReady(function(){
       if(nav)layoutObserver.observe(nav);
     }
     new MutationObserver(function(records){
-      if(records.some(function(record){
-        if(record.target.nodeType===1&&record.target.matches('.hex-article-hero-title'))return true;
-        return Array.from(record.addedNodes).some(function(node){
-          return node.nodeType===1&&node.matches('.hex-anchor-nav,.hex-anchor-nav-placeholder,.hex-article-hero-title');
-        });
-      }))queueLayout();
+      if(records.some(function(record){return Array.from(record.addedNodes).some(function(node){
+        return node.nodeType===1&&node.matches('.hex-anchor-nav,.hex-anchor-nav-placeholder');
+      });}))queueLayout();
     }).observe(contents,{childList:true,subtree:true});
     if(document.fonts)document.fonts.ready.then(queueLayout);
     function revealPage(replay){
@@ -18756,57 +18764,16 @@ hexReady(function(){
       requestAnimationFrame(function(){setTimeout(function(){revealPage(true);},2000);});
     });
   }
-  function setArticleHeroTitle(hero){
-    var articleHeader=document.querySelector(articleHeaderSelector);
-    var articleTitle=articleHeader&&articleHeader.querySelector('h2');
-    var heading=hero.querySelector('.bg_text h1');
-    var text=articleTitle&&hexCleanArticleTitle(articleTitle.textContent);
-    if(!heading||!text)return;
-
-    var title=heading.querySelector('.hex-article-hero-title');
-    if(!title){
-      title=document.createElement('span');
-      title.className='hex-article-hero-title';
-      heading.replaceChildren(title);
-    }
-    if(title.textContent!==text)title.textContent=text;
-    hero.classList.add('has-article-hero-title');
-
-    var date=articlePageType!=='work_item'&&articleHeader.querySelector('.date');
-    var dateText=date&&date.textContent.trim();
-    var subtitle=hero.querySelector('.hex-article-hero-date');
-    if(dateText){
-      if(!subtitle){
-        subtitle=document.createElement('p');
-        subtitle.className='hex-article-hero-date';
-        heading.after(subtitle);
-      }
-      if(subtitle.textContent!==dateText)subtitle.textContent=dateText;
-    }else if(subtitle){
-      subtitle.remove();
-    }
-    articleHeader.classList.add('is-relocated-to-hero');
-  }
-
-  function scan(){
-    document.querySelectorAll('.pagetitle_type.pagetitle_type4').forEach(function(hero){
-      if(articlePageType)setArticleHeroTitle(hero);
-      init(hero);
-    });
-  }
+  function scan(){document.querySelectorAll('.pagetitle_type.pagetitle_type4').forEach(init);}
   hexReady(scan);
   hexLoad(scan);
   // HOPWEBのページ差し替えにも対応
   hexReady(function(){
     var queued=false;
-    var watchedSelector='.pagetitle_type4'+(articlePageType?','+articleHeaderSelector:'');
     new MutationObserver(function(records){
-      var relevant=records.some(function(record){
-        return (articlePageType&&record.target.closest&&record.target.closest(articleHeaderSelector))||
-          Array.from(record.addedNodes).some(function(node){
-            return node.nodeType===1&&(node.matches(watchedSelector)||node.querySelector(watchedSelector));
-          });
-      });
+      var relevant=records.some(function(record){return Array.from(record.addedNodes).some(function(node){
+        return node.nodeType===1&&(node.matches('.pagetitle_type4')||node.querySelector('.pagetitle_type4'));
+      });});
       if(relevant&&!queued){queued=true;requestAnimationFrame(function(){queued=false;scan();});}
     }).observe(document.body,{childList:true,subtree:true});
   });
