@@ -1,3 +1,124 @@
+var hexHistoryNavigation=(function(){
+  var navigation=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
+  return navigation?navigation.type==='back_forward':
+    !!(performance.navigation&&performance.navigation.type===2);
+})();
+if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navigation');
+
+(function(){
+  var curtain,frame=0;
+  window.addEventListener('pagehide',function(){
+    cancelAnimationFrame(frame);
+    if(curtain){curtain.remove();curtain=null;}
+  });
+  window.addEventListener('pageshow',function(event){
+    if(!event.persisted&&!hexHistoryNavigation)return;
+    var root=document.documentElement;
+    if(event.persisted)root.classList.add('hex-history-navigation');
+    frame=requestAnimationFrame(function(){
+      frame=requestAnimationFrame(function(){
+        if(event.persisted&&!hexHistoryNavigation)root.classList.remove('hex-history-navigation');
+        if(!Element.prototype.animate||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+        if(curtain)curtain.remove();
+        var overlay=document.createElement('div');
+        overlay.className='hex-history-curtain';
+        overlay.setAttribute('aria-hidden','true');
+        overlay.innerHTML='<span class="hex-opening-curtain-track"><i></i><i></i><i></i><i></i></span>';
+        document.body.appendChild(overlay);
+        curtain=overlay;
+        var track=overlay.firstElementChild;
+        var activation=window.navigation&&window.navigation.activation;
+        var backwards=!(activation&&activation.from&&activation.entry&&activation.from.index>=0&&
+          activation.entry.index>activation.from.index);
+        var animations=hexAnimateCurtain(track,Array.from(track.children),false,backwards,930);
+        function clear(){
+          overlay.remove();
+          if(curtain===overlay)curtain=null;
+        }
+        animations.track.finished.then(clear,clear);
+      });
+    });
+  });
+})();
+
+function hexAnimateCurtain(track,bands,vertical,backwards,duration){
+  var entryEnd=.21,sweepEnd=.60,thinExitStart=.80;
+  var bandAnimations=[];
+  var trackAnimation=track.animate(
+    vertical
+      ?(backwards
+        ?[
+          {transform:"translate3d(0,-61vh,0)"},
+          {transform:"translate3d(0,-45vh,0)",offset:entryEnd},
+          {transform:"translate3d(0,40vh,0)",offset:sweepEnd},
+          {transform:"translate3d(0,calc(100vh - 40px),0)",offset:thinExitStart},
+          {transform:"translate3d(0,101vh,0)"}
+        ]
+        :[
+          {transform:"translate3d(0,calc(161vh - 100%),0)"},
+          {transform:"translate3d(0,calc(145vh - 100%),0)",offset:entryEnd},
+          {transform:"translate3d(0,calc(60vh - 100%),0)",offset:sweepEnd},
+          {transform:"translate3d(0,calc(40px - 100%),0)",offset:thinExitStart},
+          {transform:"translate3d(0,calc(-1vh - 100%),0)"}
+        ])
+      :(backwards
+        ?[
+          {transform:"translate3d(-61vw,0,0)"},
+          {transform:"translate3d(-45vw,0,0)",offset:entryEnd},
+          {transform:"translate3d(40vw,0,0)",offset:sweepEnd},
+          {transform:"translate3d(calc(100vw - 40px),0,0)",offset:thinExitStart},
+          {transform:"translate3d(101vw,0,0)"}
+        ]
+        :[
+          {transform:"translate3d(calc(161vw - 100%),0,0)"},
+          {transform:"translate3d(calc(145vw - 100%),0,0)",offset:entryEnd},
+          {transform:"translate3d(calc(60vw - 100%),0,0)",offset:sweepEnd},
+          {transform:"translate3d(calc(40px - 100%),0,0)",offset:thinExitStart},
+          {transform:"translate3d(calc(-1vw - 100%),0,0)"}
+        ]),
+    {
+      duration:duration,
+      easing:"cubic-bezier(0,.6,.25,1)",
+      fill:"both"
+    }
+  );
+
+  bands.forEach(function(band,bandIndex){
+    var order=backwards
+      ?bands.length-1-bandIndex
+      :bandIndex;
+    var bandDelay=order*45;
+    // 最後尾の帯だけ30ms早め、先行する3本へ自然に追いつかせる。
+    // 1〜3本目の開始時刻と変形カーブは変更しない。
+    if(order===bands.length-1){bandDelay-=30;}
+    // 参考サイトと同じく、各帯には短縮しない800msを与える。
+    var bandDuration=800;
+    var sizeFrames=vertical
+      ?[
+        {height:"10px"},
+        {height:"15vh",offset:.22},
+        {height:"15vh",offset:.45},
+        {height:"10px",offset:.76},
+        {height:"10px"}
+      ]
+      :[
+        {width:"10px"},
+        {width:"15vw",offset:.22},
+        {width:"15vw",offset:.45},
+        {width:"10px",offset:.76},
+        {width:"10px"}
+      ];
+
+    bandAnimations.push(band.animate(sizeFrames,{
+      duration:bandDuration,
+      delay:bandDelay,
+      easing:"cubic-bezier(0,.6,.25,1)",
+      fill:"both"
+    }));
+  });
+  return {track:trackAnimation,bands:bandAnimations};
+}
+
 /* head側の丸開きは、白い準備幕が実際に外れてから開始する。 */
 (function(){
   var handoff=window.hexPageTransition;
@@ -923,6 +1044,10 @@ hexReady(function(){
   var offset=160;
   var count=0;
 
+  if(hexHistoryNavigation){
+    if(window.hexPageTransition)window.hexPageTransition.anchorReady=true;
+    return;
+  }
   var incomingPage=!!(window.hexPageTransition&&window.hexPageTransition.incoming);
   if(!hash&&!incomingPage)return;
 
@@ -1852,6 +1977,10 @@ function hexInitAnchorNav(){
   }
   /* 別ページからのアンカー移動を補正 */
   function correctHashAnchorPosition(){
+    if(hexHistoryNavigation){
+      if(window.hexPageTransition)window.hexPageTransition.anchorReady=true;
+      return;
+    }
     if(location.hash==='#top')return;
     if(!hashAnchorTarget){
       if(window.hexPageTransition)window.hexPageTransition.anchorReady=true;
@@ -3665,6 +3794,7 @@ hexReady(function(){
 
     var spHistoryBody=false,spHistoryRestoring=false;
     function setHeroPageLock(locked){
+      if(hexHistoryNavigation&&window.pageYOffset>documentTop(hero)+2)locked=false;
       /* 本文の復帰中・WELCOME以降では、遅れて完了したHero処理で再ロックしない。 */
       if(isSp()&&(welcomeActive||spHistoryBody||spHistoryRestoring))locked=false;
       document.documentElement.classList.toggle(
@@ -4126,6 +4256,7 @@ hexReady(function(){
     }
 
     function onWelcomeScroll(){
+      if(hexHistoryNavigation&&window.pageYOffset>documentTop(hero)+2)setHeroPageLock(false);
       if(welcomeReverseActive&&welcomeReverseScrollY!==null&&
         Math.abs(window.pageYOffset-welcomeReverseScrollY)>.5){
         window.scrollTo({top:welcomeReverseScrollY,left:0,behavior:'instant'});
@@ -10862,7 +10993,7 @@ hexReady(function(){
     root.classList.add('hex-hero-display-wait');
     if(afterOpening){
       root.classList.add('hex-direct-hero-fade');
-    }else{
+    }else if(!hexHistoryNavigation){
       cover=document.createElement('div');
       cover.className='hex-page-yellow-cover hex-direct-hero-cover';
       cover.appendChild(hexCreateLoadingLabel());
@@ -10931,7 +11062,7 @@ hexReady(function(){
 
       target=Math.max(0,hero.getBoundingClientRect().top+
         window.pageYOffset-(window.innerWidth<=768?headerHeight:0));
-      if(!alignedOnce||Math.abs(window.pageYOffset-target)>.5){
+      if(!hexHistoryNavigation&&(!alignedOnce||Math.abs(window.pageYOffset-target)>.5)){
         if(motion&&typeof motion.scrollTo==='function'){
           motion.scrollTo(target,{immediate:true,force:true});
         }else{
@@ -10966,7 +11097,7 @@ hexReady(function(){
       document.dispatchEvent(new Event('hex:hero-display-ready'));
       /* ページ全体のloadを待たず、初期ズームの終盤で見出しを再生する。 */
       if(cover)revealDirectHero();
-      else showHeroCatch(180,true);
+      else if(!hexHistoryNavigation)showHeroCatch(180,true);
       /* 操作開始と後続コンテンツの準備は従来のタイミングを維持する。 */
       var wasInert=hero.inert;
       hero.inert=true;
@@ -11502,78 +11633,9 @@ hexReady(function(){
         );
       }
 
-      trackAnimation=track.animate(
-        vertical
-          ?(backwards
-            ?[
-              {transform:"translate3d(0,-61vh,0)"},
-              {transform:"translate3d(0,-45vh,0)",offset:entryEnd},
-              {transform:"translate3d(0,40vh,0)",offset:sweepEnd},
-              {transform:"translate3d(0,calc(100vh - 40px),0)",offset:thinExitStart},
-              {transform:"translate3d(0,101vh,0)"}
-            ]
-            :[
-              {transform:"translate3d(0,calc(161vh - 100%),0)"},
-              {transform:"translate3d(0,calc(145vh - 100%),0)",offset:entryEnd},
-              {transform:"translate3d(0,calc(60vh - 100%),0)",offset:sweepEnd},
-              {transform:"translate3d(0,calc(40px - 100%),0)",offset:thinExitStart},
-              {transform:"translate3d(0,calc(-1vh - 100%),0)"}
-            ])
-          :(backwards
-            ?[
-              {transform:"translate3d(-61vw,0,0)"},
-              {transform:"translate3d(-45vw,0,0)",offset:entryEnd},
-              {transform:"translate3d(40vw,0,0)",offset:sweepEnd},
-              {transform:"translate3d(calc(100vw - 40px),0,0)",offset:thinExitStart},
-              {transform:"translate3d(101vw,0,0)"}
-            ]
-            :[
-              {transform:"translate3d(calc(161vw - 100%),0,0)"},
-              {transform:"translate3d(calc(145vw - 100%),0,0)",offset:entryEnd},
-              {transform:"translate3d(calc(60vw - 100%),0,0)",offset:sweepEnd},
-              {transform:"translate3d(calc(40px - 100%),0,0)",offset:thinExitStart},
-              {transform:"translate3d(calc(-1vw - 100%),0,0)"}
-            ]),
-        {
-          duration:duration,
-          easing:"cubic-bezier(0,.6,.25,1)",
-          fill:"both"
-        }
-      );
-
-      bands.forEach(function(band,bandIndex){
-        var order=backwards
-          ?bands.length-1-bandIndex
-          :bandIndex;
-        var bandDelay=order*45;
-        // 最後尾の帯だけ30ms早め、先行する3本へ自然に追いつかせる。
-        // 1〜3本目の開始時刻と変形カーブは変更しない。
-        if(order===bands.length-1){bandDelay-=30;}
-        // 参考サイトと同じく、各帯には短縮しない800msを与える。
-        var bandDuration=800;
-        var sizeFrames=vertical
-          ?[
-            {height:"10px"},
-            {height:"15vh",offset:.22},
-            {height:"15vh",offset:.45},
-            {height:"10px",offset:.76},
-            {height:"10px"}
-          ]
-          :[
-            {width:"10px"},
-            {width:"15vw",offset:.22},
-            {width:"15vw",offset:.45},
-            {width:"10px",offset:.76},
-            {width:"10px"}
-          ];
-
-        bandAnimations.push(band.animate(sizeFrames,{
-          duration:bandDuration,
-          delay:bandDelay,
-          easing:"cubic-bezier(0,.6,.25,1)",
-          fill:"both"
-        }));
-      });
+      var animations=hexAnimateCurtain(track,bands,vertical,backwards,duration);
+      trackAnimation=animations.track;
+      bandAnimations=animations.bands;
 
       /*
        * 次画像の境界を独立した時間アニメーションで動かすと、
@@ -12131,7 +12193,7 @@ hexReady(function(){
 
     var replayRequested=isReplayRequested();
     clearReplayRequest();
-    var restoreCompleted=!FORCE_PLAY&&!replayRequested&&shouldRestoreCompletedHero(fromHeaderLogo);
+    var restoreCompleted=hexHistoryNavigation||(!FORCE_PLAY&&!replayRequested&&shouldRestoreCompletedHero(fromHeaderLogo));
     var directHero=restoreCompleted||isReducedMotion()||
       (!FORCE_PLAY&&!replayRequested&&hasViewedOpening());
 
@@ -18499,12 +18561,12 @@ hexReady(function(){
         document.querySelector('h2, .hex-anchor-target')));
     var intro=contents.querySelector('.hex-intro')||document.querySelector('.hex-intro');
     intro=hexCreateArticleLoadingIntro(document,new URLSearchParams(window.location.search),intro);
-    var headerIntro=!!(intro&&handoff&&handoff.headerIntro);
-    var waitForHandoff=!!(expectsNav&&handoff&&handoff.incoming&&!headerIntro);
-    var skipIntro=waitForHandoff;
+    var headerIntro=!!(!hexHistoryNavigation&&intro&&handoff&&handoff.headerIntro);
+    var waitForHandoff=!!(!hexHistoryNavigation&&expectsNav&&handoff&&handoff.incoming&&!headerIntro);
+    var skipIntro=hexHistoryNavigation||waitForHandoff;
     hero.classList.add('hex-page-hero','is-hero-loading');
     hero.setAttribute('aria-busy',headerIntro?'false':'true');
-    var unlockScroll=lockIntroScroll(hero);
+    var unlockScroll=hexHistoryNavigation?function(){}:lockIntroScroll(hero);
     if(intro){
       contents.appendChild(intro);
       intro.classList.add('hex-page-hero-loading-intro');
@@ -18533,7 +18595,7 @@ hexReady(function(){
       hexAddLoadingHeaderLogo(loadingCover);
       document.body.appendChild(loadingCover);
     }
-    if(!waitForHandoff)showLoadingCover();
+    if(!skipIntro)showLoadingCover();
     var nav=contents.querySelector('.hex-anchor-nav');
     if(nav)nav.setAttribute('inert','');
     function finishHandoffPage(){
@@ -18657,7 +18719,7 @@ hexReady(function(){
       });});
     }
     // 通常は導入文を最低2秒表示。共通内部リンクの遷移は固定待機を省く。
-    var introReady=intro&&!skipIntro?new Promise(function(resolve){
+    var introReady=hexHistoryNavigation?Promise.resolve():intro&&!skipIntro?new Promise(function(resolve){
       function beginIntro(){requestAnimationFrame(function(){
         var displayedAt=headerIntro&&handoff.introDisplayedAt;
         setTimeout(resolve,displayedAt?Math.max(0,2000-(Date.now()-displayedAt)):2000);
@@ -18700,7 +18762,8 @@ hexReady(function(){
         loadingCover.setAttribute('aria-hidden','true');
       }
       var layers=[contents,decor];
-      var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var reduced=(!replay&&hexHistoryNavigation)||
+        window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var rect=(loadingCover||hero).getBoundingClientRect();
       var radius=Math.hypot(rect.width/2,rect.height/2)+4;
       function clip(size){
