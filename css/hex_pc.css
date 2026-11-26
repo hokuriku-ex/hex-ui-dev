@@ -10003,8 +10003,33 @@ html.hex-page-handoff-active:not(.hex-history-navigation) body:has(.pagetitle_ty
   overflow:hidden;
   pointer-events:none;
 }
-html.hex-history-navigation::view-transition{
+html.hex-history-navigation:not(.hex-history-snapshot)::view-transition{
   display:none!important;
+}
+html.hex-history-snapshot .hex-history-curtain{
+  view-transition-name:hex-history-curtain;
+}
+html.hex-history-snapshot::view-transition-group(root),
+html.hex-history-snapshot::view-transition-group(hex-history-curtain),
+html.hex-history-snapshot::view-transition-new(root),
+html.hex-history-snapshot::view-transition-new(hex-history-curtain){
+  animation:none!important;
+  opacity:1!important;
+  clip-path:none!important;
+  mix-blend-mode:normal!important;
+}
+html.hex-history-snapshot::view-transition-old(root){
+  animation:hex-history-hold 1s linear paused!important;
+  opacity:1!important;
+  z-index:1;
+  clip-path:var(--hex-history-old-clip,inset(0))!important;
+  mix-blend-mode:normal!important;
+}
+html.hex-history-snapshot::view-transition-group(hex-history-curtain){
+  z-index:2;
+}
+@keyframes hex-history-hold{
+  from,to{opacity:1;}
 }
 html.hex-history-navigation .hex-page-yellow-cover{
   display:none!important;
