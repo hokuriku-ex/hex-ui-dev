@@ -57,6 +57,10 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
   function canAnimate(){
     return !!Element.prototype.animate&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
+  function keepHistorySnapshot(event){
+    // The CMS head's non-capture handlers skip transitions without a link-click handoff.
+    if(window.hexPageTransition&&event.viewTransition)event.stopImmediatePropagation();
+  }
   function playCurtain(overlay){
     if(curtain!==overlay||!transition)return;
     var track=overlay.firstElementChild;
@@ -99,6 +103,8 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
   window.addEventListener('pageswap',function(event){
     if(!event.activation)return;
     if(event.activation.navigationType==='traverse'){
+      keepHistorySnapshot(event);
+      document.dispatchEvent(new Event('hex:history-page-swap'));
       root.classList.add('hex-history-navigation');
       var direction=getHistoryDirection(event.activation);
       if(direction!==null&&event.activation.entry.url){
@@ -111,10 +117,11 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
     }else{
       leaveHistoryPage();
     }
-  });
+  },true);
   window.addEventListener('pagereveal',function(event){
     var activation=window.navigation&&window.navigation.activation;
-    if(!hexHistoryNavigation&&(!activation||activation.navigationType!=='traverse'))return;
+    if(activation?activation.navigationType!=='traverse':!hexHistoryNavigation)return;
+    keepHistorySnapshot(event);
     root.classList.add('hex-history-navigation');
     restoreHistoryDirection(activation);
     if(!event.viewTransition)return;
@@ -134,7 +141,7 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
     current.finished.then(function(){
       if(transition===current)clearCurtain();
     });
-  });
+  },true);
   window.addEventListener('pagehide',leaveHistoryPage);
   document.addEventListener('hex:page-cover-start',leaveHistoryPage);
   window.addEventListener('pageshow',function(event){
@@ -18080,8 +18087,8 @@ hexReady(function(){
     if(stoppedLenis){stoppedLenis.start();stoppedLenis=null;}
   }
   window.addEventListener('pageshow',function(event){if(event.persisted)cleanup();});
-  window.addEventListener('pageswap',function(event){
-    if(cover&&event.activation&&event.activation.navigationType==='traverse')cleanup();
+  document.addEventListener('hex:history-page-swap',function(){
+    if(cover)cleanup();
   });
   // CMSメニューの直接遷移を、既存headが扱える一時的な内部リンクへ渡す。
   document.addEventListener('click',function(event){
