@@ -222,14 +222,17 @@ window.hexPrepareFixedBackgroundImages=function(){
   document.querySelectorAll('.hex-bg-patterns-layer').forEach(window.hexPrepareFixedBackgroundLayer);
 };
 
-/* 数字のid（記事詳細）またはpage_no（一覧ページング）は共通タイトル・導入を省略。 */
-function hexIsArticlePage(){
+/* 施工事例・お知らせ・ブログの詳細は親ページと同じヒーローを使う。 */
+function hexShouldHidePageHero(){
   var params=new URLSearchParams(window.location.search);
+  var pageType=params.get('k')||params.get('page_type')||'';
+  if(/^(work_item|information_item|staffblog_item)$/.test(pageType))return false;
+
   return ['id','page_no'].some(function(name){
     return /^\d+$/.test(params.get(name)||'');
   });
 }
-document.documentElement.classList.toggle('hex-article-page',hexIsArticlePage());
+document.documentElement.classList.toggle('hex-article-page',hexShouldHidePageHero());
 
 /* 標準固定フッターはCSSの読み込み前から隠す。ヘッダー表示後も解除しない。 */
 (function(){
@@ -12222,7 +12225,7 @@ hexReady(function(){
    導入文・アンカーナビをページタイトル内へ移動
 ======================================= */
 hexLoad(function(){
-  if(hexIsArticlePage())return;
+  if(hexShouldHidePageHero())return;
   var hexIntro=document.querySelector('.hex-intro');
   var hexAnchorSource=document.querySelector('.hex-anchor-source');
   var pageTitleContents=document.querySelector(
@@ -18379,7 +18382,7 @@ hexReady(function(){
 /* Lower-page heroes */
 (function(){
   'use strict';
-  if(hexIsArticlePage())return;
+  if(hexShouldHidePageHero())return;
   var scrollLocks=new Set(),heldLenis=null,resumeLenis=false,lockFrame=0;
   function preventScroll(event){
     if(event.type==='keydown'){
