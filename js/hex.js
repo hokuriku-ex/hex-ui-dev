@@ -6,19 +6,36 @@ var hexHistoryNavigation=(function(){
 if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navigation');
 
 (function(){
+  var root=document.documentElement;
   var curtain,frame=0;
-  window.addEventListener('pagehide',function(){
+  function clear(){
     cancelAnimationFrame(frame);
     if(curtain){curtain.remove();curtain=null;}
+    root.classList.remove('hex-history-navigation');
+  }
+  function skipViewTransition(event){
+    if(event.viewTransition)event.viewTransition.skipTransition();
+  }
+  window.addEventListener('pageswap',function(event){
+    if(event.activation&&event.activation.navigationType==='traverse')skipViewTransition(event);
   });
+  window.addEventListener('pagereveal',function(event){
+    var activation=window.navigation&&window.navigation.activation;
+    if(!hexHistoryNavigation&&(!activation||activation.navigationType!=='traverse'))return;
+    root.classList.add('hex-history-navigation');
+    skipViewTransition(event);
+  });
+  window.addEventListener('pagehide',clear);
+  document.addEventListener('hex:page-cover-start',clear);
   window.addEventListener('pageshow',function(event){
     if(!event.persisted&&!hexHistoryNavigation)return;
-    var root=document.documentElement;
-    if(event.persisted)root.classList.add('hex-history-navigation');
+    root.classList.add('hex-history-navigation');
     frame=requestAnimationFrame(function(){
       frame=requestAnimationFrame(function(){
-        if(event.persisted&&!hexHistoryNavigation)root.classList.remove('hex-history-navigation');
-        if(!Element.prototype.animate||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+        if(!Element.prototype.animate||window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+          clear();
+          return;
+        }
         if(curtain)curtain.remove();
         var overlay=document.createElement('div');
         overlay.className='hex-history-curtain';
@@ -31,11 +48,10 @@ if(hexHistoryNavigation)document.documentElement.classList.add('hex-history-navi
         var backwards=!(activation&&activation.from&&activation.entry&&activation.from.index>=0&&
           activation.entry.index>activation.from.index);
         var animations=hexAnimateCurtain(track,Array.from(track.children),false,backwards,930);
-        function clear(){
-          overlay.remove();
-          if(curtain===overlay)curtain=null;
+        function finish(){
+          if(curtain===overlay)clear();
         }
-        animations.track.finished.then(clear,clear);
+        animations.track.finished.then(finish,finish);
       });
     });
   });
@@ -126,7 +142,7 @@ function hexAnimateCurtain(track,bands,vertical,backwards,duration){
   try{
     var headerIntro=JSON.parse(sessionStorage.getItem('hex-header-intro-v1')||'null');
     sessionStorage.removeItem('hex-header-intro-v1');
-    if(headerIntro&&headerIntro.url===location.href&&Date.now()-headerIntro.time<45000&&handoff.incoming){
+    if(!hexHistoryNavigation&&headerIntro&&headerIntro.url===location.href&&Date.now()-headerIntro.time<45000&&handoff.incoming){
       handoff.headerIntro=true;
       handoff.introDisplayedAt=Number(headerIntro.displayedAt)||0;
       document.documentElement.classList.add('hex-header-intro-handoff');
@@ -17975,6 +17991,9 @@ hexReady(function(){
     if(stoppedLenis){stoppedLenis.start();stoppedLenis=null;}
   }
   window.addEventListener('pageshow',function(event){if(event.persisted)cleanup();});
+  window.addEventListener('pageswap',function(event){
+    if(cover&&event.activation&&event.activation.navigationType==='traverse')cleanup();
+  });
   // CMSメニューの直接遷移を、既存headが扱える一時的な内部リンクへ渡す。
   document.addEventListener('click',function(event){
     if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
