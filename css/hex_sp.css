@@ -1759,11 +1759,6 @@
     font-size:20px!important;
     font-weight:500!important;
   }
-  .content_body:has(.hex-vision-section) .welcome .kakko_l,
-  .content_body:has(.hex-vision-section) .welcome .kakko_br{
-    width:clamp(32px, calc(3.92vw + 17.88px), 48px)!important;
-    height:clamp(32px, calc(3.92vw + 17.88px), 48px)!important;
-  }
   .content_body:has(.hex-vision-section) .welcome .text .text-right{
     margin:16px 0 0 auto!important;
   }

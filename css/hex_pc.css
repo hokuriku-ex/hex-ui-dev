@@ -5613,50 +5613,6 @@ html body
   font-family:var(--hex-font-hand)!important;
   -webkit-text-stroke:1.5px currentColor!important;
 }
-.welcome .kakko_l,
-.welcome .kakko_br{
-  --kakko-color:#265ab0;
-  position:absolute;
-  z-index:2;
-  width:clamp(40px, calc(25.88px + 3.92vw), 56px);
-  height:clamp(40px, calc(25.88px + 3.92vw), 56px);
-  box-sizing:border-box;
-  pointer-events:none;
-}
-.welcome .kakko_l{
-  top:0;
-  left:0;
-  background:
-    linear-gradient(var(--kakko-color) 0 0)
-      top left / 100% 2px no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      top left / 2px 100% no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      left 6px top 6px / calc(100% - 6px) 2px no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      left 6px top 6px / 2px calc(100% - 6px) no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      top right / 2px 8px no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      bottom left / 8px 2px no-repeat
-}
-.welcome .kakko_br{
-  right:0;
-  bottom:0;
-  background:
-    linear-gradient(var(--kakko-color) 0 0)
-      bottom left / 100% 2px no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      top right / 2px 100% no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      left bottom 6px / calc(100% - 6px) 2px no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      right 6px top / 2px calc(100% - 6px) no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      bottom left / 2px 6px no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      top right / 8px 2px no-repeat
-}
 .welcome .text{
   display:table;
   margin:0 auto!important;
@@ -6859,50 +6815,6 @@ html body
 .content_body:has(.hex-vision-section) .welcome .title h3{
   font-size:24px!important;
 }
-.content_body:has(.hex-vision-section) .welcome .kakko_l,
-.content_body:has(.hex-vision-section) .welcome .kakko_br{
-  --kakko-color:#203459;
-  position:absolute;
-  z-index:2;
-  width:clamp(40px, calc(25.88px + 3.92vw), 56px);
-  height:clamp(40px, calc(25.88px + 3.92vw), 56px);
-  box-sizing:border-box;
-  pointer-events:none;
-}
-.content_body:has(.hex-vision-section) .welcome .kakko_l{
-  top:0;
-  left:0;
-  background:
-    linear-gradient(var(--kakko-color) 0 0)
-      top left / 100% 2px no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      top left / 2px 100% no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      left 6px top 6px / calc(100% - 6px) 2px no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      left 6px top 6px / 2px calc(100% - 6px) no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      top right / 2px 8px no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      bottom left / 8px 2px no-repeat
-}
-.content_body:has(.hex-vision-section) .welcome .kakko_br{
-  right:0;
-  bottom:0;
-  background:
-    linear-gradient(var(--kakko-color) 0 0)
-      bottom left / 100% 2px no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      top right / 2px 100% no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      left bottom 6px / calc(100% - 6px) 2px no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      right 6px top / 2px calc(100% - 6px) no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      bottom left / 2px 6px no-repeat,
-    linear-gradient(var(--kakko-color) 0 0)
-      top right / 8px 2px no-repeat
-}
 .content_body:has(.hex-vision-section) .welcome .text .text-right{
   display:flex;
   align-items:baseline;
@@ -6926,18 +6838,29 @@ html body
   color:#203459;
 }
 
-/* ロゴに込めた想い */
-.content_body:has(.hex-logo-section) .bg_before_after1{
-  width:min(100%, 400px);
-  aspect-ratio:407 / 312;
-  margin:0 auto!important;
+/* カギ括弧 */
+.content_body:has(.hex-vision-section) .welcome .title h3[id="代表あいさつ"] {
+  --kakko-size: clamp(32px, 5vw, 56px);
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-inline: auto;
+  padding-inline: var(--kakko-size);
 }
-.content_body:has(.hex-logo-section) .bg_before_after1 img{
-  display:block;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:center;
+.content_body:has(.hex-vision-section) .welcome .title h3[id="代表あいさつ"] > .kakko {
+  position: absolute;
+  font-size: var(--kakko-size);
+  line-height: 1;
+  letter-spacing: 0;
+}
+.content_body:has(.hex-vision-section) .welcome .title h3[id="代表あいさつ"] > .kakko:first-child {
+  top: -0.1em;
+  left: 0;
+}
+.content_body:has(.hex-vision-section) .welcome .title h3[id="代表あいさつ"] > .kakko:last-child {
+  right: 0;
+  bottom: -0.1em;
 }
 
 /* 体制・スタッフ紹介 */
