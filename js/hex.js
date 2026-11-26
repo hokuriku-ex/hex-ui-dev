@@ -18547,10 +18547,14 @@ hexReady(function(){
       pageViewportWidth=width;
     }
     function fitTitle(){
-      var style=getComputedStyle(heading,'::after');
-      var text=style.content;
-      if(!text||text==='none'||text==='normal')return;
-      try{text=JSON.parse(text);}catch(error){text=text.replace(/^['"]|['"]$/g,'');}
+      var articleTitle=heading.querySelector('.hex-article-hero-title');
+      var style=articleTitle?getComputedStyle(articleTitle):getComputedStyle(heading,'::after');
+      var text=articleTitle?articleTitle.textContent:style.content;
+      if(!text)return;
+      if(!articleTitle){
+        if(text==='none'||text==='normal')return;
+        try{text=JSON.parse(text);}catch(error){text=text.replace(/^['"]|['"]$/g,'');}
+      }
       var measure=document.createElement('span');
       measure.textContent=text;
       measure.style.cssText='position:absolute;visibility:hidden;pointer-events:none;white-space:pre;width:max-content;';
@@ -18570,12 +18574,13 @@ hexReady(function(){
       if(width>0){
         // 1000px以上は964px、未満は左右16pxを残して文字幅を合わせる。
         var limit=window.innerWidth<1000?Math.max(1,window.innerWidth-32):964;
+        if(articleTitle)limit*=2;
         // Staffなどの短い見出しは、幅いっぱいまで過度に拡大しない。
         var size=Math.min(128,100*limit/width);
         measure.style.fontSize=size+'px';
         width=measure.getBoundingClientRect().width;
         if(width>limit)size*=limit/width;
-        hero.style.setProperty('--hex-page-title-size',size+'px');
+        hero.style.setProperty('--hex-page-title-size',(articleTitle?Math.max(22,size):size)+'px');
       }
       measure.remove();
     }
@@ -18667,9 +18672,12 @@ hexReady(function(){
       if(nav)layoutObserver.observe(nav);
     }
     new MutationObserver(function(records){
-      if(records.some(function(record){return Array.from(record.addedNodes).some(function(node){
-        return node.nodeType===1&&node.matches('.hex-anchor-nav,.hex-anchor-nav-placeholder');
-      });}))queueLayout();
+      if(records.some(function(record){
+        if(record.target.nodeType===1&&record.target.matches('.hex-article-hero-title'))return true;
+        return Array.from(record.addedNodes).some(function(node){
+          return node.nodeType===1&&node.matches('.hex-anchor-nav,.hex-anchor-nav-placeholder,.hex-article-hero-title');
+        });
+      }))queueLayout();
     }).observe(contents,{childList:true,subtree:true});
     if(document.fonts)document.fonts.ready.then(queueLayout);
     function revealPage(replay){
