@@ -18585,6 +18585,7 @@ hexReady(function(){
 (function(){
   'use strict';
   if(hexShouldHidePageHero())return;
+  var root=document.documentElement;
   var scrollLocks=new Set(),heldLenis=null,resumeLenis=false,lockFrame=0;
   function preventScroll(event){
     if(event.type==='keydown'){
