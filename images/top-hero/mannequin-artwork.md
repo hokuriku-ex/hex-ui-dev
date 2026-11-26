@@ -4,7 +4,7 @@ Source: `C:/Users/desig/Desktop/HPコンテンツ/ヒーロー画像/2.png`
 
 Created with the built-in image_gen tool (background-extraction edit). These are AI-derived cutouts; they are not pixel-exact extractions of the source. Original colors, poses, and orientation were requested as invariants. Tools were added as specified. No website layout or image references were changed.
 
-Final assets: `aluminum.webp`, `pruning.webp`, `sakan.webp`, `block.webp`, `supervisor.webp`, `family.webp` in this directory. Lossless WebP; sizes normalized approximately to the sakan worker on 2026-10-24; crop bounds use alpha > 1 plus 2 pixels of padding, retaining original alpha inside the crop. Alpha and appearance on black and white backgrounds were checked after conversion.
+Final assets: `aluminum1.webp`, `pruning1.webp`, `sakan1.webp`, `block1.webp`, `supervisor1.webp`, `family.webp` in this directory. Lossless WebP; sizes normalized approximately to the sakan worker on 2026-10-24; crop bounds use alpha > 1 plus 2 pixels of padding, retaining original alpha inside the crop. Alpha and appearance on black and white backgrounds were checked after conversion.
 
 ## Common prompt
 
@@ -71,7 +71,7 @@ Precise local clothing edit of the attached terracotta family sprite. Change onl
 
 ## Navy hammer handle and equal rendered heights
 
-The hammer handle in block.webp was recolored with the built-in image_gen tool. Latest block asset: 1161 x 1000 pixels. Hammer head remains metallic.
+The hammer handle in block1.webp was recolored with the built-in image_gen tool. Latest block asset: 1161 x 1000 pixels. Hammer head remains metallic.
 
 All six CSS character widths are calculated from their actual WebP aspect ratios, keeping sakan at 10% of scene width. Thus each rendered height is 10 / 1.388 = 7.204611% of scene width. Position and bottom offsets remain unchanged. The same width values are consumed by the canvas compositor and character hit testing, so visual and interaction bounds stay consistent. Assets remain 1000 pixels tall. Widths must be recalculated if asset aspect ratios change.
 

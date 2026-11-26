@@ -21,14 +21,19 @@ CMSのヒーローHTMLには `examples/hero-layers-inline.html` を使用しま�
 15. `wall02.webp`
 16. `wall03.webp`
 17. `exterior04.webp`
-18. `supervisor.webp`
-19. `block.webp`
+18. `supervisor1.webp`
+19. `block1.webp`
 20. `tree03.webp`
 21. `underplant03.webp`
-22. `aluminum.webp`
-23. `sakan.webp`
-24. `pruning.webp`
+22. `aluminum1.webp`
+23. `sakan1.webp`
+24. `pruning1.webp`
 25. `family.webp`
+
+職人の画像は、元画像と同じピクセル寸法・透過キャンバスで `2.webp`（途中のポーズ）と
+`3.webp`（最大まで動かしたポーズ）を作り、同じフォルダに追加します。
+例えば左官職人は `sakan1.webp`、`sakan2.webp`、`sakan3.webp` の3枚です。
+追加の2枚が読み込めると、登場演出の後に①→②→③→②→①の順で1秒ごとに切り替わります。
 
 台座を最背面に置き、残りはHTMLの記載順に重ねます。
 

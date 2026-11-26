@@ -569,6 +569,9 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
     // Keep the image basenames; only the format changes.
     file=file.replace(/^((?:left|right)_bottom0[1-4])\.png(?=[?#]|$)/i,'$1.webp');
     file=file.replace(/^(aluminum|pruning|sakan|block|supervisor|family)\.png(?=[?#]|$)/i,'$1.webp');
+    file=file.replace(/^(aluminum|pruning|sakan|block|supervisor)\.webp(?=[?#]|$)/i,function(match,character){
+      return character+'1.webp';
+    });
     file=file.replace(/^exterior\.(?:png|webp)(?=[?#]|$)/i,'exterior02.webp');
     var sceneAsset=/^(plinth|house|drawing|exterior0[1-4]|(?:pave|wall|tree|underplant)0[1-3])\.(?:png|webp)(?=[?#]|$)/i;
     file=file.replace(sceneAsset,'$1.webp');
@@ -589,7 +592,11 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
       // 表示だけでなくCanvas/WebGL合成にも使うため、URL指定より先にCORSを設定する。
       if(!url){
         var current=image.getAttribute('src')||'';
-        if(current.indexOf(imageRoot)===0)url=current;
+        if(current.indexOf(imageRoot)===0){
+          var filename=current.slice(imageRoot.length);
+          url=/^(aluminum|pruning|sakan|block|supervisor)\.(png|webp)(?=[?#]|$)/i.test(filename)
+            ?resolve(filename):current;
+        }
       }
       if(url){
         if(image.crossOrigin!=='anonymous')image.crossOrigin='anonymous';
@@ -3643,6 +3650,11 @@ hexReady(function(){
       ".hex-hero-sprite--underplant01,.hex-hero-sprite--underplant02,.hex-hero-sprite--underplant03"
     ];
     var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
+    var HERO_CHARACTER_FRAME_MS=1000;
+    var HERO_CHARACTER_FRAME_ORDER=[0,1,2,1];
+    var heroCharacterFrames=new Map();
+    var heroCharacterFrameTimer=0;
+    var heroCharacterFrameStep=0;
     var heroImageIntroReady=false;
     var HERO_LAYER_POP_DURATIONS=[570,530,490,450,410,370,330];
     var heroLayerVersion=0;
@@ -5506,7 +5518,7 @@ hexReady(function(){
         var height=width*bounds.aspect;
         var y=metrics.imageHeight-bottom-height;
         if(imageX>=x&&imageX<x+width&&imageY>=y&&imageY<y+height&&
-          pointerHitsCharacter(layer,(imageX-x)/width,(imageY-y)/height)){
+          pointerHitsCharacter(getHeroCharacterFrame(layer),(imageX-x)/width,(imageY-y)/height)){
           return {x:x+width/2,y:y+height/2,kind:bounds.kind};
         }
       }
@@ -6023,6 +6035,7 @@ hexReady(function(){
       heroLayerPop.started=null;
       if(webglStage)webglStage.classList.remove('is-layer-pop-pending');
       updateHeroLayerTransforms();
+      queueHeroCharacterFrame();
     }
 
     function prepareHeroLayerPop(){
@@ -6033,7 +6046,107 @@ hexReady(function(){
       heroLayerPop.elapsed=0;
       heroLayerPop.lastFrame=-1;
       heroLayerStyleCache=new WeakMap();
+      window.clearTimeout(heroCharacterFrameTimer);
+      heroCharacterFrameTimer=0;
+      heroCharacterFrameStep=0;
+      showHeroCharacterFrame(0);
       updateHeroLayerTransforms();
+    }
+
+    function loadHeroCharacterFrames(layer){
+      if(reduced||!layer.matches('.hex-hero-character')||
+        layer.matches('.hex-hero-character--family')||!layer.src||heroCharacterFrames.has(layer))return;
+      var source=new URL(layer.src);
+      var firstFrame=/\/(aluminum|pruning|sakan|block|supervisor)1\.webp$/i;
+      if(!firstFrame.test(source.pathname))return;
+      var animation={images:null,index:0};
+      heroCharacterFrames.set(layer,animation);
+      var images=[2,3].map(function(number){
+        return new Promise(function(resolve,reject){
+          var frame=new Image();
+          if(layer.crossOrigin!==null)frame.crossOrigin=layer.crossOrigin;
+          frame.onload=function(){
+            if(typeof frame.decode==='function'){frame.decode().then(function(){resolve(frame);},reject);}
+            else{resolve(frame);}
+          };
+          frame.onerror=reject;
+          var url=new URL(source.href);
+          url.pathname=url.pathname.replace(firstFrame,function(match,character){
+            return '/'+character+number+'.webp';
+          });
+          frame.src=url.href;
+        });
+      });
+      Promise.all(images).then(function(frames){
+        animation.images=[layer].concat(frames);
+        var entry=heroLayerMeshes.get(layer);
+        if(entry)prepareHeroCharacterFrameMaps(entry,animation.images);
+        queueHeroCharacterFrame();
+      }).catch(function(){
+        // A missing frame leaves the original character visible.
+      });
+    }
+
+    function getHeroCharacterFrame(layer){
+      var animation=heroCharacterFrames.get(layer);
+      return animation&&animation.images?animation.images[animation.index]:layer;
+    }
+
+    function heroCharacterFramesMatch(images){
+      var original=images[0];
+      return original.naturalWidth>0&&images.slice(1).every(function(frame){
+        return frame.naturalWidth===original.naturalWidth&&frame.naturalHeight===original.naturalHeight;
+      });
+    }
+
+    function prepareHeroCharacterFrameMaps(entry,images){
+      if(!heroCharacterFramesMatch(images))return;
+      var maps=[entry.baseMap];
+      try{
+        images.slice(1).forEach(function(frame){
+          var map=createHeroLayerTexture(frame,window.THREE);
+          maps.push(map);
+          renderer.initTexture(map);
+          pointerHitsCharacter(frame,0,0);
+        });
+        entry.frameMaps=maps;
+      }catch(error){
+        maps.slice(1).forEach(function(map){map.dispose();});
+      }
+    }
+
+    function showHeroCharacterFrame(index){
+      heroCharacterFrames.forEach(function(animation,layer){
+        if(!animation.images||animation.index===index)return;
+        var entry=heroLayerMeshes.get(layer);
+        if(entry){
+          if(!entry.frameMaps)return;
+          entry.mesh.material.map=entry.frameMaps[index];
+        }else if(activeHero&&activeHero.classList.contains('is-v2-fallback')){
+          if(!heroCharacterFramesMatch(animation.images))return;
+          if(index===0){layer.style.removeProperty('content');}
+          else{layer.style.setProperty('content','url('+JSON.stringify(animation.images[index].src)+')');}
+        }else{return;}
+        animation.index=index;
+        heroLayerPreviewCache=null;
+        heroRenderDirty=true;
+      });
+    }
+
+    function queueHeroCharacterFrame(){
+      if(heroCharacterFrameTimer||heroLayerPop.active||!Array.from(heroCharacterFrames.values()).some(function(animation){
+        return animation.images;
+      }))return;
+      heroCharacterFrameTimer=window.setTimeout(function(){
+        heroCharacterFrameTimer=0;
+        if(!ready||!hero.isConnected)return;
+        if(!document.hidden&&heroRenderVisible&&!welcomeActive&&!heroAnchorDeparted&&
+          !document.documentElement.classList.contains('hex-opening-lock')){
+          heroCharacterFrameStep=(heroCharacterFrameStep+1)%HERO_CHARACTER_FRAME_ORDER.length;
+          showHeroCharacterFrame(HERO_CHARACTER_FRAME_ORDER[heroCharacterFrameStep]);
+        }
+        queueHeroCharacterFrame();
+      },HERO_CHARACTER_FRAME_MS);
     }
 
     function heroLayerPopDuration(index){
@@ -6108,7 +6221,7 @@ hexReady(function(){
         context.drawImage(layer,x+width*crop.x/crop.originalWidth,y+height*crop.y/crop.originalHeight,
           width*crop.width/crop.originalWidth,height*crop.height/crop.originalHeight);
       }else{
-        context.drawImage(layer,x,y,width,height);
+        context.drawImage(getHeroCharacterFrame(layer),x,y,width,height);
       }
     }
 
@@ -6329,8 +6442,22 @@ hexReady(function(){
     function disposeHeroLayerMesh(entry){
       if(scene)scene.remove(entry.pivot);
       entry.mesh.geometry.dispose();
-      entry.mesh.material.map.dispose();
+      (entry.frameMaps||[entry.baseMap]).forEach(function(map){map.dispose();});
       entry.mesh.material.dispose();
+    }
+
+    function createHeroLayerTexture(image,THREE){
+      var pixels=document.createElement('canvas');
+      pixels.width=image.naturalWidth;pixels.height=image.naturalHeight;
+      var context=pixels.getContext('2d',{alpha:true});
+      if(!context)throw new Error('Hero layer canvas unavailable');
+      context.drawImage(image,0,0);
+      var map=new THREE.CanvasTexture(pixels);
+      map.colorSpace=THREE.SRGBColorSpace;
+      map.generateMipmaps=false;
+      map.minFilter=THREE.LinearFilter;
+      map.needsUpdate=true;
+      return map;
     }
 
     function updateTextureSource(image){
@@ -6354,25 +6481,21 @@ hexReady(function(){
         if(!entry){
           // Rasterize once before upload. This avoids relying on a hidden DOM image's
           // browser/GPU decode surface while keeping all animation work on the GPU.
-          var pixels=document.createElement('canvas');
-          pixels.width=layer.naturalWidth;pixels.height=layer.naturalHeight;
-          var pixelsContext=pixels.getContext('2d',{alpha:true});
-          if(!pixelsContext)throw new Error('Hero layer canvas unavailable');
-          pixelsContext.drawImage(layer,0,0);
-          var map=new THREE.CanvasTexture(pixels);
-          map.colorSpace=THREE.SRGBColorSpace;
-          map.generateMipmaps=false;
-          map.minFilter=THREE.LinearFilter;
-          map.needsUpdate=true;
+          var map=createHeroLayerTexture(layer,THREE);
           var mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({
             map:map,transparent:true,depthTest:false,depthWrite:false
           }));
           var pivot=new THREE.Group();
           pivot.add(mesh);scene.add(pivot);
-          entry={key:key,mesh:mesh,pivot:pivot,valid:false};
+          entry={key:key,mesh:mesh,pivot:pivot,valid:false,baseMap:map};
           heroLayerMeshes.set(layer,entry);
           // Decode/upload once before the intro; never upload textures on animation frames.
           renderer.initTexture(map);
+          var animation=heroCharacterFrames.get(layer);
+          if(animation&&animation.images){
+            prepareHeroCharacterFrameMaps(entry,animation.images);
+            animation.index=0;
+          }
         }
         entry.valid=[rect.x,rect.y,rect.width,rect.height].every(Number.isFinite)&&rect.width>0&&rect.height>0;
         if(!entry.valid)return;
@@ -6528,6 +6651,11 @@ hexReady(function(){
       if(activeHero){activeHero.classList.remove("is-v2-active");}
       heroLayerMeshes.forEach(disposeHeroLayerMesh);
       heroLayerMeshes.clear();
+      heroCharacterFrameStep=0;
+      heroCharacterFrames.forEach(function(animation,layer){
+        if(animation.index){layer.style.removeProperty('content');}
+        animation.index=0;
+      });
       if(renderer){renderer.dispose();}
       if(webglStage&&webglStage.parentNode){webglStage.remove();}
       webglStage=null;
@@ -6549,6 +6677,7 @@ hexReady(function(){
       // Keep the plinth at the back of the compositing order.
       heroLayerImages=heroLayerImages.filter(function(layer){return layer!==sourceImage;});
       if(sourceImage)heroLayerImages.unshift(sourceImage);
+      heroLayerImages.forEach(loadHeroCharacterFrames);
       // Assign pop timing separately; never sort the compositing array.
       heroLayerPopOrder.clear();
       heroLayerPopGroupCount=0;
@@ -6594,6 +6723,7 @@ hexReady(function(){
       syncHeroFallbackLayout();
       hero.classList.add("is-v2-ready","is-v2-fallback");
       ready=true;
+      queueHeroCharacterFrame();
       interactionLocked=false;
       revealCatch(false);
       setHeroPageLock(true);
@@ -6679,6 +6809,7 @@ hexReady(function(){
           }
           activeHero.classList.add("is-v2-active");
           ready=true;
+          queueHeroCharacterFrame();
           hero.classList.add("is-v2-ready");
           setHeroPageLock(true);
           updateWelcomeButton();
