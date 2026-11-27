@@ -579,6 +579,7 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
     if(/^(?:left|right)_bottom04\.webp$/i.test(file))file+='?v=20261029-oriented';
     if(!/^[^/\\?#]+\.(?:avif|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i.test(file))return null;
     var url=new URL(file,imageRoot);
+    if(/^sakan1\.webp(?=[?#]|$)/i.test(file))url.searchParams.set('v','20261127-arm-frames');
     if(sceneAsset.test(file)){
       var version=/^(?:drawing|tree|underplant)/i.test(file)?'20261118-cropped':'20261118-restored';
       url.searchParams.set('v',version);
@@ -594,7 +595,7 @@ const HEX_IS_PRODUCTION=HEX_HOSTS.PRODUCTION.indexOf(location.hostname)!==-1;
         var current=image.getAttribute('src')||'';
         if(current.indexOf(imageRoot)===0){
           var filename=current.slice(imageRoot.length);
-          url=/^(aluminum|pruning|sakan|block|supervisor)\.(png|webp)(?=[?#]|$)/i.test(filename)
+          url=/^(?:(?:aluminum|pruning|sakan|block|supervisor)\.(?:png|webp)|sakan1\.webp)(?=[?#]|$)/i.test(filename)
             ?resolve(filename):current;
         }
       }
