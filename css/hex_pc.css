@@ -5191,8 +5191,8 @@ html body
 .hex-hero-character--family{--hex-sprite-x:30%;--hex-sprite-bottom:30%;--hex-sprite-width:8.8%;}
 .hex-hero-character--supervisor{--hex-sprite-x:30%;--hex-sprite-bottom:45%;--hex-sprite-width:3.8%;}
 .hex-hero-character--block{--hex-sprite-x:38.4%;--hex-sprite-bottom:42.7%;--hex-sprite-width:5%;}
-/* Preserve registration after adding 80 transparent pixels to the left of the 1388px original. */
-.hex-hero-character--sakan{--hex-sprite-x:60.6541786744%;--hex-sprite-bottom:40%;--hex-sprite-width:6.3458213256%;}
+/* Preserve registration after adding 144 transparent pixels to the left of the 1388px original. */
+.hex-hero-character--sakan{--hex-sprite-x:60.3775216138%;--hex-sprite-bottom:40%;--hex-sprite-width:6.6224783862%;}
 .hex-hero-character--pruning{--hex-sprite-x:50.5%;--hex-sprite-bottom:41.5%;--hex-sprite-width:4%;}
 .hex-hero-character--aluminum{--hex-sprite-x:70.7%;--hex-sprite-bottom:44%;--hex-sprite-width:2.54%;}
 
