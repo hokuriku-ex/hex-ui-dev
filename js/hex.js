@@ -5890,11 +5890,13 @@ hexReady(function(){
       mouseTap.pointerId=null;
       mouseTap.character=null;
       if(!keepMask){
+        var wasFocused=characterFocus.maskVisible;
         characterFocus.maskVisible=false;
         clearCharacterCopy();
         document.documentElement.classList.remove("hex-character-focus-active");
         if(characterFocusMask){characterFocusMask.style.display="none";}
         updateWelcomeButton();
+        if(wasFocused)queueHeroCharacterFrame();
       }
     }
 
@@ -5910,6 +5912,8 @@ hexReady(function(){
       characterFocus.targetY=metrics.imageHeight/2-character.y;
       characterFocus.active=true;
       characterFocus.maskVisible=true;
+      window.clearTimeout(heroCharacterFrameTimer);
+      heroCharacterFrameTimer=0;
       document.documentElement.classList.add("hex-character-focus-active");
       characterFocus.progress=0;
       characterFocus.rawProgress=0;
@@ -6156,7 +6160,7 @@ hexReady(function(){
     }
 
     function queueHeroCharacterFrame(){
-      if(heroCharacterFrameTimer||heroLayerPop.active||!Array.from(heroCharacterFrames.values()).some(function(animation){
+      if(heroCharacterFrameTimer||heroLayerPop.active||characterFocus.maskVisible||!Array.from(heroCharacterFrames.values()).some(function(animation){
         return animation.images;
       }))return;
       heroCharacterFrameTimer=window.setTimeout(function(){
