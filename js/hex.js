@@ -3658,7 +3658,7 @@ hexReady(function(){
       ".hex-hero-sprite--underplant01,.hex-hero-sprite--underplant02,.hex-hero-sprite--underplant03"
     ];
     var heroLayerPop={active:false,started:null,elapsed:0,lastFrame:-1};
-    var HERO_CHARACTER_FRAME_MS=1000;
+    var HERO_CHARACTER_FRAME_MS=500;
     var HERO_CHARACTER_FRAME_ORDER=[0,1,2,1];
     var heroCharacterFrames=new Map();
     var heroCharacterFrameTimer=0;
