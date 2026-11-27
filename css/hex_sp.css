@@ -2240,33 +2240,24 @@
   }
   .gc_auto_frame_post_index_home_box_contents_cell_text_list,
   .gc_auto_frame_post_index_box_contents_cell_text_list{
-    display:block!important;
-    position:relative!important;
-    padding:0 30px 0 0!important;
+    padding:8px 2px 8px 0!important;
   }
   .gc_auto_frame_post_index_home_box_contents_cell_date_list,
   .gc_auto_frame_post_index_box_contents_cell_date_list{
-    display:block!important;
-    width:auto!important;
-    text-align:left!important;
+    flex-basis:76px!important;
+    margin-right:12px!important;
   }
-  .hex-news-separator{
-    display:none!important;
+  .hex-news-date-month-day{
+    font-size:1.5em;
   }
   .gc_auto_frame_post_index_home_box_contents_cell_caption_list,
   .gc_auto_frame_post_index_box_contents_cell_caption_list{
-    display:block!important;
-    margin-left:0!important;
     line-height:1.8!important;
-    word-break:keep-all;
+    white-space:normal!important;
+    overflow-wrap:anywhere;
   }
   .hex-news-arrow{
-    position:absolute!important;
-    right:2px!important;
-    top:auto!important;
-    bottom:18px!important;
-    transform:none!important;
-    margin-left:0!important;
+    margin-left:12px;
     font-size:16px!important;
   }
 }

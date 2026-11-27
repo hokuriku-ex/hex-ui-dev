@@ -9136,11 +9136,15 @@ hexLoad(function(){
       if(caption){
         caption.textContent=caption.textContent.replace(/【(?:スタッフブログ|重要なお知らせ)】[ \u00A0　]*/g,'');
       }
-      if(date&&caption&&!item.querySelector('.hex-news-separator')){
-        var separator=document.createElement('span');
-        separator.className='hex-news-separator';
-        separator.textContent='｜';
-        item.insertBefore(separator,caption);
+      var dateParts=date&&date.textContent.trim().match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
+      if(dateParts){
+        var year=document.createElement('span');
+        var monthDay=document.createElement('span');
+        year.className='hex-news-date-year';
+        year.textContent=dateParts[1];
+        monthDay.className='hex-news-date-month-day';
+        monthDay.textContent=dateParts[2].padStart(2,'0')+'.'+dateParts[3].padStart(2,'0');
+        date.replaceChildren(year,monthDay);
       }
       if(!item.querySelector('.hex-news-arrow')){
         var arrow=document.createElement('span');
