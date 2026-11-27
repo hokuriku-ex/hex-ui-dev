@@ -214,14 +214,19 @@
 
 /* 記事詳細タイトル */
 @media screen and (max-width:768px){
+  .gc_auto_frame_post_item_title{
+    gap:12px;
+    max-width:min(var(--base_width, 100%), calc(100% - 40px))!important;
+    margin-bottom:24px!important;
+  }
   .gc_auto_frame_post_item_title .date{
     font-size:14px!important;
+    padding-right:12px!important;
   }
   .gc_auto_frame_post_item_title h2{
-    margin:0 0 24px!important;
     font-size:26px!important;
   }
-  .gc_auto_frame_post_item_title h2::after{
+  .gc_auto_frame_post_item_title::after{
     width:calc(100% + 24px)!important;
     max-width:calc(100vw - 32px)!important;
   }

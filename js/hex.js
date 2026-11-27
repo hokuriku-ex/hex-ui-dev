@@ -2558,8 +2558,22 @@ function hexCleanArticleTitle(text){
   return text.replace(/【(?:スタッフブログ|重要なお知らせ)】[ \u00A0　]*/g,'').replace(/\s+/g,' ').trim();
 }
 
+function hexFormatArticleDate(date){
+  var dateParts=date&&date.textContent.trim().match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
+  if(!dateParts)return;
+
+  var year=document.createElement('span');
+  var monthDay=document.createElement('span');
+  year.className='hex-news-date-year';
+  year.textContent=dateParts[1];
+  monthDay.className='hex-news-date-month-day';
+  monthDay.textContent=dateParts[2].padStart(2,'0')+'.'+dateParts[3].padStart(2,'0');
+  date.replaceChildren(year,' ',monthDay);
+}
+
 hexLoad(function(){
   setTimeout(function(){
+    document.querySelectorAll('.gc_auto_frame_post_item_title .date').forEach(hexFormatArticleDate);
     var titles=document.querySelectorAll('.gc_auto_frame_post_item_title h2');
     Array.prototype.forEach.call(titles,function(title){
       if(title.classList.contains('hex-article-title-done'))return;
@@ -9136,16 +9150,7 @@ hexLoad(function(){
       if(caption){
         caption.textContent=caption.textContent.replace(/【(?:スタッフブログ|重要なお知らせ)】[ \u00A0　]*/g,'');
       }
-      var dateParts=date&&date.textContent.trim().match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
-      if(dateParts){
-        var year=document.createElement('span');
-        var monthDay=document.createElement('span');
-        year.className='hex-news-date-year';
-        year.textContent=dateParts[1];
-        monthDay.className='hex-news-date-month-day';
-        monthDay.textContent=dateParts[2].padStart(2,'0')+'.'+dateParts[3].padStart(2,'0');
-        date.replaceChildren(year,monthDay);
-      }
+      hexFormatArticleDate(date);
       if(!item.querySelector('.hex-news-arrow')){
         var arrow=document.createElement('span');
         var icon=document.createElement('i');
