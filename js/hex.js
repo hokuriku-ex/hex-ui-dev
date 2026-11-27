@@ -3321,8 +3321,8 @@ window.hexNextBlock=function(el){
   }
   return null;
 };
-hexReady(function(){
-  document.querySelectorAll('.hex-button-view').forEach(function(hexView){
+function hexRenderButtonView(hexView){
+    if(hexView.dataset.hexButtonReady==='true')return;
     /* WELCOME末尾の共通ボタンは廃止。旧HTMLが残っていても生成しない。 */
     if(hexView.closest('.hex-welcome-wrap')){hexView.hidden=true;return;}
     var hexTitle=hexView.dataset.title||'';
@@ -3353,7 +3353,10 @@ hexReady(function(){
     hexWrap.appendChild(hexAnchor);
     hexView.parentNode.insertBefore(hexWrap,hexView);
     hexView.style.display='none';
-  });
+    hexView.dataset.hexButtonReady='true';
+}
+hexReady(function(){
+  document.querySelectorAll('.hex-button-view').forEach(hexRenderButtonView);
   document.querySelectorAll('.hex-link-view').forEach(function(hexView){
     var hexTitle=hexView.dataset.title||'';
     var hexDetail=hexView.dataset.detail||'詳しく見る';
@@ -7226,7 +7229,46 @@ hexReady(function(){
 
   var accordionObserver = null;
 
-  function setupAccordion(action){
+  function findButtonGridRange(startBlock,nextBlock){
+    var content=[];
+    for(var block=nextBlock(startBlock);block;block=nextBlock(block)){
+      if(block.matches('.hex-button-grid-start')||block.querySelector('.hex-button-grid-start')){
+        break;
+      }
+      if(block.matches('.hex-button-grid-end')||block.querySelector('.hex-button-grid-end')){
+        return {start:startBlock,end:block,content:content};
+      }
+      content.push(block);
+    }
+    return null;
+  }
+
+  function buildButtonGrid(start){
+    var range=findButtonGridRange(start,function(block){return block.nextElementSibling;});
+    var startBlock=window.hexBaseBlock(start);
+    if(!range&&startBlock!==start){
+      range=findButtonGridRange(startBlock,window.hexNextBlock);
+    }
+    if(!range||!range.content.length)return;
+
+    var grid=document.createElement('div');
+    grid.className='hex-button-grid';
+    range.start.before(grid);
+    range.content.forEach(function(block){grid.appendChild(block);});
+    range.start.remove();
+    range.end.remove();
+
+    grid.querySelectorAll('.hex-button-columns').forEach(function(columns){
+      var view=columns.querySelector('.hex-button-view[data-col]');
+      var count=view&&view.dataset.col;
+      if(/^[1-6]$/.test(count)){
+        columns.style.setProperty('--hex-button-grid-columns',count);
+      }
+    });
+    grid.querySelectorAll('.hex-button-view').forEach(hexRenderButtonView);
+  }
+
+  function setupAccordion(action,index,actions){
 
     /* 設定済みなら何もしない */
     if(action.dataset.hexAccordionReady === 'true'){
@@ -7241,7 +7283,7 @@ hexReady(function(){
 
     var grids = Array.from(
       document.querySelectorAll(
-        '.hex-card-grid, .hex-image-grid'
+        '.hex-card-grid, .hex-image-grid, .hex-button-grid, .hex-button-grid-start'
       )
     );
 
@@ -7262,12 +7304,19 @@ hexReady(function(){
      * CMSがまだgridを生成していない場合は
      * MutationObserverによる次回処理を待つ
      */
-    if(!grid){
+    if(!grid||grid.classList.contains('hex-button-grid-start')){
       return;
     }
 
+    var isButtonGrid=grid.classList.contains('hex-button-grid');
+    var nextAction=actions[index+1];
+    if(isButtonGrid&&nextAction&&(
+      nextAction.compareDocumentPosition(grid)&Node.DOCUMENT_POSITION_FOLLOWING
+    ))return;
+
     grid.classList.remove('hex-action-grid-debug');
     grid.classList.add('hex-action-grid');
+    if(isButtonGrid)grid.inert=true;
 
     /* カードグリッドのmax-widthを見出しへ渡す */
     function syncActionMaxWidth(){
@@ -7325,6 +7374,7 @@ hexReady(function(){
 
           grid.classList.remove('is-open');
           action.classList.remove('is-open');
+          if(isButtonGrid)grid.inert=true;
 
           trigger.setAttribute(
             'aria-expanded',
@@ -7337,6 +7387,7 @@ hexReady(function(){
 
         grid.classList.add('is-open');
         action.classList.add('is-open');
+        if(isButtonGrid)grid.inert=false;
 
         grid.style.maxHeight =
           grid.scrollHeight + 'px';
@@ -7382,6 +7433,7 @@ hexReady(function(){
 
   function initializeAccordions(){
 
+    document.querySelectorAll('.hex-button-grid-start').forEach(buildButtonGrid);
     document
       .querySelectorAll(
         '.hex-section-action.action-on'

@@ -11828,6 +11828,26 @@ html body .hex-home-anchor-panel .hex-home-anchor-nav.hex-anchor-nav:not(.is-fix
   width:auto!important;
   margin:0;
 }
+.hex-button-grid{
+  width:100%;
+  max-width:1200px;
+  margin:0 auto;
+}
+.hex-button-grid .hex-button-columns{
+  display:grid;
+  grid-template-columns:repeat(var(--hex-button-grid-columns,4),minmax(0,1fr));
+}
+.hex-button-grid .hex-btn-main{
+  gap:10px;
+  padding:12px 16px;
+}
+.hex-button-grid .hex-btn-main-title{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.hex-button-grid .hex-btn-main-icon{
+  flex-shrink:0;
+}
 @media screen and (max-width:768px){
   .hex-button-columns{
     flex-direction:column;
@@ -11837,6 +11857,14 @@ html body .hex-home-anchor-panel .hex-home-anchor-nav.hex-anchor-nav:not(.is-fix
   .hex-button-columns > .hex-button-wrap{
     flex:0 0 auto;
     width:100%!important;
+  }
+  .hex-button-grid .hex-button-columns{
+    grid-template-columns:repeat(min(var(--hex-button-grid-columns,4),2),minmax(0,1fr));
+    gap:12px;
+  }
+  .hex-button-grid .hex-btn-main{
+    gap:8px;
+    padding-inline:12px;
   }
 }
 
