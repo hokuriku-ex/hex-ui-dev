@@ -16251,7 +16251,6 @@ hexLoad(function(){
       '.hex-card',
       '.hex-banner',
       '.hex-image-grid-item',
-      '.hex-company-pair-item',
       '.hex-staff-card',
       '.qanda_content',
       '.kb_qanda_content',
